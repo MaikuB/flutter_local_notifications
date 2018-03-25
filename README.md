@@ -1,4 +1,4 @@
-# local_notifications
+# flutter_local_notifications
 
 A cross platform plugin for displaying local notifications.
 
