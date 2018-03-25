@@ -9,3 +9,8 @@
 ## [0.0.3]
 
 * Fix changelog
+
+
+## [0.0.4]
+
+* Updated README

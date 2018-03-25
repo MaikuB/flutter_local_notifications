@@ -12,7 +12,7 @@ Check out the `example` directory for a sample app.
 If your application needs the ability to schedule notifications then you need to add the following the manifest
 
 ```xml
-        <receiver android:name="com.dexterous.localnotifications.ScheduledNotificationReceiver" />
+<receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
 ```
 
 ### iOS Integration
