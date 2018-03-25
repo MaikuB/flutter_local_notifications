@@ -17,4 +17,4 @@ If your application needs the ability to schedule notifications then you need to
 
 ### iOS Integration
 
-By design, iOS applications do not display notifications when they're in the foreground. Therefore, you need to update the AppDelegate class to handle when a local notification is received to display an alert. This is shown in the sample app where the `didReceiveLocalNotification` method. The notification title can be found by looking up the `title` within the `userInfo` dictionary of the `UILocalNotification` object.
+By design, iOS applications do not display notifications when they're in the foreground. Therefore, you need to update the AppDelegate class to handle when a local notification is received to display an alert. This is shown in the sample app within the `didReceiveLocalNotification` method of the `AppDelegate` class. The notification title can be found by looking up the `title` within the `userInfo` dictionary of the `UILocalNotification` object.
