@@ -10,7 +10,7 @@ class FlutterLocalNotifications {
       const MethodChannel('dexterous.com/flutter/local_notifications');
 
   /// Initializes the plugin. Call this method on application before using the plugin further
-  static Future initialize(
+  static Future<bool> initialize(
       InitializationSettings initializationSettings) async {
     Map<String, dynamic> serializedPlatformSpecifics;
     if (Platform.isAndroid) {
@@ -18,9 +18,10 @@ class FlutterLocalNotifications {
     } else if (Platform.isIOS) {
       serializedPlatformSpecifics = initializationSettings.ios.toJson();
     }
-    await _channel.invokeMethod('initialize', <String, dynamic>{
+    var result = await _channel.invokeMethod('initialize', <String, dynamic>{
       'platformSpecifics': serializedPlatformSpecifics
     });
+    return result;
   }
 
   /// Show a notification

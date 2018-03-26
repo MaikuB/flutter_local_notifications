@@ -58,7 +58,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler {
       Map<String, Object> platformSpecifics  = (Map<String, Object>) arguments.get("platformSpecifics");
       String defaultIcon = (String) platformSpecifics.get("defaultIcon");
       defaultIconResourceId = registrar.context().getResources().getIdentifier(defaultIcon, "drawable", registrar.context().getPackageName());
-      result.success(null);
+      result.success(true);
     }
     else if (call.method.equals(SHOW_METHOD)) {
       Map<String, Object> arguments = call.arguments();

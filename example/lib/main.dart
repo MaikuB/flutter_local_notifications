@@ -16,7 +16,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
-  initState() {
+  initState(){
     super.initState();
     InitializationSettingsAndroid initializationSettingsAndroid = new InitializationSettingsAndroid('app_icon');
     InitializationSettingsIOS initializationSettingsIOS = new InitializationSettingsIOS();
