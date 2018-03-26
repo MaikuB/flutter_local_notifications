@@ -63,12 +63,21 @@
         result(nil);
     } else if([@"cancel" isEqualToString:call.method]) {
         NSNumber* id = (NSNumber*)call.arguments;
-        NSArray *notifications = [UIApplication sharedApplication].scheduledLocalNotifications;
-        for( int i = 0; i < [notifications count]; i++) {
-            UILocalNotification* localNotification = [notifications objectAtIndex:i];
-            NSNumber *userInfoNotificationId = localNotification.userInfo[@"NotificationId"];
-            if([userInfoNotificationId longValue] == [id longValue]) {
-                [[UIApplication sharedApplication] cancelLocalNotification:localNotification];
+        
+        if(@available(iOS 10.0, *)) {
+            UNUserNotificationCenter *center =  [UNUserNotificationCenter currentNotificationCenter];
+            NSArray *idsToRemove = [[NSArray alloc] initWithObjects:[id stringValue], nil];
+            [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
+            [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
+
+        } else {
+            NSArray *notifications = [UIApplication sharedApplication].scheduledLocalNotifications;
+            for( int i = 0; i < [notifications count]; i++) {
+                UILocalNotification* localNotification = [notifications objectAtIndex:i];
+                NSNumber *userInfoNotificationId = localNotification.userInfo[@"NotificationId"];
+                if([userInfoNotificationId longValue] == [id longValue]) {
+                    [[UIApplication sharedApplication] cancelLocalNotification:localNotification];
+                }
             }
         }
         result(nil);
