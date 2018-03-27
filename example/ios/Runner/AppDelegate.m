@@ -11,6 +11,10 @@
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
 {
+    if(@available(iOS 10.0, *)) {
+        return;
+    }
+    
     NSString* title = notification.userInfo[@"title"];
     UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:title message:notification.alertBody delegate:nil     cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
     [alertView show];

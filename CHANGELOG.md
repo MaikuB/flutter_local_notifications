@@ -17,4 +17,9 @@
 
 ## [0.0.5]
 
-* Updates to iOS code to support both legacy notifications via UILocalNotification (before iOS 10) and the user notifications framework introduced in iOS 10
+* Updates to iOS code to support both legacy notifications via UILocalNotification (before iOS 10) and the User Notifications framework introduced in iOS 10
+
+## [0.0.6]
+
+* Add ability to customise the presentation options when a notification is triggered while the app is in the foreground for iOS notifications presented using the User Notifications Framework (iOS 10+). IMPORTANT: the named parameters for iOS initialisation settings constructor have had to change to differentiate between permission options and presentation options
+
