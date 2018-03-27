@@ -23,3 +23,7 @@
 
 * Add ability to customise the presentation options when a notification is triggered while the app is in the foreground for iOS notifications presented using the User Notifications Framework (iOS 10+). IMPORTANT: the named parameters for iOS initialisation settings constructor have had to change to differentiate between permission options and presentation options
 
+## [0.0.7]
+
+* Fix notifications on Android so tapping on them will remove them and will also start the app if it has been terminated.
+

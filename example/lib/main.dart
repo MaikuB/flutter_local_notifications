@@ -19,7 +19,7 @@ class _MyAppState extends State<MyApp> {
   initState(){
     super.initState();
     InitializationSettingsAndroid initializationSettingsAndroid = new InitializationSettingsAndroid('app_icon');
-    InitializationSettingsIOS initializationSettingsIOS = new InitializationSettingsIOS(requestAlertPermission: false);
+    InitializationSettingsIOS initializationSettingsIOS = new InitializationSettingsIOS();
     InitializationSettings initializationSettings = new InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
     FlutterLocalNotifications.initialize(initializationSettings);
   }
