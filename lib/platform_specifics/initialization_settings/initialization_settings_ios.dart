@@ -9,25 +9,25 @@ class InitializationSettingsIOS {
   /// Request permission to badge app icon
   final bool requestBadgePermission;
 
-  /// Display an alert when the notification is triggered while app is in the foreground. iOS 10+ only
-  final bool presentAlert;
+  /// Default setting that indiciates an alert should be displayed when a notification is triggered while app is in the foreground. iOS 10+ only
+  final bool defaultPresentAlert;
 
-  /// Play a sound when the notification is triggered while app is in the foreground. iOS 10+ only
-  final bool presentSound;
+  /// Default setting that indiciates if a sound should be played when a notification is triggered while app is in the foreground. iOS 10+ only
+  final bool defaultPresentSound;
 
-  /// Apply the badge value when the notification is triggered while app is in the foreground. iOS 10+ only
-  final bool presentBadge;
+  /// Default setting that indiciates if a badge value should be applied when a notification is triggered while app is in the foreground. iOS 10+ only
+  final bool defaultPresentBadge;
 
-  const InitializationSettingsIOS({this.requestAlertPermission = true, this.requestSoundPermission = true, this.requestBadgePermission = true, this.presentAlert = true, this.presentSound = true, this.presentBadge = true});
+  const InitializationSettingsIOS({this.requestAlertPermission = true, this.requestSoundPermission = true, this.requestBadgePermission = true, this.defaultPresentAlert = true, this.defaultPresentSound = true, this.defaultPresentBadge = true});
 
   Map<String, dynamic> toJson() {
     return <String, dynamic> {
       'requestAlertPermission': requestAlertPermission,
       'requestSoundPermission': requestSoundPermission,
       'requestBadgePermission': requestBadgePermission,
-      'presentAlert': presentAlert,
-      'presentSound': presentSound,
-      'presentBadge': presentBadge
+      'presentAlert': defaultPresentAlert,
+      'presentSound': defaultPresentSound,
+      'presentBadge': defaultPresentBadge
     };
   }
 }

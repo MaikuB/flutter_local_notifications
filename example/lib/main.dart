@@ -111,7 +111,7 @@ class _MyAppState extends State<MyApp> {
             sound: 'slow_spring_board',
             vibrationPattern: vibrationPattern);
     NotificationDetailsIOS iOSPlatformChannelSpecifics =
-        new NotificationDetailsIOS();
+        new NotificationDetailsIOS(sound: "slow_spring_board.aiff");
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await FlutterLocalNotifications.schedule(
@@ -128,7 +128,7 @@ class _MyAppState extends State<MyApp> {
             'silent channel name', 'silent channel description',
             playSound: false);
     NotificationDetailsIOS iOSPlatformChannelSpecifics =
-        new NotificationDetailsIOS();
+        new NotificationDetailsIOS(presentSound: false);
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await FlutterLocalNotifications.show(
