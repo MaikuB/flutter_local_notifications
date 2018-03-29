@@ -27,3 +27,7 @@
 
 * Fix notifications on Android so tapping on them will remove them and will also start the app if it has been terminated.
 
+## [0.0.8]
+
+* Enable ability to customise sound and vibration for Android notifications.
+
