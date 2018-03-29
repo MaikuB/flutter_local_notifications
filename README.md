@@ -19,6 +19,8 @@ If your application needs the ability to schedule notifications then you need to
 <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
 ```
 
+Notification icons should be added as a drawable resource. The sample code shows how to set default icon for all notifications and how to specify one for each notification.
+
 ### iOS Integration
 
 By design, iOS applications do not display notifications when they're in the foreground. For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. For older versions of iOS, you will need update the AppDelegate class to handle when a local notification is received to display an alert. This is shown in the sample app within the `didReceiveLocalNotification` method of the `AppDelegate` class. The notification title can be found by looking up the `title` within the `userInfo` dictionary of the `UILocalNotification` object.

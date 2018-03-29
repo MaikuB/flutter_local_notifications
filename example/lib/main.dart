@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/platform_specifics/initialization_settings/initialization_settings.dart';
@@ -16,11 +18,14 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
-  initState(){
+  initState() {
     super.initState();
-    InitializationSettingsAndroid initializationSettingsAndroid = new InitializationSettingsAndroid('app_icon');
-    InitializationSettingsIOS initializationSettingsIOS = new InitializationSettingsIOS();
-    InitializationSettings initializationSettings = new InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
+    InitializationSettingsAndroid initializationSettingsAndroid =
+        new InitializationSettingsAndroid('app_icon');
+    InitializationSettingsIOS initializationSettingsIOS =
+        new InitializationSettingsIOS();
+    InitializationSettings initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
     FlutterLocalNotifications.initialize(initializationSettings);
   }
 
@@ -54,9 +59,16 @@ class _MyAppState extends State<MyApp> {
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
                         child: new Text(
-                            'Schedule notification to appear in 5 seconds'),
+                            'Schedule notification to appear in 5 seconds, different sound'),
                         onPressed: () async {
                           await scheduleNotification();
+                        })),
+                new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
+                        child: new Text('Play notification with no sound'),
+                        onPressed: () async {
+                          await playNotificationWithNoSound();
                         })),
               ],
             ),
@@ -83,18 +95,46 @@ class _MyAppState extends State<MyApp> {
     await FlutterLocalNotifications.cancel(0);
   }
 
+  /// Schedules a notification that specifies a different icon, sound and vibration pattern
   scheduleNotification() async {
     var scheduledNotificationDateTime =
         new DateTime.now().add(new Duration(seconds: 5));
+    var vibrationPattern = new Int64List(4);
+    vibrationPattern[0] = 0;
+    vibrationPattern[1] = 1000;
+    vibrationPattern[2] = 5000;
+    vibrationPattern[3] = 2000;
     NotificationDetailsAndroid androidPlatformChannelSpecifics =
-        new NotificationDetailsAndroid(
-            'your channel id', 'your channel name', 'your channel description',
-            icon: 'secondary_icon');
+        new NotificationDetailsAndroid('your other channel id',
+            'your other channel name', 'your other channel description',
+            icon: 'secondary_icon',
+            sound: 'slow_spring_board',
+            vibrationPattern: vibrationPattern);
     NotificationDetailsIOS iOSPlatformChannelSpecifics =
         new NotificationDetailsIOS();
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await FlutterLocalNotifications.schedule(0, 'scheduled title', 'scheduled body',
-        scheduledNotificationDateTime, platformChannelSpecifics);
+    await FlutterLocalNotifications.schedule(
+        0,
+        'scheduled title',
+        'scheduled body',
+        scheduledNotificationDateTime,
+        platformChannelSpecifics);
+  }
+
+  playNotificationWithNoSound() async {
+       NotificationDetailsAndroid androidPlatformChannelSpecifics =
+        new NotificationDetailsAndroid('silent channel id',
+            'silent channel name', 'silent channel description',
+            playSound: false);
+    NotificationDetailsIOS iOSPlatformChannelSpecifics =
+        new NotificationDetailsIOS();
+    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await FlutterLocalNotifications.show(
+        0,
+        'silent title',
+        'silent body',
+        platformChannelSpecifics);
   }
 }

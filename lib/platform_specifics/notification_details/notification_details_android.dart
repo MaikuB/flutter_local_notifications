@@ -1,5 +1,8 @@
 /// The available importance levels for Android notifications.
 /// Required for Android 8.0+
+
+import 'dart:typed_data';
+
 class Importance {
   static const Unspecified = const Importance(-1000);
   static const None = const Importance(0);
@@ -33,7 +36,7 @@ class Priority {
 
 /// Configures the notification on Android
 class NotificationDetailsAndroid {
-  /// The icon that should be used when displaying the notification
+  /// The icon that should be used when displaying the notification. When not specified, this will use the default icon that has been configured.
   final String icon;
 
   /// The channel's id. Required for Android 8.0+
@@ -46,13 +49,25 @@ class NotificationDetailsAndroid {
   final String channelDescription;
 
   /// The importance of the notification
-  Importance importance = Importance.Default;
+  Importance importance;
 
   /// The priority of the notification
-  Priority priority = Priority.Default;
+  Priority priority;
+  
+  /// Indicates if a sound should be played when the notification is displayed. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  bool playSound;
+
+  /// The sound to play for the notification. Requires setting [playSound] to true for it to work. If [playSound] is set to true but this is not specified then the default sound is played. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  String sound;
+
+  /// Indicates if vibration should be enabled when the notification is displayed. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  bool enableVibration;
+
+  /// The vibration pattern. Requires setting [enableVibration] to true for it to work. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  Int64List vibrationPattern;
 
   NotificationDetailsAndroid(this.channelId,
-      this.channelName, this.channelDescription, {this.icon, this.importance = Importance.Default, this.priority = Priority.Default});
+      this.channelName, this.channelDescription, {this.icon, this.importance = Importance.Default, this.priority = Priority.Default, this.playSound = true, this.sound, this.enableVibration = true, this.vibrationPattern});
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
@@ -61,7 +76,11 @@ class NotificationDetailsAndroid {
       'channelName': channelName,
       'channelDescription': channelDescription,
       'importance': importance.value,
-      'priority': priority.value
+      'priority': priority.value,
+      'playSound': playSound,
+      'sound': sound,
+      'enableVibration': enableVibration,
+      'vibrationPattern': vibrationPattern
     };
   }
 }

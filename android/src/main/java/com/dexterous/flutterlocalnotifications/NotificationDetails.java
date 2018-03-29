@@ -5,6 +5,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class NotificationDetails {
@@ -18,6 +19,10 @@ public class NotificationDetails {
     public String channelDescription;
     public Integer importance;
     public Integer priority;
+    public Boolean playSound;
+    public String sound;
+    public Boolean enableVibration;
+    public long[] vibrationPattern;
 
 
     public static NotificationDetails from(Map<String, Object> arguments) {
@@ -32,6 +37,10 @@ public class NotificationDetails {
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get("platformSpecifics");
         notificationDetails.icon = (String) platformChannelSpecifics.get("icon");
         notificationDetails.priority = (Integer) platformChannelSpecifics.get("priority");
+        notificationDetails.playSound = (Boolean) platformChannelSpecifics.get("playSound");
+        notificationDetails.sound = (String) platformChannelSpecifics.get("sound");
+        notificationDetails.enableVibration = (Boolean) platformChannelSpecifics.get("enableVibration");
+        notificationDetails.vibrationPattern = (long[]) platformChannelSpecifics.get("vibrationPattern");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationDetails.channelId = (String) platformChannelSpecifics.get("channelId");
             notificationDetails.channelName = (String) platformChannelSpecifics.get("channelName");

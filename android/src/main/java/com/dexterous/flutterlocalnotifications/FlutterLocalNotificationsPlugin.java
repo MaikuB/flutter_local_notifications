@@ -8,6 +8,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -79,7 +84,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler{
     private void cancelNotification(Integer id) {
         Context context = registrar.context();
         Intent intent = new Intent(context, ScheduledNotificationReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager alarmManager = getAlarmManager();
         alarmManager.cancel(pendingIntent);
         NotificationManagerCompat notificationManager = getNotificationManager();
@@ -105,28 +110,16 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler{
 
     private Notification createNotification(NotificationDetails notificationDetails) {
         Context context = registrar.context();
-
-        int resourceId = 0;
+        int resourceId;
         if (notificationDetails.icon != null) {
             resourceId = context.getResources().getIdentifier(notificationDetails.icon, "drawable", context.getPackageName());
         } else {
             resourceId = defaultIconResourceId;
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(notificationDetails.channelId);
-            if (notificationChannel == null) {
-                notificationChannel = new NotificationChannel(notificationDetails.channelId, notificationDetails.channelName, notificationDetails.importance);
-                notificationChannel.setDescription(notificationDetails.channelDescription);
-                notificationManager.createNotificationChannel(notificationChannel);
-            }
-        }
-
+        setupNotificationChannel(context, notificationDetails);
         Intent intent = new Intent(context, registrar.activity().getClass());
         intent.setAction(SELECT_NOTIFICATION);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationDetails.channelId)
                 .setSmallIcon(resourceId)
                 .setContentTitle(notificationDetails.title)
@@ -134,8 +127,57 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler{
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setPriority(notificationDetails.priority);
+        if (notificationDetails.playSound) {
+            Uri uri = retrieveSoundResourceUri(context, notificationDetails);
+            builder.setSound(uri);
+        } else {
+            builder.setSound(null);
+        }
+
+        if (notificationDetails.enableVibration) {
+            if (notificationDetails.vibrationPattern != null && notificationDetails.vibrationPattern.length > 0) {
+                builder.setVibrate(notificationDetails.vibrationPattern);
+            }
+        } else {
+            builder.setVibrate(new long[] { 0 });
+        }
         Notification notification = builder.build();
         return notification;
+    }
+
+    private void setupNotificationChannel(Context context, NotificationDetails notificationDetails) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(notificationDetails.channelId);
+            if (notificationChannel == null) {
+                notificationChannel = new NotificationChannel(notificationDetails.channelId, notificationDetails.channelName, notificationDetails.importance);
+                notificationChannel.setDescription(notificationDetails.channelDescription);
+                if(notificationDetails.playSound) {
+                    AudioAttributes audioAttributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build();
+                    Uri uri = retrieveSoundResourceUri(context, notificationDetails);
+                    notificationChannel.setSound(uri, audioAttributes);
+                } else {
+                    notificationChannel.setSound(null, null);
+                }
+                notificationChannel.enableVibration(notificationDetails.enableVibration);
+                if (notificationDetails.vibrationPattern != null && notificationDetails.vibrationPattern.length > 0) {
+                    notificationChannel.setVibrationPattern(notificationDetails.vibrationPattern);
+                }
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+        }
+    }
+
+    private Uri retrieveSoundResourceUri(Context context, NotificationDetails notificationDetails) {
+        Uri uri;
+        if (notificationDetails.sound == null || notificationDetails.sound.isEmpty()) {
+            uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        } else {
+
+            int soundResourceId = context.getResources().getIdentifier(notificationDetails.sound, "raw", context.getPackageName());
+            return Uri.parse("android.resource://" + context.getPackageName() + "/" + soundResourceId);
+        }
+        return uri;
     }
 
     private NotificationManagerCompat getNotificationManager() {
