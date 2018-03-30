@@ -3,6 +3,10 @@
 
 import 'dart:typed_data';
 
+import 'package:flutter_local_notifications/platform_specifics/android_styles/style_information.dart';
+
+enum NotificationStyleAndroid { Default, BigText }
+
 class Importance {
   static const Unspecified = const Importance(-1000);
   static const None = const Importance(0);
@@ -66,11 +70,19 @@ class NotificationDetailsAndroid {
   /// The vibration pattern. Requires setting [enableVibration] to true for it to work. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   Int64List vibrationPattern;
 
+  /// Defines the notification style
+  NotificationStyleAndroid style;
+
+  /// Contains extra information for the specified notification [style]
+  StyleInformation styleInformation;
+
   NotificationDetailsAndroid(
       this.channelId, this.channelName, this.channelDescription,
       {this.icon,
       this.importance = Importance.Default,
       this.priority = Priority.Default,
+      this.style = NotificationStyleAndroid.Default,
+      this.styleInformation,
       this.playSound = true,
       this.sound,
       this.enableVibration = true,
@@ -87,7 +99,9 @@ class NotificationDetailsAndroid {
       'playSound': playSound,
       'sound': sound,
       'enableVibration': enableVibration,
-      'vibrationPattern': vibrationPattern
+      'vibrationPattern': vibrationPattern,
+      'style': style.index,
+      'styleInformation': styleInformation == null ? null : styleInformation.toJson()
     };
   }
 }
