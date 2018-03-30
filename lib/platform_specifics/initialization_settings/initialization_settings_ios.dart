@@ -18,16 +18,22 @@ class InitializationSettingsIOS {
   /// Default setting that indiciates if a badge value should be applied when a notification is triggered while app is in the foreground. iOS 10+ only
   final bool defaultPresentBadge;
 
-  const InitializationSettingsIOS({this.requestAlertPermission = true, this.requestSoundPermission = true, this.requestBadgePermission = true, this.defaultPresentAlert = true, this.defaultPresentSound = true, this.defaultPresentBadge = true});
+  const InitializationSettingsIOS(
+      {this.requestAlertPermission = true,
+      this.requestSoundPermission = true,
+      this.requestBadgePermission = true,
+      this.defaultPresentAlert = true,
+      this.defaultPresentSound = true,
+      this.defaultPresentBadge = true});
 
   Map<String, dynamic> toJson() {
-    return <String, dynamic> {
+    return <String, dynamic>{
       'requestAlertPermission': requestAlertPermission,
       'requestSoundPermission': requestSoundPermission,
       'requestBadgePermission': requestBadgePermission,
-      'presentAlert': defaultPresentAlert,
-      'presentSound': defaultPresentSound,
-      'presentBadge': defaultPresentBadge
+      'defaultPresentAlert': defaultPresentAlert,
+      'defaultPresentSound': defaultPresentSound,
+      'defaultPresentBadge': defaultPresentBadge
     };
   }
 }

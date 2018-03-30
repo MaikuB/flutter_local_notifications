@@ -53,7 +53,7 @@ class NotificationDetailsAndroid {
 
   /// The priority of the notification
   Priority priority;
-  
+
   /// Indicates if a sound should be played when the notification is displayed. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   bool playSound;
 
@@ -66,8 +66,15 @@ class NotificationDetailsAndroid {
   /// The vibration pattern. Requires setting [enableVibration] to true for it to work. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   Int64List vibrationPattern;
 
-  NotificationDetailsAndroid(this.channelId,
-      this.channelName, this.channelDescription, {this.icon, this.importance = Importance.Default, this.priority = Priority.Default, this.playSound = true, this.sound, this.enableVibration = true, this.vibrationPattern});
+  NotificationDetailsAndroid(
+      this.channelId, this.channelName, this.channelDescription,
+      {this.icon,
+      this.importance = Importance.Default,
+      this.priority = Priority.Default,
+      this.playSound = true,
+      this.sound,
+      this.enableVibration = true,
+      this.vibrationPattern});
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{

@@ -18,9 +18,8 @@ class FlutterLocalNotifications {
     } else if (Platform.isIOS) {
       serializedPlatformSpecifics = initializationSettings.ios.toJson();
     }
-    var result = await _channel.invokeMethod('initialize', <String, dynamic>{
-      'platformSpecifics': serializedPlatformSpecifics
-    });
+    var result = await _channel.invokeMethod('initialize',
+        <String, dynamic>{'platformSpecifics': serializedPlatformSpecifics});
     return result;
   }
 
@@ -30,7 +29,9 @@ class FlutterLocalNotifications {
     Map<String, dynamic> serializedPlatformSpecifics;
     if (Platform.isAndroid) {
       serializedPlatformSpecifics = notificationDetails.android.toJson();
-    } else if (Platform.isIOS) {}
+    } else if (Platform.isIOS) {
+      serializedPlatformSpecifics = notificationDetails.iOS.toJson();
+    }
     await _channel.invokeMethod('show', <String, dynamic>{
       'id': id,
       'title': title,
@@ -50,7 +51,9 @@ class FlutterLocalNotifications {
     Map<String, dynamic> serializedPlatformSpecifics;
     if (Platform.isAndroid) {
       serializedPlatformSpecifics = notificationDetails.android.toJson();
-    } else if (Platform.isIOS) {}
+    } else if (Platform.isIOS) {
+      serializedPlatformSpecifics = notificationDetails.iOS.toJson();
+    }
     await _channel.invokeMethod('schedule', <String, dynamic>{
       'id': id,
       'title': title,

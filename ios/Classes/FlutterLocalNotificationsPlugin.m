@@ -42,34 +42,52 @@ bool updateBadge;
 - (void)initialize:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
     NSDictionary *arguments = [call arguments];
     NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
+    if(arguments[DEFAULT_PRESENT_ALERT] != [NSNull null]) {
+        displayAlert = [[platformSpecifics objectForKey:DEFAULT_PRESENT_ALERT] boolValue];
+    }
+    if(arguments[DEFAULT_PRESENT_SOUND] != [NSNull null]) {
+        playSound = [[platformSpecifics objectForKey:DEFAULT_PRESENT_SOUND] boolValue];
+    }
+    if(arguments[DEFAULT_PRESENT_BADGE] != [NSNull null]) {
+        updateBadge = [[platformSpecifics objectForKey:DEFAULT_PRESENT_BADGE] boolValue];
+    }
+    bool requestedSoundPermission = false;
+    bool requestedAlertPermission = false;
+    bool requestedBadgePermission = false;
+    if (platformSpecifics[REQUEST_SOUND_PERMISSION] != [NSNull null]) {
+        requestedSoundPermission = [platformSpecifics[REQUEST_SOUND_PERMISSION] boolValue];
+    }
+    if (platformSpecifics[REQUEST_ALERT_PERMISSION] != [NSNull null]) {
+        requestedAlertPermission = [platformSpecifics[REQUEST_ALERT_PERMISSION] boolValue];
+    }
+    if (platformSpecifics[REQUEST_BADGE_PERMISSION] != [NSNull null]) {
+        requestedBadgePermission = [platformSpecifics[REQUEST_BADGE_PERMISSION] boolValue];
+    }
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         center.delegate = self;
         UNAuthorizationOptions authorizationOptions = 0;
-        if (platformSpecifics[REQUEST_SOUND_PERMISSION]) {
+        if (requestedSoundPermission) {
             authorizationOptions += UNAuthorizationOptionSound;
         }
-        if (platformSpecifics[REQUEST_ALERT_PERMISSION]) {
+        if (requestedAlertPermission) {
             authorizationOptions += UNAuthorizationOptionAlert;
         }
-        if (platformSpecifics[REQUEST_BADGE_PERMISSION]) {
+        if (requestedBadgePermission) {
             authorizationOptions += UNAuthorizationOptionBadge;
         }
-        displayAlert = platformSpecifics[DEFAULT_PRESENT_ALERT];
-        playSound = platformSpecifics[DEFAULT_PRESENT_SOUND];
-        updateBadge = platformSpecifics[DEFAULT_PRESENT_BADGE];
         [center requestAuthorizationWithOptions:(authorizationOptions) completionHandler:^(BOOL granted, NSError * _Nullable error) {
             result(@(granted));
         }];
     } else {
         UIUserNotificationType notificationTypes = 0;
-        if (platformSpecifics[REQUEST_SOUND_PERMISSION]) {
+        if (requestedSoundPermission) {
             notificationTypes |= UIUserNotificationTypeSound;
         }
-        if (platformSpecifics[REQUEST_ALERT_PERMISSION]) {
+        if (requestedAlertPermission) {
             notificationTypes |= UIUserNotificationTypeAlert;
         }
-        if (platformSpecifics[REQUEST_BADGE_PERMISSION]) {
+        if (requestedBadgePermission) {
             notificationTypes |= UIUserNotificationTypeBadge;
         }
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:notificationTypes categories:nil];
@@ -82,27 +100,29 @@ bool updateBadge;
     NSNumber *id = call.arguments[ID];
     NSString *title = call.arguments[TITLE];
     NSString *body = call.arguments[BODY];
-    
+    NSDictionary *platformSpecifics = call.arguments[PLATFORM_SPECIFICS];
     bool presentAlert = displayAlert;
     bool presentSound = playSound;
     bool presentBadge = updateBadge;
-    if(call.arguments[PRESENT_ALERT] != nil) {
-        presentAlert = call.arguments[PRESENT_ALERT];
+    
+    if(platformSpecifics[PRESENT_ALERT] != [NSNull null]) {
+        presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
     }
-    if(call.arguments[PRESENT_SOUND] != nil) {
-        presentSound = call.arguments[PRESENT_SOUND];
+    if(platformSpecifics[PRESENT_SOUND] != [NSNull null]) {
+        presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
     }
-    if(call.arguments[PRESENT_BADGE] != nil) {
-        presentBadge = call.arguments[PRESENT_BADGE];
+    if(platformSpecifics[PRESENT_BADGE] != [NSNull null]) {
+        presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
     }
+    NSString *sound = platformSpecifics[SOUND];
     NSNumber *secondsSinceEpoch;
     if([SCHEDULE_METHOD isEqualToString:call.method]) {
         secondsSinceEpoch = @([call.arguments[MILLISECONDS_SINCE_EPOCH] integerValue] / 1000);
     }
     if(@available(iOS 10.0, *)) {
-        [self showUserNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge];
+        [self showUserNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound];
     } else {
-        [self showLocalNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge];
+        [self showLocalNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound];
     }
     result(nil);
 }
@@ -142,16 +162,23 @@ bool updateBadge;
 }
 
 - (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge {
-    NSDictionary *userDict =[NSDictionary dictionaryWithObjectsAndKeys:id, NOTIFICATION_ID, title, TITLE, presentAlert, PRESENT_ALERT, presentSound, PRESENT_SOUND, presentBadge, PRESENT_BADGE, nil];
+    NSDictionary *userDict =[NSDictionary dictionaryWithObjectsAndKeys:id, NOTIFICATION_ID, title, TITLE, [NSNumber numberWithBool:presentAlert], PRESENT_ALERT, [NSNumber numberWithBool:presentSound], PRESENT_SOUND, [NSNumber numberWithBool:presentBadge], PRESENT_BADGE, nil];
     return userDict;
 }
 
-- (void) showUserNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge {
+- (void) showUserNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound {
     if(@available(iOS 10.0, *)) {
         UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
         UNNotificationTrigger *trigger;
         content.title = title;
         content.body = body;
+        if(presentSound) {
+            if(!sound || [sound isKindOfClass:[NSNull class]]) {
+                content.sound = UNNotificationSound.defaultSound;
+            } else {
+                content.sound = [UNNotificationSound soundNamed:sound];
+            }
+        }
         content.userInfo = [self buildUserDict:id title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge];
         if(secondsSinceEpoch == nil) {
             trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:0.1
@@ -178,11 +205,18 @@ bool updateBadge;
     }
 }
 
-- (void) showLocalNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge  {
+- (void) showLocalNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound  {
     UILocalNotification *notification = [[UILocalNotification alloc] init];
     notification.alertBody = body;
     if(@available(iOS 8.2, *)) {
         notification.alertTitle = title;
+    }
+    if(presentSound) {
+        if(!sound || [sound isKindOfClass:[NSNull class]]){
+            notification.soundName = UILocalNotificationDefaultSoundName;
+        } else {
+            notification.soundName = sound;
+        }
     }
     notification.userInfo = [self buildUserDict:id title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge];
     if(secondsSinceEpoch == nil) {
@@ -194,12 +228,14 @@ bool updateBadge;
 }
 
 
-
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification :(UNNotification *)notification withCompletionHandler :(void (^)(UNNotificationPresentationOptions))completionHandler NS_AVAILABLE_IOS(10.0) {
     UNNotificationPresentationOptions presentationOptions = 0;
-    bool presentAlert = notification.request.content.userInfo[PRESENT_ALERT];
-    bool presentSound = notification.request.content.userInfo[PRESENT_SOUND];
-    bool presentBadge = notification.request.content.userInfo[PRESENT_BADGE];
+    NSNumber *presentAlertValue = (NSNumber*)notification.request.content.userInfo[PRESENT_ALERT];
+    NSNumber *presentSoundValue = (NSNumber*)notification.request.content.userInfo[PRESENT_SOUND];
+    NSNumber *presentBadgeValue = (NSNumber*)notification.request.content.userInfo[PRESENT_BADGE];
+    bool presentAlert = [presentAlertValue boolValue];
+    bool presentSound = [presentSoundValue boolValue];
+    bool presentBadge = [presentBadgeValue boolValue];
     if(presentAlert) {
         presentationOptions |= UNNotificationPresentationOptionAlert;
     }
@@ -211,5 +247,7 @@ bool updateBadge;
     }
     completionHandler(presentationOptions);
 }
+
+
 
 @end
