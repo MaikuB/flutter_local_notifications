@@ -23,6 +23,8 @@ public class NotificationDetails {
     public String sound;
     public Boolean enableVibration;
     public long[] vibrationPattern;
+    public NotificationStyle style;
+    public StyleInformation styleInformation;
 
 
     public static NotificationDetails from(Map<String, Object> arguments) {
@@ -35,6 +37,8 @@ public class NotificationDetails {
             notificationDetails.delay = millisecondsSinceEpoch - System.currentTimeMillis();
         }
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get("platformSpecifics");
+        notificationDetails.style = NotificationStyle.values()[(Integer)platformChannelSpecifics.get("style")];
+        ProcessStyleInformation(notificationDetails, platformChannelSpecifics);
         notificationDetails.icon = (String) platformChannelSpecifics.get("icon");
         notificationDetails.priority = (Integer) platformChannelSpecifics.get("priority");
         notificationDetails.playSound = (Boolean) platformChannelSpecifics.get("playSound");
@@ -49,5 +53,23 @@ public class NotificationDetails {
         }
 
         return notificationDetails;
+    }
+
+    private static void ProcessStyleInformation(NotificationDetails notificationDetails, Map<String, Object> platformSpecifics) {
+        switch(notificationDetails.style) {
+
+            case Default:
+                break;
+            case BigText:
+                Map<String, Object> bigTextStyleInformation = (Map<String, Object>) platformSpecifics.get("styleInformation");
+                String bigText = (String)bigTextStyleInformation.get("bigText");
+                Boolean htmlFormatBigText = (Boolean)bigTextStyleInformation.get("htmlFormatBigText");
+                String contentTitle = (String)bigTextStyleInformation.get("contentTitle");
+                Boolean htmlFormatContentTitle = (Boolean)bigTextStyleInformation.get("htmlFormatContentTitle");
+                String summaryText = (String)bigTextStyleInformation.get("summaryText");
+                Boolean htmlFormatSummaryText = (Boolean)bigTextStyleInformation.get("htmlFormatSummaryText");
+                notificationDetails.styleInformation = new BigTextStyleInformation(bigText, htmlFormatBigText, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText);
+                break;
+        }
     }
 }

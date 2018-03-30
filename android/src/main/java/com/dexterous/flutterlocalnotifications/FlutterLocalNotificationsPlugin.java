@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.text.Html;
 
 import java.util.Map;
 
@@ -139,8 +140,33 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler{
         } else {
             builder.setVibrate(new long[] { 0 });
         }
+        ApplyNotificationStyle(notificationDetails, builder);
         Notification notification = builder.build();
         return notification;
+    }
+
+    private void ApplyNotificationStyle(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        switch(notificationDetails.style) {
+            case Default:
+                break;
+            case BigText:
+                BigTextStyleInformation bigTextStyleInformation = (BigTextStyleInformation)notificationDetails.styleInformation;
+                NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
+                if(bigTextStyleInformation.bigText != null) {
+                    CharSequence bigText = bigTextStyleInformation.htmlFormatBigText ? Html.fromHtml(bigTextStyleInformation.bigText) : bigTextStyleInformation.bigText;
+                    bigTextStyle.bigText(bigText);
+                }
+                if(bigTextStyleInformation.contentTitle != null) {
+                    CharSequence contentTitle = bigTextStyleInformation.htmlFormatContentTitle ? Html.fromHtml(bigTextStyleInformation.contentTitle) : bigTextStyleInformation.contentTitle;
+                    bigTextStyle.setBigContentTitle(contentTitle);
+                }
+                if(bigTextStyleInformation.summaryText != null) {
+                    CharSequence summaryText = bigTextStyleInformation.htmlFormatSummaryText? Html.fromHtml(bigTextStyleInformation.summaryText) : bigTextStyleInformation.summaryText;
+                    bigTextStyle.setSummaryText(summaryText);
+                }
+                builder.setStyle(bigTextStyle);
+                break;
+        }
     }
 
     private void setupNotificationChannel(Context context, NotificationDetails notificationDetails) {

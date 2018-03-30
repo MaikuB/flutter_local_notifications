@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/platform_specifics/initialization_se
 import 'package:flutter_local_notifications/platform_specifics/notification_details/notification_details.dart';
 import 'package:flutter_local_notifications/platform_specifics/notification_details/notification_details_android.dart';
 import 'package:flutter_local_notifications/platform_specifics/notification_details/notification_details_ios.dart';
+import 'package:flutter_local_notifications/platform_specifics/android_styles/big_text_style_information.dart';
 
 void main() => runApp(new MyApp());
 
@@ -66,9 +67,16 @@ class _MyAppState extends State<MyApp> {
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
-                        child: new Text('Play notification with no sound'),
+                        child: new Text('Show notification with no sound'),
                         onPressed: () async {
-                          await playNotificationWithNoSound();
+                          await showNotificationWithNoSound();
+                        })),
+                new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
+                        child: new Text('Show big text notification [Android]'),
+                        onPressed: () async {
+                          await showBigTextNotification();
                         })),
               ],
             ),
@@ -122,8 +130,8 @@ class _MyAppState extends State<MyApp> {
         platformChannelSpecifics);
   }
 
-  playNotificationWithNoSound() async {
-       NotificationDetailsAndroid androidPlatformChannelSpecifics =
+  showNotificationWithNoSound() async {
+    NotificationDetailsAndroid androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid('silent channel id',
             'silent channel name', 'silent channel description',
             playSound: false);
@@ -132,9 +140,27 @@ class _MyAppState extends State<MyApp> {
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await FlutterLocalNotifications.show(
-        0,
-        'silent title',
-        'silent body',
-        platformChannelSpecifics);
+        0, 'silent title', 'silent body', platformChannelSpecifics);
+  }
+
+  showBigTextNotification() async {
+    BigTextStyleInformation bigTextStyleInformation = new BigTextStyleInformation(
+        'Lorem <i>ipsum dolor sit</i> amet, consectetur <b>adipiscing elit</b>, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        htmlFormatBigText: true,
+        contentTitle: 'overridden <b>big</b> context title',
+        htmlFormatContentTitle: true,
+        summaryText: 'summary <i>text</i>',
+        htmlFormatSummaryText: true);
+    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+        new NotificationDetailsAndroid('big text channel id',
+            'big text channel name', 'big text channel description',
+            style: NotificationStyleAndroid.BigText,
+            styleInformation: bigTextStyleInformation);
+    NotificationDetailsIOS iOSPlatformChannelSpecifics =
+        new NotificationDetailsIOS();
+    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await FlutterLocalNotifications.show(
+        0, 'big text title', 'silent body', platformChannelSpecifics);
   }
 }
