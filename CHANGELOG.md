@@ -35,3 +35,6 @@
 
 * Enable ability to customise the sound for iOS notifications (**IMPORTANT** requires testing on older iOS versions < 10). Can now specify default presentation options for iOS (**BREAKING CHANGE** named parameters for iOS initialisation have changed) that can also be overridden at the notification level). Fixes for reading in specified options in iOS.
 
+## [0.1.0]
+
+* Add support for big text style for Android notifications
