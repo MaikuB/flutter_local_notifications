@@ -3,6 +3,7 @@
 
 import 'dart:typed_data';
 
+import 'package:flutter_local_notifications/platform_specifics/android_styles/default_style_information.dart';
 import 'package:flutter_local_notifications/platform_specifics/android_styles/style_information.dart';
 
 enum NotificationStyleAndroid { Default, BigText }
@@ -101,7 +102,7 @@ class NotificationDetailsAndroid {
       'enableVibration': enableVibration,
       'vibrationPattern': vibrationPattern,
       'style': style.index,
-      'styleInformation': styleInformation == null ? null : styleInformation.toJson()
+      'styleInformation': styleInformation == null ? new DefaultStyleInformation(false, false).toJson() : styleInformation.toJson()
     };
   }
 }

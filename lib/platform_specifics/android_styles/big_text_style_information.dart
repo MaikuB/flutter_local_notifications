@@ -1,11 +1,22 @@
-import 'package:flutter_local_notifications/platform_specifics/android_styles/style_information.dart';
+import 'package:flutter_local_notifications/platform_specifics/android_styles/default_style_information.dart';
 
-class BigTextStyleInformation extends StyleInformation {
+class BigTextStyleInformation extends DefaultStyleInformation {
+  /// Provide the longer text to be displayed in the big form of the template in place of the content text.
   final String bigText;
+
+  /// Overrides ContentTitle in the big form of the template.
   final String contentTitle;
+
+  /// Set the first line of text after the detail section in the big form of the template.
   final String summaryText;
+
+  /// Specifies if formatting should be applied to the longer text through HTML markup
   final bool htmlFormatBigText;
+
+  /// Specifies if the overridden ContentTitle should have formatting applies through HTML markup
   final bool htmlFormatContentTitle;
+
+  /// Specifies if formatting should be applied to the first line of text after the detail section in the big form of the template.
   final bool htmlFormatSummaryText;
 
   BigTextStyleInformation(this.bigText,
@@ -13,12 +24,15 @@ class BigTextStyleInformation extends StyleInformation {
       this.contentTitle,
       this.htmlFormatContentTitle = false,
       this.summaryText,
-      this.htmlFormatSummaryText = false})
-      : super();
+      this.htmlFormatSummaryText = false,
+      bool htmlFormatContent = false,
+      bool htmlFormatTitle = false})
+      : super(htmlFormatContent, htmlFormatTitle);
 
-  @override
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
+    var styleJson = super.toJson();
+
+    var bigTextStyleJson = <String, dynamic>{
       'bigText': bigText,
       'htmlFormatBigText': htmlFormatBigText,
       'contentTitle': contentTitle,
@@ -26,5 +40,7 @@ class BigTextStyleInformation extends StyleInformation {
       'summaryText': summaryText,
       'htmlFormatSummaryText': htmlFormatSummaryText
     };
+    styleJson.addAll(bigTextStyleJson);
+    return styleJson;
   }
 }

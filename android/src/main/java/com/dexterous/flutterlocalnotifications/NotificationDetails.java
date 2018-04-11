@@ -2,6 +2,7 @@ package com.dexterous.flutterlocalnotifications;
 
 import android.app.NotificationManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
@@ -56,20 +57,27 @@ public class NotificationDetails {
     }
 
     private static void ProcessStyleInformation(NotificationDetails notificationDetails, Map<String, Object> platformSpecifics) {
+        Map<String, Object> styleInformation = (Map<String, Object>) platformSpecifics.get("styleInformation");
+        DefaultStyleInformation defaultStyleInformation = getDefaultStyleInformation(styleInformation);
         switch(notificationDetails.style) {
-
             case Default:
+                notificationDetails.styleInformation = defaultStyleInformation;
                 break;
             case BigText:
-                Map<String, Object> bigTextStyleInformation = (Map<String, Object>) platformSpecifics.get("styleInformation");
-                String bigText = (String)bigTextStyleInformation.get("bigText");
-                Boolean htmlFormatBigText = (Boolean)bigTextStyleInformation.get("htmlFormatBigText");
-                String contentTitle = (String)bigTextStyleInformation.get("contentTitle");
-                Boolean htmlFormatContentTitle = (Boolean)bigTextStyleInformation.get("htmlFormatContentTitle");
-                String summaryText = (String)bigTextStyleInformation.get("summaryText");
-                Boolean htmlFormatSummaryText = (Boolean)bigTextStyleInformation.get("htmlFormatSummaryText");
-                notificationDetails.styleInformation = new BigTextStyleInformation(bigText, htmlFormatBigText, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText);
+                String bigText = (String)styleInformation.get("bigText");
+                Boolean htmlFormatBigText = (Boolean)styleInformation.get("htmlFormatBigText");
+                String contentTitle = (String)styleInformation.get("contentTitle");
+                Boolean htmlFormatContentTitle = (Boolean)styleInformation.get("htmlFormatContentTitle");
+                String summaryText = (String)styleInformation.get("summaryText");
+                Boolean htmlFormatSummaryText = (Boolean)styleInformation.get("htmlFormatSummaryText");
+                notificationDetails.styleInformation = new BigTextStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, bigText, htmlFormatBigText, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText);
                 break;
         }
+    }
+
+    private static DefaultStyleInformation getDefaultStyleInformation(Map<String, Object> styleInformation) {
+        Boolean htmlFormatTitle = (Boolean)styleInformation.get("htmlFormatTitle");
+        Boolean htmlFormatBody = (Boolean)styleInformation.get("htmlFormatContent");
+        return new DefaultStyleInformation(htmlFormatTitle, htmlFormatBody);
     }
 }

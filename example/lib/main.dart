@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_local_notifications/platform_specifics/android_styles/default_style_information.dart';
 import 'package:flutter_local_notifications/platform_specifics/initialization_settings/initialization_settings.dart';
 import 'package:flutter_local_notifications/platform_specifics/initialization_settings/initialization_settings_android.dart';
 import 'package:flutter_local_notifications/platform_specifics/initialization_settings/initialization_settings_ios.dart';
@@ -134,13 +135,14 @@ class _MyAppState extends State<MyApp> {
     NotificationDetailsAndroid androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid('silent channel id',
             'silent channel name', 'silent channel description',
-            playSound: false);
+            playSound: false,
+            styleInformation: new DefaultStyleInformation(true, true));
     NotificationDetailsIOS iOSPlatformChannelSpecifics =
         new NotificationDetailsIOS(presentSound: false);
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await FlutterLocalNotifications.show(
-        0, 'silent title', 'silent body', platformChannelSpecifics);
+        0, '<b>silent</b> title', '<b>silent</b> body', platformChannelSpecifics);
   }
 
   showBigTextNotification() async {

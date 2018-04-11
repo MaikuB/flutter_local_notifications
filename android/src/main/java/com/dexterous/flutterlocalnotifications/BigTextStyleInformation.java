@@ -1,6 +1,6 @@
 package com.dexterous.flutterlocalnotifications;
 
-public class BigTextStyleInformation extends StyleInformation {
+public class BigTextStyleInformation extends DefaultStyleInformation {
     public String bigText;
     public Boolean htmlFormatBigText;
     public String contentTitle;
@@ -8,7 +8,8 @@ public class BigTextStyleInformation extends StyleInformation {
     public String summaryText;
     public Boolean htmlFormatSummaryText;
 
-    public BigTextStyleInformation(String bigText, Boolean htmlFormatBigText, String contentTitle, Boolean htmlFormatContentTitle, String summaryText, Boolean htmlFormatSummaryText) {
+    public BigTextStyleInformation(Boolean htmlFormatTitle, Boolean htmlFormatBody, String bigText, Boolean htmlFormatBigText, String contentTitle, Boolean htmlFormatContentTitle, String summaryText, Boolean htmlFormatSummaryText) {
+        super(htmlFormatTitle, htmlFormatBody);
         this.bigText = bigText;
         this.htmlFormatBigText = htmlFormatBigText;
         this.contentTitle = contentTitle;
