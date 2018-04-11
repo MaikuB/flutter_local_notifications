@@ -15,6 +15,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.text.Html;
+import android.text.Spanned;
 
 import java.util.Map;
 
@@ -119,10 +120,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler{
         Intent intent = new Intent(context, registrar.activity().getClass());
         intent.setAction(SELECT_NOTIFICATION);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        DefaultStyleInformation defaultStyleInformation = (DefaultStyleInformation) notificationDetails.styleInformation;
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationDetails.channelId)
                 .setSmallIcon(resourceId)
-                .setContentTitle(notificationDetails.title)
-                .setContentText(notificationDetails.body)
+                .setContentTitle(defaultStyleInformation.htmlFormatTitle ? fromHtml(notificationDetails.title) : notificationDetails.title)
+                .setContentText(defaultStyleInformation.htmlFormatBody ? fromHtml(notificationDetails.body) : notificationDetails.body)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setPriority(notificationDetails.priority);
@@ -153,19 +155,28 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler{
                 BigTextStyleInformation bigTextStyleInformation = (BigTextStyleInformation)notificationDetails.styleInformation;
                 NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
                 if(bigTextStyleInformation.bigText != null) {
-                    CharSequence bigText = bigTextStyleInformation.htmlFormatBigText ? Html.fromHtml(bigTextStyleInformation.bigText) : bigTextStyleInformation.bigText;
+                    CharSequence bigText = bigTextStyleInformation.htmlFormatBigText ? fromHtml(bigTextStyleInformation.bigText) : bigTextStyleInformation.bigText;
                     bigTextStyle.bigText(bigText);
                 }
                 if(bigTextStyleInformation.contentTitle != null) {
-                    CharSequence contentTitle = bigTextStyleInformation.htmlFormatContentTitle ? Html.fromHtml(bigTextStyleInformation.contentTitle) : bigTextStyleInformation.contentTitle;
+                    CharSequence contentTitle = bigTextStyleInformation.htmlFormatContentTitle ? fromHtml(bigTextStyleInformation.contentTitle) : bigTextStyleInformation.contentTitle;
                     bigTextStyle.setBigContentTitle(contentTitle);
                 }
                 if(bigTextStyleInformation.summaryText != null) {
-                    CharSequence summaryText = bigTextStyleInformation.htmlFormatSummaryText? Html.fromHtml(bigTextStyleInformation.summaryText) : bigTextStyleInformation.summaryText;
+                    CharSequence summaryText = bigTextStyleInformation.htmlFormatSummaryText? fromHtml(bigTextStyleInformation.summaryText) : bigTextStyleInformation.summaryText;
                     bigTextStyle.setSummaryText(summaryText);
                 }
                 builder.setStyle(bigTextStyle);
                 break;
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    public static Spanned fromHtml(String html){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            return Html.fromHtml(html);
         }
     }
 
