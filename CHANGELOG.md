@@ -37,4 +37,8 @@
 
 ## [0.1.0]
 
-* Add support for big text style for Android notifications
+* Add support for big text style for Android notifications and format the big text style specific content using HTML markup.
+
+## [0.1.1]
+
+* Add ability to use HTML markup to format the title and content of Android notifications
