@@ -102,7 +102,9 @@ class NotificationDetailsAndroid {
       'enableVibration': enableVibration,
       'vibrationPattern': vibrationPattern,
       'style': style.index,
-      'styleInformation': styleInformation == null ? new DefaultStyleInformation(false, false).toJson() : styleInformation.toJson()
+      'styleInformation': styleInformation == null
+          ? new DefaultStyleInformation(false, false).toJson()
+          : styleInformation.toJson()
     };
   }
 }
