@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -14,7 +15,6 @@ public class NotificationDetails {
     public String title;
     public String body;
     public String icon;
-    public Long delay;
     public String channelId = "Default_Channel_Id";
     public String channelName;
     public String channelDescription;
@@ -26,6 +26,7 @@ public class NotificationDetails {
     public long[] vibrationPattern;
     public NotificationStyle style;
     public StyleInformation styleInformation;
+    public Long millisecondsSinceEpoch;
 
 
     public static NotificationDetails from(Map<String, Object> arguments) {
@@ -34,8 +35,7 @@ public class NotificationDetails {
         notificationDetails.title = (String) arguments.get("title");
         notificationDetails.body = (String) arguments.get("body");
         if (arguments.containsKey("millisecondsSinceEpoch")) {
-            Long millisecondsSinceEpoch = (Long) arguments.get("millisecondsSinceEpoch");
-            notificationDetails.delay = millisecondsSinceEpoch - System.currentTimeMillis();
+            notificationDetails.millisecondsSinceEpoch = (Long) arguments.get("millisecondsSinceEpoch");
         }
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get("platformSpecifics");
         notificationDetails.style = NotificationStyle.values()[(Integer)platformChannelSpecifics.get("style")];

@@ -17,10 +17,11 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        Notification notification = intent.getParcelableExtra(NOTIFICATION);
-        int notificationId = intent.getIntExtra(NOTIFICATION_ID, 0);
-        notificationManager.notify(notificationId, notification);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+            Notification notification = intent.getParcelableExtra(NOTIFICATION);
+            int notificationId = intent.getIntExtra(NOTIFICATION_ID, 0);
+            notificationManager.notify(notificationId, notification);
+            FlutterLocalNotificationsPlugin.removeNotificationFromCache(notificationId, context);
     }
 
 }

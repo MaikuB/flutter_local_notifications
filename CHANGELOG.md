@@ -42,3 +42,8 @@
 ## [0.1.1]
 
 * Add ability to use HTML markup to format the title and content of Android notifications
+
+
+## [0.1.2]
+
+* Bug fix in calculating when to show a scheduled Android notification. Ensure scheduled Android notifications will remain scheduled even after rebooting.
