@@ -4,21 +4,25 @@
 
 A cross platform plugin for displaying local notifications. 
 
-Features supported:
+Features supported (example app has code to cover each functionality)
 
 * Display basic notifications
 * Scheduling when notifications should appear
 * Cancelling/removing notifications
 * Customising the notification sound
-* Customising the vibration pattern for Android notifications
-* Formatting notification content on Android via HTML markup (see https://developer.android.com/guide/topics/resources/string-resource.html#StylingWithHTML)
-* Support for basic notification styling and the big text style for Android (will look into adding more styles)
+* [Android] Customising the vibration pattern for notifications
+* [Android] Configure the default icon for all notifications
+* [Android] Configure the icon for each notification (overrides the default when specified)
+* [Android] Formatting notification content via HTML markup (see https://developer.android.com/guide/topics/resources/string-resource.html#StylingWithHTML)
+* [Android] Support for basic notification styling and the big text style for (will look into adding more styles)
+* [iOS] Customise the permissions to be requested around displaying notifications
+
+Uses the NotificationCompat APIs on Android for backwards compatibility support for devices with older versions of Android. For iOS, there is support for the User Notifications Framework introduced in iOS 10 but will use the UILocalNotification APIs for older versions of iOS.
+
+
+Note that this plugin aims to provide abstractions for all platforms as opposed to having methods that only work on specific platforms. However, each method allows passing in "platform-specifics" that contains data that is specific for customising notifications on each platform. It is still under development so expect the API surface to change over time.
 
 Contributions are welcome by submitting a PR for me to review.
-
-Note that this plugin aims to provide abstractions for all platforms as opposed to having methods that only work on specific platforms (I come from a Xamarin background and I believe this is preferred approach for cross platform development). However, each method allows passing in "platform-specifics" that contains data that is specific for customising notifications on each platform. It is still under development so expect the API surface to change over time.
-
-Uses the NotificationCompat APIs on Android for backwards compatibility support for devices with older versions of Android. For iOS, there is support for the User Notifications Framework introduced in iOS 10 but will use UILocalNotification for older versions of iOS.
 
 ## Getting Started
 
