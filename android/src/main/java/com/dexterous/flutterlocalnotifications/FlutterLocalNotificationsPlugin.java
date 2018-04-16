@@ -31,12 +31,13 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /**
  * FlutterLocalNotificationsPlugin
  */
-public class FlutterLocalNotificationsPlugin implements MethodCallHandler {
+public class FlutterLocalNotificationsPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener {
     public static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
@@ -45,12 +46,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler {
     private static final String SCHEDULE_METHOD = "schedule";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
     private static MethodChannel channel;
-    private static Registrar registrar;
     private static int defaultIconResourceId;
+    private final Registrar registrar;
 
     private FlutterLocalNotificationsPlugin(Registrar registrar) {
         this.registrar = registrar;
         this.registrar.context().registerReceiver(new ScheduledNotificationReceiver(), new IntentFilter());
+        this.registrar.addNewIntentListener(this);
     }
 
     public static void rescheduleNotifications(Context context) {
@@ -66,7 +68,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler {
         String json = sharedPreferences.getString(SCHEDULED_NOTIFICATIONS, null);
         System.out.println("json " + json);
         if (json != null) {
-            Gson gson = buildScheduledNotificationsGson();
+            Gson gson = getGsonBuilder();
             Type type = new TypeToken<ArrayList<NotificationDetails>>() {
             }.getType();
             scheduledNotifications = gson.fromJson(json, type);
@@ -75,7 +77,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler {
     }
 
     @NonNull
-    private static Gson buildScheduledNotificationsGson() {
+    private static Gson getGsonBuilder() {
         RuntimeTypeAdapterFactory<StyleInformation> styleInformationAdapter =
                 RuntimeTypeAdapterFactory
                         .of(StyleInformation.class)
@@ -86,7 +88,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler {
     }
 
     public static void saveScheduledNotifications(Context context, ArrayList<NotificationDetails> scheduledNotifications) {
-        Gson gson = buildScheduledNotificationsGson();
+        Gson gson = getGsonBuilder();
         String json = gson.toJson(scheduledNotifications);
         SharedPreferences sharedPreferences = context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -120,7 +122,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler {
     }
 
     @SuppressWarnings("deprecation")
-    public static Spanned fromHtml(String html) {
+    private static Spanned fromHtml(String html) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
         } else {
@@ -154,6 +156,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler {
         setupNotificationChannel(context, notificationDetails);
         Intent intent = new Intent(context, getMainActivityClass(context));
         intent.setAction(SELECT_NOTIFICATION);
+        Gson gson = getGsonBuilder();
+        Type type = new TypeToken<NotificationDetails>() {}.getType();
+        String json = gson.toJson(notificationDetails, type);
+        intent.putExtra(ScheduledNotificationReceiver.NOTIFICATION, json);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         DefaultStyleInformation defaultStyleInformation = (DefaultStyleInformation) notificationDetails.styleInformation;
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationDetails.channelId)
@@ -307,4 +313,17 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler {
         return NotificationManagerCompat.from(registrar.context());
     }
 
+    @Override
+    public boolean onNewIntent(Intent intent) {
+        if(SELECT_NOTIFICATION.equals(intent.getAction())) {
+            String json = intent.getStringExtra(ScheduledNotificationReceiver.NOTIFICATION);
+            Gson gson = getGsonBuilder();
+            Type type = new TypeToken<NotificationDetails>() {
+            }.getType();
+            NotificationDetails notificationDetails = gson.fromJson(json, type);
+            channel.invokeMethod("selectNotification", notificationDetails.payload);
+            return true;
+        }
+        return false;
+    }
 }

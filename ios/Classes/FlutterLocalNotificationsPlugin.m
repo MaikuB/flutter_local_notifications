@@ -2,6 +2,7 @@
 
 @implementation FlutterLocalNotificationsPlugin
 
+FlutterMethodChannel* channel;
 NSString *const INITIALIZE_METHOD = @"initialize";
 NSString *const SHOW_METHOD = @"show";
 NSString *const SCHEDULE_METHOD = @"schedule";
@@ -25,15 +26,16 @@ NSString *const PRESENT_BADGE = @"presentBadge";
 NSString *const MILLISECONDS_SINCE_EPOCH = @"millisecondsSinceEpoch";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
+NSString *const NOTIFICATION = @"Notification";
 
 bool displayAlert;
 bool playSound;
 bool updateBadge;
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-    FlutterMethodChannel* channel = [FlutterMethodChannel
-                                     methodChannelWithName:CHANNEL
-                                     binaryMessenger:[registrar messenger]];
+    channel = [FlutterMethodChannel
+               methodChannelWithName:CHANNEL
+               binaryMessenger:[registrar messenger]];
     FlutterLocalNotificationsPlugin* instance = [[FlutterLocalNotificationsPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
 }
@@ -120,9 +122,9 @@ bool updateBadge;
         secondsSinceEpoch = @([call.arguments[MILLISECONDS_SINCE_EPOCH] integerValue] / 1000);
     }
     if(@available(iOS 10.0, *)) {
-        [self showUserNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound];
+        [self showUserNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound payload:call.arguments];
     } else {
-        [self showLocalNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound];
+        [self showLocalNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound payload:call.arguments];
     }
     result(nil);
 }
@@ -161,12 +163,12 @@ bool updateBadge;
     }
 }
 
-- (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge {
-    NSDictionary *userDict =[NSDictionary dictionaryWithObjectsAndKeys:id, NOTIFICATION_ID, title, TITLE, [NSNumber numberWithBool:presentAlert], PRESENT_ALERT, [NSNumber numberWithBool:presentSound], PRESENT_SOUND, [NSNumber numberWithBool:presentBadge], PRESENT_BADGE, nil];
+- (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge payload:(NSDictionary *)payload {
+    NSDictionary *userDict =[NSDictionary dictionaryWithObjectsAndKeys:id, NOTIFICATION_ID, title, TITLE, [NSNumber numberWithBool:presentAlert], PRESENT_ALERT, [NSNumber numberWithBool:presentSound], PRESENT_SOUND, [NSNumber numberWithBool:presentBadge], PRESENT_BADGE, payload, NOTIFICATION, nil];
     return userDict;
 }
 
-- (void) showUserNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound {
+- (void) showUserNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSDictionary *)payload {
     if(@available(iOS 10.0, *)) {
         UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
         UNNotificationTrigger *trigger;
@@ -179,7 +181,7 @@ bool updateBadge;
                 content.sound = [UNNotificationSound soundNamed:sound];
             }
         }
-        content.userInfo = [self buildUserDict:id title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge];
+        content.userInfo = [self buildUserDict:id title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge payload:payload];
         if(secondsSinceEpoch == nil) {
             trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:0.1
                                                                          repeats:NO];
@@ -205,7 +207,7 @@ bool updateBadge;
     }
 }
 
-- (void) showLocalNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound  {
+- (void) showLocalNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSDictionary *)payload {
     UILocalNotification *notification = [[UILocalNotification alloc] init];
     notification.alertBody = body;
     if(@available(iOS 8.2, *)) {
@@ -218,7 +220,7 @@ bool updateBadge;
             notification.soundName = sound;
         }
     }
-    notification.userInfo = [self buildUserDict:id title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge];
+    notification.userInfo = [self buildUserDict:id title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge payload:payload];
     if(secondsSinceEpoch == nil) {
         [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
     } else {
@@ -246,6 +248,17 @@ bool updateBadge;
         presentationOptions |= UNNotificationPresentationOptionBadge;
     }
     completionHandler(presentationOptions);
+}
+
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+didReceiveNotificationResponse:(UNNotificationResponse *)response
+         withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
+    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
+        NSDictionary *payload = (NSDictionary *) response.notification.request.content.userInfo[NOTIFICATION];
+        [channel invokeMethod:@"selectNotification" arguments:payload];
+    }
+    
+    // Else handle any custom actions. . .
 }
 
 

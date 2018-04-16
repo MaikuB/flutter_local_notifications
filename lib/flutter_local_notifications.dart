@@ -5,19 +5,25 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/platform_specifics/initialization_settings/initialization_settings.dart';
 import 'package:flutter_local_notifications/platform_specifics/notification_details/notification_details.dart';
 
+typedef Future<dynamic> MessageHandler(Map<String, dynamic> message);
+
 class FlutterLocalNotifications {
   static const MethodChannel _channel =
       const MethodChannel('dexterous.com/flutter/local_notifications');
 
+  static MessageHandler onSelectNotification;
+
   /// Initializes the plugin. Call this method on application before using the plugin further
   static Future<bool> initialize(
-      InitializationSettings initializationSettings) async {
-    Map<String, dynamic> serializedPlatformSpecifics;
+      InitializationSettings initializationSettings, {MessageHandler selectNotification}) async {
+   onSelectNotification = selectNotification;
+   Map<String, dynamic> serializedPlatformSpecifics;
     if (Platform.isAndroid) {
       serializedPlatformSpecifics = initializationSettings.android.toJson();
     } else if (Platform.isIOS) {
       serializedPlatformSpecifics = initializationSettings.ios.toJson();
     }
+    _channel.setMethodCallHandler(_handleMethod);
     var result = await _channel.invokeMethod('initialize',
         <String, dynamic>{'platformSpecifics': serializedPlatformSpecifics});
     return result;
@@ -61,5 +67,9 @@ class FlutterLocalNotifications {
       'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
       'platformSpecifics': serializedPlatformSpecifics
     });
+  }
+
+  static Future<Null> _handleMethod(MethodCall call) async {
+    return onSelectNotification(call.arguments.cast<String, dynamic>());
   }
 }

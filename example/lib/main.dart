@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -11,7 +12,11 @@ import 'package:flutter_local_notifications/platform_specifics/notification_deta
 import 'package:flutter_local_notifications/platform_specifics/notification_details/notification_details_ios.dart';
 import 'package:flutter_local_notifications/platform_specifics/android_styles/big_text_style_information.dart';
 
-void main() => runApp(new MyApp());
+void main() {
+  runApp(
+    new MaterialApp(home: new MyApp()),
+  );
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -28,7 +33,8 @@ class _MyAppState extends State<MyApp> {
         new InitializationSettingsIOS();
     InitializationSettings initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
-    FlutterLocalNotifications.initialize(initializationSettings);
+    FlutterLocalNotifications.initialize(initializationSettings,
+        selectNotification: onSelectNotification);
   }
 
   @override
@@ -141,8 +147,8 @@ class _MyAppState extends State<MyApp> {
         new NotificationDetailsIOS(presentSound: false);
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await FlutterLocalNotifications.show(
-        0, '<b>silent</b> title', '<b>silent</b> body', platformChannelSpecifics);
+    await FlutterLocalNotifications.show(0, '<b>silent</b> title',
+        '<b>silent</b> body', platformChannelSpecifics);
   }
 
   showBigTextNotification() async {
@@ -164,5 +170,33 @@ class _MyAppState extends State<MyApp> {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await FlutterLocalNotifications.show(
         0, 'big text title', 'silent body', platformChannelSpecifics);
+  }
+
+  Future onSelectNotification(Map<String, dynamic> message) async {
+    debugPrint(message.toString());
+        //debugPrint('notification ' + message['id'].toString());
+    await Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => new SecondScreen()),
+    );
+  }
+}
+
+class SecondScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("Second Screen"),
+      ),
+      body: new Center(
+        child: new RaisedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: new Text('Go back!'),
+        ),
+      ),
+    );
   }
 }

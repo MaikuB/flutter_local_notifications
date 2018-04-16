@@ -27,10 +27,12 @@ public class NotificationDetails {
     public NotificationStyle style;
     public StyleInformation styleInformation;
     public Long millisecondsSinceEpoch;
+    public Map<String, Object> payload;
 
 
     public static NotificationDetails from(Map<String, Object> arguments) {
         NotificationDetails notificationDetails = new NotificationDetails();
+        notificationDetails.payload = arguments;
         notificationDetails.id = (Integer) arguments.get("id");
         notificationDetails.title = (String) arguments.get("title");
         notificationDetails.body = (String) arguments.get("body");
