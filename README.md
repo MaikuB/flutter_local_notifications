@@ -10,6 +10,8 @@ Features supported (example app has code to cover each functionality)
 * Scheduling when notifications should appear
 * Cancelling/removing notifications
 * Customising the notification sound
+* [Android] Configuring the importance level
+* [Android] Configuring the priority
 * [Android] Customising the vibration pattern for notifications
 * [Android] Configure the default icon for all notifications
 * [Android] Configure the icon for each notification (overrides the default when specified)
