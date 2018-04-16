@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/platform_specifics/initialization_settings/initialization_settings.dart';
 import 'package:flutter_local_notifications/platform_specifics/notification_details/notification_details.dart';
 
-typedef Future<dynamic> MessageHandler(Map<String, dynamic> message);
+typedef Future<dynamic> MessageHandler(String message);
 
 class FlutterLocalNotifications {
   static const MethodChannel _channel =
@@ -29,9 +29,9 @@ class FlutterLocalNotifications {
     return result;
   }
 
-  /// Show a notification
+  /// Show a notification with optional payload
   static Future show(int id, String title, String body,
-      NotificationDetails notificationDetails) async {
+      NotificationDetails notificationDetails, {String payload}) async {
     Map<String, dynamic> serializedPlatformSpecifics;
     if (Platform.isAndroid) {
       serializedPlatformSpecifics = notificationDetails.android.toJson();
@@ -42,7 +42,8 @@ class FlutterLocalNotifications {
       'id': id,
       'title': title,
       'body': body,
-      'platformSpecifics': serializedPlatformSpecifics
+      'platformSpecifics': serializedPlatformSpecifics,
+      'payload': payload
     });
   }
 
@@ -51,9 +52,9 @@ class FlutterLocalNotifications {
     await _channel.invokeMethod('cancel', id);
   }
 
-  /// Schedules a notification to be shown at the specified time
+  /// Schedules a notification to be shown at the specified time with optional payload
   static Future schedule(int id, String title, String body,
-      DateTime scheduledDate, NotificationDetails notificationDetails) async {
+      DateTime scheduledDate, NotificationDetails notificationDetails, {String payload}) async {
     Map<String, dynamic> serializedPlatformSpecifics;
     if (Platform.isAndroid) {
       serializedPlatformSpecifics = notificationDetails.android.toJson();
@@ -65,11 +66,12 @@ class FlutterLocalNotifications {
       'title': title,
       'body': body,
       'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
-      'platformSpecifics': serializedPlatformSpecifics
+      'platformSpecifics': serializedPlatformSpecifics,
+      'payload': payload
     });
   }
 
   static Future<Null> _handleMethod(MethodCall call) async {
-    return onSelectNotification(call.arguments.cast<String, dynamic>());
+    return onSelectNotification(call.arguments);
   }
 }

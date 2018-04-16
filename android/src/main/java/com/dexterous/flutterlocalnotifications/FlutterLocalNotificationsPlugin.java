@@ -45,6 +45,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String CANCEL_METHOD = "cancel";
     private static final String SCHEDULE_METHOD = "schedule";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
+    public static final String PAYLOAD = "payload";
     private static MethodChannel channel;
     private static int defaultIconResourceId;
     private final Registrar registrar;
@@ -156,10 +157,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         setupNotificationChannel(context, notificationDetails);
         Intent intent = new Intent(context, getMainActivityClass(context));
         intent.setAction(SELECT_NOTIFICATION);
-        Gson gson = getGsonBuilder();
-        Type type = new TypeToken<NotificationDetails>() {}.getType();
-        String json = gson.toJson(notificationDetails, type);
-        intent.putExtra(ScheduledNotificationReceiver.NOTIFICATION, json);
+        intent.putExtra(PAYLOAD, notificationDetails.payload);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         DefaultStyleInformation defaultStyleInformation = (DefaultStyleInformation) notificationDetails.styleInformation;
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationDetails.channelId)
@@ -271,6 +269,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             Map<String, Object> platformSpecifics = (Map<String, Object>) arguments.get("platformSpecifics");
             String defaultIcon = (String) platformSpecifics.get("defaultIcon");
             defaultIconResourceId = registrar.context().getResources().getIdentifier(defaultIcon, "drawable", registrar.context().getPackageName());
+            if (registrar.activity() != null) {
+                sendNotificationPayloadMessage(registrar.activity().getIntent());
+            }
             result.success(true);
         } else if (call.method.equals(SHOW_METHOD)) {
             Map<String, Object> arguments = call.arguments();
@@ -315,13 +316,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     @Override
     public boolean onNewIntent(Intent intent) {
+        return sendNotificationPayloadMessage(intent);
+    }
+
+    private Boolean sendNotificationPayloadMessage(Intent intent) {
         if(SELECT_NOTIFICATION.equals(intent.getAction())) {
-            String json = intent.getStringExtra(ScheduledNotificationReceiver.NOTIFICATION);
-            Gson gson = getGsonBuilder();
-            Type type = new TypeToken<NotificationDetails>() {
-            }.getType();
-            NotificationDetails notificationDetails = gson.fromJson(json, type);
-            channel.invokeMethod("selectNotification", notificationDetails.payload);
+            String payload = intent.getStringExtra(PAYLOAD);
+            channel.invokeMethod("selectNotification", payload);
             return true;
         }
         return false;

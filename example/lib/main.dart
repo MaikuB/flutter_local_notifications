@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
-                        child: new Text('Show plain notification'),
+                        child: new Text('Show plain notification with payload'),
                         onPressed: () async {
                           await showNotification();
                         })),
@@ -103,7 +103,7 @@ class _MyAppState extends State<MyApp> {
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await FlutterLocalNotifications.show(
-        0, 'plain title', 'plain body', platformChannelSpecifics);
+        0, 'plain title', 'plain body', platformChannelSpecifics, payload: 'hi');
   }
 
   cancelNotification() async {
@@ -172,9 +172,10 @@ class _MyAppState extends State<MyApp> {
         0, 'big text title', 'silent body', platformChannelSpecifics);
   }
 
-  Future onSelectNotification(Map<String, dynamic> message) async {
-    debugPrint(message.toString());
-        //debugPrint('notification ' + message['id'].toString());
+  Future onSelectNotification(String message) async {
+    if (message != null) {
+      debugPrint(message);
+    }
     await Navigator.push(
       context,
       new MaterialPageRoute(builder: (context) => new SecondScreen()),
