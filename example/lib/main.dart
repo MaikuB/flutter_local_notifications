@@ -172,9 +172,9 @@ class _MyAppState extends State<MyApp> {
         0, 'big text title', 'silent body', platformChannelSpecifics);
   }
 
-  Future onSelectNotification(String message) async {
-    if (message != null) {
-      debugPrint(message);
+  Future onSelectNotification(String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
     }
     await Navigator.push(
       context,

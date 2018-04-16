@@ -27,16 +27,21 @@ NSString *const MILLISECONDS_SINCE_EPOCH = @"millisecondsSinceEpoch";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
-
+NSString *launchPayload;
 bool displayAlert;
 bool playSound;
 bool updateBadge;
+bool initialized;
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     channel = [FlutterMethodChannel
                methodChannelWithName:CHANNEL
                binaryMessenger:[registrar messenger]];
     FlutterLocalNotificationsPlugin* instance = [[FlutterLocalNotificationsPlugin alloc] init];
+    if(@available(iOS 10.0, *)) {
+        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        center.delegate = instance;
+    }
     [registrar addMethodCallDelegate:instance channel:channel];
 }
 
@@ -67,7 +72,6 @@ bool updateBadge;
     }
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        center.delegate = self;
         UNAuthorizationOptions authorizationOptions = 0;
         if (requestedSoundPermission) {
             authorizationOptions += UNAuthorizationOptionSound;
@@ -79,6 +83,9 @@ bool updateBadge;
             authorizationOptions += UNAuthorizationOptionBadge;
         }
         [center requestAuthorizationWithOptions:(authorizationOptions) completionHandler:^(BOOL granted, NSError * _Nullable error) {
+            if(launchPayload != nil) {
+                [channel invokeMethod:@"selectNotification" arguments:launchPayload];
+            }
             result(@(granted));
         }];
     } else {
@@ -96,6 +103,7 @@ bool updateBadge;
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
         result(@true);
     }
+    initialized = true;
 }
 
 - (void)showNotification:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
@@ -255,11 +263,16 @@ bool updateBadge;
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
     if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
+        
         NSString *payload = (NSString *) response.notification.request.content.userInfo[PAYLOAD];
-        [channel invokeMethod:@"selectNotification" arguments:payload];
+        if(initialized) {
+            [channel invokeMethod:@"selectNotification" arguments:payload];
+        } else {
+            launchPayload = payload;
+        }
+        
     }
 }
-
 
 
 @end

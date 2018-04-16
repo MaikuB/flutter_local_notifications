@@ -43,7 +43,7 @@ class FlutterLocalNotifications {
       'title': title,
       'body': body,
       'platformSpecifics': serializedPlatformSpecifics,
-      'payload': payload
+      'payload': payload ?? ''
     });
   }
 
@@ -67,7 +67,7 @@ class FlutterLocalNotifications {
       'body': body,
       'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
       'platformSpecifics': serializedPlatformSpecifics,
-      'payload': payload
+      'payload': payload ?? ''
     });
   }
 
