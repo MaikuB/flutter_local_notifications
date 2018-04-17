@@ -132,4 +132,39 @@ Note that with Android 8.0+, sounds and vibrations are associated with notificat
 
 ### iOS Integration
 
-By design, iOS applications do not display notifications when they're in the foreground. For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. For older versions of iOS, you will need update the AppDelegate class to handle when a local notification is received to display an alert. This is shown in the sample app within the `didReceiveLocalNotification` method of the `AppDelegate` class. The notification title can be found by looking up the `title` within the `userInfo` dictionary of the `UILocalNotification` object.
+By design, iOS applications do not display notifications when they're in the foreground. For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. For older versions of iOS, you will need update the AppDelegate class to handle when a local notification is received to display an alert. This is shown in the sample app within the `didReceiveLocalNotification` method of the `AppDelegate` class. The notification title can be found by looking up the `title` within the `userInfo` dictionary of the `UILocalNotification` object
+
+```
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
+{
+    if(@available(iOS 10.0, *)) {
+        return;
+    }
+    
+    NSString *payload = notification.userInfo[@"payload"];
+    if(FlutterLocalNotificationsPlugin.resumingFromBackground) {
+        // resuming from the background so don't want to show an alert as we would've seen
+        // the notification while the app was in the background
+        [FlutterLocalNotificationsPlugin handleSelectNotification:payload];
+        return;
+    }
+    
+    // display the alert as the app was in the foreground so notification wouldn't be displayed.
+    // when the user taps on OK, fire the code in our Flutter app that is responsible for handling
+    // the action for when the user taps on a notification
+    NSString *title = notification.userInfo[@"title"];
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:title
+                                                                   message:notification.alertBody
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              [FlutterLocalNotificationsPlugin handleSelectNotification:payload];
+                                                          }];
+    
+    [alert addAction:defaultAction];
+    [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:alert animated:YES completion:nil];
+}
+```
+
+In theory, it should be possible for the plugin to handle this but this the method doesn't seem to fire. Will lodge an issue on the Flutter repository to see if this could be looked into. If this is confirmed to be an issue then I will move this code to be part of the plugin once the fix is out.

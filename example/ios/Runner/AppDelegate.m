@@ -10,7 +10,7 @@
     return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
-// NOTE: cannot seem to handle this protocol in the plugin class. Possible bug in how Flutter registers app delegates
+// NOTE: cannot seem to handle this in the plugin class. Possible bug in how Flutter registers app delegates
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
 {
     if(@available(iOS 10.0, *)) {
