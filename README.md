@@ -29,18 +29,21 @@ Contributions are welcome by submitting a PR for me to review. If it's to add ne
 
 The first step is to initialise the plugin with the settings to use for each platform
 
-```InitializationSettingsAndroid initializationSettingsAndroid =
+```
+InitializationSettingsAndroid initializationSettingsAndroid =
         new InitializationSettingsAndroid('app_icon');
     InitializationSettingsIOS initializationSettingsIOS =
         new InitializationSettingsIOS();
     InitializationSettings initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     FlutterLocalNotifications.initialize(initializationSettings,
-        selectNotification: onSelectNotification);```
+        selectNotification: onSelectNotification);
+```
 
 Here we specify we have specified the default icon to use for notifications on Android and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In the example, it is defined as follows to navigate to another page and display the payload associated with the notification. In the real world, this payload could represent the id of the item you want to display the details of.
 
-```Future onSelectNotification(String payload) async {
+```
+Future onSelectNotification(String payload) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
     }
@@ -48,11 +51,13 @@ Here we specify we have specified the default icon to use for notifications on A
       context,
       new MaterialPageRoute(builder: (context) => new SecondScreen(payload)),
     );
-  }```
+}
+```
 
 Once the initialisation has been done. We can display a notification with the following code
 
-```NotificationDetailsAndroid androidPlatformChannelSpecifics =
+```
+NotificationDetailsAndroid androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid(
             'your channel id', 'your channel name', 'your channel description');
     NotificationDetailsIOS iOSPlatformChannelSpecifics =
@@ -61,7 +66,8 @@ Once the initialisation has been done. We can display a notification with the fo
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await FlutterLocalNotifications.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
-        payload: 'item id 2');```
+        payload: 'item id 2');
+```
 
 In this block of code, the details for each platform have been specified. This includes the channel details that is required for Android 8.0+. The payload has been specified ('item id 2'), that will passed back through your application when the user has tapped on a notification.
 
@@ -85,7 +91,7 @@ var scheduledNotificationDateTime =
         platformChannelSpecifics);
 ```
 
-Cancelling a notification
+Cancelling/deleting a notification is also possible
 
 ```
 // cancel the notification with id value of zero
