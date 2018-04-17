@@ -38,14 +38,14 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  * FlutterLocalNotificationsPlugin
  */
 public class FlutterLocalNotificationsPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener {
-    public static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
+    private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
     private static final String SHOW_METHOD = "show";
     private static final String CANCEL_METHOD = "cancel";
     private static final String SCHEDULE_METHOD = "schedule";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
-    public static final String PAYLOAD = "payload";
+    private static final String PAYLOAD = "payload";
     private static MethodChannel channel;
     private static int defaultIconResourceId;
     private final Registrar registrar;
@@ -63,7 +63,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-    public static ArrayList<NotificationDetails> loadScheduledNotifications(Context context) {
+    private static ArrayList<NotificationDetails> loadScheduledNotifications(Context context) {
         ArrayList<NotificationDetails> scheduledNotifications = new ArrayList<>();
         SharedPreferences sharedPreferences = context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
         String json = sharedPreferences.getString(SCHEDULED_NOTIFICATIONS, null);
@@ -88,7 +88,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return builder.create();
     }
 
-    public static void saveScheduledNotifications(Context context, ArrayList<NotificationDetails> scheduledNotifications) {
+    private static void saveScheduledNotifications(Context context, ArrayList<NotificationDetails> scheduledNotifications) {
         Gson gson = getGsonBuilder();
         String json = gson.toJson(scheduledNotifications);
         SharedPreferences sharedPreferences = context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
@@ -264,31 +264,41 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
-        if (call.method.equals(INITIALIZE_METHOD)) {
-            Map<String, Object> arguments = call.arguments();
-            Map<String, Object> platformSpecifics = (Map<String, Object>) arguments.get("platformSpecifics");
-            String defaultIcon = (String) platformSpecifics.get("defaultIcon");
-            defaultIconResourceId = registrar.context().getResources().getIdentifier(defaultIcon, "drawable", registrar.context().getPackageName());
-            if (registrar.activity() != null) {
-                sendNotificationPayloadMessage(registrar.activity().getIntent());
+        switch (call.method) {
+            case INITIALIZE_METHOD: {
+                Map<String, Object> arguments = call.arguments();
+                @SuppressWarnings("unchecked")
+                Map<String, Object> platformSpecifics = (Map<String, Object>) arguments.get("platformSpecifics");
+                String defaultIcon = (String) platformSpecifics.get("defaultIcon");
+                defaultIconResourceId = registrar.context().getResources().getIdentifier(defaultIcon, "drawable", registrar.context().getPackageName());
+                if (registrar.activity() != null) {
+                    sendNotificationPayloadMessage(registrar.activity().getIntent());
+                }
+                result.success(true);
+                break;
             }
-            result.success(true);
-        } else if (call.method.equals(SHOW_METHOD)) {
-            Map<String, Object> arguments = call.arguments();
-            NotificationDetails notificationDetails = NotificationDetails.from(arguments);
-            showNotification(notificationDetails);
-            result.success(null);
-        } else if (call.method.equals(SCHEDULE_METHOD)) {
-            Map<String, Object> arguments = call.arguments();
-            NotificationDetails notificationDetails = NotificationDetails.from(arguments);
-            scheduleNotification(registrar.context(), notificationDetails, true);
-            result.success(null);
-        } else if (call.method.equals(CANCEL_METHOD)) {
-            Integer id = call.arguments();
-            cancelNotification(id);
-            result.success(null);
-        } else {
-            result.notImplemented();
+            case SHOW_METHOD: {
+                Map<String, Object> arguments = call.arguments();
+                NotificationDetails notificationDetails = NotificationDetails.from(arguments);
+                showNotification(notificationDetails);
+                result.success(null);
+                break;
+            }
+            case SCHEDULE_METHOD: {
+                Map<String, Object> arguments = call.arguments();
+                NotificationDetails notificationDetails = NotificationDetails.from(arguments);
+                scheduleNotification(registrar.context(), notificationDetails, true);
+                result.success(null);
+                break;
+            }
+            case CANCEL_METHOD:
+                Integer id = call.arguments();
+                cancelNotification(id);
+                result.success(null);
+                break;
+            default:
+                result.notImplemented();
+                break;
         }
     }
 

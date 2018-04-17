@@ -1,13 +1,7 @@
 package com.dexterous.flutterlocalnotifications;
 
-import android.app.NotificationManager;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Map;
 
 public class NotificationDetails {
@@ -39,6 +33,7 @@ public class NotificationDetails {
         if (arguments.containsKey("millisecondsSinceEpoch")) {
             notificationDetails.millisecondsSinceEpoch = (Long) arguments.get("millisecondsSinceEpoch");
         }
+        @SuppressWarnings("unchecked")
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get("platformSpecifics");
         notificationDetails.style = NotificationStyle.values()[(Integer)platformChannelSpecifics.get("style")];
         ProcessStyleInformation(notificationDetails, platformChannelSpecifics);
@@ -59,6 +54,7 @@ public class NotificationDetails {
     }
 
     private static void ProcessStyleInformation(NotificationDetails notificationDetails, Map<String, Object> platformSpecifics) {
+        @SuppressWarnings("unchecked")
         Map<String, Object> styleInformation = (Map<String, Object>) platformSpecifics.get("styleInformation");
         DefaultStyleInformation defaultStyleInformation = getDefaultStyleInformation(styleInformation);
         switch(notificationDetails.style) {
