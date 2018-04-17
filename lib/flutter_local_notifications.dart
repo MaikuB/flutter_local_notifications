@@ -71,7 +71,7 @@ class FlutterLocalNotifications {
     });
   }
 
-  static Future<Null> _handleMethod(MethodCall call) async {
+  static Future _handleMethod(MethodCall call) async {
     return onSelectNotification(call.arguments);
   }
 }

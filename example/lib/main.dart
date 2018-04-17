@@ -27,6 +27,7 @@ class _MyAppState extends State<MyApp> {
   @override
   initState() {
     super.initState();
+    // initialise the plugin
     InitializationSettingsAndroid initializationSettingsAndroid =
         new InitializationSettingsAndroid('app_icon');
     InitializationSettingsIOS initializationSettingsIOS =
@@ -103,7 +104,8 @@ class _MyAppState extends State<MyApp> {
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await FlutterLocalNotifications.show(
-        0, 'plain title', 'plain body', platformChannelSpecifics, payload: 'hi');
+        0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
   }
 
   cancelNotification() async {
@@ -178,17 +180,31 @@ class _MyAppState extends State<MyApp> {
     }
     await Navigator.push(
       context,
-      new MaterialPageRoute(builder: (context) => new SecondScreen()),
+      new MaterialPageRoute(builder: (context) => new SecondScreen(payload)),
     );
   }
 }
 
-class SecondScreen extends StatelessWidget {
+class SecondScreen extends StatefulWidget {
+  final String payload;
+  SecondScreen(this.payload);
+  @override
+  State<StatefulWidget> createState() => new SecondScreenState();
+}
+
+class SecondScreenState extends State<SecondScreen> {
+  String _payload;
+  @override
+  void initState() {
+    super.initState();
+    _payload = widget.payload;
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Second Screen"),
+        title: new Text("Second Screen with payload: " + _payload),
       ),
       body: new Center(
         child: new RaisedButton(
