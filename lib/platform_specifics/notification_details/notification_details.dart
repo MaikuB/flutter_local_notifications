@@ -8,6 +8,6 @@ class NotificationDetails {
 
   /// Notification details for iOS
   final NotificationDetailsIOS iOS;
-  
+
   const NotificationDetails(this.android, this.iOS);
 }
