@@ -1,5 +1,7 @@
 #import "FlutterLocalNotificationsPlugin.h"
 
+static bool appResumingFromBackground;
+
 @implementation FlutterLocalNotificationsPlugin
 
 FlutterMethodChannel* channel;
@@ -32,6 +34,8 @@ bool displayAlert;
 bool playSound;
 bool updateBadge;
 bool initialized;
++ (bool) resumingFromBackground { return appResumingFromBackground; }
+UILocalNotification *launchNotification;
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     channel = [FlutterMethodChannel
@@ -42,11 +46,13 @@ bool initialized;
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         center.delegate = instance;
     }
+    [registrar addApplicationDelegate:instance];
     [registrar addMethodCallDelegate:instance channel:channel];
 }
 
 
 - (void)initialize:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
+    appResumingFromBackground = false;
     NSDictionary *arguments = [call arguments];
     NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
     if(arguments[DEFAULT_PRESENT_ALERT] != [NSNull null]) {
@@ -84,7 +90,7 @@ bool initialized;
         }
         [center requestAuthorizationWithOptions:(authorizationOptions) completionHandler:^(BOOL granted, NSError * _Nullable error) {
             if(launchPayload != nil) {
-                [channel invokeMethod:@"selectNotification" arguments:launchPayload];
+                [FlutterLocalNotificationsPlugin handleSelectNotification:launchPayload];
             }
             result(@(granted));
         }];
@@ -101,6 +107,10 @@ bool initialized;
         }
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:notificationTypes categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+        if(launchNotification != nil) {
+            NSString *payload = launchNotification.userInfo[PAYLOAD];
+            [channel invokeMethod:@"selectNotification" arguments:payload];
+        }
         result(@true);
     }
     initialized = true;
@@ -259,6 +269,10 @@ bool initialized;
     completionHandler(presentationOptions);
 }
 
++ (void)handleSelectNotification:(NSString *)payload {
+    [channel invokeMethod:@"selectNotification" arguments:payload];
+}
+
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
@@ -266,13 +280,27 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
         
         NSString *payload = (NSString *) response.notification.request.content.userInfo[PAYLOAD];
         if(initialized) {
-            [channel invokeMethod:@"selectNotification" arguments:payload];
+            [FlutterLocalNotificationsPlugin handleSelectNotification:payload];
         } else {
             launchPayload = payload;
         }
         
     }
 }
+- (BOOL)application:(UIApplication *)application
+didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    if (launchOptions != nil) {
+        launchNotification = (UILocalNotification *)[launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+    }
+    return YES;
+}
 
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+    appResumingFromBackground = true;
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    appResumingFromBackground = false;
+}
 
 @end

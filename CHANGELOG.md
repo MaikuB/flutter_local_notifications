@@ -47,3 +47,6 @@
 ## [0.1.2]
 
 * Bug fix in calculating when to show a scheduled Android notification. Ensure scheduled Android notifications will remain scheduled even after rebooting.
+
+## [0.1.3]
+* Fix example app for iOS due to incorrect reference to custom sound file. Added ability to handle when a notification is tapped. See updated example

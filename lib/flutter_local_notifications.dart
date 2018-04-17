@@ -29,7 +29,7 @@ class FlutterLocalNotifications {
     return result;
   }
 
-  /// Show a notification with optional payload
+  /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped
   static Future show(int id, String title, String body,
       NotificationDetails notificationDetails, {String payload}) async {
     Map<String, dynamic> serializedPlatformSpecifics;
@@ -52,7 +52,7 @@ class FlutterLocalNotifications {
     await _channel.invokeMethod('cancel', id);
   }
 
-  /// Schedules a notification to be shown at the specified time with optional payload
+  /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
   static Future schedule(int id, String title, String body,
       DateTime scheduledDate, NotificationDetails notificationDetails, {String payload}) async {
     Map<String, dynamic> serializedPlatformSpecifics;
