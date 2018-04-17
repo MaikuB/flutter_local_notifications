@@ -3,7 +3,11 @@ import 'package:flutter_local_notifications/platform_specifics/notification_deta
 
 /// Contains notification settings for each platform
 class NotificationDetails {
+  /// Notification details for Android
   final NotificationDetailsAndroid android;
+
+  /// Notification details for iOS
   final NotificationDetailsIOS iOS;
+  
   const NotificationDetails(this.android, this.iOS);
 }
