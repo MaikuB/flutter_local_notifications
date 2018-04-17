@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -11,7 +12,11 @@ import 'package:flutter_local_notifications/platform_specifics/notification_deta
 import 'package:flutter_local_notifications/platform_specifics/notification_details/notification_details_ios.dart';
 import 'package:flutter_local_notifications/platform_specifics/android_styles/big_text_style_information.dart';
 
-void main() => runApp(new MyApp());
+void main() {
+  runApp(
+    new MaterialApp(home: new MyApp()),
+  );
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -22,13 +27,15 @@ class _MyAppState extends State<MyApp> {
   @override
   initState() {
     super.initState();
+    // initialise the plugin
     InitializationSettingsAndroid initializationSettingsAndroid =
         new InitializationSettingsAndroid('app_icon');
     InitializationSettingsIOS initializationSettingsIOS =
         new InitializationSettingsIOS();
     InitializationSettings initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
-    FlutterLocalNotifications.initialize(initializationSettings);
+    FlutterLocalNotifications.initialize(initializationSettings,
+        selectNotification: onSelectNotification);
   }
 
   @override
@@ -46,7 +53,7 @@ class _MyAppState extends State<MyApp> {
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
-                        child: new Text('Show plain notification'),
+                        child: new Text('Show plain notification with payload'),
                         onPressed: () async {
                           await showNotification();
                         })),
@@ -97,7 +104,8 @@ class _MyAppState extends State<MyApp> {
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await FlutterLocalNotifications.show(
-        0, 'plain title', 'plain body', platformChannelSpecifics);
+        0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
   }
 
   cancelNotification() async {
@@ -141,8 +149,8 @@ class _MyAppState extends State<MyApp> {
         new NotificationDetailsIOS(presentSound: false);
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await FlutterLocalNotifications.show(
-        0, '<b>silent</b> title', '<b>silent</b> body', platformChannelSpecifics);
+    await FlutterLocalNotifications.show(0, '<b>silent</b> title',
+        '<b>silent</b> body', platformChannelSpecifics);
   }
 
   showBigTextNotification() async {
@@ -164,5 +172,48 @@ class _MyAppState extends State<MyApp> {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await FlutterLocalNotifications.show(
         0, 'big text title', 'silent body', platformChannelSpecifics);
+  }
+
+  Future onSelectNotification(String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+    await Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => new SecondScreen(payload)),
+    );
+  }
+}
+
+class SecondScreen extends StatefulWidget {
+  final String payload;
+  SecondScreen(this.payload);
+  @override
+  State<StatefulWidget> createState() => new SecondScreenState();
+}
+
+class SecondScreenState extends State<SecondScreen> {
+  String _payload;
+  @override
+  void initState() {
+    super.initState();
+    _payload = widget.payload;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("Second Screen with payload: " + _payload),
+      ),
+      body: new Center(
+        child: new RaisedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: new Text('Go back!'),
+        ),
+      ),
+    );
   }
 }

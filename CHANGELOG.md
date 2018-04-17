@@ -47,3 +47,6 @@
 ## [0.1.2]
 
 * Bug fix in calculating when to show a scheduled Android notification. Ensure scheduled Android notifications will remain scheduled even after rebooting.
+
+## [0.1.3]
+* Fix broken example app for iOS due to incorrect reference to custom sound file. Added ability to handle when a notification is tapped. See updated example for details on how to do this and will navigate to another page. Note that the second page isn't rendering full-screen on Android if the notification was tapped on while the app was in the foreground. Suspect that this is Flutter rendering issue and have logged this on the Flutter repository at https://github.com/flutter/flutter/issues/16636
