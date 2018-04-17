@@ -14,10 +14,10 @@ class FlutterLocalNotifications {
   static MessageHandler onSelectNotification;
 
   /// Initializes the plugin. Call this method on application before using the plugin further
-  static Future<bool> initialize(
-      InitializationSettings initializationSettings, {MessageHandler selectNotification}) async {
-   onSelectNotification = selectNotification;
-   Map<String, dynamic> serializedPlatformSpecifics;
+  static Future<bool> initialize(InitializationSettings initializationSettings,
+      {MessageHandler selectNotification}) async {
+    onSelectNotification = selectNotification;
+    Map<String, dynamic> serializedPlatformSpecifics;
     if (Platform.isAndroid) {
       serializedPlatformSpecifics = initializationSettings.android.toJson();
     } else if (Platform.isIOS) {
@@ -31,7 +31,8 @@ class FlutterLocalNotifications {
 
   /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped
   static Future show(int id, String title, String body,
-      NotificationDetails notificationDetails, {String payload}) async {
+      NotificationDetails notificationDetails,
+      {String payload}) async {
     Map<String, dynamic> serializedPlatformSpecifics;
     if (Platform.isAndroid) {
       serializedPlatformSpecifics = notificationDetails.android.toJson();
@@ -54,7 +55,8 @@ class FlutterLocalNotifications {
 
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
   static Future schedule(int id, String title, String body,
-      DateTime scheduledDate, NotificationDetails notificationDetails, {String payload}) async {
+      DateTime scheduledDate, NotificationDetails notificationDetails,
+      {String payload}) async {
     Map<String, dynamic> serializedPlatformSpecifics;
     if (Platform.isAndroid) {
       serializedPlatformSpecifics = notificationDetails.android.toJson();

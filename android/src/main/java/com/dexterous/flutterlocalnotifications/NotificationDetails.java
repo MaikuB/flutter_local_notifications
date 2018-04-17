@@ -2,6 +2,12 @@ package com.dexterous.flutterlocalnotifications;
 
 import android.os.Build;
 
+import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
+import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
+import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
+import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
+
+import java.util.ArrayList;
 import java.util.Map;
 
 public class NotificationDetails {
@@ -35,7 +41,7 @@ public class NotificationDetails {
         }
         @SuppressWarnings("unchecked")
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get("platformSpecifics");
-        notificationDetails.style = NotificationStyle.values()[(Integer)platformChannelSpecifics.get("style")];
+        notificationDetails.style = NotificationStyle.values()[(Integer) platformChannelSpecifics.get("style")];
         ProcessStyleInformation(notificationDetails, platformChannelSpecifics);
         notificationDetails.icon = (String) platformChannelSpecifics.get("icon");
         notificationDetails.priority = (Integer) platformChannelSpecifics.get("priority");
@@ -57,25 +63,30 @@ public class NotificationDetails {
         @SuppressWarnings("unchecked")
         Map<String, Object> styleInformation = (Map<String, Object>) platformSpecifics.get("styleInformation");
         DefaultStyleInformation defaultStyleInformation = getDefaultStyleInformation(styleInformation);
-        switch(notificationDetails.style) {
-            case Default:
-                notificationDetails.styleInformation = defaultStyleInformation;
-                break;
-            case BigText:
-                String bigText = (String)styleInformation.get("bigText");
-                Boolean htmlFormatBigText = (Boolean)styleInformation.get("htmlFormatBigText");
-                String contentTitle = (String)styleInformation.get("contentTitle");
-                Boolean htmlFormatContentTitle = (Boolean)styleInformation.get("htmlFormatContentTitle");
-                String summaryText = (String)styleInformation.get("summaryText");
-                Boolean htmlFormatSummaryText = (Boolean)styleInformation.get("htmlFormatSummaryText");
-                notificationDetails.styleInformation = new BigTextStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, bigText, htmlFormatBigText, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText);
-                break;
+        if (notificationDetails.style == NotificationStyle.Default) {
+            notificationDetails.styleInformation = defaultStyleInformation;
+        } else if (notificationDetails.style == NotificationStyle.BigText) {
+            String bigText = (String) styleInformation.get("bigText");
+            Boolean htmlFormatBigText = (Boolean) styleInformation.get("htmlFormatBigText");
+            String contentTitle = (String) styleInformation.get("contentTitle");
+            Boolean htmlFormatContentTitle = (Boolean) styleInformation.get("htmlFormatContentTitle");
+            String summaryText = (String) styleInformation.get("summaryText");
+            Boolean htmlFormatSummaryText = (Boolean) styleInformation.get("htmlFormatSummaryText");
+            notificationDetails.styleInformation = new BigTextStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, bigText, htmlFormatBigText, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText);
+        } else if(notificationDetails.style == NotificationStyle.Inbox) {
+            String contentTitle = (String) styleInformation.get("contentTitle");
+            Boolean htmlFormatContentTitle = (Boolean) styleInformation.get("htmlFormatContentTitle");
+            String summaryText = (String) styleInformation.get("summaryText");
+            Boolean htmlFormatSummaryText = (Boolean) styleInformation.get("htmlFormatSummaryText");
+            ArrayList<String> lines = (ArrayList<String>) styleInformation.get("lines");
+            Boolean htmlFormatLines = (Boolean) styleInformation.get("htmlFormatLines");
+            notificationDetails.styleInformation = new InboxStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText, lines, htmlFormatLines);
         }
     }
 
     private static DefaultStyleInformation getDefaultStyleInformation(Map<String, Object> styleInformation) {
-        Boolean htmlFormatTitle = (Boolean)styleInformation.get("htmlFormatTitle");
-        Boolean htmlFormatBody = (Boolean)styleInformation.get("htmlFormatContent");
+        Boolean htmlFormatTitle = (Boolean) styleInformation.get("htmlFormatTitle");
+        Boolean htmlFormatBody = (Boolean) styleInformation.get("htmlFormatContent");
         return new DefaultStyleInformation(htmlFormatTitle, htmlFormatBody);
     }
 }

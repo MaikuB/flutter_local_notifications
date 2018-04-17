@@ -19,6 +19,10 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.text.Html;
 import android.text.Spanned;
 
+import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
+import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
+import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
+import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -219,6 +223,24 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 }
                 builder.setStyle(bigTextStyle);
                 break;
+            case Inbox:
+                InboxStyleInformation inboxStyleInformation = (InboxStyleInformation) notificationDetails.styleInformation;
+                NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+                if (inboxStyleInformation.contentTitle != null) {
+                    CharSequence contentTitle = inboxStyleInformation.htmlFormatContentTitle ? fromHtml(inboxStyleInformation.contentTitle) : inboxStyleInformation.contentTitle;
+                    inboxStyle.setBigContentTitle(contentTitle);
+                }
+                if (inboxStyleInformation.summaryText != null) {
+                    CharSequence summaryText = inboxStyleInformation.htmlFormatSummaryText ? fromHtml(inboxStyleInformation.summaryText) : inboxStyleInformation.summaryText;
+                    inboxStyle.setSummaryText(summaryText);
+                }
+                if (inboxStyleInformation.lines != null) {
+                    for (String line : inboxStyleInformation.lines) {
+                        inboxStyle.addLine(inboxStyleInformation.htmlFormatLines ? fromHtml(line) : line);
+                    }
+                }
+                builder.setStyle(inboxStyle);
+                break;
         }
     }
 
@@ -330,7 +352,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private Boolean sendNotificationPayloadMessage(Intent intent) {
-        if(SELECT_NOTIFICATION.equals(intent.getAction())) {
+        if (SELECT_NOTIFICATION.equals(intent.getAction())) {
             String payload = intent.getStringExtra(PAYLOAD);
             channel.invokeMethod("selectNotification", payload);
             return true;
