@@ -1,4 +1,4 @@
-package com.dexterous.flutterlocalnotifications;
+package com.dexterous.flutterlocalnotifications.models.styles;
 
 public class BigTextStyleInformation extends DefaultStyleInformation {
     public String bigText;

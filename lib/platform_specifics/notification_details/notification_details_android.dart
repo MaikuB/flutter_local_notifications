@@ -7,7 +7,7 @@ import 'package:flutter_local_notifications/platform_specifics/android_styles/de
 import 'package:flutter_local_notifications/platform_specifics/android_styles/style_information.dart';
 
 /// The available notification styles on Android
-enum NotificationStyleAndroid { Default, BigText }
+enum NotificationStyleAndroid { Default, BigText, Inbox }
 
 /// Defines the available importance levels for Android notifications
 class Importance {

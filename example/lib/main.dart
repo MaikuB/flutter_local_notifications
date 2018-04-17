@@ -11,6 +11,7 @@ import 'package:flutter_local_notifications/platform_specifics/notification_deta
 import 'package:flutter_local_notifications/platform_specifics/notification_details/notification_details_android.dart';
 import 'package:flutter_local_notifications/platform_specifics/notification_details/notification_details_ios.dart';
 import 'package:flutter_local_notifications/platform_specifics/android_styles/big_text_style_information.dart';
+import 'package:flutter_local_notifications/platform_specifics/android_styles/inbox_style_information.dart';
 
 void main() {
   runApp(
@@ -85,6 +86,13 @@ class _MyAppState extends State<MyApp> {
                         child: new Text('Show big text notification [Android]'),
                         onPressed: () async {
                           await showBigTextNotification();
+                        })),
+                new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
+                        child: new Text('Show inbox notification [Android]'),
+                        onPressed: () async {
+                          await showInboxNotification();
                         })),
               ],
             ),
@@ -172,6 +180,30 @@ class _MyAppState extends State<MyApp> {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await FlutterLocalNotifications.show(
         0, 'big text title', 'silent body', platformChannelSpecifics);
+  }
+
+  showInboxNotification() async {
+    List<String> lines = new List<String>();
+    lines.add('line <b>1</b>');
+    lines.add('line <i>2</i>');
+    InboxStyleInformation inboxStyleInformation = new InboxStyleInformation(
+        lines,
+        htmlFormatLines: true,
+        contentTitle: 'overridden <b>inbox/b> context title',
+        htmlFormatContentTitle: true,
+        summaryText: 'summary <i>text</i>',
+        htmlFormatSummaryText: true);
+    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+        new NotificationDetailsAndroid('inbox channel id', 'inboxchannel name',
+            'inbox channel description',
+            style: NotificationStyleAndroid.Inbox,
+            styleInformation: inboxStyleInformation);
+    NotificationDetailsIOS iOSPlatformChannelSpecifics =
+        new NotificationDetailsIOS();
+    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await FlutterLocalNotifications.show(
+        0, 'inbox title', 'inbox body', platformChannelSpecifics);
   }
 
   Future onSelectNotification(String payload) async {
