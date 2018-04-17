@@ -6,8 +6,10 @@ import 'dart:typed_data';
 import 'package:flutter_local_notifications/platform_specifics/android_styles/default_style_information.dart';
 import 'package:flutter_local_notifications/platform_specifics/android_styles/style_information.dart';
 
+/// The available notification styles on Android
 enum NotificationStyleAndroid { Default, BigText }
 
+/// Defines the available importance levels for Android notifications
 class Importance {
   static const Unspecified = const Importance(-1000);
   static const None = const Importance(0);
@@ -24,7 +26,7 @@ class Importance {
   const Importance(this.value);
 }
 
-// Notification priority for Android 7.1 and lower
+// Priority for notifications on Android 7.1 and lower
 class Priority {
   static const Min = const Priority(-2);
   static const Low = const Priority(-1);
