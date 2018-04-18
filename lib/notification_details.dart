@@ -1,5 +1,5 @@
-import 'package:flutter_local_notifications/platform_specifics/notification_details/notification_details_android.dart';
-import 'package:flutter_local_notifications/platform_specifics/notification_details/notification_details_ios.dart';
+import 'package:flutter_local_notifications/platform_specifics/android/notification_details_android.dart';
+import 'package:flutter_local_notifications/platform_specifics/ios/notification_details_ios.dart';
 
 /// Contains notification settings for each platform
 class NotificationDetails {
