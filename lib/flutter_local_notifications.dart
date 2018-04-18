@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/platform_specifics/initialization_settings/initialization_settings.dart';
-import 'package:flutter_local_notifications/platform_specifics/notification_details/notification_details.dart';
+import 'package:flutter_local_notifications/initialization_settings.dart';
+import 'package:flutter_local_notifications/notification_details.dart';
 
 typedef Future<dynamic> MessageHandler(String message);
 

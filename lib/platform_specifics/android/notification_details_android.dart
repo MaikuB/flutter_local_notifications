@@ -3,8 +3,8 @@
 
 import 'dart:typed_data';
 
-import 'package:flutter_local_notifications/platform_specifics/android_styles/default_style_information.dart';
-import 'package:flutter_local_notifications/platform_specifics/android_styles/style_information.dart';
+import 'package:flutter_local_notifications/platform_specifics/android/styles/default_style_information.dart';
+import 'package:flutter_local_notifications/platform_specifics/android/styles/style_information.dart';
 
 /// The available notification styles on Android
 enum NotificationStyleAndroid { Default, BigText, Inbox }
