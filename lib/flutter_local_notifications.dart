@@ -1,43 +1,56 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/initialization_settings.dart';
 import 'package:flutter_local_notifications/notification_details.dart';
+import 'package:meta/meta.dart';
+import 'package:platform/platform.dart';
 
 typedef Future<dynamic> MessageHandler(String message);
 
-class FlutterLocalNotifications {
-  static const MethodChannel _channel =
-      const MethodChannel('dexterous.com/flutter/local_notifications');
+class FlutterLocalNotificationsPlugin {
+  factory FlutterLocalNotificationsPlugin() => _instance;
 
-  static MessageHandler onSelectNotification;
+  @visibleForTesting
+  FlutterLocalNotificationsPlugin.private(
+      MethodChannel channel, Platform platform)
+      : _channel = channel,
+        _platform = platform;
+
+  static final FlutterLocalNotificationsPlugin _instance =
+      new FlutterLocalNotificationsPlugin.private(
+          const MethodChannel('dexterous.com/flutter/local_notifications'),
+          const LocalPlatform());
+
+  final MethodChannel _channel;
+  final Platform _platform;
+
+  MessageHandler onSelectNotification;
 
   /// Initializes the plugin. Call this method on application before using the plugin further
-  static Future<bool> initialize(InitializationSettings initializationSettings,
+  Future<bool> initialize(InitializationSettings initializationSettings,
       {MessageHandler selectNotification}) async {
     onSelectNotification = selectNotification;
     Map<String, dynamic> serializedPlatformSpecifics;
-    if (Platform.isAndroid) {
-      serializedPlatformSpecifics = initializationSettings.android.toJson();
-    } else if (Platform.isIOS) {
-      serializedPlatformSpecifics = initializationSettings.ios.toJson();
+    if (_platform.isAndroid) {
+      serializedPlatformSpecifics = initializationSettings.android.toMap();
+    } else if (_platform.isIOS) {
+      serializedPlatformSpecifics = initializationSettings.ios.toMap();
     }
     _channel.setMethodCallHandler(_handleMethod);
-    var result = await _channel.invokeMethod('initialize',
-        <String, dynamic>{'platformSpecifics': serializedPlatformSpecifics});
+    var result =
+        await _channel.invokeMethod('initialize', serializedPlatformSpecifics);
     return result;
   }
 
   /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped
-  static Future show(int id, String title, String body,
+  Future show(int id, String title, String body,
       NotificationDetails notificationDetails,
       {String payload}) async {
     Map<String, dynamic> serializedPlatformSpecifics;
-    if (Platform.isAndroid) {
-      serializedPlatformSpecifics = notificationDetails.android.toJson();
-    } else if (Platform.isIOS) {
-      serializedPlatformSpecifics = notificationDetails.iOS.toJson();
+    if (_platform.isAndroid) {
+      serializedPlatformSpecifics = notificationDetails.android.toMap();
+    } else if (_platform.isIOS) {
+      serializedPlatformSpecifics = notificationDetails.iOS.toMap();
     }
     await _channel.invokeMethod('show', <String, dynamic>{
       'id': id,
@@ -49,19 +62,19 @@ class FlutterLocalNotifications {
   }
 
   /// Cancel/remove the notificiation with the specified id
-  static Future cancel(int id) async {
+  Future cancel(int id) async {
     await _channel.invokeMethod('cancel', id);
   }
 
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
-  static Future schedule(int id, String title, String body,
-      DateTime scheduledDate, NotificationDetails notificationDetails,
+  Future schedule(int id, String title, String body, DateTime scheduledDate,
+      NotificationDetails notificationDetails,
       {String payload}) async {
     Map<String, dynamic> serializedPlatformSpecifics;
-    if (Platform.isAndroid) {
-      serializedPlatformSpecifics = notificationDetails.android.toJson();
-    } else if (Platform.isIOS) {
-      serializedPlatformSpecifics = notificationDetails.iOS.toJson();
+    if (_platform.isAndroid) {
+      serializedPlatformSpecifics = notificationDetails.android.toMap();
+    } else if (_platform.isIOS) {
+      serializedPlatformSpecifics = notificationDetails.iOS.toMap();
     }
     await _channel.invokeMethod('schedule', <String, dynamic>{
       'id': id,
@@ -73,7 +86,7 @@ class FlutterLocalNotifications {
     });
   }
 
-  static Future _handleMethod(MethodCall call) async {
+  Future _handleMethod(MethodCall call) async {
     return onSelectNotification(call.arguments);
   }
 }

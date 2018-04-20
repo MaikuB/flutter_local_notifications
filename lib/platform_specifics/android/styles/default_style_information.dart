@@ -10,7 +10,7 @@ class DefaultStyleInformation extends StyleInformation {
   DefaultStyleInformation(this.htmlFormatContent, this.htmlFormatTitle)
       : super();
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'htmlFormatContent': htmlFormatContent,
       'htmlFormatTitle': htmlFormatTitle

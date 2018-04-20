@@ -29,8 +29,8 @@ class BigTextStyleInformation extends DefaultStyleInformation {
       bool htmlFormatTitle = false})
       : super(htmlFormatContent, htmlFormatTitle);
 
-  Map<String, dynamic> toJson() {
-    var styleJson = super.toJson();
+  Map<String, dynamic> toMap() {
+    var styleJson = super.toMap();
 
     var bigTextStyleJson = <String, dynamic>{
       'bigText': bigText,

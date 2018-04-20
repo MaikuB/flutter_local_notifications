@@ -16,7 +16,7 @@ class NotificationDetailsIOS {
   NotificationDetailsIOS(
       {this.presentAlert, this.presentBadge, this.presentSound, this.sound});
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'presentAlert': presentAlert,
       'presentSound': presentSound,
