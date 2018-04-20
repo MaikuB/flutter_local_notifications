@@ -289,9 +289,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         switch (call.method) {
             case INITIALIZE_METHOD: {
                 Map<String, Object> arguments = call.arguments();
-                @SuppressWarnings("unchecked")
-                Map<String, Object> platformSpecifics = (Map<String, Object>) arguments.get("platformSpecifics");
-                String defaultIcon = (String) platformSpecifics.get("defaultIcon");
+                String defaultIcon = (String) arguments.get("defaultIcon");
                 defaultIconResourceId = registrar.context().getResources().getIdentifier(defaultIcon, "drawable", registrar.context().getPackageName());
                 if (registrar.activity() != null) {
                     sendNotificationPayloadMessage(registrar.activity().getIntent());

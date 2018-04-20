@@ -54,27 +54,26 @@ UILocalNotification *launchNotification;
 - (void)initialize:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
     appResumingFromBackground = false;
     NSDictionary *arguments = [call arguments];
-    NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
     if(arguments[DEFAULT_PRESENT_ALERT] != [NSNull null]) {
-        displayAlert = [[platformSpecifics objectForKey:DEFAULT_PRESENT_ALERT] boolValue];
+        displayAlert = [[arguments objectForKey:DEFAULT_PRESENT_ALERT] boolValue];
     }
     if(arguments[DEFAULT_PRESENT_SOUND] != [NSNull null]) {
-        playSound = [[platformSpecifics objectForKey:DEFAULT_PRESENT_SOUND] boolValue];
+        playSound = [[arguments objectForKey:DEFAULT_PRESENT_SOUND] boolValue];
     }
     if(arguments[DEFAULT_PRESENT_BADGE] != [NSNull null]) {
-        updateBadge = [[platformSpecifics objectForKey:DEFAULT_PRESENT_BADGE] boolValue];
+        updateBadge = [[arguments objectForKey:DEFAULT_PRESENT_BADGE] boolValue];
     }
     bool requestedSoundPermission = false;
     bool requestedAlertPermission = false;
     bool requestedBadgePermission = false;
-    if (platformSpecifics[REQUEST_SOUND_PERMISSION] != [NSNull null]) {
-        requestedSoundPermission = [platformSpecifics[REQUEST_SOUND_PERMISSION] boolValue];
+    if (arguments[REQUEST_SOUND_PERMISSION] != [NSNull null]) {
+        requestedSoundPermission = [arguments[REQUEST_SOUND_PERMISSION] boolValue];
     }
-    if (platformSpecifics[REQUEST_ALERT_PERMISSION] != [NSNull null]) {
-        requestedAlertPermission = [platformSpecifics[REQUEST_ALERT_PERMISSION] boolValue];
+    if (arguments[REQUEST_ALERT_PERMISSION] != [NSNull null]) {
+        requestedAlertPermission = [arguments[REQUEST_ALERT_PERMISSION] boolValue];
     }
-    if (platformSpecifics[REQUEST_BADGE_PERMISSION] != [NSNull null]) {
-        requestedBadgePermission = [platformSpecifics[REQUEST_BADGE_PERMISSION] boolValue];
+    if (arguments[REQUEST_BADGE_PERMISSION] != [NSNull null]) {
+        requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
     }
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];

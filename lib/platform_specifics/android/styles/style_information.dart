@@ -1,5 +1,5 @@
 abstract class StyleInformation {
   StyleInformation();
 
-  Map<String, dynamic> toJson();
+  Map<String, dynamic> toMap();
 }

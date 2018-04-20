@@ -5,7 +5,7 @@ class InitializationSettingsAndroid {
 
   const InitializationSettingsAndroid(this.defaultIcon);
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return <String, dynamic>{'defaultIcon': this.defaultIcon};
   }
 }

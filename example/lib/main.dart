@@ -25,6 +25,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   @override
   initState() {
     super.initState();
@@ -35,7 +36,8 @@ class _MyAppState extends State<MyApp> {
         new InitializationSettingsIOS();
     InitializationSettings initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
-    FlutterLocalNotifications.initialize(initializationSettings,
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
         selectNotification: onSelectNotification);
   }
 
@@ -111,13 +113,13 @@ class _MyAppState extends State<MyApp> {
         new NotificationDetailsIOS();
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await FlutterLocalNotifications.show(
+    await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');
   }
 
   cancelNotification() async {
-    await FlutterLocalNotifications.cancel(0);
+    await flutterLocalNotificationsPlugin.cancel(0);
   }
 
   /// Schedules a notification that specifies a different icon, sound and vibration pattern
@@ -139,7 +141,7 @@ class _MyAppState extends State<MyApp> {
         new NotificationDetailsIOS(sound: "slow_spring_board.aiff");
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await FlutterLocalNotifications.schedule(
+    await flutterLocalNotificationsPlugin.schedule(
         0,
         'scheduled title',
         'scheduled body',
@@ -157,7 +159,7 @@ class _MyAppState extends State<MyApp> {
         new NotificationDetailsIOS(presentSound: false);
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await FlutterLocalNotifications.show(0, '<b>silent</b> title',
+    await flutterLocalNotificationsPlugin.show(0, '<b>silent</b> title',
         '<b>silent</b> body', platformChannelSpecifics);
   }
 
@@ -178,7 +180,7 @@ class _MyAppState extends State<MyApp> {
         new NotificationDetailsIOS();
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await FlutterLocalNotifications.show(
+    await flutterLocalNotificationsPlugin.show(
         0, 'big text title', 'silent body', platformChannelSpecifics);
   }
 
@@ -202,7 +204,7 @@ class _MyAppState extends State<MyApp> {
         new NotificationDetailsIOS();
     NotificationDetails platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await FlutterLocalNotifications.show(
+    await flutterLocalNotificationsPlugin.show(
         0, 'inbox title', 'inbox body', platformChannelSpecifics);
   }
 
@@ -210,6 +212,9 @@ class _MyAppState extends State<MyApp> {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
     }
+
+    /// Note: the navigation doesn't seem to do a complete full page transition on Android when the app is already running.
+    /// Raised an issue on the Fluter repo for it to be investigated.
     await Navigator.push(
       context,
       new MaterialPageRoute(builder: (context) => new SecondScreen(payload)),

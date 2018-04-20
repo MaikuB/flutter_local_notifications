@@ -26,7 +26,7 @@ class InitializationSettingsIOS {
       this.defaultPresentSound = true,
       this.defaultPresentBadge = true});
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'requestAlertPermission': requestAlertPermission,
       'requestSoundPermission': requestSoundPermission,

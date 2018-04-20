@@ -91,7 +91,7 @@ class NotificationDetailsAndroid {
       this.enableVibration = true,
       this.vibrationPattern});
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'icon': icon,
       'channelId': channelId,
@@ -105,8 +105,8 @@ class NotificationDetailsAndroid {
       'vibrationPattern': vibrationPattern,
       'style': style.index,
       'styleInformation': styleInformation == null
-          ? new DefaultStyleInformation(false, false).toJson()
-          : styleInformation.toJson()
+          ? new DefaultStyleInformation(false, false).toMap()
+          : styleInformation.toMap()
     };
   }
 }
