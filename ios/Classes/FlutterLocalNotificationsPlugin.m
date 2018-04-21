@@ -120,21 +120,24 @@ UILocalNotification *launchNotification;
     NSString *title = call.arguments[TITLE];
     NSString *body = call.arguments[BODY];
     NSString *payload = call.arguments[PAYLOAD];
-    NSDictionary *platformSpecifics = call.arguments[PLATFORM_SPECIFICS];
     bool presentAlert = displayAlert;
     bool presentSound = playSound;
     bool presentBadge = updateBadge;
-    
-    if(platformSpecifics[PRESENT_ALERT] != [NSNull null]) {
-        presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
+    NSString *sound;
+    if(call.arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
+    NSDictionary *platformSpecifics = call.arguments[PLATFORM_SPECIFICS];
+
+        if(platformSpecifics[PRESENT_ALERT] != [NSNull null]) {
+            presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
+        }
+        if(platformSpecifics[PRESENT_SOUND] != [NSNull null]) {
+            presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
+        }
+        if(platformSpecifics[PRESENT_BADGE] != [NSNull null]) {
+            presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
+        }
+        sound = platformSpecifics[SOUND];
     }
-    if(platformSpecifics[PRESENT_SOUND] != [NSNull null]) {
-        presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
-    }
-    if(platformSpecifics[PRESENT_BADGE] != [NSNull null]) {
-        presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
-    }
-    NSString *sound = platformSpecifics[SOUND];
     NSNumber *secondsSinceEpoch;
     if([SCHEDULE_METHOD isEqualToString:call.method]) {
         secondsSinceEpoch = @([call.arguments[MILLISECONDS_SINCE_EPOCH] integerValue] / 1000);

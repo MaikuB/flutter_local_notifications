@@ -48,9 +48,9 @@ class FlutterLocalNotificationsPlugin {
       {String payload}) async {
     Map<String, dynamic> serializedPlatformSpecifics;
     if (_platform.isAndroid) {
-      serializedPlatformSpecifics = notificationDetails.android.toMap();
+      serializedPlatformSpecifics = notificationDetails?.android?.toMap();
     } else if (_platform.isIOS) {
-      serializedPlatformSpecifics = notificationDetails.iOS.toMap();
+      serializedPlatformSpecifics = notificationDetails?.iOS?.toMap();
     }
     await _channel.invokeMethod('show', <String, dynamic>{
       'id': id,
@@ -72,9 +72,9 @@ class FlutterLocalNotificationsPlugin {
       {String payload}) async {
     Map<String, dynamic> serializedPlatformSpecifics;
     if (_platform.isAndroid) {
-      serializedPlatformSpecifics = notificationDetails.android.toMap();
+      serializedPlatformSpecifics = notificationDetails?.android?.toMap();
     } else if (_platform.isIOS) {
-      serializedPlatformSpecifics = notificationDetails.iOS.toMap();
+      serializedPlatformSpecifics = notificationDetails?.iOS?.toMap();
     }
     await _channel.invokeMethod('schedule', <String, dynamic>{
       'id': id,
@@ -86,7 +86,7 @@ class FlutterLocalNotificationsPlugin {
     });
   }
 
-  Future _handleMethod(MethodCall call) async {
+  Future _handleMethod(MethodCall call) {
     return onSelectNotification(call.arguments);
   }
 }

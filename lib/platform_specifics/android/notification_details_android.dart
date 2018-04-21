@@ -41,6 +41,8 @@ class Priority {
   const Priority(this.value);
 }
 
+enum GroupAlertBehavior { All, Summary, Children }
+
 /// Configures the notification on Android
 class NotificationDetailsAndroid {
   /// The icon that should be used when displaying the notification. When not specified, this will use the default icon that has been configured.
@@ -79,6 +81,14 @@ class NotificationDetailsAndroid {
   /// Contains extra information for the specified notification [style]
   StyleInformation styleInformation;
 
+  /// Specifies the group that this notification belongs to. For Android 7.0+ (API level 24)
+  String groupKey;
+
+  /// Specifies if this notification will function as the summary for grouped notifications
+  bool setAsGroupSummary;
+
+  GroupAlertBehavior groupAlertBehavior;
+
   NotificationDetailsAndroid(
       this.channelId, this.channelName, this.channelDescription,
       {this.icon,
@@ -89,7 +99,10 @@ class NotificationDetailsAndroid {
       this.playSound = true,
       this.sound,
       this.enableVibration = true,
-      this.vibrationPattern});
+      this.vibrationPattern,
+      this.groupKey,
+      this.setAsGroupSummary,
+      this.groupAlertBehavior = GroupAlertBehavior.All});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -106,7 +119,10 @@ class NotificationDetailsAndroid {
       'style': style.index,
       'styleInformation': styleInformation == null
           ? new DefaultStyleInformation(false, false).toMap()
-          : styleInformation.toMap()
+          : styleInformation.toMap(),
+      'groupKey': groupKey,
+      'useAsGroupSummary': setAsGroupSummary,
+      'groupAlertBehavior': groupAlertBehavior.index
     };
   }
 }
