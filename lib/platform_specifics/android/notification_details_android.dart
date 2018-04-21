@@ -121,7 +121,7 @@ class NotificationDetailsAndroid {
           ? new DefaultStyleInformation(false, false).toMap()
           : styleInformation.toMap(),
       'groupKey': groupKey,
-      'useAsGroupSummary': setAsGroupSummary,
+      'setAsGroupSummary': setAsGroupSummary,
       'groupAlertBehavior': groupAlertBehavior.index
     };
   }

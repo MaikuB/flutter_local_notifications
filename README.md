@@ -117,7 +117,7 @@ NotificationDetailsAndroid firstNotificationAndroidSpecifics =
         groupKey: groupKey);
 NotificationDetails firstNotificationPlatformSpecifics =
     new NotificationDetails(firstNotificationAndroidSpecifics, null);
-await flutterLocalNotificationsPlugin.show(0, 'Alex Faarborg',
+await flutterLocalNotificationsPlugin.show(1, 'Alex Faarborg',
     'You will not believe...', firstNotificationPlatformSpecifics);
 NotificationDetailsAndroid secondNotificationAndroidSpecifics =
     new NotificationDetailsAndroid(
@@ -128,7 +128,7 @@ NotificationDetailsAndroid secondNotificationAndroidSpecifics =
 NotificationDetails secondNotificationPlatformSpecifics =
     new NotificationDetails(secondNotificationAndroidSpecifics, null);
 await flutterLocalNotificationsPlugin.show(
-    0,
+    2,
     'Jeff Chang',
     'Please join us to celebrate the...',
     secondNotificationPlatformSpecifics);
@@ -151,7 +151,7 @@ NotificationDetailsAndroid androidPlatformChannelSpecifics =
 NotificationDetails platformChannelSpecifics =
     new NotificationDetails(androidPlatformChannelSpecifics, null);
 await flutterLocalNotificationsPlugin.show(
-    0, 'Attention', 'Two new messages', platformChannelSpecifics);
+    3, 'Attention', 'Two new messages', platformChannelSpecifics);
 ```
 
 ### Cancelling/deleting a notification

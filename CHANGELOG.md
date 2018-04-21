@@ -64,3 +64,6 @@
 * Add ability to show grouped notifications on Android. Example code has been updated to demonstrate this functionality.
 * Fixed the example project so it works with the new release of Cocoapods (1.5.0)
 * Fixes for when API methods were called without specifying platform specific settings
+
+## [0.1.8]
+* Bug fix for grouping notifications on Android
