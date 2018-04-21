@@ -96,6 +96,13 @@ class _MyAppState extends State<MyApp> {
                         onPressed: () async {
                           await showInboxNotification();
                         })),
+                new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
+                        child: new Text('Show grouped notifications [Android]'),
+                        onPressed: () async {
+                          await showGroupedNotifications();
+                        })),
               ],
             ),
           ),
@@ -176,10 +183,8 @@ class _MyAppState extends State<MyApp> {
             'big text channel name', 'big text channel description',
             style: NotificationStyleAndroid.BigText,
             styleInformation: bigTextStyleInformation);
-    NotificationDetailsIOS iOSPlatformChannelSpecifics =
-        new NotificationDetailsIOS();
-    NotificationDetails platformChannelSpecifics = new NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    NotificationDetails platformChannelSpecifics =
+        new NotificationDetails(androidPlatformChannelSpecifics, null);
     await flutterLocalNotificationsPlugin.show(
         0, 'big text title', 'silent body', platformChannelSpecifics);
   }
@@ -191,7 +196,7 @@ class _MyAppState extends State<MyApp> {
     InboxStyleInformation inboxStyleInformation = new InboxStyleInformation(
         lines,
         htmlFormatLines: true,
-        contentTitle: 'overridden <b>inbox/b> context title',
+        contentTitle: 'overridden <b>inbox</b> context title',
         htmlFormatContentTitle: true,
         summaryText: 'summary <i>text</i>',
         htmlFormatSummaryText: true);
@@ -200,12 +205,61 @@ class _MyAppState extends State<MyApp> {
             'inbox channel description',
             style: NotificationStyleAndroid.Inbox,
             styleInformation: inboxStyleInformation);
-    NotificationDetailsIOS iOSPlatformChannelSpecifics =
-        new NotificationDetailsIOS();
-    NotificationDetails platformChannelSpecifics = new NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    NotificationDetails platformChannelSpecifics =
+        new NotificationDetails(androidPlatformChannelSpecifics, null);
     await flutterLocalNotificationsPlugin.show(
         0, 'inbox title', 'inbox body', platformChannelSpecifics);
+  }
+
+  showGroupedNotifications() async {
+    String groupKey = 'com.android.example.WORK_EMAIL';
+    String groupChannelId = 'grouped channel id';
+    String groupChannelName = 'grouped channel name';
+    String groupChannelDescription = 'grouped channel description';
+    // example based on https://developer.android.com/training/notify-user/group.html
+    NotificationDetailsAndroid firstNotificationAndroidSpecifics =
+        new NotificationDetailsAndroid(
+            groupChannelId, groupChannelName, groupChannelDescription,
+            importance: Importance.Max,
+            priority: Priority.High,
+            groupKey: groupKey);
+    NotificationDetails firstNotificationPlatformSpecifics =
+        new NotificationDetails(firstNotificationAndroidSpecifics, null);
+    await flutterLocalNotificationsPlugin.show(0, 'Alex Faarborg',
+        'You will not believe...', firstNotificationPlatformSpecifics);
+    NotificationDetailsAndroid secondNotificationAndroidSpecifics =
+        new NotificationDetailsAndroid(
+            groupChannelId, groupChannelName, groupChannelDescription,
+            importance: Importance.Max,
+            priority: Priority.High,
+            groupKey: groupKey);
+    NotificationDetails secondNotificationPlatformSpecifics =
+        new NotificationDetails(secondNotificationAndroidSpecifics, null);
+    await flutterLocalNotificationsPlugin.show(
+        0,
+        'Jeff Chang',
+        'Please join us to celebrate the...',
+        secondNotificationPlatformSpecifics);
+
+    // create the summary notification
+    List<String> lines = new List<String>();
+    lines.add('Alex Faarborg  Check this out');
+    lines.add('Jeff Chang    Launch Party');
+    InboxStyleInformation inboxStyleInformation = new InboxStyleInformation(
+        lines,
+        contentTitle: '2 new messages',
+        summaryText: 'janedoe@example.com');
+    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+        new NotificationDetailsAndroid(
+            groupChannelId, groupChannelName, groupChannelDescription,
+            style: NotificationStyleAndroid.Inbox,
+            styleInformation: inboxStyleInformation,
+            groupKey: groupKey,
+            setAsGroupSummary: true);
+    NotificationDetails platformChannelSpecifics =
+        new NotificationDetails(androidPlatformChannelSpecifics, null);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'Attention', 'Two new messages', platformChannelSpecifics);
   }
 
   Future onSelectNotification(String payload) async {
@@ -213,7 +267,7 @@ class _MyAppState extends State<MyApp> {
       debugPrint('notification payload: ' + payload);
     }
 
-    /// Note: the navigation doesn't seem to do a complete full page transition on Android when the app is already running.
+    /// the navigation doesn't seem to do a complete full page transition on Android when the app is already running.
     /// Raised an issue on the Fluter repo for it to be investigated.
     await Navigator.push(
       context,

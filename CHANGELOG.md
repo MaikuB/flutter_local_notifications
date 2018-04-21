@@ -59,3 +59,8 @@
 
 ## [0.1.6]
 * **BREAKING CHANGES** Apologies again, this is another cleanup release. FlutterLocalNotifications class has been renamed to FlutterLocalNotificationsPlugin now as it makes more sense from a readability perspective. More importantly, the class and methods are also no longer static to faciliate mocking and testing. It's something I should've picked up on earlier so sorry once again. Check the source code for an example on how to mock the plugin when testing
+
+## [0.1.7]
+* Add ability to show grouped notifications on Android. Example code has been updated to demonstrate this functionality.
+* Fixed the example project so it works with the new release of Cocoapods (1.5.0)
+* Fixes for when API methods were called without specifying platform specific settings

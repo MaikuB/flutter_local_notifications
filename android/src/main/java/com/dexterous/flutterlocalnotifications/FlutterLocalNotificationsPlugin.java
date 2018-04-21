@@ -19,10 +19,13 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.text.Html;
 import android.text.Spanned;
 
+import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
+import com.dexterous.flutterlocalnotifications.utils.BooleanUtils;
+import com.dexterous.flutterlocalnotifications.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -171,23 +174,48 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setPriority(notificationDetails.priority);
-        if (notificationDetails.playSound) {
-            Uri uri = retrieveSoundResourceUri(context, notificationDetails);
-            builder.setSound(uri);
-        } else {
-            builder.setSound(null);
+
+        applyGrouping(notificationDetails, builder);
+        setSound(context, notificationDetails, builder);
+        setVibrationPattern(notificationDetails, builder);
+        setStyle(notificationDetails, builder);
+        Notification notification = builder.build();
+        return notification;
+    }
+
+    private static void applyGrouping(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        Boolean isGrouped = false;
+        if(!StringUtils.isNullOrEmpty(notificationDetails.groupKey)) {
+            builder.setGroup(notificationDetails.groupKey);
+            isGrouped = true;
         }
 
-        if (notificationDetails.enableVibration) {
+        if(isGrouped) {
+            if (BooleanUtils.getValue(notificationDetails.setAsGroupSummary)) {
+                builder.setGroupSummary(true);
+            }
+
+            builder.setGroupAlertBehavior(notificationDetails.groupAlertBehavior);
+        }
+    }
+
+    private static void setVibrationPattern(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        if (BooleanUtils.getValue(notificationDetails.enableVibration)) {
             if (notificationDetails.vibrationPattern != null && notificationDetails.vibrationPattern.length > 0) {
                 builder.setVibrate(notificationDetails.vibrationPattern);
             }
         } else {
             builder.setVibrate(new long[]{0});
         }
-        ApplyNotificationStyle(notificationDetails, builder);
-        Notification notification = builder.build();
-        return notification;
+    }
+
+    private static void setSound(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        if (BooleanUtils.getValue(notificationDetails.playSound)) {
+            Uri uri = retrieveSoundResourceUri(context, notificationDetails);
+            builder.setSound(uri);
+        } else {
+            builder.setSound(null);
+        }
     }
 
     private static Class getMainActivityClass(Context context) {
@@ -202,7 +230,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-    private static void ApplyNotificationStyle(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+    private static void setStyle(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
         switch (notificationDetails.style) {
             case Default:
                 break;
@@ -258,7 +286,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 } else {
                     notificationChannel.setSound(null, null);
                 }
-                notificationChannel.enableVibration(notificationDetails.enableVibration);
+                notificationChannel.enableVibration(BooleanUtils.getValue(notificationDetails.enableVibration));
                 if (notificationDetails.vibrationPattern != null && notificationDetails.vibrationPattern.length > 0) {
                     notificationChannel.setVibrationPattern(notificationDetails.vibrationPattern);
                 }
@@ -269,7 +297,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private static Uri retrieveSoundResourceUri(Context context, NotificationDetails notificationDetails) {
         Uri uri;
-        if (notificationDetails.sound == null || notificationDetails.sound.isEmpty()) {
+        if (StringUtils.isNullOrEmpty(notificationDetails.sound)) {
             uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         } else {
 

@@ -1,7 +1,8 @@
-package com.dexterous.flutterlocalnotifications;
+package com.dexterous.flutterlocalnotifications.models;
 
 import android.os.Build;
 
+import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
@@ -28,6 +29,9 @@ public class NotificationDetails {
     public StyleInformation styleInformation;
     public Long millisecondsSinceEpoch;
     public String payload;
+    public String groupKey;
+    public Boolean setAsGroupSummary;
+    public Integer groupAlertBehavior;
 
 
     public static NotificationDetails from(Map<String, Object> arguments) {
@@ -41,22 +45,30 @@ public class NotificationDetails {
         }
         @SuppressWarnings("unchecked")
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get("platformSpecifics");
-        notificationDetails.style = NotificationStyle.values()[(Integer) platformChannelSpecifics.get("style")];
-        ProcessStyleInformation(notificationDetails, platformChannelSpecifics);
-        notificationDetails.icon = (String) platformChannelSpecifics.get("icon");
-        notificationDetails.priority = (Integer) platformChannelSpecifics.get("priority");
-        notificationDetails.playSound = (Boolean) platformChannelSpecifics.get("playSound");
-        notificationDetails.sound = (String) platformChannelSpecifics.get("sound");
-        notificationDetails.enableVibration = (Boolean) platformChannelSpecifics.get("enableVibration");
-        notificationDetails.vibrationPattern = (long[]) platformChannelSpecifics.get("vibrationPattern");
+        if(platformChannelSpecifics != null) {
+            notificationDetails.style = NotificationStyle.values()[(Integer) platformChannelSpecifics.get("style")];
+            ProcessStyleInformation(notificationDetails, platformChannelSpecifics);
+            notificationDetails.icon = (String) platformChannelSpecifics.get("icon");
+            notificationDetails.priority = (Integer) platformChannelSpecifics.get("priority");
+            notificationDetails.playSound = (Boolean) platformChannelSpecifics.get("playSound");
+            notificationDetails.sound = (String) platformChannelSpecifics.get("sound");
+            notificationDetails.enableVibration = (Boolean) platformChannelSpecifics.get("enableVibration");
+            notificationDetails.vibrationPattern = (long[]) platformChannelSpecifics.get("vibrationPattern");
+            notificationDetails.groupKey = (String) platformChannelSpecifics.get("groupKey");
+            notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get("setAsGroupSummary");
+            notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get("groupAlertBehavior");
+            getChannelInformation(notificationDetails, platformChannelSpecifics);
+        }
+        return notificationDetails;
+    }
+
+    private static void getChannelInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationDetails.channelId = (String) platformChannelSpecifics.get("channelId");
             notificationDetails.channelName = (String) platformChannelSpecifics.get("channelName");
             notificationDetails.channelDescription = (String) platformChannelSpecifics.get("channelDescription");
             notificationDetails.importance = (Integer) platformChannelSpecifics.get("importance");
         }
-
-        return notificationDetails;
     }
 
     private static void ProcessStyleInformation(NotificationDetails notificationDetails, Map<String, Object> platformSpecifics) {
@@ -78,6 +90,7 @@ public class NotificationDetails {
             Boolean htmlFormatContentTitle = (Boolean) styleInformation.get("htmlFormatContentTitle");
             String summaryText = (String) styleInformation.get("summaryText");
             Boolean htmlFormatSummaryText = (Boolean) styleInformation.get("htmlFormatSummaryText");
+            @SuppressWarnings("unchecked")
             ArrayList<String> lines = (ArrayList<String>) styleInformation.get("lines");
             Boolean htmlFormatLines = (Boolean) styleInformation.get("htmlFormatLines");
             notificationDetails.styleInformation = new InboxStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText, lines, htmlFormatLines);
