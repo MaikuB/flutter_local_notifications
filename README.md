@@ -23,6 +23,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Configure the icon for each notification (overrides the default when specified)
 * [Android] Formatting notification content via HTML markup (see https://developer.android.com/guide/topics/resources/string-resource.html#StylingWithHTML)
 * [Android] Support for basic notification styling and the big text style for (will look into adding more styles)
+* [Android] Group notifications
 * [iOS] Customise the permissions to be requested around displaying notifications
 
 Note that this plugin aims to provide abstractions for all platforms as opposed to having methods that only work on specific platforms. However, each method allows passing in "platform-specifics" that contains data that is specific for customising notifications on each platform. It is still under development so expect the API surface to change over time.
@@ -96,6 +97,61 @@ await flutterLocalNotificationsPlugin.schedule(
     'scheduled body',
     scheduledNotificationDateTime,
     platformChannelSpecifics);
+```
+
+### [Android only] Grouping notifications
+
+This is a "translation" of the sample available at https://developer.android.com/training/notify-user/group.html
+
+```
+String groupKey = 'com.android.example.WORK_EMAIL';
+String groupChannelId = 'grouped channel id';
+String groupChannelName = 'grouped channel name';
+String groupChannelDescription = 'grouped channel description';
+// example based on https://developer.android.com/training/notify-user/group.html
+NotificationDetailsAndroid firstNotificationAndroidSpecifics =
+    new NotificationDetailsAndroid(
+        groupChannelId, groupChannelName, groupChannelDescription,
+        importance: Importance.Max,
+        priority: Priority.High,
+        groupKey: groupKey);
+NotificationDetails firstNotificationPlatformSpecifics =
+    new NotificationDetails(firstNotificationAndroidSpecifics, null);
+await flutterLocalNotificationsPlugin.show(0, 'Alex Faarborg',
+    'You will not believe...', firstNotificationPlatformSpecifics);
+NotificationDetailsAndroid secondNotificationAndroidSpecifics =
+    new NotificationDetailsAndroid(
+        groupChannelId, groupChannelName, groupChannelDescription,
+        importance: Importance.Max,
+        priority: Priority.High,
+        groupKey: groupKey);
+NotificationDetails secondNotificationPlatformSpecifics =
+    new NotificationDetails(secondNotificationAndroidSpecifics, null);
+await flutterLocalNotificationsPlugin.show(
+    0,
+    'Jeff Chang',
+    'Please join us to celebrate the...',
+    secondNotificationPlatformSpecifics);
+
+// create the summary notification
+List<String> lines = new List<String>();
+lines.add('Alex Faarborg  Check this out');
+lines.add('Jeff Chang    Launch Party');
+InboxStyleInformation inboxStyleInformation = new InboxStyleInformation(
+    lines,
+    contentTitle: '2 new messages',
+    summaryText: 'janedoe@example.com');
+NotificationDetailsAndroid androidPlatformChannelSpecifics =
+    new NotificationDetailsAndroid(
+        groupChannelId, groupChannelName, groupChannelDescription,
+        style: NotificationStyleAndroid.Inbox,
+        styleInformation: inboxStyleInformation,
+        groupKey: groupKey,
+        setAsGroupSummary: true);
+NotificationDetails platformChannelSpecifics =
+    new NotificationDetails(androidPlatformChannelSpecifics, null);
+await flutterLocalNotificationsPlugin.show(
+    0, 'Attention', 'Two new messages', platformChannelSpecifics);
 ```
 
 ### Cancelling/deleting a notification
