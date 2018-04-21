@@ -41,6 +41,7 @@ class Priority {
   const Priority(this.value);
 }
 
+/// The available alert behaviours for grouped notifications
 enum GroupAlertBehavior { All, Summary, Children }
 
 /// Configures the notification on Android
@@ -87,6 +88,7 @@ class NotificationDetailsAndroid {
   /// Specifies if this notification will function as the summary for grouped notifications
   bool setAsGroupSummary;
 
+  /// Sets the group alert behavior for this notification. Default is AlertAll. See https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#setGroupAlertBehavior(int)
   GroupAlertBehavior groupAlertBehavior;
 
   NotificationDetailsAndroid(

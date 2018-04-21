@@ -241,7 +241,7 @@ class _MyAppState extends State<MyApp> {
         'Please join us to celebrate the...',
         secondNotificationPlatformSpecifics);
 
-    // create the summary notification
+    // create the summary notification required for older devices that pre-date Android 7.0 (API level 24)
     List<String> lines = new List<String>();
     lines.add('Alex Faarborg  Check this out');
     lines.add('Jeff Chang    Launch Party');
