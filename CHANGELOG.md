@@ -67,3 +67,6 @@
 
 ## [0.1.8]
 * Bug fix for grouping notifications on Android
+
+## [0.1.9]
+* Add ability to cancel/remove all notifications

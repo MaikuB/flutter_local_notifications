@@ -58,50 +58,57 @@ class _MyAppState extends State<MyApp> {
                     child: new RaisedButton(
                         child: new Text('Show plain notification with payload'),
                         onPressed: () async {
-                          await showNotification();
+                          await _showNotification();
                         })),
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
                         child: new Text('Cancel notification'),
                         onPressed: () async {
-                          await cancelNotification();
+                          await _cancelNotification();
                         })),
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
                         child: new Text(
-                            'Schedule notification to appear in 5 seconds, different sound'),
+                            'Schedule notification to appear in 5 seconds, custom sound'),
                         onPressed: () async {
-                          await scheduleNotification();
+                          await _scheduleNotification();
                         })),
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
                         child: new Text('Show notification with no sound'),
                         onPressed: () async {
-                          await showNotificationWithNoSound();
+                          await _showNotificationWithNoSound();
                         })),
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
                         child: new Text('Show big text notification [Android]'),
                         onPressed: () async {
-                          await showBigTextNotification();
+                          await _showBigTextNotification();
                         })),
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
                         child: new Text('Show inbox notification [Android]'),
                         onPressed: () async {
-                          await showInboxNotification();
+                          await _showInboxNotification();
                         })),
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
                         child: new Text('Show grouped notifications [Android]'),
                         onPressed: () async {
-                          await showGroupedNotifications();
+                          await _showGroupedNotifications();
+                        })),
+                new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
+                        child: new Text('cancel all notifications'),
+                        onPressed: () async {
+                          await _cancelAllNotifications();
                         })),
               ],
             ),
@@ -111,7 +118,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  showNotification() async {
+  Future _showNotification() async {
     NotificationDetailsAndroid androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid(
             'your channel id', 'your channel name', 'your channel description',
@@ -125,12 +132,12 @@ class _MyAppState extends State<MyApp> {
         payload: 'item x');
   }
 
-  cancelNotification() async {
+  Future _cancelNotification() async {
     await flutterLocalNotificationsPlugin.cancel(0);
   }
 
   /// Schedules a notification that specifies a different icon, sound and vibration pattern
-  scheduleNotification() async {
+  Future _scheduleNotification() async {
     var scheduledNotificationDateTime =
         new DateTime.now().add(new Duration(seconds: 5));
     var vibrationPattern = new Int64List(4);
@@ -156,7 +163,7 @@ class _MyAppState extends State<MyApp> {
         platformChannelSpecifics);
   }
 
-  showNotificationWithNoSound() async {
+  Future _showNotificationWithNoSound() async {
     NotificationDetailsAndroid androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid('silent channel id',
             'silent channel name', 'silent channel description',
@@ -170,7 +177,7 @@ class _MyAppState extends State<MyApp> {
         '<b>silent</b> body', platformChannelSpecifics);
   }
 
-  showBigTextNotification() async {
+  Future _showBigTextNotification() async {
     BigTextStyleInformation bigTextStyleInformation = new BigTextStyleInformation(
         'Lorem <i>ipsum dolor sit</i> amet, consectetur <b>adipiscing elit</b>, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
         htmlFormatBigText: true,
@@ -189,7 +196,7 @@ class _MyAppState extends State<MyApp> {
         0, 'big text title', 'silent body', platformChannelSpecifics);
   }
 
-  showInboxNotification() async {
+  Future _showInboxNotification() async {
     List<String> lines = new List<String>();
     lines.add('line <b>1</b>');
     lines.add('line <i>2</i>');
@@ -211,7 +218,7 @@ class _MyAppState extends State<MyApp> {
         0, 'inbox title', 'inbox body', platformChannelSpecifics);
   }
 
-  showGroupedNotifications() async {
+  Future _showGroupedNotifications() async {
     String groupKey = 'com.android.example.WORK_EMAIL';
     String groupChannelId = 'grouped channel id';
     String groupChannelName = 'grouped channel name';
@@ -260,6 +267,10 @@ class _MyAppState extends State<MyApp> {
         new NotificationDetails(androidPlatformChannelSpecifics, null);
     await flutterLocalNotificationsPlugin.show(
         3, 'Attention', 'Two new messages', platformChannelSpecifics);
+  }
+
+  Future _cancelAllNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
   }
 
   Future onSelectNotification(String payload) async {
