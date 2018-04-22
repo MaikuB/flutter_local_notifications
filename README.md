@@ -1,4 +1,4 @@
-# flutter_local_notifications
+# Flutter Local Notifications Plugin
 
 [![pub package](https://img.shields.io/pub/v/flutter_local_notifications.svg)](https://pub.dartlang.org/packages/flutter_local_notifications)
 
