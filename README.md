@@ -13,8 +13,8 @@ A cross platform plugin for displaying local notifications.
 * Mockable (plugin and API methods aren't static)
 * Display basic notifications
 * Scheduling when notifications should appear
-* Cancelling/removing notifications
-* Customising the notification sound
+* Cancelling/removing notification by id or all of them
+* Specify a custom notification sound
 * Ability to handle when a user has tapped on a notification, when the app is the foreground, background or terminated
 * [Android] Configuring the importance level
 * [Android] Configuring the priority
@@ -22,7 +22,9 @@ A cross platform plugin for displaying local notifications.
 * [Android] Configure the default icon for all notifications
 * [Android] Configure the icon for each notification (overrides the default when specified)
 * [Android] Formatting notification content via HTML markup (see https://developer.android.com/guide/topics/resources/string-resource.html#StylingWithHTML)
-* [Android] Support for basic notification styling and the big text style for (will look into adding more styles)
+* [Android] Support for the following notification styles
+    * Big text
+    * Inbox
 * [Android] Group notifications
 * [iOS] Customise the permissions to be requested around displaying notifications
 
@@ -102,6 +104,7 @@ await flutterLocalNotificationsPlugin.schedule(
 ### [Android only] Grouping notifications
 
 This is a "translation" of the sample available at https://developer.android.com/training/notify-user/group.html
+For iOS, you could just display the summary notification (not shown in the example) as otherwise the following code would show three notifications 
 
 ```
 String groupKey = 'com.android.example.WORK_EMAIL';
@@ -159,6 +162,12 @@ await flutterLocalNotificationsPlugin.show(
 ```
 // cancel the notification with id value of zero
 await flutterLocalNotificationsPlugin.cancel(0);
+```
+
+### Cancelling/deleting all notifications
+
+```
+await flutterLocalNotificationsPlugin.cancelAll();
 ```
 
 This should cover the basic functionality. Please check out the `example` directory for a sample app that illustrates the rest of the functionality available and refer to the API docs for more information. Also read the below on what you need to configure on each platform

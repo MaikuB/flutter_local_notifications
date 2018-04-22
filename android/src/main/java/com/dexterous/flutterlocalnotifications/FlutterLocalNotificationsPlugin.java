@@ -50,6 +50,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INITIALIZE_METHOD = "initialize";
     private static final String SHOW_METHOD = "show";
     private static final String CANCEL_METHOD = "cancel";
+    private static final String CANCEL_ALL_METHOD = "cancelAll";
     private static final String SCHEDULE_METHOD = "schedule";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
     private static final String PAYLOAD = "payload";
@@ -344,6 +345,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 cancelNotification(id);
                 result.success(null);
                 break;
+            case CANCEL_ALL_METHOD:
+                cancelAllNotifications();
+                result.success(null);
             default:
                 result.notImplemented();
                 break;
@@ -358,8 +362,27 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         alarmManager.cancel(pendingIntent);
         NotificationManagerCompat notificationManager = getNotificationManager();
         notificationManager.cancel(id);
-
         removeNotificationFromCache(id, context);
+    }
+
+    private void cancelAllNotifications() {
+        NotificationManagerCompat notificationManager = getNotificationManager();
+        notificationManager.cancelAll();
+        Context context = registrar.context();
+        ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
+        if(scheduledNotifications == null) {
+            return;
+        }
+
+        Intent intent = new Intent(context, ScheduledNotificationReceiver.class);
+        for (NotificationDetails scheduledNotification :
+                scheduledNotifications) {
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, scheduledNotification.id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager alarmManager = getAlarmManager(context);
+            alarmManager.cancel(pendingIntent);
+        }
+
+        saveScheduledNotifications(context, new ArrayList<NotificationDetails>());
     }
 
     private void showNotification(NotificationDetails notificationDetails) {

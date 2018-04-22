@@ -9,6 +9,7 @@ NSString *const INITIALIZE_METHOD = @"initialize";
 NSString *const SHOW_METHOD = @"show";
 NSString *const SCHEDULE_METHOD = @"schedule";
 NSString *const CANCEL_METHOD = @"cancel";
+NSString *const CANCEL_ALL_METHOD = @"cancelAll";
 NSString *const CHANNEL = @"dexterous.com/flutter/local_notifications";
 
 NSString *const REQUEST_SOUND_PERMISSION = @"requestSoundPermission";
@@ -125,8 +126,8 @@ UILocalNotification *launchNotification;
     bool presentBadge = updateBadge;
     NSString *sound;
     if(call.arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
-    NSDictionary *platformSpecifics = call.arguments[PLATFORM_SPECIFICS];
-
+        NSDictionary *platformSpecifics = call.arguments[PLATFORM_SPECIFICS];
+        
         if(platformSpecifics[PRESENT_ALERT] != [NSNull null]) {
             presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
         }
@@ -157,7 +158,6 @@ UILocalNotification *launchNotification;
         NSArray *idsToRemove = [[NSArray alloc] initWithObjects:[id stringValue], nil];
         [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
         [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
-        
     } else {
         NSArray *notifications = [UIApplication sharedApplication].scheduledLocalNotifications;
         for( int i = 0; i < [notifications count]; i++) {
@@ -165,8 +165,20 @@ UILocalNotification *launchNotification;
             NSNumber *userInfoNotificationId = localNotification.userInfo[NOTIFICATION_ID];
             if([userInfoNotificationId longValue] == [id longValue]) {
                 [[UIApplication sharedApplication] cancelLocalNotification:localNotification];
+                break;
             }
         }
+    }
+    result(nil);
+}
+
+- (void)cancelAllNotifications:(FlutterResult _Nonnull) result {
+    if(@available(iOS 10.0, *)) {
+        UNUserNotificationCenter *center =  [UNUserNotificationCenter currentNotificationCenter];
+        [center removeAllPendingNotificationRequests];
+        [center removeAllDeliveredNotifications];
+    } else {
+        [[UIApplication sharedApplication] cancelAllLocalNotifications];
     }
     result(nil);
 }
@@ -179,7 +191,10 @@ UILocalNotification *launchNotification;
         [self showNotification:call result:result];
     } else if([CANCEL_METHOD isEqualToString:call.method]) {
         [self cancelNotification:call result:result];
-    } else {
+    } else if([CANCEL_ALL_METHOD isEqualToString:call.method]) {
+        [self cancelAllNotifications:result];
+    }
+    else {
         result(FlutterMethodNotImplemented);
     }
 }
@@ -189,43 +204,42 @@ UILocalNotification *launchNotification;
     return userDict;
 }
 
-- (void) showUserNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSString *)payload {
-    if(@available(iOS 10.0, *)) {
-        UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
-        UNNotificationTrigger *trigger;
-        content.title = title;
-        content.body = body;
-        if(presentSound) {
-            if(!sound || [sound isKindOfClass:[NSNull class]]) {
-                content.sound = UNNotificationSound.defaultSound;
-            } else {
-                content.sound = [UNNotificationSound soundNamed:sound];
-            }
-        }
-        content.userInfo = [self buildUserDict:id title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge payload:payload];
-        if(secondsSinceEpoch == nil) {
-            trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:0.1
-                                                                         repeats:NO];
+- (void) showUserNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSString *)payload NS_AVAILABLE_IOS(10.0) {
+    UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
+    UNNotificationTrigger *trigger;
+    content.title = title;
+    content.body = body;
+    if(presentSound) {
+        if(!sound || [sound isKindOfClass:[NSNull class]]) {
+            content.sound = UNNotificationSound.defaultSound;
         } else {
-            NSDate *date = [NSDate dateWithTimeIntervalSince1970:[secondsSinceEpoch integerValue]];
-            NSCalendar *currentCalendar = [NSCalendar currentCalendar];
-            NSDateComponents *dateComponents    = [currentCalendar components:(NSCalendarUnitYear  |
-                                                                               NSCalendarUnitMonth |
-                                                                               NSCalendarUnitDay   |
-                                                                               NSCalendarUnitHour  |
-                                                                               NSCalendarUnitMinute|
-                                                                               NSCalendarUnitSecond) fromDate:date];
-            trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:false];
+            content.sound = [UNNotificationSound soundNamed:sound];
         }
-        UNNotificationRequest* notificationRequest = [UNNotificationRequest
-                                                      requestWithIdentifier:[id stringValue] content:content trigger:trigger];
-        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        [center addNotificationRequest:notificationRequest withCompletionHandler:^(NSError * _Nullable error) {
-            if (error != nil) {
-                NSLog(@"Unable to Add Notification Request");
-            }
-        }];
     }
+    content.userInfo = [self buildUserDict:id title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge payload:payload];
+    if(secondsSinceEpoch == nil) {
+        trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:0.1
+                                                                     repeats:NO];
+    } else {
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:[secondsSinceEpoch integerValue]];
+        NSCalendar *currentCalendar = [NSCalendar currentCalendar];
+        NSDateComponents *dateComponents    = [currentCalendar components:(NSCalendarUnitYear  |
+                                                                           NSCalendarUnitMonth |
+                                                                           NSCalendarUnitDay   |
+                                                                           NSCalendarUnitHour  |
+                                                                           NSCalendarUnitMinute|
+                                                                           NSCalendarUnitSecond) fromDate:date];
+        trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:false];
+    }
+    UNNotificationRequest* notificationRequest = [UNNotificationRequest
+                                                  requestWithIdentifier:[id stringValue] content:content trigger:trigger];
+    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+    [center addNotificationRequest:notificationRequest withCompletionHandler:^(NSError * _Nullable error) {
+        if (error != nil) {
+            NSLog(@"Unable to Add Notification Request");
+        }
+    }];
+    
 }
 
 - (void) showLocalNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSString *)payload {

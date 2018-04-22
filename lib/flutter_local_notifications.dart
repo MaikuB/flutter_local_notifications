@@ -66,6 +66,11 @@ class FlutterLocalNotificationsPlugin {
     await _channel.invokeMethod('cancel', id);
   }
 
+  /// Cancels/removes all notifications
+  Future cancelAll() async {
+    await _channel.invokeMethod('cancelAll');
+  }
+
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
   Future schedule(int id, String title, String body, DateTime scheduledDate,
       NotificationDetails notificationDetails,
