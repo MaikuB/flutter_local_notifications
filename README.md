@@ -241,7 +241,7 @@ By design, iOS applications do not display notifications when they're in the for
 }
 ```
 
-In theory, it should be possible for the plugin to handle this but this the method doesn't seem to fire. Will lodge an issue on the Flutter repository to see if this could be looked into. If this is confirmed to be an issue then I will move this code to be part of the plugin once the fix is out.
+In theory, it should be possible for the plugin to handle this but this the method doesn't seem to fire. The Flutter team has acknowledged that the method hasn't been wired up to enable this https://github.com/flutter/flutter/issues/16662
 
 ## Testing
 
