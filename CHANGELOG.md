@@ -25,7 +25,7 @@
 
 ## [0.0.7]
 
-* [Android] Fix notifications on so that tapping on them will remove them and will also start the app if it has been terminated.
+* [Android] Fix notifications so that tapping on them will remove them and will also start the app if it has been terminated.
 
 ## [0.0.8]
 
