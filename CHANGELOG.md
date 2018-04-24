@@ -34,7 +34,7 @@
 ## [0.0.9]
 
 * [iOS] Enable ability to customise the sound for notifications (**IMPORTANT** requires testing on older iOS versions < 10)
-* [iOS] Can now specify default presentation option (**BREAKING CHANGE** named parameters for iOS initialisation have changed) that can also be overridden at the notification level).
+* [iOS] Can now specify default presentation options (**BREAKING CHANGE** named parameters for iOS initialisation have changed) that can also be overridden at the notification level).
 * [iOS] Fixes for reading in specified options
 
 ## [0.1.0]
