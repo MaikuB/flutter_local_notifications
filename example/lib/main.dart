@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/initialization_settings.dart';
@@ -54,6 +53,11 @@ class _MyAppState extends State<MyApp> {
             child: new Column(
               children: <Widget>[
                 new Padding(
+                  padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                  child: new Text(
+                      'Tap on a notification when it appears to trigger navigation'),
+                ),
+                new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
                         child: new Text('Show plain notification with payload'),
@@ -102,6 +106,13 @@ class _MyAppState extends State<MyApp> {
                         child: new Text('Show grouped notifications [Android]'),
                         onPressed: () async {
                           await _showGroupedNotifications();
+                        })),
+                new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
+                        child: new Text('Show ongoing notification [Android]'),
+                        onPressed: () async {
+                          await _showOngoingNotification();
                         })),
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
@@ -278,12 +289,25 @@ class _MyAppState extends State<MyApp> {
       debugPrint('notification payload: ' + payload);
     }
 
-    /// the navigation doesn't seem to do a complete full page transition on Android when the app is already running.
-    /// Raised an issue on the Fluter repo for it to be investigated.
+    /// IMPORTANT: On beta 2, the navigation doesn't seem to do a complete full page transition on Android when the app is already running.
+    /// This has been fixed by the Flutter team on the master channel.
     await Navigator.push(
       context,
       new MaterialPageRoute(builder: (context) => new SecondScreen(payload)),
     );
+  }
+
+  Future _showOngoingNotification() async {
+    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+        new NotificationDetailsAndroid(
+            'your channel id', 'your channel name', 'your channel description',
+            importance: Importance.Max, priority: Priority.High, ongoing: true);
+    NotificationDetailsIOS iOSPlatformChannelSpecifics =
+        new NotificationDetailsIOS();
+    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(0, 'ongoing notification title',
+        'ongoing notification body', platformChannelSpecifics);
   }
 }
 

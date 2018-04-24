@@ -32,7 +32,8 @@ public class NotificationDetails {
     public String groupKey;
     public Boolean setAsGroupSummary;
     public Integer groupAlertBehavior;
-
+    public Boolean autoCancel;
+    public Boolean ongoing;
 
     public static NotificationDetails from(Map<String, Object> arguments) {
         NotificationDetails notificationDetails = new NotificationDetails();
@@ -45,7 +46,9 @@ public class NotificationDetails {
         }
         @SuppressWarnings("unchecked")
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get("platformSpecifics");
-        if(platformChannelSpecifics != null) {
+        if (platformChannelSpecifics != null) {
+            notificationDetails.autoCancel = (Boolean) arguments.get("autoCancel");
+            notificationDetails.ongoing = (Boolean) arguments.get("ongoing");
             notificationDetails.style = NotificationStyle.values()[(Integer) platformChannelSpecifics.get("style")];
             ProcessStyleInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.icon = (String) platformChannelSpecifics.get("icon");
@@ -85,7 +88,7 @@ public class NotificationDetails {
             String summaryText = (String) styleInformation.get("summaryText");
             Boolean htmlFormatSummaryText = (Boolean) styleInformation.get("htmlFormatSummaryText");
             notificationDetails.styleInformation = new BigTextStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, bigText, htmlFormatBigText, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText);
-        } else if(notificationDetails.style == NotificationStyle.Inbox) {
+        } else if (notificationDetails.style == NotificationStyle.Inbox) {
             String contentTitle = (String) styleInformation.get("contentTitle");
             Boolean htmlFormatContentTitle = (Boolean) styleInformation.get("htmlFormatContentTitle");
             String summaryText = (String) styleInformation.get("summaryText");

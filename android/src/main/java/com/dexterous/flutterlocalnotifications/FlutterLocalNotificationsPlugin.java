@@ -32,6 +32,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 import io.flutter.plugin.common.MethodCall;
@@ -116,18 +117,14 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     public static void removeNotificationFromCache(Integer notificationId, Context context) {
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
-        ArrayList<NotificationDetails> notificationsToRemove = new ArrayList<>();
-        for (int i = 0; i < scheduledNotifications.size(); i++) {
-            NotificationDetails notificationDetails = scheduledNotifications.get(i);
+        for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext();) {
+            NotificationDetails notificationDetails = it.next();
             if (notificationDetails.id == notificationId) {
-                notificationsToRemove.add(notificationDetails);
+                it.remove();
+                break;
             }
         }
-        for (int i = 0; i < notificationsToRemove.size(); i++) {
-            NotificationDetails notificationToRemove = notificationsToRemove.get(i);
-            scheduledNotifications.remove(notificationToRemove);
-            saveScheduledNotifications(context, scheduledNotifications);
-        }
+        saveScheduledNotifications(context, scheduledNotifications);
     }
 
     @SuppressWarnings("deprecation")
@@ -172,9 +169,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setSmallIcon(resourceId)
                 .setContentTitle(defaultStyleInformation.htmlFormatTitle ? fromHtml(notificationDetails.title) : notificationDetails.title)
                 .setContentText(defaultStyleInformation.htmlFormatBody ? fromHtml(notificationDetails.body) : notificationDetails.body)
-                .setAutoCancel(true)
+                .setAutoCancel(BooleanUtils.getValue(notificationDetails.autoCancel))
                 .setContentIntent(pendingIntent)
-                .setPriority(notificationDetails.priority);
+                .setPriority(notificationDetails.priority)
+                .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing));
+
 
         applyGrouping(notificationDetails, builder);
         setSound(context, notificationDetails, builder);
@@ -348,6 +347,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case CANCEL_ALL_METHOD:
                 cancelAllNotifications();
                 result.success(null);
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -370,7 +370,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         notificationManager.cancelAll();
         Context context = registrar.context();
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
-        if(scheduledNotifications == null) {
+        if(scheduledNotifications == null || scheduledNotifications.isEmpty()) {
             return;
         }
 

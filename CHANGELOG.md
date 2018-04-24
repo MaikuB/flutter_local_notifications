@@ -52,7 +52,7 @@
 * Fix broken example app for iOS due to incorrect reference to custom sound file. Added ability to handle when a notification is tapped. See updated example for details on how to do this and will navigate to another page. Note that the second page isn't rendering full-screen on Android if the notification was tapped on while the app was in the foreground. Suspect that this is Flutter rendering issue and have logged this on the Flutter repository at https://github.com/flutter/flutter/issues/16636
 
 ## [0.1.4]
-* Add inbox notification style
+* [Android] Add inbox notification style
 
 ## [0.1.5]
 * **BREAKING CHANGES** There are no functional changes. This is an API cleanup release where I've reorganised the Dart classes to better separate them by platform. What this means is that the import statements in your coode will need to be fixed. Apologies to anyone using the plugin but I feel that this was necessary as Flutter may target additional platforms in the future. Hopefully you'll agree that the end result looks a better :)
@@ -70,3 +70,8 @@
 
 ## [0.1.9]
 * Add ability to cancel/remove all notifications
+
+## [0.2.0]
+* Add ability to specify if notifications on Android should automatically be dismissed upon touching them
+* Add ability to specify in notifications on Android are ongoing
+* Fix bug in cancelling all notifications

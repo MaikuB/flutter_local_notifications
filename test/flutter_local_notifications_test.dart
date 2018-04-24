@@ -7,9 +7,6 @@ import 'package:flutter_local_notifications/initialization_settings.dart';
 import 'package:flutter_local_notifications/notification_details.dart';
 import 'package:flutter_local_notifications/platform_specifics/android/initialization_settings_android.dart';
 import 'package:flutter_local_notifications/platform_specifics/android/notification_details_android.dart';
-import 'package:flutter_local_notifications/platform_specifics/android/styles/big_text_style_information.dart';
-import 'package:flutter_local_notifications/platform_specifics/android/styles/default_style_information.dart';
-import 'package:flutter_local_notifications/platform_specifics/android/styles/inbox_style_information.dart';
 import 'package:flutter_local_notifications/platform_specifics/ios/initialization_settings_ios.dart';
 import 'package:flutter_local_notifications/platform_specifics/ios/notification_details_ios.dart';
 
