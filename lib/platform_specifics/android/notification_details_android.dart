@@ -91,6 +91,12 @@ class NotificationDetailsAndroid {
   /// Sets the group alert behavior for this notification. Default is AlertAll. See https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#setGroupAlertBehavior(int)
   GroupAlertBehavior groupAlertBehavior;
 
+  /// Specifies if the notification should automatically dismissed upon tapping on it
+  bool autoCancel;
+
+  /// Specifies if the notification will be "ongoing".
+  bool ongoing;
+
   NotificationDetailsAndroid(
       this.channelId, this.channelName, this.channelDescription,
       {this.icon,
@@ -104,7 +110,9 @@ class NotificationDetailsAndroid {
       this.vibrationPattern,
       this.groupKey,
       this.setAsGroupSummary,
-      this.groupAlertBehavior = GroupAlertBehavior.All});
+      this.groupAlertBehavior = GroupAlertBehavior.All,
+      this.autoCancel = true,
+      this.ongoing});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -124,7 +132,9 @@ class NotificationDetailsAndroid {
           : styleInformation.toMap(),
       'groupKey': groupKey,
       'setAsGroupSummary': setAsGroupSummary,
-      'groupAlertBehavior': groupAlertBehavior.index
+      'groupAlertBehavior': groupAlertBehavior.index,
+      'autoCancel': autoCancel,
+      'ongoing': ongoing
     };
   }
 }

@@ -48,7 +48,7 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
     selectNotification: onSelectNotification);
 ```
 
-Here we specify we have specified the default icon to use for notifications on Android and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In the example, it is defined as follows to navigate to another page and display the payload associated with the notification. In the real world, this payload could represent the id of the item you want to display the details of.
+Here we specify we have specified the default icon to use for notifications on Android and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In the example, it will trigger navigation to another page and display the payload associated with the notification. 
 
 ```
 Future onSelectNotification(String payload) async {
@@ -62,7 +62,9 @@ Future onSelectNotification(String payload) async {
 }
 ```
 
-Once the initialisation has been done, then you can manage the displaying of notifications
+In the real world, this payload could represent the id of the item you want to display the details of. Once the initialisation has been done, then you can manage the displaying of notifications
+
+Note: If your Flutter SDK is on the beta channel, then there's a known issue (https://github.com/flutter/flutter/issues/15777) where navigation won't complete the full page transition properly on Android while the app is running. The Flutter team have fixed this on the master channel so you may want to change to track the master channel but do so at your own risk.
 
 ### Displaying a notification
 
@@ -239,7 +241,7 @@ By design, iOS applications do not display notifications when they're in the for
 }
 ```
 
-In theory, it should be possible for the plugin to handle this but this the method doesn't seem to fire. Will lodge an issue on the Flutter repository to see if this could be looked into. If this is confirmed to be an issue then I will move this code to be part of the plugin once the fix is out.
+In theory, it should be possible for the plugin to handle this but this the method doesn't seem to fire. The Flutter team has acknowledged that the method hasn't been wired up to enable this https://github.com/flutter/flutter/issues/16662
 
 ## Testing
 
