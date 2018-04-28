@@ -209,6 +209,10 @@ Note that with Android 8.0+, sounds and vibrations are associated with notificat
 By design, iOS applications do not display notifications when they're in the foreground. For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. For older versions of iOS, you will need update the AppDelegate class to handle when a local notification is received to display an alert. This is shown in the sample app within the `didReceiveLocalNotification` method of the `AppDelegate` class. The notification title can be found by looking up the `title` within the `userInfo` dictionary of the `UILocalNotification` object
 
 ```
+#import <flutter_local_notifications/FlutterLocalNotificationsPlugin.h>
+
+...
+
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
 {
     if(@available(iOS 10.0, *)) {
@@ -242,6 +246,15 @@ By design, iOS applications do not display notifications when they're in the for
 ```
 
 In theory, it should be possible for the plugin to handle this but this the method doesn't seem to fire. The Flutter team has acknowledged that the method hasn't been wired up to enable this https://github.com/flutter/flutter/issues/16662
+
+Also if you have set notifications to be periodically shown, then on older iOS versions (< 10), if the application was uninstalled without cancelling all alarms then the next time it's installed you may see the "old" notifications being fired. If this is not the desired behaviour, then you can add the following to the `didFinishLaunchingWithOptions` method of your `AppDelegate` class.
+
+```
+if(![[NSUserDefaults standardUserDefaults]objectForKey:@"Notification"]){
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+    [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"Notification"];
+}
+```
 
 ## Testing
 

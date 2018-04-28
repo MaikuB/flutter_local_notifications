@@ -60,7 +60,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     [registrar addMethodCallDelegate:instance channel:channel];
 }
 
-
 - (void)initialize:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
     appResumingFromBackground = false;
     NSDictionary *arguments = [call arguments];
@@ -279,6 +278,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if(@available(iOS 8.2, *)) {
         notification.alertTitle = title;
     }
+    
     if(presentSound) {
         if(!sound || [sound isKindOfClass:[NSNull class]]){
             notification.soundName = UILocalNotificationDefaultSoundName;
@@ -286,6 +286,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
             notification.soundName = sound;
         }
     }
+    
     notification.userInfo = [self buildUserDict:id title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge payload:payload];
     if(secondsSinceEpoch == nil) {
         if(repeatInterval != nil) {
