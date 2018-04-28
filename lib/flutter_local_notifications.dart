@@ -41,17 +41,6 @@ class FlutterLocalNotificationsPlugin {
     return result;
   }
 
-  Map<String, dynamic> _retrievePlatformSpecificInitializationSettings(
-      InitializationSettings initializationSettings) {
-    Map<String, dynamic> serializedPlatformSpecifics;
-    if (_platform.isAndroid) {
-      serializedPlatformSpecifics = initializationSettings.android.toMap();
-    } else if (_platform.isIOS) {
-      serializedPlatformSpecifics = initializationSettings.ios.toMap();
-    }
-    return serializedPlatformSpecifics;
-  }
-
   /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped
   Future show(int id, String title, String body,
       NotificationDetails notificationDetails,
@@ -118,6 +107,17 @@ class FlutterLocalNotificationsPlugin {
       serializedPlatformSpecifics = notificationDetails?.android?.toMap();
     } else if (_platform.isIOS) {
       serializedPlatformSpecifics = notificationDetails?.iOS?.toMap();
+    }
+    return serializedPlatformSpecifics;
+  }
+
+  Map<String, dynamic> _retrievePlatformSpecificInitializationSettings(
+      InitializationSettings initializationSettings) {
+    Map<String, dynamic> serializedPlatformSpecifics;
+    if (_platform.isAndroid) {
+      serializedPlatformSpecifics = initializationSettings?.android?.toMap();
+    } else if (_platform.isIOS) {
+      serializedPlatformSpecifics = initializationSettings?.ios?.toMap();
     }
     return serializedPlatformSpecifics;
   }
