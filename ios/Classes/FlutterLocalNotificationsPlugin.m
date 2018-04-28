@@ -8,6 +8,7 @@ FlutterMethodChannel* channel;
 NSString *const INITIALIZE_METHOD = @"initialize";
 NSString *const SHOW_METHOD = @"show";
 NSString *const SCHEDULE_METHOD = @"schedule";
+NSString *const PERIODICALLY_SHOW_METHOD = @"periodicallyShow";
 NSString *const CANCEL_METHOD = @"cancel";
 NSString *const CANCEL_ALL_METHOD = @"cancelAll";
 NSString *const CHANNEL = @"dexterous.com/flutter/local_notifications";
@@ -27,6 +28,7 @@ NSString *const PRESENT_ALERT = @"presentAlert";
 NSString *const PRESENT_SOUND = @"presentSound";
 NSString *const PRESENT_BADGE = @"presentBadge";
 NSString *const MILLISECONDS_SINCE_EPOCH = @"millisecondsSinceEpoch";
+NSString *const REPEAT_INTERVAL = @"repeatInterval";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
@@ -37,6 +39,13 @@ bool updateBadge;
 bool initialized;
 + (bool) resumingFromBackground { return appResumingFromBackground; }
 UILocalNotification *launchNotification;
+
+typedef NS_ENUM(NSInteger, RepeatInterval) {
+    EveryMinute,
+    Hourly,
+    Daily,
+    Weekly
+};
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     channel = [FlutterMethodChannel
@@ -140,13 +149,16 @@ UILocalNotification *launchNotification;
         sound = platformSpecifics[SOUND];
     }
     NSNumber *secondsSinceEpoch;
+    NSNumber *repeatInterval;
     if([SCHEDULE_METHOD isEqualToString:call.method]) {
         secondsSinceEpoch = @([call.arguments[MILLISECONDS_SINCE_EPOCH] integerValue] / 1000);
+    } else if([PERIODICALLY_SHOW_METHOD isEqualToString:call.method]) {
+        repeatInterval = @([call.arguments[REPEAT_INTERVAL] integerValue]);
     }
     if(@available(iOS 10.0, *)) {
-        [self showUserNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound payload:payload];
+        [self showUserNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch repeatInterval:repeatInterval presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound payload:payload];
     } else {
-        [self showLocalNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound payload:payload];
+        [self showLocalNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch repeatInterval:repeatInterval presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound payload:payload];
     }
     result(nil);
 }
@@ -187,7 +199,7 @@ UILocalNotification *launchNotification;
     if([INITIALIZE_METHOD isEqualToString:call.method]) {
         [self initialize:call result:result];
         
-    } else if ([SHOW_METHOD isEqualToString:call.method] || [SCHEDULE_METHOD isEqualToString:call.method]) {
+    } else if ([SHOW_METHOD isEqualToString:call.method] || [SCHEDULE_METHOD isEqualToString:call.method] || [PERIODICALLY_SHOW_METHOD isEqualToString:call.method]) {
         [self showNotification:call result:result];
     } else if([CANCEL_METHOD isEqualToString:call.method]) {
         [self cancelNotification:call result:result];
@@ -204,7 +216,7 @@ UILocalNotification *launchNotification;
     return userDict;
 }
 
-- (void) showUserNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSString *)payload NS_AVAILABLE_IOS(10.0) {
+- (void) showUserNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch repeatInterval:(NSNumber *)repeatInterval presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSString *)payload NS_AVAILABLE_IOS(10.0) {
     UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
     UNNotificationTrigger *trigger;
     content.title = title;
@@ -218,8 +230,27 @@ UILocalNotification *launchNotification;
     }
     content.userInfo = [self buildUserDict:id title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge payload:payload];
     if(secondsSinceEpoch == nil) {
-        trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:0.1
-                                                                     repeats:NO];
+        NSTimeInterval timeInterval = 0.1;
+        Boolean repeats = NO;
+        if(repeatInterval != nil) {
+            switch([repeatInterval integerValue]) {
+                case EveryMinute:
+                    timeInterval = 60;
+                    break;
+                case Hourly:
+                    timeInterval = 60 * 60;
+                    break;
+                case Daily:
+                    timeInterval = 60 * 60 * 24;
+                    break;
+                case Weekly:
+                    timeInterval = 60 * 60 * 24 * 7;
+                    break;
+            }
+            repeats = YES;
+        }
+        trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:timeInterval
+                                                                     repeats:repeats];
     } else {
         NSDate *date = [NSDate dateWithTimeIntervalSince1970:[secondsSinceEpoch integerValue]];
         NSCalendar *currentCalendar = [NSCalendar currentCalendar];
@@ -242,7 +273,7 @@ UILocalNotification *launchNotification;
     
 }
 
-- (void) showLocalNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSString *)payload {
+- (void) showLocalNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch repeatInterval:(NSNumber *)repeatInterval presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSString *)payload {
     UILocalNotification *notification = [[UILocalNotification alloc] init];
     notification.alertBody = body;
     if(@available(iOS 8.2, *)) {
@@ -257,6 +288,31 @@ UILocalNotification *launchNotification;
     }
     notification.userInfo = [self buildUserDict:id title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge payload:payload];
     if(secondsSinceEpoch == nil) {
+        if(repeatInterval != nil) {
+            NSTimeInterval timeInterval = 0;
+
+            switch([repeatInterval integerValue]) {
+                case EveryMinute:
+                    timeInterval = 60;
+                    notification.repeatInterval = NSCalendarUnitMinute;
+                    break;
+                case Hourly:
+                    timeInterval = 60 * 60;
+                    notification.repeatInterval = NSCalendarUnitHour;
+                    break;
+                case Daily:
+                    timeInterval = 60 * 60 * 24;
+                    notification.repeatInterval = NSCalendarUnitDay;
+                    break;
+                case Weekly:
+                    timeInterval = 60 * 60 * 24 * 7;
+                    notification.repeatInterval = NSCalendarUnitWeekOfYear;
+                    break;
+            }
+            notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:timeInterval];
+            [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+            return;
+        }
         [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
     } else {
         notification.fireDate = [NSDate dateWithTimeIntervalSince1970:[secondsSinceEpoch integerValue]];

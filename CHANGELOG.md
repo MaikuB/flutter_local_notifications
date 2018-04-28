@@ -77,3 +77,6 @@
 * [Android] Add ability to specify if notifications should automatically be dismissed upon touching them
 * [Android] Add ability to specify in notifications are ongoing
 * [Android] Fix bug in cancelling all notifications
+
+## [0.2.1]
+* [Android & iOS] Add ability to set a notification to be periodically displayed

@@ -7,6 +7,9 @@ import 'package:platform/platform.dart';
 
 typedef Future<dynamic> MessageHandler(String message);
 
+/// The available intervals for periodically showing notifications
+enum RepeatInterval { EveryMinute, Daily, Hourly, Weekly }
+
 class FlutterLocalNotificationsPlugin {
   factory FlutterLocalNotificationsPlugin() => _instance;
 
@@ -30,28 +33,31 @@ class FlutterLocalNotificationsPlugin {
   Future<bool> initialize(InitializationSettings initializationSettings,
       {MessageHandler selectNotification}) async {
     onSelectNotification = selectNotification;
-    Map<String, dynamic> serializedPlatformSpecifics;
-    if (_platform.isAndroid) {
-      serializedPlatformSpecifics = initializationSettings.android.toMap();
-    } else if (_platform.isIOS) {
-      serializedPlatformSpecifics = initializationSettings.ios.toMap();
-    }
+    Map<String, dynamic> serializedPlatformSpecifics =
+        _retrievePlatformSpecificInitializationSettings(initializationSettings);
     _channel.setMethodCallHandler(_handleMethod);
     var result =
         await _channel.invokeMethod('initialize', serializedPlatformSpecifics);
     return result;
   }
 
+  Map<String, dynamic> _retrievePlatformSpecificInitializationSettings(
+      InitializationSettings initializationSettings) {
+    Map<String, dynamic> serializedPlatformSpecifics;
+    if (_platform.isAndroid) {
+      serializedPlatformSpecifics = initializationSettings.android.toMap();
+    } else if (_platform.isIOS) {
+      serializedPlatformSpecifics = initializationSettings.ios.toMap();
+    }
+    return serializedPlatformSpecifics;
+  }
+
   /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped
   Future show(int id, String title, String body,
       NotificationDetails notificationDetails,
       {String payload}) async {
-    Map<String, dynamic> serializedPlatformSpecifics;
-    if (_platform.isAndroid) {
-      serializedPlatformSpecifics = notificationDetails?.android?.toMap();
-    } else if (_platform.isIOS) {
-      serializedPlatformSpecifics = notificationDetails?.iOS?.toMap();
-    }
+    Map<String, dynamic> serializedPlatformSpecifics =
+        _retrievePlatformSpecificNotificationDetails(notificationDetails);
     await _channel.invokeMethod('show', <String, dynamic>{
       'id': id,
       'title': title,
@@ -75,12 +81,8 @@ class FlutterLocalNotificationsPlugin {
   Future schedule(int id, String title, String body, DateTime scheduledDate,
       NotificationDetails notificationDetails,
       {String payload}) async {
-    Map<String, dynamic> serializedPlatformSpecifics;
-    if (_platform.isAndroid) {
-      serializedPlatformSpecifics = notificationDetails?.android?.toMap();
-    } else if (_platform.isIOS) {
-      serializedPlatformSpecifics = notificationDetails?.iOS?.toMap();
-    }
+    Map<String, dynamic> serializedPlatformSpecifics =
+        _retrievePlatformSpecificNotificationDetails(notificationDetails);
     await _channel.invokeMethod('schedule', <String, dynamic>{
       'id': id,
       'title': title,
@@ -89,6 +91,35 @@ class FlutterLocalNotificationsPlugin {
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
     });
+  }
+
+  /// Periodically show a notification using the specified interval.
+  /// For example, specifying a hourly interval means the first time the notification will be an hour after the method has been called and then every hour after that.
+  Future periodicallyShow(int id, String title, String body,
+      RepeatInterval repeatInterval, NotificationDetails notificationDetails,
+      {String payload}) async {
+    Map<String, dynamic> serializedPlatformSpecifics =
+        _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': new DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': repeatInterval.index,
+      'platformSpecifics': serializedPlatformSpecifics,
+      'payload': payload ?? ''
+    });
+  }
+
+  Map<String, dynamic> _retrievePlatformSpecificNotificationDetails(
+      NotificationDetails notificationDetails) {
+    Map<String, dynamic> serializedPlatformSpecifics;
+    if (_platform.isAndroid) {
+      serializedPlatformSpecifics = notificationDetails?.android?.toMap();
+    } else if (_platform.isIOS) {
+      serializedPlatformSpecifics = notificationDetails?.iOS?.toMap();
+    }
+    return serializedPlatformSpecifics;
   }
 
   Future _handleMethod(MethodCall call) {

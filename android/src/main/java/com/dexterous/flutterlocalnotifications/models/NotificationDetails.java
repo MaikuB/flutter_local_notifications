@@ -3,6 +3,7 @@ package com.dexterous.flutterlocalnotifications.models;
 import android.os.Build;
 
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
+import com.dexterous.flutterlocalnotifications.RepeatInterval;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
@@ -27,13 +28,18 @@ public class NotificationDetails {
     public long[] vibrationPattern;
     public NotificationStyle style;
     public StyleInformation styleInformation;
+    public RepeatInterval repeatInterval;
     public Long millisecondsSinceEpoch;
+    public Long calledAt;
     public String payload;
     public String groupKey;
     public Boolean setAsGroupSummary;
     public Integer groupAlertBehavior;
     public Boolean autoCancel;
     public Boolean ongoing;
+
+    // Note: this is set on the Android to save details about the icon that should be used when re-shydrating scheduled notifications when a device has been restarted
+    public Integer iconResourceId;
 
     public static NotificationDetails from(Map<String, Object> arguments) {
         NotificationDetails notificationDetails = new NotificationDetails();
@@ -43,6 +49,12 @@ public class NotificationDetails {
         notificationDetails.body = (String) arguments.get("body");
         if (arguments.containsKey("millisecondsSinceEpoch")) {
             notificationDetails.millisecondsSinceEpoch = (Long) arguments.get("millisecondsSinceEpoch");
+        }
+        if(arguments.containsKey("calledAt")) {
+            notificationDetails.calledAt = (Long) arguments.get("calledAt");
+        }
+        if(arguments.containsKey("repeatInterval")) {
+            notificationDetails.repeatInterval = RepeatInterval.values()[(Integer)arguments.get("repeatInterval")];
         }
         @SuppressWarnings("unchecked")
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get("platformSpecifics");

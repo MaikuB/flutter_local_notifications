@@ -12,16 +12,18 @@ import android.support.v4.app.NotificationManagerCompat;
 
 public class ScheduledNotificationReceiver extends BroadcastReceiver {
 
-    public static String NOTIFICATION_ID = "notification_id";
-    public static String NOTIFICATION = "notification";
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            Notification notification = intent.getParcelableExtra(NOTIFICATION);
-            int notificationId = intent.getIntExtra(NOTIFICATION_ID, 0);
-            notificationManager.notify(notificationId, notification);
-            FlutterLocalNotificationsPlugin.removeNotificationFromCache(notificationId, context);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        Notification notification = intent.getParcelableExtra(FlutterLocalNotificationsPlugin.NOTIFICATION);
+        int notificationId = intent.getIntExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_ID, 0);
+        notificationManager.notify(notificationId, notification);
+        boolean repeat = intent.getBooleanExtra(FlutterLocalNotificationsPlugin.REPEAT, false);
+        if (repeat) {
+            return;
+        }
+        FlutterLocalNotificationsPlugin.removeNotificationFromCache(notificationId, context);
     }
 
 }

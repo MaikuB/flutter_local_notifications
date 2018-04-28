@@ -53,8 +53,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String CANCEL_METHOD = "cancel";
     private static final String CANCEL_ALL_METHOD = "cancelAll";
     private static final String SCHEDULE_METHOD = "schedule";
+    private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
     private static final String PAYLOAD = "payload";
+    public static String NOTIFICATION_ID = "notification_id";
+    public static String NOTIFICATION = "notification";
+    public static String REPEAT = "repeat";
     private static MethodChannel channel;
     private static int defaultIconResourceId;
     private final Registrar registrar;
@@ -67,8 +71,14 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     public static void rescheduleNotifications(Context context) {
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
-        for (int i = 0; i < scheduledNotifications.size(); i++) {
-            scheduleNotification(context, scheduledNotifications.get(i), false);
+        for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext();) {
+            NotificationDetails scheduledNotification = it.next();
+            if(scheduledNotification.repeatInterval == null) {
+                scheduleNotification(context, scheduledNotification, false);
+            }
+            else {
+                repeatNotification(context, scheduledNotification, false);
+            }
         }
     }
 
@@ -76,7 +86,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         ArrayList<NotificationDetails> scheduledNotifications = new ArrayList<>();
         SharedPreferences sharedPreferences = context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
         String json = sharedPreferences.getString(SCHEDULED_NOTIFICATIONS, null);
-        System.out.println("json " + json);
         if (json != null) {
             Gson gson = getGsonBuilder();
             Type type = new TypeToken<ArrayList<NotificationDetails>>() {
@@ -139,8 +148,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static void scheduleNotification(Context context, NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
         Notification notification = createNotification(context, notificationDetails);
         Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
-        notificationIntent.putExtra(ScheduledNotificationReceiver.NOTIFICATION_ID, notificationDetails.id);
-        notificationIntent.putExtra(ScheduledNotificationReceiver.NOTIFICATION, notification);
+        notificationIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
+        notificationIntent.putExtra(NOTIFICATION, notification);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         AlarmManager alarmManager = getAlarmManager(context);
@@ -152,12 +161,58 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
+    private static void repeatNotification(Context context, NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
+        Notification notification = createNotification(context, notificationDetails);
+        Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
+        notificationIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
+        notificationIntent.putExtra(NOTIFICATION, notification);
+        notificationIntent.putExtra(REPEAT, true);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        AlarmManager alarmManager = getAlarmManager(context);
+        long startTimeMilliseconds = notificationDetails.calledAt;
+        long repeatInterval = 0;
+        switch(notificationDetails.repeatInterval) {
+
+            case EveryMinute:
+                repeatInterval = 60000;
+                break;
+            case Hourly:
+                repeatInterval = 60000 * 60;
+                break;
+            case Daily:
+                repeatInterval = 60000 * 60 * 24;
+                break;
+            case Weekly:
+                repeatInterval = 60000 * 60 * 24 * 7;
+                break;
+        }
+
+        long currentTime = System.currentTimeMillis();
+        while(startTimeMilliseconds < currentTime) {
+            startTimeMilliseconds += repeatInterval;
+        }
+
+
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, startTimeMilliseconds, repeatInterval, pendingIntent);
+        if (updateScheduledNotificationsCache) {
+            ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
+            scheduledNotifications.add(notificationDetails);
+            saveScheduledNotifications(context, scheduledNotifications);
+        }
+    }
+
     private static Notification createNotification(Context context, NotificationDetails notificationDetails) {
         int resourceId;
-        if (notificationDetails.icon != null) {
-            resourceId = context.getResources().getIdentifier(notificationDetails.icon, "drawable", context.getPackageName());
+        if(notificationDetails.iconResourceId == null) {
+            if (notificationDetails.icon != null) {
+                resourceId = context.getResources().getIdentifier(notificationDetails.icon, "drawable", context.getPackageName());
+            } else {
+                resourceId = defaultIconResourceId;
+            }
+            notificationDetails.iconResourceId = resourceId;
         } else {
-            resourceId = defaultIconResourceId;
+            resourceId = notificationDetails.iconResourceId;
         }
         setupNotificationChannel(context, notificationDetails);
         Intent intent = new Intent(context, getMainActivityClass(context));
@@ -336,6 +391,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 Map<String, Object> arguments = call.arguments();
                 NotificationDetails notificationDetails = NotificationDetails.from(arguments);
                 scheduleNotification(registrar.context(), notificationDetails, true);
+                result.success(null);
+                break;
+            }
+            case PERIODICALLY_SHOW_METHOD: {
+                Map<String, Object> arguments = call.arguments();
+                NotificationDetails notificationDetails = NotificationDetails.from(arguments);
+                repeatNotification(registrar.context(), notificationDetails, true);
                 result.success(null);
                 break;
             }
