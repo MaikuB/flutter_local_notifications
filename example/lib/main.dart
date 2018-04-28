@@ -82,6 +82,13 @@ class _MyAppState extends State<MyApp> {
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
+                        child: new Text('Repeat notification every minute'),
+                        onPressed: () async {
+                          await _repeatNotification();
+                        })),
+                new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
                         child: new Text('Show notification with no sound'),
                         onPressed: () async {
                           await _showNotificationWithNoSound();
@@ -308,6 +315,18 @@ class _MyAppState extends State<MyApp> {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(0, 'ongoing notification title',
         'ongoing notification body', platformChannelSpecifics);
+  }
+
+  Future _repeatNotification() async {
+    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+        new NotificationDetailsAndroid('repeating channel id',
+            'repeating channel name', 'repeating description');
+    NotificationDetailsIOS iOSPlatformChannelSpecifics =
+        new NotificationDetailsIOS();
+    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
+        'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
   }
 }
 
