@@ -48,7 +48,7 @@ public class NotificationDetails {
     private static final String HTML_FORMAT_LINES = "htmlFormatLines";
     private static final String HTML_FORMAT_TITLE = "htmlFormatTitle";
     private static final String HTML_FORMAT_CONTENT = "htmlFormatContent";
-    
+
     public Integer id;
     public String title;
     public String body;
