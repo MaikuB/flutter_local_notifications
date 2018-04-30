@@ -13,6 +13,7 @@ A cross platform plugin for displaying local notifications.
 * Mockable (plugin and API methods aren't static)
 * Display basic notifications
 * Scheduling when notifications should appear
+* Periodically show a notification
 * Cancelling/removing notification by id or all of them
 * Specify a custom notification sound
 * Ability to handle when a user has tapped on a notification, when the app is the foreground, background or terminated
