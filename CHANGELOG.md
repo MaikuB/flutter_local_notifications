@@ -80,3 +80,5 @@
 
 ## [0.2.1]
 * [Android & iOS] Add ability to set a notification to be periodically displayed
+* [Android] Fix a bug where the small icon could not be be found when loading scheduled notifications from shared preferences to reschedule them on a device reboot
+* [Android] Fix example app manifest file

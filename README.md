@@ -103,6 +103,21 @@ await flutterLocalNotificationsPlugin.schedule(
     platformChannelSpecifics);
 ```
 
+### Periodically show a notification with a specified interval
+
+```
+// Show a notification every minute with the first appearance happening a minute after invoking the method
+NotificationDetailsAndroid androidPlatformChannelSpecifics =
+    new NotificationDetailsAndroid('repeating channel id',
+        'repeating channel name', 'repeating description');
+NotificationDetailsIOS iOSPlatformChannelSpecifics =
+    new NotificationDetailsIOS();
+NotificationDetails platformChannelSpecifics = new NotificationDetails(
+    androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
+    'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
+```
+
 ### [Android only] Grouping notifications
 
 This is a "translation" of the sample available at https://developer.android.com/training/notify-user/group.html
