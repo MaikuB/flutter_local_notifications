@@ -77,7 +77,7 @@ public class NotificationDetails {
     // Note: this is set on the Android to save details about the icon that should be used when re-shydrating scheduled notifications when a device has been restarted
     public Integer iconResourceId;
 
-    private static NotificationDetails from(Map<String, Object> arguments) {
+    public static NotificationDetails from(Map<String, Object> arguments) {
         NotificationDetails notificationDetails = new NotificationDetails();
         notificationDetails.payload = (String) arguments.get(PAYLOAD);
         notificationDetails.id = (Integer) arguments.get(ID);
