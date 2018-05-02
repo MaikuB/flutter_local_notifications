@@ -173,7 +173,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         long startTimeMilliseconds = notificationDetails.calledAt;
         long repeatInterval = 0;
         switch(notificationDetails.repeatInterval) {
-
             case EveryMinute:
                 repeatInterval = 60000;
                 break;
@@ -185,6 +184,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 break;
             case Weekly:
                 repeatInterval = 60000 * 60 * 24 * 7;
+                break;
+            default:
                 break;
         }
 
@@ -323,6 +324,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                     }
                 }
                 builder.setStyle(inboxStyle);
+                break;
+            default:
                 break;
         }
     }

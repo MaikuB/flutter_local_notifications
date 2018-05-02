@@ -8,7 +8,7 @@ import 'package:platform/platform.dart';
 typedef Future<dynamic> MessageHandler(String message);
 
 /// The available intervals for periodically showing notifications
-enum RepeatInterval { EveryMinute, Daily, Hourly, Weekly }
+enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
 
 class FlutterLocalNotificationsPlugin {
   factory FlutterLocalNotificationsPlugin() => _instance;
