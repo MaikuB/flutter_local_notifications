@@ -84,4 +84,4 @@
 * [Android] Fix example app manifest file
 
 ## [0.2.2]
-* [Android/iOS] Fix RepeatInterval not being mapped to the correct values on the native side
+* [Android/iOS] Fix RepeatInterval not being mapped to the correct values on the native side. Thanks to deckerst for spotting the issue.
