@@ -1,4 +1,5 @@
 #import "FlutterLocalNotificationsPlugin.h"
+#import "NotificationTime.h"
 
 static bool appResumingFromBackground;
 
@@ -29,6 +30,10 @@ NSString *const PRESENT_SOUND = @"presentSound";
 NSString *const PRESENT_BADGE = @"presentBadge";
 NSString *const MILLISECONDS_SINCE_EPOCH = @"millisecondsSinceEpoch";
 NSString *const REPEAT_INTERVAL = @"repeatInterval";
+NSString *const REPEAT_TIME = @"repeatTime";
+NSString *const HOUR = @"hour";
+NSString *const MINUTE = @"minute";
+NSString *const SECOND = @"second";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
@@ -149,15 +154,29 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     }
     NSNumber *secondsSinceEpoch;
     NSNumber *repeatInterval;
+    NotificationTime *repeatTime;
     if([SCHEDULE_METHOD isEqualToString:call.method]) {
         secondsSinceEpoch = @([call.arguments[MILLISECONDS_SINCE_EPOCH] integerValue] / 1000);
     } else if([PERIODICALLY_SHOW_METHOD isEqualToString:call.method]) {
+        if (call.arguments[REPEAT_TIME] != [NSNull null]) {
+            NSDictionary *timeArguments = (NSDictionary *) call.arguments[REPEAT_TIME];
+            repeatTime = [[NotificationTime alloc] init];
+            if (timeArguments[HOUR] != [NSNull null]) {
+                repeatTime.hour = @([timeArguments[HOUR] integerValue]);
+            }
+            if (timeArguments[MINUTE] != [NSNull null]) {
+                repeatTime.minute = @([timeArguments[MINUTE] integerValue]);
+            }
+            if (timeArguments[SECOND] != [NSNull null]) {
+                repeatTime.second = @([timeArguments[SECOND] integerValue]);
+            }
+        }
         repeatInterval = @([call.arguments[REPEAT_INTERVAL] integerValue]);
     }
     if(@available(iOS 10.0, *)) {
-        [self showUserNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch repeatInterval:repeatInterval presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound payload:payload];
+        [self showUserNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch repeatInterval:repeatInterval repeatTime:repeatTime presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound payload:payload];
     } else {
-        [self showLocalNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch repeatInterval:repeatInterval presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound payload:payload];
+        [self showLocalNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch repeatInterval:repeatInterval repeatTime:repeatTime presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound payload:payload];
     }
     result(nil);
 }
@@ -215,7 +234,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     return userDict;
 }
 
-- (void) showUserNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch repeatInterval:(NSNumber *)repeatInterval presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSString *)payload NS_AVAILABLE_IOS(10.0) {
+- (void) showUserNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch repeatInterval:(NSNumber *)repeatInterval repeatTime:(NotificationTime *)repeatTime presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSString *)payload NS_AVAILABLE_IOS(10.0) {
     UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
     UNNotificationTrigger *trigger;
     content.title = title;
@@ -248,8 +267,16 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
             }
             repeats = YES;
         }
-        trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:timeInterval
-                                                                     repeats:repeats];
+        if (repeatTime != nil) {
+            NSDateComponents *dateComponent = [[NSDateComponents alloc] init];
+            [dateComponent setHour:[repeatTime.hour integerValue]];
+            [dateComponent setMinute:[repeatTime.minute integerValue]];
+            [dateComponent setSecond:[repeatTime.second integerValue]];
+            trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponent repeats: repeats];
+        } else {
+            trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:timeInterval
+                repeats:repeats];
+        }                                                          
     } else {
         NSDate *date = [NSDate dateWithTimeIntervalSince1970:[secondsSinceEpoch integerValue]];
         NSCalendar *currentCalendar = [NSCalendar currentCalendar];
@@ -272,7 +299,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     
 }
 
-- (void) showLocalNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch repeatInterval:(NSNumber *)repeatInterval presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSString *)payload {
+- (void) showLocalNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch repeatInterval:(NSNumber *)repeatInterval repeatTime:(NotificationTime *)repeatTime presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSString *)payload {
     UILocalNotification *notification = [[UILocalNotification alloc] init];
     notification.alertBody = body;
     if(@available(iOS 8.2, *)) {
@@ -310,7 +337,17 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                     notification.repeatInterval = NSCalendarUnitWeekOfYear;
                     break;
             }
-            notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:timeInterval];
+            if (repeatTime != nil) {
+                NSDate *now = [NSDate date];
+                NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier: NSCalendarIdentifierGregorian];
+                NSDateComponents *components = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:now];
+                [components setHour:[repeatTime.hour integerValue]];
+                [components setMinute:[repeatTime.minute integerValue]];
+                [components setSecond:[repeatTime.second integerValue]];
+                notification.fireDate = [calendar dateFromComponents:components];
+            } else {
+                notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:timeInterval];
+            }
             [[UIApplication sharedApplication] scheduleLocalNotification:notification];
             return;
         }
