@@ -89,6 +89,13 @@ class _MyAppState extends State<MyApp> {
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
+                        child: new Text('Repeat notification every day at 10:00:00 am (aprox)'),
+                        onPressed: () async {
+                          await _repeatDailyAtTime(new Time(10, 0, 0));
+                        })),
+                new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
                         child: new Text('Show notification with no sound'),
                         onPressed: () async {
                           await _showNotificationWithNoSound();
@@ -327,6 +334,18 @@ class _MyAppState extends State<MyApp> {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
         'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
+  }
+
+  Future _repeatDailyAtTime(Time time) async {
+    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+        new NotificationDetailsAndroid('repeatDailyAtTime channel id',
+            'repeatDailyAtTime channel name', 'repeatDailyAtTime description');
+    NotificationDetailsIOS iOSPlatformChannelSpecifics =
+        new NotificationDetailsIOS();
+    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.showDailyAtTime(0, 'repeatDailyAtTime title',
+        'It\'s ${time.hour}:${time.minute}:${time.second} approximately' , time, platformChannelSpecifics);
   }
 }
 

@@ -10,6 +10,20 @@ typedef Future<dynamic> MessageHandler(String message);
 /// The available intervals for periodically showing notifications
 enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
 
+class Time {
+  final int hour;
+  final int minute;
+  final int second;
+
+  Time([this.hour = 0, this.minute = 0, this.second = 0]);
+
+  Map<String, int> get serialized => {
+    "hour": hour,
+    "minute": minute,
+    "second": second,
+  };
+}
+
 class FlutterLocalNotificationsPlugin {
   factory FlutterLocalNotificationsPlugin() => _instance;
 
@@ -95,6 +109,23 @@ class FlutterLocalNotificationsPlugin {
       'body': body,
       'calledAt': new DateTime.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
+      'platformSpecifics': serializedPlatformSpecifics,
+      'payload': payload ?? ''
+    });
+  }
+
+  Future showDailyAtTime(int id, String title, String body,
+    Time notificationTime, NotificationDetails notificationDetails,
+    {String payload}) async {
+    Map<String, dynamic> serializedPlatformSpecifics =
+        _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': new DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': RepeatInterval.Daily.index,
+      'repeatTime': notificationTime.serialized,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
     });
