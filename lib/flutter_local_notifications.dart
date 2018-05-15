@@ -125,7 +125,7 @@ class FlutterLocalNotificationsPlugin {
     {String payload}) async {
     Map<String, dynamic> serializedPlatformSpecifics =
         _retrievePlatformSpecificNotificationDetails(notificationDetails);
-    await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
+    await _channel.invokeMethod('showDailyAtTime', <String, dynamic>{
       'id': id,
       'title': title,
       'body': body,

@@ -56,6 +56,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String CANCEL_ALL_METHOD = "cancelAll";
     private static final String SCHEDULE_METHOD = "schedule";
     private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
+    private static final String SHOW_DAILY_AT_TIME = "showDailyAtTime";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
     private static final String PAYLOAD = "payload";
     public static String NOTIFICATION_ID = "notification_id";
@@ -407,6 +408,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 break;
             }
             case PERIODICALLY_SHOW_METHOD: {
+                Map<String, Object> arguments = call.arguments();
+                NotificationDetails notificationDetails = NotificationDetails.from(arguments);
+                repeatNotification(registrar.context(), notificationDetails, true);
+                result.success(null);
+                break;
+            }
+            case SHOW_DAILY_AT_TIME: {
                 Map<String, Object> arguments = call.arguments();
                 NotificationDetails notificationDetails = NotificationDetails.from(arguments);
                 repeatNotification(registrar.context(), notificationDetails, true);
