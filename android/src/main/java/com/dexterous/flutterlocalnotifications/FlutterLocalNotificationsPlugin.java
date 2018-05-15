@@ -20,6 +20,7 @@ import android.text.Html;
 import android.text.Spanned;
 
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
+import com.dexterous.flutterlocalnotifications.models.Time;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
@@ -32,6 +33,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -54,6 +56,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String CANCEL_ALL_METHOD = "cancelAll";
     private static final String SCHEDULE_METHOD = "schedule";
     private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
+    private static final String SHOW_DAILY_AT_TIME = "showDailyAtTime";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
     private static final String PAYLOAD = "payload";
     public static String NOTIFICATION_ID = "notification_id";
@@ -170,32 +173,39 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         AlarmManager alarmManager = getAlarmManager(context);
-        long startTimeMilliseconds = notificationDetails.calledAt;
-        long repeatInterval = 0;
-        switch(notificationDetails.repeatInterval) {
-            case EveryMinute:
-                repeatInterval = 60000;
-                break;
-            case Hourly:
-                repeatInterval = 60000 * 60;
-                break;
-            case Daily:
-                repeatInterval = 60000 * 60 * 24;
-                break;
-            case Weekly:
-                repeatInterval = 60000 * 60 * 24 * 7;
-                break;
-            default:
-                break;
+        if (notificationDetails.repeatTime != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, notificationDetails.repeatTime.hour);
+            calendar.set(Calendar.MINUTE, notificationDetails.repeatTime.minute);
+            calendar.set(Calendar.SECOND, notificationDetails.repeatTime.second);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
+        } else {
+            long startTimeMilliseconds = notificationDetails.calledAt;
+            long repeatInterval = 0;
+            switch(notificationDetails.repeatInterval) {
+                case EveryMinute:
+                    repeatInterval = 60000;
+                    break;
+                case Hourly:
+                    repeatInterval = 60000 * 60;
+                    break;
+                case Daily:
+                    repeatInterval = 60000 * 60 * 24;
+                    break;
+                case Weekly:
+                    repeatInterval = 60000 * 60 * 24 * 7;
+                    break;
+                default:
+                    break;
+            }
+
+            long currentTime = System.currentTimeMillis();
+            while(startTimeMilliseconds < currentTime) {
+                startTimeMilliseconds += repeatInterval;
+            }
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, startTimeMilliseconds, repeatInterval, pendingIntent);
         }
-
-        long currentTime = System.currentTimeMillis();
-        while(startTimeMilliseconds < currentTime) {
-            startTimeMilliseconds += repeatInterval;
-        }
-
-
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, startTimeMilliseconds, repeatInterval, pendingIntent);
         if (updateScheduledNotificationsCache) {
             ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
             scheduledNotifications.add(notificationDetails);
@@ -398,6 +408,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 break;
             }
             case PERIODICALLY_SHOW_METHOD: {
+                Map<String, Object> arguments = call.arguments();
+                NotificationDetails notificationDetails = NotificationDetails.from(arguments);
+                repeatNotification(registrar.context(), notificationDetails, true);
+                result.success(null);
+                break;
+            }
+            case SHOW_DAILY_AT_TIME: {
                 Map<String, Object> arguments = call.arguments();
                 NotificationDetails notificationDetails = NotificationDetails.from(arguments);
                 repeatNotification(registrar.context(), notificationDetails, true);
