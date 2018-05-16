@@ -84,4 +84,8 @@
 * [Android] Fix example app manifest file
 
 ## [0.2.2]
-* [Android/iOS] Fix RepeatInterval not being mapped to the correct values on the native side
+* [Android/iOS] Fix RepeatInterval not being mapped to the correct values on the native side. Thanks to Thibault Deckers (deckerst) for spotting the issue.
+
+## [0.2.3]
+* [Android/iOS] Add ability to have a notification shown daily at a specified time. Credits to Javier Lecuona (javiercbk) for submitting the PR for this.
+* [Android/iOS] Add ability to have a notification shown weekly on a specific day and time.

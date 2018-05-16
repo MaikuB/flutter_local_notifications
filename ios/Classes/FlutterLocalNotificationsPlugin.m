@@ -1,5 +1,6 @@
 #import "FlutterLocalNotificationsPlugin.h"
 #import "NotificationTime.h"
+#import "NotificationDetails.h"
 
 static bool appResumingFromBackground;
 
@@ -11,9 +12,11 @@ NSString *const SHOW_METHOD = @"show";
 NSString *const SCHEDULE_METHOD = @"schedule";
 NSString *const PERIODICALLY_SHOW_METHOD = @"periodicallyShow";
 NSString *const SHOW_DAILY_AT_TIME_METHOD = @"showDailyAtTime";
+NSString *const SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = @"showWeeklyAtDayAndTime";
 NSString *const CANCEL_METHOD = @"cancel";
 NSString *const CANCEL_ALL_METHOD = @"cancelAll";
 NSString *const CHANNEL = @"dexterous.com/flutter/local_notifications";
+NSString *const DAY = @"day";
 
 NSString *const REQUEST_SOUND_PERMISSION = @"requestSoundPermission";
 NSString *const REQUEST_ALERT_PERMISSION = @"requestAlertPermission";
@@ -52,6 +55,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     Daily,
     Weekly
 };
+
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     channel = [FlutterMethodChannel
@@ -131,53 +135,53 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 }
 
 - (void)showNotification:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
-    NSNumber *id = call.arguments[ID];
-    NSString *title = call.arguments[TITLE];
-    NSString *body = call.arguments[BODY];
-    NSString *payload = call.arguments[PAYLOAD];
-    bool presentAlert = displayAlert;
-    bool presentSound = playSound;
-    bool presentBadge = updateBadge;
-    NSString *sound;
+    NotificationDetails *notificationDetails = [[NotificationDetails alloc]init];
+    notificationDetails.id = call.arguments[ID];
+    notificationDetails.title = call.arguments[TITLE];
+    notificationDetails.body = call.arguments[BODY];
+    notificationDetails.payload = call.arguments[PAYLOAD];
+    notificationDetails.presentAlert = displayAlert;
+    notificationDetails.presentSound = playSound;
+    notificationDetails.presentBadge = updateBadge;
     if(call.arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
         NSDictionary *platformSpecifics = call.arguments[PLATFORM_SPECIFICS];
         
         if(platformSpecifics[PRESENT_ALERT] != [NSNull null]) {
-            presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
+            notificationDetails.presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
         }
         if(platformSpecifics[PRESENT_SOUND] != [NSNull null]) {
-            presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
+            notificationDetails.presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
         }
         if(platformSpecifics[PRESENT_BADGE] != [NSNull null]) {
-            presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
+            notificationDetails.presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
         }
-        sound = platformSpecifics[SOUND];
+        notificationDetails.sound = platformSpecifics[SOUND];
     }
-    NSNumber *secondsSinceEpoch;
-    NSNumber *repeatInterval;
-    NotificationTime *repeatTime;
     if([SCHEDULE_METHOD isEqualToString:call.method]) {
-        secondsSinceEpoch = @([call.arguments[MILLISECONDS_SINCE_EPOCH] integerValue] / 1000);
-    } else if([PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]) {
-        if (call.arguments[REPEAT_TIME] != [NSNull null]) {
+        notificationDetails.secondsSinceEpoch = @([call.arguments[MILLISECONDS_SINCE_EPOCH] integerValue] / 1000);
+    } else if([PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method] || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
+        if (call.arguments[REPEAT_TIME]) {
             NSDictionary *timeArguments = (NSDictionary *) call.arguments[REPEAT_TIME];
-            repeatTime = [[NotificationTime alloc] init];
+            notificationDetails.repeatTime = [[NotificationTime alloc] init];
             if (timeArguments[HOUR] != [NSNull null]) {
-                repeatTime.hour = @([timeArguments[HOUR] integerValue]);
+                notificationDetails.repeatTime.hour = @([timeArguments[HOUR] integerValue]);
             }
             if (timeArguments[MINUTE] != [NSNull null]) {
-                repeatTime.minute = @([timeArguments[MINUTE] integerValue]);
+                notificationDetails.repeatTime.minute = @([timeArguments[MINUTE] integerValue]);
             }
             if (timeArguments[SECOND] != [NSNull null]) {
-                repeatTime.second = @([timeArguments[SECOND] integerValue]);
+                notificationDetails.repeatTime.second = @([timeArguments[SECOND] integerValue]);
             }
         }
-        repeatInterval = @([call.arguments[REPEAT_INTERVAL] integerValue]);
+        if (call.arguments[DAY]) {
+            notificationDetails.day = @([call.arguments[DAY] integerValue]);
+        }
+        notificationDetails.repeatInterval = @([call.arguments[REPEAT_INTERVAL] integerValue]);
     }
     if(@available(iOS 10.0, *)) {
-        [self showUserNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch repeatInterval:repeatInterval repeatTime:repeatTime presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound payload:payload];
+        [self showUserNotification:notificationDetails];
     } else {
-        [self showLocalNotification:id title:title body:body secondsSinceEpoch:secondsSinceEpoch repeatInterval:repeatInterval repeatTime:repeatTime presentAlert:presentAlert  presentSound:presentSound presentBadge:presentBadge sound:sound payload:payload];
+        [self showLocalNotification:notificationDetails];
     }
     result(nil);
 }
@@ -218,7 +222,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if([INITIALIZE_METHOD isEqualToString:call.method]) {
         [self initialize:call result:result];
         
-    } else if ([SHOW_METHOD isEqualToString:call.method] || [SCHEDULE_METHOD isEqualToString:call.method] || [PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]) {
+    } else if ([SHOW_METHOD isEqualToString:call.method] || [SCHEDULE_METHOD isEqualToString:call.method] || [PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]
+               || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
         [self showNotification:call result:result];
     } else if([CANCEL_METHOD isEqualToString:call.method]) {
         [self cancelNotification:call result:result];
@@ -235,24 +240,24 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     return userDict;
 }
 
-- (void) showUserNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch repeatInterval:(NSNumber *)repeatInterval repeatTime:(NotificationTime *)repeatTime presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSString *)payload NS_AVAILABLE_IOS(10.0) {
+- (void) showUserNotification:(NotificationDetails *) notificationDetails NS_AVAILABLE_IOS(10.0) {
     UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
     UNNotificationTrigger *trigger;
-    content.title = title;
-    content.body = body;
-    if(presentSound) {
-        if(!sound || [sound isKindOfClass:[NSNull class]]) {
+    content.title = notificationDetails.title;
+    content.body = notificationDetails.body;
+    if(notificationDetails.presentSound) {
+        if(!notificationDetails.sound || [notificationDetails.sound isKindOfClass:[NSNull class]]) {
             content.sound = UNNotificationSound.defaultSound;
         } else {
-            content.sound = [UNNotificationSound soundNamed:sound];
+            content.sound = [UNNotificationSound soundNamed:notificationDetails.sound];
         }
     }
-    content.userInfo = [self buildUserDict:id title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge payload:payload];
-    if(secondsSinceEpoch == nil) {
+    content.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload];
+    if(notificationDetails.secondsSinceEpoch == nil) {
         NSTimeInterval timeInterval = 0.1;
         Boolean repeats = NO;
-        if(repeatInterval != nil) {
-            switch([repeatInterval integerValue]) {
+        if(notificationDetails.repeatInterval != nil) {
+            switch([notificationDetails.repeatInterval integerValue]) {
                 case EveryMinute:
                     timeInterval = 60;
                     break;
@@ -268,29 +273,34 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
             }
             repeats = YES;
         }
-        if (repeatTime != nil) {
-            NSDateComponents *dateComponent = [[NSDateComponents alloc] init];
-            [dateComponent setHour:[repeatTime.hour integerValue]];
-            [dateComponent setMinute:[repeatTime.minute integerValue]];
-            [dateComponent setSecond:[repeatTime.second integerValue]];
-            trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponent repeats: repeats];
+        if (notificationDetails.repeatTime != nil) {
+            NSDate *now = [NSDate date];
+            NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier: NSCalendarIdentifierGregorian];
+            NSDateComponents *dateComponents = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:now];
+            [dateComponents setHour:[notificationDetails.repeatTime.hour integerValue]];
+            [dateComponents setMinute:[notificationDetails.repeatTime.minute integerValue]];
+            [dateComponents setSecond:[notificationDetails.repeatTime.second integerValue]];
+            if(notificationDetails.day != nil) {
+                [dateComponents setWeekday:[notificationDetails.day integerValue]];
+            }
+            trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats: repeats];
         } else {
             trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:timeInterval
-                repeats:repeats];
-        }                                                          
+                                                                         repeats:repeats];
+        }
     } else {
-        NSDate *date = [NSDate dateWithTimeIntervalSince1970:[secondsSinceEpoch integerValue]];
-        NSCalendar *currentCalendar = [NSCalendar currentCalendar];
-        NSDateComponents *dateComponents    = [currentCalendar components:(NSCalendarUnitYear  |
-                                                                           NSCalendarUnitMonth |
-                                                                           NSCalendarUnitDay   |
-                                                                           NSCalendarUnitHour  |
-                                                                           NSCalendarUnitMinute|
-                                                                           NSCalendarUnitSecond) fromDate:date];
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:[notificationDetails.secondsSinceEpoch integerValue]];
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        NSDateComponents *dateComponents    = [calendar components:(NSCalendarUnitYear  |
+                                                                    NSCalendarUnitMonth |
+                                                                    NSCalendarUnitDay   |
+                                                                    NSCalendarUnitHour  |
+                                                                    NSCalendarUnitMinute|
+                                                                    NSCalendarUnitSecond) fromDate:date];
         trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:false];
     }
     UNNotificationRequest* notificationRequest = [UNNotificationRequest
-                                                  requestWithIdentifier:[id stringValue] content:content trigger:trigger];
+                                                  requestWithIdentifier:[notificationDetails.id stringValue] content:content trigger:trigger];
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     [center addNotificationRequest:notificationRequest withCompletionHandler:^(NSError * _Nullable error) {
         if (error != nil) {
@@ -300,27 +310,27 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     
 }
 
-- (void) showLocalNotification:(NSNumber *)id title:(NSString *)title body:(NSString *)body secondsSinceEpoch:(NSNumber *)secondsSinceEpoch repeatInterval:(NSNumber *)repeatInterval repeatTime:(NotificationTime *)repeatTime presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge sound:(NSString*)sound payload:(NSString *)payload {
+- (void) showLocalNotification:(NotificationDetails *) notificationDetails {
     UILocalNotification *notification = [[UILocalNotification alloc] init];
-    notification.alertBody = body;
+    notification.alertBody = notificationDetails.body;
     if(@available(iOS 8.2, *)) {
-        notification.alertTitle = title;
+        notification.alertTitle = notificationDetails.title;
     }
     
-    if(presentSound) {
-        if(!sound || [sound isKindOfClass:[NSNull class]]){
+    if(notificationDetails.presentSound) {
+        if(!notificationDetails.sound || [notificationDetails.sound isKindOfClass:[NSNull class]]){
             notification.soundName = UILocalNotificationDefaultSoundName;
         } else {
-            notification.soundName = sound;
+            notification.soundName = notificationDetails.sound;
         }
     }
     
-    notification.userInfo = [self buildUserDict:id title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge payload:payload];
-    if(secondsSinceEpoch == nil) {
-        if(repeatInterval != nil) {
+    notification.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload];
+    if(notificationDetails.secondsSinceEpoch == nil) {
+        if(notificationDetails.repeatInterval != nil) {
             NSTimeInterval timeInterval = 0;
-
-            switch([repeatInterval integerValue]) {
+            
+            switch([notificationDetails.repeatInterval integerValue]) {
                 case EveryMinute:
                     timeInterval = 60;
                     notification.repeatInterval = NSCalendarUnitMinute;
@@ -338,14 +348,17 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                     notification.repeatInterval = NSCalendarUnitWeekOfYear;
                     break;
             }
-            if (repeatTime != nil) {
+            if (notificationDetails.repeatTime != nil) {
                 NSDate *now = [NSDate date];
                 NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier: NSCalendarIdentifierGregorian];
-                NSDateComponents *components = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:now];
-                [components setHour:[repeatTime.hour integerValue]];
-                [components setMinute:[repeatTime.minute integerValue]];
-                [components setSecond:[repeatTime.second integerValue]];
-                notification.fireDate = [calendar dateFromComponents:components];
+                NSDateComponents *dateComponents = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:now];
+                [dateComponents setHour:[notificationDetails.repeatTime.hour integerValue]];
+                [dateComponents setMinute:[notificationDetails.repeatTime.minute integerValue]];
+                [dateComponents setSecond:[notificationDetails.repeatTime.second integerValue]];
+                if(notificationDetails.day != nil) {
+                    [dateComponents setWeekday:[notificationDetails.day integerValue]];
+                }
+                notification.fireDate = [calendar dateFromComponents:dateComponents];
             } else {
                 notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:timeInterval];
             }
@@ -354,7 +367,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         }
         [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
     } else {
-        notification.fireDate = [NSDate dateWithTimeIntervalSince1970:[secondsSinceEpoch integerValue]];
+        notification.fireDate = [NSDate dateWithTimeIntervalSince1970:[notificationDetails.secondsSinceEpoch integerValue]];
         [[UIApplication sharedApplication] scheduleLocalNotification:notification];
     }
 }

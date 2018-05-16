@@ -49,6 +49,7 @@ public class NotificationDetails {
     private static final String HTML_FORMAT_LINES = "htmlFormatLines";
     private static final String HTML_FORMAT_TITLE = "htmlFormatTitle";
     private static final String HTML_FORMAT_CONTENT = "htmlFormatContent";
+    private static final String DAY = "day";
 
     public Integer id;
     public String title;
@@ -75,8 +76,9 @@ public class NotificationDetails {
     public Integer groupAlertBehavior;
     public Boolean autoCancel;
     public Boolean ongoing;
+    public Integer day;
 
-    // Note: this is set on the Android to save details about the icon that should be used when re-shydrating scheduled notifications when a device has been restarted
+    // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted
     public Integer iconResourceId;
 
     public static NotificationDetails from(Map<String, Object> arguments) {
@@ -98,6 +100,9 @@ public class NotificationDetails {
             @SuppressWarnings("unchecked")
             Map<String, Object> repeatTimeParams = (Map<String, Object>)arguments.get(REPEAT_TIME);
             notificationDetails.repeatTime = Time.from(repeatTimeParams);
+        }
+        if(arguments.containsKey(DAY)) {
+            notificationDetails.day = (Integer) arguments.get(DAY);
         }
         @SuppressWarnings("unchecked")
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get(PLATFORM_SPECIFICS);
