@@ -29,11 +29,11 @@ class _MyAppState extends State<MyApp> {
   initState() {
     super.initState();
     // initialise the plugin
-    InitializationSettingsAndroid initializationSettingsAndroid =
+    var initializationSettingsAndroid =
         new InitializationSettingsAndroid('app_icon');
-    InitializationSettingsIOS initializationSettingsIOS =
+    var initializationSettingsIOS =
         new InitializationSettingsIOS();
-    InitializationSettings initializationSettings = new InitializationSettings(
+    var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
@@ -89,9 +89,18 @@ class _MyAppState extends State<MyApp> {
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
-                        child: new Text('Repeat notification every day at 10:00:00 am (aprox)'),
+                        child: new Text(
+                            'Repeat notification every day at approximately 10:00:00 am'),
                         onPressed: () async {
-                          await _repeatDailyAtTime(new Time(10, 0, 0));
+                          await _showDailyAtTime();
+                        })),
+                new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
+                        child: new Text(
+                            'Repeat notification weekly on Monday at approximately 10:00:00 am'),
+                        onPressed: () async {
+                          await _showWeeklyAtDayAndTime();
                         })),
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
@@ -144,13 +153,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future _showNotification() async {
-    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+    var androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid(
             'your channel id', 'your channel name', 'your channel description',
             importance: Importance.Max, priority: Priority.High);
-    NotificationDetailsIOS iOSPlatformChannelSpecifics =
+    var iOSPlatformChannelSpecifics =
         new NotificationDetailsIOS();
-    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+    var platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
@@ -170,15 +179,15 @@ class _MyAppState extends State<MyApp> {
     vibrationPattern[1] = 1000;
     vibrationPattern[2] = 5000;
     vibrationPattern[3] = 2000;
-    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+    var androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid('your other channel id',
             'your other channel name', 'your other channel description',
             icon: 'secondary_icon',
             sound: 'slow_spring_board',
             vibrationPattern: vibrationPattern);
-    NotificationDetailsIOS iOSPlatformChannelSpecifics =
+    var iOSPlatformChannelSpecifics =
         new NotificationDetailsIOS(sound: "slow_spring_board.aiff");
-    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+    var platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.schedule(
         0,
@@ -189,83 +198,83 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future _showNotificationWithNoSound() async {
-    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+    var androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid('silent channel id',
             'silent channel name', 'silent channel description',
             playSound: false,
             styleInformation: new DefaultStyleInformation(true, true));
-    NotificationDetailsIOS iOSPlatformChannelSpecifics =
+    var iOSPlatformChannelSpecifics =
         new NotificationDetailsIOS(presentSound: false);
-    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+    var platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(0, '<b>silent</b> title',
         '<b>silent</b> body', platformChannelSpecifics);
   }
 
   Future _showBigTextNotification() async {
-    BigTextStyleInformation bigTextStyleInformation = new BigTextStyleInformation(
+    var bigTextStyleInformation = new BigTextStyleInformation(
         'Lorem <i>ipsum dolor sit</i> amet, consectetur <b>adipiscing elit</b>, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
         htmlFormatBigText: true,
         contentTitle: 'overridden <b>big</b> context title',
         htmlFormatContentTitle: true,
         summaryText: 'summary <i>text</i>',
         htmlFormatSummaryText: true);
-    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+    var androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid('big text channel id',
             'big text channel name', 'big text channel description',
             style: NotificationStyleAndroid.BigText,
             styleInformation: bigTextStyleInformation);
-    NotificationDetails platformChannelSpecifics =
+    var platformChannelSpecifics =
         new NotificationDetails(androidPlatformChannelSpecifics, null);
     await flutterLocalNotificationsPlugin.show(
         0, 'big text title', 'silent body', platformChannelSpecifics);
   }
 
   Future _showInboxNotification() async {
-    List<String> lines = new List<String>();
+    var lines = new List<String>();
     lines.add('line <b>1</b>');
     lines.add('line <i>2</i>');
-    InboxStyleInformation inboxStyleInformation = new InboxStyleInformation(
+    var inboxStyleInformation = new InboxStyleInformation(
         lines,
         htmlFormatLines: true,
         contentTitle: 'overridden <b>inbox</b> context title',
         htmlFormatContentTitle: true,
         summaryText: 'summary <i>text</i>',
         htmlFormatSummaryText: true);
-    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+    var androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid('inbox channel id', 'inboxchannel name',
             'inbox channel description',
             style: NotificationStyleAndroid.Inbox,
             styleInformation: inboxStyleInformation);
-    NotificationDetails platformChannelSpecifics =
+    var platformChannelSpecifics =
         new NotificationDetails(androidPlatformChannelSpecifics, null);
     await flutterLocalNotificationsPlugin.show(
         0, 'inbox title', 'inbox body', platformChannelSpecifics);
   }
 
   Future _showGroupedNotifications() async {
-    String groupKey = 'com.android.example.WORK_EMAIL';
-    String groupChannelId = 'grouped channel id';
-    String groupChannelName = 'grouped channel name';
-    String groupChannelDescription = 'grouped channel description';
+    var groupKey = 'com.android.example.WORK_EMAIL';
+    var groupChannelId = 'grouped channel id';
+    var groupChannelName = 'grouped channel name';
+    var groupChannelDescription = 'grouped channel description';
     // example based on https://developer.android.com/training/notify-user/group.html
-    NotificationDetailsAndroid firstNotificationAndroidSpecifics =
+    var firstNotificationAndroidSpecifics =
         new NotificationDetailsAndroid(
             groupChannelId, groupChannelName, groupChannelDescription,
             importance: Importance.Max,
             priority: Priority.High,
             groupKey: groupKey);
-    NotificationDetails firstNotificationPlatformSpecifics =
+    var firstNotificationPlatformSpecifics =
         new NotificationDetails(firstNotificationAndroidSpecifics, null);
     await flutterLocalNotificationsPlugin.show(1, 'Alex Faarborg',
         'You will not believe...', firstNotificationPlatformSpecifics);
-    NotificationDetailsAndroid secondNotificationAndroidSpecifics =
+    var secondNotificationAndroidSpecifics =
         new NotificationDetailsAndroid(
             groupChannelId, groupChannelName, groupChannelDescription,
             importance: Importance.Max,
             priority: Priority.High,
             groupKey: groupKey);
-    NotificationDetails secondNotificationPlatformSpecifics =
+    var secondNotificationPlatformSpecifics =
         new NotificationDetails(secondNotificationAndroidSpecifics, null);
     await flutterLocalNotificationsPlugin.show(
         2,
@@ -274,21 +283,21 @@ class _MyAppState extends State<MyApp> {
         secondNotificationPlatformSpecifics);
 
     // create the summary notification required for older devices that pre-date Android 7.0 (API level 24)
-    List<String> lines = new List<String>();
+    var lines = new List<String>();
     lines.add('Alex Faarborg  Check this out');
     lines.add('Jeff Chang    Launch Party');
-    InboxStyleInformation inboxStyleInformation = new InboxStyleInformation(
+    var inboxStyleInformation = new InboxStyleInformation(
         lines,
         contentTitle: '2 new messages',
         summaryText: 'janedoe@example.com');
-    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+    var androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid(
             groupChannelId, groupChannelName, groupChannelDescription,
             style: NotificationStyleAndroid.Inbox,
             styleInformation: inboxStyleInformation,
             groupKey: groupKey,
             setAsGroupSummary: true);
-    NotificationDetails platformChannelSpecifics =
+    var platformChannelSpecifics =
         new NotificationDetails(androidPlatformChannelSpecifics, null);
     await flutterLocalNotificationsPlugin.show(
         3, 'Attention', 'Two new messages', platformChannelSpecifics);
@@ -303,8 +312,6 @@ class _MyAppState extends State<MyApp> {
       debugPrint('notification payload: ' + payload);
     }
 
-    /// IMPORTANT: On beta 2, the navigation doesn't seem to do a complete full page transition on Android when the app is already running.
-    /// This has been fixed by the Flutter team on the master channel.
     await Navigator.push(
       context,
       new MaterialPageRoute(builder: (context) => new SecondScreen(payload)),
@@ -312,40 +319,67 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future _showOngoingNotification() async {
-    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+    var androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid(
             'your channel id', 'your channel name', 'your channel description',
             importance: Importance.Max, priority: Priority.High, ongoing: true);
-    NotificationDetailsIOS iOSPlatformChannelSpecifics =
+    var iOSPlatformChannelSpecifics =
         new NotificationDetailsIOS();
-    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+    var platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(0, 'ongoing notification title',
         'ongoing notification body', platformChannelSpecifics);
   }
 
   Future _repeatNotification() async {
-    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+    var androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid('repeating channel id',
             'repeating channel name', 'repeating description');
-    NotificationDetailsIOS iOSPlatformChannelSpecifics =
+    var iOSPlatformChannelSpecifics =
         new NotificationDetailsIOS();
-    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+    var platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
         'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
   }
 
-  Future _repeatDailyAtTime(Time time) async {
-    NotificationDetailsAndroid androidPlatformChannelSpecifics =
+  Future _showDailyAtTime() async {
+    var time = new Time(10, 0, 0);
+    var androidPlatformChannelSpecifics =
         new NotificationDetailsAndroid('repeatDailyAtTime channel id',
             'repeatDailyAtTime channel name', 'repeatDailyAtTime description');
-    NotificationDetailsIOS iOSPlatformChannelSpecifics =
+    var iOSPlatformChannelSpecifics =
         new NotificationDetailsIOS();
-    NotificationDetails platformChannelSpecifics = new NotificationDetails(
+    var platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.showDailyAtTime(0, 'repeatDailyAtTime title',
-        'It\'s ${time.hour}:${time.minute}:${time.second} approximately' , time, platformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.showDailyAtTime(
+        0,
+        'show daily title',
+        'Daily notification shown at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
+        time,
+        platformChannelSpecifics);
+  }
+
+  Future _showWeeklyAtDayAndTime() async {
+    var time = new Time(10, 0, 0);
+    var androidPlatformChannelSpecifics =
+        new NotificationDetailsAndroid('show weekly channel id',
+            'show weekly channel name', 'show weekly description');
+    var iOSPlatformChannelSpecifics =
+        new NotificationDetailsIOS();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
+        0,
+        'show weekly title',
+        'Weekly notification shown on Monday at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
+        Day.Monday,
+        time,
+        platformChannelSpecifics);
+  }
+
+  String _toTwoDigitString(int value) {
+    return value.toString().padLeft(2, '0');
   }
 }
 

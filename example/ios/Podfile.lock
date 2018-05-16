@@ -4,12 +4,12 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
-  - Flutter (from `Pods/.symlinks/flutter/ios-release`)
+  - Flutter (from `Pods/.symlinks/flutter/ios`)
   - flutter_local_notifications (from `Pods/.symlinks/plugins/flutter_local_notifications/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
-    :path: Pods/.symlinks/flutter/ios-release
+    :path: Pods/.symlinks/flutter/ios
   flutter_local_notifications:
     :path: Pods/.symlinks/plugins/flutter_local_notifications/ios
 

@@ -57,6 +57,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SCHEDULE_METHOD = "schedule";
     private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
     private static final String SHOW_DAILY_AT_TIME = "showDailyAtTime";
+    private static final String SHOW_WEEKLY_AT_DAY_AND_TIME = "showWeeklyAtDayAndTime";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
     private static final String PAYLOAD = "payload";
     public static String NOTIFICATION_ID = "notification_id";
@@ -74,12 +75,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     public static void rescheduleNotifications(Context context) {
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
-        for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext();) {
+        for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
             NotificationDetails scheduledNotification = it.next();
-            if(scheduledNotification.repeatInterval == null) {
+            if (scheduledNotification.repeatInterval == null) {
                 scheduleNotification(context, scheduledNotification, false);
-            }
-            else {
+            } else {
                 repeatNotification(context, scheduledNotification, false);
             }
         }
@@ -129,7 +129,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     public static void removeNotificationFromCache(Integer notificationId, Context context) {
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
-        for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext();) {
+        for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
             NotificationDetails notificationDetails = it.next();
             if (notificationDetails.id == notificationId) {
                 it.remove();
@@ -173,39 +173,43 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         AlarmManager alarmManager = getAlarmManager(context);
-        if (notificationDetails.repeatTime != null) {
+        long repeatInterval = 0;
+        switch (notificationDetails.repeatInterval) {
+            case EveryMinute:
+                repeatInterval = 60000;
+                break;
+            case Hourly:
+                repeatInterval = 60000 * 60;
+                break;
+            case Daily:
+                repeatInterval = 60000 * 60 * 24;
+                break;
+            case Weekly:
+                repeatInterval = 60000 * 60 * 24 * 7;
+                break;
+            default:
+                break;
+        }
+
+        long startTimeMilliseconds = notificationDetails.calledAt;
+        if (notificationDetails.repeatTime == null) {
+            long currentTime = System.currentTimeMillis();
+            while (startTimeMilliseconds < currentTime) {
+                startTimeMilliseconds += repeatInterval;
+            }
+        } else {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, notificationDetails.repeatTime.hour);
             calendar.set(Calendar.MINUTE, notificationDetails.repeatTime.minute);
             calendar.set(Calendar.SECOND, notificationDetails.repeatTime.second);
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-        } else {
-            long startTimeMilliseconds = notificationDetails.calledAt;
-            long repeatInterval = 0;
-            switch(notificationDetails.repeatInterval) {
-                case EveryMinute:
-                    repeatInterval = 60000;
-                    break;
-                case Hourly:
-                    repeatInterval = 60000 * 60;
-                    break;
-                case Daily:
-                    repeatInterval = 60000 * 60 * 24;
-                    break;
-                case Weekly:
-                    repeatInterval = 60000 * 60 * 24 * 7;
-                    break;
-                default:
-                    break;
+            if (notificationDetails.day != null) {
+                calendar.set(Calendar.DAY_OF_WEEK, notificationDetails.day);
             }
-
-            long currentTime = System.currentTimeMillis();
-            while(startTimeMilliseconds < currentTime) {
-                startTimeMilliseconds += repeatInterval;
-            }
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, startTimeMilliseconds, repeatInterval, pendingIntent);
+            startTimeMilliseconds = calendar.getTimeInMillis();
         }
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, startTimeMilliseconds, repeatInterval, pendingIntent);
+
         if (updateScheduledNotificationsCache) {
             ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
             scheduledNotifications.add(notificationDetails);
@@ -215,7 +219,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private static Notification createNotification(Context context, NotificationDetails notificationDetails) {
         int resourceId;
-        if(notificationDetails.iconResourceId == null) {
+        if (notificationDetails.iconResourceId == null) {
             if (notificationDetails.icon != null) {
                 resourceId = context.getResources().getIdentifier(notificationDetails.icon, "drawable", context.getPackageName());
             } else {
@@ -251,12 +255,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private static void applyGrouping(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
         Boolean isGrouped = false;
-        if(!StringUtils.isNullOrEmpty(notificationDetails.groupKey)) {
+        if (!StringUtils.isNullOrEmpty(notificationDetails.groupKey)) {
             builder.setGroup(notificationDetails.groupKey);
             isGrouped = true;
         }
 
-        if(isGrouped) {
+        if (isGrouped) {
             if (BooleanUtils.getValue(notificationDetails.setAsGroupSummary)) {
                 builder.setGroupSummary(true);
             }
@@ -407,14 +411,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 result.success(null);
                 break;
             }
-            case PERIODICALLY_SHOW_METHOD: {
-                Map<String, Object> arguments = call.arguments();
-                NotificationDetails notificationDetails = NotificationDetails.from(arguments);
-                repeatNotification(registrar.context(), notificationDetails, true);
-                result.success(null);
-                break;
-            }
-            case SHOW_DAILY_AT_TIME: {
+            case PERIODICALLY_SHOW_METHOD:
+            case SHOW_DAILY_AT_TIME:
+            case SHOW_WEEKLY_AT_DAY_AND_TIME: {
                 Map<String, Object> arguments = call.arguments();
                 NotificationDetails notificationDetails = NotificationDetails.from(arguments);
                 repeatNotification(registrar.context(), notificationDetails, true);
@@ -452,7 +451,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         notificationManager.cancelAll();
         Context context = registrar.context();
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
-        if(scheduledNotifications == null || scheduledNotifications.isEmpty()) {
+        if (scheduledNotifications == null || scheduledNotifications.isEmpty()) {
             return;
         }
 

@@ -13,7 +13,9 @@ A cross platform plugin for displaying local notifications.
 * Mockable (plugin and API methods aren't static)
 * Display basic notifications
 * Scheduling when notifications should appear
-* Periodically show a notification
+* Periodically show a notification (interval based)
+* Schedule a notification to be shown daily at a specified time
+* Schedule a notification to be shown weekly on a specified day and time
 * Cancelling/removing notification by id or all of them
 * Specify a custom notification sound
 * Ability to handle when a user has tapped on a notification, when the app is the foreground, background or terminated
@@ -65,8 +67,6 @@ Future onSelectNotification(String payload) async {
 
 In the real world, this payload could represent the id of the item you want to display the details of. Once the initialisation has been done, then you can manage the displaying of notifications
 
-Note: If your Flutter SDK is on the beta channel, then there's a known issue (https://github.com/flutter/flutter/issues/15777) where navigation won't complete the full page transition properly on Android while the app is running. The Flutter team have fixed this on the master channel so you may want to change to track the master channel but do so at your own risk.
-
 ### Displaying a notification
 
 ```
@@ -117,6 +117,44 @@ NotificationDetails platformChannelSpecifics = new NotificationDetails(
     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
     'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
+```
+### Show a daily notification at a specific time
+
+```
+var time = new Time(10, 0, 0);
+var androidPlatformChannelSpecifics =
+    new NotificationDetailsAndroid('repeatDailyAtTime channel id',
+        'repeatDailyAtTime channel name', 'repeatDailyAtTime description');
+var iOSPlatformChannelSpecifics =
+    new NotificationDetailsIOS();
+var platformChannelSpecifics = new NotificationDetails(
+    androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+await flutterLocalNotificationsPlugin.showDailyAtTime(
+    0,
+    'show daily title',
+    'Daily notification shown at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
+    time,
+    platformChannelSpecifics);
+```
+
+### Show a weekly notification on specific day and time
+
+```
+var time = new Time(10, 0, 0);
+var androidPlatformChannelSpecifics =
+    new NotificationDetailsAndroid('show weekly channel id',
+        'show weekly channel name', 'show weekly description');
+var iOSPlatformChannelSpecifics =
+    new NotificationDetailsIOS();
+var platformChannelSpecifics = new NotificationDetails(
+    androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
+    0,
+    'show weekly title',
+    'Weekly notification shown on Monday at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
+    Day.Monday,
+    time,
+    platformChannelSpecifics);
 ```
 
 ### [Android only] Grouping notifications
