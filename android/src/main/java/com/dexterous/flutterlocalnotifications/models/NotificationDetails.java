@@ -50,6 +50,7 @@ public class NotificationDetails {
     private static final String HTML_FORMAT_TITLE = "htmlFormatTitle";
     private static final String HTML_FORMAT_CONTENT = "htmlFormatContent";
     private static final String DAY = "day";
+    private static final String ACTIONS = "actions";
 
     public Integer id;
     public String title;
@@ -77,6 +78,7 @@ public class NotificationDetails {
     public Boolean autoCancel;
     public Boolean ongoing;
     public Integer day;
+    public ArrayList<ActionButton> buttons;
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted
     public Integer iconResourceId;
@@ -120,9 +122,41 @@ public class NotificationDetails {
             notificationDetails.groupKey = (String) platformChannelSpecifics.get(GROUP_KEY);
             notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
             notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
+            if (platformChannelSpecifics.containsKey(ACTIONS)) {
+                @SuppressWarnings("unchecked")
+                ArrayList<Object> buttons = (ArrayList<Object>)platformChannelSpecifics.get(ACTIONS);
+                if (buttons != null) {
+                    notificationDetails.buttons = getActionButtons(buttons);
+                } else {
+                    notificationDetails.buttons = new ArrayList<ActionButton>();
+                }
+            } else {
+                notificationDetails.buttons = new ArrayList<ActionButton>();
+            }
             getChannelInformation(notificationDetails, platformChannelSpecifics);
         }
         return notificationDetails;
+    }
+
+    private static ArrayList<ActionButton> getActionButtons(ArrayList<Object> buttonData) {
+        ArrayList<ActionButton> buttons = new ArrayList<ActionButton>();
+        for (Object ob: buttonData) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> data = (Map<String, Object>)ob;
+            ActionButton newButton = new ActionButton();
+
+            if (data.containsKey(ICON)) {
+                newButton.icon = (String) data.get(ICON);
+            }
+            if (data.containsKey(TITLE)) {
+                newButton.text = (String) data.get(TITLE);
+            }
+            if (data.containsKey(PAYLOAD)) {
+                newButton.payload = (String) data.get(PAYLOAD);
+            }
+            buttons.add(newButton);
+        }
+        return buttons;
     }
 
     private static void getChannelInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {

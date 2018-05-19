@@ -3,8 +3,9 @@
 
 import 'dart:typed_data';
 
-import 'package:flutter_local_notifications/platform_specifics/android/styles/default_style_information.dart';
-import 'package:flutter_local_notifications/platform_specifics/android/styles/style_information.dart';
+import 'styles/default_style_information.dart';
+import 'styles/style_information.dart';
+import 'action.dart';
 
 /// The available notification styles on Android
 enum NotificationStyleAndroid { Default, BigText, Inbox }
@@ -97,6 +98,9 @@ class NotificationDetailsAndroid {
   /// Specifies if the notification will be "ongoing".
   bool ongoing;
 
+  /// The actions associated with this notification (max 3).
+  List<AndroidNotificationAction> actions = [];
+
   NotificationDetailsAndroid(
       this.channelId, this.channelName, this.channelDescription,
       {this.icon,
@@ -112,9 +116,19 @@ class NotificationDetailsAndroid {
       this.setAsGroupSummary,
       this.groupAlertBehavior = GroupAlertBehavior.All,
       this.autoCancel = true,
-      this.ongoing});
+      this.ongoing,
+      this.actions});
 
   Map<String, dynamic> toMap() {
+    List<Map<String, dynamic>> buttons = [];
+    if (actions != null) {
+      for (AndroidNotificationAction button in actions) {
+        buttons.add({
+          'icon': button.icon, 'title': button.text, 'payload': button.payload
+        });
+      }
+    }
+    print(buttons);
     return <String, dynamic>{
       'icon': icon,
       'channelId': channelId,
@@ -134,7 +148,8 @@ class NotificationDetailsAndroid {
       'setAsGroupSummary': setAsGroupSummary,
       'groupAlertBehavior': groupAlertBehavior.index,
       'autoCancel': autoCancel,
-      'ongoing': ongoing
+      'ongoing': ongoing,
+      'actions': buttons
     };
   }
 }
