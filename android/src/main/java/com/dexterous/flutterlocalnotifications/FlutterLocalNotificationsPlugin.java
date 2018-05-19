@@ -18,7 +18,9 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 
+import com.dexterous.flutterlocalnotifications.models.ActionButton;
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
 import com.dexterous.flutterlocalnotifications.models.Time;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
@@ -36,7 +38,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.HashMap;
 
+import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.EventChannel.EventSink;
+import io.flutter.plugin.common.EventChannel.StreamHandler;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -48,7 +54,8 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  * FlutterLocalNotificationsPlugin
  */
 public class FlutterLocalNotificationsPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener {
-    private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
+    private static final String ACTION_SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
+    private static final String ACTION_FLUTTER_BUTTON = "FLUTTER_BUTTON";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
     private static final String SHOW_METHOD = "show";
@@ -59,10 +66,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SHOW_DAILY_AT_TIME = "showDailyAtTime";
     private static final String SHOW_WEEKLY_AT_DAY_AND_TIME = "showWeeklyAtDayAndTime";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
-    private static final String PAYLOAD = "payload";
-    public static String NOTIFICATION_ID = "notification_id";
-    public static String NOTIFICATION = "notification";
-    public static String REPEAT = "repeat";
+    public static final String PAYLOAD = "payload";
+    public static final String NOTIFICATION_ID = "notification_id";
+    public static final String NOTIFICATION = "notification";
+    public static final String REPEAT = "repeat";
     private static MethodChannel channel;
     private static int defaultIconResourceId;
     private final Registrar registrar;
@@ -125,6 +132,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         channel = new MethodChannel(registrar.messenger(), METHOD_CHANNEL);
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin(registrar);
         channel.setMethodCallHandler(plugin);
+        Log.i("LocalNotifications", "Initialized the local notifications plugin");
+
     }
 
     public static void removeNotificationFromCache(Integer notificationId, Context context) {
@@ -231,7 +240,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
         setupNotificationChannel(context, notificationDetails);
         Intent intent = new Intent(context, getMainActivityClass(context));
-        intent.setAction(SELECT_NOTIFICATION);
+        intent.setAction(ACTION_SELECT_NOTIFICATION);
         intent.putExtra(PAYLOAD, notificationDetails.payload);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         DefaultStyleInformation defaultStyleInformation = (DefaultStyleInformation) notificationDetails.styleInformation;
@@ -245,6 +254,24 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing));
 
 
+        for (ActionButton button: notificationDetails.buttons) {
+            System.out.println(button.text);
+            Intent buttonIntent = new Intent(context, getMainActivityClass(context));
+            buttonIntent.setAction(ACTION_FLUTTER_BUTTON);
+            buttonIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
+            buttonIntent.putExtra(PAYLOAD, button.payload);
+            PendingIntent buttonPendingIntent =
+                    PendingIntent.getActivity(context, 0, buttonIntent, 0);
+
+            if (button.iconResourceId == null) {
+                if (button.icon != null) {
+                    button.iconResourceId = context.getResources().getIdentifier(notificationDetails.icon, "drawable", context.getPackageName());
+                } else {
+                    button.iconResourceId = defaultIconResourceId;
+                }
+            }
+            builder.addAction(button.iconResourceId, button.text, buttonPendingIntent);
+        }
         applyGrouping(notificationDetails, builder);
         setSound(context, notificationDetails, builder);
         setVibrationPattern(notificationDetails, builder);
@@ -482,9 +509,18 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private Boolean sendNotificationPayloadMessage(Intent intent) {
-        if (SELECT_NOTIFICATION.equals(intent.getAction())) {
+        if (ACTION_SELECT_NOTIFICATION.equals(intent.getAction())) {
             String payload = intent.getStringExtra(PAYLOAD);
             channel.invokeMethod("selectNotification", payload);
+            return true;
+        }
+        if (ACTION_FLUTTER_BUTTON.equals(intent.getAction())) {
+            Map<String, Object> data = new HashMap<String, Object>();
+            data.put(PAYLOAD, intent.getStringExtra(PAYLOAD));
+            data.put(NOTIFICATION_ID, intent.getIntExtra(NOTIFICATION_ID, 0));
+            //String payload = intent.getStringExtra(PAYLOAD);
+            //Integer notificationId = intent.getIntExtra(NOTIFICATION_ID);
+            channel.invokeMethod("buttonPressed", data);
             return true;
         }
         return false;
