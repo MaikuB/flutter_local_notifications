@@ -10,7 +10,6 @@ typedef Future<dynamic> MessageHandler(String message);
 /// The available intervals for periodically showing notifications
 enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
 
-
 class Day {
   static const Sunday = const Day(1);
   static const Monday = const Day(2);
@@ -20,12 +19,14 @@ class Day {
   static const Friday = const Day(6);
   static const Saturday = const Day(7);
 
-  static get values => [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
+  static get values =>
+      [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
 
   final int value;
 
   const Day(this.value);
 }
+
 /// The days of the week
 //enum Day { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday }
 

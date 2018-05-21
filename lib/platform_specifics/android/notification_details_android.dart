@@ -97,7 +97,7 @@ class NotificationDetailsAndroid {
 
   /// Specifies if the notification will be "ongoing".
   bool ongoing;
-  
+
   /// Sets the color
   Color color;
 
