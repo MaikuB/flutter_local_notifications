@@ -48,6 +48,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  * FlutterLocalNotificationsPlugin
  */
 public class FlutterLocalNotificationsPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener {
+    private static final String DEFAULT_ICON = "defaultIcon";
     private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
@@ -244,6 +245,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setPriority(notificationDetails.priority)
                 .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing));
 
+        if(notificationDetails.color != null) {
+            builder.setColor(notificationDetails.color.intValue());
+        }
 
         applyGrouping(notificationDetails, builder);
         setSound(context, notificationDetails, builder);
@@ -389,7 +393,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         switch (call.method) {
             case INITIALIZE_METHOD: {
                 Map<String, Object> arguments = call.arguments();
-                String defaultIcon = (String) arguments.get("defaultIcon");
+                String defaultIcon = (String) arguments.get(DEFAULT_ICON);
                 defaultIconResourceId = registrar.context().getResources().getIdentifier(defaultIcon, "drawable", registrar.context().getPackageName());
                 if (registrar.activity() != null) {
                     sendNotificationPayloadMessage(registrar.activity().getIntent());

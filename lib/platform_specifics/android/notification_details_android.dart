@@ -2,6 +2,7 @@
 /// Required for Android 8.0+
 
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter_local_notifications/platform_specifics/android/styles/default_style_information.dart';
 import 'package:flutter_local_notifications/platform_specifics/android/styles/style_information.dart';
@@ -97,6 +98,9 @@ class NotificationDetailsAndroid {
   /// Specifies if the notification will be "ongoing".
   bool ongoing;
 
+  /// Sets the color
+  Color color;
+
   NotificationDetailsAndroid(
       this.channelId, this.channelName, this.channelDescription,
       {this.icon,
@@ -112,7 +116,8 @@ class NotificationDetailsAndroid {
       this.setAsGroupSummary,
       this.groupAlertBehavior = GroupAlertBehavior.All,
       this.autoCancel = true,
-      this.ongoing});
+      this.ongoing,
+      this.color});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -134,7 +139,8 @@ class NotificationDetailsAndroid {
       'setAsGroupSummary': setAsGroupSummary,
       'groupAlertBehavior': groupAlertBehavior.index,
       'autoCancel': autoCancel,
-      'ongoing': ongoing
+      'ongoing': ongoing,
+      'color': color?.value
     };
   }
 }
