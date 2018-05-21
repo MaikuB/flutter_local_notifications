@@ -140,7 +140,10 @@ class NotificationDetailsAndroid {
       'groupAlertBehavior': groupAlertBehavior.index,
       'autoCancel': autoCancel,
       'ongoing': ongoing,
-      'color': color?.value
+      'colorAlpha': color?.alpha,
+      'colorRed': color?.red,
+      'colorGreen': color?.green,
+      'colorBlue': color?.blue
     };
   }
 }

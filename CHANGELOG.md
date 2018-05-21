@@ -92,3 +92,6 @@
 
 ## [0.2.4]
 * [Android] Add ability to set the colour.
+
+## [0.2.5]
+* [Android] Bug fix for previous release
