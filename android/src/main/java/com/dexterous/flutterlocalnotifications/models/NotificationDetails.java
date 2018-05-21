@@ -50,6 +50,7 @@ public class NotificationDetails {
     private static final String HTML_FORMAT_TITLE = "htmlFormatTitle";
     private static final String HTML_FORMAT_CONTENT = "htmlFormatContent";
     private static final String DAY = "day";
+    private static final String COLOR = "color";
 
     public Integer id;
     public String title;
@@ -77,9 +78,11 @@ public class NotificationDetails {
     public Boolean autoCancel;
     public Boolean ongoing;
     public Integer day;
+    public Long color;
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted
     public Integer iconResourceId;
+
 
     public static NotificationDetails from(Map<String, Object> arguments) {
         NotificationDetails notificationDetails = new NotificationDetails();
@@ -120,6 +123,7 @@ public class NotificationDetails {
             notificationDetails.groupKey = (String) platformChannelSpecifics.get(GROUP_KEY);
             notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
             notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
+            notificationDetails.color = (Long) platformChannelSpecifics.get(COLOR);
             getChannelInformation(notificationDetails, platformChannelSpecifics);
         }
         return notificationDetails;

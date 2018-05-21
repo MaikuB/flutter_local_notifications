@@ -313,3 +313,7 @@ if(![[NSUserDefaults standardUserDefaults]objectForKey:@"Notification"]){
 ## Testing
 
 As the plugin class is not static, it is possible to mock and verify it's behaviour when writing tests as part of your application. Check the source code for a sample test suite can be found at _test/flutter_local_notifications_test.dart_ that demonstrates how this can be done.
+
+## Acknowledgments
+
+* Javier Lecuona (javiercbk) for submitting the PR that added the ability to have notifications shown daily

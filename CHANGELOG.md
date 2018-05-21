@@ -89,3 +89,6 @@
 ## [0.2.3]
 * [Android/iOS] Add ability to have a notification shown daily at a specified time. Credits to Javier Lecuona (javiercbk) for submitting the PR for this.
 * [Android/iOS] Add ability to have a notification shown weekly on a specific day and time.
+
+## [0.2.4]
+* [Android] Add ability to set the colour.
