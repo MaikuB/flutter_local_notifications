@@ -184,7 +184,7 @@ class _MyAppState extends State<MyApp> {
         icon: 'secondary_icon',
         sound: 'slow_spring_board',
         vibrationPattern: vibrationPattern,
-        color: const Color.fromARGB(255, 0, 0, 0));
+        color: const Color.fromARGB(255, 255, 0, 0));
     var iOSPlatformChannelSpecifics =
         new NotificationDetailsIOS(sound: "slow_spring_board.aiff");
     var platformChannelSpecifics = new NotificationDetails(

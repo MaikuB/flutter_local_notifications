@@ -1,5 +1,6 @@
 package com.dexterous.flutterlocalnotifications.models;
 
+import android.graphics.Color;
 import android.os.Build;
 
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
@@ -50,7 +51,11 @@ public class NotificationDetails {
     private static final String HTML_FORMAT_TITLE = "htmlFormatTitle";
     private static final String HTML_FORMAT_CONTENT = "htmlFormatContent";
     private static final String DAY = "day";
-    private static final String COLOR = "color";
+    private static final String COLOR_ALPHA = "colorAlpha";
+    private static final String COLOR_RED = "colorRed";
+    private static final String COLOR_GREEN = "colorGreen";
+    private static final String COLOR_BLUE = "colorBlue";
+
 
     public Integer id;
     public String title;
@@ -113,7 +118,7 @@ public class NotificationDetails {
             notificationDetails.autoCancel = (Boolean) arguments.get(AUTO_CANCEL);
             notificationDetails.ongoing = (Boolean) arguments.get(ONGOING);
             notificationDetails.style = NotificationStyle.values()[(Integer) platformChannelSpecifics.get(STYLE)];
-            ProcessStyleInformation(notificationDetails, platformChannelSpecifics);
+            readStyleInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.icon = (String) platformChannelSpecifics.get(ICON);
             notificationDetails.priority = (Integer) platformChannelSpecifics.get(PRIORITY);
             notificationDetails.playSound = (Boolean) platformChannelSpecifics.get(PLAY_SOUND);
@@ -123,18 +128,23 @@ public class NotificationDetails {
             notificationDetails.groupKey = (String) platformChannelSpecifics.get(GROUP_KEY);
             notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
             notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
-            Object colorObj = platformChannelSpecifics.get(COLOR);
-            if (colorObj instanceof Integer) {
-                notificationDetails.color = (Integer) colorObj;
-            } else if (colorObj instanceof Long && colorObj != null) {
-                notificationDetails.color = ((Long) colorObj).intValue();
-            }
-            getChannelInformation(notificationDetails, platformChannelSpecifics);
+            readColor(notificationDetails, platformChannelSpecifics);
+            readChannelInformation(notificationDetails, platformChannelSpecifics);
         }
         return notificationDetails;
     }
 
-    private static void getChannelInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
+    private static void readColor(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
+        Integer a = (Integer) platformChannelSpecifics.get(COLOR_ALPHA);
+        Integer r = (Integer) platformChannelSpecifics.get(COLOR_RED);
+        Integer g = (Integer) platformChannelSpecifics.get(COLOR_GREEN);
+        Integer b = (Integer) platformChannelSpecifics.get(COLOR_BLUE);
+        if (a != null && r != null && g != null && b != null) {
+            notificationDetails.color = Color.argb(a, r, g, b);
+        }
+    }
+
+    private static void readChannelInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationDetails.channelId = (String) platformChannelSpecifics.get(CHANNEL_ID);
             notificationDetails.channelName = (String) platformChannelSpecifics.get(CHANNEL_NAME);
@@ -143,7 +153,7 @@ public class NotificationDetails {
         }
     }
 
-    private static void ProcessStyleInformation(NotificationDetails notificationDetails, Map<String, Object> platformSpecifics) {
+    private static void readStyleInformation(NotificationDetails notificationDetails, Map<String, Object> platformSpecifics) {
         @SuppressWarnings("unchecked")
         Map<String, Object> styleInformation = (Map<String, Object>) platformSpecifics.get(STYLE_INFORMATION);
         DefaultStyleInformation defaultStyleInformation = getDefaultStyleInformation(styleInformation);
