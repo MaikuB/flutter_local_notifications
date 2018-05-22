@@ -20,7 +20,6 @@ import android.text.Html;
 import android.text.Spanned;
 
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
-import com.dexterous.flutterlocalnotifications.models.Time;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
@@ -34,6 +33,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -193,12 +193,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
 
         long startTimeMilliseconds = notificationDetails.calledAt;
-        if (notificationDetails.repeatTime == null) {
-            long currentTime = System.currentTimeMillis();
-            while (startTimeMilliseconds < currentTime) {
-                startTimeMilliseconds += repeatInterval;
-            }
-        } else {
+        if (notificationDetails.repeatTime != null) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
             calendar.set(Calendar.HOUR_OF_DAY, notificationDetails.repeatTime.hour);
@@ -207,8 +202,16 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             if (notificationDetails.day != null) {
                 calendar.set(Calendar.DAY_OF_WEEK, notificationDetails.day);
             }
+
             startTimeMilliseconds = calendar.getTimeInMillis();
         }
+
+        // ensure that start time is in the future
+        long currentTime = System.currentTimeMillis();
+        while (startTimeMilliseconds < currentTime) {
+            startTimeMilliseconds += repeatInterval;
+        }
+
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, startTimeMilliseconds, repeatInterval, pendingIntent);
 
         if (updateScheduledNotificationsCache) {

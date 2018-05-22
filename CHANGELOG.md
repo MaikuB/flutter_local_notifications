@@ -98,3 +98,6 @@
 
 ## [0.2.6]
 * [Android] Fix bug with applying ongoing and autoCancel properties
+
+## [0.2.7]
+* [Android] Fix issue with showDailyAtTime and showWeeklyAtDayAndTime where time occurred in the past and caused notification to trigger instantly
