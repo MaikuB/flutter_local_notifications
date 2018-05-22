@@ -95,3 +95,6 @@
 
 ## [0.2.5]
 * [Android] Bug fix for previous release
+
+## [0.2.6]
+* [Android] Fix bug with applying ongoing and autoCancel properties

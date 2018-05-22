@@ -115,8 +115,8 @@ public class NotificationDetails {
         @SuppressWarnings("unchecked")
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get(PLATFORM_SPECIFICS);
         if (platformChannelSpecifics != null) {
-            notificationDetails.autoCancel = (Boolean) arguments.get(AUTO_CANCEL);
-            notificationDetails.ongoing = (Boolean) arguments.get(ONGOING);
+            notificationDetails.autoCancel = (Boolean) platformChannelSpecifics.get(AUTO_CANCEL);
+            notificationDetails.ongoing = (Boolean) platformChannelSpecifics.get(ONGOING);
             notificationDetails.style = NotificationStyle.values()[(Integer) platformChannelSpecifics.get(STYLE)];
             readStyleInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.icon = (String) platformChannelSpecifics.get(ICON);
