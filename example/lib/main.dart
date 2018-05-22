@@ -316,7 +316,10 @@ class _MyAppState extends State<MyApp> {
   Future _showOngoingNotification() async {
     var androidPlatformChannelSpecifics = new NotificationDetailsAndroid(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, ongoing: true, autoCancel: false);
+        importance: Importance.Max,
+        priority: Priority.High,
+        ongoing: true,
+        autoCancel: false);
     var iOSPlatformChannelSpecifics = new NotificationDetailsIOS();
     var platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
