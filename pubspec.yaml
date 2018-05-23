@@ -11,8 +11,10 @@ dependencies:
   platform: ^2.0.0
 
 dev_dependencies:
-  mockito: ^2.0.2
-  test: ^0.12.35
+  flutter_test:
+    sdk: flutter
+  mockito: "^2.2.3"
+
 
 # The following section is specific to Flutter.
 flutter:
