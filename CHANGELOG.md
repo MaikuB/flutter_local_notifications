@@ -101,3 +101,6 @@
 
 ## [0.2.7]
 * [Android] Fix issue with showDailyAtTime and showWeeklyAtDayAndTime where time occurred in the past and caused notification to trigger instantly
+
+## [0.2.8]
+* Update dev dependencies required for flutter test to run. This is due to a breaking change in Flutter. See https://github.com/flutter/flutter/wiki/Changelog
