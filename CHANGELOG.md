@@ -104,3 +104,6 @@
 
 ## [0.2.8]
 * Update dev dependencies required for flutter test to run. This is due to a breaking change in Flutter. See https://github.com/flutter/flutter/wiki/Changelog
+
+## [0.2.9]
+* Fix error in calling initialize error on iOS versions < 9

@@ -129,7 +129,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
             NSString *payload = launchNotification.userInfo[PAYLOAD];
             [channel invokeMethod:@"selectNotification" arguments:payload];
         }
-        result(@true);
+        result(@YES);
     }
     initialized = true;
 }
