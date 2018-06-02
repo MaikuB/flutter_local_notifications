@@ -1,16 +1,10 @@
-/// The available importance levels for Android notifications.
-/// Required for Android 8.0+
-
-import 'dart:typed_data';
-import 'dart:ui';
-
-import 'package:flutter_local_notifications/platform_specifics/android/styles/default_style_information.dart';
-import 'package:flutter_local_notifications/platform_specifics/android/styles/style_information.dart';
+part of flutter_local_notifications;
 
 /// The available notification styles on Android
-enum NotificationStyleAndroid { Default, BigText, Inbox }
+enum AndroidNotificationStyle { Default, BigText, Inbox }
 
-/// Defines the available importance levels for Android notifications
+/// The available importance levels for Android notifications.
+/// Required for Android 8.0+
 class Importance {
   static const Unspecified = const Importance(-1000);
   static const None = const Importance(0);
@@ -46,7 +40,7 @@ class Priority {
 enum GroupAlertBehavior { All, Summary, Children }
 
 /// Configures the notification on Android
-class NotificationDetailsAndroid {
+class AndroidNotificationDetails {
   /// The icon that should be used when displaying the notification. When not specified, this will use the default icon that has been configured.
   final String icon;
 
@@ -78,7 +72,7 @@ class NotificationDetailsAndroid {
   Int64List vibrationPattern;
 
   /// Defines the notification style
-  NotificationStyleAndroid style;
+  AndroidNotificationStyle style;
 
   /// Contains extra information for the specified notification [style]
   StyleInformation styleInformation;
@@ -101,12 +95,12 @@ class NotificationDetailsAndroid {
   /// Sets the color
   Color color;
 
-  NotificationDetailsAndroid(
+  AndroidNotificationDetails(
       this.channelId, this.channelName, this.channelDescription,
       {this.icon,
       this.importance = Importance.Default,
       this.priority = Priority.Default,
-      this.style = NotificationStyleAndroid.Default,
+      this.style = AndroidNotificationStyle.Default,
       this.styleInformation,
       this.playSound = true,
       this.sound,

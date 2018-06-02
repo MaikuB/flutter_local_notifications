@@ -41,17 +41,17 @@ The first step is to create a new instance of the plugin class and then initiali
 
 ```
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
-InitializationSettingsAndroid initializationSettingsAndroid =
-        new InitializationSettingsAndroid('app_icon');
-InitializationSettingsIOS initializationSettingsIOS =
-    new InitializationSettingsIOS();
-InitializationSettings initializationSettings = new InitializationSettings(
+var initializationSettingsAndroid =
+    new AndroidInitializationSettings('app_icon');
+var initializationSettingsIOS = new IOSInitializationSettings();
+var initializationSettings = new InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
+flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
     selectNotification: onSelectNotification);
 ```
 
-Here we specify we have specified the default icon to use for notifications on Android and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In the example, it will trigger navigation to another page and display the payload associated with the notification. 
+Here we specify we have specified the default icon to use for notifications on Android and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In this example, it will trigger navigation to another page and display the payload associated with the notification. 
 
 ```
 Future onSelectNotification(String payload) async {
@@ -65,17 +65,16 @@ Future onSelectNotification(String payload) async {
 }
 ```
 
-In the real world, this payload could represent the id of the item you want to display the details of. Once the initialisation has been done, then you can manage the displaying of notifications
+In the real world, this payload could represent the id of the item you want to display the details of. Once the initialisation has been done, then you can manage the displaying of notifications.
 
 ### Displaying a notification
 
 ```
-NotificationDetailsAndroid androidPlatformChannelSpecifics =
-        new NotificationDetailsAndroid(
-            'your channel id', 'your channel name', 'your channel description');
-NotificationDetailsIOS iOSPlatformChannelSpecifics =
-    new NotificationDetailsIOS();
-NotificationDetails platformChannelSpecifics = new NotificationDetails(
+var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+    'your channel id', 'your channel name', 'your channel description',
+    importance: Importance.Max, priority: Priority.High);
+var iOSPlatformChannelSpecifics = new NotificationDetailsIOS();
+var platformChannelSpecifics = new NotificationDetails(
     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.show(
     0, 'plain title', 'plain body', platformChannelSpecifics,
@@ -89,11 +88,11 @@ In this block of code, the details for each platform have been specified. This i
 ```
 var scheduledNotificationDateTime =
         new DateTime.now().add(new Duration(seconds: 5));
-NotificationDetailsAndroid androidPlatformChannelSpecifics =
-    new NotificationDetailsAndroid('your other channel id',
+var androidPlatformChannelSpecifics =
+    new AndroidNotificationDetails('your other channel id',
         'your other channel name', 'your other channel description');
-NotificationDetailsIOS iOSPlatformChannelSpecifics =
-    new NotificationDetailsIOS();
+var iOSPlatformChannelSpecifics =
+    new IOSNotificationDetails();
 NotificationDetails platformChannelSpecifics = new NotificationDetails(
     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.schedule(
@@ -108,12 +107,12 @@ await flutterLocalNotificationsPlugin.schedule(
 
 ```
 // Show a notification every minute with the first appearance happening a minute after invoking the method
-NotificationDetailsAndroid androidPlatformChannelSpecifics =
-    new NotificationDetailsAndroid('repeating channel id',
+var androidPlatformChannelSpecifics =
+    new AndroidNotificationDetails('repeating channel id',
         'repeating channel name', 'repeating description');
-NotificationDetailsIOS iOSPlatformChannelSpecifics =
-    new NotificationDetailsIOS();
-NotificationDetails platformChannelSpecifics = new NotificationDetails(
+var iOSPlatformChannelSpecifics =
+    new IOSNotificationDetails();
+var platformChannelSpecifics = new NotificationDetails(
     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
     'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
@@ -123,10 +122,10 @@ await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
 ```
 var time = new Time(10, 0, 0);
 var androidPlatformChannelSpecifics =
-    new NotificationDetailsAndroid('repeatDailyAtTime channel id',
+    new AndroidNotificationDetails('repeatDailyAtTime channel id',
         'repeatDailyAtTime channel name', 'repeatDailyAtTime description');
 var iOSPlatformChannelSpecifics =
-    new NotificationDetailsIOS();
+    new IOSNotificationDetails();
 var platformChannelSpecifics = new NotificationDetails(
     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.showDailyAtTime(
@@ -142,10 +141,10 @@ await flutterLocalNotificationsPlugin.showDailyAtTime(
 ```
 var time = new Time(10, 0, 0);
 var androidPlatformChannelSpecifics =
-    new NotificationDetailsAndroid('show weekly channel id',
+    new AndroidNotificationDetails('show weekly channel id',
         'show weekly channel name', 'show weekly description');
 var iOSPlatformChannelSpecifics =
-    new NotificationDetailsIOS();
+    new IOSNotificationDetails();
 var platformChannelSpecifics = new NotificationDetails(
     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
@@ -168,8 +167,8 @@ String groupChannelId = 'grouped channel id';
 String groupChannelName = 'grouped channel name';
 String groupChannelDescription = 'grouped channel description';
 // example based on https://developer.android.com/training/notify-user/group.html
-NotificationDetailsAndroid firstNotificationAndroidSpecifics =
-    new NotificationDetailsAndroid(
+AndroidNotificationDetails firstNotificationAndroidSpecifics =
+    new AndroidNotificationDetails(
         groupChannelId, groupChannelName, groupChannelDescription,
         importance: Importance.Max,
         priority: Priority.High,
@@ -178,8 +177,8 @@ NotificationDetails firstNotificationPlatformSpecifics =
     new NotificationDetails(firstNotificationAndroidSpecifics, null);
 await flutterLocalNotificationsPlugin.show(1, 'Alex Faarborg',
     'You will not believe...', firstNotificationPlatformSpecifics);
-NotificationDetailsAndroid secondNotificationAndroidSpecifics =
-    new NotificationDetailsAndroid(
+AndroidNotificationDetails secondNotificationAndroidSpecifics =
+    new AndroidNotificationDetails(
         groupChannelId, groupChannelName, groupChannelDescription,
         importance: Importance.Max,
         priority: Priority.High,
@@ -200,8 +199,8 @@ InboxStyleInformation inboxStyleInformation = new InboxStyleInformation(
     lines,
     contentTitle: '2 new messages',
     summaryText: 'janedoe@example.com');
-NotificationDetailsAndroid androidPlatformChannelSpecifics =
-    new NotificationDetailsAndroid(
+AndroidNotificationDetails androidPlatformChannelSpecifics =
+    new AndroidNotificationDetails(
         groupChannelId, groupChannelName, groupChannelDescription,
         style: NotificationStyleAndroid.Inbox,
         styleInformation: inboxStyleInformation,
