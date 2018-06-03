@@ -134,6 +134,39 @@ void main() {
       }));
     });
 
+    test('schedule repeat notifications on Android', () async {
+      var scheduledNotificationDateTime = new DateTime.now().add(new Duration(seconds: 5));
+      var scheduledNotificationEndTime = new DateTime.now().add(new Duration(minutes: 3));
+
+      NotificationDetailsAndroid androidPlatformChannelSpecifics =
+          new NotificationDetailsAndroid( 'your other channel id',
+                                          'your other channel name', 
+                                          'your other channel description');
+
+      NotificationDetails platformChannelSpecifics = new NotificationDetails(androidPlatformChannelSpecifics, null);
+      
+      await flutterLocalNotificationsPlugin.periodicallyShowTill(
+                  id, 
+                  title, 
+                  body,
+                  scheduledNotificationDateTime, 
+                  scheduledNotificationEndTime, 
+                  RepeatInterval.EveryMinute, 
+                  platformChannelSpecifics
+      );
+
+      verify(mockChannel.invokeMethod('periodicallyShow', <String, dynamic>{
+        'id': id,
+        'title': title,
+        'body': body,
+        'calledAt': scheduledNotificationDateTime.millisecondsSinceEpoch,
+        'endTime': scheduledNotificationEndTime.millisecondsSinceEpoch,
+        'repeatInterval': RepeatInterval.EveryMinute.index,
+        'platformSpecifics': androidPlatformChannelSpecifics.toMap(),
+        'payload': ''
+      }));
+    });
+
     test('delete notification on android', () async {
       await flutterLocalNotificationsPlugin.cancel(id);
       verify(mockChannel.invokeMethod('cancel', id));

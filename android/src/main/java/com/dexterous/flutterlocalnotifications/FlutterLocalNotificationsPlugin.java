@@ -64,6 +64,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     public static String NOTIFICATION_ID = "notification_id";
     public static String NOTIFICATION = "notification";
     public static String REPEAT = "repeat";
+    public static String REPEAT_TILL = "repeatTill";
     private static MethodChannel channel;
     private static int defaultIconResourceId;
     private final Registrar registrar;
@@ -171,6 +172,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         notificationIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
         notificationIntent.putExtra(NOTIFICATION, notification);
         notificationIntent.putExtra(REPEAT, true);
+
+        if( notificationDetails.endTime != null )
+            notificationIntent.putExtra(REPEAT_TILL, notificationDetails.endTime);
+            
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         AlarmManager alarmManager = getAlarmManager(context);
