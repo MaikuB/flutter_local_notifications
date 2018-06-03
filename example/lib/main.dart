@@ -143,6 +143,14 @@ class _MyAppState extends State<MyApp> {
                         onPressed: () async {
                           await _cancelAllNotifications();
                         })),
+                new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
+                        child: new Text(
+                            'Repeat notification every minute for 3 minutes'),
+                        onPressed: () async {
+                          await _showRepeatEveryMinute();
+                        })),
               ],
             ),
           ),
@@ -372,6 +380,31 @@ class _MyAppState extends State<MyApp> {
         Day.Monday,
         time,
         platformChannelSpecifics);
+  }
+
+  Future _showRepeatEveryMinute() async {
+
+    var startTime = new DateTime.now().add(new Duration(seconds: 5));
+    var endTime = new DateTime.now().add(new Duration(minutes: 3));
+
+    var androidPlatformChannelSpecifics = 
+              new NotificationDetailsAndroid(
+                  'show minute channel id',
+                  'show minute channel name',
+                  'show minute description');
+
+    var iOSPlatformChannelSpecifics = new NotificationDetailsIOS();
+    var platformChannelSpecifics = new NotificationDetails(androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.periodicallyShowTill(
+        0,
+        'show every minute title',
+        'notification every minute',
+        startTime,
+        endTime,
+        RepeatInterval.EveryMinute,
+        platformChannelSpecifics
+      );
   }
 
   String _toTwoDigitString(int value) {
