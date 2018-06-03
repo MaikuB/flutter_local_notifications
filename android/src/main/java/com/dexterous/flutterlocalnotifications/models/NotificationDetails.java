@@ -22,6 +22,7 @@ public class NotificationDetails {
     private static final String CALLED_AT = "calledAt";
     private static final String REPEAT_INTERVAL = "repeatInterval";
     private static final String REPEAT_TIME = "repeatTime";
+    private static final String END_TIME = "endTime";
     private static final String PLATFORM_SPECIFICS = "platformSpecifics";
     private static final String AUTO_CANCEL = "autoCancel";
     private static final String ONGOING = "ongoing";
@@ -75,6 +76,7 @@ public class NotificationDetails {
     public RepeatInterval repeatInterval;
     public Time repeatTime;
     public Long millisecondsSinceEpoch;
+    public Long endTime;
     public Long calledAt;
     public String payload;
     public String groupKey;
@@ -108,6 +110,9 @@ public class NotificationDetails {
             @SuppressWarnings("unchecked")
             Map<String, Object> repeatTimeParams = (Map<String, Object>) arguments.get(REPEAT_TIME);
             notificationDetails.repeatTime = Time.from(repeatTimeParams);
+        }
+        if (arguments.containsKey(END_TIME)) {
+            notificationDetails.endTime = (Long) arguments.get(END_TIME);
         }
         if (arguments.containsKey(DAY)) {
             notificationDetails.day = (Integer) arguments.get(DAY);

@@ -146,6 +146,26 @@ class FlutterLocalNotificationsPlugin {
     });
   }
 
+  Future periodicallyShowTill(  int id, String title, String body, 
+                                DateTime scheduledDate, 
+                                DateTime scheduledTill,
+                                RepeatInterval repeatInterval, 
+                                NotificationDetails notificationDetails,
+                                {String payload}) async {
+
+    var serializedPlatformSpecifics =_retrievePlatformSpecificNotificationDetails(notificationDetails);
+    await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': scheduledDate.millisecondsSinceEpoch,
+      'endTime': scheduledTill.millisecondsSinceEpoch,
+      'repeatInterval': repeatInterval.index,
+      'platformSpecifics': serializedPlatformSpecifics,
+      'payload': payload ?? ''
+    });
+  }
+
   /// Shows a notification on a daily interval at the specified time
   Future showDailyAtTime(int id, String title, String body,
       Time notificationTime, NotificationDetails notificationDetails,
