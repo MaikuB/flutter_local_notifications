@@ -126,7 +126,7 @@
 
 ## [0.3.0]
 
-* **BREAKING CHANGES** restructured code so that only a single import statement is now needed and classes that had the platform (Android/iOS) as a suffix are now prefixes to improve readability of code and follow the recommendations for writing Dart code i.e. write code that reads more like a sentence. The following have been renamed
+* **BREAKING CHANGES** restructured code so that only a single import statement is now needed to use the plugin. Classes that had the platform (Android/iOS) as a suffix are now prefixes to improve readability of code and follow the recommendations for writing Dart code i.e. write code that reads more like a sentence. The following have been renamed
 
     * InitializationSettingsAndroid -> AndroidInitializationSettings
     * InitializationSettingsIOS -> IOSInitializationSettings
@@ -136,5 +136,5 @@
 
 * [Android] Ability to set the large icon used for each notification. See example app for sample code
 * [Android] Ability to create a notification with the big picture style. See example app for sample code
-
+* Correct license text
 
