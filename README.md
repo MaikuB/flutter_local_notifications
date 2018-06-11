@@ -35,11 +35,9 @@ A cross platform plugin for displaying local notifications.
 
 Note that this plugin aims to provide abstractions for all platforms as opposed to having methods that only work on specific platforms. However, each method allows passing in "platform-specifics" that contains data that is specific for customising notifications on each platform. It is still under development so expect the API surface to change over time.
 
-Contributions are welcome by submitting a PR for me to review. If it's to add new features, appreciate it if you could try to maintain the architecture or try to improve on it :)
-
 ## Getting Started
 
-The GitHub repository has an example app that demonstrates the various features of the plugin. Please check the example for more detailed code samples. The following samples will demonstrate the more commonly used functionalities.
+The GitHub repository has an example app that should demonstrate of all the supported features of the plugin. Please check the example for more detailed code samples. The following samples will demonstrate the more commonly used functionalities.
 
 The first step is to create a new instance of the plugin class and then initialise it with the settings to use for each platform
 
@@ -320,9 +318,24 @@ When using custom notification sound, developers should be aware that iOS enforc
 
 https://developer.apple.com/documentation/usernotifications/unnotificationsound?language=objc
 
+*NOTE*: this plugin registers itself as the delegate to handle incoming notifications and actions. This may cause problems if you're using other plugins for push notifications (e.g. `firebase_messaging`) as they will most likely do the same and it's only possible to register a single delegate. iOS handles showing push notifications out of the box so if you're only using this plugin to display the notification payload on Android then it's suggested that you fork the plugin code and remove the following part in the iOS code
+
+```
+UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+center.delegate = instance;
+```
+
+Unfortunately, this platform limitation does mean that it's not possible to use this plugin together other plugins for push notifications on iOS. If you are in this situation, then my only advice is that you'll need to need to look at writing customised platform-specific code for your application that may involve taking bits and pieces of code from the plugins you need. 
+
 ## Testing
 
 As the plugin class is not static, it is possible to mock and verify it's behaviour when writing tests as part of your application. Check the source code for a sample test suite can be found at _test/flutter_local_notifications_test.dart_ that demonstrates how this can be done.
+
+## Raising issues and contributions
+
+Contributions are welcome by submitting a PR for me to review. If it's to add new features, appreciate it if you could try to maintain the architecture or try to improve on it. However, do note that I will not take PRs that add methods at the Dart level that don't work on all platforms. However, platform-specific configuration through the use parameters are fine as that's approach being taken via this plugin.
+
+If you're creating an issue on the repository, it'd much appreciated if this could be limited to actual bugs or feature requests. If you're looking at how you could use the plugin to do a particular kind of notification, check the example app provides detailed code samples for each supported feature.
 
 ## Acknowledgements
 
