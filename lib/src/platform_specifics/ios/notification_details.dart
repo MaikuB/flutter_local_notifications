@@ -1,6 +1,7 @@
+part of flutter_local_notifications;
+
 /// Configures the notification details on iOS.
-/// Currently not used.
-class NotificationDetailsIOS {
+class IOSNotificationDetails {
   // Display an alert when the notification is triggered while app is in the foreground. iOS 10+ only
   final bool presentAlert;
 
@@ -13,7 +14,7 @@ class NotificationDetailsIOS {
   /// Specifies the name of the file to play for the notification. Requires setting [presentSound] to true. If [presentSound] is set to true but [sound] isn't specified then it will use the default notification sound.
   final String sound;
 
-  NotificationDetailsIOS(
+  IOSNotificationDetails(
       {this.presentAlert, this.presentBadge, this.presentSound, this.sound});
 
   Map<String, dynamic> toMap() {

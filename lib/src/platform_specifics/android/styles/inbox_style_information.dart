@@ -1,26 +1,26 @@
-import 'package:flutter_local_notifications/platform_specifics/android/styles/default_style_information.dart';
+part of flutter_local_notifications;
 
-class BigTextStyleInformation extends DefaultStyleInformation {
-  /// Provide the longer text to be displayed in the big form of the template in place of the content text.
-  final String bigText;
-
+class InboxStyleInformation extends DefaultStyleInformation {
   /// Overrides ContentTitle in the big form of the template.
   final String contentTitle;
 
   /// Set the first line of text after the detail section in the big form of the template.
   final String summaryText;
 
-  /// Specifies if formatting should be applied to the longer text through HTML markup
-  final bool htmlFormatBigText;
+  /// The lines that form part of the digest section for inbox-style notifications
+  List<String> lines;
 
-  /// Specifies if the overridden ContentTitle should have formatting applies through HTML markup
+  /// Specifies if the lines should have formatting applied through HTML markup
+  final bool htmlFormatLines;
+
+  /// Specifies if the overridden ContentTitle should have formatting applied through HTML markup
   final bool htmlFormatContentTitle;
 
   /// Specifies if formatting should be applied to the first line of text after the detail section in the big form of the template.
   final bool htmlFormatSummaryText;
 
-  BigTextStyleInformation(this.bigText,
-      {this.htmlFormatBigText = false,
+  InboxStyleInformation(this.lines,
+      {this.htmlFormatLines = false,
       this.contentTitle,
       this.htmlFormatContentTitle = false,
       this.summaryText,
@@ -33,12 +33,12 @@ class BigTextStyleInformation extends DefaultStyleInformation {
     var styleJson = super.toMap();
 
     var bigTextStyleJson = <String, dynamic>{
-      'bigText': bigText,
-      'htmlFormatBigText': htmlFormatBigText,
       'contentTitle': contentTitle,
       'htmlFormatContentTitle': htmlFormatContentTitle,
       'summaryText': summaryText,
-      'htmlFormatSummaryText': htmlFormatSummaryText
+      'htmlFormatSummaryText': htmlFormatSummaryText,
+      'lines': lines ?? new List<String>(),
+      'htmlFormatLines': htmlFormatLines
     };
     styleJson.addAll(bigTextStyleJson);
     return styleJson;

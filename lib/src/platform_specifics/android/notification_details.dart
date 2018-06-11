@@ -1,52 +1,7 @@
-/// The available importance levels for Android notifications.
-/// Required for Android 8.0+
-
-import 'dart:typed_data';
-import 'dart:ui';
-
-import 'package:flutter_local_notifications/platform_specifics/android/styles/default_style_information.dart';
-import 'package:flutter_local_notifications/platform_specifics/android/styles/style_information.dart';
-
-/// The available notification styles on Android
-enum NotificationStyleAndroid { Default, BigText, Inbox }
-
-/// Defines the available importance levels for Android notifications
-class Importance {
-  static const Unspecified = const Importance(-1000);
-  static const None = const Importance(0);
-  static const Min = const Importance(1);
-  static const Low = const Importance(2);
-  static const Default = const Importance(3);
-  static const High = const Importance(4);
-  static const Max = const Importance(5);
-
-  static get values => [Unspecified, None, Min, Low, Default, High, Max];
-
-  final int value;
-
-  const Importance(this.value);
-}
-
-// Priority for notifications on Android 7.1 and lower
-class Priority {
-  static const Min = const Priority(-2);
-  static const Low = const Priority(-1);
-  static const Default = const Priority(0);
-  static const High = const Priority(1);
-  static const Max = const Priority(2);
-
-  static get values => [Min, Low, Default, High, Max];
-
-  final int value;
-
-  const Priority(this.value);
-}
-
-/// The available alert behaviours for grouped notifications
-enum GroupAlertBehavior { All, Summary, Children }
+part of flutter_local_notifications;
 
 /// Configures the notification on Android
-class NotificationDetailsAndroid {
+class AndroidNotificationDetails {
   /// The icon that should be used when displaying the notification. When not specified, this will use the default icon that has been configured.
   final String icon;
 
@@ -78,7 +33,7 @@ class NotificationDetailsAndroid {
   Int64List vibrationPattern;
 
   /// Defines the notification style
-  NotificationStyleAndroid style;
+  AndroidNotificationStyle style;
 
   /// Contains extra information for the specified notification [style]
   StyleInformation styleInformation;
@@ -101,12 +56,18 @@ class NotificationDetailsAndroid {
   /// Sets the color
   Color color;
 
-  NotificationDetailsAndroid(
+  /// Specifics the large icon to use. This will be either the name of the drawable of an actual file path based on the value of [largeIconBitmapSource].
+  String largeIcon;
+
+  /// Specifies the source for the large icon
+  BitmapSource largeIconBitmapSource;
+
+  AndroidNotificationDetails(
       this.channelId, this.channelName, this.channelDescription,
       {this.icon,
       this.importance = Importance.Default,
       this.priority = Priority.Default,
-      this.style = NotificationStyleAndroid.Default,
+      this.style = AndroidNotificationStyle.Default,
       this.styleInformation,
       this.playSound = true,
       this.sound,
@@ -117,7 +78,9 @@ class NotificationDetailsAndroid {
       this.groupAlertBehavior = GroupAlertBehavior.All,
       this.autoCancel = true,
       this.ongoing,
-      this.color});
+      this.color,
+      this.largeIcon,
+      this.largeIconBitmapSource});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -143,7 +106,9 @@ class NotificationDetailsAndroid {
       'colorAlpha': color?.alpha,
       'colorRed': color?.red,
       'colorGreen': color?.green,
-      'colorBlue': color?.blue
+      'colorBlue': color?.blue,
+      'largeIcon': largeIcon,
+      'largeIconBitmapSource': largeIconBitmapSource?.index
     };
   }
 }

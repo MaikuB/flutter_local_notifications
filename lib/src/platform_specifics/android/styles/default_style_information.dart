@@ -1,4 +1,4 @@
-import 'package:flutter_local_notifications/platform_specifics/android/styles/style_information.dart';
+part of flutter_local_notifications;
 
 class DefaultStyleInformation extends StyleInformation {
   /// Specifies if formatting should be applied to the content through HTML markup
