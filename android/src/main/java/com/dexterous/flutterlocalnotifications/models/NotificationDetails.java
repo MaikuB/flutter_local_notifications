@@ -1,10 +1,13 @@
 package com.dexterous.flutterlocalnotifications.models;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 
+import com.dexterous.flutterlocalnotifications.BitmapSource;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.RepeatInterval;
+import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
@@ -55,6 +58,10 @@ public class NotificationDetails {
     private static final String COLOR_RED = "colorRed";
     private static final String COLOR_GREEN = "colorGreen";
     private static final String COLOR_BLUE = "colorBlue";
+    private static final String LARGE_ICON = "largeIcon";
+    private static final String LARGE_ICON_BITMAP_SOURCE = "largeIconBitmapSource";
+    private static final String BIG_PICTURE = "bigPicture";
+    private static final String BIG_PICTURE_BITMAP_SOURCE = "bigPictureBitmapSource";
 
 
     public Integer id;
@@ -84,10 +91,11 @@ public class NotificationDetails {
     public Boolean ongoing;
     public Integer day;
     public Integer color;
+    public String largeIcon;
+    public BitmapSource largeIconBitmapSource;
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted
     public Integer iconResourceId;
-
 
     public static NotificationDetails from(Map<String, Object> arguments) {
         NotificationDetails notificationDetails = new NotificationDetails();
@@ -130,6 +138,13 @@ public class NotificationDetails {
             notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
             readColor(notificationDetails, platformChannelSpecifics);
             readChannelInformation(notificationDetails, platformChannelSpecifics);
+            notificationDetails.largeIcon = (String) platformChannelSpecifics.get(LARGE_ICON);
+            if (platformChannelSpecifics.containsKey(LARGE_ICON_BITMAP_SOURCE)) {
+                Integer argumentValue = (Integer) platformChannelSpecifics.get(LARGE_ICON_BITMAP_SOURCE);
+                if (argumentValue != null) {
+                    notificationDetails.largeIconBitmapSource = BitmapSource.values()[argumentValue];
+                }
+            }
         }
         return notificationDetails;
     }
@@ -159,6 +174,21 @@ public class NotificationDetails {
         DefaultStyleInformation defaultStyleInformation = getDefaultStyleInformation(styleInformation);
         if (notificationDetails.style == NotificationStyle.Default) {
             notificationDetails.styleInformation = defaultStyleInformation;
+        } else if (notificationDetails.style == NotificationStyle.BigPicture) {
+            String contentTitle = (String) styleInformation.get(CONTENT_TITLE);
+            Boolean htmlFormatContentTitle = (Boolean) styleInformation.get(HTML_FORMAT_CONTENT_TITLE);
+            String summaryText = (String) styleInformation.get(SUMMARY_TEXT);
+            Boolean htmlFormatSummaryText = (Boolean) styleInformation.get(HTML_FORMAT_SUMMARY_TEXT);
+            String largeIcon = (String) styleInformation.get(LARGE_ICON);
+            BitmapSource largeIconBitmapSource = null;
+            if (styleInformation.containsKey(LARGE_ICON_BITMAP_SOURCE)) {
+                Integer largeIconBitmapSourceArgument = (Integer) styleInformation.get(LARGE_ICON_BITMAP_SOURCE);
+                largeIconBitmapSource = BitmapSource.values()[largeIconBitmapSourceArgument];
+            }
+            String bigPicture = (String) styleInformation.get(BIG_PICTURE);
+            Integer bigPictureBitmapSourceArgument = (Integer) styleInformation.get(BIG_PICTURE_BITMAP_SOURCE);
+            BitmapSource bigPictureBitmapSource = BitmapSource.values()[bigPictureBitmapSourceArgument];
+            notificationDetails.styleInformation = new BigPictureStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText, largeIcon, largeIconBitmapSource, bigPicture, bigPictureBitmapSource);
         } else if (notificationDetails.style == NotificationStyle.BigText) {
             String bigText = (String) styleInformation.get(BIG_TEXT);
             Boolean htmlFormatBigText = (Boolean) styleInformation.get(HTML_FORMAT_BIG_TEXT);

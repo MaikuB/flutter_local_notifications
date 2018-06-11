@@ -134,4 +134,7 @@
     * NotificationStyleAndroid -> AndroidNotificationStyle
     * NotificationDetailsIOS -> IOSNotificationDetails
 
+* [Android] Ability to set the large icon used for each notification. See example app for sample code
+* [Android] Ability to create a notification with the big picture style. See example app for sample code
+
 

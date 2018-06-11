@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -20,6 +22,7 @@ import android.text.Html;
 import android.text.Spanned;
 
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
+import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
@@ -33,7 +36,6 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -48,6 +50,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  * FlutterLocalNotificationsPlugin
  */
 public class FlutterLocalNotificationsPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener {
+    private static final String DRAWABLE = "drawable";
     private static final String DEFAULT_ICON = "defaultIcon";
     private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
@@ -225,7 +228,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         int resourceId;
         if (notificationDetails.iconResourceId == null) {
             if (notificationDetails.icon != null) {
-                resourceId = context.getResources().getIdentifier(notificationDetails.icon, "drawable", context.getPackageName());
+                resourceId = context.getResources().getIdentifier(notificationDetails.icon, DRAWABLE, context.getPackageName());
             } else {
                 resourceId = defaultIconResourceId;
             }
@@ -233,6 +236,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         } else {
             resourceId = notificationDetails.iconResourceId;
         }
+
         setupNotificationChannel(context, notificationDetails);
         Intent intent = new Intent(context, getMainActivityClass(context));
         intent.setAction(SELECT_NOTIFICATION);
@@ -248,6 +252,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setPriority(notificationDetails.priority)
                 .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing));
 
+        if(!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
+            builder.setLargeIcon(getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
+        }
         if(notificationDetails.color != null) {
             builder.setColor(notificationDetails.color.intValue());
         }
@@ -255,9 +262,22 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         applyGrouping(notificationDetails, builder);
         setSound(context, notificationDetails, builder);
         setVibrationPattern(notificationDetails, builder);
-        setStyle(notificationDetails, builder);
+        setStyle(context, notificationDetails, builder);
         Notification notification = builder.build();
         return notification;
+    }
+
+    private static Bitmap getBitmapFromSource(Context context, String bitmapPath, BitmapSource bitmapSource) {
+         Bitmap bitmap = null;
+         if(bitmapSource == BitmapSource.Drawable) {
+             int resourceId = context.getResources().getIdentifier(bitmapPath, DRAWABLE, context.getPackageName());
+             bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId);
+         } else if (bitmapSource == BitmapSource.FilePath) {
+             bitmap = BitmapFactory.decodeFile(bitmapPath);
+
+         }
+
+         return bitmap;
     }
 
     private static void applyGrouping(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
@@ -307,48 +327,77 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-    private static void setStyle(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+    private static void setStyle(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
         switch (notificationDetails.style) {
             case Default:
                 break;
+            case BigPicture:
+                setBigPictureStyle(context, notificationDetails, builder);
+                break;
             case BigText:
-                BigTextStyleInformation bigTextStyleInformation = (BigTextStyleInformation) notificationDetails.styleInformation;
-                NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
-                if (bigTextStyleInformation.bigText != null) {
-                    CharSequence bigText = bigTextStyleInformation.htmlFormatBigText ? fromHtml(bigTextStyleInformation.bigText) : bigTextStyleInformation.bigText;
-                    bigTextStyle.bigText(bigText);
-                }
-                if (bigTextStyleInformation.contentTitle != null) {
-                    CharSequence contentTitle = bigTextStyleInformation.htmlFormatContentTitle ? fromHtml(bigTextStyleInformation.contentTitle) : bigTextStyleInformation.contentTitle;
-                    bigTextStyle.setBigContentTitle(contentTitle);
-                }
-                if (bigTextStyleInformation.summaryText != null) {
-                    CharSequence summaryText = bigTextStyleInformation.htmlFormatSummaryText ? fromHtml(bigTextStyleInformation.summaryText) : bigTextStyleInformation.summaryText;
-                    bigTextStyle.setSummaryText(summaryText);
-                }
-                builder.setStyle(bigTextStyle);
+                setBigTextStyle(notificationDetails, builder);
                 break;
             case Inbox:
-                InboxStyleInformation inboxStyleInformation = (InboxStyleInformation) notificationDetails.styleInformation;
-                NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-                if (inboxStyleInformation.contentTitle != null) {
-                    CharSequence contentTitle = inboxStyleInformation.htmlFormatContentTitle ? fromHtml(inboxStyleInformation.contentTitle) : inboxStyleInformation.contentTitle;
-                    inboxStyle.setBigContentTitle(contentTitle);
-                }
-                if (inboxStyleInformation.summaryText != null) {
-                    CharSequence summaryText = inboxStyleInformation.htmlFormatSummaryText ? fromHtml(inboxStyleInformation.summaryText) : inboxStyleInformation.summaryText;
-                    inboxStyle.setSummaryText(summaryText);
-                }
-                if (inboxStyleInformation.lines != null) {
-                    for (String line : inboxStyleInformation.lines) {
-                        inboxStyle.addLine(inboxStyleInformation.htmlFormatLines ? fromHtml(line) : line);
-                    }
-                }
-                builder.setStyle(inboxStyle);
+                setInboxStyle(notificationDetails, builder);
                 break;
             default:
                 break;
         }
+    }
+
+    private static void setBigPictureStyle(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        BigPictureStyleInformation bigPictureStyleInformation = (BigPictureStyleInformation) notificationDetails.styleInformation;
+        NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
+        if (bigPictureStyleInformation.contentTitle != null) {
+            CharSequence contentTitle = bigPictureStyleInformation.htmlFormatContentTitle ? fromHtml(bigPictureStyleInformation.contentTitle) : bigPictureStyleInformation.contentTitle;
+            bigPictureStyle.setBigContentTitle(contentTitle);
+        }
+        if(bigPictureStyleInformation.summaryText != null) {
+            CharSequence summaryText = bigPictureStyleInformation.htmlFormatSummaryText ? fromHtml(bigPictureStyleInformation.summaryText) : bigPictureStyleInformation.summaryText;
+            bigPictureStyle.setSummaryText(summaryText);
+        }
+        if(bigPictureStyleInformation.largeIcon != null) {
+            bigPictureStyle.bigLargeIcon(getBitmapFromSource(context, bigPictureStyleInformation.largeIcon, bigPictureStyleInformation.largeIconBitmapSource));
+        }
+        bigPictureStyle.bigPicture(getBitmapFromSource(context, bigPictureStyleInformation.bigPicture, bigPictureStyleInformation.bigPictureBitmapSource));
+        builder.setStyle(bigPictureStyle);
+    }
+
+    private static void setInboxStyle(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        InboxStyleInformation inboxStyleInformation = (InboxStyleInformation) notificationDetails.styleInformation;
+        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+        if (inboxStyleInformation.contentTitle != null) {
+            CharSequence contentTitle = inboxStyleInformation.htmlFormatContentTitle ? fromHtml(inboxStyleInformation.contentTitle) : inboxStyleInformation.contentTitle;
+            inboxStyle.setBigContentTitle(contentTitle);
+        }
+        if (inboxStyleInformation.summaryText != null) {
+            CharSequence summaryText = inboxStyleInformation.htmlFormatSummaryText ? fromHtml(inboxStyleInformation.summaryText) : inboxStyleInformation.summaryText;
+            inboxStyle.setSummaryText(summaryText);
+        }
+        if (inboxStyleInformation.lines != null) {
+            for (String line : inboxStyleInformation.lines) {
+                inboxStyle.addLine(inboxStyleInformation.htmlFormatLines ? fromHtml(line) : line);
+            }
+        }
+        builder.setStyle(inboxStyle);
+    }
+
+    private static void setBigTextStyle(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        BigTextStyleInformation bigTextStyleInformation = (BigTextStyleInformation) notificationDetails.styleInformation;
+        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
+        if (bigTextStyleInformation.bigText != null) {
+            CharSequence bigText = bigTextStyleInformation.htmlFormatBigText ? fromHtml(bigTextStyleInformation.bigText) : bigTextStyleInformation.bigText;
+            bigTextStyle.bigText(bigText);
+        }
+        if (bigTextStyleInformation.contentTitle != null) {
+            CharSequence contentTitle = bigTextStyleInformation.htmlFormatContentTitle ? fromHtml(bigTextStyleInformation.contentTitle) : bigTextStyleInformation.contentTitle;
+            bigTextStyle.setBigContentTitle(contentTitle);
+        }
+        if (bigTextStyleInformation.summaryText != null) {
+            CharSequence summaryText = bigTextStyleInformation.htmlFormatSummaryText ? fromHtml(bigTextStyleInformation.summaryText) : bigTextStyleInformation.summaryText;
+            bigTextStyle.setSummaryText(summaryText);
+        }
+        builder.setStyle(bigTextStyle);
     }
 
     private static void setupNotificationChannel(Context context, NotificationDetails notificationDetails) {

@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(
@@ -65,7 +68,7 @@ class _MyAppState extends State<MyApp> {
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
                         child: new Text(
-                            'Schedule notification to appear in 5 seconds, custom sound, red colour'),
+                            'Schedule notification to appear in 5 seconds, custom sound, red colour, large icon'),
                         onPressed: () async {
                           await _scheduleNotification();
                         })),
@@ -98,6 +101,14 @@ class _MyAppState extends State<MyApp> {
                         child: new Text('Show notification with no sound'),
                         onPressed: () async {
                           await _showNotificationWithNoSound();
+                        })),
+                new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
+                        child:
+                            new Text('Show big picture notification [Android]'),
+                        onPressed: () async {
+                          await _showBigPictureNotification();
                         })),
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
@@ -174,6 +185,8 @@ class _MyAppState extends State<MyApp> {
         'your other channel description',
         icon: 'secondary_icon',
         sound: 'slow_spring_board',
+        largeIcon: 'sample_large_icon',
+        largeIconBitmapSource: BitmapSource.Drawable,
         vibrationPattern: vibrationPattern,
         color: const Color.fromARGB(255, 255, 0, 0));
     var iOSPlatformChannelSpecifics =
@@ -203,11 +216,42 @@ class _MyAppState extends State<MyApp> {
         '<b>silent</b> body', platformChannelSpecifics);
   }
 
+  Future _showBigPictureNotification() async {
+    var directory = await getApplicationDocumentsDirectory();
+    var largeIconResponse = await http.get('http://via.placeholder.com/48x48');
+    var largeIconPath = '${directory.path}/largeIcon';
+    var file = new File(largeIconPath);
+    await file.writeAsBytes(largeIconResponse.bodyBytes);
+    var bigPictureResponse =
+        await http.get('http://via.placeholder.com/400x800');
+    var bigPicturePath = '${directory.path}/bigPicture';
+    file = new File(bigPicturePath);
+    await file.writeAsBytes(bigPictureResponse.bodyBytes);
+    var bigPictureStyleInformation = new BigPictureStyleInformation(
+        bigPicturePath, BitmapSource.FilePath,
+        largeIcon: largeIconPath,
+        largeIconBitmapSource: BitmapSource.FilePath,
+        contentTitle: 'overridden <b>big</b> content title',
+        htmlFormatContentTitle: true,
+        summaryText: 'summary <i>text</i>',
+        htmlFormatSummaryText: true);
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'big text channel id',
+        'big text channel name',
+        'big text channel description',
+        style: AndroidNotificationStyle.BigPicture,
+        styleInformation: bigPictureStyleInformation);
+    var platformChannelSpecifics =
+        new NotificationDetails(androidPlatformChannelSpecifics, null);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'big text title', 'silent body', platformChannelSpecifics);
+  }
+
   Future _showBigTextNotification() async {
     var bigTextStyleInformation = new BigTextStyleInformation(
         'Lorem <i>ipsum dolor sit</i> amet, consectetur <b>adipiscing elit</b>, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
         htmlFormatBigText: true,
-        contentTitle: 'overridden <b>big</b> context title',
+        contentTitle: 'overridden <b>big</b> content title',
         htmlFormatContentTitle: true,
         summaryText: 'summary <i>text</i>',
         htmlFormatSummaryText: true);

@@ -24,8 +24,10 @@ A cross platform plugin for displaying local notifications.
 * [Android] Customising the vibration pattern for notifications
 * [Android] Configure the default icon for all notifications
 * [Android] Configure the icon for each notification (overrides the default when specified)
+* [Android] Configure the large icon for each notification. The icon can be a drawable or a file on the device
 * [Android] Formatting notification content via HTML markup (see https://developer.android.com/guide/topics/resources/string-resource.html#StylingWithHTML)
 * [Android] Support for the following notification styles
+    * Big picture
     * Big text
     * Inbox
 * [Android] Group notifications
@@ -36,6 +38,8 @@ Note that this plugin aims to provide abstractions for all platforms as opposed 
 Contributions are welcome by submitting a PR for me to review. If it's to add new features, appreciate it if you could try to maintain the architecture or try to improve on it :)
 
 ## Getting Started
+
+The GitHub repository has an example app that demonstrates the various features of the plugin. Please check the example for more detailed code samples. The following samples will demonstrate the more commonly used functionalities.
 
 The first step is to create a new instance of the plugin class and then initialise it with the settings to use for each platform
 
@@ -51,7 +55,7 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
     selectNotification: onSelectNotification);
 ```
 
-Here we specify we have specified the default icon to use for notifications on Android and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In this example, it will trigger navigation to another page and display the payload associated with the notification. 
+Here we specify we have specified the default icon to use for notifications on Android (refer to the Android Integration section) and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In this example, it will trigger navigation to another page and display the payload associated with the notification. 
 
 ```
 Future onSelectNotification(String payload) async {
@@ -251,9 +255,12 @@ If the vibration pattern of an Android notification will be customised then add 
 <uses-permission android:name="android.permission.VIBRATE" />
 ```
 
-Notification icons should be added as a drawable resource. The sample code shows how to set default icon for all notifications and how to specify one for each notification.
+Notification icons should be added as a drawable resource. The example project/code shows how to set default icon for all notifications and how to specify one for each notification. Custom notification sounds should be added as a raw resource and the sample illustrates how to play a notification with a custom sound. Refer to the following links around Android resources and for details on one of the ways you can generate notification icons
 
-Custom notification sounds should be added as a raw resource and the sample illustrates how to play a notification with a custom sound.
+https://developer.android.com/guide/topics/resources/providing-resources
+https://developer.android.com/studio/write/image-asset-studio#notification
+
+When specifying the large icon bitmap or big picture bitmap (associated with the big picture style), bitmaps can be either a drawable resource or file on the device. This is specified via a single property (e.g. the `largeIcon` property associated with the `AndroidNotificationDetails` class) and there will be a corresponding property of the `BitmapSource` enum type (e.g. `largeIconBitmapSource`) that indicates if the string value represents the name of the drawable resource or the path to the bitmap file.
 
 Note that with Android 8.0+, sounds and vibrations are associated with notification channels and can only be configured when they are first created. Showing/scheduling a notification will create a channel with the specified id if it doesn't exist already. If another notification specifies the same channel id but tries to specify another sound or vibration pattern then nothing occurs.
 
@@ -308,6 +315,10 @@ if(![[NSUserDefaults standardUserDefaults]objectForKey:@"Notification"]){
     [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"Notification"];
 }
 ```
+
+When using custom notification sound, developers should be aware that iOS enforces restrictions on this (e.g. supported file formats). As of this writing, this is documented by Apple at
+
+https://developer.apple.com/documentation/usernotifications/unnotificationsound?language=objc
 
 ## Testing
 
