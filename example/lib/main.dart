@@ -6,6 +6,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
+/// IMPORTANT: running the following code on its own won't work as there is setup required for each platform head project.
+/// Please download the complete example app from the GitHub repository where all the setup has been done
 void main() {
   runApp(
     new MaterialApp(home: new MyApp()),
@@ -22,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   @override
   initState() {
     super.initState();
-    // initialise the plugin
+    // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
     var initializationSettingsAndroid =
         new AndroidInitializationSettings('app_icon');
     var initializationSettingsIOS = new IOSInitializationSettings();

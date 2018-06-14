@@ -37,9 +37,9 @@ Note that this plugin aims to provide abstractions for all platforms as opposed 
 
 ## Getting Started
 
-The GitHub repository has an example app that should demonstrate of all the supported features of the plugin. Please check the example for more detailed code samples. The following samples will demonstrate the more commonly used functionalities.
+The GitHub repository has an example app that should demonstrate of all the supported features of the plugin. Please check the example for more detailed code samples. If you only copy and paste the Dart code then this will not work as there's setup required for each platform.
 
-The first step is to create a new instance of the plugin class and then initialise it with the settings to use for each platform
+The following samples will demonstrate the more commonly used functionalities. The first step is to create a new instance of the plugin class and then initialise it with the settings to use for each platform
 
 ```
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
@@ -253,10 +253,11 @@ If the vibration pattern of an Android notification will be customised then add 
 <uses-permission android:name="android.permission.VIBRATE" />
 ```
 
-Notification icons should be added as a drawable resource. The example project/code shows how to set default icon for all notifications and how to specify one for each notification. Custom notification sounds should be added as a raw resource and the sample illustrates how to play a notification with a custom sound. Refer to the following links around Android resources and for details on one of the ways you can generate notification icons
+Notification icons should be added as a drawable resource. The example project/code shows how to set default icon for all notifications and how to specify one for each notification. It is possible to use launcher icon/mipmap and this by default is `@mipmap/ic_launcher` in the Android manifest and can be passed `AndroidInitializationSettings` constructor. However, the offical Android guidance is that you should use drawable resources. Custom notification sounds should be added as a raw resource and the sample illustrates how to play a notification with a custom sound. Refer to the following links around Android resources and notification icons.
 
-https://developer.android.com/guide/topics/resources/providing-resources
-https://developer.android.com/studio/write/image-asset-studio#notification
+ * https://developer.android.com/guide/topics/resources/providing-resources
+ * https://developer.android.com/studio/write/image-asset-studio#notification
+ * https://developer.android.com/guide/practices/ui_guidelines/icon_design_status_bar
 
 When specifying the large icon bitmap or big picture bitmap (associated with the big picture style), bitmaps can be either a drawable resource or file on the device. This is specified via a single property (e.g. the `largeIcon` property associated with the `AndroidNotificationDetails` class) and there will be a corresponding property of the `BitmapSource` enum type (e.g. `largeIconBitmapSource`) that indicates if the string value represents the name of the drawable resource or the path to the bitmap file.
 
