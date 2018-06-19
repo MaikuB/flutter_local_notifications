@@ -35,7 +35,7 @@ A cross platform plugin for displaying local notifications.
 
 Note that this plugin aims to provide abstractions for all platforms as opposed to having methods that only work on specific platforms. However, each method allows passing in "platform-specifics" that contains data that is specific for customising notifications on each platform. It is still under development so expect the API surface to change over time.
 
-**IMPORTANT**: Recurring notifications on Android use the [Alarm Manager](https://developer.android.com/reference/android/app/AlarmManager). This is standard practice but does mean the delivery of the notifications/alarms are inexact and this is documented Android behaviour as per the previous link.
+**IMPORTANT**: Recurring notifications on Android use the [Alarm Manager](https://developer.android.com/reference/android/app/AlarmManager) API. This is standard practice but does mean the delivery of the notifications/alarms are inexact and this is documented Android behaviour as per the previous link.
 
 ## Raising issues and contributions
 
