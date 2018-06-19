@@ -35,6 +35,14 @@ A cross platform plugin for displaying local notifications.
 
 Note that this plugin aims to provide abstractions for all platforms as opposed to having methods that only work on specific platforms. However, each method allows passing in "platform-specifics" that contains data that is specific for customising notifications on each platform. It is still under development so expect the API surface to change over time.
 
+**IMPORTANT**: Recurring notifications on Android use the [Alarm Manager](https://developer.android.com/reference/android/app/AlarmManager) API. This is standard practice but does mean the delivery of the notifications/alarms are inexact and this is documented Android behaviour as per the previous link.
+
+## Raising issues and contributions
+
+If you run into issues, please raise them on the GitHub repository. Please do not email them to me as I will be ignoring emails going forward as GitHub is the appropriate place for them. It would also be much appreciated if they could be limited to actual bugs or feature requests. If you're looking at how you could use the plugin to do a particular kind of notification, check the example app provides detailed code samples for each supported feature. Also try to check the README first in case you have missed something e.g. platform-specific setup.
+
+Contributions are welcome by submitting a PR for me to review. If it's to add new features, appreciate it if you could try to maintain the architecture or try to improve on it. However, do note that I will not take PRs that add methods at the Dart level that don't work on all platforms. However, platform-specific configuration through the use parameters are fine as that's approach being taken via this plugin.
+
 ## Getting Started
 
 The GitHub repository has an example app that should demonstrate of all the supported features of the plugin. Please check the example for more detailed code samples. If you only copy and paste the Dart code then this will not work as there's setup required for each platform.
@@ -75,7 +83,7 @@ In the real world, this payload could represent the id of the item you want to d
 var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
     'your channel id', 'your channel name', 'your channel description',
     importance: Importance.Max, priority: Priority.High);
-var iOSPlatformChannelSpecifics = new NotificationDetailsIOS();
+var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
 var platformChannelSpecifics = new NotificationDetails(
     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.show(
@@ -119,6 +127,7 @@ var platformChannelSpecifics = new NotificationDetails(
 await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
     'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
 ```
+
 ### Show a daily notification at a specific time
 
 ```
@@ -319,7 +328,7 @@ When using custom notification sound, developers should be aware that iOS enforc
 
 https://developer.apple.com/documentation/usernotifications/unnotificationsound?language=objc
 
-*NOTE*: this plugin registers itself as the delegate to handle incoming notifications and actions. This may cause problems if you're using other plugins for push notifications (e.g. `firebase_messaging`) as they will most likely do the same and it's only possible to register a single delegate. iOS handles showing push notifications out of the box so if you're only using this plugin to display the notification payload on Android then it's suggested that you fork the plugin code and remove the following part in the iOS code
+**NOTE**: this plugin registers itself as the delegate to handle incoming notifications and actions. This may cause problems if you're using other plugins for push notifications (e.g. `firebase_messaging`) as they will most likely do the same and it's only possible to register a single delegate. iOS handles showing push notifications out of the box so if you're only using this plugin to display the notification payload on Android then it's suggested that you fork the plugin code and remove the following part in the iOS code
 
 ```
 UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
@@ -332,11 +341,6 @@ Unfortunately, this platform limitation does mean that it's not possible to use 
 
 As the plugin class is not static, it is possible to mock and verify it's behaviour when writing tests as part of your application. Check the source code for a sample test suite can be found at _test/flutter_local_notifications_test.dart_ that demonstrates how this can be done.
 
-## Raising issues and contributions
-
-Contributions are welcome by submitting a PR for me to review. If it's to add new features, appreciate it if you could try to maintain the architecture or try to improve on it. However, do note that I will not take PRs that add methods at the Dart level that don't work on all platforms. However, platform-specific configuration through the use parameters are fine as that's approach being taken via this plugin.
-
-If you're creating an issue on the repository, it'd much appreciated if this could be limited to actual bugs or feature requests. If you're looking at how you could use the plugin to do a particular kind of notification, check the example app provides detailed code samples for each supported feature.
 
 ## Acknowledgements
 
