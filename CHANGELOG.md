@@ -1,3 +1,6 @@
+## [0.3.2]
+* No functional changes. Updated the README around raising issues, recurring Android notifications on Android and a fix in the getting started section (thanks to ebeem for spotting that).
+
 ## [0.3.1]
 
 * No functional changes in this release but removed a class that is no longer used due to changes in 0.3.0
