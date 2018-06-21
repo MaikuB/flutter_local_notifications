@@ -277,6 +277,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
             NSDate *now = [NSDate date];
             NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier: NSCalendarIdentifierGregorian];
             NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+            [dateComponents setCalendar:calendar];
             if (notificationDetails.day != nil) {
                 [dateComponents setWeekday:[notificationDetails.day integerValue]];
             }
