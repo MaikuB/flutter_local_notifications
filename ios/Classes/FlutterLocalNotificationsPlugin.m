@@ -276,13 +276,14 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         if (notificationDetails.repeatTime != nil) {
             NSDate *now = [NSDate date];
             NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier: NSCalendarIdentifierGregorian];
-            NSDateComponents *dateComponents = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:now];
+            NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+            [dateComponents setCalendar:calendar];
+            if (notificationDetails.day != nil) {
+                [dateComponents setWeekday:[notificationDetails.day integerValue]];
+            }
             [dateComponents setHour:[notificationDetails.repeatTime.hour integerValue]];
             [dateComponents setMinute:[notificationDetails.repeatTime.minute integerValue]];
             [dateComponents setSecond:[notificationDetails.repeatTime.second integerValue]];
-            if(notificationDetails.day != nil) {
-                [dateComponents setWeekday:[notificationDetails.day integerValue]];
-            }
             trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats: repeats];
         } else {
             trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:timeInterval
