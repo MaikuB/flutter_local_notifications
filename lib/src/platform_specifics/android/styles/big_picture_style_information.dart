@@ -1,5 +1,6 @@
 part of flutter_local_notifications;
 
+/// Used to pass the content for an Android notification displayed using the big picture style
 class BigPictureStyleInformation extends DefaultStyleInformation {
   /// Overrides ContentTitle in the big form of the template.
   final String contentTitle;

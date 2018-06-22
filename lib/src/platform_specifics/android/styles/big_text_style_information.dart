@@ -1,5 +1,6 @@
 part of flutter_local_notifications;
 
+/// Used to pass the content for an Android notification displayed using the big text style
 class BigTextStyleInformation extends DefaultStyleInformation {
   /// Provide the longer text to be displayed in the big form of the template in place of the content text.
   final String bigText;

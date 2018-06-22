@@ -1,5 +1,6 @@
 part of flutter_local_notifications;
 
+/// Specifies if the source for a bitmap used by Android notifications.
 enum BitmapSource { Drawable, FilePath }
 
 /// The available notification styles on Android
@@ -23,7 +24,7 @@ class Importance {
   const Importance(this.value);
 }
 
-// Priority for notifications on Android 7.1 and lower
+/// Priority for notifications on Android 7.1 and lower
 class Priority {
   static const Min = const Priority(-2);
   static const Low = const Priority(-1);

@@ -344,5 +344,5 @@ As the plugin class is not static, it is possible to mock and verify it's behavi
 
 ## Acknowledgements
 
-* Javier Lecuona (javiercbk) for submitting the PR that added the ability to have notifications shown daily
-* Jeff Scaturro (JeffScaturro) for submitting the PR to fix the iOS issue around showing daily and weekly notifications
+* [Javier Lecuona](https://github.com/javiercbk) for submitting the PR that added the ability to have notifications shown daily
+* [Jeff Scaturro](https://github.com/JeffScaturro) for submitting the PR to fix the iOS issue around showing daily and weekly notifications
