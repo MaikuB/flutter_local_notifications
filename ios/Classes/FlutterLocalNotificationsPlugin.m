@@ -274,7 +274,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
             repeats = YES;
         }
         if (notificationDetails.repeatTime != nil) {
-            NSDate *now = [NSDate date];
             NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier: NSCalendarIdentifierGregorian];
             NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
             [dateComponents setCalendar:calendar];
