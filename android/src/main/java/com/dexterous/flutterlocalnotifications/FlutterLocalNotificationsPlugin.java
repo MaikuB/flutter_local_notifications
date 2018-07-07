@@ -66,6 +66,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String PAYLOAD = "payload";
     public static String NOTIFICATION_ID = "notification_id";
     public static String NOTIFICATION = "notification";
+    public static String NOTIFICATION_DETAILS = "notificationDetails";
     public static String REPEAT = "repeat";
     private static MethodChannel channel;
     private static int defaultIconResourceId;
@@ -89,12 +90,57 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
+    public static Notification createNotification(Context context, NotificationDetails notificationDetails) {
+        setIconResourceId(context, notificationDetails);
+        setupNotificationChannel(context, notificationDetails);
+        Intent intent = new Intent(context, getMainActivityClass(context));
+        intent.setAction(SELECT_NOTIFICATION);
+        intent.putExtra(PAYLOAD, notificationDetails.payload);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        DefaultStyleInformation defaultStyleInformation = (DefaultStyleInformation) notificationDetails.styleInformation;
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationDetails.channelId)
+                .setSmallIcon(notificationDetails.iconResourceId)
+                .setContentTitle(defaultStyleInformation.htmlFormatTitle ? fromHtml(notificationDetails.title) : notificationDetails.title)
+                .setContentText(defaultStyleInformation.htmlFormatBody ? fromHtml(notificationDetails.body) : notificationDetails.body)
+                .setAutoCancel(BooleanUtils.getValue(notificationDetails.autoCancel))
+                .setContentIntent(pendingIntent)
+                .setPriority(notificationDetails.priority)
+                .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing));
+
+        if(!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
+            builder.setLargeIcon(getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
+        }
+        if(notificationDetails.color != null) {
+            builder.setColor(notificationDetails.color.intValue());
+        }
+
+        applyGrouping(notificationDetails, builder);
+        setSound(context, notificationDetails, builder);
+        setVibrationPattern(notificationDetails, builder);
+        setStyle(context, notificationDetails, builder);
+        Notification notification = builder.build();
+        return notification;
+    }
+
+    @NonNull
+    public static Gson buildGson() {
+        RuntimeTypeAdapterFactory<StyleInformation> styleInformationAdapter =
+                RuntimeTypeAdapterFactory
+                        .of(StyleInformation.class)
+                        .registerSubtype(DefaultStyleInformation.class)
+                        .registerSubtype(BigTextStyleInformation.class)
+                        .registerSubtype(BigPictureStyleInformation.class)
+                        .registerSubtype(InboxStyleInformation.class);
+        GsonBuilder builder = new GsonBuilder().registerTypeAdapterFactory(styleInformationAdapter);
+        return builder.create();
+    }
+
     private static ArrayList<NotificationDetails> loadScheduledNotifications(Context context) {
         ArrayList<NotificationDetails> scheduledNotifications = new ArrayList<>();
         SharedPreferences sharedPreferences = context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
         String json = sharedPreferences.getString(SCHEDULED_NOTIFICATIONS, null);
         if (json != null) {
-            Gson gson = getGsonBuilder();
+            Gson gson = buildGson();
             Type type = new TypeToken<ArrayList<NotificationDetails>>() {
             }.getType();
             scheduledNotifications = gson.fromJson(json, type);
@@ -102,19 +148,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return scheduledNotifications;
     }
 
-    @NonNull
-    private static Gson getGsonBuilder() {
-        RuntimeTypeAdapterFactory<StyleInformation> styleInformationAdapter =
-                RuntimeTypeAdapterFactory
-                        .of(StyleInformation.class)
-                        .registerSubtype(DefaultStyleInformation.class)
-                        .registerSubtype(BigTextStyleInformation.class);
-        GsonBuilder builder = new GsonBuilder().registerTypeAdapterFactory(styleInformationAdapter);
-        return builder.create();
-    }
 
     private static void saveScheduledNotifications(Context context, ArrayList<NotificationDetails> scheduledNotifications) {
-        Gson gson = getGsonBuilder();
+        Gson gson = buildGson();
         String json = gson.toJson(scheduledNotifications);
         SharedPreferences sharedPreferences = context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -153,10 +189,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static void scheduleNotification(Context context, NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
-        Notification notification = createNotification(context, notificationDetails);
+        setIconResourceId(context, notificationDetails);
+        Gson gson = buildGson();
+        String notificationDetailsJson = gson.toJson(notificationDetails);
         Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
-        notificationIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
-        notificationIntent.putExtra(NOTIFICATION, notification);
+        notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         AlarmManager alarmManager = getAlarmManager(context);
@@ -169,10 +206,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static void repeatNotification(Context context, NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
-        Notification notification = createNotification(context, notificationDetails);
+        setIconResourceId(context, notificationDetails);
+        Gson gson = buildGson();
+        String notificationDetailsJson = gson.toJson(notificationDetails);
         Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
-        notificationIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
-        notificationIntent.putExtra(NOTIFICATION, notification);
+        notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
         notificationIntent.putExtra(REPEAT, true);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
@@ -224,7 +262,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-    private static Notification createNotification(Context context, NotificationDetails notificationDetails) {
+
+
+
+    private static void setIconResourceId(Context context, NotificationDetails notificationDetails) {
         int resourceId;
         if (notificationDetails.iconResourceId == null) {
             if (notificationDetails.icon != null) {
@@ -233,38 +274,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 resourceId = defaultIconResourceId;
             }
             notificationDetails.iconResourceId = resourceId;
-        } else {
-            resourceId = notificationDetails.iconResourceId;
         }
-
-        setupNotificationChannel(context, notificationDetails);
-        Intent intent = new Intent(context, getMainActivityClass(context));
-        intent.setAction(SELECT_NOTIFICATION);
-        intent.putExtra(PAYLOAD, notificationDetails.payload);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        DefaultStyleInformation defaultStyleInformation = (DefaultStyleInformation) notificationDetails.styleInformation;
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationDetails.channelId)
-                .setSmallIcon(resourceId)
-                .setContentTitle(defaultStyleInformation.htmlFormatTitle ? fromHtml(notificationDetails.title) : notificationDetails.title)
-                .setContentText(defaultStyleInformation.htmlFormatBody ? fromHtml(notificationDetails.body) : notificationDetails.body)
-                .setAutoCancel(BooleanUtils.getValue(notificationDetails.autoCancel))
-                .setContentIntent(pendingIntent)
-                .setPriority(notificationDetails.priority)
-                .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing));
-
-        if(!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
-            builder.setLargeIcon(getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
-        }
-        if(notificationDetails.color != null) {
-            builder.setColor(notificationDetails.color.intValue());
-        }
-
-        applyGrouping(notificationDetails, builder);
-        setSound(context, notificationDetails, builder);
-        setVibrationPattern(notificationDetails, builder);
-        setStyle(context, notificationDetails, builder);
-        Notification notification = builder.build();
-        return notification;
     }
 
     private static Bitmap getBitmapFromSource(Context context, String bitmapPath, BitmapSource bitmapSource) {

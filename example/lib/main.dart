@@ -53,19 +53,23 @@ class _MyAppState extends State<MyApp> {
                       'Tap on a notification when it appears to trigger navigation'),
                 ),
                 new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: new RaisedButton(
-                        child: new Text('Show plain notification with payload'),
-                        onPressed: () async {
-                          await _showNotification();
-                        })),
+                  padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                  child: new RaisedButton(
+                    child: new Text('Show plain notification with payload'),
+                    onPressed: () async {
+                      await _showNotification();
+                    },
+                  ),
+                ),
                 new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: new RaisedButton(
-                        child: new Text('Cancel notification'),
-                        onPressed: () async {
-                          await _cancelNotification();
-                        })),
+                  padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                  child: new RaisedButton(
+                    child: new Text('Cancel notification'),
+                    onPressed: () async {
+                      await _cancelNotification();
+                    },
+                  ),
+                ),
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
@@ -75,71 +79,88 @@ class _MyAppState extends State<MyApp> {
                           await _scheduleNotification();
                         })),
                 new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: new RaisedButton(
-                        child: new Text('Repeat notification every minute'),
-                        onPressed: () async {
-                          await _repeatNotification();
-                        })),
+                  padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                  child: new RaisedButton(
+                    child: new Text('Repeat notification every minute'),
+                    onPressed: () async {
+                      await _repeatNotification();
+                    },
+                  ),
+                ),
                 new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: new RaisedButton(
-                        child: new Text(
-                            'Repeat notification every day at approximately 10:00:00 am'),
-                        onPressed: () async {
-                          await _showDailyAtTime();
-                        })),
+                  padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                  child: new RaisedButton(
+                    child: new Text(
+                        'Repeat notification every day at approximately 10:00:00 am'),
+                    onPressed: () async {
+                      await _showDailyAtTime();
+                    },
+                  ),
+                ),
                 new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: new RaisedButton(
-                        child: new Text(
-                            'Repeat notification weekly on Monday at approximately 10:00:00 am'),
-                        onPressed: () async {
-                          await _showWeeklyAtDayAndTime();
-                        })),
+                  padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                  child: new RaisedButton(
+                    child: new Text(
+                        'Repeat notification weekly on Monday at approximately 10:00:00 am'),
+                    onPressed: () async {
+                      await _showWeeklyAtDayAndTime();
+                    },
+                  ),
+                ),
                 new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: new RaisedButton(
-                        child: new Text('Show notification with no sound'),
-                        onPressed: () async {
-                          await _showNotificationWithNoSound();
-                        })),
+                  padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                  child: new RaisedButton(
+                    child: new Text('Show notification with no sound'),
+                    onPressed: () async {
+                      await _showNotificationWithNoSound();
+                    },
+                  ),
+                ),
                 new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: new RaisedButton(
-                        child:
-                            new Text('Show big picture notification [Android]'),
-                        onPressed: () async {
-                          await _showBigPictureNotification();
-                        })),
+                  padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                  child: new RaisedButton(
+                    child: new Text('Show big picture notification [Android]'),
+                    onPressed: () async {
+                      await _showBigPictureNotification();
+                    },
+                  ),
+                ),
                 new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: new RaisedButton(
-                        child: new Text('Show big text notification [Android]'),
-                        onPressed: () async {
-                          await _showBigTextNotification();
-                        })),
+                  padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                  child: new RaisedButton(
+                    child: new Text('Show big text notification [Android]'),
+                    onPressed: () async {
+                      await _showBigTextNotification();
+                    },
+                  ),
+                ),
                 new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: new RaisedButton(
-                        child: new Text('Show inbox notification [Android]'),
-                        onPressed: () async {
-                          await _showInboxNotification();
-                        })),
+                  padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                  child: new RaisedButton(
+                    child: new Text('Show inbox notification [Android]'),
+                    onPressed: () async {
+                      await _showInboxNotification();
+                    },
+                  ),
+                ),
                 new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: new RaisedButton(
-                        child: new Text('Show grouped notifications [Android]'),
-                        onPressed: () async {
-                          await _showGroupedNotifications();
-                        })),
+                  padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                  child: new RaisedButton(
+                    child: new Text('Show grouped notifications [Android]'),
+                    onPressed: () async {
+                      await _showGroupedNotifications();
+                    },
+                  ),
+                ),
                 new Padding(
-                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: new RaisedButton(
-                        child: new Text('Show ongoing notification [Android]'),
-                        onPressed: () async {
-                          await _showOngoingNotification();
-                        })),
+                  padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                  child: new RaisedButton(
+                    child: new Text('Show ongoing notification [Android]'),
+                    onPressed: () async {
+                      await _showOngoingNotification();
+                    },
+                  ),
+                ),
                 new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
