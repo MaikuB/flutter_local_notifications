@@ -45,7 +45,7 @@ Contributions are welcome by submitting a PR for me to review. If it's to add ne
 
 ## Getting Started
 
-The GitHub repository has an example app that should demonstrate of all the supported features of the plugin. Please check the example for more detailed code samples. If you only copy and paste the Dart code then this will not work as there's setup required for each platform.
+The GitHub repository has an example app that should demonstrate of all the supported features of the plugin. Please check the example for more detailed code samples. If you only copy and paste the Dart code then this will not work as there's setup required for each platform. Pub also generates API docs for the latest version [here](https://pub.dartlang.org/documentation/flutter_local_notifications/latest/)
 
 The following samples will demonstrate the more commonly used functionalities. The first step is to create a new instance of the plugin class and then initialise it with the settings to use for each platform
 
@@ -344,5 +344,5 @@ As the plugin class is not static, it is possible to mock and verify it's behavi
 
 ## Acknowledgements
 
-* Javier Lecuona (javiercbk) for submitting the PR that added the ability to have notifications shown daily
-* Jeff Scaturro (JeffScaturro) for submitting the PR to fix the iOS issue around showing daily and weekly notifications
+* [Javier Lecuona](https://github.com/javiercbk) for submitting the PR that added the ability to have notifications shown daily
+* [Jeff Scaturro](https://github.com/JeffScaturro) for submitting the PR to fix the iOS issue around showing daily and weekly notifications
