@@ -64,6 +64,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SHOW_WEEKLY_AT_DAY_AND_TIME = "showWeeklyAtDayAndTime";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
     private static final String PAYLOAD = "payload";
+    private static final String INVALID_ICON_ERROR_CODE = "INVALID_ICON";
+    private static final String INVALID_LARGE_ICON_ERROR_CODE = "INVALID_LARGE_ICON";
+    private static final String INVALID_BIG_PICTURE_ERROR_CODE = "INVALID_BIG_PICTURE";
+    private static final String INVALID_SOUND_ERROR_CODE = "INVALID_SOUND";
+    private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
+    private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a raw resource to your Android head project.";
+
     public static String NOTIFICATION_ID = "notification_id";
     public static String NOTIFICATION = "notification";
     public static String NOTIFICATION_DETAILS = "notificationDetails";
@@ -91,7 +98,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     public static Notification createNotification(Context context, NotificationDetails notificationDetails) {
-        setIconResourceId(context, notificationDetails);
         setupNotificationChannel(context, notificationDetails);
         Intent intent = new Intent(context, getMainActivityClass(context));
         intent.setAction(SELECT_NOTIFICATION);
@@ -107,10 +113,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setPriority(notificationDetails.priority)
                 .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing));
 
-        if(!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
+        if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
             builder.setLargeIcon(getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
         }
-        if(notificationDetails.color != null) {
+        if (notificationDetails.color != null) {
             builder.setColor(notificationDetails.color.intValue());
         }
 
@@ -118,8 +124,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         setSound(context, notificationDetails, builder);
         setVibrationPattern(notificationDetails, builder);
         setStyle(context, notificationDetails, builder);
-        Notification notification = builder.build();
-        return notification;
+        return builder.build();
     }
 
     @NonNull
@@ -189,7 +194,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static void scheduleNotification(Context context, NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
-        setIconResourceId(context, notificationDetails);
         Gson gson = buildGson();
         String notificationDetailsJson = gson.toJson(notificationDetails);
         Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
@@ -206,7 +210,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static void repeatNotification(Context context, NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
-        setIconResourceId(context, notificationDetails);
         Gson gson = buildGson();
         String notificationDetailsJson = gson.toJson(notificationDetails);
         Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
@@ -262,32 +265,34 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-
-
-
-    private static void setIconResourceId(Context context, NotificationDetails notificationDetails) {
-        int resourceId;
+    private static boolean setIconResourceId(Context context, NotificationDetails notificationDetails, Result result) {
         if (notificationDetails.iconResourceId == null) {
+            int resourceId;
             if (notificationDetails.icon != null) {
                 resourceId = context.getResources().getIdentifier(notificationDetails.icon, DRAWABLE, context.getPackageName());
+                if (resourceId == 0) {
+                    result.error(INVALID_ICON_ERROR_CODE, String.format(INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE, notificationDetails.icon), null);
+                }
             } else {
                 resourceId = defaultIconResourceId;
             }
             notificationDetails.iconResourceId = resourceId;
         }
+
+        return notificationDetails.iconResourceId != 0;
     }
 
     private static Bitmap getBitmapFromSource(Context context, String bitmapPath, BitmapSource bitmapSource) {
-         Bitmap bitmap = null;
-         if(bitmapSource == BitmapSource.Drawable) {
-             int resourceId = context.getResources().getIdentifier(bitmapPath, DRAWABLE, context.getPackageName());
-             bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId);
-         } else if (bitmapSource == BitmapSource.FilePath) {
-             bitmap = BitmapFactory.decodeFile(bitmapPath);
+        Bitmap bitmap = null;
+        if (bitmapSource == BitmapSource.Drawable) {
+            int resourceId = context.getResources().getIdentifier(bitmapPath, DRAWABLE, context.getPackageName());
+            bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId);
+        } else if (bitmapSource == BitmapSource.FilePath) {
+            bitmap = BitmapFactory.decodeFile(bitmapPath);
 
-         }
+        }
 
-         return bitmap;
+        return bitmap;
     }
 
     private static void applyGrouping(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
@@ -362,11 +367,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             CharSequence contentTitle = bigPictureStyleInformation.htmlFormatContentTitle ? fromHtml(bigPictureStyleInformation.contentTitle) : bigPictureStyleInformation.contentTitle;
             bigPictureStyle.setBigContentTitle(contentTitle);
         }
-        if(bigPictureStyleInformation.summaryText != null) {
+        if (bigPictureStyleInformation.summaryText != null) {
             CharSequence summaryText = bigPictureStyleInformation.htmlFormatSummaryText ? fromHtml(bigPictureStyleInformation.summaryText) : bigPictureStyleInformation.summaryText;
             bigPictureStyle.setSummaryText(summaryText);
         }
-        if(bigPictureStyleInformation.largeIcon != null) {
+        if (bigPictureStyleInformation.largeIcon != null) {
             bigPictureStyle.bigLargeIcon(getBitmapFromSource(context, bigPictureStyleInformation.largeIcon, bigPictureStyleInformation.largeIconBitmapSource));
         }
         bigPictureStyle.bigPicture(getBitmapFromSource(context, bigPictureStyleInformation.bigPicture, bigPictureStyleInformation.bigPictureBitmapSource));
@@ -446,8 +451,16 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static AlarmManager getAlarmManager(Context context) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        return alarmManager;
+        return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    }
+
+    private static boolean isValidDrawableResource(Context context, String name, Result result, String errorCode) {
+        int resourceId = context.getResources().getIdentifier(name, DRAWABLE, context.getPackageName());
+        if (resourceId == 0) {
+            result.error(errorCode, String.format(INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE, name), null);
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -457,6 +470,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 Map<String, Object> arguments = call.arguments();
                 String defaultIcon = (String) arguments.get(DEFAULT_ICON);
                 defaultIconResourceId = registrar.context().getResources().getIdentifier(defaultIcon, "drawable", registrar.context().getPackageName());
+                if (defaultIconResourceId == 0) {
+                    result.error(INVALID_ICON_ERROR_CODE, String.format(INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE, defaultIcon), null);
+                    break;
+                }
                 if (registrar.activity() != null) {
                     sendNotificationPayloadMessage(registrar.activity().getIntent());
                 }
@@ -465,25 +482,31 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             }
             case SHOW_METHOD: {
                 Map<String, Object> arguments = call.arguments();
-                NotificationDetails notificationDetails = NotificationDetails.from(arguments);
-                showNotification(notificationDetails);
-                result.success(null);
+                NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
+                if (notificationDetails != null) {
+                    showNotification(notificationDetails);
+                    result.success(null);
+                }
                 break;
             }
             case SCHEDULE_METHOD: {
                 Map<String, Object> arguments = call.arguments();
-                NotificationDetails notificationDetails = NotificationDetails.from(arguments);
-                scheduleNotification(registrar.context(), notificationDetails, true);
-                result.success(null);
+                NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
+                if (notificationDetails != null) {
+                    scheduleNotification(registrar.context(), notificationDetails, true);
+                    result.success(null);
+                }
                 break;
             }
             case PERIODICALLY_SHOW_METHOD:
             case SHOW_DAILY_AT_TIME:
             case SHOW_WEEKLY_AT_DAY_AND_TIME: {
                 Map<String, Object> arguments = call.arguments();
-                NotificationDetails notificationDetails = NotificationDetails.from(arguments);
-                repeatNotification(registrar.context(), notificationDetails, true);
-                result.success(null);
+                NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
+                if (notificationDetails != null) {
+                    repeatNotification(registrar.context(), notificationDetails, true);
+                    result.success(null);
+                }
                 break;
             }
             case CANCEL_METHOD:
@@ -499,6 +522,43 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 result.notImplemented();
                 break;
         }
+    }
+
+    /// Extracts the details of the notifications passed from the Flutter side and also validates that any specified drawable/raw resources exist
+    private NotificationDetails extractNotificationDetails(Result result, Map<String, Object> arguments) {
+        NotificationDetails notificationDetails = NotificationDetails.from(arguments);
+        // validate the icon resource
+        if (!setIconResourceId(registrar.context(), notificationDetails, result)) {
+            return null;
+        }
+        if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
+            // validate the large icon resource
+            if (notificationDetails.largeIconBitmapSource == BitmapSource.Drawable) {
+                if (!isValidDrawableResource(registrar.context(), notificationDetails.largeIcon, result, INVALID_LARGE_ICON_ERROR_CODE)) {
+                    return null;
+                }
+            }
+        }
+        if (notificationDetails.style == NotificationStyle.BigPicture) {
+            // validate the big picture resources
+            BigPictureStyleInformation bigPictureStyleInformation = (BigPictureStyleInformation) notificationDetails.styleInformation;
+            if (!StringUtils.isNullOrEmpty(bigPictureStyleInformation.largeIcon)) {
+                if (bigPictureStyleInformation.largeIconBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), bigPictureStyleInformation.largeIcon, result, INVALID_LARGE_ICON_ERROR_CODE)) {
+                    return null;
+                }
+            }
+            if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), bigPictureStyleInformation.bigPicture, result, INVALID_BIG_PICTURE_ERROR_CODE)) {
+                return null;
+            }
+        }
+        if(!StringUtils.isNullOrEmpty(notificationDetails.sound)) {
+            int soundResourceId = registrar.context().getResources().getIdentifier(notificationDetails.sound, "raw", registrar.context().getPackageName());
+            if(soundResourceId == 0) {
+                result.error(INVALID_SOUND_ERROR_CODE, INVALID_RAW_RESOURCE_ERROR_MESSAGE, null);
+            }
+        }
+
+        return notificationDetails;
     }
 
     private void cancelNotification(Integer id) {
