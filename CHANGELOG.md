@@ -1,3 +1,7 @@
+## [0.3.5]
+* [Android] Will now throw a PlatformException with a more friendly error message on the Flutter side when a specified resource hasn't been found e.g. when specifying the icon for the notification
+* Fix overflow rendering issue in the example app
+
 ## [0.3.4]
 * [Android] Fix issue [71](https://github.com/MaikuB/flutter_local_notifications/issues/71) where the wrong time on when the notification occurred is being displayed. **BREAKING CHANGE** this involves changing it the receiver for displaying a scheduled notification will only build the notification prior to displaying it. There is a fix applied to existing scheduled notifications in this release that will be eventually be removed as going forward all scheduled notifications will work as just described
 * [Android] Fix an issue with serialising  and deserialising the notifications so that additional style types would be recognised
