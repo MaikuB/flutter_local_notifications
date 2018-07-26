@@ -165,12 +165,24 @@ class _MyAppState extends State<MyApp> {
                     ),
                   ),
                   new Padding(
-                      padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: new RaisedButton(
-                          child: new Text('cancel all notifications'),
-                          onPressed: () async {
-                            await _cancelAllNotifications();
-                          })),
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
+                      child: new Text(
+                          'Show notification with no badge, alert only once [Android]'),
+                      onPressed: () async {
+                        await _showNotificationWithNoBadge();
+                      },
+                    ),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
+                      child: new Text('cancel all notifications'),
+                      onPressed: () async {
+                        await _cancelAllNotifications();
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -434,6 +446,21 @@ class _MyAppState extends State<MyApp> {
         Day.Monday,
         time,
         platformChannelSpecifics);
+  }
+
+  Future _showNotificationWithNoBadge() async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'no badge channel', 'no badge name', 'no badge description',
+        channelShowBadge: false,
+        importance: Importance.Max,
+        priority: Priority.High,
+        onlyAlertOnce: true);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'no badge title', 'no badge body', platformChannelSpecifics,
+        payload: 'item x');
   }
 
   String _toTwoDigitString(int value) {

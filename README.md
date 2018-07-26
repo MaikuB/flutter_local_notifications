@@ -37,6 +37,12 @@ Note that this plugin aims to provide abstractions for all platforms as opposed 
 
 **IMPORTANT**: Recurring notifications on Android use the [Alarm Manager](https://developer.android.com/reference/android/app/AlarmManager) API. This is standard practice but does mean the delivery of the notifications/alarms are inexact and this is documented Android behaviour as per the previous link.
 
+
+## Acknowledgements
+
+* [Javier Lecuona](https://github.com/javiercbk) for submitting the PR that added the ability to have notifications shown daily
+* [Jeff Scaturro](https://github.com/JeffScaturro) for submitting the PR to fix the iOS issue around showing daily and weekly notifications
+
 ## Raising issues and contributions
 
 If you run into issues, please raise them on the GitHub repository. Please do not email them to me as I will be ignoring emails going forward as GitHub is the appropriate place for them. It would also be much appreciated if they could be limited to actual bugs or feature requests. If you're looking at how you could use the plugin to do a particular kind of notification, check the example app provides detailed code samples for each supported feature. Also try to check the README first in case you have missed something e.g. platform-specific setup.
@@ -340,9 +346,3 @@ Unfortunately, this platform limitation does mean that it's not possible to use 
 ## Testing
 
 As the plugin class is not static, it is possible to mock and verify it's behaviour when writing tests as part of your application. Check the source code for a sample test suite can be found at _test/flutter_local_notifications_test.dart_ that demonstrates how this can be done.
-
-
-## Acknowledgements
-
-* [Javier Lecuona](https://github.com/javiercbk) for submitting the PR that added the ability to have notifications shown daily
-* [Jeff Scaturro](https://github.com/JeffScaturro) for submitting the PR to fix the iOS issue around showing daily and weekly notifications

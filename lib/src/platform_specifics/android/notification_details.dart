@@ -14,6 +14,9 @@ class AndroidNotificationDetails {
   /// The channel's description. Required for Android 8.0+
   final String channelDescription;
 
+  /// Whether notifications posted to this channel can appear as application icon badges in a Launcher
+  final bool channelShowBadge;
+
   /// The importance of the notification
   Importance importance;
 
@@ -62,6 +65,9 @@ class AndroidNotificationDetails {
   /// Specifies the source for the large icon
   BitmapSource largeIconBitmapSource;
 
+  /// Specifies if you would only like the sound, vibrate and ticker to be played if the notification is not already showing.
+  bool onlyAlertOnce;
+
   AndroidNotificationDetails(
       this.channelId, this.channelName, this.channelDescription,
       {this.icon,
@@ -80,7 +86,9 @@ class AndroidNotificationDetails {
       this.ongoing,
       this.color,
       this.largeIcon,
-      this.largeIconBitmapSource});
+      this.largeIconBitmapSource,
+      this.onlyAlertOnce,
+      this.channelShowBadge = true});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -88,6 +96,7 @@ class AndroidNotificationDetails {
       'channelId': channelId,
       'channelName': channelName,
       'channelDescription': channelDescription,
+      'channelShowBadge': channelShowBadge,
       'importance': importance.value,
       'priority': priority.value,
       'playSound': playSound,
@@ -108,7 +117,8 @@ class AndroidNotificationDetails {
       'colorGreen': color?.green,
       'colorBlue': color?.blue,
       'largeIcon': largeIcon,
-      'largeIconBitmapSource': largeIconBitmapSource?.index
+      'largeIconBitmapSource': largeIconBitmapSource?.index,
+      'onlyAlertOnce': onlyAlertOnce
     };
   }
 }
