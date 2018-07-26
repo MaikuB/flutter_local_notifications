@@ -111,7 +111,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setAutoCancel(BooleanUtils.getValue(notificationDetails.autoCancel))
                 .setContentIntent(pendingIntent)
                 .setPriority(notificationDetails.priority)
-                .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing));
+                .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
+                .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
 
         if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
             builder.setLargeIcon(getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
@@ -433,6 +434,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 if (notificationDetails.vibrationPattern != null && notificationDetails.vibrationPattern.length > 0) {
                     notificationChannel.setVibrationPattern(notificationDetails.vibrationPattern);
                 }
+                notificationChannel.setShowBadge(BooleanUtils.getValue(notificationDetails.channelShowBadge));
                 notificationManager.createNotificationChannel(notificationChannel);
             }
         }

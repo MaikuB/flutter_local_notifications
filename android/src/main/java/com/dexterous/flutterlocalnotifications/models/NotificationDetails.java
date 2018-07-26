@@ -1,6 +1,5 @@
 package com.dexterous.flutterlocalnotifications.models;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 
@@ -38,9 +37,11 @@ public class NotificationDetails {
     private static final String GROUP_KEY = "groupKey";
     private static final String SET_AS_GROUP_SUMMARY = "setAsGroupSummary";
     private static final String GROUP_ALERT_BEHAVIOR = "groupAlertBehavior";
+    private static final String ONLY_ALERT_ONCE = "onlyAlertOnce";
     private static final String CHANNEL_ID = "channelId";
     private static final String CHANNEL_NAME = "channelName";
     private static final String CHANNEL_DESCRIPTION = "channelDescription";
+    private static final String CHANNEL_SHOW_BADGE = "channelShowBadge";
     private static final String IMPORTANCE = "importance";
     private static final String STYLE_INFORMATION = "styleInformation";
     private static final String BIG_TEXT = "bigText";
@@ -71,6 +72,7 @@ public class NotificationDetails {
     public String channelId = "Default_Channel_Id";
     public String channelName;
     public String channelDescription;
+    public Boolean channelShowBadge;
     public Integer importance;
     public Integer priority;
     public Boolean playSound;
@@ -93,6 +95,7 @@ public class NotificationDetails {
     public Integer color;
     public String largeIcon;
     public BitmapSource largeIconBitmapSource;
+    public Boolean onlyAlertOnce;
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted
     public Integer iconResourceId;
@@ -136,6 +139,7 @@ public class NotificationDetails {
             notificationDetails.groupKey = (String) platformChannelSpecifics.get(GROUP_KEY);
             notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
             notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
+            notificationDetails.onlyAlertOnce = (Boolean) platformChannelSpecifics.get(ONLY_ALERT_ONCE);
             readColor(notificationDetails, platformChannelSpecifics);
             readChannelInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.largeIcon = (String) platformChannelSpecifics.get(LARGE_ICON);
@@ -165,6 +169,7 @@ public class NotificationDetails {
             notificationDetails.channelName = (String) platformChannelSpecifics.get(CHANNEL_NAME);
             notificationDetails.channelDescription = (String) platformChannelSpecifics.get(CHANNEL_DESCRIPTION);
             notificationDetails.importance = (Integer) platformChannelSpecifics.get(IMPORTANCE);
+            notificationDetails.channelShowBadge = (Boolean) platformChannelSpecifics.get(CHANNEL_SHOW_BADGE);
         }
     }
 
