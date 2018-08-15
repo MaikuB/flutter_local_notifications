@@ -177,7 +177,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
             NotificationDetails notificationDetails = it.next();
-            if (notificationDetails.id == notificationId) {
+            if (notificationDetails.id.equals(notificationId)) {
                 it.remove();
                 break;
             }
