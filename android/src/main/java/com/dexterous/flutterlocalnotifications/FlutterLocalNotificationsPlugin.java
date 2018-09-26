@@ -36,6 +36,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -60,14 +61,16 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String CANCEL_ALL_METHOD = "cancelAll";
     private static final String SCHEDULE_METHOD = "schedule";
     private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
-    private static final String SHOW_DAILY_AT_TIME = "showDailyAtTime";
-    private static final String SHOW_WEEKLY_AT_DAY_AND_TIME = "showWeeklyAtDayAndTime";
+    private static final String SHOW_DAILY_AT_TIME_METHOD = "showDailyAtTime";
+    private static final String SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = "showWeeklyAtDayAndTime";
+    private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD = "getNotificationAppLaunchDetails";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
     private static final String PAYLOAD = "payload";
     private static final String INVALID_ICON_ERROR_CODE = "INVALID_ICON";
     private static final String INVALID_LARGE_ICON_ERROR_CODE = "INVALID_LARGE_ICON";
     private static final String INVALID_BIG_PICTURE_ERROR_CODE = "INVALID_BIG_PICTURE";
     private static final String INVALID_SOUND_ERROR_CODE = "INVALID_SOUND";
+    private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
     private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a raw resource to your Android head project.";
 
@@ -468,6 +471,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         switch (call.method) {
+
             case INITIALIZE_METHOD: {
                 Map<String, Object> arguments = call.arguments();
                 String defaultIcon = (String) arguments.get(DEFAULT_ICON);
@@ -480,6 +484,18 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                     sendNotificationPayloadMessage(registrar.activity().getIntent());
                 }
                 result.success(true);
+                break;
+            }
+            case GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD: {
+                Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
+                String payload = null;
+                Boolean notificationLaunchedApp = (registrar.activity() != null && SELECT_NOTIFICATION.equals(registrar.activity().getIntent().getAction()));
+                notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
+                if(notificationLaunchedApp) {
+                    payload = registrar.activity().getIntent().getStringExtra(PAYLOAD);
+                }
+                notificationAppLaunchDetails.put(PAYLOAD, payload);
+                result.success(notificationAppLaunchDetails);
                 break;
             }
             case SHOW_METHOD: {
@@ -501,8 +517,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 break;
             }
             case PERIODICALLY_SHOW_METHOD:
-            case SHOW_DAILY_AT_TIME:
-            case SHOW_WEEKLY_AT_DAY_AND_TIME: {
+            case SHOW_DAILY_AT_TIME_METHOD:
+            case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD: {
                 Map<String, Object> arguments = call.arguments();
                 NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
                 if (notificationDetails != null) {

@@ -243,6 +243,13 @@ await flutterLocalNotificationsPlugin.cancel(0);
 await flutterLocalNotificationsPlugin.cancelAll();
 ```
 
+
+### Get details on if the app was launched via a notification
+```
+ var notificationAppLaunchDetails =
+     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+```
+
 This should cover the basic functionality. Please check out the `example` directory for a sample app that illustrates the rest of the functionality available and refer to the API docs for more information. Also read the below on what you need to configure on each platform
 
 ## Android Integration
@@ -300,6 +307,12 @@ allprojects {
 ```
 
 Note though this will force other plugins to use the same version of the library that this plugin depends on so may not be desirable, particularly if they use a more recent version than 27.1. If you have another suggestion on how to solve this please do let me know :)
+
+When doing a release build of your app, you'll likely need to customise your ProGuard configuration file as per this [link](https://developer.android.com/studio/build/shrink-code#keep-code) and add the following line
+
+```
+-keep class com.dexterous.** { *; }
+```
 
 ## iOS Integration
 

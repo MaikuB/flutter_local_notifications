@@ -1,3 +1,7 @@
+# [0.3.8]
+* Added `getNotificationAppLaunchDetails()` method that could be used to determine if the app was launched via notification (raised in issue [100])
+* Added documentation around ProGuard configuration to Android Integration section of the README
+
 ## [0.3.7]
 * [Android] Fix issues [88](https://github.com/MaikuB/flutter_local_notifications/issues/88) where cancelled notifications could reappear on reboot.
 
