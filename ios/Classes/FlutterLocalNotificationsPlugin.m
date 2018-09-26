@@ -15,6 +15,7 @@ NSString *const SHOW_DAILY_AT_TIME_METHOD = @"showDailyAtTime";
 NSString *const SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = @"showWeeklyAtDayAndTime";
 NSString *const CANCEL_METHOD = @"cancel";
 NSString *const CANCEL_ALL_METHOD = @"cancelAll";
+NSString *const GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD = @"getNotificationAppLaunchDetails";
 NSString *const CHANNEL = @"dexterous.com/flutter/local_notifications";
 NSString *const DAY = @"day";
 
@@ -41,11 +42,14 @@ NSString *const SECOND = @"second";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
+NSString *const NOTIFICATION_LAUNCHED_APP = @"notificationLaunchedApp";
 NSString *launchPayload;
 bool displayAlert;
 bool playSound;
 bool updateBadge;
 bool initialized;
+bool launchingAppFromNotification;
+
 + (bool) resumingFromBackground { return appResumingFromBackground; }
 UILocalNotification *launchNotification;
 
@@ -221,7 +225,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if([INITIALIZE_METHOD isEqualToString:call.method]) {
         [self initialize:call result:result];
-        
     } else if ([SHOW_METHOD isEqualToString:call.method] || [SCHEDULE_METHOD isEqualToString:call.method] || [PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]
                || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
         [self showNotification:call result:result];
@@ -229,6 +232,15 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         [self cancelNotification:call result:result];
     } else if([CANCEL_ALL_METHOD isEqualToString:call.method]) {
         [self cancelAllNotifications:result];
+    } else if([GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD isEqualToString:call.method]) {
+        NSString *payload;
+        if(launchNotification != nil) {
+            payload = launchNotification.userInfo[PAYLOAD];
+        } else {
+            payload = launchPayload;
+        }
+        NSDictionary *notificationAppLaunchDetails = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:launchingAppFromNotification], NOTIFICATION_LAUNCHED_APP, payload, PAYLOAD, nil];
+        result(notificationAppLaunchDetails);
     }
     else {
         result(FlutterMethodNotImplemented);
@@ -407,6 +419,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
             [FlutterLocalNotificationsPlugin handleSelectNotification:payload];
         } else {
             launchPayload = payload;
+            launchingAppFromNotification = true;
         }
         
     }
@@ -415,7 +428,9 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     if (launchOptions != nil) {
         launchNotification = (UILocalNotification *)[launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+        launchingAppFromNotification = launchNotification != nil;
     }
+    
     return YES;
 }
 

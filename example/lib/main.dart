@@ -6,21 +6,30 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+
 /// IMPORTANT: running the following code on its own won't work as there is setup required for each platform head project.
 /// Please download the complete example app from the GitHub repository where all the setup has been done
-void main() {
+void main() async {
+  flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+
+  // NOTE: if you want to find out if the app was launched via notification then you could use the following call and then do something like
+  // change the default route of the app
+  // var notificationAppLaunchDetails =
+  //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   runApp(
-    new MaterialApp(home: new MyApp()),
+    new MaterialApp(
+      home: HomePage(),
+    ),
   );
 }
 
-class MyApp extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  _MyAppState createState() => new _MyAppState();
+  _HomePageState createState() => new _HomePageState();
 }
 
-class _MyAppState extends State<MyApp> {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+class _HomePageState extends State<HomePage> {
   @override
   initState() {
     super.initState();
@@ -30,7 +39,6 @@ class _MyAppState extends State<MyApp> {
     var initializationSettingsIOS = new IOSInitializationSettings();
     var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
-    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         selectNotification: onSelectNotification);
   }

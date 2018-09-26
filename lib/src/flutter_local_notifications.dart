@@ -80,6 +80,12 @@ class FlutterLocalNotificationsPlugin {
     return result;
   }
 
+  Future<NotificationAppLaunchDetails> getNotificationAppLaunchDetails() async {
+    var result = await _channel.invokeMethod('getNotificationAppLaunchDetails');
+    return NotificationAppLaunchDetails(result['notificationLaunchedApp'],
+        result.containsKey('payload') ? result['payload'] : null);
+  }
+
   /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped
   Future show(int id, String title, String body,
       NotificationDetails notificationDetails,

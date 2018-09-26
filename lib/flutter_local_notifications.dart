@@ -20,3 +20,4 @@ part 'src/platform_specifics/ios/notification_details.dart';
 part 'src/notification_details.dart';
 part 'src/initialization_settings.dart';
 part 'src/flutter_local_notifications.dart';
+part 'src/notification_app_launch_details.dart';
