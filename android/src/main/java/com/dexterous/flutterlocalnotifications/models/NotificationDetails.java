@@ -63,6 +63,10 @@ public class NotificationDetails {
     private static final String LARGE_ICON_BITMAP_SOURCE = "largeIconBitmapSource";
     private static final String BIG_PICTURE = "bigPicture";
     private static final String BIG_PICTURE_BITMAP_SOURCE = "bigPictureBitmapSource";
+    private static final String SHOW_PROGRESS = "showProgress";
+    private static final String MAX_PROGRESS = "maxProgress";
+    private static final String PROGRESS = "progress";
+    private static final String INDETERMINATE = "indeterminate";
 
 
     public Integer id;
@@ -96,6 +100,11 @@ public class NotificationDetails {
     public String largeIcon;
     public BitmapSource largeIconBitmapSource;
     public Boolean onlyAlertOnce;
+    public Boolean showProgress;
+    public Integer maxProgress;
+    public Integer progress;
+    public Boolean indeterminate;
+
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted
     public Integer iconResourceId;
@@ -140,6 +149,19 @@ public class NotificationDetails {
             notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
             notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
             notificationDetails.onlyAlertOnce = (Boolean) platformChannelSpecifics.get(ONLY_ALERT_ONCE);
+            notificationDetails.showProgress = (Boolean) platformChannelSpecifics.get(SHOW_PROGRESS);
+            if (platformChannelSpecifics.containsKey(MAX_PROGRESS)) {
+                notificationDetails.maxProgress = (Integer) platformChannelSpecifics.get(MAX_PROGRESS);
+            }
+
+            if (platformChannelSpecifics.containsKey(PROGRESS)) {
+                notificationDetails.progress = (Integer) platformChannelSpecifics.get(PROGRESS);
+            }
+
+            if (platformChannelSpecifics.containsKey(INDETERMINATE)) {
+                notificationDetails.indeterminate = (Boolean) platformChannelSpecifics.get(INDETERMINATE);
+            }
+
             readColor(notificationDetails, platformChannelSpecifics);
             readChannelInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.largeIcon = (String) platformChannelSpecifics.get(LARGE_ICON);

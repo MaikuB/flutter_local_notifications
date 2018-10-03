@@ -1,3 +1,6 @@
+# [0.3.9]
+* [Android] Added ability to show progress notifications and updated example app to demonstrate how to display them
+
 # [0.3.8]
 * Added `getNotificationAppLaunchDetails()` method that could be used to determine if the app was launched via notification (raised in issue [100])
 * Added documentation around ProGuard configuration to Android Integration section of the README

@@ -68,6 +68,18 @@ class AndroidNotificationDetails {
   /// Specifies if you would only like the sound, vibrate and ticker to be played if the notification is not already showing.
   bool onlyAlertOnce;
 
+  /// Specifies if the notification will be used to show progress
+  bool showProgress;
+
+  /// The maximum progress value
+  int maxProgress;
+
+  /// The current progress value
+  int progress;
+
+  /// Specifies if an indeterminate progress bar will be shown
+  bool indeterminate;
+
   AndroidNotificationDetails(
       this.channelId, this.channelName, this.channelDescription,
       {this.icon,
@@ -88,7 +100,11 @@ class AndroidNotificationDetails {
       this.largeIcon,
       this.largeIconBitmapSource,
       this.onlyAlertOnce,
-      this.channelShowBadge = true});
+      this.channelShowBadge = true,
+      this.showProgress = false,
+      this.maxProgress = 0,
+      this.progress = 0,
+      this.indeterminate = false});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -118,7 +134,11 @@ class AndroidNotificationDetails {
       'colorBlue': color?.blue,
       'largeIcon': largeIcon,
       'largeIconBitmapSource': largeIconBitmapSource?.index,
-      'onlyAlertOnce': onlyAlertOnce
+      'onlyAlertOnce': onlyAlertOnce,
+      'showProgress': showProgress,
+      'maxProgress': maxProgress,
+      'progress': progress,
+      'indeterminate': indeterminate
     };
   }
 }
