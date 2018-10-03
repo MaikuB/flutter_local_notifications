@@ -128,6 +128,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         setSound(context, notificationDetails, builder);
         setVibrationPattern(notificationDetails, builder);
         setStyle(context, notificationDetails, builder);
+        setProgress(notificationDetails, builder);
         return builder.build();
     }
 
@@ -361,6 +362,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 break;
             default:
                 break;
+        }
+    }
+
+    private static void setProgress(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        if(BooleanUtils.getValue(notificationDetails.showProgress)) {
+            builder.setProgress(notificationDetails.maxProgress, notificationDetails.progress, notificationDetails.indeterminate);
         }
     }
 

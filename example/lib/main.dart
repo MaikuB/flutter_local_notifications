@@ -185,6 +185,26 @@ class _HomePageState extends State<HomePage> {
                   new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
+                      child: new Text(
+                          'Show progress notification - updates every second [Android]'),
+                      onPressed: () async {
+                        await _showProgressNotification();
+                      },
+                    ),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
+                      child: new Text(
+                          'Show indeterminate progress notification [Android]'),
+                      onPressed: () async {
+                        await _showIndeterminateProgressNotification();
+                      },
+                    ),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
                       child: new Text('cancel all notifications'),
                       onPressed: () async {
                         await _cancelAllNotifications();
@@ -468,6 +488,56 @@ class _HomePageState extends State<HomePage> {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'no badge title', 'no badge body', platformChannelSpecifics,
+        payload: 'item x');
+  }
+
+  Future _showProgressNotification() async {
+    var maxProgress = 5;
+    for (var i = 0; i <= maxProgress; i++) {
+      await Future.delayed(Duration(seconds: 1), () async {
+        var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+            'progress channel',
+            'progress channel',
+            'progress channel description',
+            channelShowBadge: false,
+            importance: Importance.Max,
+            priority: Priority.High,
+            onlyAlertOnce: true,
+            showProgress: true,
+            maxProgress: maxProgress,
+            progress: i);
+        var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+        var platformChannelSpecifics = new NotificationDetails(
+            androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+        await flutterLocalNotificationsPlugin.show(
+            0,
+            'progress notification title',
+            'progress notification body',
+            platformChannelSpecifics,
+            payload: 'item x');
+      });
+    }
+  }
+
+  Future _showIndeterminateProgressNotification() async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'indeterminate progress channel',
+        'indeterminate progress channel',
+        'indeterminate progress channel description',
+        channelShowBadge: false,
+        importance: Importance.Max,
+        priority: Priority.High,
+        onlyAlertOnce: true,
+        showProgress: true,
+        indeterminate: true);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0,
+        'indeterminate progress notification title',
+        'indeterminate progress notification body',
+        platformChannelSpecifics,
         payload: 'item x');
   }
 

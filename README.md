@@ -19,6 +19,7 @@ A cross platform plugin for displaying local notifications.
 * Cancelling/removing notification by id or all of them
 * Specify a custom notification sound
 * Ability to handle when a user has tapped on a notification, when the app is the foreground, background or terminated
+* Determine if an app was launched due to tapping on a notification
 * [Android] Configuring the importance level
 * [Android] Configuring the priority
 * [Android] Customising the vibration pattern for notifications
@@ -31,6 +32,7 @@ A cross platform plugin for displaying local notifications.
     * Big text
     * Inbox
 * [Android] Group notifications
+* [Android] Show progress notifications
 * [iOS] Customise the permissions to be requested around displaying notifications
 
 Note that this plugin aims to provide abstractions for all platforms as opposed to having methods that only work on specific platforms. However, each method allows passing in "platform-specifics" that contains data that is specific for customising notifications on each platform. It is still under development so expect the API surface to change over time.
