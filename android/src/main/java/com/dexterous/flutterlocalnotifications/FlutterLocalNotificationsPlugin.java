@@ -480,73 +480,96 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         switch (call.method) {
 
             case INITIALIZE_METHOD: {
-                Map<String, Object> arguments = call.arguments();
-                String defaultIcon = (String) arguments.get(DEFAULT_ICON);
-                defaultIconResourceId = registrar.context().getResources().getIdentifier(defaultIcon, "drawable", registrar.context().getPackageName());
-                if (defaultIconResourceId == 0) {
-                    result.error(INVALID_ICON_ERROR_CODE, String.format(INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE, defaultIcon), null);
-                    break;
-                }
-                if (registrar.activity() != null) {
-                    sendNotificationPayloadMessage(registrar.activity().getIntent());
-                }
-                result.success(true);
+                initialize(call, result);
                 break;
             }
             case GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD: {
-                Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
-                String payload = null;
-                Boolean notificationLaunchedApp = (registrar.activity() != null && SELECT_NOTIFICATION.equals(registrar.activity().getIntent().getAction()));
-                notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
-                if(notificationLaunchedApp) {
-                    payload = registrar.activity().getIntent().getStringExtra(PAYLOAD);
-                }
-                notificationAppLaunchDetails.put(PAYLOAD, payload);
-                result.success(notificationAppLaunchDetails);
+                getNotificationAppLaunchDetails(result);
                 break;
             }
             case SHOW_METHOD: {
-                Map<String, Object> arguments = call.arguments();
-                NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
-                if (notificationDetails != null) {
-                    showNotification(notificationDetails);
-                    result.success(null);
-                }
+                show(call, result);
                 break;
             }
             case SCHEDULE_METHOD: {
-                Map<String, Object> arguments = call.arguments();
-                NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
-                if (notificationDetails != null) {
-                    scheduleNotification(registrar.context(), notificationDetails, true);
-                    result.success(null);
-                }
+                schedule(call, result);
                 break;
             }
             case PERIODICALLY_SHOW_METHOD:
             case SHOW_DAILY_AT_TIME_METHOD:
             case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD: {
-                Map<String, Object> arguments = call.arguments();
-                NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
-                if (notificationDetails != null) {
-                    repeatNotification(registrar.context(), notificationDetails, true);
-                    result.success(null);
-                }
+                repeat(call, result);
                 break;
             }
             case CANCEL_METHOD:
-                Integer id = call.arguments();
-                cancelNotification(id);
-                result.success(null);
+                cancel(call, result);
                 break;
             case CANCEL_ALL_METHOD:
-                cancelAllNotifications();
-                result.success(null);
+                cancelAllNotifications(result);
                 break;
             default:
                 result.notImplemented();
                 break;
         }
+    }
+
+    private void cancel(MethodCall call, Result result) {
+        Integer id = call.arguments();
+        cancelNotification(id);
+        result.success(null);
+    }
+
+    private void repeat(MethodCall call, Result result) {
+        Map<String, Object> arguments = call.arguments();
+        NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
+        if (notificationDetails != null) {
+            repeatNotification(registrar.context(), notificationDetails, true);
+            result.success(null);
+        }
+    }
+
+    private void schedule(MethodCall call, Result result) {
+        Map<String, Object> arguments = call.arguments();
+        NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
+        if (notificationDetails != null) {
+            scheduleNotification(registrar.context(), notificationDetails, true);
+            result.success(null);
+        }
+    }
+
+    private void show(MethodCall call, Result result) {
+        Map<String, Object> arguments = call.arguments();
+        NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
+        if (notificationDetails != null) {
+            showNotification(notificationDetails);
+            result.success(null);
+        }
+    }
+
+    private void getNotificationAppLaunchDetails(Result result) {
+        Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
+        String payload = null;
+        Boolean notificationLaunchedApp = (registrar.activity() != null && SELECT_NOTIFICATION.equals(registrar.activity().getIntent().getAction()));
+        notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
+        if(notificationLaunchedApp) {
+            payload = registrar.activity().getIntent().getStringExtra(PAYLOAD);
+        }
+        notificationAppLaunchDetails.put(PAYLOAD, payload);
+        result.success(notificationAppLaunchDetails);
+    }
+
+    private void initialize(MethodCall call, Result result) {
+        Map<String, Object> arguments = call.arguments();
+        String defaultIcon = (String) arguments.get(DEFAULT_ICON);
+        defaultIconResourceId = registrar.context().getResources().getIdentifier(defaultIcon, "drawable", registrar.context().getPackageName());
+        if (defaultIconResourceId == 0) {
+            result.error(INVALID_ICON_ERROR_CODE, String.format(INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE, defaultIcon), null);
+            return;
+        }
+        if (registrar.activity() != null) {
+            sendNotificationPayloadMessage(registrar.activity().getIntent());
+        }
+        result.success(true);
     }
 
     /// Extracts the details of the notifications passed from the Flutter side and also validates that any specified drawable/raw resources exist
@@ -597,12 +620,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         removeNotificationFromCache(id, context);
     }
 
-    private void cancelAllNotifications() {
+    private void cancelAllNotifications(Result result) {
         NotificationManagerCompat notificationManager = getNotificationManager();
         notificationManager.cancelAll();
         Context context = registrar.context();
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         if (scheduledNotifications == null || scheduledNotifications.isEmpty()) {
+            result.success(null);
             return;
         }
 
@@ -615,6 +639,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
 
         saveScheduledNotifications(context, new ArrayList<NotificationDetails>());
+        result.success(null);
     }
 
     private void showNotification(NotificationDetails notificationDetails) {
