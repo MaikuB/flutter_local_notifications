@@ -46,10 +46,15 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
       'htmlFormatContentTitle': htmlFormatContentTitle,
       'htmlFormatSummaryText': htmlFormatSummaryText,
       'largeIcon': largeIcon,
-      'largeIconBitmapSource': largeIconBitmapSource?.index,
       'bigPicture': bigPicture,
       'bigPictureBitmapSource': bigPictureBitmapSource?.index
     };
+
+    if (largeIconBitmapSource != null) {
+      bigPictureStyleJson['largeIconBitmapSource'] =
+          largeIconBitmapSource.index;
+    }
+
     styleJson.addAll(bigPictureStyleJson);
     return styleJson;
   }
