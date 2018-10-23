@@ -43,5 +43,9 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>
         </receiver>
+        <service
+            android:name="com.dexterous.flutterlocalnotifications.NotificationService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true"/>
     </application>
 </manifest>

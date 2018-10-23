@@ -24,6 +24,11 @@ void main() async {
   );
 }
 
+Future onNotification(int id, String title, String body, String payload) async {
+  print(
+      'on notification callback triggered with id: $id, title: $title, body: $body, payload: $payload');
+}
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => new _HomePageState();
@@ -40,7 +45,8 @@ class _HomePageState extends State<HomePage> {
     var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        selectNotification: onSelectNotification);
+        onSelectNotification: onSelectNotification,
+        onNotification: onNotification);
   }
 
   @override

@@ -17,9 +17,6 @@ import java.util.Map;
 
 public class NotificationDetails {
     private static final String PAYLOAD = "payload";
-    private static final String ID = "id";
-    private static final String TITLE = "title";
-    private static final String BODY = "body";
     private static final String MILLISECONDS_SINCE_EPOCH = "millisecondsSinceEpoch";
     private static final String CALLED_AT = "calledAt";
     private static final String REPEAT_INTERVAL = "repeatInterval";
@@ -68,6 +65,9 @@ public class NotificationDetails {
     private static final String PROGRESS = "progress";
     private static final String INDETERMINATE = "indeterminate";
 
+    public static final String ID = "id";
+    public static final String TITLE = "title";
+    public static final String BODY = "body";
 
     public Integer id;
     public String title;

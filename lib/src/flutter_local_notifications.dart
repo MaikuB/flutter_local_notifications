@@ -1,6 +1,13 @@
 part of flutter_local_notifications;
 
-typedef Future<dynamic> MessageHandler(String message);
+/// Signature of callback passed to [initialize]. Callback triggered when user taps on a notification
+typedef Future<dynamic> SelectNotificationCallback(String payload);
+
+/// Signature of callback passed to [initialize].
+/// Callback is triggered when a notification is shown. Note that on iOS this only works on iOS 10+.
+/// The callback must be a top-level or static method
+typedef Future<dynamic> NotificationCallback(
+    int id, String title, String body, String payload);
 
 /// The available intervals for periodically showing notifications
 enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
@@ -66,17 +73,30 @@ class FlutterLocalNotificationsPlugin {
   final MethodChannel _channel;
   final Platform _platform;
 
-  MessageHandler onSelectNotification;
+  SelectNotificationCallback onSelectNotification;
 
   /// Initializes the plugin. Call this method on application before using the plugin further
   Future<bool> initialize(InitializationSettings initializationSettings,
-      {MessageHandler selectNotification}) async {
-    onSelectNotification = selectNotification;
+      {SelectNotificationCallback onSelectNotification,
+      NotificationCallback onNotification}) async {
+    onSelectNotification = onSelectNotification;
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificInitializationSettings(initializationSettings);
     _channel.setMethodCallHandler(_handleMethod);
+
     var result =
         await _channel.invokeMethod('initialize', serializedPlatformSpecifics);
+    final CallbackHandle callback =
+        PluginUtilities.getCallbackHandle(_callbackDispatcher);
+    var headlessInitializationSettings = <String, dynamic>{
+      'callbackDispatcher': callback.toRawHandle()
+    };
+    if (onNotification != null) {
+      headlessInitializationSettings['onNotificationCallbackDispatcher'] =
+          PluginUtilities.getCallbackHandle(onNotification).toRawHandle();
+    }
+    await _channel.invokeMethod(
+        'initializeHeadlessService', headlessInitializationSettings);
     return result;
   }
 

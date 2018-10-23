@@ -7,7 +7,10 @@ static bool appResumingFromBackground;
 @implementation FlutterLocalNotificationsPlugin
 
 FlutterMethodChannel* channel;
+FlutterMethodChannel* callbackChannel;
 NSString *const INITIALIZE_METHOD = @"initialize";
+NSString *const INITIALIZE_HEADLESS_SERVICE_METHOD = @"initializeHeadlessService";
+NSString *const INITIALIZED_HEADLESS_SERVICE_METHOD = @"initializedHeadlessService";
 NSString *const SHOW_METHOD = @"show";
 NSString *const SCHEDULE_METHOD = @"schedule";
 NSString *const PERIODICALLY_SHOW_METHOD = @"periodicallyShow";
@@ -17,6 +20,8 @@ NSString *const CANCEL_METHOD = @"cancel";
 NSString *const CANCEL_ALL_METHOD = @"cancelAll";
 NSString *const GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD = @"getNotificationAppLaunchDetails";
 NSString *const CHANNEL = @"dexterous.com/flutter/local_notifications";
+NSString *const CALLBACK_CHANNEL = @"dexterous.com/flutter/local_notifications_background";
+NSString *const ON_NOTIFICATION_METHOD = @"onNotification";
 NSString *const DAY = @"day";
 
 NSString *const REQUEST_SOUND_PERMISSION = @"requestSoundPermission";
@@ -25,6 +30,8 @@ NSString *const REQUEST_BADGE_PERMISSION = @"requestBadgePermission";
 NSString *const DEFAULT_PRESENT_ALERT = @"defaultPresentAlert";
 NSString *const DEFAULT_PRESENT_SOUND = @"defaultPresentSound";
 NSString *const DEFAULT_PRESENT_BADGE = @"defaultPresentBadge";
+NSString *const CALLBACK_DISPATCHER = @"callbackDispatcher";
+NSString *const ON_NOTIFICATION_CALLBACK_DISPATCHER = @"onNotificationCallbackDispatcher";
 NSString *const PLATFORM_SPECIFICS = @"platformSpecifics";
 NSString *const ID = @"id";
 NSString *const TITLE = @"title";
@@ -49,6 +56,9 @@ bool playSound;
 bool updateBadge;
 bool initialized;
 bool launchingAppFromNotification;
+FlutterHeadlessDartRunner  *headlessRunner;
+NSUserDefaults *persistentState;
+NSObject<FlutterPluginRegistrar> *_registrar;
 
 + (bool) resumingFromBackground { return appResumingFromBackground; }
 UILocalNotification *launchNotification;
@@ -65,13 +75,17 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     channel = [FlutterMethodChannel
                methodChannelWithName:CHANNEL
                binaryMessenger:[registrar messenger]];
+    persistentState = [NSUserDefaults standardUserDefaults];
     FlutterLocalNotificationsPlugin* instance = [[FlutterLocalNotificationsPlugin alloc] init];
+    headlessRunner = [[FlutterHeadlessDartRunner alloc] init];
+    callbackChannel = [FlutterMethodChannel methodChannelWithName:CALLBACK_CHANNEL binaryMessenger:headlessRunner];
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         center.delegate = instance;
     }
     [registrar addApplicationDelegate:instance];
     [registrar addMethodCallDelegate:instance channel:channel];
+    _registrar = registrar;
 }
 
 - (void)initialize:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
@@ -241,10 +255,40 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         }
         NSDictionary *notificationAppLaunchDetails = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:launchingAppFromNotification], NOTIFICATION_LAUNCHED_APP, payload, PAYLOAD, nil];
         result(notificationAppLaunchDetails);
+    } else if([INITIALIZE_HEADLESS_SERVICE_METHOD isEqualToString:call.method]) {
+        [self startHeadlessService:[call.arguments[CALLBACK_DISPATCHER] longValue]];
+        if (call.arguments[ON_NOTIFICATION_CALLBACK_DISPATCHER] != [NSNull null]) {
+            [self setCallbackDispatcherHandle:[call.arguments[ON_NOTIFICATION_CALLBACK_DISPATCHER] longValue] key:ON_NOTIFICATION_CALLBACK_DISPATCHER];
+        }
+    } else if([INITIALIZED_HEADLESS_SERVICE_METHOD isEqualToString:call.method]) {
+        result(nil);
     }
     else {
         result(FlutterMethodNotImplemented);
     }
+}
+
+- (void)startHeadlessService:(int64_t)handle {
+    [self setCallbackDispatcherHandle:handle key:CALLBACK_DISPATCHER];
+    FlutterCallbackInformation *info = [FlutterCallbackCache lookupCallbackInformation:handle];
+    NSAssert(info != nil, @"failed to find callback");
+    NSString *entrypoint = info.callbackName;
+    NSString *uri = info.callbackLibraryPath;
+    [headlessRunner runWithEntrypointAndLibraryUri:entrypoint libraryUri:uri];
+    [_registrar addMethodCallDelegate:self channel:callbackChannel];
+}
+
+- (void)setCallbackDispatcherHandle:(int64_t)handle key:(NSString *)handleKey {
+    [persistentState setObject:[NSNumber numberWithLongLong:handle]
+                         forKey:handleKey];
+}
+
+- (int64_t)getCallbackDispatcherHandle:(NSString *) handleKey {
+    id handle = [persistentState objectForKey:handleKey];
+    if (handle == nil) {
+        return 0;
+    }
+    return [handle longLongValue];
 }
 
 - (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge payload:(NSString *)payload {
@@ -401,6 +445,12 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     }
     if(presentBadge) {
         presentationOptions |= UNNotificationPresentationOptionBadge;
+    }
+    
+    int64_t callback = [self getCallbackDispatcherHandle:ON_NOTIFICATION_CALLBACK_DISPATCHER];
+    if (callback != 0) {
+        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:@(callback),CALLBACK_DISPATCHER, notification.request.content.userInfo[NOTIFICATION_ID], ID, notification.request.content.title, TITLE, notification.request.content.body, BODY, notification.request.content.userInfo[PAYLOAD], PAYLOAD, nil];
+        [callbackChannel invokeMethod:ON_NOTIFICATION_METHOD arguments:arguments];
     }
     completionHandler(presentationOptions);
 }
