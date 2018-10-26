@@ -78,7 +78,6 @@ public class NotificationService extends JobIntentService implements MethodChann
         startNotificationService(this);
     }
 
-
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         Log.i(TAG, "NotificationService onHandleWork");

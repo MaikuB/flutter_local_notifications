@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+Future<SharedPreferences> sharedPrefs = SharedPreferences.getInstance();
 
 /// IMPORTANT: running the following code on its own won't work as there is setup required for each platform head project.
 /// Please download the complete example app from the GitHub repository where all the setup has been done
@@ -27,6 +29,14 @@ void main() async {
 Future onNotification(int id, String title, String body, String payload) async {
   print(
       'on notification callback triggered with id: $id, title: $title, body: $body, payload: $payload');
+  // update a counter in shared preferences to track how many times a notification has been shown
+  // this example app will only display the counter on a cold start of the app to demonstrate headless execution
+  if (Platform.isAndroid) {
+    // IMPORTANT: Flutter currently only supports executing headless Dart code that uses other plugins on Android
+    var sharedPreferences = await sharedPrefs;
+    var shown = sharedPreferences.getInt('shownCounter') ?? 0;
+    sharedPreferences.setInt('shownCounter', shown + 1);
+  }
 }
 
 class HomePage extends StatefulWidget {
@@ -68,6 +78,24 @@ class _HomePageState extends State<HomePage> {
                     child: new Text(
                         'Tap on a notification when it appears to trigger navigation'),
                   ),
+                  // NOTE: the following text is demonstrate headless execution with plugins work in Android
+                  new Padding(
+                      padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                      child: new FutureBuilder(
+                        future: sharedPrefs,
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            SharedPreferences sharedPreferences = snapshot.data;
+                            var counter =
+                                sharedPreferences.getInt('shownCounter') ?? 0;
+                            return new Text(
+                                'Shown ${counter.toString()} Android notifications since the last cold start');
+                          } else {
+                            return CircularProgressIndicator();
+                          }
+                        },
+                      )),
                   new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(

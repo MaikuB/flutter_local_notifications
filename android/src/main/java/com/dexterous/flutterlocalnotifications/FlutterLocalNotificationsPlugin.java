@@ -90,7 +90,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private FlutterLocalNotificationsPlugin(Registrar registrar) {
         this.registrar = registrar;
-        this.registrar.context().registerReceiver(new ScheduledNotificationReceiver(), new IntentFilter());
         this.registrar.addNewIntentListener(this);
     }
 
