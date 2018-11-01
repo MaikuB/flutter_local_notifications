@@ -1,14 +1,18 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rxdart/rxdart.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 Future<SharedPreferences> sharedPrefs = SharedPreferences.getInstance();
+var counterSubject = PublishSubject<int>();
 
 /// IMPORTANT: running the following code on its own won't work as there is setup required for each platform head project.
 /// Please download the complete example app from the GitHub repository where all the setup has been done
@@ -34,8 +38,13 @@ Future onNotification(int id, String title, String body, String payload) async {
   if (Platform.isAndroid) {
     // IMPORTANT: Flutter currently only supports executing headless Dart code that uses other plugins on Android
     var sharedPreferences = await sharedPrefs;
-    var shown = sharedPreferences.getInt('shownCounter') ?? 0;
-    sharedPreferences.setInt('shownCounter', shown + 1);
+    var shown = (sharedPreferences.getInt('shownCounter') ?? 0) + 1;
+    sharedPreferences.setInt('shownCounter', shown);
+
+    // use to send updates that can be handled in the UI
+    final SendPort send =
+        IsolateNameServer.lookupPortByName('notification_shown_port');
+    send?.send(shown);
   }
 }
 
@@ -45,6 +54,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  ReceivePort port = ReceivePort();
+
   @override
   initState() {
     super.initState();
@@ -57,6 +68,16 @@ class _HomePageState extends State<HomePage> {
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification,
         onNotification: onNotification);
+    sharedPrefs.then((sharedPreferences) {
+      var counter = sharedPreferences.getInt('shownCounter') ?? 0;
+      counterSubject.sink.add(counter);
+    });
+
+    IsolateNameServer.registerPortWithName(
+        port.sendPort, 'notification_shown_port');
+    port.listen((dynamic data) {
+      counterSubject.sink.add(data);
+    });
   }
 
   @override
@@ -79,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                         'Tap on a notification when it appears to trigger navigation'),
                   ),
                   // NOTE: the following text is demonstrate headless execution with plugins work in Android
-                  new Padding(
+                  /*new Padding(
                       padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                       child: new FutureBuilder(
                         future: sharedPrefs,
@@ -94,6 +115,17 @@ class _HomePageState extends State<HomePage> {
                           } else {
                             return CircularProgressIndicator();
                           }
+                        },
+                      )),*/
+                  new Padding(
+                      padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                      child: new StreamBuilder(
+                        initialData: 0,
+                        stream: counterSubject.stream,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<int> snapshot) {
+                          return new Text(
+                              'Shown ${snapshot.data} Android notifications since the last cold start');
                         },
                       )),
                   new Padding(

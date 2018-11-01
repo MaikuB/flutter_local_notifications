@@ -95,6 +95,7 @@ class FlutterLocalNotificationsPlugin {
       headlessInitializationSettings['onNotificationCallbackDispatcher'] =
           PluginUtilities.getCallbackHandle(onNotification).toRawHandle();
     }
+    print(result.toString());
     await _channel.invokeMethod(
         'initializeHeadlessService', headlessInitializationSettings);
     return result;
