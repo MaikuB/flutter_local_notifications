@@ -10,9 +10,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rxdart/rxdart.dart';
 
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-Future<SharedPreferences> sharedPrefs = SharedPreferences.getInstance();
+var flutterLocalNotificationsPlugin;
+var sharedPrefs = SharedPreferences.getInstance();
 var counterSubject = PublishSubject<int>();
+var portName = 'notification_shown_port';
+var shownCounterSharedPrefKey = 'shownCounter';
 
 /// IMPORTANT: running the following code on its own won't work as there is setup required for each platform head project.
 /// Please download the complete example app from the GitHub repository where all the setup has been done
@@ -30,7 +32,9 @@ void main() async {
   );
 }
 
-Future onNotification(int id, String title, String body, String payload) async {
+/// Top-level function to handle when a notification is shown
+Future onShowNotification(
+    int id, String title, String body, String payload) async {
   print(
       'on notification callback triggered with id: $id, title: $title, body: $body, payload: $payload');
   // update a counter in shared preferences to track how many times a notification has been shown
@@ -38,12 +42,11 @@ Future onNotification(int id, String title, String body, String payload) async {
   if (Platform.isAndroid) {
     // IMPORTANT: Flutter currently only supports executing headless Dart code that uses other plugins on Android
     var sharedPreferences = await sharedPrefs;
-    var shown = (sharedPreferences.getInt('shownCounter') ?? 0) + 1;
-    sharedPreferences.setInt('shownCounter', shown);
+    var shown = (sharedPreferences.getInt(shownCounterSharedPrefKey) ?? 0) + 1;
+    sharedPreferences.setInt(shownCounterSharedPrefKey, shown);
 
-    // use to send updates that can be handled in the UI
-    final SendPort send =
-        IsolateNameServer.lookupPortByName('notification_shown_port');
+    // required so updates can be handled in the UI
+    final SendPort send = IsolateNameServer.lookupPortByName(portName);
     send?.send(shown);
   }
 }
@@ -67,14 +70,14 @@ class _HomePageState extends State<HomePage> {
         initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification,
-        onNotification: onNotification);
+        onShowNotification: onShowNotification);
     sharedPrefs.then((sharedPreferences) {
-      var counter = sharedPreferences.getInt('shownCounter') ?? 0;
+      var counter = sharedPreferences.getInt(shownCounterSharedPrefKey) ?? 0;
       counterSubject.sink.add(counter);
     });
 
-    IsolateNameServer.registerPortWithName(
-        port.sendPort, 'notification_shown_port');
+    // used to handle that a notification was shown while app was running and we need to update the counter
+    IsolateNameServer.registerPortWithName(port.sendPort, portName);
     port.listen((dynamic data) {
       counterSubject.sink.add(data);
     });
@@ -100,23 +103,6 @@ class _HomePageState extends State<HomePage> {
                         'Tap on a notification when it appears to trigger navigation'),
                   ),
                   // NOTE: the following text is demonstrate headless execution with plugins work in Android
-                  /*new Padding(
-                      padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: new FutureBuilder(
-                        future: sharedPrefs,
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            SharedPreferences sharedPreferences = snapshot.data;
-                            var counter =
-                                sharedPreferences.getInt('shownCounter') ?? 0;
-                            return new Text(
-                                'Shown ${counter.toString()} Android notifications since the last cold start');
-                          } else {
-                            return CircularProgressIndicator();
-                          }
-                        },
-                      )),*/
                   new Padding(
                       padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                       child: new StreamBuilder(

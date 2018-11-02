@@ -1,3 +1,8 @@
+# [0.4.1]
+* [Android/iOS] New `onShowNotification` callback for when a notification is shown that can handled when calling the `initialize` function. This uses the latest changes to the Flutter engine that supports headless execution i.e. the ability to execute Dart code without the app running. See [here](https://github.com/flutter/flutter/issues/6192) for a link to the issue in the main Flutter repository about this. Note that the function handling this callback must be top-level function as this is requirement for executing headless Dart code. The example for the plugin has been updated to provide sample code on to handle the callback.
+* **BREAKING CHANGE** renamed the `selectNotification` callback exposed by the `initialize` function to `onSelectNotification`
+* Address issue [115](https://github.com/MaikuB/flutter_local_notifications/issues/115) by adding validation to the notification ID values. This ensure they're within the range of a 32-bit integer as notification IDs on Android need to be within that range. Note that an `ArgumentError` is thrown when a value is out of range. 
+
 # [0.4.0]
 * [Android] Fix issue [112](https://github.com/MaikuB/flutter_local_notifications/issues/112) where big picture notifications wouldn't show
 
