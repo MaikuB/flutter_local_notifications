@@ -78,6 +78,7 @@ public class NotificationService extends JobIntentService implements MethodChann
         startNotificationService(this);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         Log.i(TAG, "NotificationService onHandleWork");
@@ -85,13 +86,6 @@ public class NotificationService extends JobIntentService implements MethodChann
             case FlutterLocalNotificationsPlugin.ON_NOTIFICATION_ACTION:
                 synchronized(started) {
                     HashMap<String, Object> callbackArgs = (HashMap<String, Object>) intent.getSerializableExtra(FlutterLocalNotificationsPlugin.ON_NOTIFICATION_ARGS);
-                    /*if (!started.get()) {
-                        Log.i(TAG, "NotificationService queued callback");
-                        onNotificationQueue.add(callbackArgs);
-                    } else {
-                        Log.i(TAG, "NotificationService invoke callback");
-                        backgroundChannel.invokeMethod(ON_NOTIFICATION_METHOD, callbackArgs);
-                    }*/
                     onNotificationQueue.add(callbackArgs);
                 }
                 break;
