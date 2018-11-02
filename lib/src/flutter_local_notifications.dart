@@ -76,6 +76,7 @@ class FlutterLocalNotificationsPlugin {
   SelectNotificationCallback onSelectNotification;
 
   /// Initializes the plugin. Call this method on application before using the plugin further
+  /// Support for the [onShowNotification] callback is limited to Android and iOS 10+
   Future<bool> initialize(InitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification,
       ShowNotificationCallback onShowNotification}) async {
