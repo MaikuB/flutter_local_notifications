@@ -89,6 +89,8 @@ public class NotificationService extends JobIntentService implements MethodChann
                     onNotificationQueue.add(callbackArgs);
                 }
                 break;
+            default:
+                break;
         }
     }
 

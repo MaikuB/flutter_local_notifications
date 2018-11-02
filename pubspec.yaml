@@ -9,7 +9,6 @@ dependencies:
     sdk: flutter
   meta: ^1.0.4
   platform: ^2.0.0
-  fixnum: ^0.10.8
 
 dev_dependencies:
   flutter_test:
