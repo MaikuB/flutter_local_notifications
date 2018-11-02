@@ -56,6 +56,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
+    private static final String INITIALIZE_HEADLESS_SERVICE_METHOD = "initializeHeadlessService";
     private static final String SHOW_METHOD = "show";
     private static final String CANCEL_METHOD = "cancel";
     private static final String CANCEL_ALL_METHOD = "cancelAll";
@@ -74,6 +75,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
     private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a raw resource to your Android head project.";
 
+    public static final String ON_NOTIFICATION_ACTION = "onNotification";
+    public static final String ON_NOTIFICATION_ARGS = "onNotificationArgs";
+    public static final String CALLBACK_DISPATCHER = "callbackDispatcher";
+    public static final String ON_NOTIFICATION_CALLBACK_DISPATCHER = "onNotificationCallbackDispatcher";
+    public static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
     public static String NOTIFICATION_ID = "notification_id";
     public static String NOTIFICATION = "notification";
     public static String NOTIFICATION_DETAILS = "notificationDetails";
@@ -84,7 +90,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private FlutterLocalNotificationsPlugin(Registrar registrar) {
         this.registrar = registrar;
-        this.registrar.context().registerReceiver(new ScheduledNotificationReceiver(), new IntentFilter());
         this.registrar.addNewIntentListener(this);
     }
 
@@ -483,6 +488,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 initialize(call, result);
                 break;
             }
+            case INITIALIZE_HEADLESS_SERVICE_METHOD: {
+                initializeHeadlessService(call, result);
+                break;
+            }
             case GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD: {
                 getNotificationAppLaunchDetails(result);
                 break;
@@ -513,6 +522,30 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
+    private void initializeHeadlessService(MethodCall call, Result result) {
+        Map<String, Object> arguments = call.arguments();
+        SharedPreferences.Editor editor = registrar.context().getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+                .edit();
+
+        Object callbackDispatcher = arguments.get(CALLBACK_DISPATCHER);
+        if(callbackDispatcher instanceof Long) {
+            editor.putLong(CALLBACK_DISPATCHER, (Long)callbackDispatcher);
+        } else if(callbackDispatcher instanceof  Integer) {
+            editor.putLong(CALLBACK_DISPATCHER, (Integer)callbackDispatcher);
+        }
+
+        if(arguments.containsKey(ON_NOTIFICATION_CALLBACK_DISPATCHER)) {
+            Object onNotificationCallbackDispatcher = arguments.get(ON_NOTIFICATION_CALLBACK_DISPATCHER);
+            if(onNotificationCallbackDispatcher instanceof Long) {
+                editor.putLong(ON_NOTIFICATION_CALLBACK_DISPATCHER, (Long)onNotificationCallbackDispatcher);
+            } else if(onNotificationCallbackDispatcher instanceof Integer) {
+                editor.putLong(ON_NOTIFICATION_CALLBACK_DISPATCHER, (Integer)onNotificationCallbackDispatcher);
+            }
+        }
+
+        editor.commit();
+    }
+
     private void cancel(MethodCall call, Result result) {
         Integer id = call.arguments();
         cancelNotification(id);
@@ -541,7 +574,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         Map<String, Object> arguments = call.arguments();
         NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
         if (notificationDetails != null) {
-            showNotification(notificationDetails);
+            showNotification(registrar.context(), notificationDetails);
             result.success(null);
         }
     }
@@ -615,15 +648,15 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager alarmManager = getAlarmManager(context);
         alarmManager.cancel(pendingIntent);
-        NotificationManagerCompat notificationManager = getNotificationManager();
+        NotificationManagerCompat notificationManager = getNotificationManager(context);
         notificationManager.cancel(id);
         removeNotificationFromCache(id, context);
     }
 
     private void cancelAllNotifications(Result result) {
-        NotificationManagerCompat notificationManager = getNotificationManager();
-        notificationManager.cancelAll();
         Context context = registrar.context();
+        NotificationManagerCompat notificationManager = getNotificationManager(context);
+        notificationManager.cancelAll();
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         if (scheduledNotifications == null || scheduledNotifications.isEmpty()) {
             result.success(null);
@@ -642,14 +675,28 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         result.success(null);
     }
 
-    private void showNotification(NotificationDetails notificationDetails) {
-        Notification notification = createNotification(registrar.context(), notificationDetails);
-        NotificationManagerCompat notificationManagerCompat = getNotificationManager();
+    public static void showNotification(Context context, NotificationDetails notificationDetails) {
+        Notification notification = createNotification(context, notificationDetails);
+        NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
         notificationManagerCompat.notify(notificationDetails.id, notification);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        if(sharedPreferences.contains(ON_NOTIFICATION_CALLBACK_DISPATCHER)) {
+            long callbackHandle = sharedPreferences.getLong(ON_NOTIFICATION_CALLBACK_DISPATCHER, 0);
+            HashMap<String, Object> callbackArgs = new HashMap<>();
+            callbackArgs.put(CALLBACK_DISPATCHER, callbackHandle);
+            callbackArgs.put(NotificationDetails.ID, notificationDetails.id);
+            callbackArgs.put(NotificationDetails.TITLE, notificationDetails.title);
+            callbackArgs.put(NotificationDetails.BODY, notificationDetails.body);
+            callbackArgs.put(PAYLOAD, notificationDetails.payload);
+            Intent intent = new Intent(context, NotificationService.class);
+            intent.setAction(ON_NOTIFICATION_ACTION);
+            intent.putExtra(ON_NOTIFICATION_ARGS, callbackArgs);
+            NotificationService.enqueueWork(context, intent);
+        }
     }
 
-    private NotificationManagerCompat getNotificationManager() {
-        return NotificationManagerCompat.from(registrar.context());
+    private static NotificationManagerCompat getNotificationManager(Context context) {
+        return NotificationManagerCompat.from(context);
     }
 
     @Override

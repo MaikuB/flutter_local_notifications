@@ -20,6 +20,7 @@ A cross platform plugin for displaying local notifications.
 * Specify a custom notification sound
 * Ability to handle when a user has tapped on a notification, when the app is the foreground, background or terminated
 * Determine if an app was launched due to tapping on a notification
+* [Android/iOS 10+] Receive callback when a notification is shown (*NOTE*: support on iOS is difficult to verify at the moment since Flutter engine support for executing headless Dart code on iOS doesn't support plugins at the moment. See [here](https://github.com/flutter/flutter/issues/21925) for details)
 * [Android] Configuring the importance level
 * [Android] Configuring the priority
 * [Android] Customising the vibration pattern for notifications
@@ -67,10 +68,11 @@ var initializationSettings = new InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
 flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
-    selectNotification: onSelectNotification);
+    onSelectNotification: onSelectNotification
+    onShowNotification: onShowNotification);
 ```
 
-Here we specify we have specified the default icon to use for notifications on Android (refer to the Android Integration section) and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In this example, it will trigger navigation to another page and display the payload associated with the notification. 
+Here we specify we have specified the default icon to use for notifications on Android (refer to the Android Integration section) and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In this example, it will trigger navigation to another page and display the payload associated with the notification. It is also possible to handle the `onShowNotification` that will invoke code when a notification is shown. Note that the function handling this callback must be top-level function as this is requirement for executing headless Dart code.
 
 ```
 Future onSelectNotification(String payload) async {
@@ -256,26 +258,38 @@ This should cover the basic functionality. Please check out the `example` direct
 
 ## Android Integration
 
-If your application needs the ability to schedule notifications then you need to request permissions to be notified when the phone has been booted as scheduled notifications uses AlarmManager to determine when notifications should be displayed. However, they are cleared when a phone has been turned off. Requesting permission requires adding the following to the manifest
+If your application needs the ability to schedule notifications then you need to request permissions to be notified when the phone has been booted as scheduled notifications uses the `AlarmManager` API to determine when notifications should be displayed. However, they are cleared when a phone has been turned off. Requesting permission requires adding the following to the manifest
 
 ```xml
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-```
 
-Developers will also need to add the following so that plugin can handle displaying scheduled notifications and reschedule notifications upon a reboot
+The following is also needed to ensure scheduled notifications remain scheduled upon a reboot (this is handled by the plugin)
 
 ```xml
-<receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
 <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
     <intent-filter>
         <action android:name="android.intent.action.BOOT_COMPLETED"></action>
     </intent-filter>
 </receiver>
 ```
+```
+
+Developers will also need to add the following so that plugin can handle displaying scheduled notifications
+
+```xml
+<receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+```
+
 If the vibration pattern of an Android notification will be customised then add the following
 
 ```xml
 <uses-permission android:name="android.permission.VIBRATE" />
+```
+
+If your application is looking to handle the `onShowNotification` callback, then the following permission is required
+
+```xml
+<uses-permission android:name="android.permission.WAKE_LOCK" />
 ```
 
 Notification icons should be added as a drawable resource. The example project/code shows how to set default icon for all notifications and how to specify one for each notification. It is possible to use launcher icon/mipmap and this by default is `@mipmap/ic_launcher` in the Android manifest and can be passed `AndroidInitializationSettings` constructor. However, the offical Android guidance is that you should use drawable resources. Custom notification sounds should be added as a raw resource and the sample illustrates how to play a notification with a custom sound. Refer to the following links around Android resources and notification icons.
