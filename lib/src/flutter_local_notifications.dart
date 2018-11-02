@@ -73,14 +73,14 @@ class FlutterLocalNotificationsPlugin {
   final MethodChannel _channel;
   final Platform _platform;
 
-  SelectNotificationCallback onSelectNotification;
+  SelectNotificationCallback selectNotificationCallback;
 
   /// Initializes the plugin. Call this method on application before using the plugin further
   /// Support for the [onShowNotification] callback is limited to Android and iOS 10+
   Future<bool> initialize(InitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification,
       ShowNotificationCallback onShowNotification}) async {
-    onSelectNotification = onSelectNotification;
+    selectNotificationCallback = onSelectNotification;
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificInitializationSettings(initializationSettings);
     _channel.setMethodCallHandler(_handleMethod);
@@ -233,7 +233,7 @@ class FlutterLocalNotificationsPlugin {
   }
 
   Future _handleMethod(MethodCall call) {
-    return onSelectNotification(call.arguments);
+    return selectNotificationCallback(call.arguments);
   }
 
   void _validateId(int id) {
