@@ -103,17 +103,20 @@ class _HomePageState extends State<HomePage> {
                         'Tap on a notification when it appears to trigger navigation'),
                   ),
                   // NOTE: the following text is demonstrate headless execution with plugins work in Android
-                  new Padding(
-                      padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: new StreamBuilder(
-                        initialData: 0,
-                        stream: counterSubject.stream,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<int> snapshot) {
-                          return new Text(
-                              'Shown ${snapshot.data} Android notifications since the last cold start');
-                        },
-                      )),
+                  Offstage(
+                    offstage: Platform.isAndroid == false,
+                    child: new Padding(
+                        padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                        child: new StreamBuilder(
+                          initialData: 0,
+                          stream: counterSubject.stream,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<int> snapshot) {
+                            return new Text(
+                                'Shown ${snapshot.data} Android notifications since the last cold start');
+                          },
+                        )),
+                  ),
                   new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
