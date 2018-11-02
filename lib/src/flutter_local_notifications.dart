@@ -95,10 +95,10 @@ class FlutterLocalNotificationsPlugin {
     if (onShowNotification != null) {
       headlessInitializationSettings['onNotificationCallbackDispatcher'] =
           PluginUtilities.getCallbackHandle(onShowNotification).toRawHandle();
-    }
 
-    await _channel.invokeMethod(
-        'initializeHeadlessService', headlessInitializationSettings);
+      await _channel.invokeMethod(
+          'initializeHeadlessService', headlessInitializationSettings);
+    }
     return result;
   }
 

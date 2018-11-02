@@ -20,7 +20,7 @@ A cross platform plugin for displaying local notifications.
 * Specify a custom notification sound
 * Ability to handle when a user has tapped on a notification, when the app is the foreground, background or terminated
 * Determine if an app was launched due to tapping on a notification
-* [Android/iOS 10+] Receive callback when a notification is shown
+* [Android/iOS 10+] Receive callback when a notification is shown (*NOTE*: support on iOS is difficult to verify at the moment since Flutter engine support for executing headless Dart code on iOS doesn't support plugins at the moment. See [here](https://github.com/flutter/flutter/issues/21925) for details)
 * [Android] Configuring the importance level
 * [Android] Configuring the priority
 * [Android] Customising the vibration pattern for notifications
@@ -262,15 +262,8 @@ If your application needs the ability to schedule notifications then you need to
 
 ```xml
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-```
 
-Developers will also need to add the following so that plugin can handle displaying scheduled notifications
-
-```xml
-<receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
-```
-
-As Android normally will not keep anything scheduled via the `AlarmManager` API upon reboot, the following is also needed to ensure scheduled notifications remain scheduled upon a reboot 
+The following is also needed to ensure scheduled notifications remain scheduled upon a reboot (this is handled by the plugin)
 
 ```xml
 <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
@@ -279,11 +272,24 @@ As Android normally will not keep anything scheduled via the `AlarmManager` API 
     </intent-filter>
 </receiver>
 ```
+```
+
+Developers will also need to add the following so that plugin can handle displaying scheduled notifications
+
+```xml
+<receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+```
 
 If the vibration pattern of an Android notification will be customised then add the following
 
 ```xml
 <uses-permission android:name="android.permission.VIBRATE" />
+```
+
+If your application is looking to handle the `onShowNotification` callback, then the following permission is required
+
+```xml
+<uses-permission android:name="android.permission.WAKE_LOCK" />
 ```
 
 Notification icons should be added as a drawable resource. The example project/code shows how to set default icon for all notifications and how to specify one for each notification. It is possible to use launcher icon/mipmap and this by default is `@mipmap/ic_launcher` in the Android manifest and can be passed `AndroidInitializationSettings` constructor. However, the offical Android guidance is that you should use drawable resources. Custom notification sounds should be added as a raw resource and the sample illustrates how to play a notification with a custom sound. Refer to the following links around Android resources and notification icons.
