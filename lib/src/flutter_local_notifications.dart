@@ -84,21 +84,15 @@ class FlutterLocalNotificationsPlugin {
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificInitializationSettings(initializationSettings);
     _channel.setMethodCallHandler(_handleMethod);
-
-    var result =
-        await _channel.invokeMethod('initialize', serializedPlatformSpecifics);
     final CallbackHandle callback =
         PluginUtilities.getCallbackHandle(_callbackDispatcher);
-    var headlessInitializationSettings = <String, dynamic>{
-      'callbackDispatcher': callback.toRawHandle()
-    };
+    serializedPlatformSpecifics['callbackDispatcher'] = callback.toRawHandle();
     if (onShowNotification != null) {
-      headlessInitializationSettings['onNotificationCallbackDispatcher'] =
+      serializedPlatformSpecifics['onNotificationCallbackDispatcher'] =
           PluginUtilities.getCallbackHandle(onShowNotification).toRawHandle();
-
-      await _channel.invokeMethod(
-          'initializeHeadlessService', headlessInitializationSettings);
     }
+    var result =
+        await _channel.invokeMethod('initialize', serializedPlatformSpecifics);
     return result;
   }
 

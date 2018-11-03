@@ -32,25 +32,6 @@ void main() async {
   );
 }
 
-/// Top-level function to handle when a notification is shown
-Future onShowNotification(
-    int id, String title, String body, String payload) async {
-  print(
-      'on notification callback triggered with id: $id, title: $title, body: $body, payload: $payload');
-  // update a counter in shared preferences to track how many times a notification has been shown
-  // this example app will only display the counter on a cold start of the app to demonstrate headless execution
-  if (Platform.isAndroid) {
-    // IMPORTANT: Flutter currently only supports executing headless Dart code that uses other plugins on Android
-    var sharedPreferences = await sharedPrefs;
-    var shown = (sharedPreferences.getInt(shownCounterSharedPrefKey) ?? 0) + 1;
-    sharedPreferences.setInt(shownCounterSharedPrefKey, shown);
-
-    // required so updates can be handled in the UI
-    final SendPort send = IsolateNameServer.lookupPortByName(portName);
-    send?.send(shown);
-  }
-}
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => new _HomePageState();
@@ -81,6 +62,26 @@ class _HomePageState extends State<HomePage> {
     port.listen((dynamic data) {
       counterSubject.sink.add(data);
     });
+  }
+
+  /// headless code for the callback handle when a notification is shown must be static function or a top-level function (i.e. like the main function)
+  static Future onShowNotification(
+      int id, String title, String body, String payload) async {
+    print(
+        'on notification callback triggered with id: $id, title: $title, body: $body, payload: $payload');
+    // update a counter in shared preferences to track how many times a notification has been shown
+    // this example app will only display the counter on a cold start of the app to demonstrate headless execution
+    if (Platform.isAndroid) {
+      // IMPORTANT: Flutter currently only supports executing headless Dart code that uses other plugins on Android
+      var sharedPreferences = await sharedPrefs;
+      var shown =
+          (sharedPreferences.getInt(shownCounterSharedPrefKey) ?? 0) + 1;
+      sharedPreferences.setInt(shownCounterSharedPrefKey, shown);
+
+      // required so updates can be handled in the UI
+      final SendPort send = IsolateNameServer.lookupPortByName(portName);
+      send?.send(shown);
+    }
   }
 
   @override
