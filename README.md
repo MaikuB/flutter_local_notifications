@@ -307,7 +307,7 @@ allprojects {
             resolutionStrategy.eachDependency { details ->
                 if (details.requested.group == 'com.android.support'
                         && !details.requested.name.contains('multidex') ) {
-                    details.useVersion "27.1.0"
+                    details.useVersion "28.0.0"
                 }
             }
         }
@@ -315,7 +315,7 @@ allprojects {
 }
 ```
 
-Note though this will force other plugins to use the same version of the library that this plugin depends on so may not be desirable, particularly if they use a more recent version than 27.1. If you have another suggestion on how to solve this please do let me know :)
+Note though this will force other plugins to use the same version of the library that this plugin depends on so may not be desirable. If you have another suggestion on how to solve this please do let me know :)
 
 When doing a release build of your app, you'll likely need to customise your ProGuard configuration file as per this [link](https://developer.android.com/studio/build/shrink-code#keep-code) and add the following line
 

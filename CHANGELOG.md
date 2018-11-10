@@ -1,5 +1,6 @@
 # [0.4.1]
 * **BREAKING CHANGE** renamed the `selectNotification` callback exposed by the `initialize` function to `onSelectNotification`
+* **BREAKING CHANGE** updated plugin to Android Support Library version 28.0, compile and target SDK version to 28
 * Address issue [115](https://github.com/MaikuB/flutter_local_notifications/issues/115) by adding validation to the notification ID values. This ensure they're within the range of a 32-bit integer as notification IDs on Android need to be within that range. Note that an `ArgumentError` is thrown when a value is out of range. 
 * Updated the Android Integration section around registering receivers via the Android manifest as per the suggestion in [116](https://github.com/MaikuB/flutter_local_notifications/issues/116)
 * Updated version of the http dependency for used by the example app
