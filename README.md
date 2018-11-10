@@ -261,6 +261,7 @@ If your application needs the ability to schedule notifications then you need to
 
 ```xml
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+```
 
 The following is also needed to ensure scheduled notifications remain scheduled upon a reboot (this is handled by the plugin)
 
@@ -270,7 +271,6 @@ The following is also needed to ensure scheduled notifications remain scheduled 
         <action android:name="android.intent.action.BOOT_COMPLETED"></action>
     </intent-filter>
 </receiver>
-```
 ```
 
 Developers will also need to add the following so that plugin can handle displaying scheduled notifications
