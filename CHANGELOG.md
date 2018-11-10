@@ -1,7 +1,9 @@
 # [0.4.1]
-* [Android/iOS] New `onShowNotification` callback for when a notification is shown that can handled when calling the `initialize` function. This uses the latest changes to the Flutter engine that supports headless execution i.e. the ability to execute Dart code without the app running. See [here](https://github.com/flutter/flutter/issues/6192) for a link to the issue in the main Flutter repository about this. Note that the function handling this callback must be top-level function as this is requirement for executing headless Dart code. The example for the plugin has been updated to provide sample code on to handle the callback. **IMPORTANT** the callback only works on Android and iOS 10+. Note support on iOS is difficult to verify at the moment since Flutter engine support for executing headless Dart code on iOS doesn't support plugins at the moment.
 * **BREAKING CHANGE** renamed the `selectNotification` callback exposed by the `initialize` function to `onSelectNotification`
+* **BREAKING CHANGE** updated plugin to Android Support Library version 28.0, compile and target SDK version to 28
 * Address issue [115](https://github.com/MaikuB/flutter_local_notifications/issues/115) by adding validation to the notification ID values. This ensure they're within the range of a 32-bit integer as notification IDs on Android need to be within that range. Note that an `ArgumentError` is thrown when a value is out of range. 
+* Updated the Android Integration section around registering receivers via the Android manifest as per the suggestion in [116](https://github.com/MaikuB/flutter_local_notifications/issues/116)
+* Updated version of the http dependency for used by the example app
 
 # [0.4.0]
 * [Android] Fix issue [112](https://github.com/MaikuB/flutter_local_notifications/issues/112) where big picture notifications wouldn't show
@@ -14,7 +16,7 @@
 * Added documentation around ProGuard configuration to Android Integration section of the README
 
 ## [0.3.7]
-* [Android] Fix issues [88](https://github.com/MaikuB/flutter_local_notifications/issues/88) where cancelled notifications could reappear on reboot.
+* [Android] Fix issue [88](https://github.com/MaikuB/flutter_local_notifications/issues/88) where cancelled notifications could reappear on reboot.
 
 ## [0.3.6]
 * [Android] Add mapping to the setOnlyAlertOnce method [83](https://github.com/MaikuB/flutter_local_notifications/issues/83). Allows the sound, vibrate and ticker to be played if the notification is not already showing

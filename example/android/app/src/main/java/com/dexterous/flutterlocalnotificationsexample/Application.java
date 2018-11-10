@@ -1,4 +1,4 @@
-package com.dexterous.flutterlocalnotificationsexample;
+/*package com.dexterous.flutterlocalnotificationsexample;
 
 import com.dexterous.flutterlocalnotifications.NotificationService;
 
@@ -17,4 +17,4 @@ public class Application extends FlutterApplication implements PluginRegistry.Pl
     public void registerWith(PluginRegistry registry) {
         GeneratedPluginRegistrant.registerWith(registry);
     }
-}
+}*/

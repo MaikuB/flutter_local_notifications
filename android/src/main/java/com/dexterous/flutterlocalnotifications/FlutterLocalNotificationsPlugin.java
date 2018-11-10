@@ -46,6 +46,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+import io.flutter.view.FlutterNativeView;
 
 /**
  * FlutterLocalNotificationsPlugin
@@ -75,10 +76,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
     private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a raw resource to your Android head project.";
 
-    public static final String ON_NOTIFICATION_ACTION = "onNotification";
+    /*public static final String ON_NOTIFICATION_ACTION = "onNotification";
     public static final String ON_NOTIFICATION_ARGS = "onNotificationArgs";
     public static final String CALLBACK_DISPATCHER = "callbackDispatcher";
-    public static final String ON_NOTIFICATION_CALLBACK_DISPATCHER = "onNotificationCallbackDispatcher";
+    public static final String ON_NOTIFICATION_CALLBACK_DISPATCHER = "onNotificationCallbackDispatcher";*/
     public static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
     public static String NOTIFICATION_ID = "notification_id";
     public static String NOTIFICATION = "notification";
@@ -485,11 +486,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         switch (call.method) {
 
             case INITIALIZE_METHOD: {
+                // initializeHeadlessService(call, result);
                 initialize(call, result);
-                break;
-            }
-            case INITIALIZE_HEADLESS_SERVICE_METHOD: {
-                initializeHeadlessService(call, result);
                 break;
             }
             case GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD: {
@@ -522,16 +520,20 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-    private void initializeHeadlessService(MethodCall call, Result result) {
+    /*private void initializeHeadlessService(MethodCall call, Result result) {
         Map<String, Object> arguments = call.arguments();
-        SharedPreferences.Editor editor = registrar.context().getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
-                .edit();
+        SharedPreferences sharedPreferences = registrar.context().getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        Object callbackDispatcher = arguments.get(CALLBACK_DISPATCHER);
-        if(callbackDispatcher instanceof Long) {
-            editor.putLong(CALLBACK_DISPATCHER, (Long)callbackDispatcher);
-        } else if(callbackDispatcher instanceof  Integer) {
-            editor.putLong(CALLBACK_DISPATCHER, (Integer)callbackDispatcher);
+        if(arguments.containsKey(CALLBACK_DISPATCHER)) {
+            Object callbackDispatcher = arguments.get(CALLBACK_DISPATCHER);
+            if (callbackDispatcher instanceof Long) {
+                editor.putLong(CALLBACK_DISPATCHER, (Long) callbackDispatcher);
+            } else if (callbackDispatcher instanceof Integer) {
+                editor.putLong(CALLBACK_DISPATCHER, (Integer) callbackDispatcher);
+            }
+        } else if(sharedPreferences.contains(CALLBACK_DISPATCHER)){
+            editor.remove(CALLBACK_DISPATCHER);
         }
 
         if(arguments.containsKey(ON_NOTIFICATION_CALLBACK_DISPATCHER)) {
@@ -541,10 +543,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             } else if(onNotificationCallbackDispatcher instanceof Integer) {
                 editor.putLong(ON_NOTIFICATION_CALLBACK_DISPATCHER, (Integer)onNotificationCallbackDispatcher);
             }
+        } else if(sharedPreferences.contains(ON_NOTIFICATION_CALLBACK_DISPATCHER)){
+            editor.remove(ON_NOTIFICATION_CALLBACK_DISPATCHER);
         }
 
         editor.commit();
-    }
+    }*/
 
     private void cancel(MethodCall call, Result result) {
         Integer id = call.arguments();
@@ -679,7 +683,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         Notification notification = createNotification(context, notificationDetails);
         NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
         notificationManagerCompat.notify(notificationDetails.id, notification);
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        /*SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         if(sharedPreferences.contains(ON_NOTIFICATION_CALLBACK_DISPATCHER)) {
             long callbackHandle = sharedPreferences.getLong(ON_NOTIFICATION_CALLBACK_DISPATCHER, 0);
             HashMap<String, Object> callbackArgs = new HashMap<>();
@@ -692,7 +696,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             intent.setAction(ON_NOTIFICATION_ACTION);
             intent.putExtra(ON_NOTIFICATION_ARGS, callbackArgs);
             NotificationService.enqueueWork(context, intent);
-        }
+        }*/
     }
 
     private static NotificationManagerCompat getNotificationManager(Context context) {

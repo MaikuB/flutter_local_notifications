@@ -1,4 +1,4 @@
-package com.dexterous.flutterlocalnotifications;
+/*package com.dexterous.flutterlocalnotifications;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,43 +22,43 @@ import io.flutter.view.FlutterRunArguments;
 
 public class NotificationService extends JobIntentService implements MethodChannel.MethodCallHandler {
     private static final String TAG = "NotificationService";
-    private static final String BACKGROUND_CHANNEL = "dexterous.com/flutter/local_notifications_background";
+    private static final String BACKGROUND_CHANNEL = "dexterous.com/flutter/local_notifications";
     private static final int JOB_ID = (int)UUID.randomUUID().getMostSignificantBits();
     private static final String INITIALIZED_HEADLESS_SERVICE_METHOD = "initializedHeadlessService";
     private static final String ON_NOTIFICATION_METHOD = "onNotification";
-    private static AtomicBoolean started = new AtomicBoolean(false);
+    private static final AtomicBoolean started = new AtomicBoolean(false);
     private static PluginRegistrantCallback pluginRegistrantCallback;
     private MethodChannel backgroundChannel;
     private ArrayDeque onNotificationQueue = new ArrayDeque<Map<String, Object>>();
     private FlutterNativeView backgroundFlutterView;
 
     public static void enqueueWork(Context context, Intent intent) {
+        FlutterMain.ensureInitializationComplete(context, null);
         enqueueWork(context, NotificationService.class, JOB_ID, intent);
     }
 
     private void startNotificationService(Context context) {
         synchronized (started) {
-            FlutterMain.ensureInitializationComplete(context, null);
-
-            long callbackHandle = context.getSharedPreferences(
-                    FlutterLocalNotificationsPlugin.SHARED_PREFERENCES_KEY,
-                    Context.MODE_PRIVATE)
-                    .getLong(FlutterLocalNotificationsPlugin.CALLBACK_DISPATCHER, 0);
-            FlutterCallbackInformation callbackInfo = FlutterCallbackInformation.lookupCallbackInformation(callbackHandle);
-            if (callbackInfo == null) {
-                Log.e(TAG, "Fatal: failed to find callback");
-                return;
+            if(backgroundFlutterView == null) {
+                long callbackHandle = context.getSharedPreferences(
+                        FlutterLocalNotificationsPlugin.SHARED_PREFERENCES_KEY,
+                        Context.MODE_PRIVATE)
+                        .getLong(FlutterLocalNotificationsPlugin.CALLBACK_DISPATCHER, 0);
+                FlutterCallbackInformation callbackInfo = FlutterCallbackInformation.lookupCallbackInformation(callbackHandle);
+                if (callbackInfo == null) {
+                    Log.e(TAG, "Fatal: failed to find callback");
+                    return;
+                }
+                backgroundFlutterView = new FlutterNativeView(context, true);
+                if (pluginRegistrantCallback != null) {
+                    pluginRegistrantCallback.registerWith(backgroundFlutterView.getPluginRegistry());
+                }
+                FlutterRunArguments args = new FlutterRunArguments();
+                args.bundlePath = FlutterMain.findAppBundlePath(context);
+                args.entrypoint = callbackInfo.callbackName;
+                args.libraryPath = callbackInfo.callbackLibraryPath;
+                backgroundFlutterView.runFromBundle(args);
             }
-            backgroundFlutterView = new FlutterNativeView(context, true);
-            FlutterRunArguments args = new FlutterRunArguments();
-            args.bundlePath = FlutterMain.findAppBundlePath(context);
-            args.entrypoint = callbackInfo.callbackName;
-            args.libraryPath = callbackInfo.callbackLibraryPath;
-            backgroundFlutterView.runFromBundle(args);
-            if (pluginRegistrantCallback != null) {
-                pluginRegistrantCallback.registerWith(backgroundFlutterView.getPluginRegistry());
-            }
-
 
         }
         backgroundChannel = new MethodChannel(backgroundFlutterView, BACKGROUND_CHANNEL);
@@ -111,4 +111,4 @@ public class NotificationService extends JobIntentService implements MethodChann
             result.notImplemented();
         }
     }
-}
+}*/

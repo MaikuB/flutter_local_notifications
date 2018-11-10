@@ -1,8 +1,8 @@
-part of flutter_local_notifications;
+/*part of flutter_local_notifications;
 
 void _callbackDispatcher() {
   const MethodChannel _backgroundChannel =
-      MethodChannel('dexterous.com/flutter/local_notifications_background');
+      MethodChannel('dexterous.com/flutter/local_notifications');
   WidgetsFlutterBinding.ensureInitialized();
 
   _backgroundChannel.setMethodCallHandler((MethodCall call) async {
@@ -15,4 +15,4 @@ void _callbackDispatcher() {
     }
   });
   _backgroundChannel.invokeMethod('initializedHeadlessService');
-}
+}*/
