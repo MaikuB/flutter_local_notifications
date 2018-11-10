@@ -7,20 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:rxdart/rxdart.dart';
 
 var flutterLocalNotificationsPlugin;
-var sharedPrefs = SharedPreferences.getInstance();
-var counterSubject = PublishSubject<int>();
-var portName = 'notification_shown_port';
-var shownCounterSharedPrefKey = 'shownCounter';
 
 /// IMPORTANT: running the following code on its own won't work as there is setup required for each platform head project.
 /// Please download the complete example app from the GitHub repository where all the setup has been done
 void main() async {
   flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
-
   // NOTE: if you want to find out if the app was launched via notification then you could use the following call and then do something like
   // change the default route of the app
   // var notificationAppLaunchDetails =
@@ -50,38 +43,7 @@ class _HomePageState extends State<HomePage> {
     var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: onSelectNotification,
-        onShowNotification: onShowNotification);
-    sharedPrefs.then((sharedPreferences) {
-      var counter = sharedPreferences.getInt(shownCounterSharedPrefKey) ?? 0;
-      counterSubject.sink.add(counter);
-    });
-
-    // used to handle that a notification was shown while app was running and we need to update the counter
-    IsolateNameServer.registerPortWithName(port.sendPort, portName);
-    port.listen((dynamic data) {
-      counterSubject.sink.add(data);
-    });
-  }
-
-  /// headless code for the callback handle when a notification is shown must be static function or a top-level function (i.e. like the main function)
-  static Future onShowNotification(
-      int id, String title, String body, String payload) async {
-    print(
-        'on notification callback triggered with id: $id, title: $title, body: $body, payload: $payload');
-    // update a counter in shared preferences to track how many times a notification has been shown
-    // this example app will only display the counter on a cold start of the app to demonstrate headless execution
-    if (Platform.isAndroid) {
-      // IMPORTANT: Flutter currently only supports executing headless Dart code that uses other plugins on Android
-      var sharedPreferences = await sharedPrefs;
-      var shown =
-          (sharedPreferences.getInt(shownCounterSharedPrefKey) ?? 0) + 1;
-      sharedPreferences.setInt(shownCounterSharedPrefKey, shown);
-
-      // required so updates can be handled in the UI
-      final SendPort send = IsolateNameServer.lookupPortByName(portName);
-      send?.send(shown);
-    }
+        onSelectNotification: onSelectNotification);
   }
 
   @override
@@ -102,21 +64,6 @@ class _HomePageState extends State<HomePage> {
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new Text(
                         'Tap on a notification when it appears to trigger navigation'),
-                  ),
-                  // NOTE: the following text is demonstrate headless execution with plugins work in Android
-                  Offstage(
-                    offstage: Platform.isAndroid == false,
-                    child: new Padding(
-                        padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                        child: new StreamBuilder(
-                          initialData: 0,
-                          stream: counterSubject.stream,
-                          builder: (BuildContext context,
-                              AsyncSnapshot<int> snapshot) {
-                            return new Text(
-                                'Shown ${snapshot.data} Android notifications since the last cold start');
-                          },
-                        )),
                   ),
                   new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),

@@ -1,4 +1,4 @@
-package com.dexterous.flutterlocalnotifications;
+/*package com.dexterous.flutterlocalnotifications;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +22,7 @@ import io.flutter.view.FlutterRunArguments;
 
 public class NotificationService extends JobIntentService implements MethodChannel.MethodCallHandler {
     private static final String TAG = "NotificationService";
-    private static final String BACKGROUND_CHANNEL = "dexterous.com/flutter/local_notifications_background";
+    private static final String BACKGROUND_CHANNEL = "dexterous.com/flutter/local_notifications";
     private static final int JOB_ID = (int)UUID.randomUUID().getMostSignificantBits();
     private static final String INITIALIZED_HEADLESS_SERVICE_METHOD = "initializedHeadlessService";
     private static final String ON_NOTIFICATION_METHOD = "onNotification";
@@ -111,4 +111,4 @@ public class NotificationService extends JobIntentService implements MethodChann
             result.notImplemented();
         }
     }
-}
+}*/

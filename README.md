@@ -68,11 +68,10 @@ var initializationSettings = new InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
 flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
-    onSelectNotification: onSelectNotification
-    onShowNotification: onShowNotification);
+    onSelectNotification: onSelectNotification);
 ```
 
-Here we specify we have specified the default icon to use for notifications on Android (refer to the Android Integration section) and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In this example, it will trigger navigation to another page and display the payload associated with the notification. It is also possible to handle the `onShowNotification` that will invoke code when a notification is shown. Note that the function handling this callback must be top-level function as this is requirement for executing headless Dart code.
+Here we specify we have specified the default icon to use for notifications on Android (refer to the Android Integration section) and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In this example, it will trigger navigation to another page and display the payload associated with the notification.
 
 ```
 Future onSelectNotification(String payload) async {
@@ -284,12 +283,6 @@ If the vibration pattern of an Android notification will be customised then add 
 
 ```xml
 <uses-permission android:name="android.permission.VIBRATE" />
-```
-
-If your application is looking to handle the `onShowNotification` callback, then the following permission is required
-
-```xml
-<uses-permission android:name="android.permission.WAKE_LOCK" />
 ```
 
 Notification icons should be added as a drawable resource. The example project/code shows how to set default icon for all notifications and how to specify one for each notification. It is possible to use launcher icon/mipmap and this by default is `@mipmap/ic_launcher` in the Android manifest and can be passed `AndroidInitializationSettings` constructor. However, the offical Android guidance is that you should use drawable resources. Custom notification sounds should be added as a raw resource and the sample illustrates how to play a notification with a custom sound. Refer to the following links around Android resources and notification icons.

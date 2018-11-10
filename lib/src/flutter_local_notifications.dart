@@ -3,12 +3,6 @@ part of flutter_local_notifications;
 /// Signature of callback passed to [initialize]. Callback triggered when user taps on a notification
 typedef Future<dynamic> SelectNotificationCallback(String payload);
 
-/// Signature of callback passed to [initialize].
-/// Callback is triggered when a notification is shown. Note that on iOS this only works on iOS 10+.
-/// The callback must be a top-level or static method
-typedef Future<dynamic> ShowNotificationCallback(
-    int id, String title, String body, String payload);
-
 /// The available intervals for periodically showing notifications
 enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
 
@@ -76,21 +70,19 @@ class FlutterLocalNotificationsPlugin {
   SelectNotificationCallback selectNotificationCallback;
 
   /// Initializes the plugin. Call this method on application before using the plugin further
-  /// Support for the [onShowNotification] callback is limited to Android and iOS 10+
   Future<bool> initialize(InitializationSettings initializationSettings,
-      {SelectNotificationCallback onSelectNotification,
-      ShowNotificationCallback onShowNotification}) async {
+      {SelectNotificationCallback onSelectNotification}) async {
     selectNotificationCallback = onSelectNotification;
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificInitializationSettings(initializationSettings);
     _channel.setMethodCallHandler(_handleMethod);
-    final CallbackHandle callback =
+    /*final CallbackHandle callback =
         PluginUtilities.getCallbackHandle(_callbackDispatcher);
     serializedPlatformSpecifics['callbackDispatcher'] = callback.toRawHandle();
     if (onShowNotification != null) {
       serializedPlatformSpecifics['onNotificationCallbackDispatcher'] =
           PluginUtilities.getCallbackHandle(onShowNotification).toRawHandle();
-    }
+    }*/
     var result =
         await _channel.invokeMethod('initialize', serializedPlatformSpecifics);
     return result;

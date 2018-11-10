@@ -16,7 +16,7 @@
          additional functionality it is fine to subclass or reimplement
          FlutterApplication and put your custom class here. -->
     <application
-        android:name=".Application"
+        android:name="io.flutter.app.FlutterApplication"
         android:label="flutter_local_notifications_example"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -44,9 +44,5 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>
         </receiver>
-        <service
-            android:name="com.dexterous.flutterlocalnotifications.NotificationService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="true"/>
     </application>
 </manifest>
