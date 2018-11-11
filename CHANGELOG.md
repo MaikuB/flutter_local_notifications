@@ -1,3 +1,6 @@
+# [0.4.1+1]
+* Remove unused code in example app
+
 # [0.4.1]
 * **BREAKING CHANGE** renamed the `selectNotification` callback exposed by the `initialize` function to `onSelectNotification`
 * **BREAKING CHANGE** updated plugin to Android Support Library version 28.0, compile and target SDK version to 28
