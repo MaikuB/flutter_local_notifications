@@ -30,8 +30,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => new _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  ReceivePort port = ReceivePort();
+class _HomePageState extends State<HomePage> {  
 
   @override
   initState() {
