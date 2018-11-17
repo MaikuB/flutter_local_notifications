@@ -1,3 +1,6 @@
+# [0.4.2]
+* **BREAKING CHANGE** Fix issue [127] (https://github.com/MaikuB/flutter_local_notifications/issues/127) by changing plugin to Android Support Library version 27.1.1, compile and target SDK version to 27 due to issues Flutter has with API 28. 
+
 # [0.4.1+1]
 * Remove unused code in example app
 
