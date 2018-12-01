@@ -1,3 +1,6 @@
+# [0.4.2+1]
+* Update changelog to indicate when `MessageHandler` typedef got renamed (in 0.4.1) as raised in issue [132](https://github.com/MaikuB/flutter_local_notifications/issues/132)
+
 # [0.4.2]
 * **BREAKING CHANGE** Fix issue [127] (https://github.com/MaikuB/flutter_local_notifications/issues/127) by changing plugin to Android Support Library version 27.1.1, compile and target SDK version to 27 due to issues Flutter has with API 28. 
 
@@ -6,6 +9,7 @@
 
 # [0.4.1]
 * **BREAKING CHANGE** renamed the `selectNotification` callback exposed by the `initialize` function to `onSelectNotification`
+* **BREAKING CHANGE** renamed the `MessageHandler` typedef to `SelectNotificationCallback`
 * **BREAKING CHANGE** updated plugin to Android Support Library version 28.0, compile and target SDK version to 28
 * Address issue [115](https://github.com/MaikuB/flutter_local_notifications/issues/115) by adding validation to the notification ID values. This ensure they're within the range of a 32-bit integer as notification IDs on Android need to be within that range. Note that an `ArgumentError` is thrown when a value is out of range. 
 * Updated the Android Integration section around registering receivers via the Android manifest as per the suggestion in [116](https://github.com/MaikuB/flutter_local_notifications/issues/116)
