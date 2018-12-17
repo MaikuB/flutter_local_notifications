@@ -59,7 +59,7 @@ The GitHub repository has an example app that should demonstrate of all the supp
 
 The following samples will demonstrate the more commonly used functionalities. The first step is to create a new instance of the plugin class and then initialise it with the settings to use for each platform
 
-```
+```dart
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
 var initializationSettingsAndroid =
     new AndroidInitializationSettings('app_icon');
@@ -73,7 +73,7 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
 
 Here we specify we have specified the default icon to use for notifications on Android (refer to the Android Integration section) and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In this example, it will trigger navigation to another page and display the payload associated with the notification.
 
-```
+```dart
 Future onSelectNotification(String payload) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
@@ -89,7 +89,7 @@ In the real world, this payload could represent the id of the item you want to d
 
 ### Displaying a notification
 
-```
+```dart
 var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
     'your channel id', 'your channel name', 'your channel description',
     importance: Importance.Max, priority: Priority.High);
@@ -105,7 +105,7 @@ In this block of code, the details for each platform have been specified. This i
 
 ### Scheduling a notification
 
-```
+```dart
 var scheduledNotificationDateTime =
         new DateTime.now().add(new Duration(seconds: 5));
 var androidPlatformChannelSpecifics =
@@ -125,7 +125,7 @@ await flutterLocalNotificationsPlugin.schedule(
 
 ### Periodically show a notification with a specified interval
 
-```
+```dart
 // Show a notification every minute with the first appearance happening a minute after invoking the method
 var androidPlatformChannelSpecifics =
     new AndroidNotificationDetails('repeating channel id',
@@ -140,7 +140,7 @@ await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
 
 ### Show a daily notification at a specific time
 
-```
+```dart
 var time = new Time(10, 0, 0);
 var androidPlatformChannelSpecifics =
     new AndroidNotificationDetails('repeatDailyAtTime channel id',
@@ -159,7 +159,7 @@ await flutterLocalNotificationsPlugin.showDailyAtTime(
 
 ### Show a weekly notification on specific day and time
 
-```
+```dart
 var time = new Time(10, 0, 0);
 var androidPlatformChannelSpecifics =
     new AndroidNotificationDetails('show weekly channel id',
@@ -182,7 +182,7 @@ await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
 This is a "translation" of the sample available at https://developer.android.com/training/notify-user/group.html
 For iOS, you could just display the summary notification (not shown in the example) as otherwise the following code would show three notifications 
 
-```
+```dart
 String groupKey = 'com.android.example.WORK_EMAIL';
 String groupChannelId = 'grouped channel id';
 String groupChannelName = 'grouped channel name';
@@ -235,20 +235,21 @@ await flutterLocalNotificationsPlugin.show(
 
 ### Cancelling/deleting a notification
 
-```
+```dart
 // cancel the notification with id value of zero
 await flutterLocalNotificationsPlugin.cancel(0);
 ```
 
 ### Cancelling/deleting all notifications
 
-```
+```dart
 await flutterLocalNotificationsPlugin.cancelAll();
 ```
 
 
 ### Get details on if the app was launched via a notification
-```
+
+```dart
  var notificationAppLaunchDetails =
      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 ```
@@ -297,7 +298,7 @@ Note that with Android 8.0+, sounds and vibrations are associated with notificat
 
 If you run into error messages around the `com.android.support:support-compat` library due to version conflicts, you can try adding the following to the `build.gradle` file of your Android head project as reported by another dev [here](https://github.com/MaikuB/flutter_local_notifications/issues/5)
 
-```
+```gradle
 allprojects {
     repositories {
        //...
@@ -327,7 +328,7 @@ When doing a release build of your app, you'll likely need to customise your Pro
 
 By design, iOS applications do not display notifications when they're in the foreground. For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. For older versions of iOS, you will need update the AppDelegate class to handle when a local notification is received to display an alert. This is shown in the sample app within the `didReceiveLocalNotification` method of the `AppDelegate` class. The notification title can be found by looking up the `title` within the `userInfo` dictionary of the `UILocalNotification` object
 
-```
+```objc
 #import <flutter_local_notifications/FlutterLocalNotificationsPlugin.h>
 
 ...
@@ -368,7 +369,7 @@ In theory, it should be possible for the plugin to handle this but this the meth
 
 Also if you have set notifications to be periodically shown, then on older iOS versions (< 10), if the application was uninstalled without cancelling all alarms then the next time it's installed you may see the "old" notifications being fired. If this is not the desired behaviour, then you can add the following to the `didFinishLaunchingWithOptions` method of your `AppDelegate` class.
 
-```
+```objc
 if(![[NSUserDefaults standardUserDefaults]objectForKey:@"Notification"]){
     [[UIApplication sharedApplication] cancelAllLocalNotifications];
     [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"Notification"];
@@ -381,7 +382,7 @@ https://developer.apple.com/documentation/usernotifications/unnotificationsound?
 
 **NOTE**: this plugin registers itself as the delegate to handle incoming notifications and actions. This may cause problems if you're using other plugins for push notifications (e.g. `firebase_messaging`) as they will most likely do the same and it's only possible to register a single delegate. iOS handles showing push notifications out of the box so if you're only using this plugin to display the notification payload on Android then it's suggested that you fork the plugin code and remove the following part in the iOS code
 
-```
+```objc
 UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
 center.delegate = instance;
 ```
