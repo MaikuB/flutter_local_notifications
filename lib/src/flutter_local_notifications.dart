@@ -132,7 +132,7 @@ class FlutterLocalNotificationsPlugin {
       'id': id,
       'title': title,
       'body': body,
-      'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
+      'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch.toString(),
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
     });
