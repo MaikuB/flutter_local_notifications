@@ -58,7 +58,7 @@ void main() {
         'title': title,
         'body': body,
         'millisecondsSinceEpoch':
-            scheduledNotificationDateTime.millisecondsSinceEpoch,
+            scheduledNotificationDateTime.millisecondsSinceEpoch.toString(),
         'platformSpecifics': iOSPlatformChannelSpecifics.toMap(),
         'payload': ''
       }));
@@ -122,7 +122,7 @@ void main() {
         'title': title,
         'body': body,
         'millisecondsSinceEpoch':
-            scheduledNotificationDateTime.millisecondsSinceEpoch,
+            scheduledNotificationDateTime.millisecondsSinceEpoch.toString(),
         'platformSpecifics': androidPlatformChannelSpecifics.toMap(),
         'payload': ''
       }));

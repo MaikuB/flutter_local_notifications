@@ -116,10 +116,12 @@ public class NotificationDetails {
         notificationDetails.title = (String) arguments.get(TITLE);
         notificationDetails.body = (String) arguments.get(BODY);
         if (arguments.containsKey(MILLISECONDS_SINCE_EPOCH)) {
-            notificationDetails.millisecondsSinceEpoch = (Long) arguments.get(MILLISECONDS_SINCE_EPOCH);
+            String strMillisecondsSinceEpoch = (String) arguments.get(MILLISECONDS_SINCE_EPOCH);
+            notificationDetails.millisecondsSinceEpoch = Long.parseLong(strMillisecondsSinceEpoch, 10);
         }
         if (arguments.containsKey(CALLED_AT)) {
-            notificationDetails.calledAt = (Long) arguments.get(CALLED_AT);
+            String strCalledAt = (String) arguments.get(CALLED_AT);
+            notificationDetails.calledAt = Long.parseLong(strCalledAt, 10);
         }
         if (arguments.containsKey(REPEAT_INTERVAL)) {
             notificationDetails.repeatInterval = RepeatInterval.values()[(Integer) arguments.get(REPEAT_INTERVAL)];
