@@ -26,6 +26,9 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
   /// Specifies the source for the bitmap to be used as the payload for the BigPicture notification
   final BitmapSource bigPictureBitmapSource;
 
+  /// Hides the large icon when showing the expanded notification
+  final bool hideExpandedLargeIcon;
+
   BigPictureStyleInformation(this.bigPicture, this.bigPictureBitmapSource,
       {this.contentTitle,
       this.summaryText,
@@ -34,7 +37,8 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
       this.largeIcon,
       this.largeIconBitmapSource,
       bool htmlFormatContent = false,
-      bool htmlFormatTitle = false})
+      bool htmlFormatTitle = false,
+      this.hideExpandedLargeIcon = false})
       : super(htmlFormatContent, htmlFormatTitle);
 
   @override
@@ -47,7 +51,8 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
       'htmlFormatSummaryText': htmlFormatSummaryText,
       'largeIcon': largeIcon,
       'bigPicture': bigPicture,
-      'bigPictureBitmapSource': bigPictureBitmapSource?.index
+      'bigPictureBitmapSource': bigPictureBitmapSource?.index,
+      'hideExpandedLargeIcon': hideExpandedLargeIcon
     };
 
     if (largeIconBitmapSource != null) {
