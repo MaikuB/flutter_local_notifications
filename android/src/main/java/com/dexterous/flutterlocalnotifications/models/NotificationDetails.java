@@ -60,6 +60,7 @@ public class NotificationDetails {
     private static final String LARGE_ICON_BITMAP_SOURCE = "largeIconBitmapSource";
     private static final String BIG_PICTURE = "bigPicture";
     private static final String BIG_PICTURE_BITMAP_SOURCE = "bigPictureBitmapSource";
+    private static final String HIDE_EXPANDED_LARGE_ICON = "hideExpandedLargeIcon";
     private static final String SHOW_PROGRESS = "showProgress";
     private static final String MAX_PROGRESS = "maxProgress";
     private static final String PROGRESS = "progress";
@@ -215,7 +216,8 @@ public class NotificationDetails {
             String bigPicture = (String) styleInformation.get(BIG_PICTURE);
             Integer bigPictureBitmapSourceArgument = (Integer) styleInformation.get(BIG_PICTURE_BITMAP_SOURCE);
             BitmapSource bigPictureBitmapSource = BitmapSource.values()[bigPictureBitmapSourceArgument];
-            notificationDetails.styleInformation = new BigPictureStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText, largeIcon, largeIconBitmapSource, bigPicture, bigPictureBitmapSource);
+            Boolean showThumbnail = (Boolean) styleInformation.get(HIDE_EXPANDED_LARGE_ICON);
+            notificationDetails.styleInformation = new BigPictureStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText, largeIcon, largeIconBitmapSource, bigPicture, bigPictureBitmapSource, showThumbnail);
         } else if (notificationDetails.style == NotificationStyle.BigText) {
             String bigText = (String) styleInformation.get(BIG_TEXT);
             Boolean htmlFormatBigText = (Boolean) styleInformation.get(HTML_FORMAT_BIG_TEXT);

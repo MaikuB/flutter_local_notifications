@@ -139,6 +139,16 @@ class _HomePageState extends State<HomePage> {
                   new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
+                      child: new Text(
+                          'Show big picture notification, hide large icon on expand [Android]'),
+                      onPressed: () async {
+                        await _showBigPictureNotificationHideExpandedLargeIcon();
+                      },
+                    ),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
                       child: new Text('Show big text notification [Android]'),
                       onPressed: () async {
                         await _showBigTextNotification();
@@ -306,6 +316,38 @@ class _HomePageState extends State<HomePage> {
         'big text channel id',
         'big text channel name',
         'big text channel description',
+        style: AndroidNotificationStyle.BigPicture,
+        styleInformation: bigPictureStyleInformation);
+    var platformChannelSpecifics =
+        new NotificationDetails(androidPlatformChannelSpecifics, null);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'big text title', 'silent body', platformChannelSpecifics);
+  }
+
+  Future _showBigPictureNotificationHideExpandedLargeIcon() async {
+    var directory = await getApplicationDocumentsDirectory();
+    var largeIconResponse = await http.get('http://via.placeholder.com/48x48');
+    var largeIconPath = '${directory.path}/largeIcon';
+    var file = new File(largeIconPath);
+    await file.writeAsBytes(largeIconResponse.bodyBytes);
+    var bigPictureResponse =
+        await http.get('http://via.placeholder.com/400x800');
+    var bigPicturePath = '${directory.path}/bigPicture';
+    file = new File(bigPicturePath);
+    await file.writeAsBytes(bigPictureResponse.bodyBytes);
+    var bigPictureStyleInformation = new BigPictureStyleInformation(
+        bigPicturePath, BitmapSource.FilePath,
+        hideExpandedLargeIcon: true,
+        contentTitle: 'overridden <b>big</b> content title',
+        htmlFormatContentTitle: true,
+        summaryText: 'summary <i>text</i>',
+        htmlFormatSummaryText: true);
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'big text channel id',
+        'big text channel name',
+        'big text channel description',
+        largeIcon: largeIconPath,
+        largeIconBitmapSource: BitmapSource.FilePath,
         style: AndroidNotificationStyle.BigPicture,
         styleInformation: bigPictureStyleInformation);
     var platformChannelSpecifics =

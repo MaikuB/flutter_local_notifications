@@ -11,8 +11,9 @@ public class BigPictureStyleInformation extends DefaultStyleInformation {
     public BitmapSource largeIconBitmapSource;
     public String bigPicture;
     public BitmapSource bigPictureBitmapSource;
+    public Boolean hideExpandedLargeIcon;
 
-    public BigPictureStyleInformation(Boolean htmlFormatTitle, Boolean htmlFormatBody, String contentTitle, Boolean htmlFormatContentTitle, String summaryText, Boolean htmlFormatSummaryText, String largeIcon, BitmapSource largeIconBitmapSource, String bigPicture, BitmapSource bigPictureBitmapSource) {
+    public BigPictureStyleInformation(Boolean htmlFormatTitle, Boolean htmlFormatBody, String contentTitle, Boolean htmlFormatContentTitle, String summaryText, Boolean htmlFormatSummaryText, String largeIcon, BitmapSource largeIconBitmapSource, String bigPicture, BitmapSource bigPictureBitmapSource, Boolean hideExpandedLargeIcon) {
         super(htmlFormatTitle, htmlFormatBody);
         this.contentTitle = contentTitle;
         this.htmlFormatContentTitle = htmlFormatContentTitle;
@@ -22,5 +23,6 @@ public class BigPictureStyleInformation extends DefaultStyleInformation {
         this.largeIconBitmapSource = largeIconBitmapSource;
         this.bigPicture = bigPicture;
         this.bigPictureBitmapSource = bigPictureBitmapSource;
+        this.hideExpandedLargeIcon = hideExpandedLargeIcon;
     }
 }
