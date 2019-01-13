@@ -591,6 +591,7 @@ class _HomePageState extends State<HomePage> {
 
   Future onDidRecieveLocationLocation(
       int id, String title, String body, String payload) async {
+    // display a dialog with the notification details, tap ok to go to another page
     showDialog(
       context: context,
       builder: (BuildContext context) => new CupertinoAlertDialog(
