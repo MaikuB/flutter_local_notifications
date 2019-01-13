@@ -20,8 +20,9 @@ class IOSInitializationSettings {
   /// Default setting that indicates if a badge value should be applied when a notification is triggered while app is in the foreground. Default value is true. iOS 10+ only
   final bool defaultPresentBadge;
 
-  /// Indicates if this plugin should handle incoming notifications and their related actions. Default value is true.
-  final bool registerUNUserNotificationCenterDelegate;
+  /// Callback for handling when a notification is triggered while the app is in the foreground. Applicable to iOS versions < 10 only
+  final DidReceiveLocalNotificationCallback
+      onDidReceiveLocalNotificationCallback;
 
   const IOSInitializationSettings(
       {this.requestAlertPermission = true,
@@ -30,7 +31,7 @@ class IOSInitializationSettings {
       this.defaultPresentAlert = true,
       this.defaultPresentSound = true,
       this.defaultPresentBadge = true,
-      this.registerUNUserNotificationCenterDelegate = true});
+      this.onDidReceiveLocalNotificationCallback});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -39,9 +40,7 @@ class IOSInitializationSettings {
       'requestBadgePermission': requestBadgePermission,
       'defaultPresentAlert': defaultPresentAlert,
       'defaultPresentSound': defaultPresentSound,
-      'defaultPresentBadge': defaultPresentBadge,
-      'registerUNUserNotificationCenterDelegate':
-          registerUNUserNotificationCenterDelegate
+      'defaultPresentBadge': defaultPresentBadge
     };
   }
 }
