@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
     var initializationSettingsAndroid =
         new AndroidInitializationSettings('app_icon');
     var initializationSettingsIOS = new IOSInitializationSettings(
-        onDidReceiveLocalNotificationCallback: onDidRecieveLocationLocation);
+        onDidReceiveLocalNotification: onDidRecieveLocalNotification);
     var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
@@ -589,7 +589,7 @@ class _HomePageState extends State<HomePage> {
     return value.toString().padLeft(2, '0');
   }
 
-  Future onDidRecieveLocationLocation(
+  Future onDidRecieveLocalNotification(
       int id, String title, String body, String payload) async {
     // display a dialog with the notification details, tap ok to go to another page
     showDialog(

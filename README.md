@@ -334,7 +334,7 @@ By design, iOS applications do not display notifications when they're in the for
 var initializationSettingsAndroid =
     new AndroidInitializationSettings('app_icon');
 var initializationSettingsIOS = new IOSInitializationSettings(
-    onDidReceiveLocalNotificationCallback: onDidRecieveLocationLocation);
+    onDidReceiveLocalNotification: onDidRecieveLocalNotification);
 var initializationSettings = new InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
@@ -342,7 +342,7 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
 
 ...
 
-  Future onDidRecieveLocationLocation(
+  Future onDidRecieveLocalNotification(
       int id, String title, String body, String payload) async {
     // display a dialog with the notification details, tap ok to go to another page
     showDialog(

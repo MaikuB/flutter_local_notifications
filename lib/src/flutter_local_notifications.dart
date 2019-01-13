@@ -80,7 +80,7 @@ class FlutterLocalNotificationsPlugin {
       {SelectNotificationCallback onSelectNotification}) async {
     selectNotificationCallback = onSelectNotification;
     didReceiveLocalNotificationCallback =
-        initializationSettings?.ios?.onDidReceiveLocalNotificationCallback;
+        initializationSettings?.ios?.onDidReceiveLocalNotification;
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificInitializationSettings(initializationSettings);
     _channel.setMethodCallHandler(_handleMethod);

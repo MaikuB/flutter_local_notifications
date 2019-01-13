@@ -21,8 +21,7 @@ class IOSInitializationSettings {
   final bool defaultPresentBadge;
 
   /// Callback for handling when a notification is triggered while the app is in the foreground. Applicable to iOS versions < 10 only
-  final DidReceiveLocalNotificationCallback
-      onDidReceiveLocalNotificationCallback;
+  final DidReceiveLocalNotificationCallback onDidReceiveLocalNotification;
 
   const IOSInitializationSettings(
       {this.requestAlertPermission = true,
@@ -31,7 +30,7 @@ class IOSInitializationSettings {
       this.defaultPresentAlert = true,
       this.defaultPresentSound = true,
       this.defaultPresentBadge = true,
-      this.onDidReceiveLocalNotificationCallback});
+      this.onDidReceiveLocalNotification});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
