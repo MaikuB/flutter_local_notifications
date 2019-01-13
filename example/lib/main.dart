@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
     var initializationSettingsAndroid =
         new AndroidInitializationSettings('app_icon');
     var initializationSettingsIOS = new IOSInitializationSettings(
-        didReceiveLocalNotificationCallback: onDidRecieveLocationLocation);
+        onDidReceiveLocalNotificationCallback: onDidRecieveLocationLocation);
     var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
