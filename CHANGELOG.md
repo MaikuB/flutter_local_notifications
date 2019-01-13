@@ -1,3 +1,6 @@
+# [0.4.4+1]
+* Fix naming of `onDidReceiveLocalNotification` property in the `IOSInitializationSettings` class (previously was `onDidReceiveLocalNotificationCallback` by accident)
+
 # [0.4.4]
 *  **BREAKING CHANGE** removed `registerUNNotificationCenterDelegate` argument for the `IOSInitializationSettings` class as it wasn't actually used.
 * Plugin can now `didReceiveLocalNotification` delegate method in iOS and allow developers to handle the associated callback in Flutter. Added a `onDidReceiveLocalNotification` argument to the `IOSInitializationSettings` class to enable this and updated the sample code to demonstrate the usage. This should resolve issue [14](https://github.com/MaikuB/flutter_local_notifications/issues/14).
