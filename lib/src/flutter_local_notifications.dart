@@ -3,6 +3,10 @@ part of flutter_local_notifications;
 /// Signature of callback passed to [initialize]. Callback triggered when user taps on a notification
 typedef Future<dynamic> SelectNotificationCallback(String payload);
 
+// Signature of the callback that is triggered when a notification is shown whilst the app is in the foreground. Applicable to iOS versions < 10 only
+typedef Future<dynamic> DidReceiveLocalNotificationCallback(
+    int id, String title, String body, String payload);
+
 /// The available intervals for periodically showing notifications
 enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
 
@@ -69,10 +73,14 @@ class FlutterLocalNotificationsPlugin {
 
   SelectNotificationCallback selectNotificationCallback;
 
+  DidReceiveLocalNotificationCallback didReceiveLocalNotificationCallback;
+
   /// Initializes the plugin. Call this method on application before using the plugin further
   Future<bool> initialize(InitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
     selectNotificationCallback = onSelectNotification;
+    didReceiveLocalNotificationCallback =
+        initializationSettings?.ios?.didReceiveLocalNotificationCallback;
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificInitializationSettings(initializationSettings);
     _channel.setMethodCallHandler(_handleMethod);
@@ -219,7 +227,19 @@ class FlutterLocalNotificationsPlugin {
   }
 
   Future _handleMethod(MethodCall call) {
-    return selectNotificationCallback(call.arguments);
+    switch (call.method) {
+      case 'selectNotification':
+        return selectNotificationCallback(call.arguments);
+
+      case 'didReceiveLocalNotification':
+        return didReceiveLocalNotificationCallback(
+            call.arguments['id'],
+            call.arguments['title'],
+            call.arguments['body'],
+            call.arguments['payload']);
+      default:
+        return Future.error('method not defined');
+    }
   }
 
   void _validateId(int id) {

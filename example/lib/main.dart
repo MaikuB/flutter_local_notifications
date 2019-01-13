@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
@@ -36,7 +37,8 @@ class _HomePageState extends State<HomePage> {
     // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
     var initializationSettingsAndroid =
         new AndroidInitializationSettings('app_icon');
-    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettingsIOS = new IOSInitializationSettings(
+        didReceiveLocalNotificationCallback: onDidRecieveLocationLocation);
     var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
@@ -585,6 +587,32 @@ class _HomePageState extends State<HomePage> {
 
   String _toTwoDigitString(int value) {
     return value.toString().padLeft(2, '0');
+  }
+
+  Future onDidRecieveLocationLocation(
+      int id, String title, String body, String payload) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => new CupertinoAlertDialog(
+            title: new Text(title),
+            content: new Text(body),
+            actions: [
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                child: new Text('Ok'),
+                onPressed: () async {
+                  Navigator.of(context, rootNavigator: true).pop();
+                  await Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                      builder: (context) => new SecondScreen(payload),
+                    ),
+                  );
+                },
+              )
+            ],
+          ),
+    );
   }
 }
 
