@@ -1,3 +1,6 @@
+# [0.4.5]
+* Fix issue [160](https://github.com/MaikuB/flutter_local_notifications/issues/160) so that notifications created with the `schedule` on Android will appear at the exact date and time they are scheduled
+
 # [0.4.4+2]
 * Fix CHANGELOG
 
