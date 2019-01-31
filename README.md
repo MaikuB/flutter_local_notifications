@@ -297,28 +297,6 @@ When specifying the large icon bitmap or big picture bitmap (associated with the
 
 Note that with Android 8.0+, sounds and vibrations are associated with notification channels and can only be configured when they are first created. Showing/scheduling a notification will create a channel with the specified id if it doesn't exist already. If another notification specifies the same channel id but tries to specify another sound or vibration pattern then nothing occurs.
 
-If you run into error messages around the `com.android.support:support-compat` library due to version conflicts, you can try adding the following to the `build.gradle` file of your Android head project as reported by another dev [here](https://github.com/MaikuB/flutter_local_notifications/issues/5)
-
-```gradle
-allprojects {
-    repositories {
-       //...
-    }
-    subprojects {
-        project.configurations.all {
-            resolutionStrategy.eachDependency { details ->
-                if (details.requested.group == 'com.android.support'
-                        && !details.requested.name.contains('multidex') ) {
-                    details.useVersion "27.1.1"
-                }
-            }
-        }
-    }
-}
-```
-
-Note though this will force other plugins to use the same version of the library that this plugin depends on so may not be desirable. If you have another suggestion on how to solve this please do let me know :)
-
 When doing a release build of your app, you'll likely need to customise your ProGuard configuration file as per this [link](https://developer.android.com/studio/build/shrink-code#keep-code) and add the following line
 
 ```
