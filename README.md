@@ -44,7 +44,7 @@ Note that this plugin aims to provide abstractions for all platforms as opposed 
 ## Acknowledgements
 
 * [Javier Lecuona](https://github.com/javiercbk) for submitting the PR that added the ability to have notifications shown daily
-* [Jeff Scaturro](https://github.com/JeffScaturro) for submitting the PR to fix the iOS issue around showing daily and weekly notifications
+* [Jeff Scaturro](https://github.com/JeffScaturro) for submitting the PR to fix the iOS issue around showing daily and weekly notifications and migrating the plugin to AndroidX
 * [Ian Cavanaugh](https://github.com/icavanaugh95) for helping create a sample to reproduce the problem reported in [issue #88](https://github.com/MaikuB/flutter_local_notifications/issues/88)
 
 ## Raising issues and contributions
