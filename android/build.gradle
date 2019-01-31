@@ -26,7 +26,7 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
         disable 'InvalidPackage'
@@ -34,6 +34,6 @@ android {
 }
 
 dependencies {
-    implementation "androidx.core:core:1.0.0"
+    implementation "androidx.core:core:1.0.1"
     implementation "com.google.code.gson:gson:2.8.2"
 }
