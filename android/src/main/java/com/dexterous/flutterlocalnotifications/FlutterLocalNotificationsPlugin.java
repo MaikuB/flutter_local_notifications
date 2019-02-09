@@ -332,6 +332,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case ContentUri:
                 icon = IconCompat.createWithContentUri(iconPath);
                 break;
+            default:
+                break;
         }
         return icon;
     }
