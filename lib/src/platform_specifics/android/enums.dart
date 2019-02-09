@@ -3,6 +3,9 @@ part of flutter_local_notifications;
 /// Specifies the source for a bitmap used by Android notifications.
 enum BitmapSource { Drawable, FilePath }
 
+/// Specifies the source for icons
+enum IconSource { Drawable, FilePath, ContentUri }
+
 /// The available notification styles on Android
 enum AndroidNotificationStyle { Default, BigPicture, BigText, Inbox, Messaging }
 

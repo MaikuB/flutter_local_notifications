@@ -74,7 +74,7 @@ public class NotificationDetails {
     private static final String TEXT = "text";
     private static final String TIMESTAMP = "timestamp";
     private static final String BOT = "bot";
-    private static final String ICON_BITMAP_SOURCE = "iconBitmapSource";
+    private static final String ICON_SOURCE = "iconSource";
     private static final String IMPORTANT = "important";
     private static final String KEY = "key";
     private static final String NAME = "name";
@@ -213,8 +213,8 @@ public class NotificationDetails {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static void readStyleInformation(NotificationDetails notificationDetails, Map<String, Object> platformSpecifics) {
-        @SuppressWarnings("unchecked")
         Map<String, Object> styleInformation = (Map<String, Object>) platformSpecifics.get(STYLE_INFORMATION);
         DefaultStyleInformation defaultStyleInformation = getDefaultStyleInformation(styleInformation);
         if (notificationDetails.style == NotificationStyle.Default) {
@@ -230,6 +230,7 @@ public class NotificationDetails {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static void readMessagingStyleInformation(NotificationDetails notificationDetails, Map<String, Object> styleInformation, DefaultStyleInformation defaultStyleInformation) {
         String conversationTitle = (String) styleInformation.get(CONVERSATION_TITLE);
         Boolean groupConversation = (Boolean) styleInformation.get(GROUP_CONVERSATION);
@@ -244,15 +245,16 @@ public class NotificationDetails {
         }
         Boolean bot = (Boolean) person.get(BOT);
         String icon = (String) person.get(ICON);
-        Integer iconBitmapSourceIndex = (Integer) person.get(ICON_BITMAP_SOURCE);
-        BitmapSource iconBitmapSource = iconBitmapSourceIndex == null ? null : BitmapSource.values()[iconBitmapSourceIndex];
+        Integer iconSourceIndex = (Integer) person.get(ICON_SOURCE);
+        IconSource iconSource = iconSourceIndex == null ? null : IconSource.values()[iconSourceIndex];
         Boolean important = (Boolean) person.get(IMPORTANT);
         String key = (String) person.get(KEY);
         String name = (String) person.get(NAME);
         String uri = (String) person.get(URI);
-        return new PersonDetails(bot, icon, iconBitmapSource, important, key, name, uri);
+        return new PersonDetails(bot, icon, iconSource, important, key, name, uri);
     }
 
+    @SuppressWarnings("unchecked")
     private static ArrayList<MessageDetails> readMessages(ArrayList<Map<String, Object>> messages) {
         ArrayList<MessageDetails> result = new ArrayList<>();
         if(messages != null) {

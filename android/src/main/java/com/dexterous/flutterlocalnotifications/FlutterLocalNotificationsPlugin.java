@@ -17,6 +17,7 @@ import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
 
+import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
 import com.dexterous.flutterlocalnotifications.models.PersonDetails;
@@ -200,6 +201,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     @SuppressWarnings("deprecation")
     private static Spanned fromHtml(String html) {
+        if (html == null) {
+            return null;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
         } else {
@@ -301,16 +305,35 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return notificationDetails.iconResourceId != 0;
     }
 
+    private static int getDrawableResourceId(Context context, String name) {
+        return context.getResources().getIdentifier(name, DRAWABLE, context.getPackageName());
+    }
+
     private static Bitmap getBitmapFromSource(Context context, String bitmapPath, BitmapSource bitmapSource) {
         Bitmap bitmap = null;
         if (bitmapSource == BitmapSource.Drawable) {
-            int resourceId = context.getResources().getIdentifier(bitmapPath, DRAWABLE, context.getPackageName());
-            bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId);
+            bitmap = BitmapFactory.decodeResource(context.getResources(), getDrawableResourceId(context, bitmapPath));
         } else if (bitmapSource == BitmapSource.FilePath) {
             bitmap = BitmapFactory.decodeFile(bitmapPath);
         }
 
         return bitmap;
+    }
+
+    private static IconCompat getIconFromSource(Context context, String iconPath, IconSource iconSource) {
+        IconCompat icon = null;
+        switch (iconSource) {
+            case Drawable:
+                icon = IconCompat.createWithResource(context, getDrawableResourceId(context, iconPath));
+                break;
+            case FilePath:
+                icon = IconCompat.createWithBitmap(BitmapFactory.decodeFile(iconPath));
+                break;
+            case ContentUri:
+                icon = IconCompat.createWithContentUri(iconPath);
+                break;
+        }
+        return icon;
     }
 
 
@@ -464,7 +487,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         Person.Builder personBuilder = new Person.Builder();
         personBuilder.setBot(BooleanUtils.getValue(personDetails.bot));
         if (personDetails.icon != null && personDetails.iconBitmapSource != null) {
-            personBuilder.setIcon(IconCompat.createWithBitmap(getBitmapFromSource(context, personDetails.icon, personDetails.iconBitmapSource)));
+            personBuilder.setIcon(getIconFromSource(context, personDetails.icon, personDetails.iconBitmapSource));
         }
         personBuilder.setImportant(BooleanUtils.getValue(personDetails.important));
         if (personDetails.key != null) {
