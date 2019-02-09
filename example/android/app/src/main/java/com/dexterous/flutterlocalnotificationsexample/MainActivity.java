@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import io.flutter.app.FlutterActivity;
+import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 
@@ -25,11 +26,14 @@ public class MainActivity extends FlutterActivity {
         super.onCreate(savedInstanceState);
         GeneratedPluginRegistrant.registerWith(this);
         new MethodChannel(getFlutterView(), "crossingthestreams.io/resourceResolver").setMethodCallHandler(
-                (call, result) -> {
-                    if ("drawableToUri".equals(call.method)) {
-                        int resourceId = getResources().getIdentifier((String) call.arguments, "drawable", getPackageName());
-                        String uriString = resourceToUriString(getApplicationContext(), resourceId);
-                        result.success(uriString);
+                new MethodChannel.MethodCallHandler() {
+                    @Override
+                    public void onMethodCall(MethodCall call, MethodChannel.Result result) {
+                        if ("drawableToUri".equals(call.method)) {
+                            int resourceId = MainActivity.this.getResources().getIdentifier((String) call.arguments, "drawable", MainActivity.this.getPackageName());
+                            String uriString = resourceToUriString(MainActivity.this.getApplicationContext(), resourceId);
+                            result.success(uriString);
+                        }
                     }
                 });
     }
