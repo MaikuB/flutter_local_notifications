@@ -4,6 +4,7 @@ public enum NotificationStyle{
     Default,
     BigPicture,
     BigText,
-    Inbox
+    Inbox,
+    Messaging
 }
 

@@ -10,9 +10,11 @@ import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInfo
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
+import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 public class NotificationDetails {
@@ -65,6 +67,21 @@ public class NotificationDetails {
     private static final String MAX_PROGRESS = "maxProgress";
     private static final String PROGRESS = "progress";
     private static final String INDETERMINATE = "indeterminate";
+    private static final String PERSON = "person";
+    private static final String CONVERSATION_TITLE = "conversationTitle";
+    private static final String GROUP_CONVERSATION = "groupConversation";
+    private static final String MESSAGES = "messages";
+    private static final String TEXT = "text";
+    private static final String TIMESTAMP = "timestamp";
+    private static final String BOT = "bot";
+    private static final String ICON_BITMAP_SOURCE = "iconBitmapSource";
+    private static final String IMPORTANT = "important";
+    private static final String KEY = "key";
+    private static final String NAME = "name";
+    private static final String URI = "uri";
+    private static final String DATA_MIME_TYPE = "dataMimeType";
+    private static final String DATA_URI = "dataUri";
+
 
     public static final String ID = "id";
     public static final String TITLE = "title";
@@ -203,39 +220,87 @@ public class NotificationDetails {
         if (notificationDetails.style == NotificationStyle.Default) {
             notificationDetails.styleInformation = defaultStyleInformation;
         } else if (notificationDetails.style == NotificationStyle.BigPicture) {
-            String contentTitle = (String) styleInformation.get(CONTENT_TITLE);
-            Boolean htmlFormatContentTitle = (Boolean) styleInformation.get(HTML_FORMAT_CONTENT_TITLE);
-            String summaryText = (String) styleInformation.get(SUMMARY_TEXT);
-            Boolean htmlFormatSummaryText = (Boolean) styleInformation.get(HTML_FORMAT_SUMMARY_TEXT);
-            String largeIcon = (String) styleInformation.get(LARGE_ICON);
-            BitmapSource largeIconBitmapSource = null;
-            if (styleInformation.containsKey(LARGE_ICON_BITMAP_SOURCE)) {
-                Integer largeIconBitmapSourceArgument = (Integer) styleInformation.get(LARGE_ICON_BITMAP_SOURCE);
-                largeIconBitmapSource = BitmapSource.values()[largeIconBitmapSourceArgument];
-            }
-            String bigPicture = (String) styleInformation.get(BIG_PICTURE);
-            Integer bigPictureBitmapSourceArgument = (Integer) styleInformation.get(BIG_PICTURE_BITMAP_SOURCE);
-            BitmapSource bigPictureBitmapSource = BitmapSource.values()[bigPictureBitmapSourceArgument];
-            Boolean showThumbnail = (Boolean) styleInformation.get(HIDE_EXPANDED_LARGE_ICON);
-            notificationDetails.styleInformation = new BigPictureStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText, largeIcon, largeIconBitmapSource, bigPicture, bigPictureBitmapSource, showThumbnail);
+            readBigPictureStyleInformation(notificationDetails, styleInformation, defaultStyleInformation);
         } else if (notificationDetails.style == NotificationStyle.BigText) {
-            String bigText = (String) styleInformation.get(BIG_TEXT);
-            Boolean htmlFormatBigText = (Boolean) styleInformation.get(HTML_FORMAT_BIG_TEXT);
-            String contentTitle = (String) styleInformation.get(CONTENT_TITLE);
-            Boolean htmlFormatContentTitle = (Boolean) styleInformation.get(HTML_FORMAT_CONTENT_TITLE);
-            String summaryText = (String) styleInformation.get(SUMMARY_TEXT);
-            Boolean htmlFormatSummaryText = (Boolean) styleInformation.get(HTML_FORMAT_SUMMARY_TEXT);
-            notificationDetails.styleInformation = new BigTextStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, bigText, htmlFormatBigText, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText);
+            readBigTextStyleInformation(notificationDetails, styleInformation, defaultStyleInformation);
         } else if (notificationDetails.style == NotificationStyle.Inbox) {
-            String contentTitle = (String) styleInformation.get(CONTENT_TITLE);
-            Boolean htmlFormatContentTitle = (Boolean) styleInformation.get(HTML_FORMAT_CONTENT_TITLE);
-            String summaryText = (String) styleInformation.get(SUMMARY_TEXT);
-            Boolean htmlFormatSummaryText = (Boolean) styleInformation.get(HTML_FORMAT_SUMMARY_TEXT);
-            @SuppressWarnings("unchecked")
-            ArrayList<String> lines = (ArrayList<String>) styleInformation.get(LINES);
-            Boolean htmlFormatLines = (Boolean) styleInformation.get(HTML_FORMAT_LINES);
-            notificationDetails.styleInformation = new InboxStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText, lines, htmlFormatLines);
+            readInboxStyleInformation(notificationDetails, styleInformation, defaultStyleInformation);
+        } else if(notificationDetails.style == NotificationStyle.Messaging) {
+            readMessagingStyleInformation(notificationDetails, styleInformation, defaultStyleInformation);
         }
+    }
+
+    private static void readMessagingStyleInformation(NotificationDetails notificationDetails, Map<String, Object> styleInformation, DefaultStyleInformation defaultStyleInformation) {
+        String conversationTitle = (String) styleInformation.get(CONVERSATION_TITLE);
+        Boolean groupConversation = (Boolean) styleInformation.get(GROUP_CONVERSATION);
+        PersonDetails person = readPersonDetails((Map<String, Object>) styleInformation.get(PERSON));
+        ArrayList<MessageDetails> messages = readMessages((ArrayList<Map<String, Object>>) styleInformation.get(MESSAGES));
+        notificationDetails.styleInformation = new MessagingStyleInformation(person, conversationTitle, groupConversation, messages, defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody);
+    }
+
+    private static PersonDetails readPersonDetails(Map<String, Object> person) {
+        if(person == null) {
+            return null;
+        }
+        Boolean bot = (Boolean) person.get(BOT);
+        String icon = (String) person.get(ICON);
+        Integer iconBitmapSourceIndex = (Integer) person.get(ICON_BITMAP_SOURCE);
+        BitmapSource iconBitmapSource = iconBitmapSourceIndex == null ? null : BitmapSource.values()[iconBitmapSourceIndex];
+        Boolean important = (Boolean) person.get(IMPORTANT);
+        String key = (String) person.get(KEY);
+        String name = (String) person.get(NAME);
+        String uri = (String) person.get(URI);
+        return new PersonDetails(bot, icon, iconBitmapSource, important, key, name, uri);
+    }
+
+    private static ArrayList<MessageDetails> readMessages(ArrayList<Map<String, Object>> messages) {
+        ArrayList<MessageDetails> result = new ArrayList<>();
+        if(messages != null) {
+            for (Iterator<Map<String, Object>> it = messages.iterator(); it.hasNext(); ) {
+                Map<String, Object> messageData = it.next();
+                result.add(new MessageDetails((String) messageData.get(TEXT), (Long) messageData.get(TIMESTAMP),  readPersonDetails((Map<String, Object>)messageData.get(PERSON)), (String) messageData.get(DATA_MIME_TYPE), (String) messageData.get(DATA_URI)));
+            }
+        }
+        return result;
+    }
+
+    private static void readInboxStyleInformation(NotificationDetails notificationDetails, Map<String, Object> styleInformation, DefaultStyleInformation defaultStyleInformation) {
+        String contentTitle = (String) styleInformation.get(CONTENT_TITLE);
+        Boolean htmlFormatContentTitle = (Boolean) styleInformation.get(HTML_FORMAT_CONTENT_TITLE);
+        String summaryText = (String) styleInformation.get(SUMMARY_TEXT);
+        Boolean htmlFormatSummaryText = (Boolean) styleInformation.get(HTML_FORMAT_SUMMARY_TEXT);
+        @SuppressWarnings("unchecked")
+        ArrayList<String> lines = (ArrayList<String>) styleInformation.get(LINES);
+        Boolean htmlFormatLines = (Boolean) styleInformation.get(HTML_FORMAT_LINES);
+        notificationDetails.styleInformation = new InboxStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText, lines, htmlFormatLines);
+    }
+
+    private static void readBigTextStyleInformation(NotificationDetails notificationDetails, Map<String, Object> styleInformation, DefaultStyleInformation defaultStyleInformation) {
+        String bigText = (String) styleInformation.get(BIG_TEXT);
+        Boolean htmlFormatBigText = (Boolean) styleInformation.get(HTML_FORMAT_BIG_TEXT);
+        String contentTitle = (String) styleInformation.get(CONTENT_TITLE);
+        Boolean htmlFormatContentTitle = (Boolean) styleInformation.get(HTML_FORMAT_CONTENT_TITLE);
+        String summaryText = (String) styleInformation.get(SUMMARY_TEXT);
+        Boolean htmlFormatSummaryText = (Boolean) styleInformation.get(HTML_FORMAT_SUMMARY_TEXT);
+        notificationDetails.styleInformation = new BigTextStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, bigText, htmlFormatBigText, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText);
+    }
+
+    private static void readBigPictureStyleInformation(NotificationDetails notificationDetails, Map<String, Object> styleInformation, DefaultStyleInformation defaultStyleInformation) {
+        String contentTitle = (String) styleInformation.get(CONTENT_TITLE);
+        Boolean htmlFormatContentTitle = (Boolean) styleInformation.get(HTML_FORMAT_CONTENT_TITLE);
+        String summaryText = (String) styleInformation.get(SUMMARY_TEXT);
+        Boolean htmlFormatSummaryText = (Boolean) styleInformation.get(HTML_FORMAT_SUMMARY_TEXT);
+        String largeIcon = (String) styleInformation.get(LARGE_ICON);
+        BitmapSource largeIconBitmapSource = null;
+        if (styleInformation.containsKey(LARGE_ICON_BITMAP_SOURCE)) {
+            Integer largeIconBitmapSourceArgument = (Integer) styleInformation.get(LARGE_ICON_BITMAP_SOURCE);
+            largeIconBitmapSource = BitmapSource.values()[largeIconBitmapSourceArgument];
+        }
+        String bigPicture = (String) styleInformation.get(BIG_PICTURE);
+        Integer bigPictureBitmapSourceArgument = (Integer) styleInformation.get(BIG_PICTURE_BITMAP_SOURCE);
+        BitmapSource bigPictureBitmapSource = BitmapSource.values()[bigPictureBitmapSourceArgument];
+        Boolean showThumbnail = (Boolean) styleInformation.get(HIDE_EXPANDED_LARGE_ICON);
+        notificationDetails.styleInformation = new BigPictureStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody, contentTitle, htmlFormatContentTitle, summaryText, htmlFormatSummaryText, largeIcon, largeIconBitmapSource, bigPicture, bigPictureBitmapSource, showThumbnail);
     }
 
     private static DefaultStyleInformation getDefaultStyleInformation(Map<String, Object> styleInformation) {

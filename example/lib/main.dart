@@ -169,6 +169,15 @@ class _HomePageState extends State<HomePage> {
                   new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
+                      child: new Text('Show messaging notification [Android]'),
+                      onPressed: () async {
+                        await _showMessagingNotification();
+                      },
+                    ),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
                       child: new Text('Show grouped notifications [Android]'),
                       onPressed: () async {
                         await _showGroupedNotifications();
@@ -396,6 +405,47 @@ class _HomePageState extends State<HomePage> {
         new NotificationDetails(androidPlatformChannelSpecifics, null);
     await flutterLocalNotificationsPlugin.show(
         0, 'inbox title', 'inbox body', platformChannelSpecifics);
+  }
+
+  Future _showMessagingNotification() async {
+    var messages = List<Message>();
+    var me = Person(
+        name: 'Me',
+        key: '1',
+        uri: 'tel:1234567890',
+        icon: 'me',
+        iconBitmapSource: BitmapSource.Drawable);
+    var coworker = Person(
+        name: 'Coworker',
+        key: '2',
+        uri: 'tel:9876543210',
+        icon: 'coworker',
+        iconBitmapSource: BitmapSource.Drawable);
+    var lunchBot = Person(name: 'Lunch bot', key: 'bot', bot: true);
+    messages.add(Message('Hi', DateTime.now(), null));
+    messages.add(Message(
+        'What\'s up?', DateTime.now().add(Duration(minutes: 5)), coworker));
+    messages.add(Message(
+        'Not much. Lunch?', DateTime.now().add(Duration(minutes: 10)), null,
+        dataMimeType: 'image/png', dataUri: 'food'));
+    messages.add(Message('What kind of food would you prefer?',
+        DateTime.now().add(Duration(minutes: 10)), lunchBot));
+    var messagingStyle = MessagingStyleInformation(me,
+        groupConversation: true,
+        conversationTitle: 'Team lunch',
+        htmlFormatContent: true,
+        htmlFormatTitle: true,
+        messages: messages);
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'message channel id',
+        ' message channel name',
+        'message channel description',
+        style: AndroidNotificationStyle.Messaging,
+        styleInformation: messagingStyle);
+    var platformChannelSpecifics =
+        new NotificationDetails(androidPlatformChannelSpecifics, null);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'message title', 'message body', platformChannelSpecifics);
   }
 
   Future _showGroupedNotifications() async {
