@@ -32,6 +32,7 @@ A cross platform plugin for displaying local notifications.
     * Big picture
     * Big text
     * Inbox
+    * Messaging
 * [Android] Group notifications
 * [Android] Show progress notifications
 * [iOS] Customise the permissions to be requested around displaying notifications
