@@ -6,7 +6,7 @@ A cross platform plugin for displaying local notifications.
 
 ## Supported Platforms
 * Android API 16+ (4.1+, the minimum version supported by Flutter). Uses the NotificationCompat APIs so it can be run older Android devices.
-* iOS 8.0+ (the minimum version supported by Flutter). Supports the old and new iOS notification APIs (the User Notifications Framework introduced in iOS 10 but will use the UILocalNotification APIs for devices predating iOS 10)
+* iOS 8.0+ (the minimum version supported by Flutter). Supports the old and new iOS notification APIs (the User Notifications Framework introduced in iOS 10 but will use the UILocalNotification APIs for devices predating iOS 10).
 
 ## Features
 
@@ -20,7 +20,6 @@ A cross platform plugin for displaying local notifications.
 * Specify a custom notification sound
 * Ability to handle when a user has tapped on a notification, when the app is the foreground, background or terminated
 * Determine if an app was launched due to tapping on a notification
-* [Android/iOS 10+] Receive callback when a notification is shown (*NOTE*: support on iOS is difficult to verify at the moment since Flutter engine support for executing headless Dart code on iOS doesn't support plugins at the moment. See [here](https://github.com/flutter/flutter/issues/21925) for details)
 * [Android] Configuring the importance level
 * [Android] Configuring the priority
 * [Android] Customising the vibration pattern for notifications
@@ -303,6 +302,8 @@ When doing a release build of your app, you'll likely need to customise your Pro
 ```
 -keep class com.dexterous.** { *; }
 ```
+
+*NOTE*: Starting from version 0.5.0, this library no longer uses the deprecated Android support libraries and has migrated to AndroidX. Developers may require migrating their apps to support this following [this guide](https://developer.android.com/jetpack/androidx/migrate)
 
 ## iOS Integration
 

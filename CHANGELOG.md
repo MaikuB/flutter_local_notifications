@@ -1,3 +1,6 @@
+# [0.5.1+1]
+* README corrections and add information on migrating to AndroidX
+
 # [0.5.1]
 * Updated gradle plugin of example app to 3.3.1
 * Added support for messaging style notifications on Android as requested in issue [159](https://github.com/MaikuB/flutter_local_notifications/issues/159). See example app for some sample code
