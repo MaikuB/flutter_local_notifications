@@ -5,8 +5,8 @@
 A cross platform plugin for displaying local notifications. 
 
 ## Supported Platforms
-* Android API 16+ (4.1+, the minimum version supported by Flutter). Uses the NotificationCompat APIs so it can be run older Android devices.
-* iOS 8.0+ (the minimum version supported by Flutter). Supports the old and new iOS notification APIs (the User Notifications Framework introduced in iOS 10 but will use the UILocalNotification APIs for devices predating iOS 10).
+* Android API 16+ (4.1+, the minimum version supported by Flutter). Uses the NotificationCompat APIs so it can be run older Android devices
+* iOS 8.0+ (the minimum version supported by Flutter). Supports the old and new iOS notification APIs (the User Notifications Framework introduced in iOS 10 but will use the UILocalNotification APIs for devices predating iOS 10)
 
 ## Features
 
@@ -303,7 +303,7 @@ When doing a release build of your app, you'll likely need to customise your Pro
 -keep class com.dexterous.** { *; }
 ```
 
-*NOTE*: Starting from version 0.5.0, this library no longer uses the deprecated Android support libraries and has migrated to AndroidX. Developers may require migrating their apps to support this following [this guide](https://developer.android.com/jetpack/androidx/migrate)
+**IMPORTANT**: Starting from version 0.5.0, this library no longer uses the deprecated Android support libraries and has migrated to AndroidX. Developers may require migrating their apps to support this following [this guide](https://developer.android.com/jetpack/androidx/migrate)
 
 ## iOS Integration
 

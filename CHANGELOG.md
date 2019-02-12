@@ -1,3 +1,6 @@
+# [0.5.1+2]
+* Highlight note on migrating to AndroidX more in README
+
 # [0.5.1+1]
 * README corrections and add information on migrating to AndroidX
 
