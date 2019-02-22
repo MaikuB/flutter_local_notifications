@@ -12,7 +12,7 @@ enum AndroidNotificationStyle { Default, BigPicture, BigText, Inbox, Messaging }
 /// The available actions for managing notification channels.
 /// [CreateIfNotExists]: will create a channel if it doesn't exist
 /// [Update]: will update the details of an existing channel. Note that some details can not be changed once a channel has been created
-enum NotificationChannelAction { CreateIfNotExists, Update }
+enum AndroidNotificationChannelAction { CreateIfNotExists, Update }
 
 /// The available importance levels for Android notifications.
 /// Required for Android 8.0+

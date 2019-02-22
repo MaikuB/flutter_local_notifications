@@ -81,7 +81,7 @@ class AndroidNotificationDetails {
   bool indeterminate;
 
   /// The action to take for managing notification channels. Defaults to creating the notification channel using the provided details if it doesn't exist
-  NotificationChannelAction channelAction;
+  AndroidNotificationChannelAction channelAction;
 
   AndroidNotificationDetails(
       this.channelId, this.channelName, this.channelDescription,
@@ -108,7 +108,7 @@ class AndroidNotificationDetails {
       this.maxProgress = 0,
       this.progress = 0,
       this.indeterminate = false,
-      this.channelAction = NotificationChannelAction.CreateIfNotExists});
+      this.channelAction = AndroidNotificationChannelAction.CreateIfNotExists});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{

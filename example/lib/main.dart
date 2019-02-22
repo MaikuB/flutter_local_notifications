@@ -673,7 +673,7 @@ class _HomePageState extends State<HomePage> {
         'your updated channel description',
         importance: Importance.Max,
         priority: Priority.High,
-        channelAction: NotificationChannelAction.Update);
+        channelAction: AndroidNotificationChannelAction.Update);
     var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
     var platformChannelSpecifics = new NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
