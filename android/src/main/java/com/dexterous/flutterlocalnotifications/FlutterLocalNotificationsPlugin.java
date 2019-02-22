@@ -529,7 +529,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             NotificationChannel notificationChannel = notificationManager.getNotificationChannel(notificationDetails.channelId);
             // only create/update the channel when needed/specified. Allow this happen to when channelAction may be null to support cases where notifications had been
             // created on older versions of the plugin where channel management options weren't available back then
-            if (notificationChannel == null || (notificationDetails.channelAction == null || notificationDetails.channelAction == NotificationChannelAction.CreateIfNotExists || notificationDetails.channelAction == NotificationChannelAction.Update)) {
+            if ((notificationChannel == null && (notificationDetails.channelAction == null || notificationDetails.channelAction == NotificationChannelAction.CreateIfNotExists)) || (notificationChannel != null && notificationDetails.channelAction == NotificationChannelAction.Update)) {
                 notificationChannel = new NotificationChannel(notificationDetails.channelId, notificationDetails.channelName, notificationDetails.importance);
                 notificationChannel.setDescription(notificationDetails.channelDescription);
                 if (notificationDetails.playSound) {
