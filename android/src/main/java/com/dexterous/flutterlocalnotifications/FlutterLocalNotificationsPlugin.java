@@ -19,6 +19,7 @@ import android.text.Spanned;
 
 import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
+import com.dexterous.flutterlocalnotifications.models.NotificationChannelAction;
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
 import com.dexterous.flutterlocalnotifications.models.PersonDetails;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
@@ -526,7 +527,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel notificationChannel = notificationManager.getNotificationChannel(notificationDetails.channelId);
-            if (notificationChannel == null) {
+            // only create/update the channel when needed/specified. Allow this happen to when channelAction may be null to support cases where notifications had been
+            // created on older versions of the plugin where channel management options weren't available back then
+            if (notificationChannel == null || (notificationDetails.channelAction == null || notificationDetails.channelAction == NotificationChannelAction.CreateIfNotExists || notificationDetails.channelAction == NotificationChannelAction.Update)) {
                 notificationChannel = new NotificationChannel(notificationDetails.channelId, notificationDetails.channelName, notificationDetails.importance);
                 notificationChannel.setDescription(notificationDetails.channelDescription);
                 if (notificationDetails.playSound) {

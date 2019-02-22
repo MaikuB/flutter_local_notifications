@@ -80,6 +80,9 @@ class AndroidNotificationDetails {
   /// Specifies if an indeterminate progress bar will be shown
   bool indeterminate;
 
+  /// The action to take for managing notification channels. Defaults to creating the notification channel using the provided details if it doesn't exist
+  NotificationChannelAction channelAction;
+
   AndroidNotificationDetails(
       this.channelId, this.channelName, this.channelDescription,
       {this.icon,
@@ -104,7 +107,8 @@ class AndroidNotificationDetails {
       this.showProgress = false,
       this.maxProgress = 0,
       this.progress = 0,
-      this.indeterminate = false});
+      this.indeterminate = false,
+      this.channelAction = NotificationChannelAction.CreateIfNotExists});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -113,6 +117,7 @@ class AndroidNotificationDetails {
       'channelName': channelName,
       'channelDescription': channelDescription,
       'channelShowBadge': channelShowBadge,
+      'channelAction': channelAction?.index,
       'importance': importance.value,
       'priority': priority.value,
       'playSound': playSound,

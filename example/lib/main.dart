@@ -79,6 +79,16 @@ class _HomePageState extends State<HomePage> {
                   new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
+                      child: new Text(
+                          'Show plain notification with payload and update channel description'),
+                      onPressed: () async {
+                        await _showNotificationWithUpdatedChannelDescription();
+                      },
+                    ),
+                  ),
+                  new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: new RaisedButton(
                       child: new Text('Cancel notification'),
                       onPressed: () async {
                         await _cancelNotification();
@@ -652,6 +662,25 @@ class _HomePageState extends State<HomePage> {
         0,
         'indeterminate progress notification title',
         'indeterminate progress notification body',
+        platformChannelSpecifics,
+        payload: 'item x');
+  }
+
+  Future _showNotificationWithUpdatedChannelDescription() async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'your channel id',
+        'your channel name',
+        'your updated channel description',
+        importance: Importance.Max,
+        priority: Priority.High,
+        channelAction: NotificationChannelAction.Update);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0,
+        'updated notification channel',
+        'check settings to see updated channel description',
         platformChannelSpecifics,
         payload: 'item x');
   }
