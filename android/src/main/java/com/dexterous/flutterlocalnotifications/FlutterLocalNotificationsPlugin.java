@@ -88,13 +88,15 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     public static String NOTIFICATION = "notification";
     public static String NOTIFICATION_DETAILS = "notificationDetails";
     public static String REPEAT = "repeat";
-    private static MethodChannel channel;
+    private MethodChannel channel;
     private static int defaultIconResourceId;
     private final Registrar registrar;
 
     private FlutterLocalNotificationsPlugin(Registrar registrar) {
         this.registrar = registrar;
         this.registrar.addNewIntentListener(this);
+        this.channel = new MethodChannel(registrar.messenger(), METHOD_CHANNEL);
+        this.channel.setMethodCallHandler(this);
     }
 
     public static void rescheduleNotifications(Context context) {
@@ -182,9 +184,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
      * Plugin registration.
      */
     public static void registerWith(Registrar registrar) {
-        channel = new MethodChannel(registrar.messenger(), METHOD_CHANNEL);
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin(registrar);
-        channel.setMethodCallHandler(plugin);
     }
 
     public static void removeNotificationFromCache(Integer notificationId, Context context) {
