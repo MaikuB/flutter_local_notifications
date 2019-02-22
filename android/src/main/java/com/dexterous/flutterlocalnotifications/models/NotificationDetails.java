@@ -81,6 +81,7 @@ public class NotificationDetails {
     private static final String URI = "uri";
     private static final String DATA_MIME_TYPE = "dataMimeType";
     private static final String DATA_URI = "dataUri";
+    private static final String CHANNEL_ACTION = "channelAction";
 
 
     public static final String ID = "id";
@@ -122,6 +123,7 @@ public class NotificationDetails {
     public Integer maxProgress;
     public Integer progress;
     public Boolean indeterminate;
+    public NotificationChannelAction channelAction;
 
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted
@@ -210,6 +212,7 @@ public class NotificationDetails {
             notificationDetails.channelDescription = (String) platformChannelSpecifics.get(CHANNEL_DESCRIPTION);
             notificationDetails.importance = (Integer) platformChannelSpecifics.get(IMPORTANCE);
             notificationDetails.channelShowBadge = (Boolean) platformChannelSpecifics.get(CHANNEL_SHOW_BADGE);
+            notificationDetails.channelAction = NotificationChannelAction.values()[(Integer) platformChannelSpecifics.get(CHANNEL_ACTION)];
         }
     }
 
