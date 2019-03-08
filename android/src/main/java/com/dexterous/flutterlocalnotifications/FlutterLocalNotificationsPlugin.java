@@ -89,8 +89,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     public static String NOTIFICATION = "notification";
     public static String NOTIFICATION_DETAILS = "notificationDetails";
     public static String REPEAT = "repeat";
-    private MethodChannel channel;
     private final Registrar registrar;
+    private MethodChannel channel;
 
     private FlutterLocalNotificationsPlugin(Registrar registrar) {
         this.registrar = registrar;
@@ -149,11 +149,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         } else {
             SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
             String defaultIcon = sharedPreferences.getString(DEFAULT_ICON, null);
-            if(StringUtils.isNullOrEmpty(defaultIcon)) {
-                builder.setSmallIcon(getDrawableResourceId(context, defaultIcon));
-            } else {
-                // this is for handling the old way references to the icon used to be kept but should be removed in future
+            if (StringUtils.isNullOrEmpty(defaultIcon)) {
+                // for backwards compatibility: this is for handling the old way references to the icon used to be kept but should be removed in future
                 builder.setSmallIcon(notificationDetails.iconResourceId);
+
+            } else {
+                builder.setSmallIcon(getDrawableResourceId(context, defaultIcon));
             }
         }
     }
@@ -712,7 +713,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private void initialize(MethodCall call, Result result) {
         Map<String, Object> arguments = call.arguments();
         String defaultIcon = (String) arguments.get(DEFAULT_ICON);
-        if(!isValidDrawableResource(registrar.context(), defaultIcon, result, INVALID_ICON_ERROR_CODE)) {
+        if (!isValidDrawableResource(registrar.context(), defaultIcon, result, INVALID_ICON_ERROR_CODE)) {
             return;
         }
         SharedPreferences sharedPreferences = registrar.context().getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
@@ -730,8 +731,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         NotificationDetails notificationDetails = NotificationDetails.from(arguments);
         // validate the icon resource
         if (!StringUtils.isNullOrEmpty(notificationDetails.icon)) {
-            if(!isValidDrawableResource(registrar.context(), notificationDetails.icon, result, INVALID_ICON_ERROR_CODE))
-            return null;
+            if (!isValidDrawableResource(registrar.context(), notificationDetails.icon, result, INVALID_ICON_ERROR_CODE))
+                return null;
         }
         if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
             // validate the large icon resource
