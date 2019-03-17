@@ -578,7 +578,7 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.showDailyAtTime(
         0,
         'show daily title',
-        'Daily notification shown at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
+        'Daily notification shown at approximately $time',
         time,
         platformChannelSpecifics);
   }
@@ -595,7 +595,7 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
         0,
         'show weekly title',
-        'Weekly notification shown on Monday at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
+        'Weekly notification shown on Monday at approximately $time',
         Day.Monday,
         time,
         platformChannelSpecifics);
@@ -683,10 +683,6 @@ class _HomePageState extends State<HomePage> {
         'check settings to see updated channel description',
         platformChannelSpecifics,
         payload: 'item x');
-  }
-
-  String _toTwoDigitString(int value) {
-    return value.toString().padLeft(2, '0');
   }
 
   Future onDidRecieveLocalNotification(
