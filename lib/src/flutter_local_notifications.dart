@@ -52,6 +52,15 @@ class Time {
       'second': second,
     };
   }
+
+  @override
+  String toString() {
+    return hour.toString().padLeft(2, '0') +
+        ':' +
+        minute.toString().padLeft(2, '0') +
+        ':' +
+        second.toString().padLeft(2, '0');
+  }
 }
 
 class FlutterLocalNotificationsPlugin {
