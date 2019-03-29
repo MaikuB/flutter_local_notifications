@@ -1,10 +1,10 @@
 part of flutter_local_notifications;
 
 /// Signature of callback passed to [initialize]. Callback triggered when user taps on a notification
-typedef Future<dynamic> SelectNotificationCallback(String payload);
+typedef SelectNotificationCallback = Future<dynamic> Function(String payload);
 
 // Signature of the callback that is triggered when a notification is shown whilst the app is in the foreground. Applicable to iOS versions < 10 only
-typedef Future<dynamic> DidReceiveLocalNotificationCallback(
+typedef DidReceiveLocalNotificationCallback = Future<dynamic> Function(
     int id, String title, String body, String payload);
 
 /// The available intervals for periodically showing notifications
@@ -64,7 +64,7 @@ class FlutterLocalNotificationsPlugin {
         _platform = platform;
 
   static final FlutterLocalNotificationsPlugin _instance =
-      new FlutterLocalNotificationsPlugin.private(
+      FlutterLocalNotificationsPlugin.private(
           const MethodChannel('dexterous.com/flutter/local_notifications'),
           const LocalPlatform());
 
@@ -158,7 +158,7 @@ class FlutterLocalNotificationsPlugin {
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': new DateTime.now().millisecondsSinceEpoch,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
@@ -176,7 +176,7 @@ class FlutterLocalNotificationsPlugin {
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': new DateTime.now().millisecondsSinceEpoch,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Daily.index,
       'repeatTime': notificationTime.toMap(),
       'platformSpecifics': serializedPlatformSpecifics,
@@ -195,7 +195,7 @@ class FlutterLocalNotificationsPlugin {
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': new DateTime.now().millisecondsSinceEpoch,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Weekly.index,
       'repeatTime': notificationTime.toMap(),
       'day': day.value,

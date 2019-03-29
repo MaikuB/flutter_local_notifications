@@ -14,10 +14,9 @@ void main() {
 
   group('ios', () {
     setUp(() {
-      mockChannel = new MockMethodChannel();
-      flutterLocalNotificationsPlugin =
-          new FlutterLocalNotificationsPlugin.private(
-              mockChannel, new FakePlatform(operatingSystem: 'ios'));
+      mockChannel = MockMethodChannel();
+      flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin.private(
+          mockChannel, FakePlatform(operatingSystem: 'ios'));
     });
     test('initialise plugin on iOS', () async {
       const IOSInitializationSettings initializationSettingsIOS =
@@ -30,9 +29,9 @@ void main() {
     });
     test('show notification on iOS', () async {
       IOSNotificationDetails iOSPlatformChannelSpecifics =
-          new IOSNotificationDetails();
+          IOSNotificationDetails();
       NotificationDetails platformChannelSpecifics =
-          new NotificationDetails(null, iOSPlatformChannelSpecifics);
+          NotificationDetails(null, iOSPlatformChannelSpecifics);
 
       await flutterLocalNotificationsPlugin
           .show(0, title, body, platformChannelSpecifics, payload: payload);
@@ -46,11 +45,11 @@ void main() {
     });
     test('schedule notification on iOS', () async {
       var scheduledNotificationDateTime =
-          new DateTime.now().add(new Duration(seconds: 5));
+          DateTime.now().add(Duration(seconds: 5));
       IOSNotificationDetails iOSPlatformChannelSpecifics =
-          new IOSNotificationDetails();
+          IOSNotificationDetails();
       NotificationDetails platformChannelSpecifics =
-          new NotificationDetails(null, iOSPlatformChannelSpecifics);
+          NotificationDetails(null, iOSPlatformChannelSpecifics);
       await flutterLocalNotificationsPlugin.schedule(id, title, body,
           scheduledNotificationDateTime, platformChannelSpecifics);
       verify(mockChannel.invokeMethod('schedule', <String, dynamic>{
@@ -72,10 +71,9 @@ void main() {
 
   group('android', () {
     setUp(() {
-      mockChannel = new MockMethodChannel();
-      flutterLocalNotificationsPlugin =
-          new FlutterLocalNotificationsPlugin.private(
-              mockChannel, new FakePlatform(operatingSystem: 'android'));
+      mockChannel = MockMethodChannel();
+      flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin.private(
+          mockChannel, FakePlatform(operatingSystem: 'android'));
     });
     test('initialise plugin on Android', () async {
       const AndroidInitializationSettings initializationSettingsAndroid =
@@ -88,12 +86,12 @@ void main() {
     });
     test('show notification on Android', () async {
       AndroidNotificationDetails androidPlatformChannelSpecifics =
-          new AndroidNotificationDetails('your channel id', 'your channel name',
+          AndroidNotificationDetails('your channel id', 'your channel name',
               'your channel description',
               importance: Importance.Max, priority: Priority.High);
 
       NotificationDetails platformChannelSpecifics =
-          new NotificationDetails(androidPlatformChannelSpecifics, null);
+          NotificationDetails(androidPlatformChannelSpecifics, null);
 
       await flutterLocalNotificationsPlugin
           .show(0, title, body, platformChannelSpecifics, payload: payload);
@@ -107,14 +105,14 @@ void main() {
     });
     test('schedule notification on Android', () async {
       var scheduledNotificationDateTime =
-          new DateTime.now().add(new Duration(seconds: 5));
+          DateTime.now().add(Duration(seconds: 5));
 
       AndroidNotificationDetails androidPlatformChannelSpecifics =
-          new AndroidNotificationDetails('your other channel id',
+          AndroidNotificationDetails('your other channel id',
               'your other channel name', 'your other channel description');
 
       NotificationDetails platformChannelSpecifics =
-          new NotificationDetails(androidPlatformChannelSpecifics, null);
+          NotificationDetails(androidPlatformChannelSpecifics, null);
       await flutterLocalNotificationsPlugin.schedule(id, title, body,
           scheduledNotificationDateTime, platformChannelSpecifics);
       verify(mockChannel.invokeMethod('schedule', <String, dynamic>{

@@ -126,7 +126,7 @@ class AndroidNotificationDetails {
       'vibrationPattern': vibrationPattern,
       'style': style.index,
       'styleInformation': styleInformation == null
-          ? new DefaultStyleInformation(false, false).toMap()
+          ? DefaultStyleInformation(false, false).toMap()
           : styleInformation.toMap(),
       'groupKey': groupKey,
       'setAsGroupSummary': setAsGroupSummary,

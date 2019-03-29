@@ -17,8 +17,8 @@ class MessagingStyleInformation extends DefaultStyleInformation {
       {this.conversationTitle,
       this.groupConversation,
       this.messages,
-      bool htmlFormatContent: false,
-      bool htmlFormatTitle: false})
+      bool htmlFormatContent = false,
+      bool htmlFormatTitle = false})
       : super(htmlFormatContent, htmlFormatTitle) {
     assert(this.person?.name != null, 'Must provide the details of the person');
   }

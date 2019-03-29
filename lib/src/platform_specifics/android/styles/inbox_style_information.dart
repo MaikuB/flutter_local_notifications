@@ -38,7 +38,7 @@ class InboxStyleInformation extends DefaultStyleInformation {
       'htmlFormatContentTitle': htmlFormatContentTitle,
       'summaryText': summaryText,
       'htmlFormatSummaryText': htmlFormatSummaryText,
-      'lines': lines ?? new List<String>(),
+      'lines': lines ?? List<String>(),
       'htmlFormatLines': htmlFormatLines
     };
     styleJson.addAll(bigTextStyleJson);
