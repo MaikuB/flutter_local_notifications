@@ -1,4 +1,6 @@
-part of flutter_local_notifications;
+import 'default_style_information.dart';
+import '../person.dart';
+import '../message.dart';
 
 /// Used to pass the content for an Android notification displayed using the messaging style
 class MessagingStyleInformation extends DefaultStyleInformation {

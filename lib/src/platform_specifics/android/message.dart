@@ -1,4 +1,4 @@
-part of flutter_local_notifications;
+import 'person.dart';
 
 class Message {
   /// The message text

@@ -1,4 +1,10 @@
-part of flutter_local_notifications;
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:meta/meta.dart';
+import 'package:platform/platform.dart';
+import 'initialization_settings.dart';
+import 'notification_app_launch_details.dart';
+import 'notification_details.dart';
 
 /// Signature of callback passed to [initialize]. Callback triggered when user taps on a notification
 typedef SelectNotificationCallback = Future<dynamic> Function(String payload);

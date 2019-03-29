@@ -1,5 +1,3 @@
-part of flutter_local_notifications;
-
 class NotificationAppLaunchDetails {
   /// Indicates if the app was launched via notification
   final bool didNotificationLaunchApp;

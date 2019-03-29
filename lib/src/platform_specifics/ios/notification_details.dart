@@ -1,5 +1,3 @@
-part of flutter_local_notifications;
-
 /// Configures the notification details on iOS.
 class IOSNotificationDetails {
   // Display an alert when the notification is triggered while app is in the foreground. iOS 10+ only
