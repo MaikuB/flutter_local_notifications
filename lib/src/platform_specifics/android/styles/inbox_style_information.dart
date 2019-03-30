@@ -1,4 +1,4 @@
-part of flutter_local_notifications;
+import 'default_style_information.dart';
 
 /// Used to pass the content for an Android notification displayed using the inbox style
 class InboxStyleInformation extends DefaultStyleInformation {
@@ -38,7 +38,7 @@ class InboxStyleInformation extends DefaultStyleInformation {
       'htmlFormatContentTitle': htmlFormatContentTitle,
       'summaryText': summaryText,
       'htmlFormatSummaryText': htmlFormatSummaryText,
-      'lines': lines ?? new List<String>(),
+      'lines': lines ?? List<String>(),
       'htmlFormatLines': htmlFormatLines
     };
     styleJson.addAll(bigTextStyleJson);

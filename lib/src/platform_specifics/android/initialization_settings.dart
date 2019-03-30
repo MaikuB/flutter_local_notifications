@@ -1,5 +1,3 @@
-part of flutter_local_notifications;
-
 /// Plugin initialization settings for Android
 class AndroidInitializationSettings {
   /// Sets the default icon for notifications

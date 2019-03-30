@@ -126,7 +126,7 @@ public class NotificationDetails {
     public NotificationChannelAction channelAction;
 
 
-    // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted
+    // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted.
     public Integer iconResourceId;
 
     public static NotificationDetails from(Map<String, Object> arguments) {

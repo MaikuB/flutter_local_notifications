@@ -1,4 +1,6 @@
-part of flutter_local_notifications;
+import 'default_style_information.dart';
+import '../person.dart';
+import '../message.dart';
 
 /// Used to pass the content for an Android notification displayed using the messaging style
 class MessagingStyleInformation extends DefaultStyleInformation {
@@ -17,8 +19,8 @@ class MessagingStyleInformation extends DefaultStyleInformation {
       {this.conversationTitle,
       this.groupConversation,
       this.messages,
-      bool htmlFormatContent: false,
-      bool htmlFormatTitle: false})
+      bool htmlFormatContent = false,
+      bool htmlFormatTitle = false})
       : super(htmlFormatContent, htmlFormatTitle) {
     assert(this.person?.name != null, 'Must provide the details of the person');
   }

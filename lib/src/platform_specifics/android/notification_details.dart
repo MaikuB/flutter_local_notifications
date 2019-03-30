@@ -1,4 +1,8 @@
-part of flutter_local_notifications;
+import 'dart:typed_data';
+import 'dart:ui';
+import 'enums.dart';
+import 'styles/style_information.dart';
+import 'styles/default_style_information.dart';
 
 /// Configures the notification on Android
 class AndroidNotificationDetails {
@@ -126,7 +130,7 @@ class AndroidNotificationDetails {
       'vibrationPattern': vibrationPattern,
       'style': style.index,
       'styleInformation': styleInformation == null
-          ? new DefaultStyleInformation(false, false).toMap()
+          ? DefaultStyleInformation(false, false).toMap()
           : styleInformation.toMap(),
       'groupKey': groupKey,
       'setAsGroupSummary': setAsGroupSummary,

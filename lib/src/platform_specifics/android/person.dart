@@ -1,4 +1,4 @@
-part of flutter_local_notifications;
+import 'enums.dart';
 
 /// Details of a person e.g. someone who sent a message
 class Person {

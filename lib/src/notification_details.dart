@@ -1,4 +1,5 @@
-part of flutter_local_notifications;
+import 'platform_specifics/ios/notification_details.dart';
+import 'platform_specifics/android/notification_details.dart';
 
 /// Contains notification settings for each platform
 class NotificationDetails {

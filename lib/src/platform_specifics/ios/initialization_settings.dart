@@ -1,4 +1,4 @@
-part of flutter_local_notifications;
+import '../../flutter_local_notifications.dart';
 
 /// Plugin initialization settings for iOS
 class IOSInitializationSettings {
