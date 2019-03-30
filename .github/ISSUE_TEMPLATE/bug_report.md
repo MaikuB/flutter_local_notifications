@@ -1,6 +1,6 @@
 ---
-name: Issue
-about: A general issue
+name: Bug report
+about: Create a report to help us improve
 title: ''
 labels: ''
 assignees: ''
@@ -10,8 +10,8 @@ assignees: ''
 **IMPORTANT**
 If you are getting a build error on Android that mentions AndroidX incompatibilities, before reporting an issue, please make sure look at the error information carefully as there should be a URL that provides information on migrating your application to AndroidX
 
-**Describe the issue**
-A clear and concise description of what the issue is.
+**Describe the bug**
+A clear and concise description of what the bug is.
 
 **To Reproduce**
 If applicable, steps to reproduce the behavior:
