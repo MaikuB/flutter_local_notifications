@@ -17,4 +17,5 @@ export 'src/notification_details.dart';
 export 'src/initialization_settings.dart';
 export 'src/flutter_local_notifications.dart';
 export 'src/notification_app_launch_details.dart';
+export 'src/notification_provider.dart';
 // export 'src/callback_dispatcher.dart';
