@@ -21,8 +21,11 @@ void main() async {
   // var notificationAppLaunchDetails =
   //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   runApp(
-    MaterialApp(
-      home: HomePage(),
+    NotificationProvider(
+      service: flutterLocalNotificationsPlugin,
+      child: MaterialApp(
+        home: HomePage(),
+      ),
     ),
   );
 }
@@ -51,204 +54,201 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return NotificationProvider(
-      service: flutterLocalNotificationsPlugin,
-      child: MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            title: Text('Plugin example app'),
-          ),
-          body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Center(
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Plugin example app'),
+        ),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: Text(
+                        'Tap on a notification when it appears to trigger navigation'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text('Show plain notification with payload'),
+                      onPressed: () async {
+                        await _showNotification();
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
                       child: Text(
-                          'Tap on a notification when it appears to trigger navigation'),
+                          'Show plain notification with payload and update channel description'),
+                      onPressed: () async {
+                        await _showNotificationWithUpdatedChannelDescription();
+                      },
                     ),
-                    Padding(
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text('Cancel notification'),
+                      onPressed: () async {
+                        await _cancelNotification();
+                      },
+                    ),
+                  ),
+                  Padding(
                       padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                       child: RaisedButton(
-                        child: Text('Show plain notification with payload'),
-                        onPressed: () async {
-                          await _showNotification();
-                        },
-                      ),
+                          child: Text(
+                              'Schedule notification to appear in 5 seconds, custom sound, red colour, large icon'),
+                          onPressed: () async {
+                            await _scheduleNotification();
+                          })),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text('Repeat notification every minute'),
+                      onPressed: () async {
+                        await _repeatNotification();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text(
-                            'Show plain notification with payload and update channel description'),
-                        onPressed: () async {
-                          await _showNotificationWithUpdatedChannelDescription();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text(
+                          'Repeat notification every day at approximately 10:00:00 am'),
+                      onPressed: () async {
+                        await _showDailyAtTime();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text('Cancel notification'),
-                        onPressed: () async {
-                          await _cancelNotification();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text(
+                          'Repeat notification weekly on Monday at approximately 10:00:00 am'),
+                      onPressed: () async {
+                        await _showWeeklyAtDayAndTime();
+                      },
                     ),
-                    Padding(
-                        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                        child: RaisedButton(
-                            child: Text(
-                                'Schedule notification to appear in 5 seconds, custom sound, red colour, large icon'),
-                            onPressed: () async {
-                              await _scheduleNotification();
-                            })),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text('Repeat notification every minute'),
-                        onPressed: () async {
-                          await _repeatNotification();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text('Show notification with no sound'),
+                      onPressed: () async {
+                        await _showNotificationWithNoSound();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text(
-                            'Repeat notification every day at approximately 10:00:00 am'),
-                        onPressed: () async {
-                          await _showDailyAtTime();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text('Show big picture notification [Android]'),
+                      onPressed: () async {
+                        await _showBigPictureNotification();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text(
-                            'Repeat notification weekly on Monday at approximately 10:00:00 am'),
-                        onPressed: () async {
-                          await _showWeeklyAtDayAndTime();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text(
+                          'Show big picture notification, hide large icon on expand [Android]'),
+                      onPressed: () async {
+                        await _showBigPictureNotificationHideExpandedLargeIcon();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text('Show notification with no sound'),
-                        onPressed: () async {
-                          await _showNotificationWithNoSound();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text('Show big text notification [Android]'),
+                      onPressed: () async {
+                        await _showBigTextNotification();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text('Show big picture notification [Android]'),
-                        onPressed: () async {
-                          await _showBigPictureNotification();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text('Show inbox notification [Android]'),
+                      onPressed: () async {
+                        await _showInboxNotification();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text(
-                            'Show big picture notification, hide large icon on expand [Android]'),
-                        onPressed: () async {
-                          await _showBigPictureNotificationHideExpandedLargeIcon();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text('Show messaging notification [Android]'),
+                      onPressed: () async {
+                        await _showMessagingNotification();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text('Show big text notification [Android]'),
-                        onPressed: () async {
-                          await _showBigTextNotification();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text('Show grouped notifications [Android]'),
+                      onPressed: () async {
+                        await _showGroupedNotifications();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text('Show inbox notification [Android]'),
-                        onPressed: () async {
-                          await _showInboxNotification();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text('Show ongoing notification [Android]'),
+                      onPressed: () async {
+                        await _showOngoingNotification();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text('Show messaging notification [Android]'),
-                        onPressed: () async {
-                          await _showMessagingNotification();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text(
+                          'Show notification with no badge, alert only once [Android]'),
+                      onPressed: () async {
+                        await _showNotificationWithNoBadge();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text('Show grouped notifications [Android]'),
-                        onPressed: () async {
-                          await _showGroupedNotifications();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text(
+                          'Show progress notification - updates every second [Android]'),
+                      onPressed: () async {
+                        await _showProgressNotification();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text('Show ongoing notification [Android]'),
-                        onPressed: () async {
-                          await _showOngoingNotification();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text(
+                          'Show indeterminate progress notification [Android]'),
+                      onPressed: () async {
+                        await _showIndeterminateProgressNotification();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text(
-                            'Show notification with no badge, alert only once [Android]'),
-                        onPressed: () async {
-                          await _showNotificationWithNoBadge();
-                        },
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: RaisedButton(
+                      child: Text('cancel all notifications'),
+                      onPressed: () async {
+                        await _cancelAllNotifications();
+                      },
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text(
-                            'Show progress notification - updates every second [Android]'),
-                        onPressed: () async {
-                          await _showProgressNotification();
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text(
-                            'Show indeterminate progress notification [Android]'),
-                        onPressed: () async {
-                          await _showIndeterminateProgressNotification();
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                        child: Text('cancel all notifications'),
-                        onPressed: () async {
-                          await _cancelAllNotifications();
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

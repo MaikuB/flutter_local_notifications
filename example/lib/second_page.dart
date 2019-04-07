@@ -42,7 +42,7 @@ class SecondScreenState extends State<SecondScreen> {
             var platformChannelSpecifics = NotificationDetails(
                 androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
             await plugin.show(0, 'Other page',
-                'insied second page', platformChannelSpecifics);
+                'Inside second page', platformChannelSpecifics);
           },
           child: Text('Other notification'),
         ),
