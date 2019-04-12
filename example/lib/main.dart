@@ -26,6 +26,21 @@ void main() async {
   );
 }
 
+class PaddedRaisedButton extends StatelessWidget {
+  final String buttonText;
+  final VoidCallback onPressed;
+  const PaddedRaisedButton(
+      {@required this.buttonText, @required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+      child: RaisedButton(child: Text(buttonText), onPressed: onPressed),
+    );
+  }
+}
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -67,182 +82,132 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                         'Tap on a notification when it appears to trigger navigation'),
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text('Show plain notification with payload'),
-                      onPressed: () async {
-                        await _showNotification();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show plain notification with payload',
+                    onPressed: () async {
+                      await _showNotification();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text(
-                          'Show plain notification with payload and update channel description'),
-                      onPressed: () async {
-                        await _showNotificationWithUpdatedChannelDescription();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText:
+                        'Show plain notification with payload and update channel description',
+                    onPressed: () async {
+                      await _showNotificationWithUpdatedChannelDescription();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text('Cancel notification'),
-                      onPressed: () async {
-                        await _cancelNotification();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText: 'Cancel notification',
+                    onPressed: () async {
+                      await _cancelNotification();
+                    },
                   ),
-                  Padding(
-                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                      child: RaisedButton(
-                          child: Text(
-                              'Schedule notification to appear in 5 seconds, custom sound, red colour, large icon'),
-                          onPressed: () async {
-                            await _scheduleNotification();
-                          })),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text('Repeat notification every minute'),
+                  PaddedRaisedButton(
+                      buttonText:
+                          'Schedule notification to appear in 5 seconds, custom sound, red colour, large icon',
                       onPressed: () async {
-                        await _repeatNotification();
-                      },
-                    ),
+                        await _scheduleNotification();
+                      }),
+                  PaddedRaisedButton(
+                    buttonText: 'Repeat notification every minute',
+                    onPressed: () async {
+                      await _repeatNotification();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text(
-                          'Repeat notification every day at approximately 10:00:00 am'),
-                      onPressed: () async {
-                        await _showDailyAtTime();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText:
+                        'Repeat notification every day at approximately 10:00:00 am',
+                    onPressed: () async {
+                      await _showDailyAtTime();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text(
-                          'Repeat notification weekly on Monday at approximately 10:00:00 am'),
-                      onPressed: () async {
-                        await _showWeeklyAtDayAndTime();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText:
+                        'Repeat notification weekly on Monday at approximately 10:00:00 am',
+                    onPressed: () async {
+                      await _showWeeklyAtDayAndTime();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text('Show notification with no sound'),
-                      onPressed: () async {
-                        await _showNotificationWithNoSound();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show notification with no sound',
+                    onPressed: () async {
+                      await _showNotificationWithNoSound();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text('Show big picture notification [Android]'),
-                      onPressed: () async {
-                        await _showBigPictureNotification();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show big picture notification [Android]',
+                    onPressed: () async {
+                      await _showBigPictureNotification();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text(
-                          'Show big picture notification, hide large icon on expand [Android]'),
-                      onPressed: () async {
-                        await _showBigPictureNotificationHideExpandedLargeIcon();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText:
+                        'Show big picture notification, hide large icon on expand [Android]',
+                    onPressed: () async {
+                      await _showBigPictureNotificationHideExpandedLargeIcon();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text('Show big text notification [Android]'),
-                      onPressed: () async {
-                        await _showBigTextNotification();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show big text notification [Android]',
+                    onPressed: () async {
+                      await _showBigTextNotification();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text('Show inbox notification [Android]'),
-                      onPressed: () async {
-                        await _showInboxNotification();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show inbox notification [Android]',
+                    onPressed: () async {
+                      await _showInboxNotification();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text('Show messaging notification [Android]'),
-                      onPressed: () async {
-                        await _showMessagingNotification();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show messaging notification [Android]',
+                    onPressed: () async {
+                      await _showMessagingNotification();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text('Show grouped notifications [Android]'),
-                      onPressed: () async {
-                        await _showGroupedNotifications();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show grouped notifications [Android]',
+                    onPressed: () async {
+                      await _showGroupedNotifications();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text('Show ongoing notification [Android]'),
-                      onPressed: () async {
-                        await _showOngoingNotification();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show ongoing notification [Android]',
+                    onPressed: () async {
+                      await _showOngoingNotification();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text(
-                          'Show notification with no badge, alert only once [Android]'),
-                      onPressed: () async {
-                        await _showNotificationWithNoBadge();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText:
+                        'Show notification with no badge, alert only once [Android]',
+                    onPressed: () async {
+                      await _showNotificationWithNoBadge();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text(
-                          'Show progress notification - updates every second [Android]'),
-                      onPressed: () async {
-                        await _showProgressNotification();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText:
+                        'Show progress notification - updates every second [Android]',
+                    onPressed: () async {
+                      await _showProgressNotification();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text(
-                          'Show indeterminate progress notification [Android]'),
-                      onPressed: () async {
-                        await _showIndeterminateProgressNotification();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText:
+                        'Show indeterminate progress notification [Android]',
+                    onPressed: () async {
+                      await _showIndeterminateProgressNotification();
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
-                    child: RaisedButton(
-                      child: Text('cancel all notifications'),
-                      onPressed: () async {
-                        await _cancelAllNotifications();
-                      },
-                    ),
+                  PaddedRaisedButton(
+                    buttonText: 'Check pending notifications',
+                    onPressed: () async {
+                      await _checkPendingNotificationRequests();
+                    },
+                  ),
+                  PaddedRaisedButton(
+                    buttonText: 'Cancel all notifications',
+                    onPressed: () async {
+                      await _cancelAllNotifications();
+                    },
                   ),
                 ],
               ),
@@ -253,7 +218,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future _showNotification() async {
+  Future<void> _showNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
         importance: Importance.Max, priority: Priority.High);
@@ -265,12 +230,12 @@ class _HomePageState extends State<HomePage> {
         payload: 'item x');
   }
 
-  Future _cancelNotification() async {
+  Future<void> _cancelNotification() async {
     await flutterLocalNotificationsPlugin.cancel(0);
   }
 
   /// Schedules a notification that specifies a different icon, sound and vibration pattern
-  Future _scheduleNotification() async {
+  Future<void> _scheduleNotification() async {
     var scheduledNotificationDateTime =
         DateTime.now().add(Duration(seconds: 5));
     var vibrationPattern = Int64List(4);
@@ -301,7 +266,7 @@ class _HomePageState extends State<HomePage> {
         platformChannelSpecifics);
   }
 
-  Future _showNotificationWithNoSound() async {
+  Future<void> _showNotificationWithNoSound() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'silent channel id',
         'silent channel name',
@@ -325,7 +290,7 @@ class _HomePageState extends State<HomePage> {
     return filePath;
   }
 
-  Future _showBigPictureNotification() async {
+  Future<void> _showBigPictureNotification() async {
     var largeIconPath = await _downloadAndSaveImage(
         'http://via.placeholder.com/48x48', 'largeIcon');
     var bigPicturePath = await _downloadAndSaveImage(
@@ -350,7 +315,7 @@ class _HomePageState extends State<HomePage> {
         0, 'big text title', 'silent body', platformChannelSpecifics);
   }
 
-  Future _showBigPictureNotificationHideExpandedLargeIcon() async {
+  Future<void> _showBigPictureNotificationHideExpandedLargeIcon() async {
     var largeIconPath = await _downloadAndSaveImage(
         'http://via.placeholder.com/48x48', 'largeIcon');
     var bigPicturePath = await _downloadAndSaveImage(
@@ -376,7 +341,7 @@ class _HomePageState extends State<HomePage> {
         0, 'big text title', 'silent body', platformChannelSpecifics);
   }
 
-  Future _showBigTextNotification() async {
+  Future<void> _showBigTextNotification() async {
     var bigTextStyleInformation = BigTextStyleInformation(
         'Lorem <i>ipsum dolor sit</i> amet, consectetur <b>adipiscing elit</b>, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
         htmlFormatBigText: true,
@@ -396,7 +361,7 @@ class _HomePageState extends State<HomePage> {
         0, 'big text title', 'silent body', platformChannelSpecifics);
   }
 
-  Future _showInboxNotification() async {
+  Future<void> _showInboxNotification() async {
     var lines = List<String>();
     lines.add('line <b>1</b>');
     lines.add('line <i>2</i>');
@@ -416,7 +381,7 @@ class _HomePageState extends State<HomePage> {
         0, 'inbox title', 'inbox body', platformChannelSpecifics);
   }
 
-  Future _showMessagingNotification() async {
+  Future<void> _showMessagingNotification() async {
     // use a platform channel to resolve an Android drawable resource to a URI.
     // This is NOT part of the notifications plugin. Calls made over this channel is handled by the app
     String imageUri = await platform.invokeMethod('drawableToUri', 'food');
@@ -478,7 +443,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future _showGroupedNotifications() async {
+  Future<void> _showGroupedNotifications() async {
     var groupKey = 'com.android.example.WORK_EMAIL';
     var groupChannelId = 'grouped channel id';
     var groupChannelName = 'grouped channel name';
@@ -524,11 +489,37 @@ class _HomePageState extends State<HomePage> {
         3, 'Attention', 'Two messages', platformChannelSpecifics);
   }
 
-  Future _cancelAllNotifications() async {
+  Future<void> _checkPendingNotificationRequests() async {
+    var pendingNotificationRequests =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    for (var pendingNotificationRequest in pendingNotificationRequests) {
+      debugPrint(
+          'pending notification: [id: ${pendingNotificationRequest.id}, title: ${pendingNotificationRequest.title}, body: ${pendingNotificationRequest.body}, payload: ${pendingNotificationRequest.payload}]');
+    }
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text(
+              '${pendingNotificationRequests.length} pending notification requests'),
+          actions: [
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
-  Future onSelectNotification(String payload) async {
+  Future<void> onSelectNotification(String payload) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
     }
@@ -539,7 +530,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future _showOngoingNotification() async {
+  Future<void> _showOngoingNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
         importance: Importance.Max,
@@ -553,7 +544,7 @@ class _HomePageState extends State<HomePage> {
         'ongoing notification body', platformChannelSpecifics);
   }
 
-  Future _repeatNotification() async {
+  Future<void> _repeatNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'repeating channel id',
         'repeating channel name',
@@ -565,7 +556,7 @@ class _HomePageState extends State<HomePage> {
         'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
   }
 
-  Future _showDailyAtTime() async {
+  Future<void> _showDailyAtTime() async {
     var time = Time(10, 0, 0);
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'repeatDailyAtTime channel id',
@@ -582,7 +573,7 @@ class _HomePageState extends State<HomePage> {
         platformChannelSpecifics);
   }
 
-  Future _showWeeklyAtDayAndTime() async {
+  Future<void> _showWeeklyAtDayAndTime() async {
     var time = Time(10, 0, 0);
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'show weekly channel id',
@@ -600,7 +591,7 @@ class _HomePageState extends State<HomePage> {
         platformChannelSpecifics);
   }
 
-  Future _showNotificationWithNoBadge() async {
+  Future<void> _showNotificationWithNoBadge() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'no badge channel', 'no badge name', 'no badge description',
         channelShowBadge: false,
@@ -615,7 +606,7 @@ class _HomePageState extends State<HomePage> {
         payload: 'item x');
   }
 
-  Future _showProgressNotification() async {
+  Future<void> _showProgressNotification() async {
     var maxProgress = 5;
     for (var i = 0; i <= maxProgress; i++) {
       await Future.delayed(Duration(seconds: 1), () async {
@@ -643,7 +634,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future _showIndeterminateProgressNotification() async {
+  Future<void> _showIndeterminateProgressNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'indeterminate progress channel',
         'indeterminate progress channel',
@@ -665,7 +656,7 @@ class _HomePageState extends State<HomePage> {
         payload: 'item x');
   }
 
-  Future _showNotificationWithUpdatedChannelDescription() async {
+  Future<void> _showNotificationWithUpdatedChannelDescription() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id',
         'your channel name',
@@ -688,7 +679,7 @@ class _HomePageState extends State<HomePage> {
     return value.toString().padLeft(2, '0');
   }
 
-  Future onDidRecieveLocalNotification(
+  Future<void> onDidRecieveLocalNotification(
       int id, String title, String body, String payload) async {
     // display a dialog with the notification details, tap ok to go to another page
     await showDialog(
