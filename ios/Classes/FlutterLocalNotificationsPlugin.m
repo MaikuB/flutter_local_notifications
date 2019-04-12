@@ -17,6 +17,7 @@ NSString *const SHOW_DAILY_AT_TIME_METHOD = @"showDailyAtTime";
 NSString *const SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = @"showWeeklyAtDayAndTime";
 NSString *const CANCEL_METHOD = @"cancel";
 NSString *const CANCEL_ALL_METHOD = @"cancelAll";
+NSString *const PENDING_NOTIFICATIONS_REQUESTS_METHOD = @"pendingNotificationRequests";
 NSString *const GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD = @"getNotificationAppLaunchDetails";
 NSString *const CHANNEL = @"dexterous.com/flutter/local_notifications";
 NSString *const CALLBACK_CHANNEL = @"dexterous.com/flutter/local_notifications_background";
@@ -87,6 +88,37 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     [registrar addApplicationDelegate:instance];
     [registrar addMethodCallDelegate:instance channel:channel];
     _registrar = registrar;
+}
+
+- (void)pendingNotificationRequests:(FlutterResult _Nonnull)result {
+    if(@available(iOS 10.0, *)) {
+        UNUserNotificationCenter *center =  [UNUserNotificationCenter currentNotificationCenter];
+        [center getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> * _Nonnull requests) {
+            NSMutableArray<NSDictionary<NSString *, NSObject *> *> *pendingNotificationRequests = [[NSMutableArray alloc] initWithCapacity:[requests count]];
+            for (UNNotificationRequest *request in requests) {
+                [pendingNotificationRequests addObject:@{
+                                   @"id" : request.content.userInfo[NOTIFICATION_ID],
+                                   @"title" : request.content.title,
+                                   @"body" : request.content.body,
+                                   @"payload": request.content.userInfo[PAYLOAD]
+                                   }];
+            }
+            result(pendingNotificationRequests);
+        }];
+    } else {
+        NSArray *notifications = [UIApplication sharedApplication].scheduledLocalNotifications;
+        NSMutableArray<NSDictionary<NSString *, NSObject *> *> *pendingNotificationRequests = [[NSMutableArray alloc] initWithCapacity:[notifications count]];
+        for( int i = 0; i < [notifications count]; i++) {
+            UILocalNotification* localNotification = [notifications objectAtIndex:i];
+            [pendingNotificationRequests addObject:@{
+                                                     @"id" : localNotification.userInfo[NOTIFICATION_ID],
+                                                     @"title" : localNotification.userInfo[TITLE],
+                                                     @"body" : localNotification.alertBody,
+                                                     @"payload": localNotification.userInfo[PAYLOAD]
+                                                     }];
+        }
+        result(pendingNotificationRequests);
+    }
 }
 
 - (void)initialize:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
@@ -264,6 +296,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         result(notificationAppLaunchDetails);
     } else if([INITIALIZED_HEADLESS_SERVICE_METHOD isEqualToString:call.method]) {
         result(nil);
+    } else if([PENDING_NOTIFICATIONS_REQUESTS_METHOD isEqualToString:call.method]) {
+        [self pendingNotificationRequests:result];
     }
     else {
         result(FlutterMethodNotImplemented);

@@ -16,6 +16,7 @@ A cross platform plugin for displaying local notifications.
 * Periodically show a notification (interval based)
 * Schedule a notification to be shown daily at a specified time
 * Schedule a notification to be shown weekly on a specified day and time
+* Retrieve a list of pending notification requests that have been scheduled to be shown in the future
 * Cancelling/removing notification by id or all of them
 * Specify a custom notification sound
 * Ability to handle when a user has tapped on a notification, when the app is the foreground, background or terminated
@@ -38,8 +39,9 @@ A cross platform plugin for displaying local notifications.
 
 Note that this plugin aims to provide abstractions for all platforms as opposed to having methods that only work on specific platforms. However, each method allows passing in "platform-specifics" that contains data that is specific for customising notifications on each platform. It is still under development so expect the API surface to change over time.
 
-**IMPORTANT**: Recurring notifications on Android use the [Alarm Manager](https://developer.android.com/reference/android/app/AlarmManager) API. This is standard practice but does mean the delivery of the notifications/alarms are inexact and this is documented Android behaviour as per the previous link.
+**IMPORTANT**: Recurring notifications on Android use the [Alarm Manager](https://developer.android.com/reference/android/app/AlarmManager) API. This is standard practice but does mean the delivery of the notifications/alarms are inexact and this is documented Android behaviour as per the previous link. 
 
+**KNOWN ISSUE(S)**: There is a known issue with handling daylight savings for scheduled notifications. This functionality may be deprecated to be replaced by another that only deals with elapsed time since epoch instead of a date.
 
 ## Acknowledgements
 
@@ -176,6 +178,13 @@ await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
     Day.Monday,
     time,
     platformChannelSpecifics);
+```
+
+### Retrieve pending notification requests
+
+```dart
+var pendingNotificationRequests =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
 ```
 
 ### [Android only] Grouping notifications

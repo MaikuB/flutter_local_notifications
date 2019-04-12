@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:platform/platform.dart';
 import 'initialization_settings.dart';
 import 'notification_app_launch_details.dart';
 import 'notification_details.dart';
+import 'pending_notification_request.dart';
 
 /// Signature of callback passed to [initialize]. Callback triggered when user taps on a notification
 typedef SelectNotificationCallback = Future<dynamic> Function(String payload);
@@ -109,7 +111,7 @@ class FlutterLocalNotificationsPlugin {
   }
 
   /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped
-  Future show(int id, String title, String body,
+  Future<void> show(int id, String title, String body,
       NotificationDetails notificationDetails,
       {String payload}) async {
     _validateId(id);
@@ -125,19 +127,19 @@ class FlutterLocalNotificationsPlugin {
   }
 
   /// Cancel/remove the notification with the specified id. This applies to notifications that have been scheduled and those that have already been presented.
-  Future cancel(int id) async {
+  Future<void> cancel(int id) async {
     _validateId(id);
     await _channel.invokeMethod('cancel', id);
   }
 
   /// Cancels/removes all notifications. This applies to notifications that have been scheduled and those that have already been presented.
-  Future cancelAll() async {
+  Future<void> cancelAll() async {
     await _channel.invokeMethod('cancelAll');
   }
 
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
-  Future schedule(int id, String title, String body, DateTime scheduledDate,
-      NotificationDetails notificationDetails,
+  Future<void> schedule(int id, String title, String body,
+      DateTime scheduledDate, NotificationDetails notificationDetails,
       {String payload}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
@@ -154,7 +156,7 @@ class FlutterLocalNotificationsPlugin {
 
   /// Periodically show a notification using the specified interval.
   /// For example, specifying a hourly interval means the first time the notification will be an hour after the method has been called and then every hour after that.
-  Future periodicallyShow(int id, String title, String body,
+  Future<void> periodicallyShow(int id, String title, String body,
       RepeatInterval repeatInterval, NotificationDetails notificationDetails,
       {String payload}) async {
     _validateId(id);
@@ -172,7 +174,7 @@ class FlutterLocalNotificationsPlugin {
   }
 
   /// Shows a notification on a daily interval at the specified time
-  Future showDailyAtTime(int id, String title, String body,
+  Future<void> showDailyAtTime(int id, String title, String body,
       Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
     _validateId(id);
@@ -191,8 +193,8 @@ class FlutterLocalNotificationsPlugin {
   }
 
   /// Shows a notification on a daily interval at the specified time
-  Future showWeeklyAtDayAndTime(int id, String title, String body, Day day,
-      Time notificationTime, NotificationDetails notificationDetails,
+  Future<void> showWeeklyAtDayAndTime(int id, String title, String body,
+      Day day, Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
@@ -208,6 +210,19 @@ class FlutterLocalNotificationsPlugin {
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
     });
+  }
+
+  /// Returns a list of notifications pending to be delivered/shown
+  Future<List<PendingNotificationRequest>> pendingNotificationRequests() async {
+    final List<Map<dynamic, dynamic>> pendingNotifications =
+        await _channel.invokeListMethod('pendingNotificationRequests');
+    return pendingNotifications
+        .map((pendingNotification) => PendingNotificationRequest(
+            pendingNotification['id'],
+            pendingNotification['title'],
+            pendingNotification['body'],
+            pendingNotification['payload']))
+        .toList();
   }
 
   Map<String, dynamic> _retrievePlatformSpecificNotificationDetails(
@@ -232,7 +247,7 @@ class FlutterLocalNotificationsPlugin {
     return serializedPlatformSpecifics;
   }
 
-  Future _handleMethod(MethodCall call) {
+  Future<void> _handleMethod(MethodCall call) {
     switch (call.method) {
       case 'selectNotification':
         return selectNotificationCallback(call.arguments);

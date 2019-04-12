@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
@@ -67,6 +68,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
+    private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
     private static final String INITIALIZE_HEADLESS_SERVICE_METHOD = "initializeHeadlessService";
     private static final String SHOW_METHOD = "show";
     private static final String CANCEL_METHOD = "cancel";
@@ -101,8 +103,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     public static void rescheduleNotifications(Context context) {
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
-        for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
-            NotificationDetails scheduledNotification = it.next();
+        for (NotificationDetails scheduledNotification : scheduledNotifications) {
             if (scheduledNotification.repeatInterval == null) {
                 scheduleNotification(context, scheduledNotification, false);
             } else {
@@ -227,7 +228,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-    private static void scheduleNotification(Context context, NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
+    private static void scheduleNotification(Context context, final NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
         Gson gson = buildGson();
         String notificationDetailsJson = gson.toJson(notificationDetails);
         Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
@@ -242,9 +243,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
         }
         if (updateScheduledNotificationsCache) {
-            ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
-            scheduledNotifications.add(notificationDetails);
-            saveScheduledNotifications(context, scheduledNotifications);
+            saveScheduledNotification(context, notificationDetails);
         }
     }
 
@@ -298,10 +297,21 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, startTimeMilliseconds, repeatInterval, pendingIntent);
 
         if (updateScheduledNotificationsCache) {
-            ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
-            scheduledNotifications.add(notificationDetails);
-            saveScheduledNotifications(context, scheduledNotifications);
+            saveScheduledNotification(context, notificationDetails);
         }
+    }
+
+    private static void saveScheduledNotification(Context context, NotificationDetails notificationDetails) {
+        ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
+        ArrayList<NotificationDetails> scheduledNotificationsToSave = new ArrayList<>();
+        for (NotificationDetails scheduledNotification : scheduledNotifications) {
+            if (scheduledNotification.id == notificationDetails.id) {
+                continue;
+            }
+            scheduledNotificationsToSave.add(scheduledNotification);
+        }
+        scheduledNotificationsToSave.add(notificationDetails);
+        saveScheduledNotifications(context, scheduledNotificationsToSave);
     }
 
     private static int getDrawableResourceId(Context context, String name) {
@@ -629,7 +639,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         switch (call.method) {
-
             case INITIALIZE_METHOD: {
                 // initializeHeadlessService(call, result);
                 initialize(call, result);
@@ -659,10 +668,28 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case CANCEL_ALL_METHOD:
                 cancelAllNotifications(result);
                 break;
+            case PENDING_NOTIFICATION_REQUESTS_METHOD:
+                pendingNotificationRequests(result);
+                break;
             default:
                 result.notImplemented();
                 break;
         }
+    }
+
+    private void pendingNotificationRequests(Result result) {
+        ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(registrar.context());
+        List<Map<String, Object>> pendingNotifications = new ArrayList<>();
+
+        for (NotificationDetails scheduledNotification : scheduledNotifications) {
+            HashMap<String, Object> pendingNotification = new HashMap<>();
+            pendingNotification.put("id", scheduledNotification.id);
+            pendingNotification.put("title", scheduledNotification.title);
+            pendingNotification.put("body", scheduledNotification.body);
+            pendingNotification.put("payload", scheduledNotification.payload);
+            pendingNotifications.add(pendingNotification);
+        }
+        result.success(pendingNotifications);
     }
 
     private void cancel(MethodCall call, Result result) {
@@ -720,6 +747,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(DEFAULT_ICON, defaultIcon);
         editor.commit();
+
         if (registrar.activity() != null) {
             sendNotificationPayloadMessage(registrar.activity().getIntent());
         }
