@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PaddedRaisedButton(
                       buttonText:
-                          'Schedule notification to appear in 5 seconds, custom sound, red colour, large icon',
+                          'Schedule notification to appear in 5 seconds, custom sound, red colour, large icon, red LED',
                       onPressed: () async {
                         await _scheduleNotification();
                       }),
@@ -253,7 +253,11 @@ class _HomePageState extends State<HomePage> {
         largeIcon: 'sample_large_icon',
         largeIconBitmapSource: BitmapSource.Drawable,
         vibrationPattern: vibrationPattern,
-        color: const Color.fromARGB(255, 255, 0, 0));
+        enableLights: true,
+        color: const Color.fromARGB(255, 255, 0, 0),
+        ledColor: const Color.fromARGB(255, 255, 0, 0),
+        ledOnMs: 1000,
+        ledOffMs: 500);
     var iOSPlatformChannelSpecifics =
         IOSNotificationDetails(sound: "slow_spring_board.aiff");
     var platformChannelSpecifics = NotificationDetails(
