@@ -769,45 +769,63 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         result.success(true);
     }
 
-    /// Extracts the details of the notifications passed from the Flutter side and also validates that any specified drawable/raw resources exist
+    /// Extracts the details of the notifications passed from the Flutter side and also validates that some of the details (especially resources) passed are valid
     private NotificationDetails extractNotificationDetails(Result result, Map<String, Object> arguments) {
         NotificationDetails notificationDetails = NotificationDetails.from(arguments);
-        // validate the icon resource
-        if (!StringUtils.isNullOrEmpty(notificationDetails.icon)) {
-            if (!isValidDrawableResource(registrar.context(), notificationDetails.icon, result, INVALID_ICON_ERROR_CODE))
-                return null;
-        }
-        if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
-            // validate the large icon resource
-            if (notificationDetails.largeIconBitmapSource == BitmapSource.Drawable) {
-                if (!isValidDrawableResource(registrar.context(), notificationDetails.largeIcon, result, INVALID_LARGE_ICON_ERROR_CODE)) {
-                    return null;
-                }
-            }
-        }
-        if (notificationDetails.style == NotificationStyle.BigPicture) {
-            // validate the big picture resources
-            BigPictureStyleInformation bigPictureStyleInformation = (BigPictureStyleInformation) notificationDetails.styleInformation;
-            if (!StringUtils.isNullOrEmpty(bigPictureStyleInformation.largeIcon)) {
-                if (bigPictureStyleInformation.largeIconBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), bigPictureStyleInformation.largeIcon, result, INVALID_LARGE_ICON_ERROR_CODE)) {
-                    return null;
-                }
-            }
-            if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), bigPictureStyleInformation.bigPicture, result, INVALID_BIG_PICTURE_ERROR_CODE)) {
-                return null;
-            }
-        }
-        if (!StringUtils.isNullOrEmpty(notificationDetails.sound)) {
-            int soundResourceId = registrar.context().getResources().getIdentifier(notificationDetails.sound, "raw", registrar.context().getPackageName());
-            if (soundResourceId == 0) {
-                result.error(INVALID_SOUND_ERROR_CODE, INVALID_RAW_RESOURCE_ERROR_MESSAGE, null);
-            }
+        if (hasInvalidIcon(result, notificationDetails.icon) ||
+                hasInvalidLargeIcon(result, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource) ||
+                hasInvalidBigPictureResources(result, notificationDetails) ||
+                hasInvalidSound(result, notificationDetails.sound) ||
+                hasInvalidLedDetails(result, notificationDetails)) {
+            return null;
         }
 
+        return notificationDetails;
+    }
+
+    private boolean hasInvalidLedDetails(Result result, NotificationDetails notificationDetails) {
         if (notificationDetails.ledColor != null && (notificationDetails.ledOnMs == null || notificationDetails.ledOffMs == null)) {
             result.error(INVALID_LED_DETAILS_ERROR_CODE, INVALID_LED_DETAILS_ERROR_MESSAGE, null);
+            return true;
         }
-        return notificationDetails;
+        return false;
+    }
+
+    private boolean hasInvalidSound(Result result, String sound) {
+        if (!StringUtils.isNullOrEmpty(sound)) {
+            int soundResourceId = registrar.context().getResources().getIdentifier(sound, "raw", registrar.context().getPackageName());
+            if (soundResourceId == 0) {
+                result.error(INVALID_SOUND_ERROR_CODE, INVALID_RAW_RESOURCE_ERROR_MESSAGE, null);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasInvalidBigPictureResources(Result result, NotificationDetails notificationDetails) {
+        if (notificationDetails.style == NotificationStyle.BigPicture) {
+            BigPictureStyleInformation bigPictureStyleInformation = (BigPictureStyleInformation) notificationDetails.styleInformation;
+            if (hasInvalidLargeIcon(result, bigPictureStyleInformation.largeIcon, bigPictureStyleInformation.largeIconBitmapSource))
+                return true;
+            if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), bigPictureStyleInformation.bigPicture, result, INVALID_BIG_PICTURE_ERROR_CODE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasInvalidLargeIcon(Result result, String largeIcon, BitmapSource largeIconBitmapSource) {
+        if (!StringUtils.isNullOrEmpty(largeIcon) && largeIconBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), largeIcon, result, INVALID_LARGE_ICON_ERROR_CODE)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hasInvalidIcon(Result result, String icon) {
+        if (!StringUtils.isNullOrEmpty(icon) && !isValidDrawableResource(registrar.context(), icon, result, INVALID_ICON_ERROR_CODE)) {
+            return true;
+        }
+        return false;
     }
 
     private void cancelNotification(Integer id) {
