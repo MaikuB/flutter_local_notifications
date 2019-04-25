@@ -82,6 +82,14 @@ public class NotificationDetails {
     private static final String DATA_MIME_TYPE = "dataMimeType";
     private static final String DATA_URI = "dataUri";
     private static final String CHANNEL_ACTION = "channelAction";
+    private static final String ENABLE_LIGHTS = "enableLights";
+    private static final String LED_COLOR_ALPHA = "ledColorAlpha";
+    private static final String LED_COLOR_RED = "ledColorRed";
+    private static final String LED_COLOR_GREEN = "ledColorGreen";
+    private static final String LED_COLOR_BLUE = "ledColorBlue";
+
+    private static final String LED_ON_MS = "ledOnMs";
+    private static final String LED_OFF_MS = "ledOffMs";
 
 
     public static final String ID = "id";
@@ -124,6 +132,10 @@ public class NotificationDetails {
     public Integer progress;
     public Boolean indeterminate;
     public NotificationChannelAction channelAction;
+    public Boolean enableLights;
+    public Integer ledColor;
+    public Integer ledOnMs;
+    public Integer ledOffMs;
 
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted.
@@ -184,6 +196,7 @@ public class NotificationDetails {
 
             readColor(notificationDetails, platformChannelSpecifics);
             readChannelInformation(notificationDetails, platformChannelSpecifics);
+            readLedInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.largeIcon = (String) platformChannelSpecifics.get(LARGE_ICON);
             if (platformChannelSpecifics.containsKey(LARGE_ICON_BITMAP_SOURCE)) {
                 Integer argumentValue = (Integer) platformChannelSpecifics.get(LARGE_ICON_BITMAP_SOURCE);
@@ -203,6 +216,19 @@ public class NotificationDetails {
         if (a != null && r != null && g != null && b != null) {
             notificationDetails.color = Color.argb(a, r, g, b);
         }
+    }
+
+    private static void readLedInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
+        Integer a = (Integer) platformChannelSpecifics.get(LED_COLOR_ALPHA);
+        Integer r = (Integer) platformChannelSpecifics.get(LED_COLOR_RED);
+        Integer g = (Integer) platformChannelSpecifics.get(LED_COLOR_GREEN);
+        Integer b = (Integer) platformChannelSpecifics.get(LED_COLOR_BLUE);
+        if (a != null && r != null && g != null && b != null) {
+            notificationDetails.ledColor = Color.argb(a, r, g, b);
+        }
+        notificationDetails.enableLights = (Boolean) platformChannelSpecifics.get(ENABLE_LIGHTS);
+        notificationDetails.ledOnMs = (Integer) platformChannelSpecifics.get(LED_ON_MS);
+        notificationDetails.ledOffMs = (Integer) platformChannelSpecifics.get(LED_OFF_MS);
     }
 
     private static void readChannelInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
@@ -228,7 +254,7 @@ public class NotificationDetails {
             readBigTextStyleInformation(notificationDetails, styleInformation, defaultStyleInformation);
         } else if (notificationDetails.style == NotificationStyle.Inbox) {
             readInboxStyleInformation(notificationDetails, styleInformation, defaultStyleInformation);
-        } else if(notificationDetails.style == NotificationStyle.Messaging) {
+        } else if (notificationDetails.style == NotificationStyle.Messaging) {
             readMessagingStyleInformation(notificationDetails, styleInformation, defaultStyleInformation);
         }
     }
@@ -243,7 +269,7 @@ public class NotificationDetails {
     }
 
     private static PersonDetails readPersonDetails(Map<String, Object> person) {
-        if(person == null) {
+        if (person == null) {
             return null;
         }
         Boolean bot = (Boolean) person.get(BOT);
@@ -260,10 +286,10 @@ public class NotificationDetails {
     @SuppressWarnings("unchecked")
     private static ArrayList<MessageDetails> readMessages(ArrayList<Map<String, Object>> messages) {
         ArrayList<MessageDetails> result = new ArrayList<>();
-        if(messages != null) {
+        if (messages != null) {
             for (Iterator<Map<String, Object>> it = messages.iterator(); it.hasNext(); ) {
                 Map<String, Object> messageData = it.next();
-                result.add(new MessageDetails((String) messageData.get(TEXT), (Long) messageData.get(TIMESTAMP),  readPersonDetails((Map<String, Object>)messageData.get(PERSON)), (String) messageData.get(DATA_MIME_TYPE), (String) messageData.get(DATA_URI)));
+                result.add(new MessageDetails((String) messageData.get(TEXT), (Long) messageData.get(TIMESTAMP), readPersonDetails((Map<String, Object>) messageData.get(PERSON)), (String) messageData.get(DATA_MIME_TYPE), (String) messageData.get(DATA_URI)));
             }
         }
         return result;

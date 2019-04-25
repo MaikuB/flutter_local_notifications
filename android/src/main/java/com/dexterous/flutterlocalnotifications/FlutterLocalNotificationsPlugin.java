@@ -17,6 +17,12 @@ import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.Person;
+import androidx.core.graphics.drawable.IconCompat;
+
 import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelAction;
@@ -42,11 +48,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.app.Person;
-import androidx.core.graphics.drawable.IconCompat;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -84,6 +85,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INVALID_LARGE_ICON_ERROR_CODE = "INVALID_LARGE_ICON";
     private static final String INVALID_BIG_PICTURE_ERROR_CODE = "INVALID_BIG_PICTURE";
     private static final String INVALID_SOUND_ERROR_CODE = "INVALID_SOUND";
+    private static final String INVALID_LED_DETAILS_ERROR_CODE = "INVALID_LED_DETAILS";
+    private static final String INVALID_LED_DETAILS_ERROR_MESSAGE = "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of Android before Oreo";
     private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
     private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a raw resource to your Android head project.";
@@ -139,6 +142,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         applyGrouping(notificationDetails, builder);
         setSound(context, notificationDetails, builder);
         setVibrationPattern(notificationDetails, builder);
+        setLights(notificationDetails, builder);
         setStyle(context, notificationDetails, builder);
         setProgress(notificationDetails, builder);
         return builder.build();
@@ -374,6 +378,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
+    private static void setLights(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        if (BooleanUtils.getValue(notificationDetails.enableLights) && notificationDetails.ledOnMs != null && notificationDetails.ledOffMs != null) {
+            builder.setLights(notificationDetails.ledColor, notificationDetails.ledOnMs, notificationDetails.ledOffMs);
+        }
+    }
+
     private static void setSound(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
         if (BooleanUtils.getValue(notificationDetails.playSound)) {
             Uri uri = retrieveSoundResourceUri(context, notificationDetails);
@@ -550,6 +560,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 notificationChannel.enableVibration(BooleanUtils.getValue(notificationDetails.enableVibration));
                 if (notificationDetails.vibrationPattern != null && notificationDetails.vibrationPattern.length > 0) {
                     notificationChannel.setVibrationPattern(notificationDetails.vibrationPattern);
+                }
+                boolean enableLights = BooleanUtils.getValue(notificationDetails.enableLights);
+                notificationChannel.enableLights(enableLights);
+                if (enableLights && notificationDetails.ledColor != null) {
+                    notificationChannel.setLightColor(notificationDetails.ledColor);
                 }
                 notificationChannel.setShowBadge(BooleanUtils.getValue(notificationDetails.channelShowBadge));
                 notificationManager.createNotificationChannel(notificationChannel);
@@ -754,42 +769,63 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         result.success(true);
     }
 
-    /// Extracts the details of the notifications passed from the Flutter side and also validates that any specified drawable/raw resources exist
+    /// Extracts the details of the notifications passed from the Flutter side and also validates that some of the details (especially resources) passed are valid
     private NotificationDetails extractNotificationDetails(Result result, Map<String, Object> arguments) {
         NotificationDetails notificationDetails = NotificationDetails.from(arguments);
-        // validate the icon resource
-        if (!StringUtils.isNullOrEmpty(notificationDetails.icon)) {
-            if (!isValidDrawableResource(registrar.context(), notificationDetails.icon, result, INVALID_ICON_ERROR_CODE))
-                return null;
-        }
-        if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
-            // validate the large icon resource
-            if (notificationDetails.largeIconBitmapSource == BitmapSource.Drawable) {
-                if (!isValidDrawableResource(registrar.context(), notificationDetails.largeIcon, result, INVALID_LARGE_ICON_ERROR_CODE)) {
-                    return null;
-                }
-            }
-        }
-        if (notificationDetails.style == NotificationStyle.BigPicture) {
-            // validate the big picture resources
-            BigPictureStyleInformation bigPictureStyleInformation = (BigPictureStyleInformation) notificationDetails.styleInformation;
-            if (!StringUtils.isNullOrEmpty(bigPictureStyleInformation.largeIcon)) {
-                if (bigPictureStyleInformation.largeIconBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), bigPictureStyleInformation.largeIcon, result, INVALID_LARGE_ICON_ERROR_CODE)) {
-                    return null;
-                }
-            }
-            if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), bigPictureStyleInformation.bigPicture, result, INVALID_BIG_PICTURE_ERROR_CODE)) {
-                return null;
-            }
-        }
-        if (!StringUtils.isNullOrEmpty(notificationDetails.sound)) {
-            int soundResourceId = registrar.context().getResources().getIdentifier(notificationDetails.sound, "raw", registrar.context().getPackageName());
-            if (soundResourceId == 0) {
-                result.error(INVALID_SOUND_ERROR_CODE, INVALID_RAW_RESOURCE_ERROR_MESSAGE, null);
-            }
+        if (hasInvalidIcon(result, notificationDetails.icon) ||
+                hasInvalidLargeIcon(result, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource) ||
+                hasInvalidBigPictureResources(result, notificationDetails) ||
+                hasInvalidSound(result, notificationDetails.sound) ||
+                hasInvalidLedDetails(result, notificationDetails)) {
+            return null;
         }
 
         return notificationDetails;
+    }
+
+    private boolean hasInvalidLedDetails(Result result, NotificationDetails notificationDetails) {
+        if (notificationDetails.ledColor != null && (notificationDetails.ledOnMs == null || notificationDetails.ledOffMs == null)) {
+            result.error(INVALID_LED_DETAILS_ERROR_CODE, INVALID_LED_DETAILS_ERROR_MESSAGE, null);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hasInvalidSound(Result result, String sound) {
+        if (!StringUtils.isNullOrEmpty(sound)) {
+            int soundResourceId = registrar.context().getResources().getIdentifier(sound, "raw", registrar.context().getPackageName());
+            if (soundResourceId == 0) {
+                result.error(INVALID_SOUND_ERROR_CODE, INVALID_RAW_RESOURCE_ERROR_MESSAGE, null);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasInvalidBigPictureResources(Result result, NotificationDetails notificationDetails) {
+        if (notificationDetails.style == NotificationStyle.BigPicture) {
+            BigPictureStyleInformation bigPictureStyleInformation = (BigPictureStyleInformation) notificationDetails.styleInformation;
+            if (hasInvalidLargeIcon(result, bigPictureStyleInformation.largeIcon, bigPictureStyleInformation.largeIconBitmapSource))
+                return true;
+            if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), bigPictureStyleInformation.bigPicture, result, INVALID_BIG_PICTURE_ERROR_CODE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasInvalidLargeIcon(Result result, String largeIcon, BitmapSource largeIconBitmapSource) {
+        if (!StringUtils.isNullOrEmpty(largeIcon) && largeIconBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), largeIcon, result, INVALID_LARGE_ICON_ERROR_CODE)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hasInvalidIcon(Result result, String icon) {
+        if (!StringUtils.isNullOrEmpty(icon) && !isValidDrawableResource(registrar.context(), icon, result, INVALID_ICON_ERROR_CODE)) {
+            return true;
+        }
+        return false;
     }
 
     private void cancelNotification(Integer id) {
