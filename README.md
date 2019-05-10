@@ -67,7 +67,7 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLoc
 var initializationSettingsAndroid =
     new AndroidInitializationSettings('app_icon');
 var initializationSettingsIOS = new IOSInitializationSettings(
-    onDidReceiveLocalNotification: onDidRecieveLocationLocation);
+    onDidReceiveLocalNotification: onDidRecieveLocalNotification);
 var initializationSettings = new InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
