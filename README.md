@@ -323,7 +323,7 @@ By design, iOS applications do not display notifications when they're in the for
 var initializationSettingsAndroid =
     new AndroidInitializationSettings('app_icon');
 var initializationSettingsIOS = new IOSInitializationSettings(
-    onDidReceiveLocalNotification: onDidRecieveLocalNotification);
+    onDidReceiveLocalNotification: onDidReceiveLocalNotification);
 var initializationSettings = new InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
