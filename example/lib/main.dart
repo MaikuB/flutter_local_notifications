@@ -227,7 +227,7 @@ class _HomePageState extends State<HomePage> {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
-        payload: 'item x');
+        payload: 'item x', ticker: 'ticker');
   }
 
   Future<void> _cancelNotification() async {

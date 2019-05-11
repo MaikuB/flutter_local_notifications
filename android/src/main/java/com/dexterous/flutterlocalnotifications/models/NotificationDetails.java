@@ -95,10 +95,12 @@ public class NotificationDetails {
     public static final String ID = "id";
     public static final String TITLE = "title";
     public static final String BODY = "body";
+    public static final String TICKER = "ticker";
 
     public Integer id;
     public String title;
     public String body;
+    public String ticker;
     public String icon;
     public String channelId = "Default_Channel_Id";
     public String channelName;
@@ -147,6 +149,7 @@ public class NotificationDetails {
         notificationDetails.id = (Integer) arguments.get(ID);
         notificationDetails.title = (String) arguments.get(TITLE);
         notificationDetails.body = (String) arguments.get(BODY);
+        notificationDetails.ticker = (String) arguments.get(TICKER);
         if (arguments.containsKey(MILLISECONDS_SINCE_EPOCH)) {
             notificationDetails.millisecondsSinceEpoch = (Long) arguments.get(MILLISECONDS_SINCE_EPOCH);
         }
