@@ -113,7 +113,7 @@ class FlutterLocalNotificationsPlugin {
   /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped
   Future<void> show(int id, String title, String body,
       NotificationDetails notificationDetails,
-      {String payload, String ticker}) async {
+      {String payload}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificNotificationDetails(notificationDetails);
@@ -122,8 +122,7 @@ class FlutterLocalNotificationsPlugin {
       'title': title,
       'body': body,
       'platformSpecifics': serializedPlatformSpecifics,
-      'payload': payload ?? '',
-      'ticker' : ticker
+      'payload': payload ?? ''
     });
   }
 

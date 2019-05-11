@@ -96,6 +96,9 @@ class AndroidNotificationDetails {
   /// Sets how long the light colour will remain off. Not applicable for Android 8.0+
   int ledOffMs;
 
+  /// Set the "ticker" text which is sent to accessibility services.
+  String ticker;
+
   /// The action to take for managing notification channels. Defaults to creating the notification channel using the provided details if it doesn't exist
   AndroidNotificationChannelAction channelAction;
 
@@ -128,7 +131,8 @@ class AndroidNotificationDetails {
       this.enableLights = false,
       this.ledColor,
       this.ledOnMs,
-      this.ledOffMs});
+      this.ledOffMs,
+      this.ticker});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -170,7 +174,8 @@ class AndroidNotificationDetails {
       'ledColorGreen': ledColor?.green,
       'ledColorBlue': ledColor?.blue,
       'ledOnMs': ledOnMs,
-      'ledOffMs': ledOffMs
+      'ledOffMs': ledOffMs,
+      'ticker': ticker
     };
   }
 }

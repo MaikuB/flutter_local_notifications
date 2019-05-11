@@ -221,13 +221,13 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High);
+        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
-        payload: 'item x', ticker: 'ticker');
+        payload: 'item x');
   }
 
   Future<void> _cancelNotification() async {

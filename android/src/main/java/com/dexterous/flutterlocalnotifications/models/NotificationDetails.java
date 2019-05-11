@@ -95,12 +95,12 @@ public class NotificationDetails {
     public static final String ID = "id";
     public static final String TITLE = "title";
     public static final String BODY = "body";
+
     public static final String TICKER = "ticker";
 
     public Integer id;
     public String title;
     public String body;
-    public String ticker;
     public String icon;
     public String channelId = "Default_Channel_Id";
     public String channelName;
@@ -138,6 +138,7 @@ public class NotificationDetails {
     public Integer ledColor;
     public Integer ledOnMs;
     public Integer ledOffMs;
+    public String ticker;
 
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted.
@@ -149,7 +150,6 @@ public class NotificationDetails {
         notificationDetails.id = (Integer) arguments.get(ID);
         notificationDetails.title = (String) arguments.get(TITLE);
         notificationDetails.body = (String) arguments.get(BODY);
-        notificationDetails.ticker = (String) arguments.get(TICKER);
         if (arguments.containsKey(MILLISECONDS_SINCE_EPOCH)) {
             notificationDetails.millisecondsSinceEpoch = (Long) arguments.get(MILLISECONDS_SINCE_EPOCH);
         }
@@ -207,6 +207,7 @@ public class NotificationDetails {
                     notificationDetails.largeIconBitmapSource = BitmapSource.values()[argumentValue];
                 }
             }
+            notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
         }
         return notificationDetails;
     }
