@@ -67,7 +67,7 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLoc
 var initializationSettingsAndroid =
     new AndroidInitializationSettings('app_icon');
 var initializationSettingsIOS = new IOSInitializationSettings(
-    onDidReceiveLocalNotification: onDidRecieveLocalNotification);
+    onDidReceiveLocalNotification: onDidReceiveLocalNotification);
 var initializationSettings = new InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
@@ -331,7 +331,7 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
 
 ...
 
-  Future onDidRecieveLocalNotification(
+  Future onDidReceiveLocalNotification(
       int id, String title, String body, String payload) async {
     // display a dialog with the notification details, tap ok to go to another page
     showDialog(
