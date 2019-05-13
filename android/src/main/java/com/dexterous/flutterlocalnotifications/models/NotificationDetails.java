@@ -96,6 +96,8 @@ public class NotificationDetails {
     public static final String TITLE = "title";
     public static final String BODY = "body";
 
+    public static final String TICKER = "ticker";
+
     public Integer id;
     public String title;
     public String body;
@@ -136,6 +138,7 @@ public class NotificationDetails {
     public Integer ledColor;
     public Integer ledOnMs;
     public Integer ledOffMs;
+    public String ticker;
 
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted.
@@ -204,6 +207,7 @@ public class NotificationDetails {
                     notificationDetails.largeIconBitmapSource = BitmapSource.values()[argumentValue];
                 }
             }
+            notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
         }
         return notificationDetails;
     }
