@@ -48,6 +48,8 @@ Note that this plugin aims to provide abstractions for all platforms as opposed 
 * [Javier Lecuona](https://github.com/javiercbk) for submitting the PR that added the ability to have notifications shown daily
 * [Jeff Scaturro](https://github.com/JeffScaturro) for submitting the PR to fix the iOS issue around showing daily and weekly notifications and migrating the plugin to AndroidX
 * [Ian Cavanaugh](https://github.com/icavanaugh95) for helping create a sample to reproduce the problem reported in [issue #88](https://github.com/MaikuB/flutter_local_notifications/issues/88)
+* [Zhang Jing](https://github.com/byrdkm17) for adding 'ticker' support for Android notifications
+* ...and everyone else for their contributions. They are greatly appreciated
 
 ## Raising issues and contributions
 
@@ -93,18 +95,18 @@ In the real world, this payload could represent the id of the item you want to d
 ### Displaying a notification
 
 ```dart
-var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+var androidPlatformChannelSpecifics = AndroidNotificationDetails(
     'your channel id', 'your channel name', 'your channel description',
-    importance: Importance.Max, priority: Priority.High);
-var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-var platformChannelSpecifics = new NotificationDetails(
+    importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+var platformChannelSpecifics = NotificationDetails(
     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.show(
     0, 'plain title', 'plain body', platformChannelSpecifics,
-    payload: 'item id 2');
+    payload: 'item x');
 ```
 
-In this block of code, the details for each platform have been specified. This includes the channel details that is required for Android 8.0+. The payload has been specified ('item id 2'), that will passed back through your application when the user has tapped on a notification. Note that for Android devices that notifications will only in appear in the tray and won't appear as a toast aka heads-up notification unless things like the priority/importance has been set appropriately. Refer to the Android docs (https://developer.android.com/guide/topics/ui/notifiers/notifications.html#Heads-up) for additional information.
+In this block of code, the details for each platform have been specified. This includes the channel details that is required for Android 8.0+. The payload has been specified ('item id 2'), that will passed back through your application when the user has tapped on a notification. Note that for Android devices that notifications will only in appear in the tray and won't appear as a toast aka heads-up notification unless things like the priority/importance has been set appropriately. Refer to the Android docs (https://developer.android.com/guide/topics/ui/notifiers/notifications.html#Heads-up) for additional information. Note that the "ticker" text is passed here though it is optional and specific to Android. This allows for text to be shown in the status bar on older versions of Android when the notification is shown.
 
 ### Scheduling a notification
 
