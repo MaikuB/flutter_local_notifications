@@ -1,3 +1,6 @@
+# [0.7.1+1]
+* Updated readme to include information about OS limits related to scheduled notifications
+
 # [0.7.1]
 * [Android] Added ability to specify the "ticker" text. Thanks to PR submitted by [Zhang Jing](https://github.com/byrdkm17)
 * Spelling mistake fixes in readme. Thanks to PR submitted by [Wanbok (Wayne) Choi](https://github.com/wanbok)
