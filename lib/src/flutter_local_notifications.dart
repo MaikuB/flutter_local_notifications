@@ -160,6 +160,10 @@ class FlutterLocalNotificationsPlugin {
       RepeatInterval repeatInterval, NotificationDetails notificationDetails,
       {String payload}) async {
     _validateId(id);
+    if(notificationDetails.android.exact || notificationDetails.android.allowWhileIdle) {
+      throw 'scheduling exact or allowedWhileIdle notifications not supported '
+          'with periodicallyShow, try out FlutterLocalNotificationsPlugin.schedule(...)';
+    }
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificNotificationDetails(notificationDetails);
     await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
@@ -178,6 +182,10 @@ class FlutterLocalNotificationsPlugin {
       Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
     _validateId(id);
+    if(notificationDetails.android.exact || notificationDetails.android.allowWhileIdle) {
+      throw 'scheduling exact or allowedWhileIdle notifications not supported '
+          'with showDailyAtTime, try out FlutterLocalNotificationsPlugin.schedule(...)';
+    }
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificNotificationDetails(notificationDetails);
     await _channel.invokeMethod('showDailyAtTime', <String, dynamic>{
@@ -197,6 +205,10 @@ class FlutterLocalNotificationsPlugin {
       Day day, Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
     _validateId(id);
+    if(notificationDetails.android.exact || notificationDetails.android.allowWhileIdle) {
+      throw 'scheduling exact or allowedWhileIdle notifications not supported '
+          'with showWeeklyAtDayAndTime, try out FlutterLocalNotificationsPlugin.schedule(...)';
+    }
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificNotificationDetails(notificationDetails);
     await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, dynamic>{

@@ -257,7 +257,8 @@ class _HomePageState extends State<HomePage> {
         color: const Color.fromARGB(255, 255, 0, 0),
         ledColor: const Color.fromARGB(255, 255, 0, 0),
         ledOnMs: 1000,
-        ledOffMs: 500);
+        ledOffMs: 500,
+    );
     var iOSPlatformChannelSpecifics =
         IOSNotificationDetails(sound: "slow_spring_board.aiff");
     var platformChannelSpecifics = NotificationDetails(

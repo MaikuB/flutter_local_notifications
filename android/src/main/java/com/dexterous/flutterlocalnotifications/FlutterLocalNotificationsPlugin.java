@@ -16,8 +16,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
@@ -241,11 +243,22 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         AlarmManager alarmManager = getAlarmManager(context);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, notificationDetails.millisecondsSinceEpoch, pendingIntent);
+        if(notificationDetails.exact) {
+            if(notificationDetails.allowWhileIdle) {
+                Log.d("FLNotifPlugin", "scheding (exact) (allow while idle)");
+                AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, notificationDetails.millisecondsSinceEpoch, pendingIntent);
+            } else {
+                Log.d("FLNotifPlugin", "scheding (exact)");
+                AlarmManagerCompat.setExact(alarmManager, AlarmManager.RTC_WAKEUP, notificationDetails.millisecondsSinceEpoch, pendingIntent);
+            }
         } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, notificationDetails.millisecondsSinceEpoch, pendingIntent);
-
+            if(notificationDetails.allowWhileIdle) {
+                Log.d("FLNotifPlugin", "scheding (allow while idle)");
+                AlarmManagerCompat.setAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, notificationDetails.millisecondsSinceEpoch, pendingIntent);
+            } else {
+                Log.d("FLNotifPlugin", "scheding");
+                alarmManager.set(AlarmManager.RTC_WAKEUP, notificationDetails.millisecondsSinceEpoch, pendingIntent);
+            }
         }
         if (updateScheduledNotificationsCache) {
             saveScheduledNotification(context, notificationDetails);

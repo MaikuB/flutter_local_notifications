@@ -98,6 +98,9 @@ public class NotificationDetails {
 
     public static final String TICKER = "ticker";
 
+    public static final String EXACT = "exact";
+    public static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
+
     public Integer id;
     public String title;
     public String body;
@@ -139,6 +142,8 @@ public class NotificationDetails {
     public Integer ledOnMs;
     public Integer ledOffMs;
     public String ticker;
+    public boolean exact;
+    public boolean allowWhileIdle;
 
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted.
@@ -208,6 +213,8 @@ public class NotificationDetails {
                 }
             }
             notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
+            notificationDetails.exact = (boolean) platformChannelSpecifics.get(EXACT);
+            notificationDetails.allowWhileIdle = (boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
         }
         return notificationDetails;
     }
