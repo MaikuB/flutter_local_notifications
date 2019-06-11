@@ -1,3 +1,6 @@
+# [0.7.1+2]
+* Started adding Cirrus CI configuration and include CI status badge as part of readme
+
 # [0.7.1+1]
 * Updated readme to include information about OS limits related to scheduled notifications
 
