@@ -1,3 +1,6 @@
+# [0.7.1+3]
+* Fix build status badge
+
 # [0.7.1+2]
 * Started adding Cirrus CI configuration and include CI status badge as part of readme
 
