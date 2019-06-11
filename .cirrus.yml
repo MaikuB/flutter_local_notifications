@@ -1,7 +1,20 @@
 container:
   image: cirrusci/flutter:stable
 
+build_example_android_task:
+  build_script:
+    - cd example
+    - flutter build apk
+
+build_example_ios_task:
+  build_script:
+    - cd example
+    - flutter build ios
+
 test_task:
   pub_cache:
     folder: ~/.pub-cache
   test_script: flutter test
+
+publish_dry_run_task:
+  publish_dry_run_script: flutter pub pub publish --dry-run
