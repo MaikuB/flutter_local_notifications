@@ -18,6 +18,8 @@ build_example_ios_task:
     - flutter build ios --no-codesign
 
 test_task:
+  container:
+    image: cirrusci/flutter:stable
   pub_cache:
     folder: ~/.pub-cache
   test_script: flutter test
