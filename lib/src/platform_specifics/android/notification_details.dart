@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 import 'enums.dart';
 import 'styles/style_information.dart';
 import 'styles/default_style_information.dart';
@@ -178,4 +180,84 @@ class AndroidNotificationDetails {
       'ticker': ticker
     };
   }
+}
+
+/// Configures a scheduled notification on Android
+class ScheduledAndroidNotificationDetails extends AndroidNotificationDetails {
+
+  /// The precision of the scheduled notification.  
+  /// See [the AlarmManager documentation](https://developer.android.com/reference/android/app/AlarmManager.html).
+  ScheduledNotificationPrecision precision;
+
+  ScheduledAndroidNotificationDetails(
+    String channelId, String channelName, String channelDescription,
+    //Inexact is recommended to preserve battery
+    {this.precision = ScheduledNotificationPrecision.Inexact,
+    String icon,
+    Importance importance = Importance.Default,
+    Priority priority = Priority.Default,
+    AndroidNotificationStyle style = AndroidNotificationStyle.Default,
+    StyleInformation styleInformation,
+    bool playSound = true,
+    String sound,
+    bool enableVibration,
+    Int64List vibrationPattern,
+    String groupKey,
+    bool setAsGroupSummary,
+    GroupAlertBehavior groupAlertBehavior = GroupAlertBehavior.All,
+    bool autoCancel = true,
+    bool ongoing,
+    Color color,
+    String largeIcon,
+    BitmapSource largeIconBitmapSource,
+    bool onlyAlertOnce,
+    bool channelShowBadge = true,
+    bool showProgress = false,
+    int maxProgress = 0,
+    int progress = 0,
+    bool indeterminate = false,
+    AndroidNotificationChannelAction channelAction = AndroidNotificationChannelAction.CreateIfNotExists,
+    bool enableLights = false,
+    Color ledColor,
+    int ledOnMs,
+    int ledOffMs,
+    String ticker}) : 
+      // TODO: is there a better way to do this that is less verbose? And doesn't require re-specifying defaults?
+      super(
+        channelId, channelName, channelDescription,
+        icon: icon,
+        importance: importance,
+        priority: priority,
+        style: style,
+        styleInformation: styleInformation,
+        playSound: playSound,
+        sound: sound,
+        enableVibration: enableVibration,
+        vibrationPattern: vibrationPattern,
+        groupKey: groupKey,
+        setAsGroupSummary: setAsGroupSummary,
+        groupAlertBehavior: groupAlertBehavior,
+        autoCancel: autoCancel,
+        ongoing: ongoing,
+        color: color,
+        largeIcon: largeIcon,
+        largeIconBitmapSource: largeIconBitmapSource,
+        onlyAlertOnce: onlyAlertOnce,
+        channelShowBadge: channelShowBadge,
+        showProgress: showProgress,
+        maxProgress: maxProgress,
+        progress: progress,
+        indeterminate: indeterminate,
+        channelAction: channelAction,
+        enableLights: enableLights,
+        ledColor: ledColor,
+        ledOnMs: ledOnMs,
+        ledOffMs: ledOffMs,
+        ticker: ticker
+      );
+
+      @override
+      Map<String, dynamic> toMap() {
+        return super.toMap()..addEntries([MapEntry('precision', precision.index)]);
+      }
 }

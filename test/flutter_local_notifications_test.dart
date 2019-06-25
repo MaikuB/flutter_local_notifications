@@ -108,7 +108,7 @@ void main() {
           DateTime.now().add(Duration(seconds: 5));
 
       AndroidNotificationDetails androidPlatformChannelSpecifics =
-          AndroidNotificationDetails('your other channel id',
+          ScheduledAndroidNotificationDetails('your other channel id',
               'your other channel name', 'your other channel description');
 
       NotificationDetails platformChannelSpecifics =

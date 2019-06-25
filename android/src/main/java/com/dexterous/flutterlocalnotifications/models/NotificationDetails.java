@@ -97,6 +97,8 @@ public class NotificationDetails {
     public static final String BODY = "body";
 
     public static final String TICKER = "ticker";
+    
+    public static final String PRECISION = "precision";
 
     public Integer id;
     public String title;
@@ -139,6 +141,7 @@ public class NotificationDetails {
     public Integer ledOnMs;
     public Integer ledOffMs;
     public String ticker;
+    public Integer precision;
 
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted.
@@ -208,6 +211,9 @@ public class NotificationDetails {
                 }
             }
             notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
+            if (platformChannelSpecifics.containsKey(PRECISION)) {
+                notificationDetails.precision = (Integer) platformChannelSpecifics.get(PRECISION);
+            }
         }
         return notificationDetails;
     }

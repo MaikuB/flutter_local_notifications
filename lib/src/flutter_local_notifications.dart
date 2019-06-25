@@ -7,6 +7,8 @@ import 'initialization_settings.dart';
 import 'notification_app_launch_details.dart';
 import 'notification_details.dart';
 import 'pending_notification_request.dart';
+import 'platform_specifics/android/notification_details.dart' show ScheduledAndroidNotificationDetails;
+import 'platform_specifics/android/enums.dart' show ScheduledNotificationPrecision;
 
 /// Signature of callback passed to [initialize]. Callback triggered when user taps on a notification
 typedef SelectNotificationCallback = Future<dynamic> Function(String payload);
@@ -144,6 +146,11 @@ class FlutterLocalNotificationsPlugin {
     _validateId(id);
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    //TODO: This prevents breaking change but not sure if ideal. However the change to inexact as default may be breaking.
+    if (notificationDetails.android is! ScheduledAndroidNotificationDetails) {
+      print("AndroidNotificationDetails should instead be an instance of ScheduledAndroidNotificationDetails. The default inexact precision will be used.");
+      serializedPlatformSpecifics['precision'] = ScheduledNotificationPrecision.Inexact.index;
+    }
     await _channel.invokeMethod('schedule', <String, dynamic>{
       'id': id,
       'title': title,
