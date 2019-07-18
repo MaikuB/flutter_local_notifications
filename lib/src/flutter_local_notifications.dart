@@ -66,15 +66,15 @@ class FlutterLocalNotificationsPlugin {
   factory FlutterLocalNotificationsPlugin() => _instance;
 
   @visibleForTesting
-  FlutterLocalNotificationsPlugin.private(
-      MethodChannel channel, Platform platform)
+  FlutterLocalNotificationsPlugin.private(MethodChannel channel,
+      Platform platform)
       : _channel = channel,
         _platform = platform;
 
   static final FlutterLocalNotificationsPlugin _instance =
-      FlutterLocalNotificationsPlugin.private(
-          const MethodChannel('dexterous.com/flutter/local_notifications'),
-          const LocalPlatform());
+  FlutterLocalNotificationsPlugin.private(
+      const MethodChannel('dexterous.com/flutter/local_notifications'),
+      const LocalPlatform());
 
   final MethodChannel _channel;
   final Platform _platform;
@@ -90,7 +90,7 @@ class FlutterLocalNotificationsPlugin {
     didReceiveLocalNotificationCallback =
         initializationSettings?.ios?.onDidReceiveLocalNotification;
     var serializedPlatformSpecifics =
-        _retrievePlatformSpecificInitializationSettings(initializationSettings);
+    _retrievePlatformSpecificInitializationSettings(initializationSettings);
     _channel.setMethodCallHandler(_handleMethod);
     /*final CallbackHandle callback =
         PluginUtilities.getCallbackHandle(_callbackDispatcher);
@@ -100,7 +100,7 @@ class FlutterLocalNotificationsPlugin {
           PluginUtilities.getCallbackHandle(onShowNotification).toRawHandle();
     }*/
     var result =
-        await _channel.invokeMethod('initialize', serializedPlatformSpecifics);
+    await _channel.invokeMethod('initialize', serializedPlatformSpecifics);
     return result;
   }
 
@@ -116,7 +116,7 @@ class FlutterLocalNotificationsPlugin {
       {String payload}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
-        _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    _retrievePlatformSpecificNotificationDetails(notificationDetails);
     await _channel.invokeMethod('show', <String, dynamic>{
       'id': id,
       'title': title,
@@ -138,12 +138,17 @@ class FlutterLocalNotificationsPlugin {
   }
 
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
+  /// The [androidAllowWhileIdle] parameter is Android-specific and determines if the notification should still be shown at the specified time
+  /// even when in a low-power idle mode.
   Future<void> schedule(int id, String title, String body,
       DateTime scheduledDate, NotificationDetails notificationDetails,
-      {String payload}) async {
+      {String payload, bool androidAllowWhileIdle = false}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
-        _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    if (_platform.isAndroid) {
+      serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
+    }
     await _channel.invokeMethod('schedule', <String, dynamic>{
       'id': id,
       'title': title,
@@ -161,12 +166,14 @@ class FlutterLocalNotificationsPlugin {
       {String payload}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
-        _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    _retrievePlatformSpecificNotificationDetails(notificationDetails);
     await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': DateTime
+          .now()
+          .millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
@@ -179,12 +186,14 @@ class FlutterLocalNotificationsPlugin {
       {String payload}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
-        _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    _retrievePlatformSpecificNotificationDetails(notificationDetails);
     await _channel.invokeMethod('showDailyAtTime', <String, dynamic>{
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': DateTime
+          .now()
+          .millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Daily.index,
       'repeatTime': notificationTime.toMap(),
       'platformSpecifics': serializedPlatformSpecifics,
@@ -198,12 +207,14 @@ class FlutterLocalNotificationsPlugin {
       {String payload}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
-        _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    _retrievePlatformSpecificNotificationDetails(notificationDetails);
     await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, dynamic>{
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': DateTime
+          .now()
+          .millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Weekly.index,
       'repeatTime': notificationTime.toMap(),
       'day': day.value,
@@ -215,9 +226,10 @@ class FlutterLocalNotificationsPlugin {
   /// Returns a list of notifications pending to be delivered/shown
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() async {
     final List<Map<dynamic, dynamic>> pendingNotifications =
-        await _channel.invokeListMethod('pendingNotificationRequests');
+    await _channel.invokeListMethod('pendingNotificationRequests');
     return pendingNotifications
-        .map((pendingNotification) => PendingNotificationRequest(
+        .map((pendingNotification) =>
+        PendingNotificationRequest(
             pendingNotification['id'],
             pendingNotification['title'],
             pendingNotification['body'],

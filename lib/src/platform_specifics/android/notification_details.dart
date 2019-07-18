@@ -104,9 +104,6 @@ class AndroidNotificationDetails {
   /// The action to take for managing notification channels. Defaults to creating the notification channel using the provided details if it doesn't exist
   AndroidNotificationChannelAction channelAction;
 
-  /// The precision on scheduled notifications on android
-  ScheduledAndroidNotificationPrecision scheduledAndroidNotificationPrecision;
-
   AndroidNotificationDetails(
       this.channelId, this.channelName, this.channelDescription,
       {this.icon,
@@ -137,8 +134,7 @@ class AndroidNotificationDetails {
       this.ledColor,
       this.ledOnMs,
       this.ledOffMs,
-      this.ticker,
-      this.scheduledAndroidNotificationPrecision = ScheduledAndroidNotificationPrecision.Inexact});
+      this.ticker});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -181,8 +177,7 @@ class AndroidNotificationDetails {
       'ledColorBlue': ledColor?.blue,
       'ledOnMs': ledOnMs,
       'ledOffMs': ledOffMs,
-      'ticker': ticker,
-      'scheduledAndroidNotificationPrecision': scheduledAndroidNotificationPrecision
+      'ticker': ticker
     };
   }
 }

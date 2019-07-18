@@ -6,7 +6,6 @@ import android.os.Build;
 import com.dexterous.flutterlocalnotifications.BitmapSource;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.RepeatInterval;
-import com.dexterous.flutterlocalnotifications.ScheduledNotificationPrecision;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
@@ -98,8 +97,7 @@ public class NotificationDetails {
     public static final String BODY = "body";
 
     public static final String TICKER = "ticker";
-    
-    public static final String PRECISION = "scheduledAndroidNotificationPrecision";
+    public static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
 
     public Integer id;
     public String title;
@@ -142,7 +140,7 @@ public class NotificationDetails {
     public Integer ledOnMs;
     public Integer ledOffMs;
     public String ticker;
-    public ScheduledNotificationPrecision scheduledNotificationPrecision;
+    public Boolean allowWhileIdle;
 
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted.
@@ -212,12 +210,7 @@ public class NotificationDetails {
                 }
             }
             notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
-            if (platformChannelSpecifics.containsKey(PRECISION)) {
-                Integer argumentValue = (Integer) platformChannelSpecifics.get(PRECISION);
-                if (argumentValue != null) {
-                    notificationDetails.scheduledNotificationPrecision = ScheduledNotificationPrecision.values()[argumentValue];
-                }
-            }
+            notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
         }
         return notificationDetails;
     }
