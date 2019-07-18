@@ -131,6 +131,8 @@ await flutterLocalNotificationsPlugin.schedule(
     platformChannelSpecifics);
 ```
 
+Note that on Android devices, the default behaviour is that the notification may not be delivered at the specified time when the device in a low-power idle mode. This behaviour can be changed by setting the optional parameter named `androidAllowWhileIdle` to true when calling the `schedule` method.
+
 ### Periodically show a notification with a specified interval
 
 ```dart
