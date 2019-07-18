@@ -60,10 +60,6 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  * FlutterLocalNotificationsPlugin
  */
 public class FlutterLocalNotificationsPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener {
-    /*public static final String ON_NOTIFICATION_ACTION = "onNotification";
-    public static final String ON_NOTIFICATION_ARGS = "onNotificationArgs";
-    public static final String CALLBACK_DISPATCHER = "callbackDispatcher";
-    public static final String ON_NOTIFICATION_CALLBACK_DISPATCHER = "onNotificationCallbackDispatcher";*/
     public static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
     private static final String DRAWABLE = "drawable";
     private static final String DEFAULT_ICON = "defaultIcon";
@@ -71,7 +67,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
     private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
-    private static final String INITIALIZE_HEADLESS_SERVICE_METHOD = "initializeHeadlessService";
     private static final String SHOW_METHOD = "show";
     private static final String CANCEL_METHOD = "cancel";
     private static final String CANCEL_ALL_METHOD = "cancelAll";
@@ -603,51 +598,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         Notification notification = createNotification(context, notificationDetails);
         NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
         notificationManagerCompat.notify(notificationDetails.id, notification);
-        /*SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        if(sharedPreferences.contains(ON_NOTIFICATION_CALLBACK_DISPATCHER)) {
-            long callbackHandle = sharedPreferences.getLong(ON_NOTIFICATION_CALLBACK_DISPATCHER, 0);
-            HashMap<String, Object> callbackArgs = new HashMap<>();
-            callbackArgs.put(CALLBACK_DISPATCHER, callbackHandle);
-            callbackArgs.put(NotificationDetails.ID, notificationDetails.id);
-            callbackArgs.put(NotificationDetails.TITLE, notificationDetails.title);
-            callbackArgs.put(NotificationDetails.BODY, notificationDetails.body);
-            callbackArgs.put(PAYLOAD, notificationDetails.payload);
-            Intent intent = new Intent(context, NotificationService.class);
-            intent.setAction(ON_NOTIFICATION_ACTION);
-            intent.putExtra(ON_NOTIFICATION_ARGS, callbackArgs);
-            NotificationService.enqueueWork(context, intent);
-        }*/
     }
-
-    /*private void initializeHeadlessService(MethodCall call, Result result) {
-        Map<String, Object> arguments = call.arguments();
-        SharedPreferences sharedPreferences = registrar.context().getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        if(arguments.containsKey(CALLBACK_DISPATCHER)) {
-            Object callbackDispatcher = arguments.get(CALLBACK_DISPATCHER);
-            if (callbackDispatcher instanceof Long) {
-                editor.putLong(CALLBACK_DISPATCHER, (Long) callbackDispatcher);
-            } else if (callbackDispatcher instanceof Integer) {
-                editor.putLong(CALLBACK_DISPATCHER, (Integer) callbackDispatcher);
-            }
-        } else if(sharedPreferences.contains(CALLBACK_DISPATCHER)){
-            editor.remove(CALLBACK_DISPATCHER);
-        }
-
-        if(arguments.containsKey(ON_NOTIFICATION_CALLBACK_DISPATCHER)) {
-            Object onNotificationCallbackDispatcher = arguments.get(ON_NOTIFICATION_CALLBACK_DISPATCHER);
-            if(onNotificationCallbackDispatcher instanceof Long) {
-                editor.putLong(ON_NOTIFICATION_CALLBACK_DISPATCHER, (Long)onNotificationCallbackDispatcher);
-            } else if(onNotificationCallbackDispatcher instanceof Integer) {
-                editor.putLong(ON_NOTIFICATION_CALLBACK_DISPATCHER, (Integer)onNotificationCallbackDispatcher);
-            }
-        } else if(sharedPreferences.contains(ON_NOTIFICATION_CALLBACK_DISPATCHER)){
-            editor.remove(ON_NOTIFICATION_CALLBACK_DISPATCHER);
-        }
-
-        editor.commit();
-    }*/
 
     private static NotificationManagerCompat getNotificationManager(Context context) {
         return NotificationManagerCompat.from(context);
