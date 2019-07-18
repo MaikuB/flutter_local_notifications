@@ -1,3 +1,8 @@
+# [0.8.0]
+* Added an optional parameter named `androidAllowWhileIdle` to `schedule` method. This will allow notifications to still display at the specified time when the Android device is in an low-power idle mode.
+* **BREAKING CHANGE** Bump minimum Flutter version to 1.5.0
+* **BREAKING CHANGE** Update Flutter dependencies
+
 # [0.7.1+3]
 * Fix build status badge
 

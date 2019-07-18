@@ -7,7 +7,6 @@ static bool appResumingFromBackground;
 @implementation FlutterLocalNotificationsPlugin
 
 FlutterMethodChannel* channel;
-// FlutterMethodChannel* callbackChannel;
 NSString *const INITIALIZE_METHOD = @"initialize";
 NSString *const INITIALIZED_HEADLESS_SERVICE_METHOD = @"initializedHeadlessService";
 NSString *const SHOW_METHOD = @"show";
@@ -58,7 +57,6 @@ bool playSound;
 bool updateBadge;
 bool initialized;
 bool launchingAppFromNotification;
-FlutterHeadlessDartRunner  *headlessRunner;
 NSUserDefaults *persistentState;
 NSObject<FlutterPluginRegistrar> *_registrar;
 
@@ -79,8 +77,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                binaryMessenger:[registrar messenger]];
     persistentState = [NSUserDefaults standardUserDefaults];
     FlutterLocalNotificationsPlugin* instance = [[FlutterLocalNotificationsPlugin alloc] init];
-    headlessRunner = [[FlutterHeadlessDartRunner alloc] init];
-    // callbackChannel = [FlutterMethodChannel methodChannelWithName:CALLBACK_CHANNEL binaryMessenger:headlessRunner];
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         center.delegate = instance;
@@ -303,29 +299,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         result(FlutterMethodNotImplemented);
     }
 }
-
-/*- (void)startHeadlessService:(int64_t)handle {
-    [self setCallbackDispatcherHandle:handle key:CALLBACK_DISPATCHER];
-    FlutterCallbackInformation *info = [FlutterCallbackCache lookupCallbackInformation:handle];
-    NSAssert(info != nil, @"failed to find callback");
-    NSString *entrypoint = info.callbackName;
-    NSString *uri = info.callbackLibraryPath;
-    [headlessRunner runWithEntrypointAndLibraryUri:entrypoint libraryUri:uri];
-    [_registrar addMethodCallDelegate:self channel:callbackChannel];
-}
-
-- (void)setCallbackDispatcherHandle:(int64_t)handle key:(NSString *)handleKey {
-    [persistentState setObject:[NSNumber numberWithLongLong:handle]
-                         forKey:handleKey];
-}
-
-- (int64_t)getCallbackDispatcherHandle:(NSString *) handleKey {
-    id handle = [persistentState objectForKey:handleKey];
-    if (handle == nil) {
-        return 0;
-    }
-    return [handle longLongValue];
-}*/
 
 - (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge payload:(NSString *)payload {
     NSDictionary *userDict =[NSDictionary dictionaryWithObjectsAndKeys:id, NOTIFICATION_ID, title, TITLE, [NSNumber numberWithBool:presentAlert], PRESENT_ALERT, [NSNumber numberWithBool:presentSound], PRESENT_SOUND, [NSNumber numberWithBool:presentBadge], PRESENT_BADGE, payload, PAYLOAD, nil];
