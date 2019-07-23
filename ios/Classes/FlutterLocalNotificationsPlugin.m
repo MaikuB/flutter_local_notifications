@@ -42,6 +42,7 @@ NSString *const PRESENT_ALERT = @"presentAlert";
 NSString *const PRESENT_SOUND = @"presentSound";
 NSString *const PRESENT_BADGE = @"presentBadge";
 NSString *const MILLISECONDS_SINCE_EPOCH = @"millisecondsSinceEpoch";
+NSString *const MULTIPLY_INTERVAL = @"multiplyInterval";
 NSString *const REPEAT_INTERVAL = @"repeatInterval";
 NSString *const REPEAT_TIME = @"repeatTime";
 NSString *const HOUR = @"hour";
@@ -230,6 +231,11 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
             notificationDetails.day = @([call.arguments[DAY] integerValue]);
         }
         notificationDetails.repeatInterval = @([call.arguments[REPEAT_INTERVAL] integerValue]);
+        if (call.arguments[MULTIPLY_INTERVAL]) {
+            notificationDetails.multiplyInterval = @([call.arguments[MULTIPLY_INTERVAL] integerValue]);
+        } else {
+            notificationDetails.multiplyInterval = @(1);
+        }
     }
     if(@available(iOS 10.0, *)) {
         [self showUserNotification:notificationDetails];
@@ -336,6 +342,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                     timeInterval = 60 * 60 * 24 * 7;
                     break;
             }
+            timeInterval *= [notificationDetails.multiplyInterval integerValue];
             repeats = YES;
         }
         if (notificationDetails.repeatTime != nil) {

@@ -21,6 +21,7 @@ public class NotificationDetails {
     private static final String PAYLOAD = "payload";
     private static final String MILLISECONDS_SINCE_EPOCH = "millisecondsSinceEpoch";
     private static final String CALLED_AT = "calledAt";
+    private static final String MULTIPLY_INTERVAL = "multiplyInterval";
     private static final String REPEAT_INTERVAL = "repeatInterval";
     private static final String REPEAT_TIME = "repeatTime";
     private static final String PLATFORM_SPECIFICS = "platformSpecifics";
@@ -115,6 +116,7 @@ public class NotificationDetails {
     public long[] vibrationPattern;
     public NotificationStyle style;
     public StyleInformation styleInformation;
+    public Integer multiplyInterval;
     public RepeatInterval repeatInterval;
     public Time repeatTime;
     public Long millisecondsSinceEpoch;
@@ -158,10 +160,15 @@ public class NotificationDetails {
         if (arguments.containsKey(CALLED_AT)) {
             notificationDetails.calledAt = (Long) arguments.get(CALLED_AT);
         }
+        if (arguments.containsKey(MULTIPLY_INTERVAL)) {
+            notificationDetails.multiplyInterval = (Integer) arguments.get(MULTIPLY_INTERVAL);
+        } else {
+            notificationDetails.multiplyInterval = 1;
+        }
         if (arguments.containsKey(REPEAT_INTERVAL)) {
             notificationDetails.repeatInterval = RepeatInterval.values()[(Integer) arguments.get(REPEAT_INTERVAL)];
         }
-        if (arguments.containsKey(REPEAT_TIME)) {
+        if (arguments.containsKey(REPEAT_TIME) && arguments.get(REPEAT_TIME) != null) {
             @SuppressWarnings("unchecked")
             Map<String, Object> repeatTimeParams = (Map<String, Object>) arguments.get(REPEAT_TIME);
             notificationDetails.repeatTime = Time.from(repeatTimeParams);

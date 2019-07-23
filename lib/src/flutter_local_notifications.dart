@@ -161,9 +161,11 @@ class FlutterLocalNotificationsPlugin {
 
   /// Periodically show a notification using the specified interval.
   /// For example, specifying a hourly interval means the first time the notification will be an hour after the method has been called and then every hour after that.
+  /// [multiplyInterval] scales intervals. For example, if [repeatInterval] equals [RepeatInterval.Daily]
+  /// and [multiplyInterval] equals 3, the total interval will be 3 days
   Future<void> periodicallyShow(int id, String title, String body,
       RepeatInterval repeatInterval, NotificationDetails notificationDetails,
-      {String payload}) async {
+      {String payload, int multiplyInterval = 1}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
     _retrievePlatformSpecificNotificationDetails(notificationDetails);
@@ -175,6 +177,26 @@ class FlutterLocalNotificationsPlugin {
           .now()
           .millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
+      'multiplyInterval': multiplyInterval,
+      'platformSpecifics': serializedPlatformSpecifics,
+      'payload': payload ?? ''
+    });
+  }
+
+  /// Same as [FlutterLocalNotificationsPlugin.periodicallyShow] with additional parameter [notificationTime]
+  Future<void> showEveryFewDaysAtTime(int id, String title, String body,
+      NotificationDetails notificationDetails, Time notificationTime,
+      {String payload, int multiplyInterval = 1}) async {
+    _validateId(id);
+    var serializedPlatformSpecifics = _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': RepeatInterval.Daily.index,
+      'repeatTime': notificationTime.toMap(),
+      'multiplyInterval': multiplyInterval,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
     });

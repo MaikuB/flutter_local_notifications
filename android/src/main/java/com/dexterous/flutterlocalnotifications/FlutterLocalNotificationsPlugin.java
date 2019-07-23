@@ -274,6 +274,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             default:
                 break;
         }
+        repeatInterval *= notificationDetails.multiplyInterval;
 
         long startTimeMilliseconds = notificationDetails.calledAt;
         if (notificationDetails.repeatTime != null) {

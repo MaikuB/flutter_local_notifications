@@ -83,6 +83,18 @@ class _HomePageState extends State<HomePage> {
                         'Tap on a notification when it appears to trigger navigation'),
                   ),
                   PaddedRaisedButton(
+                    buttonText: 'Show notification every 2 minutes',
+                    onPressed: () async {
+                      await _repeatEveryMinuteNotification(2);
+                    },
+                  ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show notification every 2 days at 12:00',
+                    onPressed: () async {
+                      await _repeatEveryDaysAtTimeNotification(2, Time(12, 0, 0));
+                    },
+                  ),
+                  PaddedRaisedButton(
                     buttonText: 'Show plain notification with payload',
                     onPressed: () async {
                       await _showNotification();
@@ -558,6 +570,31 @@ class _HomePageState extends State<HomePage> {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
         'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
+  }
+
+  Future<void> _repeatEveryMinuteNotification(int minutes) async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'repeating channel id',
+        'repeating channel name',
+        'repeating description');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating every $minutes minutes title',
+        'repeating every $minutes minutes body', RepeatInterval.EveryMinute, platformChannelSpecifics,
+        multiplyInterval: minutes);
+  }
+
+  Future<void> _repeatEveryDaysAtTimeNotification(int days, Time time) async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'repeating channel id',
+        'repeating channel name',
+        'repeating description');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.showEveryFewDaysAtTime(0, 'repeating daily at time title',
+        'repeating daily at time body', platformChannelSpecifics, time, multiplyInterval: days);
   }
 
   Future<void> _showDailyAtTime() async {
