@@ -2,11 +2,22 @@
 #import "NotificationTime.h"
 #import "NotificationDetails.h"
 
-static bool appResumingFromBackground;
 
-@implementation FlutterLocalNotificationsPlugin
 
-FlutterMethodChannel* channel;
+@implementation FlutterLocalNotificationsPlugin{
+    FlutterMethodChannel* _channel;
+    bool appResumingFromBackground;
+    bool displayAlert;
+    bool playSound;
+    bool updateBadge;
+    bool initialized;
+    bool launchingAppFromNotification;
+    NSUserDefaults *persistentState;
+    NSObject<FlutterPluginRegistrar> *_registrar;
+    NSString *launchPayload;
+    UILocalNotification *launchNotification;
+}
+
 NSString *const INITIALIZE_METHOD = @"initialize";
 NSString *const INITIALIZED_HEADLESS_SERVICE_METHOD = @"initializedHeadlessService";
 NSString *const SHOW_METHOD = @"show";
@@ -51,17 +62,7 @@ NSString *const SECOND = @"second";
 NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
 NSString *const NOTIFICATION_LAUNCHED_APP = @"notificationLaunchedApp";
-NSString *launchPayload;
-bool displayAlert;
-bool playSound;
-bool updateBadge;
-bool initialized;
-bool launchingAppFromNotification;
-NSUserDefaults *persistentState;
-NSObject<FlutterPluginRegistrar> *_registrar;
 
-+ (bool) resumingFromBackground { return appResumingFromBackground; }
-UILocalNotification *launchNotification;
 
 typedef NS_ENUM(NSInteger, RepeatInterval) {
     EveryMinute,
@@ -70,20 +71,31 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     Weekly
 };
 
-
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-    channel = [FlutterMethodChannel
+    FlutterMethodChannel *channel = [FlutterMethodChannel
                methodChannelWithName:CHANNEL
                binaryMessenger:[registrar messenger]];
-    persistentState = [NSUserDefaults standardUserDefaults];
-    FlutterLocalNotificationsPlugin* instance = [[FlutterLocalNotificationsPlugin alloc] init];
-    if(@available(iOS 10.0, *)) {
-        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        center.delegate = instance;
-    }
+   
+    FlutterLocalNotificationsPlugin* instance = [[FlutterLocalNotificationsPlugin alloc] initWithChannel:channel registrar:registrar];
     [registrar addApplicationDelegate:instance];
     [registrar addMethodCallDelegate:instance channel:channel];
-    _registrar = registrar;
+}
+
+- (instancetype)initWithChannel:(FlutterMethodChannel *)channel registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+    self = [super init];
+    
+    if (self) {
+        _channel = channel;
+        _registrar = registrar;
+        appResumingFromBackground = YES;
+        
+        persistentState = [NSUserDefaults standardUserDefaults];
+        if(@available(iOS 10.0, *)) {
+            UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+            center.delegate = self;
+        }
+    }
+    return self;
 }
 
 - (void)pendingNotificationRequests:(FlutterResult _Nonnull)result {
@@ -160,8 +172,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
             authorizationOptions += UNAuthorizationOptionBadge;
         }
         [center requestAuthorizationWithOptions:(authorizationOptions) completionHandler:^(BOOL granted, NSError * _Nullable error) {
-            if(launchPayload != nil) {
-                [FlutterLocalNotificationsPlugin handleSelectNotification:launchPayload];
+            if(self->launchPayload != nil) {
+                [self handleSelectNotification:self->launchPayload];
             }
             result(@(granted));
         }];
@@ -180,7 +192,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
         if(launchNotification != nil) {
             NSString *payload = launchNotification.userInfo[PAYLOAD];
-            [channel invokeMethod:@"selectNotification" arguments:payload];
+            [self handleSelectNotification:payload];
         }
         result(@YES);
     }
@@ -464,8 +476,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     completionHandler(presentationOptions);
 }
 
-+ (void)handleSelectNotification:(NSString *)payload {
-    [channel invokeMethod:@"selectNotification" arguments:payload];
+- (void)handleSelectNotification:(NSString *)payload {
+    [_channel invokeMethod:@"selectNotification" arguments:payload];
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
@@ -475,7 +487,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
         
         NSString *payload = (NSString *) response.notification.request.content.userInfo[PAYLOAD];
         if(initialized) {
-            [FlutterLocalNotificationsPlugin handleSelectNotification:payload];
+            [self handleSelectNotification:payload];
         } else {
             launchPayload = payload;
             launchingAppFromNotification = true;
@@ -504,7 +516,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 - (void)application:(UIApplication*)application
 didReceiveLocalNotification:(UILocalNotification*)notification {
     NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:notification.userInfo[NOTIFICATION_ID], ID,notification.userInfo[TITLE], TITLE,notification.alertBody, BODY,  notification.userInfo[PAYLOAD], PAYLOAD, nil];
-    [channel invokeMethod:DID_RECEIVE_LOCAL_NOTIFICATION arguments:arguments];
+    [_channel invokeMethod:DID_RECEIVE_LOCAL_NOTIFICATION arguments:arguments];
 }
 
 @end
