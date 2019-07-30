@@ -50,8 +50,9 @@ NSString *const SECOND = @"second";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
+NSString *const DATA = @"data";
 NSString *const NOTIFICATION_LAUNCHED_APP = @"notificationLaunchedApp";
-NSString *launchPayload;
+
 bool displayAlert;
 bool playSound;
 bool updateBadge;
@@ -61,7 +62,7 @@ NSUserDefaults *persistentState;
 NSObject<FlutterPluginRegistrar> *_registrar;
 
 + (bool) resumingFromBackground { return appResumingFromBackground; }
-UILocalNotification *launchNotification;
+NSDictionary *launchNotification;
 
 typedef NS_ENUM(NSInteger, RepeatInterval) {
     EveryMinute,
@@ -96,7 +97,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                                    @"id" : request.content.userInfo[NOTIFICATION_ID],
                                    @"title" : request.content.title,
                                    @"body" : request.content.body,
-                                   @"payload": request.content.userInfo[PAYLOAD]
+                                   @"payload": request.content.userInfo[PAYLOAD],
+                                   @"data": request.content.userInfo,
                                    }];
             }
             result(pendingNotificationRequests);
@@ -110,7 +112,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                                                      @"id" : localNotification.userInfo[NOTIFICATION_ID],
                                                      @"title" : localNotification.userInfo[TITLE],
                                                      @"body" : localNotification.alertBody,
-                                                     @"payload": localNotification.userInfo[PAYLOAD]
+                                                     @"payload": localNotification.userInfo[PAYLOAD],
+                                                     @"data": localNotification.userInfo
                                                      }];
         }
         result(pendingNotificationRequests);
@@ -160,8 +163,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
             authorizationOptions += UNAuthorizationOptionBadge;
         }
         [center requestAuthorizationWithOptions:(authorizationOptions) completionHandler:^(BOOL granted, NSError * _Nullable error) {
-            if(launchPayload != nil) {
-                [FlutterLocalNotificationsPlugin handleSelectNotification:launchPayload];
+            if(launchNotification != nil) {
+                [channel invokeMethod:@"selectNotification" arguments:launchNotification];
             }
             result(@(granted));
         }];
@@ -179,8 +182,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:notificationTypes categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
         if(launchNotification != nil) {
-            NSString *payload = launchNotification.userInfo[PAYLOAD];
-            [channel invokeMethod:@"selectNotification" arguments:payload];
+            [channel invokeMethod:@"selectNotification" arguments:launchNotification];
         }
         result(@YES);
     }
@@ -282,13 +284,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     } else if([CANCEL_ALL_METHOD isEqualToString:call.method]) {
         [self cancelAllNotifications:result];
     } else if([GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD isEqualToString:call.method]) {
-        NSString *payload;
-        if(launchNotification != nil) {
-            payload = launchNotification.userInfo[PAYLOAD];
-        } else {
-            payload = launchPayload;
-        }
-        NSDictionary *notificationAppLaunchDetails = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:launchingAppFromNotification], NOTIFICATION_LAUNCHED_APP, payload, PAYLOAD, nil];
+        NSDictionary *data = launchNotification;
+        NSDictionary *notificationAppLaunchDetails = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:launchingAppFromNotification], NOTIFICATION_LAUNCHED_APP, data, DATA, nil];
         result(notificationAppLaunchDetails);
     } else if([INITIALIZED_HEADLESS_SERVICE_METHOD isEqualToString:call.method]) {
         result(nil);
@@ -464,8 +461,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     completionHandler(presentationOptions);
 }
 
-+ (void)handleSelectNotification:(NSString *)payload {
-    [channel invokeMethod:@"selectNotification" arguments:payload];
++ (void)handleSelectNotification:(NSDictionary *)data {
+    [channel invokeMethod:@"selectNotification" arguments:data];
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
@@ -473,11 +470,11 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
     if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
         
-        NSString *payload = (NSString *) response.notification.request.content.userInfo[PAYLOAD];
+        NSDictionary *data = response.notification.request.content.userInfo;
         if(initialized) {
-            [FlutterLocalNotificationsPlugin handleSelectNotification:payload];
+            [FlutterLocalNotificationsPlugin handleSelectNotification:data];
         } else {
-            launchPayload = payload;
+            launchNotification = data;
             launchingAppFromNotification = true;
         }
         
@@ -486,7 +483,8 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     if (launchOptions != nil) {
-        launchNotification = (UILocalNotification *)[launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+        UILocalNotification *notification = (UILocalNotification *)[launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+        launchNotification = notification.userInfo;
         launchingAppFromNotification = launchNotification != nil;
     }
     
@@ -503,7 +501,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
 - (void)application:(UIApplication*)application
 didReceiveLocalNotification:(UILocalNotification*)notification {
-    NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:notification.userInfo[NOTIFICATION_ID], ID,notification.userInfo[TITLE], TITLE,notification.alertBody, BODY,  notification.userInfo[PAYLOAD], PAYLOAD, nil];
+    NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:notification.userInfo[NOTIFICATION_ID], ID,notification.userInfo[TITLE], TITLE,notification.alertBody, BODY,  notification.userInfo, DATA, nil];
     [channel invokeMethod:DID_RECEIVE_LOCAL_NOTIFICATION arguments:arguments];
 }
 

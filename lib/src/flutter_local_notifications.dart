@@ -1,19 +1,21 @@
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:platform/platform.dart';
+
 import 'initialization_settings.dart';
 import 'notification_app_launch_details.dart';
 import 'notification_details.dart';
 import 'pending_notification_request.dart';
 
 /// Signature of callback passed to [initialize]. Callback triggered when user taps on a notification
-typedef SelectNotificationCallback = Future<dynamic> Function(String payload);
+typedef SelectNotificationCallback = Future<dynamic> Function(String payload, Map<dynamic, dynamic> data);
 
 // Signature of the callback that is triggered when a notification is shown whilst the app is in the foreground. Applicable to iOS versions < 10 only
 typedef DidReceiveLocalNotificationCallback = Future<dynamic> Function(
-    int id, String title, String body, String payload);
+    int id, String title, String body, String payload, Map<dynamic, dynamic> data);
 
 /// The available intervals for periodically showing notifications
 enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
@@ -107,7 +109,9 @@ class FlutterLocalNotificationsPlugin {
   Future<NotificationAppLaunchDetails> getNotificationAppLaunchDetails() async {
     var result = await _channel.invokeMethod('getNotificationAppLaunchDetails');
     return NotificationAppLaunchDetails(result['notificationLaunchedApp'],
-        result.containsKey('payload') ? result['payload'] : null);
+      result["data"],
+      result["data"]?.containsKey('payload') == true ? result['data']["payload"] : null,
+    );
   }
 
   /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped
@@ -233,7 +237,8 @@ class FlutterLocalNotificationsPlugin {
             pendingNotification['id'],
             pendingNotification['title'],
             pendingNotification['body'],
-            pendingNotification['payload']))
+            pendingNotification['payload'],
+            pendingNotification['data']))
         .toList();
   }
 
@@ -262,14 +267,16 @@ class FlutterLocalNotificationsPlugin {
   Future<void> _handleMethod(MethodCall call) {
     switch (call.method) {
       case 'selectNotification':
-        return selectNotificationCallback(call.arguments);
+        return selectNotificationCallback(call.arguments["payload"], call.arguments);
 
       case 'didReceiveLocalNotification':
         return didReceiveLocalNotificationCallback(
             call.arguments['id'],
             call.arguments['title'],
             call.arguments['body'],
-            call.arguments['payload']);
+            call.arguments['payload'],
+            call.arguments['data']
+        );
       default:
         return Future.error('method not defined');
     }

@@ -5,6 +5,7 @@ class NotificationAppLaunchDetails {
   /// The payload of the notification that launched the app
   final String payload;
 
-  const NotificationAppLaunchDetails(
-      this.didNotificationLaunchApp, this.payload);
+  final Map<dynamic, dynamic> data;
+
+  const NotificationAppLaunchDetails(this.didNotificationLaunchApp, this.data, this.payload);
 }
