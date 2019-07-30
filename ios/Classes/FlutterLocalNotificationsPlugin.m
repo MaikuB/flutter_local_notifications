@@ -90,10 +90,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         appResumingFromBackground = YES;
         
         persistentState = [NSUserDefaults standardUserDefaults];
-        if(@available(iOS 10.0, *)) {
-            UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-            center.delegate = self;
-        }
     }
     return self;
 }
@@ -131,6 +127,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 
 - (void)initialize:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
     appResumingFromBackground = false;
+    
     NSDictionary *arguments = [call arguments];
     if(arguments[DEFAULT_PRESENT_ALERT] != [NSNull null]) {
         displayAlert = [[arguments objectForKey:DEFAULT_PRESENT_ALERT] boolValue];
@@ -159,8 +156,11 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     } else {
         [persistentState removeObjectForKey:ON_NOTIFICATION_CALLBACK_DISPATCHER];
     }*/
+    
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        center.delegate = self;
+        
         UNAuthorizationOptions authorizationOptions = 0;
         if (requestedSoundPermission) {
             authorizationOptions += UNAuthorizationOptionSound;
