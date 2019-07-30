@@ -98,7 +98,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                                    @"title" : request.content.title,
                                    @"body" : request.content.body,
                                    @"payload": request.content.userInfo[PAYLOAD],
-                                   @"data": request.content.userInfo,
                                    }];
             }
             result(pendingNotificationRequests);
@@ -113,7 +112,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                                                      @"title" : localNotification.userInfo[TITLE],
                                                      @"body" : localNotification.alertBody,
                                                      @"payload": localNotification.userInfo[PAYLOAD],
-                                                     @"data": localNotification.userInfo
                                                      }];
         }
         result(pendingNotificationRequests);

@@ -237,8 +237,7 @@ class FlutterLocalNotificationsPlugin {
             pendingNotification['id'],
             pendingNotification['title'],
             pendingNotification['body'],
-            pendingNotification['payload'],
-            pendingNotification['data']))
+            pendingNotification['payload']))
         .toList();
   }
 
