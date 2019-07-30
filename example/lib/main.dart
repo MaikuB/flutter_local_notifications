@@ -523,9 +523,12 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
-  Future<void> onSelectNotification(String payload) async {
+  Future<void> onSelectNotification(String payload, Map<dynamic, dynamic> data) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
+    }
+    if (data != null) {
+      debugPrint('notification data: ' + payload.toString());
     }
 
     await Navigator.push(
@@ -684,7 +687,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> onDidReceiveLocalNotification(
-      int id, String title, String body, String payload) async {
+      int id, String title, String body, String payload, Map<dynamic, dynamic> data) async {
     // display a dialog with the notification details, tap ok to go to another page
     await showDialog(
       context: context,

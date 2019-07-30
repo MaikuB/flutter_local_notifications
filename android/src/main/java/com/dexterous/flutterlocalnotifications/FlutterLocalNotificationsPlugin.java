@@ -14,6 +14,7 @@ import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
 
@@ -48,6 +49,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -821,8 +823,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private Boolean sendNotificationPayloadMessage(Intent intent) {
         if (SELECT_NOTIFICATION.equals(intent.getAction())) {
-            String payload = intent.getStringExtra(PAYLOAD);
-            channel.invokeMethod("selectNotification", payload);
+
+            Map<String, Object> data = new HashMap();
+            data.put(PAYLOAD, intent.getStringExtra(PAYLOAD));
+
+            channel.invokeMethod("selectNotification", data);
             return true;
         }
         return false;
