@@ -25,6 +25,7 @@ NSString *const DID_RECEIVE_LOCAL_NOTIFICATION = @"didReceiveLocalNotification";
 
 NSString *const DAY = @"day";
 
+NSString *const REGISTER_NOTIFICATION_CENTER_DELEGATE = @"registerNotificationCenterDelegate";
 NSString *const REQUEST_SOUND_PERMISSION = @"requestSoundPermission";
 NSString *const REQUEST_ALERT_PERMISSION = @"requestAlertPermission";
 NSString *const REQUEST_BADGE_PERMISSION = @"requestBadgePermission";
@@ -59,6 +60,7 @@ bool initialized;
 bool launchingAppFromNotification;
 NSUserDefaults *persistentState;
 NSObject<FlutterPluginRegistrar> *_registrar;
+FlutterLocalNotificationsPlugin* instance;
 
 + (bool) resumingFromBackground { return appResumingFromBackground; }
 UILocalNotification *launchNotification;
@@ -76,11 +78,11 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                methodChannelWithName:CHANNEL
                binaryMessenger:[registrar messenger]];
     persistentState = [NSUserDefaults standardUserDefaults];
-    FlutterLocalNotificationsPlugin* instance = [[FlutterLocalNotificationsPlugin alloc] init];
-    if(@available(iOS 10.0, *)) {
-        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        center.delegate = instance;
-    }
+    instance = [[FlutterLocalNotificationsPlugin alloc] init];
+    //if(@available(iOS 10.0, *)) {
+        //UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+        //center.delegate = instance;
+    //}
     [registrar addApplicationDelegate:instance];
     [registrar addMethodCallDelegate:instance channel:channel];
     _registrar = registrar;
@@ -132,6 +134,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     bool requestedSoundPermission = false;
     bool requestedAlertPermission = false;
     bool requestedBadgePermission = false;
+    bool registeriOSNotificationCenterDelegate = true;
+
     if (arguments[REQUEST_SOUND_PERMISSION] != [NSNull null]) {
         requestedSoundPermission = [arguments[REQUEST_SOUND_PERMISSION] boolValue];
     }
@@ -141,6 +145,10 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if (arguments[REQUEST_BADGE_PERMISSION] != [NSNull null]) {
         requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
     }
+    if (arguments[REGISTER_NOTIFICATION_CENTER_DELEGATE] != [NSNull null]) {
+        registeriOSNotificationCenterDelegate = [arguments[REGISTER_NOTIFICATION_CENTER_DELEGATE] boolValue];
+
+     }
     /*if (call.arguments[ON_NOTIFICATION_CALLBACK_DISPATCHER] != [NSNull null]) {
         [self startHeadlessService:[call.arguments[CALLBACK_DISPATCHER] longValue]];
         [self setCallbackDispatcherHandle:[call.arguments[ON_NOTIFICATION_CALLBACK_DISPATCHER] longValue] key:ON_NOTIFICATION_CALLBACK_DISPATCHER];
@@ -150,6 +158,11 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         UNAuthorizationOptions authorizationOptions = 0;
+
+        if(registeriOSNotificationCenterDelegate) {
+            UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+            center.delegate = instance;
+        }
         if (requestedSoundPermission) {
             authorizationOptions += UNAuthorizationOptionSound;
         }

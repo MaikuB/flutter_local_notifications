@@ -2,6 +2,9 @@ import '../../flutter_local_notifications.dart';
 
 /// Plugin initialization settings for iOS
 class IOSInitializationSettings {
+  /// Make the registration optional
+  final bool registerNotificationCenterDelegate;
+
   /// Request permission to display an alert. Default value is true.
   final bool requestAlertPermission;
 
@@ -24,7 +27,8 @@ class IOSInitializationSettings {
   final DidReceiveLocalNotificationCallback onDidReceiveLocalNotification;
 
   const IOSInitializationSettings(
-      {this.requestAlertPermission = true,
+      {this.registerNotificationCenterDelegate = true,
+      this.requestAlertPermission = true,
       this.requestSoundPermission = true,
       this.requestBadgePermission = true,
       this.defaultPresentAlert = true,
@@ -34,6 +38,7 @@ class IOSInitializationSettings {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'registerNotificationCenterDelegate': registerNotificationCenterDelegate,
       'requestAlertPermission': requestAlertPermission,
       'requestSoundPermission': requestSoundPermission,
       'requestBadgePermission': requestBadgePermission,
