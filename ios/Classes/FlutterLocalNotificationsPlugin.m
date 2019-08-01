@@ -131,7 +131,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     bool requestedSoundPermission = false;
     bool requestedAlertPermission = false;
     bool requestedBadgePermission = false;
-    bool registeriOSNotificationCenterDelegate = true;
+    bool registerNotificationCenterDelegate = true;
 
     if (arguments[REQUEST_SOUND_PERMISSION] != [NSNull null]) {
         requestedSoundPermission = [arguments[REQUEST_SOUND_PERMISSION] boolValue];
@@ -143,7 +143,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
     }
     if (arguments[REGISTER_NOTIFICATION_CENTER_DELEGATE] != [NSNull null]) {
-        registeriOSNotificationCenterDelegate = [arguments[REGISTER_NOTIFICATION_CENTER_DELEGATE] boolValue];
+        registerNotificationCenterDelegate = [arguments[REGISTER_NOTIFICATION_CENTER_DELEGATE] boolValue];
 
      }
     /*if (call.arguments[ON_NOTIFICATION_CALLBACK_DISPATCHER] != [NSNull null]) {
@@ -156,7 +156,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         UNAuthorizationOptions authorizationOptions = 0;
 
-        if(registeriOSNotificationCenterDelegate) {
+        if (registerNotificationCenterDelegate) {
             UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
             center.delegate = instance;
         }
