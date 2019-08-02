@@ -113,7 +113,8 @@ void main() {
 
       NotificationDetails platformChannelSpecifics =
           NotificationDetails(androidPlatformChannelSpecifics, null);
-      var androidPlatformChannelSpecificsMap = androidPlatformChannelSpecifics.toMap();
+      var androidPlatformChannelSpecificsMap =
+          androidPlatformChannelSpecifics.toMap();
       androidPlatformChannelSpecificsMap['allowWhileIdle'] = false;
       await flutterLocalNotificationsPlugin.schedule(id, title, body,
           scheduledNotificationDateTime, platformChannelSpecifics);

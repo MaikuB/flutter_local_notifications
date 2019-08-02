@@ -49,4 +49,9 @@ class Priority {
 enum GroupAlertBehavior { All, Summary, Children }
 
 /// The precision of scheduled notifications on android
-enum ScheduledAndroidNotificationPrecision { Exact, ExactAndAllowWhileIdle, Inexact, InexactAndAllowWhileIdle }
+enum ScheduledAndroidNotificationPrecision {
+  Exact,
+  ExactAndAllowWhileIdle,
+  Inexact,
+  InexactAndAllowWhileIdle
+}
