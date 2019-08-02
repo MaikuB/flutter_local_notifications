@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PaddedRaisedButton(
                     buttonText:
-                        'Show plain notification with payload and update channel description',
+                        'Show plain notification with payload and update channel description [Android]',
                     onPressed: () async {
                       await _showNotificationWithUpdatedChannelDescription();
                     },
@@ -689,24 +689,24 @@ class _HomePageState extends State<HomePage> {
     await showDialog(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-            title: Text(title),
-            content: Text(body),
-            actions: [
-              CupertinoDialogAction(
-                isDefaultAction: true,
-                child: Text('Ok'),
-                onPressed: () async {
-                  Navigator.of(context, rootNavigator: true).pop();
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SecondScreen(payload),
-                    ),
-                  );
-                },
-              )
-            ],
-          ),
+        title: Text(title),
+        content: Text(body),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: Text('Ok'),
+            onPressed: () async {
+              Navigator.of(context, rootNavigator: true).pop();
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SecondScreen(payload),
+                ),
+              );
+            },
+          )
+        ],
+      ),
     );
   }
 }
