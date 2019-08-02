@@ -1,3 +1,8 @@
+# [0.8.1]
+* [iOS] Accepted PR from [Josh Burton](https://github.com/athornz) that improves ability for plugin to work in multiple isolate by moving state to instance variables
+* [iOS] Add a guard to prevent a scenario from happening where it may still be possible for the `onDidReceiveLocalNotification` callback to trigger on iOS 10+
+* Minor update to readme on raising issues
+
 # [0.8.0]
 * Added an optional parameter named `androidAllowWhileIdle` to `schedule` method. This will allow notifications to still display at the specified time when the Android device is in an low-power idle mode.
 * **BREAKING CHANGE** Bump minimum Flutter version to 1.5.0

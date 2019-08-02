@@ -56,7 +56,7 @@ Note that this plugin aims to provide abstractions for all platforms as opposed 
 
 ## Raising issues and contributions
 
-If you run into issues, please raise them on the GitHub repository. Please do not email them to me as I will be ignoring emails going forward as GitHub is the appropriate place for them. It would also be much appreciated if they could be limited to actual bugs or feature requests. If you're looking at how you could use the plugin to do a particular kind of notification, check the example app provides detailed code samples for each supported feature. Also try to check the README first in case you have missed something e.g. platform-specific setup.
+If you run into issues, please raise them on the GitHub repository. Please do not email them to me as GitHub is the appropriate place for them and allows for members of the community to answer questions, particularly if I miss the email. It would also be much appreciated if they could be limited to actual bugs or feature requests. If you're looking at how you could use the plugin to do a particular kind of notification, check the example app provides detailed code samples for each supported feature. Also try to check the README first in case you have missed something e.g. platform-specific setup.
 
 Contributions are welcome by submitting a PR for me to review. If it's to add new features, appreciate it if you could try to maintain the architecture or try to improve on it. However, do note that I will not take PRs that add methods at the Dart level that don't work on all platforms. However, platform-specific configuration through the use parameters are fine as that's approach being taken via this plugin.
 
