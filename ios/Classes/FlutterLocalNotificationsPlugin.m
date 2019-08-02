@@ -6,7 +6,6 @@
 
 @implementation FlutterLocalNotificationsPlugin{
     FlutterMethodChannel* _channel;
-    bool appResumingFromBackground;
     bool displayAlert;
     bool playSound;
     bool updateBadge;
@@ -87,10 +86,9 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if (self) {
         _channel = channel;
         _registrar = registrar;
-        appResumingFromBackground = YES;
-        
         persistentState = [NSUserDefaults standardUserDefaults];
     }
+
     return self;
 }
 
@@ -126,8 +124,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 }
 
 - (void)initialize:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
-    appResumingFromBackground = false;
-    
     NSDictionary *arguments = [call arguments];
     if(arguments[DEFAULT_PRESENT_ALERT] != [NSNull null]) {
         displayAlert = [[arguments objectForKey:DEFAULT_PRESENT_ALERT] boolValue];
@@ -150,12 +146,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if (arguments[REQUEST_BADGE_PERMISSION] != [NSNull null]) {
         requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
     }
-    /*if (call.arguments[ON_NOTIFICATION_CALLBACK_DISPATCHER] != [NSNull null]) {
-        [self startHeadlessService:[call.arguments[CALLBACK_DISPATCHER] longValue]];
-        [self setCallbackDispatcherHandle:[call.arguments[ON_NOTIFICATION_CALLBACK_DISPATCHER] longValue] key:ON_NOTIFICATION_CALLBACK_DISPATCHER];
-    } else {
-        [persistentState removeObjectForKey:ON_NOTIFICATION_CALLBACK_DISPATCHER];
-    }*/
     
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
@@ -461,18 +451,16 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if(presentAlert) {
         presentationOptions |= UNNotificationPresentationOptionAlert;
     }
+    
     if(presentSound){
         presentationOptions |= UNNotificationPresentationOptionSound;
     }
+    
     if(presentBadge) {
         presentationOptions |= UNNotificationPresentationOptionBadge;
     }
     
-    /*int64_t callback = [self getCallbackDispatcherHandle:ON_NOTIFICATION_CALLBACK_DISPATCHER];
-    if (callback != 0) {
-        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:@(callback),CALLBACK_DISPATCHER, notification.request.content.userInfo[NOTIFICATION_ID], ID, notification.request.content.title, TITLE, notification.request.content.body, BODY, notification.request.content.userInfo[PAYLOAD], PAYLOAD, nil];
-        [callbackChannel invokeMethod:ON_NOTIFICATION_METHOD arguments:arguments];
-    }*/
+
     completionHandler(presentationOptions);
 }
 
@@ -484,7 +472,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
     if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
-        
         NSString *payload = (NSString *) response.notification.request.content.userInfo[PAYLOAD];
         if(initialized) {
             [self handleSelectNotification:payload];
@@ -492,7 +479,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
             launchPayload = payload;
             launchingAppFromNotification = true;
         }
-        
     }
 }
 - (BOOL)application:(UIApplication *)application
@@ -505,16 +491,12 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     return YES;
 }
 
-- (void)applicationDidEnterBackground:(UIApplication *)application {
-    appResumingFromBackground = true;
-}
-
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-    appResumingFromBackground = false;
-}
-
 - (void)application:(UIApplication*)application
 didReceiveLocalNotification:(UILocalNotification*)notification {
+    if(@available(iOS 10.0, *)) {
+        return;
+    }
+
     NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:notification.userInfo[NOTIFICATION_ID], ID,notification.userInfo[TITLE], TITLE,notification.alertBody, BODY,  notification.userInfo[PAYLOAD], PAYLOAD, nil];
     [_channel invokeMethod:DID_RECEIVE_LOCAL_NOTIFICATION arguments:arguments];
 }
