@@ -1,3 +1,7 @@
+# [0.8.1+1]
+* Update comment in example around grouped notifications to clarify that the summary notification ia required for all versions of Android
+* Update email address in pubspec.yaml
+
 # [0.8.1]
 * [iOS] Accepted PR from [Josh Burton](https://github.com/athornz) that improves ability for plugin to work in multiple isolate by moving state to instance variables
 * [iOS] Add a guard to prevent a scenario from happening where it may still be possible for the `onDidReceiveLocalNotification` callback to trigger on iOS 10+
