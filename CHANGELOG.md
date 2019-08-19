@@ -1,3 +1,6 @@
+# [0.8.2]
+* [iOS] Fix issue [295](https://github.com/MaikuB/flutter_local_notifications/issues/295) where `onSelectNotification` callback wasn't trigger when a notification had been tapped on whilst the app was terminated
+
 # [0.8.1+1]
 * Update comment in example around grouped notifications to clarify that the summary notification ia required for all versions of Android
 * Update email address in pubspec.yaml
