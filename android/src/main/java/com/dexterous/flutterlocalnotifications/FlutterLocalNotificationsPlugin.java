@@ -74,6 +74,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
     private static final String SHOW_DAILY_AT_TIME_METHOD = "showDailyAtTime";
     private static final String SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = "showWeeklyAtDayAndTime";
+    private static final String SHOW_CUSTOM_DAY_INTERVAL_AT_TIME_METHOD = "showCustomDayIntervalAtTime";
     private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD = "getNotificationAppLaunchDetails";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
     private static final String PAYLOAD = "payload";
@@ -270,6 +271,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 break;
             case Weekly:
                 repeatInterval = 60000 * 60 * 24 * 7;
+                break;
+            case CustomDayInterval:
+                repeatInterval = 60000 * 60 * 24 * notificationDetails.dayInterval;
                 break;
             default:
                 break;
@@ -626,7 +630,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             }
             case PERIODICALLY_SHOW_METHOD:
             case SHOW_DAILY_AT_TIME_METHOD:
-            case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD: {
+            case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD:
+            case SHOW_CUSTOM_DAY_INTERVAL_AT_TIME_METHOD: {
                 repeat(call, result);
                 break;
             }

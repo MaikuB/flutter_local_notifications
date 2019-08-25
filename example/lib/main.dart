@@ -128,6 +128,13 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
+                    buttonText:
+                        'Repeat notification every other day at approximately 10:00:00 am',
+                    onPressed: () async {
+                      await _showCustomDayIntervalAtTime();
+                    },
+                  ),
+                  PaddedRaisedButton(
                     buttonText: 'Show notification with no sound',
                     onPressed: () async {
                       await _showNotificationWithNoSound();
@@ -592,6 +599,24 @@ class _HomePageState extends State<HomePage> {
         'show weekly title',
         'Weekly notification shown on Monday at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
         Day.Monday,
+        time,
+        platformChannelSpecifics);
+  }
+
+  Future<void> _showCustomDayIntervalAtTime() async {
+    var time = Time(10, 0, 0);
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'show custom day interval channel id',
+        'show custom day interval channel name',
+        'show custom day interval description');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.showCustomDayIntervalAtTime(
+        0,
+        'show custom day interval title',
+        'Custom day interval notification shown every two days at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
+        2,
         time,
         platformChannelSpecifics);
   }

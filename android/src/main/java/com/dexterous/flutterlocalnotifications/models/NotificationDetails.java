@@ -23,6 +23,7 @@ public class NotificationDetails {
     private static final String CALLED_AT = "calledAt";
     private static final String REPEAT_INTERVAL = "repeatInterval";
     private static final String REPEAT_TIME = "repeatTime";
+    private static final String DAY_INTERVAL = "dayInterval";
     private static final String PLATFORM_SPECIFICS = "platformSpecifics";
     private static final String AUTO_CANCEL = "autoCancel";
     private static final String ONGOING = "ongoing";
@@ -126,6 +127,7 @@ public class NotificationDetails {
     public Boolean autoCancel;
     public Boolean ongoing;
     public Integer day;
+    public Integer dayInterval;
     public Integer color;
     public String largeIcon;
     public BitmapSource largeIconBitmapSource;
@@ -168,6 +170,9 @@ public class NotificationDetails {
         }
         if (arguments.containsKey(DAY)) {
             notificationDetails.day = (Integer) arguments.get(DAY);
+        }
+        if (arguments.containsKey(DAY_INTERVAL)) {
+            notificationDetails.dayInterval = (Integer) arguments.get(DAY_INTERVAL);
         }
         @SuppressWarnings("unchecked")
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get(PLATFORM_SPECIFICS);

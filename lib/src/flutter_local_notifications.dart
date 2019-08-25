@@ -16,7 +16,13 @@ typedef DidReceiveLocalNotificationCallback = Future<dynamic> Function(
     int id, String title, String body, String payload);
 
 /// The available intervals for periodically showing notifications
-enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
+enum RepeatInterval {
+  EveryMinute,
+  Hourly,
+  Daily,
+  Weekly,
+  CustomDayInterval,
+}
 
 /// The days of the week
 class Day {
@@ -212,6 +218,32 @@ class FlutterLocalNotificationsPlugin {
       'repeatInterval': RepeatInterval.Weekly.index,
       'repeatTime': notificationTime.toMap(),
       'day': day.value,
+      'platformSpecifics': serializedPlatformSpecifics,
+      'payload': payload ?? ''
+    });
+  }
+
+  /// Shows a notification on the given day interval at the specified time
+  Future<void> showCustomDayIntervalAtTime(
+    int id,
+    String title,
+    String body,
+    int dayInterval,
+    Time notificationTime,
+    NotificationDetails notificationDetails, {
+    String payload,
+  }) async {
+    final serializedPlatformSpecifics =
+        _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    await _channel
+        .invokeMethod('showCustomDayIntervalAtTime', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': RepeatInterval.CustomDayInterval.index,
+      'repeatTime': notificationTime.toMap(),
+      'dayInterval': dayInterval,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
     });

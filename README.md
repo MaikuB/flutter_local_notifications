@@ -17,6 +17,7 @@ A cross platform plugin for displaying local notifications.
 * Periodically show a notification (interval based)
 * Schedule a notification to be shown daily at a specified time
 * Schedule a notification to be shown weekly on a specified day and time
+* Schedule a notification to be shown on a custom day interval at a specified time
 * Retrieve a list of pending notification requests that have been scheduled to be shown in the future
 * Cancelling/removing notification by id or all of them
 * Specify a custom notification sound
@@ -183,6 +184,26 @@ await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
     'show weekly title',
     'Weekly notification shown on Monday at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
     Day.Monday,
+    time,
+    platformChannelSpecifics);
+```
+
+### Periodically show a notification on the given day interval at a specific time
+
+```dart
+var time = Time(10, 0, 0);
+var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    'show custom day interval channel id',
+    'show custom day interval channel name',
+    'show custom day interval description');
+var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+var platformChannelSpecifics = NotificationDetails(
+    androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+await flutterLocalNotificationsPlugin.showCustomDayIntervalAtTime(
+    0,
+    'show custom day interval title',
+    'Custom day interval notification shown every two days at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
+    2,
     time,
     platformChannelSpecifics);
 ```
