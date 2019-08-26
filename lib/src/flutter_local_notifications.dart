@@ -121,7 +121,6 @@ class FlutterLocalNotificationsPlugin {
 
   /// Create a notification channel
   Future<void> createNotificationChannel(NotificationDetails notificationDetails) async {
-    _validateId(id);
     var serializedPlatformSpecifics = _retrievePlatformSpecificNotificationDetails(notificationDetails);
     await _channel
         .invokeMethod('createNotificationChannel', <String, dynamic>{'platformSpecifics': serializedPlatformSpecifics});
