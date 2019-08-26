@@ -103,9 +103,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         this.channel.setMethodCallHandler(this);
     }
 
-    public static void createNotificationChannel(Context context, NotificationDetails notificationDetails) {
-        setupNotificationChannel(context, notificationDetails);
-    }
 
     public static void rescheduleNotifications(Context context) {
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
@@ -612,8 +609,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     public static void showNotification(Context context, NotificationDetails notificationDetails) {
         Notification notification = createNotification(context, notificationDetails);
-        //NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
-        //notificationManagerCompat.notify(notificationDetails.id, notification);
+        NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
+        notificationManagerCompat.notify(notificationDetails.id, notification);
     }
 
     private static NotificationManagerCompat getNotificationManager(Context context) {
@@ -717,7 +714,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         Map<String, Object> arguments = call.arguments();
         NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
         if (notificationDetails != null) {
-            createNotificationChannel(registrar.context(), notificationDetails);
+            createNotification(registrar.context(), notificationDetails);
             result.success(null);
         }
     }
