@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -48,6 +49,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -383,9 +385,16 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private static void setSound(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
         if (BooleanUtils.getValue(notificationDetails.playSound)) {
+            Log.d("SOUND_NOTIFICATION", "SOUND IS FOUND");
             Uri uri = retrieveSoundResourceUri(context, notificationDetails);
+            if(uri != null) {
+                Log.d("SOUND URI", uri.toString());
+            } else {
+                Log.d("SOUND URI", "CANNOT BE FOUND");
+            }
             builder.setSound(uri);
         } else {
+            Log.d("SOUND_NOTIFICATION", "PLAY SOUND IS NOT SET");
             builder.setSound(null);
         }
     }
@@ -572,9 +581,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static Uri retrieveSoundResourceUri(Context context, NotificationDetails notificationDetails) {
         Uri uri;
         if (StringUtils.isNullOrEmpty(notificationDetails.sound)) {
+            Log.d("SOUND_NOTIFICATION", "SOUND IS NOT SET");
             uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         } else {
-
+            Log.d("SOUND_NOTIFICATION", "SOUND IS SET" + notificationDetails.sound);
             int soundResourceId = context.getResources().getIdentifier(notificationDetails.sound, "raw", context.getPackageName());
             return Uri.parse("android.resource://" + context.getPackageName() + "/" + soundResourceId);
         }
