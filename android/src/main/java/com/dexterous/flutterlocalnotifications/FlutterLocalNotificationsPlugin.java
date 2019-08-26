@@ -70,7 +70,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INITIALIZE_METHOD = "initialize";
     private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
     private static final String SHOW_METHOD = "show";
-    private static final String CREATE_CHANNEL = "createChannel";
+    private static final String CREATE_NOTIFICATION_CHANNEL = "createNotificationChannel";
     private static final String CANCEL_METHOD = "cancel";
     private static final String CANCEL_ALL_METHOD = "cancelAll";
     private static final String SCHEDULE_METHOD = "schedule";
@@ -636,7 +636,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 show(call, result);
                 break;
             }
-            case CREATE_CHANNEL: {
+            case CREATE_NOTIFICATION_CHANNEL: {
                 createNotificationChannel(call, result);
                 break;
             }
