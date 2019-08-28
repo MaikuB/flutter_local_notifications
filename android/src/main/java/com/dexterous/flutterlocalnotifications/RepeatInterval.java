@@ -4,6 +4,5 @@ public enum RepeatInterval {
     EveryMinute,
     Hourly,
     Daily,
-    Weekly,
-    CustomDayInterval
+    Weekly
 }

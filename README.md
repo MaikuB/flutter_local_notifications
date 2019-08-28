@@ -168,6 +168,27 @@ await flutterLocalNotificationsPlugin.showDailyAtTime(
     platformChannelSpecifics);
 ```
 
+### Periodically show a notification on the given day interval at a specific time
+
+```dart
+var time = Time(10, 0, 0);
+var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    'repeatEveryOtherDayAtTime channel id',
+    'repeatEveryOtherDayAtTime channel name',
+    'repeatEveryOtherDayAtTime description',);
+var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+var platformChannelSpecifics = NotificationDetails(
+    androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+await flutterLocalNotificationsPlugin.showDailyAtTime(
+    0,
+    'show every other day title',
+    'Every other day interval notification shown every two days at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
+    time,
+    platformChannelSpecifics,
+    dayInterval: 2,
+);
+```
+
 ### Show a weekly notification on specific day and time
 
 ```dart
@@ -184,26 +205,6 @@ await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
     'show weekly title',
     'Weekly notification shown on Monday at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
     Day.Monday,
-    time,
-    platformChannelSpecifics);
-```
-
-### Periodically show a notification on the given day interval at a specific time
-
-```dart
-var time = Time(10, 0, 0);
-var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-    'show custom day interval channel id',
-    'show custom day interval channel name',
-    'show custom day interval description');
-var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-var platformChannelSpecifics = NotificationDetails(
-    androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-await flutterLocalNotificationsPlugin.showCustomDayIntervalAtTime(
-    0,
-    'show custom day interval title',
-    'Custom day interval notification shown every two days at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
-    2,
     time,
     platformChannelSpecifics);
 ```
