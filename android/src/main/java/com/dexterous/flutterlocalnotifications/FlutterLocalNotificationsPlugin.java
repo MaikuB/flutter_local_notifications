@@ -258,6 +258,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
         AlarmManager alarmManager = getAlarmManager(context);
         long repeatInterval = 0;
+        int dayInterval = notificationDetails.dayInterval == null ? 1 : notificationDetails.dayInterval;
         switch (notificationDetails.repeatInterval) {
             case EveryMinute:
                 repeatInterval = 60000;
@@ -266,7 +267,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 repeatInterval = 60000 * 60;
                 break;
             case Daily:
-                repeatInterval = 60000 * 60 * 24 * notificationDetails.dayInterval;
+                repeatInterval = 60000 * 60 * 24 * dayInterval;
                 break;
             case Weekly:
                 repeatInterval = 60000 * 60 * 24 * 7;
