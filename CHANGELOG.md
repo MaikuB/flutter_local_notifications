@@ -1,3 +1,15 @@
+# [0.8.2]
+* [iOS] Fix issue [295](https://github.com/MaikuB/flutter_local_notifications/issues/295) where `onSelectNotification` callback wasn't trigger when a notification had been tapped on whilst the app was terminated
+
+# [0.8.1+1]
+* Update comment in example around grouped notifications to clarify that the summary notification ia required for all versions of Android
+* Update email address in pubspec.yaml
+
+# [0.8.1]
+* [iOS] Accepted PR from [Josh Burton](https://github.com/athornz) that improves ability for plugin to work in multiple isolate by moving state to instance variables
+* [iOS] Add a guard to prevent a scenario from happening where it may still be possible for the `onDidReceiveLocalNotification` callback to trigger on iOS 10+
+* Minor update to readme on raising issues and correction on payload information
+
 # [0.8.0]
 * Added an optional parameter named `androidAllowWhileIdle` to `schedule` method. This will allow notifications to still display at the specified time when the Android device is in an low-power idle mode.
 * **BREAKING CHANGE** Bump minimum Flutter version to 1.5.0

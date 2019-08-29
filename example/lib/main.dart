@@ -85,7 +85,7 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
-                    buttonText: 'Show plain notification with payload and update channel description',
+                    buttonText: 'Show plain notification with payload and update channel description [Android]',
                     onPressed: () async {
                       await _showNotificationWithUpdatedChannelDescription();
                     },
@@ -392,7 +392,8 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.show(
         2, 'Jeff Chang', 'Please join us to celebrate the...', secondNotificationPlatformSpecifics);
 
-    // create the summary notification required for older devices that pre-date Android 7.0 (API level 24)
+    // create the summary notification to support older devices that pre-date Android 7.0 (API level 24).
+    // this is required is regardless of which versions of Android your application is going to support
     var lines = List<String>();
     lines.add('Alex Faarborg  Check this out');
     lines.add('Jeff Chang    Launch Party');
