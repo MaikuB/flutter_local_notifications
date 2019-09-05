@@ -330,7 +330,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if(notificationDetails.secondsSinceEpoch == nil) {
         NSTimeInterval timeInterval = 0.1;
         Boolean repeats = NO;
-        NSInteger dayInterval = notificationDetails.dayInterval == nil ? 1 : [notificationDetails.dayInterval integerValue];
         if(notificationDetails.repeatInterval != nil) {
             switch([notificationDetails.repeatInterval integerValue]) {
                 case EveryMinute:
@@ -340,7 +339,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                     timeInterval = 60 * 60;
                     break;
                 case Daily:
-                    timeInterval = 60 * 60 * 24 * dayInterval;
+                    timeInterval = 60 * 60 * 24 * (notificationDetails.dayInterval == nil ? 1 : [notificationDetails.dayInterval integerValue]);
                     break;
                 case Weekly:
                     timeInterval = 60 * 60 * 24 * 7;
@@ -404,7 +403,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if(notificationDetails.secondsSinceEpoch == nil) {
         if(notificationDetails.repeatInterval != nil) {
             NSTimeInterval timeInterval = 0;
-            NSInteger dayInterval = notificationDetails.dayInterval == nil ? 1 : [notificationDetails.dayInterval integerValue];
             switch([notificationDetails.repeatInterval integerValue]) {
                 case EveryMinute:
                     timeInterval = 60;
@@ -415,7 +413,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                     notification.repeatInterval = NSCalendarUnitHour;
                     break;
                 case Daily:
-                    timeInterval = 60 * 60 * 24 * dayInterval;
+                    timeInterval = 60 * 60 * 24 * (notificationDetails.dayInterval == nil ? 1 : [notificationDetails.dayInterval integerValue]);
                     notification.repeatInterval = NSCalendarUnitDay;
                     break;
                 case Weekly:
