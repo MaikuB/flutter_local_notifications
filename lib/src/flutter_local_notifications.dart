@@ -1,8 +1,10 @@
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:platform/platform.dart';
+
 import 'initialization_settings.dart';
 import 'notification_app_launch_details.dart';
 import 'notification_details.dart';
@@ -102,6 +104,21 @@ class FlutterLocalNotificationsPlugin {
     var result =
         await _channel.invokeMethod('initialize', serializedPlatformSpecifics);
     return result;
+  }
+
+  Future<bool> requestPermissions({
+    bool requestSoundPermission,
+    bool requestAlertPermission,
+    bool requestBadgePermission,
+  }) {
+    if (_platform.isAndroid) {
+      return Future.value(true);
+    }
+    return _channel.invokeMethod('requestPermissions', {
+      'requestSoundPermission': requestSoundPermission,
+      'requestAlertPermission': requestAlertPermission,
+      'requestBadgePermission': requestBadgePermission,
+    });
   }
 
   Future<NotificationAppLaunchDetails> getNotificationAppLaunchDetails() async {

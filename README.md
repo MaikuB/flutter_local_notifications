@@ -250,6 +250,42 @@ await flutterLocalNotificationsPlugin.show(
     3, 'Attention', 'Two new messages', platformChannelSpecifics);
 ```
 
+### [iOS only] Requesting notification permission
+
+By default this plugin will request notification permission when it is initialized. `IOSInitializationSettings` have three named parameters:
+1. `requestSoundPermission`,
+1. `requestBadgePermission`,
+1. `requestAlertPermission`
+that control this behaviour.
+
+If you want to delay permission request, set all of the above to false, then later call `requestPermissions` method.
+
+```dart
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+var initializationSettingsAndroid =
+    new AndroidInitializationSettings('app_icon');
+var initializationSettingsIOS = new IOSInitializationSettings(
+        requestSoundPermission: false,
+        requestBadgePermission: false,
+        requestAlertPermission: false,
+        onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+    );
+var initializationSettings = new InitializationSettings(
+    initializationSettingsAndroid, initializationSettingsIOS);
+flutterLocalNotificationsPlugin.initialize(initializationSettings,
+    onSelectNotification: onSelectNotification);
+
+/* some logic */
+
+var result = await flutterLocalNotificationsPlugin.requestPermissions(
+        requestSoundPermission: false,
+        requestBadgePermission: false,
+        requestAlertPermission: false,
+    );
+
+print('notification permissions were ${result ? '' : 'not '}granted');
+```
+
 ### Cancelling/deleting a notification
 
 ```dart

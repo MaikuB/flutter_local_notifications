@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -207,6 +208,12 @@ class _HomePageState extends State<HomePage> {
                     buttonText: 'Cancel all notifications',
                     onPressed: () async {
                       await _cancelAllNotifications();
+                    },
+                  ),
+                  PaddedRaisedButton(
+                    buttonText: 'Request permissions [iOS]',
+                    onPressed: () async {
+                      await _requestPermissions(context);
                     },
                   ),
                 ],
@@ -522,6 +529,22 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  Future<void> _requestPermissions(BuildContext context) async {
+    final result = await flutterLocalNotificationsPlugin.requestPermissions(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+    await showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        children: <Widget>[
+          Center(child: Text('result: $result')),
+        ],
+      ),
+    );
   }
 
   Future<void> onSelectNotification(String payload) async {
