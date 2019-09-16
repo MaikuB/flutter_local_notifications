@@ -20,13 +20,13 @@ enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
 
 /// The days of the week
 class Day {
-  static const Sunday = const Day(1);
-  static const Monday = const Day(2);
-  static const Tuesday = const Day(3);
-  static const Wednesday = const Day(4);
-  static const Thursday = const Day(5);
-  static const Friday = const Day(6);
-  static const Saturday = const Day(7);
+  static const Sunday = Day(1);
+  static const Monday = Day(2);
+  static const Tuesday = Day(3);
+  static const Wednesday = Day(4);
+  static const Thursday = Day(5);
+  static const Friday = Day(6);
+  static const Saturday = Day(7);
 
   static get values =>
       [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
