@@ -645,7 +645,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                     break;
             }
         }
-        catch (NoSuchFieldException  e) {
+        catch (Exception  e) {
             e.printStackTrace();
         }
     }
