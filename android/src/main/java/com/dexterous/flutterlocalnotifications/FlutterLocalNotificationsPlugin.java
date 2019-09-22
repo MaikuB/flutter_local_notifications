@@ -606,42 +606,47 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
-        switch (call.method) {
-            case INITIALIZE_METHOD: {
-                // initializeHeadlessService(call, result);
-                initialize(call, result);
-                break;
+        try {
+            switch (call.method) {
+                case INITIALIZE_METHOD: {
+                    // initializeHeadlessService(call, result);
+                    initialize(call, result);
+                    break;
+                }
+                case GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD: {
+                    getNotificationAppLaunchDetails(result);
+                    break;
+                }
+                case SHOW_METHOD: {
+                    show(call, result);
+                    break;
+                }
+                case SCHEDULE_METHOD: {
+                    schedule(call, result);
+                    break;
+                }
+                case PERIODICALLY_SHOW_METHOD:
+                case SHOW_DAILY_AT_TIME_METHOD:
+                case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD: {
+                    repeat(call, result);
+                    break;
+                }
+                case CANCEL_METHOD:
+                    cancel(call, result);
+                    break;
+                case CANCEL_ALL_METHOD:
+                    cancelAllNotifications(result);
+                    break;
+                case PENDING_NOTIFICATION_REQUESTS_METHOD:
+                    pendingNotificationRequests(result);
+                    break;
+                default:
+                    result.notImplemented();
+                    break;
             }
-            case GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD: {
-                getNotificationAppLaunchDetails(result);
-                break;
-            }
-            case SHOW_METHOD: {
-                show(call, result);
-                break;
-            }
-            case SCHEDULE_METHOD: {
-                schedule(call, result);
-                break;
-            }
-            case PERIODICALLY_SHOW_METHOD:
-            case SHOW_DAILY_AT_TIME_METHOD:
-            case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD: {
-                repeat(call, result);
-                break;
-            }
-            case CANCEL_METHOD:
-                cancel(call, result);
-                break;
-            case CANCEL_ALL_METHOD:
-                cancelAllNotifications(result);
-                break;
-            case PENDING_NOTIFICATION_REQUESTS_METHOD:
-                pendingNotificationRequests(result);
-                break;
-            default:
-                result.notImplemented();
-                break;
+        }
+        catch (NoSuchFieldException  e) {
+            e.printStackTrace();
         }
     }
 
