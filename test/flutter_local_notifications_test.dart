@@ -3,9 +3,11 @@ import 'package:mockito/mockito.dart';
 import 'package:platform/platform.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   MockMethodChannel mockChannel;
+  MockSharedPreferences mockSharedPreferences;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   const id = 0;
   const title = 'title';
@@ -16,7 +18,9 @@ void main() {
     setUp(() {
       mockChannel = MockMethodChannel();
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin.private(
-          mockChannel, FakePlatform(operatingSystem: 'ios'));
+          mockChannel,
+          FakePlatform(operatingSystem: 'ios'),
+              () async => mockSharedPreferences);
     });
     test('initialise plugin on iOS', () async {
       const IOSInitializationSettings initializationSettingsIOS =
@@ -24,8 +28,13 @@ void main() {
       const InitializationSettings initializationSettings =
           InitializationSettings(null, initializationSettingsIOS);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-      verify(mockChannel.invokeMethod(
-          'initialize', initializationSettingsIOS.toMap()));
+      final expectedParams = initializationSettingsIOS.toMap()
+        ..["categories"] = null;
+      final actualParams = verify(
+          mockChannel.invokeMethod('initialize', captureAny)).captured[0];
+      expect(actualParams["setupActionQueueCallback"], isA<int>());
+      actualParams.remove("setupActionQueueCallback");
+      expect(actualParams, expectedParams);
     });
     test('show notification on iOS', () async {
       IOSNotificationDetails iOSPlatformChannelSpecifics =
@@ -39,6 +48,7 @@ void main() {
         'id': id,
         'title': title,
         'body': body,
+        'categoryIdentifier': null,
         'platformSpecifics': iOSPlatformChannelSpecifics.toMap(),
         'payload': payload
       }));
@@ -56,6 +66,7 @@ void main() {
         'id': id,
         'title': title,
         'body': body,
+        'categoryIdentifier': null,
         'millisecondsSinceEpoch':
             scheduledNotificationDateTime.millisecondsSinceEpoch,
         'platformSpecifics': iOSPlatformChannelSpecifics.toMap(),
@@ -73,7 +84,9 @@ void main() {
     setUp(() {
       mockChannel = MockMethodChannel();
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin.private(
-          mockChannel, FakePlatform(operatingSystem: 'android'));
+          mockChannel,
+          FakePlatform(operatingSystem: 'android'),
+              () async => mockSharedPreferences);
     });
     test('initialise plugin on Android', () async {
       const AndroidInitializationSettings initializationSettingsAndroid =
@@ -81,8 +94,13 @@ void main() {
       const InitializationSettings initializationSettings =
           InitializationSettings(initializationSettingsAndroid, null);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-      verify(mockChannel.invokeMethod(
-          'initialize', initializationSettingsAndroid.toMap()));
+      final expectedParams = initializationSettingsAndroid.toMap()
+          ..["categories"] = null;
+      final actualParams = verify(
+          mockChannel.invokeMethod('initialize', captureAny)).captured[0];
+      expect(actualParams["setupActionQueueCallback"], isA<int>());
+      actualParams.remove("setupActionQueueCallback");
+      expect(actualParams, expectedParams);
     });
     test('show notification on Android', () async {
       AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -99,6 +117,7 @@ void main() {
         'id': id,
         'title': title,
         'body': body,
+        'categoryIdentifier': null,
         'platformSpecifics': androidPlatformChannelSpecifics.toMap(),
         'payload': payload
       }));
@@ -122,6 +141,7 @@ void main() {
         'id': id,
         'title': title,
         'body': body,
+        'categoryIdentifier': null,
         'millisecondsSinceEpoch':
             scheduledNotificationDateTime.millisecondsSinceEpoch,
         'platformSpecifics': androidPlatformChannelSpecificsMap,
@@ -137,3 +157,5 @@ void main() {
 }
 
 class MockMethodChannel extends Mock implements MethodChannel {}
+
+class MockSharedPreferences extends Mock implements SharedPreferences {}

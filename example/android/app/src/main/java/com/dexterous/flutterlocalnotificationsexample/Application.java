@@ -1,6 +1,6 @@
-/*package com.dexterous.flutterlocalnotificationsexample;
+package com.dexterous.flutterlocalnotificationsexample;
 
-import com.dexterous.flutterlocalnotifications.NotificationService;
+import com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin;
 
 import io.flutter.app.FlutterApplication;
 import io.flutter.plugin.common.PluginRegistry;
@@ -10,11 +10,11 @@ public class Application extends FlutterApplication implements PluginRegistry.Pl
     @Override
     public void onCreate() {
         super.onCreate();
-        NotificationService.setPluginRegistrant(this);
+        FlutterLocalNotificationsPlugin.setPluginRegistrant(this);
     }
 
     @Override
     public void registerWith(PluginRegistry registry) {
         GeneratedPluginRegistrant.registerWith(registry);
     }
-}*/
+}

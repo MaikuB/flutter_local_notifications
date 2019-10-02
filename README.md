@@ -297,6 +297,12 @@ Developers will also need to add the following so that plugin can handle display
 <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
 ```
 
+In order to use notification actions, also add the following
+
+```xml
+<receiver android:name="com.dexterous.flutterlocalnotifications.NotificationActionReceiver" />
+```
+
 If the vibration pattern of an Android notification will be customised then add the following
 
 ```xml

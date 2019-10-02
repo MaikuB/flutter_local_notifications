@@ -29,6 +29,7 @@ void main() async {
 class PaddedRaisedButton extends StatelessWidget {
   final String buttonText;
   final VoidCallback onPressed;
+
   const PaddedRaisedButton(
       {@required this.buttonText, @required this.onPressed});
 
@@ -53,14 +54,27 @@ class _HomePageState extends State<HomePage> {
   initState() {
     super.initState();
     // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
-    var initializationSettingsAndroid =
+    final initializationSettingsAndroid =
         AndroidInitializationSettings('app_icon');
-    var initializationSettingsIOS = IOSInitializationSettings(
+    final initializationSettingsIOS = IOSInitializationSettings(
         onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-    var initializationSettings = InitializationSettings(
+    final initializationSettings = InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: onSelectNotification);
+    final categories = [
+      NotificationCategory(
+        "MY_NOTIFICATION_CATEGORY",
+        [
+          NotificationAction("Yay", "ACTION_YAY"),
+          NotificationAction("Nay", "ACTION_NAY"),
+        ],
+      ),
+    ];
+    flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onSelectNotification: onSelectNotification,
+      onSelectNotificationAction: onSelectNotificationAction,
+      categories: categories,
+    );
   }
 
   @override
@@ -208,6 +222,12 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
+                    buttonText: 'Show notification with actions',
+                    onPressed: () async {
+                      await _showNotificationWithActions();
+                    },
+                  ),
+                  PaddedRaisedButton(
                     buttonText: 'Check pending notifications',
                     onPressed: () async {
                       await _checkPendingNotificationRequests();
@@ -229,11 +249,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showNotification() async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    final androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
         importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
+    final iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    final platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
@@ -557,6 +577,19 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> onSelectNotificationAction(NotificationActionData data) async {
+    debugPrint('notification action data: $data');
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => SecondScreen(
+                data.payload,
+                actionId: data.actionIdentifier,
+              )),
+    );
+  }
+
   Future<void> _showOngoingNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
@@ -683,6 +716,23 @@ class _HomePageState extends State<HomePage> {
         payload: 'item x');
   }
 
+  Future<void> _showNotificationWithActions() async {
+    var androidDetails = AndroidNotificationDetails(
+      'notification with actions channel id',
+      'notification with actions channel name',
+      'notification with actions channel description',
+    );
+    var iosDetails = IOSNotificationDetails();
+    var details = NotificationDetails(androidDetails, iosDetails);
+    await flutterLocalNotificationsPlugin.show(
+        0,
+        'notification with actions title',
+        'notification with actions body',
+        details,
+        categoryIdentifier: "MY_NOTIFICATION_CATEGORY",
+        payload: 'item x');
+  }
+
   Future<void> _showNotificationWithUpdatedChannelDescription() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id',
@@ -735,9 +785,10 @@ class _HomePageState extends State<HomePage> {
 }
 
 class SecondScreen extends StatefulWidget {
-  SecondScreen(this.payload);
+  SecondScreen(this.payload, {this.actionId});
 
   final String payload;
+  final String actionId;
 
   @override
   State<StatefulWidget> createState() => SecondScreenState();
@@ -745,26 +796,33 @@ class SecondScreen extends StatefulWidget {
 
 class SecondScreenState extends State<SecondScreen> {
   String _payload;
+  String _actionId;
+
   @override
   void initState() {
     super.initState();
     _payload = widget.payload;
+    _actionId = widget.actionId;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Second Screen with payload: ${(_payload ?? '')}'),
-      ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text('Go back!'),
+        appBar: AppBar(
+          title: Text('Second Screen with payload: ${(_payload ?? '')}'),
         ),
-      ),
-    );
+        body: Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                if (_actionId != null) Text("Action ID: $_actionId"),
+                RaisedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Go back!'),
+                ),
+              ]),
+        ));
   }
 }

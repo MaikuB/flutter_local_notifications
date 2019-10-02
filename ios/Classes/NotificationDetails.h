@@ -5,6 +5,7 @@
 @property(nonatomic, strong) NSNumber *id;
 @property(nonatomic, strong) NSString *title;
 @property(nonatomic, strong) NSString *body;
+@property(nonatomic, strong) NSString *categoryIdentifier;
 @property(nonatomic, strong) NSString *payload;
 @property(nonatomic) bool presentAlert;
 @property(nonatomic) bool presentSound;

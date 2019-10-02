@@ -1,15 +1,29 @@
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
+import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_local_notifications/src/notification_action_queue.dart';
 import 'package:meta/meta.dart';
 import 'package:platform/platform.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'initialization_settings.dart';
+import 'notification_action_data.dart';
 import 'notification_app_launch_details.dart';
+import 'notification_category.dart';
 import 'notification_details.dart';
 import 'pending_notification_request.dart';
 
 /// Signature of callback passed to [initialize]. Callback triggered when user taps on a notification
 typedef SelectNotificationCallback = Future<dynamic> Function(String payload);
+
+/// Signature of callback passed to [initialize]. Callback triggered when user taps on a notification action
+typedef SelectNotificationActionCallback = Future<dynamic> Function(
+    NotificationActionData data);
 
 // Signature of the callback that is triggered when a notification is shown whilst the app is in the foreground. Applicable to iOS versions < 10 only
 typedef DidReceiveLocalNotificationCallback = Future<dynamic> Function(
@@ -67,38 +81,48 @@ class FlutterLocalNotificationsPlugin {
 
   @visibleForTesting
   FlutterLocalNotificationsPlugin.private(
-      MethodChannel channel, Platform platform)
-      : _channel = channel,
-        _platform = platform;
+      this._channel,
+      this._platform,
+      this._sharedPreferencesFactory);
 
   static final FlutterLocalNotificationsPlugin _instance =
       FlutterLocalNotificationsPlugin.private(
           const MethodChannel('dexterous.com/flutter/local_notifications'),
-          const LocalPlatform());
+          const LocalPlatform(),
+          () => SharedPreferences.getInstance());
 
   final MethodChannel _channel;
   final Platform _platform;
+  final AsyncValueGetter<SharedPreferences> _sharedPreferencesFactory;
 
   SelectNotificationCallback selectNotificationCallback;
 
   DidReceiveLocalNotificationCallback didReceiveLocalNotificationCallback;
 
   /// Initializes the plugin. Call this method on application before using the plugin further
-  Future<bool> initialize(InitializationSettings initializationSettings,
-      {SelectNotificationCallback onSelectNotification}) async {
+  Future<bool> initialize(
+    InitializationSettings initializationSettings, {
+    SelectNotificationCallback onSelectNotification,
+    SelectNotificationActionCallback onSelectNotificationAction,
+    List<NotificationCategory> categories,
+  }) async {
     selectNotificationCallback = onSelectNotification;
     didReceiveLocalNotificationCallback =
         initializationSettings?.ios?.onDidReceiveLocalNotification;
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificInitializationSettings(initializationSettings);
     _channel.setMethodCallHandler(_handleMethod);
-    /*final CallbackHandle callback =
-        PluginUtilities.getCallbackHandle(_callbackDispatcher);
-    serializedPlatformSpecifics['callbackDispatcher'] = callback.toRawHandle();
-    if (onShowNotification != null) {
-      serializedPlatformSpecifics['onNotificationCallbackDispatcher'] =
-          PluginUtilities.getCallbackHandle(onShowNotification).toRawHandle();
-    }*/
+    final CallbackHandle callback =
+        PluginUtilities.getCallbackHandle(setupDartNotificationActionQueue);
+    serializedPlatformSpecifics['setupActionQueueCallback'] =
+        callback.toRawHandle();
+    serializedPlatformSpecifics['categories'] =
+        categories?.map((c) => c.toMap())?.toList();
+    final sharedPreferences = await _sharedPreferencesFactory();
+    final actionQueue = NotificationActionQueue(sharedPreferences);
+    if (onSelectNotificationAction != null) {
+      actionQueue.onSelectAction.listen(onSelectNotificationAction);
+    }
     var result =
         await _channel.invokeMethod('initialize', serializedPlatformSpecifics);
     return result;
@@ -113,7 +137,7 @@ class FlutterLocalNotificationsPlugin {
   /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped
   Future<void> show(int id, String title, String body,
       NotificationDetails notificationDetails,
-      {String payload}) async {
+      {String categoryIdentifier, String payload}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificNotificationDetails(notificationDetails);
@@ -121,6 +145,7 @@ class FlutterLocalNotificationsPlugin {
       'id': id,
       'title': title,
       'body': body,
+      'categoryIdentifier': categoryIdentifier,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
     });
@@ -140,9 +165,16 @@ class FlutterLocalNotificationsPlugin {
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
   /// The [androidAllowWhileIdle] parameter is Android-specific and determines if the notification should still be shown at the specified time
   /// even when in a low-power idle mode.
-  Future<void> schedule(int id, String title, String body,
-      DateTime scheduledDate, NotificationDetails notificationDetails,
-      {String payload, bool androidAllowWhileIdle = false}) async {
+  Future<void> schedule(
+    int id,
+    String title,
+    String body,
+    DateTime scheduledDate,
+    NotificationDetails notificationDetails, {
+    String categoryIdentifier,
+    String payload,
+    bool androidAllowWhileIdle = false,
+  }) async {
     _validateId(id);
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificNotificationDetails(notificationDetails);
@@ -153,6 +185,7 @@ class FlutterLocalNotificationsPlugin {
       'id': id,
       'title': title,
       'body': body,
+      'categoryIdentifier': categoryIdentifier,
       'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
@@ -274,4 +307,30 @@ class FlutterLocalNotificationsPlugin {
           'id must fit within the size of a 32-bit integer i.e. in the range [-2^31, 2^31 - 1]');
     }
   }
+}
+
+void setupDartNotificationActionQueue() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final channel = const MethodChannel(
+      'dexterous.com/flutter/local_notifications_background');
+  channel.setMethodCallHandler((MethodCall call) async {
+    switch (call.method) {
+      case "enqueue":
+        final dataMap = call.arguments;
+        print("Processing notification action data: $dataMap");
+        final data = NotificationActionData.fromMap(dataMap);
+        final sharedPreferences = await SharedPreferences.getInstance();
+        final actionQueue = NotificationActionQueue(sharedPreferences);
+        await actionQueue.enqueueNotificationAction(data);
+        return;
+      default:
+        throw UnsupportedError("Unsupported method ${call.method}");
+    }
+  });
+
+  print("Signalling notificationActionQueue being initialized...");
+  await channel.invokeMethod("initialized");
+
+  print("notificationActionQueue setup done");
 }
