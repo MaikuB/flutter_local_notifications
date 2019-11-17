@@ -79,7 +79,7 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: onSelectNotification);
 ```
 
-Initialisation should only be done once and the place where this can be done is in the `main` function of the your application. Developers should look at the example app as the code below is simplified for explaining the concepts. Here we specify we have specified the default icon to use for notifications on Android (refer to the Android Integration section) and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In this example, it will trigger navigation to another page and display the payload associated with the notification.
+Initialisation should only be done once and the place where this can be done is in the `main` function of the your application. Alternatively, this can be done within the first page shown in your app. Developers should look at the example app, which does the initialisation within the `main` function as the code below is simplified for explaining the concepts. Here we specify we have specified the default icon to use for notifications on Android (refer to the Android Integration section) and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In this example, it will trigger navigation to another page and display the payload associated with the notification.
 
 ```dart
 Future onSelectNotification(String payload) async {

@@ -1,3 +1,7 @@
+
+# [0.8.4+2]
+* Add note to readme that plugin initialisation be done as part of showing the first page of the app.
+
 # [0.8.4+1]
 * Fix typo in readme. Thanks to PR submitted by [Michael Arndt](https://github.com/MeneDev)
 * Updated API docs and example around initializing the plugin to make it clearer that `initialize` should only be called once on app startup.
