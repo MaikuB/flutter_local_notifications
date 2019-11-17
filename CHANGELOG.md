@@ -1,3 +1,7 @@
+# [0.8.4+1]
+* Fix typo in readme. Thanks to PR submitted by [Michael Arndt](https://github.com/MeneDev)
+* Updated API docs and example around initializing the plugin to make it clearer that `initialize` should only be called once on app startup.
+
 # [0.8.4]
 * [iOS] Fix issue [336](https://github.com/MaikuB/flutter_local_notifications/issues/336) where a native crash occurred after creating a notification with a null body
 

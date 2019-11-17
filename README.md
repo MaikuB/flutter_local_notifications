@@ -42,7 +42,7 @@ Note that this plugin aims to provide abstractions for all platforms as opposed 
 
 **IMPORTANT NOTES**:
 
-* Recurring notifications on Android use the [Alarm Manager](https://developer.android.com/reference/android/app/AlarmManager) API. This is standard practice but does mean the delivery of the notifications/alarms are inexact and this is documented Android behaviour as per the previous link. Note that it's been reported that Samsung's implementation of Android has imposed a maximum of 500 alarms that can be scheduled via this API and exceptioms can occur when going over the limit
+* Recurring notifications on Android use the [Alarm Manager](https://developer.android.com/reference/android/app/AlarmManager) API. This is standard practice but does mean the delivery of the notifications/alarms are inexact and this is documented Android behaviour as per the previous link. Note that it's been reported that Samsung's implementation of Android has imposed a maximum of 500 alarms that can be scheduled via this API and exceptions can occur when going over the limit
 * iOS has a limit on how many pending notifications it allows. This is a limit imposed by iOS where it will only keep 64 notifications that will fire the soonest
 * *Known issue*: There is a known issue with handling daylight savings for scheduled notifications. This functionality may be deprecated to be replaced by another that only deals with elapsed time since epoch instead of a date.
 
@@ -71,15 +71,15 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLoc
 // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
 var initializationSettingsAndroid =
     new AndroidInitializationSettings('app_icon');
-var initializationSettingsIOS = new IOSInitializationSettings(
+var initializationSettingsIOS = IOSInitializationSettings(
     onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-var initializationSettings = new InitializationSettings(
+var initializationSettings = InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: onSelectNotification);
 ```
 
-Here we specify we have specified the default icon to use for notifications on Android (refer to the Android Integration section) and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In this example, it will trigger navigation to another page and display the payload associated with the notification.
+Initialisation should only be done once and the place where this can be done is in the `main` function of the your application. Developers should look at the example app as the code below is simplified for explaining the concepts. Here we specify we have specified the default icon to use for notifications on Android (refer to the Android Integration section) and designated the function (onSelectNotification) that should fire when a notification has been tapped on. Specifying this callback is entirely optional. In this example, it will trigger navigation to another page and display the payload associated with the notification.
 
 ```dart
 Future onSelectNotification(String payload) async {
@@ -94,6 +94,8 @@ Future onSelectNotification(String payload) async {
 ```
 
 In the real world, this payload could represent the id of the item you want to display the details of. Once the initialisation has been done, then you can manage the displaying of notifications.
+
+*Notes around initialisation*: if the app had been launched by tapping on a notification created by this plugin, calling `initialize` is what will trigger the `onSelectNotification` to trigger to handle the notification that the user tapped on. An alternative to handling the "launch notification" is to call the `getNotificationAppLaunchDetails` method that is available in the plugin. This could be used, for example, to change the home route of the app for deep-linking. Calling `initialize` will still cause the `onSelectNotification` callback to fire for the launch notification. It will be up to developers to ensure that they don't process the same notification twice (e.g. by storing and comparing the notification id).
 
 ### Displaying a notification
 
