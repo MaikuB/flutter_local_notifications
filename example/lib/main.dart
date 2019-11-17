@@ -9,16 +9,54 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+// Streams are created so that app can respond to notification-related events since the plugin is initialised in the `main` function
+final StreamController<ReceivedNotification>
+    didReceiveLocalNotificationController =
+    StreamController<ReceivedNotification>();
+
+final StreamController<String> selectNotificationController =
+    StreamController<String>();
+
+class ReceivedNotification {
+  final int id;
+  final String title;
+  final String body;
+  final String payload;
+
+  ReceivedNotification(
+      {@required this.id,
+      @required this.title,
+      @required this.body,
+      @required this.payload});
+}
 
 /// IMPORTANT: running the following code on its own won't work as there is setup required for each platform head project.
 /// Please download the complete example app from the GitHub repository where all the setup has been done
-void main() async {
-  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+Future<void> main() async {
   // NOTE: if you want to find out if the app was launched via notification then you could use the following call and then do something like
   // change the default route of the app
   // var notificationAppLaunchDetails =
   //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
+  var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+  var initializationSettingsIOS = IOSInitializationSettings(
+      onDidReceiveLocalNotification:
+          (int id, String title, String body, String payload) async {
+    didReceiveLocalNotificationController.add(ReceivedNotification(
+        id: id, title: title, body: body, payload: payload));
+  });
+  var initializationSettings = InitializationSettings(
+      initializationSettingsAndroid, initializationSettingsIOS);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+    selectNotificationController.add(payload);
+  });
   runApp(
     MaterialApp(
       home: HomePage(),
@@ -47,20 +85,54 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var platform = MethodChannel('crossingthestreams.io/resourceResolver');
+  final MethodChannel platform =
+      MethodChannel('crossingthestreams.io/resourceResolver');
+  @override
+  void initState() {
+    super.initState();
+    didReceiveLocalNotificationController.stream
+        .listen((ReceivedNotification receivedNotification) async {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+          title: receivedNotification.title != null
+              ? Text(receivedNotification.title)
+              : null,
+          content: receivedNotification.body != null
+              ? Text(receivedNotification.body)
+              : null,
+          actions: [
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              child: Text('Ok'),
+              onPressed: () async {
+                Navigator.of(context, rootNavigator: true).pop();
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        SecondScreen(receivedNotification.payload),
+                  ),
+                );
+              },
+            )
+          ],
+        ),
+      );
+    });
+    selectNotificationController.stream.listen((String payload) async {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SecondScreen(payload)),
+      );
+    });
+  }
 
   @override
-  initState() {
-    super.initState();
-    // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
-    var initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
-    var initializationSettingsIOS = IOSInitializationSettings(
-        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-    var initializationSettings = InitializationSettings(
-        initializationSettingsAndroid, initializationSettingsIOS);
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: onSelectNotification);
+  void dispose() {
+    didReceiveLocalNotificationController.close();
+    selectNotificationController.close();
+    super.dispose();
   }
 
   @override
@@ -544,17 +616,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
-  }
-
-  Future<void> onSelectNotification(String payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: ' + payload);
-    }
-
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => SecondScreen(payload)),
-    );
   }
 
   Future<void> _showOngoingNotification() async {
