@@ -8,17 +8,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:rxdart/subjects.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 // Streams are created so that app can respond to notification-related events since the plugin is initialised in the `main` function
-final StreamController<ReceivedNotification>
-    didReceiveLocalNotificationController =
-    StreamController<ReceivedNotification>();
+final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
+    BehaviorSubject<ReceivedNotification>();
 
-final StreamController<String> selectNotificationController =
-    StreamController<String>();
+final BehaviorSubject<String> selectNotificationSubject =
+    BehaviorSubject<String>();
 
 class ReceivedNotification {
   final int id;
@@ -36,6 +36,8 @@ class ReceivedNotification {
 /// IMPORTANT: running the following code on its own won't work as there is setup required for each platform head project.
 /// Please download the complete example app from the GitHub repository where all the setup has been done
 Future<void> main() async {
+  // needed if you intend to initialize in the `main` function
+  WidgetsFlutterBinding.ensureInitialized();
   // NOTE: if you want to find out if the app was launched via notification then you could use the following call and then do something like
   // change the default route of the app
   // var notificationAppLaunchDetails =
@@ -45,7 +47,7 @@ Future<void> main() async {
   var initializationSettingsIOS = IOSInitializationSettings(
       onDidReceiveLocalNotification:
           (int id, String title, String body, String payload) async {
-    didReceiveLocalNotificationController.add(ReceivedNotification(
+    didReceiveLocalNotificationSubject.add(ReceivedNotification(
         id: id, title: title, body: body, payload: payload));
   });
   var initializationSettings = InitializationSettings(
@@ -55,7 +57,7 @@ Future<void> main() async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
     }
-    selectNotificationController.add(payload);
+    selectNotificationSubject.add(payload);
   });
   runApp(
     MaterialApp(
@@ -90,7 +92,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    didReceiveLocalNotificationController.stream
+    didReceiveLocalNotificationSubject.stream
         .listen((ReceivedNotification receivedNotification) async {
       await showDialog(
         context: context,
@@ -120,7 +122,7 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     });
-    selectNotificationController.stream.listen((String payload) async {
+    selectNotificationSubject.stream.listen((String payload) async {
       await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => SecondScreen(payload)),
@@ -130,8 +132,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    didReceiveLocalNotificationController.close();
-    selectNotificationController.close();
+    didReceiveLocalNotificationSubject.close();
+    selectNotificationSubject.close();
     super.dispose();
   }
 
