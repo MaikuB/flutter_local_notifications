@@ -5,8 +5,10 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,6 +28,8 @@ import androidx.core.graphics.drawable.IconCompat;
 
 import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
+import com.dexterous.flutterlocalnotifications.models.NotificationActionBroadcastReceiver;
+import com.dexterous.flutterlocalnotifications.models.NotificationActionDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelAction;
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
 import com.dexterous.flutterlocalnotifications.models.PersonDetails;
@@ -93,11 +97,18 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private final Registrar registrar;
     private MethodChannel channel;
 
+    public static FlutterLocalNotificationsPlugin instance;
+
     private FlutterLocalNotificationsPlugin(Registrar registrar) {
+        instance = this;
         this.registrar = registrar;
         this.registrar.addNewIntentListener(this);
         this.channel = new MethodChannel(registrar.messenger(), METHOD_CHANNEL);
         this.channel.setMethodCallHandler(this);
+    }
+
+    public void notifyActionTapped(String actionKey) {
+        channel.invokeMethod("onNotificationActionTapped", actionKey);
     }
 
     public static void rescheduleNotifications(Context context) {
@@ -142,6 +153,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         setLights(notificationDetails, builder);
         setStyle(context, notificationDetails, builder);
         setProgress(notificationDetails, builder);
+
+        setNotificationActions(context, notificationDetails, builder);
+
         return builder.build();
     }
 
@@ -426,6 +440,27 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static void setProgress(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
         if (BooleanUtils.getValue(notificationDetails.showProgress)) {
             builder.setProgress(notificationDetails.maxProgress, notificationDetails.progress, notificationDetails.indeterminate);
+        }
+    }
+
+    private static void setNotificationActions(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        if (notificationDetails.actions == null || notificationDetails.actions.length <= 0) {
+            return;
+        }
+
+        for (NotificationActionDetails actionDetail : notificationDetails.actions) {
+            int iconDrawableResourceId = getDrawableResourceId(context, actionDetail.icon);
+            System.out.println("FlutterLocalNotificationsPlugin.setNotificationActions iconId: " + iconDrawableResourceId);
+
+            Intent actionIntent = new Intent(context, NotificationActionBroadcastReceiver.class);
+            actionIntent.setAction(actionDetail.actionKey);
+
+            PendingIntent actionPendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(), notificationDetails.id, actionIntent, 0);
+            NotificationCompat.Action action = new NotificationCompat.Action.Builder(
+                    iconDrawableResourceId, actionDetail.title, actionPendingIntent)
+                    .build();
+
+            builder.addAction(action);
         }
     }
 

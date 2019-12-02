@@ -20,6 +20,9 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
 final BehaviorSubject<String> selectNotificationSubject =
     BehaviorSubject<String>();
 
+final BehaviorSubject<String> onNotificationActionTappedSubject =
+  BehaviorSubject<String>();
+
 class ReceivedNotification {
   final int id;
   final String title;
@@ -43,7 +46,10 @@ Future<void> main() async {
   // var notificationAppLaunchDetails =
   //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
-  var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+  var initializationSettingsAndroid = AndroidInitializationSettings('app_icon',
+          onNotificationActionTapped: (String actionKey) {
+            onNotificationActionTappedSubject.add(actionKey);
+          });
   var initializationSettingsIOS = IOSInitializationSettings(
       onDidReceiveLocalNotification:
           (int id, String title, String body, String payload) async {
@@ -89,9 +95,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final MethodChannel platform =
       MethodChannel('crossingthestreams.io/resourceResolver');
+
+  var lastTappedAction = "";
+
   @override
   void initState() {
     super.initState();
+    onNotificationActionTappedSubject.stream.listen(onNotificationActionTapped);
     didReceiveLocalNotificationSubject.stream
         .listen((ReceivedNotification receivedNotification) async {
       await showDialog(
@@ -281,6 +291,13 @@ class _HomePageState extends State<HomePage> {
                       await _showIndeterminateProgressNotification();
                     },
                   ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show notification with actions [Android]',
+                    onPressed: () async {
+                      await _showNotificationsWithActions();
+                    },
+                  ),
+                  Text('Last tapped action: $lastTappedAction'),
                   PaddedRaisedButton(
                     buttonText: 'Check pending notifications',
                     onPressed: () async {
@@ -616,6 +633,34 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> _showNotificationsWithActions() async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        actions: [
+          NotificationAction(
+            icon: 'baseline_play_arrow_black_18dp',
+            title: 'Play',
+            actionKey: 'PLAY'
+          ),
+          NotificationAction(
+            icon: 'baseline_pause_black_18dp',
+            title: 'Pause',
+              actionKey: 'PAUSE'
+          ),
+          NotificationAction(
+            icon: 'baseline_stop_black_18dp',
+            title: 'Stop',
+              actionKey: 'STOP'
+          ),
+        ]);
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(0, 'notification with actions title',
+        'notification with actions body', platformChannelSpecifics);
+
+  }
+
   Future<void> _cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
@@ -767,6 +812,12 @@ class _HomePageState extends State<HomePage> {
 
   String _toTwoDigitString(int value) {
     return value.toString().padLeft(2, '0');
+  }
+
+  void onNotificationActionTapped(String actionKey) {
+    setState(() {
+      lastTappedAction = actionKey;
+    });
   }
 
   Future<void> onDidReceiveLocalNotification(

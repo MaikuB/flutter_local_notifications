@@ -11,6 +11,7 @@ export 'src/platform_specifics/android/initialization_settings.dart';
 export 'src/platform_specifics/android/notification_details.dart';
 export 'src/platform_specifics/android/message.dart';
 export 'src/platform_specifics/android/person.dart';
+export 'src/platform_specifics/android/notification_action.dart';
 export 'src/platform_specifics/ios/initialization_settings.dart';
 export 'src/platform_specifics/ios/notification_details.dart';
 export 'src/notification_details.dart';

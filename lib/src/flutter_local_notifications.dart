@@ -15,6 +15,9 @@ typedef SelectNotificationCallback = Future<dynamic> Function(String payload);
 typedef DidReceiveLocalNotificationCallback = Future<dynamic> Function(
     int id, String title, String body, String payload);
 
+/// Signature of the callback that is triggered when the user taps on an action. The param `actionKey` is the one defined in NotificationAction class
+typedef OnNotificationActionTappedCallback = Function(String actionKey);
+
 /// The available intervals for periodically showing notifications
 enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
 
@@ -83,12 +86,15 @@ class FlutterLocalNotificationsPlugin {
 
   DidReceiveLocalNotificationCallback didReceiveLocalNotificationCallback;
 
+  OnNotificationActionTappedCallback onNotificationActionTapped;
+
   /// Initializes the plugin. Call this method on application before using the plugin further. This should only be done once. When a notification created by this plugin was used to launch the app, calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
   Future<bool> initialize(InitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
     selectNotificationCallback = onSelectNotification;
     didReceiveLocalNotificationCallback =
         initializationSettings?.ios?.onDidReceiveLocalNotification;
+    onNotificationActionTapped = initializationSettings?.android?.onNotificationActionTapped;
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificInitializationSettings(initializationSettings);
     _channel.setMethodCallHandler(_handleMethod);
@@ -263,9 +269,22 @@ class FlutterLocalNotificationsPlugin {
             call.arguments['title'],
             call.arguments['body'],
             call.arguments['payload']);
+
+      case 'onNotificationActionTapped':
+        return raiseNotificationActionTapped(call.arguments);
+
       default:
         return Future.error('method not defined');
     }
+  }
+
+  Future<void> raiseNotificationActionTapped(dynamic arguments) {
+    if (onNotificationActionTapped == null) return Future.value();
+
+    var actionKey = arguments as String;
+    onNotificationActionTapped(actionKey);
+
+    return Future.value();
   }
 
   void _validateId(int id) {

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'enums.dart';
+import 'notification_action.dart';
 import 'styles/style_information.dart';
 import 'styles/default_style_information.dart';
 
@@ -101,6 +102,9 @@ class AndroidNotificationDetails {
   /// Set the "ticker" text which is sent to accessibility services.
   String ticker;
 
+  /// Sets the list of action that will be shown as buttons in the notification.
+  List<NotificationAction> actions;
+
   /// The action to take for managing notification channels. Defaults to creating the notification channel using the provided details if it doesn't exist
   AndroidNotificationChannelAction channelAction;
 
@@ -134,7 +138,8 @@ class AndroidNotificationDetails {
       this.ledColor,
       this.ledOnMs,
       this.ledOffMs,
-      this.ticker});
+      this.ticker,
+      this.actions});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -177,7 +182,8 @@ class AndroidNotificationDetails {
       'ledColorBlue': ledColor?.blue,
       'ledOnMs': ledOnMs,
       'ledOffMs': ledOffMs,
-      'ticker': ticker
+      'ticker': ticker,
+      'actions': actions?.map((a) => a.toMap())?.toList()
     };
   }
 }
