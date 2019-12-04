@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:platform/platform.dart';
@@ -15,8 +16,9 @@ typedef SelectNotificationCallback = Future<dynamic> Function(String payload);
 typedef DidReceiveLocalNotificationCallback = Future<dynamic> Function(
     int id, String title, String body, String payload);
 
-/// Signature of the callback that is triggered when the user taps on an action. The param `actionKey` is the one defined in NotificationAction class
-typedef OnNotificationActionTappedCallback = Function(String actionKey);
+/// Signature of the callback that is triggered when the user taps on an action. The params `actionKey` and `extras` are the one defined in NotificationAction class
+typedef OnNotificationActionTappedCallback = Future<dynamic> Function(
+    String actionKey, Map<String, String> extras);
 
 /// The available intervals for periodically showing notifications
 enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
@@ -94,7 +96,8 @@ class FlutterLocalNotificationsPlugin {
     selectNotificationCallback = onSelectNotification;
     didReceiveLocalNotificationCallback =
         initializationSettings?.ios?.onDidReceiveLocalNotification;
-    onNotificationActionTapped = initializationSettings?.android?.onNotificationActionTapped;
+    onNotificationActionTapped =
+        initializationSettings?.android?.onNotificationActionTapped;
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificInitializationSettings(initializationSettings);
     _channel.setMethodCallHandler(_handleMethod);
@@ -271,20 +274,19 @@ class FlutterLocalNotificationsPlugin {
             call.arguments['payload']);
 
       case 'onNotificationActionTapped':
-        return raiseNotificationActionTapped(call.arguments);
+        Map<String, String> actionExtras = extractActionExtras(call.arguments);
+        String actionKey = call.arguments['actionKey'];
+        return onNotificationActionTapped(actionKey, actionExtras);
 
       default:
         return Future.error('method not defined');
     }
   }
 
-  Future<void> raiseNotificationActionTapped(dynamic arguments) {
-    if (onNotificationActionTapped == null) return Future.value();
+  Map<String, String> extractActionExtras(dynamic arguments) {
+    if (arguments == null || arguments['extras'] == null) return null;
 
-    var actionKey = arguments as String;
-    onNotificationActionTapped(actionKey);
-
-    return Future.value();
+    return Map.from(arguments['extras'].map((key, value) => MapEntry(key.toString(), value.toString())));
   }
 
   void _validateId(int id) {

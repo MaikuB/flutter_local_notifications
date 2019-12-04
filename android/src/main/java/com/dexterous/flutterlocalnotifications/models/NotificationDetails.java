@@ -97,7 +97,8 @@ public class NotificationDetails {
     //region NotificationAction class properties
     private static final String ACTION_ICON = "icon";
     private static final String ACTION_TITLE = "title";
-    private static final String ACTION_KEY = "actionKey";
+    public static final String ACTION_KEY = "actionKey";
+    public static final String ACTION_EXTRAS = "extras";
     //endregion
 
     public static final String ID = "id";
@@ -324,10 +325,13 @@ public class NotificationDetails {
         if (action == null) {
             return null;
         }
+
         String icon = (String) action.get(ACTION_ICON);
         String title = (String) action.get(ACTION_TITLE);
         String actionKey = (String) action.get(ACTION_KEY);
-        return new NotificationActionDetails(icon, title, actionKey);
+        @SuppressWarnings("unchecked")
+        HashMap<String, String> extras = (HashMap<String, String>) action.get(ACTION_EXTRAS);
+        return new NotificationActionDetails(icon, title, actionKey, extras);
     }
     //endregion
 

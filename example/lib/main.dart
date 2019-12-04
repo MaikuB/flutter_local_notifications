@@ -20,8 +20,8 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
 final BehaviorSubject<String> selectNotificationSubject =
     BehaviorSubject<String>();
 
-final BehaviorSubject<String> onNotificationActionTappedSubject =
-  BehaviorSubject<String>();
+final BehaviorSubject<NotificationActionTappedPayload> onNotificationActionTappedSubject =
+  BehaviorSubject<NotificationActionTappedPayload>();
 
 class ReceivedNotification {
   final int id;
@@ -36,6 +36,16 @@ class ReceivedNotification {
       @required this.payload});
 }
 
+class NotificationActionTappedPayload {
+  final String actionKey;
+  final Map<String, String> extras;
+
+  NotificationActionTappedPayload({
+    @required this.actionKey,
+    @required this.extras,
+  });
+}
+
 /// IMPORTANT: running the following code on its own won't work as there is setup required for each platform head project.
 /// Please download the complete example app from the GitHub repository where all the setup has been done
 Future<void> main() async {
@@ -47,8 +57,8 @@ Future<void> main() async {
   //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
   var initializationSettingsAndroid = AndroidInitializationSettings('app_icon',
-          onNotificationActionTapped: (String actionKey) {
-            onNotificationActionTappedSubject.add(actionKey);
+          onNotificationActionTapped: (String actionKey, Map<String, String> extras) async {
+            onNotificationActionTappedSubject.add(NotificationActionTappedPayload(actionKey: actionKey, extras: extras));
           });
   var initializationSettingsIOS = IOSInitializationSettings(
       onDidReceiveLocalNotification:
@@ -144,6 +154,7 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     didReceiveLocalNotificationSubject.close();
     selectNotificationSubject.close();
+    onNotificationActionTappedSubject.close();
     super.dispose();
   }
 
@@ -640,17 +651,19 @@ class _HomePageState extends State<HomePage> {
           NotificationAction(
             icon: 'baseline_play_arrow_black_18dp',
             title: 'Play',
-            actionKey: 'PLAY'
+            actionKey: 'PLAY',
+            extras: { 'extra1' : 'play_extra'},
           ),
           NotificationAction(
             icon: 'baseline_pause_black_18dp',
             title: 'Pause',
-              actionKey: 'PAUSE'
+            actionKey: 'PAUSE',
+            extras: { 'extra2' : 'pause_extra'},
           ),
           NotificationAction(
             icon: 'baseline_stop_black_18dp',
             title: 'Stop',
-              actionKey: 'STOP'
+            actionKey: 'STOP',
           ),
         ]);
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
@@ -814,9 +827,11 @@ class _HomePageState extends State<HomePage> {
     return value.toString().padLeft(2, '0');
   }
 
-  void onNotificationActionTapped(String actionKey) {
+  void onNotificationActionTapped(NotificationActionTappedPayload payload) {
+    debugPrint("onNotificationActionTapped extras: ${payload.extras}");
+
     setState(() {
-      lastTappedAction = actionKey;
+      lastTappedAction = payload.actionKey;
     });
   }
 
