@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:platform/platform.dart';
+import '../flutter_local_notifications.dart';
 import 'initialization_settings.dart';
 import 'notification_app_launch_details.dart';
 import 'notification_details.dart';
@@ -88,16 +89,19 @@ class FlutterLocalNotificationsPlugin {
 
   DidReceiveLocalNotificationCallback didReceiveLocalNotificationCallback;
 
+  /// Callback that is triggered when the user taps on an action
   OnNotificationActionTappedCallback onNotificationActionTapped;
 
   /// Initializes the plugin. Call this method on application before using the plugin further. This should only be done once. When a notification created by this plugin was used to launch the app, calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
-  Future<bool> initialize(InitializationSettings initializationSettings,
-      {SelectNotificationCallback onSelectNotification}) async {
+  Future<bool> initialize(
+    InitializationSettings initializationSettings, {
+    SelectNotificationCallback onSelectNotification,
+    OnNotificationActionTappedCallback onNotificationActionTapped,
+  }) async {
     selectNotificationCallback = onSelectNotification;
     didReceiveLocalNotificationCallback =
         initializationSettings?.ios?.onDidReceiveLocalNotification;
-    onNotificationActionTapped =
-        initializationSettings?.android?.onNotificationActionTapped;
+    this.onNotificationActionTapped = onNotificationActionTapped;
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificInitializationSettings(initializationSettings);
     _channel.setMethodCallHandler(_handleMethod);
@@ -120,9 +124,15 @@ class FlutterLocalNotificationsPlugin {
   }
 
   /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped
-  Future<void> show(int id, String title, String body,
-      NotificationDetails notificationDetails,
-      {String payload}) async {
+  Future<void> show(
+    int id,
+    String title,
+    String body,
+    NotificationDetails notificationDetails, {
+    String payload,
+    /// Sets the list of action that will be shown as buttons in the notification.
+    List<NotificationAction> actions,
+  }) async {
     _validateId(id);
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificNotificationDetails(notificationDetails);
@@ -131,7 +141,8 @@ class FlutterLocalNotificationsPlugin {
       'title': title,
       'body': body,
       'platformSpecifics': serializedPlatformSpecifics,
-      'payload': payload ?? ''
+      'payload': payload ?? '',
+      'actions': actions?.map((a) => a.toMap())?.toList(),
     });
   }
 
@@ -286,7 +297,8 @@ class FlutterLocalNotificationsPlugin {
   Map<String, String> extractActionExtras(dynamic arguments) {
     if (arguments == null || arguments['extras'] == null) return null;
 
-    return Map.from(arguments['extras'].map((key, value) => MapEntry(key.toString(), value.toString())));
+    return Map.from(arguments['extras']
+        .map((key, value) => MapEntry(key.toString(), value.toString())));
   }
 
   void _validateId(int id) {

@@ -102,9 +102,6 @@ class AndroidNotificationDetails {
   /// Set the "ticker" text which is sent to accessibility services.
   String ticker;
 
-  /// Sets the list of action that will be shown as buttons in the notification.
-  List<NotificationAction> actions;
-
   /// The action to take for managing notification channels. Defaults to creating the notification channel using the provided details if it doesn't exist
   AndroidNotificationChannelAction channelAction;
 
@@ -138,8 +135,7 @@ class AndroidNotificationDetails {
       this.ledColor,
       this.ledOnMs,
       this.ledOffMs,
-      this.ticker,
-      this.actions});
+      this.ticker});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -183,7 +179,6 @@ class AndroidNotificationDetails {
       'ledOnMs': ledOnMs,
       'ledOffMs': ledOffMs,
       'ticker': ticker,
-      'actions': actions?.map((a) => a.toMap())?.toList()
     };
   }
 }

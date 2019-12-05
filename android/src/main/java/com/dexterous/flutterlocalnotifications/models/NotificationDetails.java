@@ -179,6 +179,7 @@ public class NotificationDetails {
         if (arguments.containsKey(DAY)) {
             notificationDetails.day = (Integer) arguments.get(DAY);
         }
+        readNotificationActionList(notificationDetails, arguments);
         @SuppressWarnings("unchecked")
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get(PLATFORM_SPECIFICS);
         if (platformChannelSpecifics != null) {
@@ -221,7 +222,6 @@ public class NotificationDetails {
             }
             notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
             notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
-            readNotificationActionList(notificationDetails, platformChannelSpecifics);
         }
         return notificationDetails;
     }
@@ -302,13 +302,13 @@ public class NotificationDetails {
     }
 
     //region NotificationAction methods
-    private static void readNotificationActionList(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
-        if (!platformChannelSpecifics.containsKey(ACTIONS)) {
+    private static void readNotificationActionList(NotificationDetails notificationDetails, Map<String, Object> arguments) {
+        if (!arguments.containsKey(ACTIONS)) {
             return;
         }
 
         @SuppressWarnings("unchecked")
-        ArrayList<HashMap<String, Object>> rawActionList = (ArrayList<HashMap<String, Object>>) platformChannelSpecifics.get(ACTIONS);
+        ArrayList<HashMap<String, Object>> rawActionList = (ArrayList<HashMap<String, Object>>) arguments.get(ACTIONS);
 
         if (rawActionList == null) {
             return;

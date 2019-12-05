@@ -20,8 +20,9 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
 final BehaviorSubject<String> selectNotificationSubject =
     BehaviorSubject<String>();
 
-final BehaviorSubject<NotificationActionTappedPayload> onNotificationActionTappedSubject =
-  BehaviorSubject<NotificationActionTappedPayload>();
+final BehaviorSubject<NotificationActionTappedPayload>
+    onNotificationActionTappedSubject =
+    BehaviorSubject<NotificationActionTappedPayload>();
 
 class ReceivedNotification {
   final int id;
@@ -56,10 +57,7 @@ Future<void> main() async {
   // var notificationAppLaunchDetails =
   //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
-  var initializationSettingsAndroid = AndroidInitializationSettings('app_icon',
-          onNotificationActionTapped: (String actionKey, Map<String, String> extras) async {
-            onNotificationActionTappedSubject.add(NotificationActionTappedPayload(actionKey: actionKey, extras: extras));
-          });
+  var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
   var initializationSettingsIOS = IOSInitializationSettings(
       onDidReceiveLocalNotification:
           (int id, String title, String body, String payload) async {
@@ -74,6 +72,10 @@ Future<void> main() async {
       debugPrint('notification payload: ' + payload);
     }
     selectNotificationSubject.add(payload);
+  }, onNotificationActionTapped:
+          (String actionKey, Map<String, String> extras) async {
+    onNotificationActionTappedSubject.add(
+        NotificationActionTappedPayload(actionKey: actionKey, extras: extras));
   });
   runApp(
     MaterialApp(
@@ -303,7 +305,7 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
-                    buttonText: 'Show notification with actions [Android]',
+                    buttonText: 'Show notification with actions',
                     onPressed: () async {
                       await _showNotificationsWithActions();
                     },
@@ -646,32 +648,35 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationsWithActions() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
-        actions: [
-          NotificationAction(
-            icon: 'baseline_play_arrow_black_18dp',
-            title: 'Play',
-            actionKey: 'PLAY',
-            extras: { 'extra1' : 'play_extra'},
-          ),
-          NotificationAction(
-            icon: 'baseline_pause_black_18dp',
-            title: 'Pause',
-            actionKey: 'PAUSE',
-            extras: { 'extra2' : 'pause_extra'},
-          ),
-          NotificationAction(
-            icon: 'baseline_stop_black_18dp',
-            title: 'Stop',
-            actionKey: 'STOP',
-          ),
-        ]);
+        'your channel id', 'your channel name', 'your channel description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(0, 'notification with actions title',
-        'notification with actions body', platformChannelSpecifics);
-
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'notification with actions title',
+      'notification with actions body',
+      platformChannelSpecifics,
+      actions: [
+        NotificationAction(
+          icon: 'baseline_play_arrow_black_18dp',
+          title: 'Play',
+          actionKey: 'PLAY',
+          extras: {'extra1': 'play_extra'},
+        ),
+        NotificationAction(
+          icon: 'baseline_pause_black_18dp',
+          title: 'Pause',
+          actionKey: 'PAUSE',
+          extras: {'extra2': 'pause_extra'},
+        ),
+        NotificationAction(
+          icon: 'baseline_stop_black_18dp',
+          title: 'Stop',
+          actionKey: 'STOP',
+        ),
+      ],
+    );
   }
 
   Future<void> _cancelAllNotifications() async {
