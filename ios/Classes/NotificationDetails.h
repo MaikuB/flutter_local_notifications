@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import "NotificationTime.h"
+#import "NotificationActionDetails.h"
 
 @interface NotificationDetails : NSObject
     @property(nonatomic, strong) NSNumber *id;
@@ -14,4 +15,5 @@
     @property(nonatomic, strong) NSNumber *repeatInterval;
     @property(nonatomic, strong) NotificationTime *repeatTime;
     @property(nonatomic, strong) NSNumber *day;
+    @property(nonatomic, strong) NSMutableArray<NotificationActionDetails *> *actions;
 @end
