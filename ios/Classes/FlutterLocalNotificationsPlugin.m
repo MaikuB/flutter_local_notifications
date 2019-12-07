@@ -375,6 +375,9 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     NSMutableString *categoryName = [NSMutableString new];
     [categoryName appendString:@"category_"];
     
+    NSMutableDictionary *userInfo = [content.userInfo mutableCopy];
+    userInfo[ACTION_EXTRAS] = [NSMutableDictionary new];
+    
     // I need to build the notification actions list
     NSMutableArray<NotificationActionDetails*> *actions = notificationDetails.actions;
     NSMutableArray<UNNotificationAction *> *unActions = [[NSMutableArray alloc] initWithCapacity:[actions count]];
@@ -385,6 +388,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                                           title:actionDetail.title
                                           options:UNNotificationActionOptionForeground];
         unActions[i] = unAction;
+        userInfo[ACTION_EXTRAS][actionDetail.actionKey] = actionDetail.extras;
         
         [categoryName appendString:actionDetail.actionKey];
     }
@@ -398,6 +402,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     NSSet *categories = [NSSet setWithObject:category];
     [center setNotificationCategories:categories];
     content.categoryIdentifier = categoryName;
+    content.userInfo = userInfo;
 }
 
 - (void) showUserNotification:(NotificationDetails *) notificationDetails NS_AVAILABLE_IOS(10.0) {
@@ -566,9 +571,10 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     [_channel invokeMethod:@"selectNotification" arguments:payload];
 }
 
-- (void)notifyActionTapped:(NSString *)actionKey {
+- (void)notifyActionTapped:(NSString *)actionKey extras:(NSDictionary *)extras {
     NSMutableDictionary<NSString*, NSObject*> *arguments = [[NSMutableDictionary<NSString*, NSObject*> alloc] init];
     arguments[ACTION_KEY] = actionKey;
+    arguments[ACTION_EXTRAS] = extras;
     [_channel invokeMethod:@"onNotificationActionTapped" arguments:arguments];
 }
 
@@ -585,11 +591,15 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
         }
     }
     else {
-        [self notifyActionTapped:response.actionIdentifier];
+        NSDictionary *userInfo = response.notification.request.content.userInfo;
+        NSDictionary *extras = (NSDictionary*) userInfo[ACTION_EXTRAS][response.actionIdentifier];
+        
+        [self notifyActionTapped:response.actionIdentifier extras:extras];
     }
     
     completionHandler();
 }
+
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     if (launchOptions != nil) {
