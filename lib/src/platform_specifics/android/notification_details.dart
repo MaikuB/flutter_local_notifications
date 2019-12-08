@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'dart:ui';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'enums.dart';
 import 'styles/style_information.dart';
@@ -104,6 +103,9 @@ class AndroidNotificationDetails {
   /// The action to take for managing notification channels. Defaults to creating the notification channel using the provided details if it doesn't exist
   AndroidNotificationChannelAction channelAction;
 
+  /// Defines the notification visibility on the lockscreen
+  NotificationVisibility visibility;
+
   AndroidNotificationDetails(
       this.channelId, this.channelName, this.channelDescription,
       {this.icon,
@@ -134,7 +136,8 @@ class AndroidNotificationDetails {
       this.ledColor,
       this.ledOnMs,
       this.ledOffMs,
-      this.ticker});
+      this.ticker,
+      this.visibility});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -177,7 +180,8 @@ class AndroidNotificationDetails {
       'ledColorBlue': ledColor?.blue,
       'ledOnMs': ledOnMs,
       'ledOffMs': ledOffMs,
-      'ticker': ticker
+      'ticker': ticker,
+      'visibility': visibility?.index
     };
   }
 }

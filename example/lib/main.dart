@@ -177,6 +177,13 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
+                    buttonText:
+                    'Show plain notification as public on every lockscreen [Android]',
+                    onPressed: () async {
+                      await _showPublicNotification();
+                    },
+                  ),
+                  PaddedRaisedButton(
                     buttonText: 'Cancel notification',
                     onPressed: () async {
                       await _cancelNotification();
@@ -762,6 +769,19 @@ class _HomePageState extends State<HomePage> {
         'updated notification channel',
         'check settings to see updated channel description',
         platformChannelSpecifics,
+        payload: 'item x');
+  }
+
+  Future<void> _showPublicNotification() async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High, ticker: 'ticker',
+        visibility: NotificationVisibility.Public);
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'public notification title', 'public notification body', platformChannelSpecifics,
         payload: 'item x');
   }
 
