@@ -40,7 +40,8 @@ void main() {
         'title': title,
         'body': body,
         'platformSpecifics': iOSPlatformChannelSpecifics.toMap(),
-        'payload': payload
+        'payload': payload,
+        'actions': null,
       }));
     });
     test('schedule notification on iOS', () async {
@@ -100,7 +101,8 @@ void main() {
         'title': title,
         'body': body,
         'platformSpecifics': androidPlatformChannelSpecifics.toMap(),
-        'payload': payload
+        'payload': payload,
+        'actions': null,
       }));
     });
     test('schedule notification on Android', () async {

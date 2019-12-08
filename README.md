@@ -22,6 +22,8 @@ A cross platform plugin for displaying local notifications.
 * Specify a custom notification sound
 * Ability to handle when a user has tapped on a notification, when the app is the foreground, background or terminated
 * Determine if an app was launched due to tapping on a notification
+* Add actions to a notification
+* Handling notification action tapped
 * [Android] Configuring the importance level
 * [Android] Configuring the priority
 * [Android] Customising the vibration pattern for notifications
