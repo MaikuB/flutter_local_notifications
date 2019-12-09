@@ -35,5 +35,6 @@ android {
 
 dependencies {
     implementation "androidx.core:core:1.0.1"
+    implementation "androidx.media:media:1.0.1"
     implementation "com.google.code.gson:gson:2.8.2"
 }

@@ -231,6 +231,13 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
+                    buttonText:
+                        'Show notification as Media with album artwork [Android]',
+                    onPressed: () async {
+                      await _showNotificationMediaStyle();
+                    },
+                  ),
+                  PaddedRaisedButton(
                     buttonText: 'Show big text notification [Android]',
                     onPressed: () async {
                       await _showBigTextNotification();
@@ -439,6 +446,23 @@ class _HomePageState extends State<HomePage> {
         NotificationDetails(androidPlatformChannelSpecifics, null);
     await flutterLocalNotificationsPlugin.show(
         0, 'big text title', 'silent body', platformChannelSpecifics);
+  }
+
+  Future<void> _showNotificationMediaStyle() async {
+    var largeIconPath = await _downloadAndSaveImage(
+        'http://via.placeholder.com/128x128/00FF00/000000', 'largeIcon');
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'media channel id',
+        'media channel name',
+        'media channel description',
+        largeIcon: largeIconPath,
+        largeIconBitmapSource: BitmapSource.FilePath,
+        style: AndroidNotificationStyle.Media,
+    );
+    var platformChannelSpecifics =
+        NotificationDetails(androidPlatformChannelSpecifics, null);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'notification title', 'notification body', platformChannelSpecifics);
   }
 
   Future<void> _showBigTextNotification() async {
