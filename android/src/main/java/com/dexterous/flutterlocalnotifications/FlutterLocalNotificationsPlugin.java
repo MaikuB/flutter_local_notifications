@@ -349,6 +349,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return icon;
     }
 
+    /**
+     * Sets the visibility property to the input Notification Builder
+     * @throws IllegalArgumentException If `notificationDetails.visibility` is not null but also
+     * not matches any known index.
+     */
     private static void setVisibility(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
         if (notificationDetails.visibility == null) {
             return;
@@ -367,8 +372,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 break;
 
             default:
-                System.out.println("FlutterLocalNotificationsPlugin.setVisibility - case not handled: " + notificationDetails.visibility);
-                return;
+                throw new IllegalArgumentException("Unknown index: " + notificationDetails.visibility);
         }
 
         builder.setVisibility(visibility);
