@@ -136,6 +136,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             builder.setColor(notificationDetails.color.intValue());
         }
 
+        setVisibility(notificationDetails, builder);
         applyGrouping(notificationDetails, builder);
         setSound(context, notificationDetails, builder);
         setVibrationPattern(notificationDetails, builder);
@@ -348,6 +349,34 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return icon;
     }
 
+    /**
+     * Sets the visibility property to the input Notification Builder
+     * @throws IllegalArgumentException If `notificationDetails.visibility` is not null but also
+     * not matches any known index.
+     */
+    private static void setVisibility(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        if (notificationDetails.visibility == null) {
+            return;
+        }
+
+        int visibility;
+        switch (notificationDetails.visibility) {
+            case 0: // Private
+                visibility = NotificationCompat.VISIBILITY_PRIVATE;
+                break;
+            case 1: // Public
+                visibility = NotificationCompat.VISIBILITY_PUBLIC;
+                break;
+            case 2: // Secret
+                visibility = NotificationCompat.VISIBILITY_SECRET;
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unknown index: " + notificationDetails.visibility);
+        }
+
+        builder.setVisibility(visibility);
+    }
 
     private static void applyGrouping(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
         Boolean isGrouped = false;
