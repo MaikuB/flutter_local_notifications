@@ -61,7 +61,6 @@ public class NotificationDetails {
     private static final String COLOR_BLUE = "colorBlue";
     private static final String LARGE_ICON = "largeIcon";
     private static final String LARGE_ICON_BITMAP_SOURCE = "largeIconBitmapSource";
-    private static final String SHOW_ACTIONS_IN_COMPACT_VIEW = "showActionsInCompactView";
     private static final String BIG_PICTURE = "bigPicture";
     private static final String BIG_PICTURE_BITMAP_SOURCE = "bigPictureBitmapSource";
     private static final String HIDE_EXPANDED_LARGE_ICON = "hideExpandedLargeIcon";
@@ -276,8 +275,7 @@ public class NotificationDetails {
 
     @SuppressWarnings("unchecked")
     private static void readMediaStyleInformation(NotificationDetails notificationDetails, Map<String, Object> styleInformation, DefaultStyleInformation defaultStyleInformation) {
-        ArrayList<Integer> showActionsInCompactView = (ArrayList<Integer>) styleInformation.get(SHOW_ACTIONS_IN_COMPACT_VIEW);
-        notificationDetails.styleInformation = new MediaStyleInformation(showActionsInCompactView, defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody);
+        notificationDetails.styleInformation = new MediaStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody);
     }
 
     @SuppressWarnings("unchecked")
