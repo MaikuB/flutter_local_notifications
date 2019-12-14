@@ -47,3 +47,13 @@ class Priority {
 
 /// The available alert behaviours for grouped notifications
 enum GroupAlertBehavior { All, Summary, Children }
+
+/// Defines the notification visibility on the lockscreen
+enum NotificationVisibility {
+  /// Show this notification on all lockscreens, but conceal sensitive or private information on secure lockscreens.
+  Private,
+  /// Show this notification in its entirety on all lockscreens.
+  Public,
+  /// Do not reveal any part of this notification on a secure lockscreen.
+  Secret,
+}
