@@ -4,6 +4,8 @@
 * **BREAKING CHANGE** [iOS] Plugin no longer registers as a `UNUserNotificationCenterDelegate`. This is to enable compatibility with other plugins that display notifications. Developers must now do this themselves. Refer to the updated iOS integration section for more info on this
 * Updated info about configuring Proguard configuration rules and included a file that could be used for reference in the example app
 * Removed dependency on the `meta` package
+* **BREAKING CHANGE** Now requires Flutter SDK 1.10.0 or greater
+* Migrate the plugin to the pubspec platforms manifest
 
 # [0.8.4+3]
 * Update example to fix issue [372](https://github.com/MaikuB/flutter_local_notifications/issues/372) around app not firing `onSelectNotification` having switched to using streams and initialising the app in the `main` function.
