@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart';
 import 'package:platform/platform.dart';
 import 'initialization_settings.dart';
 import 'notification_app_launch_details.dart';
