@@ -1,4 +1,7 @@
 
+# [0.8.4+3]
+* Update example to fix issue [372](https://github.com/MaikuB/flutter_local_notifications/issues/372) around app not firing `onSelectNotification` having switched to using streams and initialising the app in the `main` function.
+
 # [0.8.4+2]
 * Add note to readme that plugin initialisation be done as part of showing the first page of the app.
 
