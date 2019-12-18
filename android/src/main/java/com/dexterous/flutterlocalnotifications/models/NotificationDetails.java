@@ -10,7 +10,6 @@ import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInfo
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
-import com.dexterous.flutterlocalnotifications.models.styles.MediaStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 
@@ -269,13 +268,8 @@ public class NotificationDetails {
         } else if (notificationDetails.style == NotificationStyle.Messaging) {
             readMessagingStyleInformation(notificationDetails, styleInformation, defaultStyleInformation);
         } else if (notificationDetails.style == NotificationStyle.Media) {
-            readMediaStyleInformation(notificationDetails, styleInformation, defaultStyleInformation);
+            notificationDetails.styleInformation = defaultStyleInformation;
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void readMediaStyleInformation(NotificationDetails notificationDetails, Map<String, Object> styleInformation, DefaultStyleInformation defaultStyleInformation) {
-        notificationDetails.styleInformation = new MediaStyleInformation(defaultStyleInformation.htmlFormatTitle, defaultStyleInformation.htmlFormatBody);
     }
 
     @SuppressWarnings("unchecked")

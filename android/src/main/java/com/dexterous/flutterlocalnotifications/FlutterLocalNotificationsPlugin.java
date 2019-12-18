@@ -33,7 +33,6 @@ import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInfo
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
-import com.dexterous.flutterlocalnotifications.models.styles.MediaStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 import com.dexterous.flutterlocalnotifications.utils.BooleanUtils;
@@ -44,7 +43,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;

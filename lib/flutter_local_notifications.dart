@@ -6,7 +6,6 @@ export 'src/platform_specifics/android/styles/big_text_style_information.dart';
 export 'src/platform_specifics/android/styles/big_picture_style_information.dart';
 export 'src/platform_specifics/android/styles/inbox_style_information.dart';
 export 'src/platform_specifics/android/styles/messaging_style_information.dart';
-export 'src/platform_specifics/android/styles/media_style_information.dart';
 export 'src/platform_specifics/android/enums.dart';
 export 'src/platform_specifics/android/initialization_settings.dart';
 export 'src/platform_specifics/android/notification_details.dart';

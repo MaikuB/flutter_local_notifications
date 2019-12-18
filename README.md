@@ -35,7 +35,7 @@ A cross platform plugin for displaying local notifications.
     * Inbox
     * Messaging
     * Media
-        * While media playback control using a `MediaSession.Token` is not supported, with this style you let Android treat the `largeIcon` Bitmap as album artwork
+        * While media playback control using a `MediaSession.Token` is not supported, with this style you let Android treat the `largeIcon` bitmap as album artwork
 * [Android] Group notifications
 * [Android] Show progress notifications
 * [Android] Configure notification visibility on the lockscreen
