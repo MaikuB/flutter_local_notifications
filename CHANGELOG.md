@@ -1,4 +1,7 @@
 
+# [0.9.0+1]
+* Fix readme where Objective-C was written twice
+
 # [0.9.0]
 * [Android] Add ability to customise visibility of a notification on the lockscreen. Thanks to PR by [gianlucaparadise](https://github.com/gianlucaparadise)
 * [Android] Bumped compile and target SDK to 29

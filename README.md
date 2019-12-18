@@ -330,8 +330,6 @@ The plugin also makes use of GSON and the Proguard rules can be found [here](htt
 
 Add the following lines to the `didFinishLaunchingWithOptions` method in the AppDelegate.m/AppDelegate.swift file of your iOS project
 
-Objective-C
-
 Objective-C:
 ```objc
 if (@available(iOS 10.0, *)) {
