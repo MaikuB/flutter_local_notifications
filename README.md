@@ -316,15 +316,35 @@ When specifying the large icon bitmap or big picture bitmap (associated with the
 
 Note that with Android 8.0+, sounds and vibrations are associated with notification channels and can only be configured when they are first created. Showing/scheduling a notification will create a channel with the specified id if it doesn't exist already. If another notification specifies the same channel id but tries to specify another sound or vibration pattern then nothing occurs.
 
-When doing a release build of your app, you'll likely need to customise your ProGuard configuration file as per this [link](https://developer.android.com/studio/build/shrink-code#keep-code) and add the following line
+When doing a release build of your app, you'll likely need to customise your ProGuard configuration file as per this [link](https://developer.android.com/studio/build/shrink-code#keep-code) and add the following line. If you have resource shrinking enabled, ensure that you have customised the resources that should be kept so that things like your notification images aren't discarded by following the instructions [here](https://developer.android.com/studio/build/shrink-code#keep-resources).
 
 ```
 -keep class com.dexterous.** { *; }
 ```
 
+The plugin also makes use of GSON and the Proguard rules can be found [here](https://github.com/google/gson/blob/master/examples/android-proguard-example/proguard.cfg). The example app has a consolidate Proguard rules (`proguard-rules.pro`) file that combines these together for reference.
+
 **IMPORTANT**: Starting from version 0.5.0, this library no longer uses the deprecated Android support libraries and has migrated to AndroidX. Developers may require migrating their apps to support this following [this guide](https://developer.android.com/jetpack/androidx/migrate)
 
 ## iOS Integration
+
+Add the following lines to the `didFinishLaunchingWithOptions` method in the AppDelegate.m/AppDelegate.swift file of your iOS project
+
+Objective-C
+
+Objective-C:
+```objc
+if (@available(iOS 10.0, *)) {
+  [UNUserNotificationCenter currentNotificationCenter].delegate = (id<UNUserNotificationCenterDelegate>) self;
+}
+```
+
+Swift:
+```swift
+if #available(iOS 10.0, *) {
+  UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+}
+```
 
 By design, iOS applications do not display notifications when they're in the foreground. For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. For older versions of iOS, you need to handle the callback as part of specifying the method that should be fired to the `onDidReceiveLocalNotification` argument when creating an instance `IOSInitializationSettings` object that is passed to the function for initializing the plugin. A snippet below from the sample app shows how this can be done
 
@@ -383,14 +403,7 @@ When using custom notification sound, developers should be aware that iOS enforc
 
 https://developer.apple.com/documentation/usernotifications/unnotificationsound?language=objc
 
-**NOTE**: this plugin registers itself as the delegate to handle incoming notifications and actions. This may cause problems if you're using other plugins for push notifications (e.g. `firebase_messaging`) as they will most likely do the same and it's only possible to register a single delegate. iOS handles showing push notifications out of the box so if you're only using this plugin to display the notification payload on Android then it's suggested that you fork the plugin code and remove the following part in the iOS code
-
-```objc
-UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-center.delegate = instance;
-```
-
-Unfortunately, this platform limitation does mean that it's not possible to use this plugin together other plugins for push notifications on iOS. If you are in this situation, then my only advice is that you'll need to need to look at writing customised platform-specific code for your application that may involve taking bits and pieces of code from the plugins you need. 
+**IMPORTANT**: There is an issue that prevents this plugin working properly with the `firebase_messaging` plugin at this point in time. This is being tracked [here](https://github.com/FirebaseExtended/flutterfire/issues/1455). Please upvote if this issue is important to you for the Flutter team to prioritise
 
 ## Testing
 

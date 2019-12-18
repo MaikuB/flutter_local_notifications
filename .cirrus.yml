@@ -9,7 +9,7 @@ build_example_android_task:
 
 build_example_ios_task:
   osx_instance:
-    image: mojave-xcode-10.2-flutter
+    image: mojave-flutter
   pub_cache:
     folder: ~/.pub-cache
   update_pods_script: pod repo update # to fetch all the latest versions

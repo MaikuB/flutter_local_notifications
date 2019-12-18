@@ -788,25 +788,17 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             BigPictureStyleInformation bigPictureStyleInformation = (BigPictureStyleInformation) notificationDetails.styleInformation;
             if (hasInvalidLargeIcon(result, bigPictureStyleInformation.largeIcon, bigPictureStyleInformation.largeIconBitmapSource))
                 return true;
-            if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), bigPictureStyleInformation.bigPicture, result, INVALID_BIG_PICTURE_ERROR_CODE)) {
-                return true;
-            }
+            return bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), bigPictureStyleInformation.bigPicture, result, INVALID_BIG_PICTURE_ERROR_CODE);
         }
         return false;
     }
 
     private boolean hasInvalidLargeIcon(Result result, String largeIcon, BitmapSource largeIconBitmapSource) {
-        if (!StringUtils.isNullOrEmpty(largeIcon) && largeIconBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), largeIcon, result, INVALID_LARGE_ICON_ERROR_CODE)) {
-            return true;
-        }
-        return false;
+        return !StringUtils.isNullOrEmpty(largeIcon) && largeIconBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(registrar.context(), largeIcon, result, INVALID_LARGE_ICON_ERROR_CODE);
     }
 
     private boolean hasInvalidIcon(Result result, String icon) {
-        if (!StringUtils.isNullOrEmpty(icon) && !isValidDrawableResource(registrar.context(), icon, result, INVALID_ICON_ERROR_CODE)) {
-            return true;
-        }
-        return false;
+        return !StringUtils.isNullOrEmpty(icon) && !isValidDrawableResource(registrar.context(), icon, result, INVALID_ICON_ERROR_CODE);
     }
 
     private void cancelNotification(Integer id) {
