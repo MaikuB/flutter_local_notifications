@@ -1,5 +1,5 @@
 #import <Flutter/Flutter.h>
 #import <UserNotifications/UserNotifications.h>
 
-@interface FlutterLocalNotificationsPlugin : NSObject <FlutterPlugin, UNUserNotificationCenterDelegate>
+@interface FlutterLocalNotificationsPlugin : NSObject <FlutterPlugin>
 @end

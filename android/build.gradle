@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.0'
+        classpath 'com.android.tools.build:gradle:3.5.0'
     }
 }
 
@@ -22,7 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 16
@@ -34,7 +34,7 @@ android {
 }
 
 dependencies {
-    implementation "androidx.core:core:1.0.1"
-    implementation "androidx.media:media:1.0.1"
-    implementation "com.google.code.gson:gson:2.8.2"
+    implementation "androidx.core:core:1.1.0"
+    implementation "androidx.media:media:1.1.0"
+    implementation "com.google.code.gson:gson:2.8.5"
 }
