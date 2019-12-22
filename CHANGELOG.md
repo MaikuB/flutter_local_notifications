@@ -1,4 +1,7 @@
 
+# [0.9.1]
+* Add support for media notification. This currently only supports showing the specified image as album artwork. Thanks to PR by [gianlucaparadise](https://github.com/gianlucaparadise)
+
 # [0.9.0+1]
 * Fix readme where Objective-C was written twice
 
