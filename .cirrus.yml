@@ -15,6 +15,7 @@ build_example_ios_task:
   update_pods_script: pod repo update # to fetch all the latest versions
   build_script:
     - cd example
+    - flutter upgrade #workaround until Cirrus has updated to latest stable Flutter SDK
     - flutter build ios --no-codesign
 
 test_task:
