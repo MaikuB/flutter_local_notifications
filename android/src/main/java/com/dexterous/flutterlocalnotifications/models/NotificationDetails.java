@@ -267,6 +267,8 @@ public class NotificationDetails {
             readInboxStyleInformation(notificationDetails, styleInformation, defaultStyleInformation);
         } else if (notificationDetails.style == NotificationStyle.Messaging) {
             readMessagingStyleInformation(notificationDetails, styleInformation, defaultStyleInformation);
+        } else if (notificationDetails.style == NotificationStyle.Media) {
+            notificationDetails.styleInformation = defaultStyleInformation;
         }
     }
 

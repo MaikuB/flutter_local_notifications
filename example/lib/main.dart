@@ -178,7 +178,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PaddedRaisedButton(
                     buttonText:
-                    'Show plain notification as public on every lockscreen [Android]',
+                        'Show plain notification as public on every lockscreen [Android]',
                     onPressed: () async {
                       await _showPublicNotification();
                     },
@@ -235,6 +235,12 @@ class _HomePageState extends State<HomePage> {
                         'Show big picture notification, hide large icon on expand [Android]',
                     onPressed: () async {
                       await _showBigPictureNotificationHideExpandedLargeIcon();
+                    },
+                  ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show media notification [Android]',
+                    onPressed: () async {
+                      await _showNotificationMediaStyle();
                     },
                   ),
                   PaddedRaisedButton(
@@ -446,6 +452,23 @@ class _HomePageState extends State<HomePage> {
         NotificationDetails(androidPlatformChannelSpecifics, null);
     await flutterLocalNotificationsPlugin.show(
         0, 'big text title', 'silent body', platformChannelSpecifics);
+  }
+
+  Future<void> _showNotificationMediaStyle() async {
+    var largeIconPath = await _downloadAndSaveImage(
+        'http://via.placeholder.com/128x128/00FF00/000000', 'largeIcon');
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'media channel id',
+      'media channel name',
+      'media channel description',
+      largeIcon: largeIconPath,
+      largeIconBitmapSource: BitmapSource.FilePath,
+      style: AndroidNotificationStyle.Media,
+    );
+    var platformChannelSpecifics =
+        NotificationDetails(androidPlatformChannelSpecifics, null);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'notification title', 'notification body', platformChannelSpecifics);
   }
 
   Future<void> _showBigTextNotification() async {
@@ -775,13 +798,15 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showPublicNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker',
+        importance: Importance.Max,
+        priority: Priority.High,
+        ticker: 'ticker',
         visibility: NotificationVisibility.Public);
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0, 'public notification title', 'public notification body', platformChannelSpecifics,
+    await flutterLocalNotificationsPlugin.show(0, 'public notification title',
+        'public notification body', platformChannelSpecifics,
         payload: 'item x');
   }
 

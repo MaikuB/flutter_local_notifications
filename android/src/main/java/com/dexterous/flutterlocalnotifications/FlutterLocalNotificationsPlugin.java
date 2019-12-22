@@ -447,6 +447,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case Messaging:
                 setMessagingStyle(context, notificationDetails, builder);
                 break;
+            case Media:
+                setMediaStyle(builder);
+                break;
             default:
                 break;
         }
@@ -500,6 +503,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         builder.setStyle(inboxStyle);
     }
 
+    private static void setMediaStyle(NotificationCompat.Builder builder) {
+        androidx.media.app.NotificationCompat.MediaStyle mediaStyle = new androidx.media.app.NotificationCompat.MediaStyle();
+        builder.setStyle(mediaStyle);
+    }
 
     private static void setMessagingStyle(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
         MessagingStyleInformation messagingStyleInformation = (MessagingStyleInformation) notificationDetails.styleInformation;

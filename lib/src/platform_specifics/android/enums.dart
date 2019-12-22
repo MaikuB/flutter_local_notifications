@@ -5,7 +5,7 @@ enum BitmapSource { Drawable, FilePath }
 enum IconSource { Drawable, FilePath, ContentUri }
 
 /// The available notification styles on Android
-enum AndroidNotificationStyle { Default, BigPicture, BigText, Inbox, Messaging }
+enum AndroidNotificationStyle { Default, BigPicture, BigText, Inbox, Messaging, Media }
 
 /// The available actions for managing notification channels.
 /// [CreateIfNotExists]: will create a channel if it doesn't exist
