@@ -1,3 +1,5 @@
+# [0.9.1+1]
+* Update readme with Swift example code on cancelling local notifications using the deprecated `UILocalNotification` iOS APIs when trying to prevent local notifications from appearing in the scenario where user has uninstalled the app whilst there are pending notification requests, reinstalled the app and ran it again.
 
 # [0.9.1]
 * Add support for media notification. This currently only supports showing the specified image as album artwork. Thanks to PR by [gianlucaparadise](https://github.com/gianlucaparadise)

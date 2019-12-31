@@ -390,12 +390,23 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
 
 ```
 
-If you have set notifications to be periodically shown, then on older iOS versions (< 10), if the application was uninstalled without cancelling all alarms then the next time it's installed you may see the "old" notifications being fired. If this is not the desired behaviour, then you can add the following to the `didFinishLaunchingWithOptions` method of your `AppDelegate` class.
+If you have set notifications to be periodically shown, then on older iOS versions (< 10), if the application was uninstalled without cancelling all alarms then the next time it's installed you may see the "old" notifications being fired. If this is not the desired behaviour, then you can add code similar to the following to the `didFinishLaunchingWithOptions` method of your `AppDelegate` class.
+
+Objective-C:
 
 ```objc
 if(![[NSUserDefaults standardUserDefaults]objectForKey:@"Notification"]){
     [[UIApplication sharedApplication] cancelAllLocalNotifications];
     [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"Notification"];
+}
+```
+
+Swift:
+
+```swift
+if(!UserDefaults.standard.bool(forKey: "Notification")) {
+    UIApplication.shared.cancelAllLocalNotifications()
+    UserDefaults.standard.set(true, forKey: "Notification")
 }
 ```
 
