@@ -1,10 +1,8 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'src/notification_app_launch_details.dart';
-import 'src/platform_notification_details.dart';
 
 export 'src/notification_app_launch_details.dart';
-export 'src/platform_notification_details.dart';
 
 abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   FlutterLocalNotificationsPlatform() : super(token: _token);
@@ -29,9 +27,7 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   }
 
   /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped on.
-  Future<void> show(int id, String title, String body,
-      PlatformNotificationDetails notificationDetails,
-      {String payload}) async {
+  Future<void> show(int id, String title, String body, {String payload}) async {
     throw UnimplementedError('show() has not been implemented');
   }
 
