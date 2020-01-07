@@ -1,14 +1,7 @@
 # flutter_local_notifications_platform_interface
 
-A new Flutter package project.
+A common platform interface for the [`flutter_local_notifications`](https://pub.dev/packages/flutter_local_notifications) plugin.
 
-## Getting Started
+## Usage
 
-This project is a starting point for a Dart
-[package](https://flutter.dev/developing-packages/),
-a library module containing code that can be shared easily across
-multiple Flutter or Dart projects.
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+Platform-specific implementations should extend from the `FlutterLocalNotificationsPlatform` class. Upon registering the plugin, the default implementation `FlutterLocalNotificationsPlatform` can be set by calling `FlutterLocalNotificationsPlatform.instance = MyFlutterLocalNotificationsPlatform()` where `MyFlutterLocalNotificationsPlatform()` represents the platform-specific implementation.
