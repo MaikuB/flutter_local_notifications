@@ -4,23 +4,31 @@ build_example_android_task:
   pub_cache:
     folder: ~/.pub-cache
   build_script:
-    - cd example
+    - cd flutter_local_notifications/example
     - flutter build apk
 
 build_example_ios_task:
   osx_instance:
-    image: mojave-flutter
+    image: mojave-xcode-11.3-flutter
   pub_cache:
     folder: ~/.pub-cache
   update_pods_script: pod repo update # to fetch all the latest versions
   build_script:
-    - cd example
-    - flutter upgrade #workaround until Cirrus has updated to latest stable Flutter SDK
+    - cd flutter_local_notifications/example
     - flutter build ios --no-codesign
 
-test_task:
+test_platform_interface_task:
+  container:
+    image: cirrusci/flutter:stable
+  test_script:
+    - cd flutter_local_notifications_platform_interface
+    - flutter test
+
+test_plugin_task:
   container:
     image: cirrusci/flutter:stable
   pub_cache:
     folder: ~/.pub-cache
-  test_script: flutter test
+  test_script:
+    - cd flutter_local_notifications
+    - flutter test
