@@ -65,7 +65,7 @@ Contributions are welcome by submitting a PR for me to review. If it's to add ne
 
 ## Getting Started
 
-The GitHub repository has an example app that should demonstrate of all the supported features of the plugin. Please check the example for more detailed code samples. If you only copy and paste the Dart code then this will not work as there's setup required for each platform. Pub also generates API docs for the latest version [here](https://pub.dartlang.org/documentation/flutter_local_notifications/latest/)
+The GitHub repository has an example app that should demonstrate of all the supported features of the plugin. Please check the example for more detailed code samples. If you only copy and paste the Dart code then this will not work as there's setup required for each platform. Pub also generates API docs for the latest version [here](https://pub.dartlang.org/documentation/flutter_local_notifications/latest/). Besides referring to the example app and getting started section, please ensure that you have performed the steps in the integration guide for each platform further below.
 
 The following samples will demonstrate the more commonly used functionalities. The first step is to create a new instance of the plugin class and then initialise it with the settings to use for each platform
 
@@ -318,13 +318,15 @@ When specifying the large icon bitmap or big picture bitmap (associated with the
 
 Note that with Android 8.0+, sounds and vibrations are associated with notification channels and can only be configured when they are first created. Showing/scheduling a notification will create a channel with the specified id if it doesn't exist already. If another notification specifies the same channel id but tries to specify another sound or vibration pattern then nothing occurs.
 
-When doing a release build of your app, you'll likely need to customise your ProGuard configuration file as per this [link](https://developer.android.com/studio/build/shrink-code#keep-code) and add the following line. If you have resource shrinking enabled, ensure that you have customised the resources that should be kept so that things like your notification images aren't discarded by following the instructions [here](https://developer.android.com/studio/build/shrink-code#keep-resources).
+When doing a release build of your app, you'll likely need to customise your ProGuard configuration file as per this [link](https://developer.android.com/studio/build/shrink-code#keep-code) and add the following line. 
 
 ```
 -keep class com.dexterous.** { *; }
 ```
 
 The plugin also makes use of GSON and the Proguard rules can be found [here](https://github.com/google/gson/blob/master/examples/android-proguard-example/proguard.cfg). The example app has a consolidate Proguard rules (`proguard-rules.pro`) file that combines these together for reference.
+
+If you have resource shrinking enabled, ensure that you have customised the resources that should be kept so that things like your notification images aren't discarded by following the instructions [here](https://developer.android.com/studio/build/shrink-code#keep-resources).
 
 **IMPORTANT**: Starting from version 0.5.0, this library no longer uses the deprecated Android support libraries and has migrated to AndroidX. Developers may require migrating their apps to support this following [this guide](https://developer.android.com/jetpack/androidx/migrate)
 
