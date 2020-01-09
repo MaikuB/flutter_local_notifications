@@ -5,7 +5,7 @@ build_example_android_task:
     folder: ~/.pub-cache
   build_script:
     - cd flutter_local_notifications/example
-    - flutter build apk
+    - flutter build apk --debug
 
 build_example_ios_task:
   osx_instance:
@@ -15,7 +15,7 @@ build_example_ios_task:
   update_pods_script: pod repo update # to fetch all the latest versions
   build_script:
     - cd flutter_local_notifications/example
-    - flutter build ios --no-codesign
+    - flutter build ios --no-codesign --debug
 
 test_platform_interface_task:
   container:
