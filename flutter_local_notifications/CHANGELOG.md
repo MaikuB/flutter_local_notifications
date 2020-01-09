@@ -1,3 +1,7 @@
+# [0.9.1+3]
+* Include notes in getting started section to emphasise that the steps in the integration guide for each platform needs to be done.
+* Move information in the readme on configuring resources to keep on Android.
+
 # [0.9.1+2]
 * Update link to repository due to restructuring.
 
