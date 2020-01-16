@@ -92,13 +92,6 @@ class FlutterLocalNotificationsPlugin {
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificInitializationSettings(initializationSettings);
     _channel.setMethodCallHandler(_handleMethod);
-    /*final CallbackHandle callback =
-        PluginUtilities.getCallbackHandle(_callbackDispatcher);
-    serializedPlatformSpecifics['callbackDispatcher'] = callback.toRawHandle();
-    if (onShowNotification != null) {
-      serializedPlatformSpecifics['onNotificationCallbackDispatcher'] =
-          PluginUtilities.getCallbackHandle(onShowNotification).toRawHandle();
-    }*/
     var result =
         await _channel.invokeMethod('initialize', serializedPlatformSpecifics);
     return result;
