@@ -472,7 +472,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         presentationOptions |= UNNotificationPresentationOptionBadge;
     }
     
-    
     completionHandler(presentationOptions);
 }
 

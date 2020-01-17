@@ -15,6 +15,5 @@ export 'src/platform_specifics/ios/initialization_settings.dart';
 export 'src/platform_specifics/ios/notification_details.dart';
 export 'src/notification_details.dart';
 export 'src/initialization_settings.dart';
-export 'src/flutter_local_notifications.dart';
-export 'src/notification_app_launch_details.dart';
+export 'src/flutter_local_notifications_plugin.dart';
 export 'src/pending_notification_request.dart';

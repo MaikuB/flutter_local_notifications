@@ -2,18 +2,14 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:platform/platform.dart';
+import 'helpers.dart';
 import 'initialization_settings.dart';
-import 'notification_app_launch_details.dart';
 import 'notification_details.dart';
 import 'pending_notification_request.dart';
-
-/// Signature of callback passed to [initialize]. Callback triggered when user taps on a notification
-typedef SelectNotificationCallback = Future<dynamic> Function(String payload);
-
-// Signature of the callback that is triggered when a notification is shown whilst the app is in the foreground. Applicable to iOS versions < 10 only
-typedef DidReceiveLocalNotificationCallback = Future<dynamic> Function(
-    int id, String title, String body, String payload);
+import 'platform_flutter_local_notifications.dart';
+import 'typedefs.dart';
 
 /// The available intervals for periodically showing notifications
 enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
@@ -69,7 +65,15 @@ class FlutterLocalNotificationsPlugin {
   FlutterLocalNotificationsPlugin.private(
       MethodChannel channel, Platform platform)
       : _channel = channel,
-        _platform = platform;
+        _platform = platform {
+    if (platform.isAndroid) {
+      FlutterLocalNotificationsPlatform.instance =
+          AndroidFlutterLocalNotificationsPlugin();
+    } else if (platform.isIOS) {
+      FlutterLocalNotificationsPlatform.instance =
+          IOSFlutterLocalNotificationsPlugin();
+    }
+  }
 
   static final FlutterLocalNotificationsPlugin _instance =
       FlutterLocalNotificationsPlugin.private(
@@ -79,55 +83,65 @@ class FlutterLocalNotificationsPlugin {
   final MethodChannel _channel;
   final Platform _platform;
 
-  SelectNotificationCallback selectNotificationCallback;
-
-  DidReceiveLocalNotificationCallback didReceiveLocalNotificationCallback;
-
   /// Initializes the plugin. Call this method on application before using the plugin further. This should only be done once. When a notification created by this plugin was used to launch the app, calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
   Future<bool> initialize(InitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
-    selectNotificationCallback = onSelectNotification;
-    didReceiveLocalNotificationCallback =
-        initializationSettings?.ios?.onDidReceiveLocalNotification;
-    var serializedPlatformSpecifics =
-        _retrievePlatformSpecificInitializationSettings(initializationSettings);
-    _channel.setMethodCallHandler(_handleMethod);
-    var result =
-        await _channel.invokeMethod('initialize', serializedPlatformSpecifics);
-    return result;
+    if (_platform.isAndroid) {
+      return await (FlutterLocalNotificationsPlatform.instance
+              as AndroidFlutterLocalNotificationsPlugin)
+          ?.initialize(initializationSettings?.android);
+    } else if (_platform.isIOS) {
+      return await (FlutterLocalNotificationsPlatform.instance
+              as IOSFlutterLocalNotificationsPlugin)
+          ?.initialize(initializationSettings?.ios);
+    }
+    throw Exception('Platform is not supported');
   }
 
+  /// Returns info on if a notification had been used to launch the application.
+  /// An example of how this could be used is to change the initial route of your application when it starts up.
   Future<NotificationAppLaunchDetails> getNotificationAppLaunchDetails() async {
-    var result = await _channel.invokeMethod('getNotificationAppLaunchDetails');
-    return NotificationAppLaunchDetails(result['notificationLaunchedApp'],
-        result.containsKey('payload') ? result['payload'] : null);
+    if (_platform.isAndroid) {
+      return await (FlutterLocalNotificationsPlatform.instance
+              as AndroidFlutterLocalNotificationsPlugin)
+          ?.getNotificationAppLaunchDetails();
+    } else if (_platform.isIOS) {
+      return await (FlutterLocalNotificationsPlatform.instance
+              as IOSFlutterLocalNotificationsPlugin)
+          ?.getNotificationAppLaunchDetails();
+    } else {
+      throw Exception('Platform is not supported');
+    }
   }
 
   /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped
   Future<void> show(int id, String title, String body,
       NotificationDetails notificationDetails,
       {String payload}) async {
-    _validateId(id);
-    var serializedPlatformSpecifics =
-        _retrievePlatformSpecificNotificationDetails(notificationDetails);
-    await _channel.invokeMethod('show', <String, dynamic>{
-      'id': id,
-      'title': title,
-      'body': body,
-      'platformSpecifics': serializedPlatformSpecifics,
-      'payload': payload ?? ''
-    });
+    if (_platform.isAndroid) {
+      await (FlutterLocalNotificationsPlatform.instance
+              as AndroidFlutterLocalNotificationsPlugin)
+          ?.show(id, title, body,
+              notificationDetails: notificationDetails?.android,
+              payload: payload);
+    } else if (_platform.isIOS) {
+      await (FlutterLocalNotificationsPlatform.instance
+              as IOSFlutterLocalNotificationsPlugin)
+          ?.show(id, title, body,
+              notificationDetails: notificationDetails?.iOS, payload: payload);
+    } else {
+      throw Exception('Platform is not supported');
+    }
   }
 
   /// Cancel/remove the notification with the specified id. This applies to notifications that have been scheduled and those that have already been presented.
   Future<void> cancel(int id) async {
-    _validateId(id);
-    await _channel.invokeMethod('cancel', id);
+    await FlutterLocalNotificationsPlatform.instance.cancel(id);
   }
 
   /// Cancels/removes all notifications. This applies to notifications that have been scheduled and those that have already been presented.
   Future<void> cancelAll() async {
-    await _channel.invokeMethod('cancelAll');
+    await FlutterLocalNotificationsPlatform.instance.cancelAll();
   }
 
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
@@ -136,7 +150,7 @@ class FlutterLocalNotificationsPlugin {
   Future<void> schedule(int id, String title, String body,
       DateTime scheduledDate, NotificationDetails notificationDetails,
       {String payload, bool androidAllowWhileIdle = false}) async {
-    _validateId(id);
+    validateId(id);
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificNotificationDetails(notificationDetails);
     if (_platform.isAndroid) {
@@ -157,7 +171,7 @@ class FlutterLocalNotificationsPlugin {
   Future<void> periodicallyShow(int id, String title, String body,
       RepeatInterval repeatInterval, NotificationDetails notificationDetails,
       {String payload}) async {
-    _validateId(id);
+    validateId(id);
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificNotificationDetails(notificationDetails);
     await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
@@ -175,7 +189,7 @@ class FlutterLocalNotificationsPlugin {
   Future<void> showDailyAtTime(int id, String title, String body,
       Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
-    _validateId(id);
+    validateId(id);
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificNotificationDetails(notificationDetails);
     await _channel.invokeMethod('showDailyAtTime', <String, dynamic>{
@@ -194,7 +208,7 @@ class FlutterLocalNotificationsPlugin {
   Future<void> showWeeklyAtDayAndTime(int id, String title, String body,
       Day day, Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
-    _validateId(id);
+    validateId(id);
     var serializedPlatformSpecifics =
         _retrievePlatformSpecificNotificationDetails(notificationDetails);
     await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, dynamic>{
@@ -232,39 +246,5 @@ class FlutterLocalNotificationsPlugin {
       serializedPlatformSpecifics = notificationDetails?.iOS?.toMap();
     }
     return serializedPlatformSpecifics;
-  }
-
-  Map<String, dynamic> _retrievePlatformSpecificInitializationSettings(
-      InitializationSettings initializationSettings) {
-    Map<String, dynamic> serializedPlatformSpecifics;
-    if (_platform.isAndroid) {
-      serializedPlatformSpecifics = initializationSettings?.android?.toMap();
-    } else if (_platform.isIOS) {
-      serializedPlatformSpecifics = initializationSettings?.ios?.toMap();
-    }
-    return serializedPlatformSpecifics;
-  }
-
-  Future<void> _handleMethod(MethodCall call) {
-    switch (call.method) {
-      case 'selectNotification':
-        return selectNotificationCallback(call.arguments);
-
-      case 'didReceiveLocalNotification':
-        return didReceiveLocalNotificationCallback(
-            call.arguments['id'],
-            call.arguments['title'],
-            call.arguments['body'],
-            call.arguments['payload']);
-      default:
-        return Future.error('method not defined');
-    }
-  }
-
-  void _validateId(int id) {
-    if (id > 0x7FFFFFFF || id < -0x80000000) {
-      throw ArgumentError(
-          'id must fit within the size of a 32-bit integer i.e. in the range [-2^31, 2^31 - 1]');
-    }
   }
 }

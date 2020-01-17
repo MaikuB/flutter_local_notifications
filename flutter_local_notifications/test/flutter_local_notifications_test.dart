@@ -11,7 +11,7 @@ void main() {
   const title = 'title';
   const body = 'body';
   const payload = 'payload';
-
+  TestWidgetsFlutterBinding.ensureInitialized();
   group('ios', () {
     setUp(() {
       mockChannel = MockMethodChannel();
