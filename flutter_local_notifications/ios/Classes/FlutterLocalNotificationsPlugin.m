@@ -190,7 +190,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         }
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:notificationTypes categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-        if(launchNotification != nil) {
+        if(launchNotification != nil && [self isAFlutterLocalNotification:launchNotification.userInfo]) {
             NSString *payload = launchNotification.userInfo[PAYLOAD];
             [self handleSelectNotification:payload];
         }
@@ -317,6 +317,10 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 - (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge payload:(NSString *)payload {
     NSDictionary *userDict =[NSDictionary dictionaryWithObjectsAndKeys:id, NOTIFICATION_ID, title, TITLE, [NSNumber numberWithBool:presentAlert], PRESENT_ALERT, [NSNumber numberWithBool:presentSound], PRESENT_SOUND, [NSNumber numberWithBool:presentBadge], PRESENT_BADGE, payload, PAYLOAD, nil];
     return userDict;
+}
+
+- (BOOL)isAFlutterLocalNotification:(NSDictionary *)userInfo {
+    return userInfo != nil && userInfo[NOTIFICATION_ID] && userInfo[TITLE] && userInfo[PRESENT_ALERT] && userInfo[PRESENT_SOUND] && userInfo[PRESENT_BADGE] && userInfo[PAYLOAD];
 }
 
 - (void) showUserNotification:(NotificationDetails *) notificationDetails NS_AVAILABLE_IOS(10.0) {
@@ -483,7 +487,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
-    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
+    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier] && [self isAFlutterLocalNotification:response.notification.request.content.userInfo]) {
         NSString *payload = (NSString *) response.notification.request.content.userInfo[PAYLOAD];
         if(initialized) {
             [self handleSelectNotification:payload];
@@ -506,6 +510,9 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 - (void)application:(UIApplication*)application
 didReceiveLocalNotification:(UILocalNotification*)notification {
     if(@available(iOS 10.0, *)) {
+        return;
+    }
+    if(![self isAFlutterLocalNotification:notification.userInfo]) {
         return;
     }
     

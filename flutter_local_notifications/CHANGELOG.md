@@ -1,3 +1,7 @@
+# [1.0.0]
+* **BREAKING CHANGE** [iOS] Added checks to ensure callbacks are only invoked for notifications originating from the plugin to improve compatibility with other notification plugins.
+* [Android] Bump Gradle plugin to 3.5.3
+
 # [0.9.1+3]
 * Include notes in getting started section to emphasise that the steps in the integration guide for each platform needs to be done.
 * Move information in the readme on configuring resources to keep on Android.
