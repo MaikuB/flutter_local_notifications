@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'helpers.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/notification_details.dart';
+import 'helpers.dart';
 import 'typedefs.dart';
 import 'types.dart';
 
@@ -66,20 +67,24 @@ class AndroidFlutterLocalNotificationsPlugin
         'initialize', initializationSettings.toMap());
   }
 
-  @override
-  Future<void> show(int id, String title, String body,
-      {AndroidNotificationDetails notificationDetails, String payload}) {
-    validateId(id);
-    return _channel.invokeMethod(
-      'show',
-      <String, dynamic>{
-        'id': id,
-        'title': title,
-        'body': body,
-        'payload': payload ?? '',
-        'platformSpecifics': notificationDetails?.toMap(),
-      },
-    );
+  /// Creates a notification channel with the specified details.
+  /// Due to how the Android notification APIs work, once created the details cannot be changed.
+  /// If they need to be changed, delete the notification channel using [deleteNotificationChannel]
+  /// and then recreate the notification channel with the new details.
+  Future<void> createNotificationChannel(
+      String id, String name, String description) {
+    return _channel.invokeMethod('createNotificationChannel', <String, dynamic>{
+      'id': id,
+      'name': name,
+      'description': description,
+    });
+  }
+
+  /// Deletes the notification channel with the associated id.
+  Future<void> deleteNotificationChannel(String id) {
+    return _channel.invokeMethod('deleteNotificationChannel', <String, dynamic> {
+      'id': id,
+    });
   }
 
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
@@ -98,22 +103,6 @@ class AndroidFlutterLocalNotificationsPlugin
       'body': body,
       'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
       'platformSpecifics': serializedPlatformSpecifics,
-      'payload': payload ?? ''
-    });
-  }
-
-  @override
-  Future<void> periodicallyShow(
-      int id, String title, String body, RepeatInterval repeatInterval,
-      {AndroidNotificationDetails notificationDetails, String payload}) async {
-    validateId(id);
-    await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
-      'id': id,
-      'title': title,
-      'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
-      'repeatInterval': repeatInterval.index,
-      'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
   }
@@ -159,52 +148,9 @@ class AndroidFlutterLocalNotificationsPlugin
     });
   }
 
-  Future<void> _handleMethod(MethodCall call) {
-    switch (call.method) {
-      case 'selectNotification':
-        return _onSelectNotification(call.arguments);
-      default:
-        return Future.error('method not defined');
-    }
-  }
-}
-
-/// iOS implementation of the local notifications plugin
-class IOSFlutterLocalNotificationsPlugin
-    extends MethodChannelFlutterLocalNotificationsPlugin {
-  SelectNotificationCallback _onSelectNotification;
-
-  DidReceiveLocalNotificationCallback _onDidReceiveLocalNotificationCallback;
-
-  /// Initializes the plugin. Call this method on application before using the plugin further.
-  /// This should only be done once. When a notification created by this plugin was used to launch the app,
-  /// calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
-  Future<bool> initialize(IOSInitializationSettings initializationSettings,
-      {SelectNotificationCallback onSelectNotification}) async {
-    _onSelectNotification = onSelectNotification;
-    _channel.setMethodCallHandler(_handleMethod);
-    return await _channel.invokeMethod(
-        'initialize', initializationSettings.toMap());
-  }
-
-  /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
-  Future<void> schedule(int id, String title, String body,
-      DateTime scheduledDate, IOSNotificationDetails notificationDetails,
-      {String payload}) async {
-    validateId(id);
-    await _channel.invokeMethod('schedule', <String, dynamic>{
-      'id': id,
-      'title': title,
-      'body': body,
-      'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
-      'platformSpecifics': notificationDetails?.toMap(),
-      'payload': payload ?? ''
-    });
-  }
-
   @override
   Future<void> show(int id, String title, String body,
-      {IOSNotificationDetails notificationDetails, String payload}) {
+      {AndroidNotificationDetails notificationDetails, String payload}) {
     validateId(id);
     return _channel.invokeMethod(
       'show',
@@ -221,7 +167,7 @@ class IOSFlutterLocalNotificationsPlugin
   @override
   Future<void> periodicallyShow(
       int id, String title, String body, RepeatInterval repeatInterval,
-      {IOSNotificationDetails notificationDetails, String payload}) async {
+      {AndroidNotificationDetails notificationDetails, String payload}) async {
     validateId(id);
     await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
       'id': id,
@@ -229,6 +175,51 @@ class IOSFlutterLocalNotificationsPlugin
       'body': body,
       'calledAt': DateTime.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
+      'platformSpecifics': notificationDetails?.toMap(),
+      'payload': payload ?? ''
+    });
+  }
+
+  Future<void> _handleMethod(MethodCall call) {
+    switch (call.method) {
+      case 'selectNotification':
+        return _onSelectNotification(call.arguments);
+      default:
+        return Future.error('method not defined');
+    }
+  }
+}
+
+/// iOS implementation of the local notifications plugin
+class IOSFlutterLocalNotificationsPlugin
+    extends MethodChannelFlutterLocalNotificationsPlugin {
+  SelectNotificationCallback _onSelectNotification;
+
+  DidReceiveLocalNotificationCallback _onDidReceiveLocalNotification;
+
+  /// Initializes the plugin. Call this method on application before using the plugin further.
+  /// This should only be done once. When a notification created by this plugin was used to launch the app,
+  /// calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
+  Future<bool> initialize(IOSInitializationSettings initializationSettings,
+      {SelectNotificationCallback onSelectNotification}) async {
+    _onSelectNotification = onSelectNotification;
+    _onDidReceiveLocalNotification =
+        initializationSettings.onDidReceiveLocalNotification;
+    _channel.setMethodCallHandler(_handleMethod);
+    return await _channel.invokeMethod(
+        'initialize', initializationSettings.toMap());
+  }
+
+  /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
+  Future<void> schedule(int id, String title, String body,
+      DateTime scheduledDate, IOSNotificationDetails notificationDetails,
+      {String payload}) async {
+    validateId(id);
+    await _channel.invokeMethod('schedule', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
@@ -275,13 +266,45 @@ class IOSFlutterLocalNotificationsPlugin
     });
   }
 
+  @override
+  Future<void> show(int id, String title, String body,
+      {IOSNotificationDetails notificationDetails, String payload}) {
+    validateId(id);
+    return _channel.invokeMethod(
+      'show',
+      <String, dynamic>{
+        'id': id,
+        'title': title,
+        'body': body,
+        'payload': payload ?? '',
+        'platformSpecifics': notificationDetails?.toMap(),
+      },
+    );
+  }
+
+  @override
+  Future<void> periodicallyShow(
+      int id, String title, String body, RepeatInterval repeatInterval,
+      {IOSNotificationDetails notificationDetails, String payload}) async {
+    validateId(id);
+    await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': repeatInterval.index,
+      'platformSpecifics': notificationDetails?.toMap(),
+      'payload': payload ?? ''
+    });
+  }
+
   Future<void> _handleMethod(MethodCall call) {
     switch (call.method) {
       case 'selectNotification':
         return _onSelectNotification(call.arguments);
 
       case 'didReceiveLocalNotification':
-        return _onDidReceiveLocalNotificationCallback(
+        return _onDidReceiveLocalNotification(
             call.arguments['id'],
             call.arguments['title'],
             call.arguments['body'],
