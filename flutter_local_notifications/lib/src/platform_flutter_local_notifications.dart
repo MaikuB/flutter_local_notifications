@@ -34,6 +34,19 @@ class MethodChannelFlutterLocalNotificationsPlugin
     return NotificationAppLaunchDetails(result['notificationLaunchedApp'],
         result.containsKey('payload') ? result['payload'] : null);
   }
+
+  @override
+  Future<List<PendingNotificationRequest>> pendingNotificationRequests() async {
+    final List<Map<dynamic, dynamic>> pendingNotifications =
+        await _channel.invokeListMethod('pendingNotificationRequests');
+    return pendingNotifications
+        .map((pendingNotification) => PendingNotificationRequest(
+            pendingNotification['id'],
+            pendingNotification['title'],
+            pendingNotification['body'],
+            pendingNotification['payload']))
+        .toList();
+  }
 }
 
 class AndroidFlutterLocalNotificationsPlugin
@@ -62,6 +75,26 @@ class AndroidFlutterLocalNotificationsPlugin
         'platformSpecifics': notificationDetails?.toMap(),
       },
     );
+  }
+
+  /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
+  /// The [androidAllowWhileIdle] parameter is Android-specific and determines if the notification should still be shown at the specified time
+  /// even when in a low-power idle mode.
+  Future<void> schedule(int id, String title, String body,
+      DateTime scheduledDate, AndroidNotificationDetails notificationDetails,
+      {String payload, bool androidAllowWhileIdle = false}) async {
+    validateId(id);
+    var serializedPlatformSpecifics =
+        notificationDetails?.toMap() ?? Map<String, dynamic>();
+    serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
+    await _channel.invokeMethod('schedule', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
+      'platformSpecifics': serializedPlatformSpecifics,
+      'payload': payload ?? ''
+    });
   }
 
   @override
@@ -97,6 +130,30 @@ class AndroidFlutterLocalNotificationsPlugin
     });
   }
 
+  /// Shows a notification on a daily interval at the specified time
+  Future<void> showWeeklyAtDayAndTime(
+      int id,
+      String title,
+      String body,
+      Day day,
+      Time notificationTime,
+      AndroidNotificationDetails notificationDetails,
+      {String payload}) async {
+    validateId(id);
+
+    await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': RepeatInterval.Weekly.index,
+      'repeatTime': notificationTime.toMap(),
+      'day': day.value,
+      'platformSpecifics': notificationDetails?.toMap(),
+      'payload': payload ?? ''
+    });
+  }
+
   Future<void> _handleMethod(MethodCall call) {
     switch (call.method) {
       case 'selectNotification':
@@ -119,6 +176,21 @@ class IOSFlutterLocalNotificationsPlugin
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
         'initialize', initializationSettings.toMap());
+  }
+
+  /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
+  Future<void> schedule(int id, String title, String body,
+      DateTime scheduledDate, IOSNotificationDetails notificationDetails,
+      {String payload}) async {
+    validateId(id);
+    await _channel.invokeMethod('schedule', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
+      'platformSpecifics': notificationDetails?.toMap(),
+      'payload': payload ?? ''
+    });
   }
 
   @override
@@ -165,6 +237,30 @@ class IOSFlutterLocalNotificationsPlugin
       'calledAt': DateTime.now().millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Daily.index,
       'repeatTime': notificationTime.toMap(),
+      'platformSpecifics': notificationDetails?.toMap(),
+      'payload': payload ?? ''
+    });
+  }
+
+  /// Shows a notification on a daily interval at the specified time
+  Future<void> showWeeklyAtDayAndTime(
+      int id,
+      String title,
+      String body,
+      Day day,
+      Time notificationTime,
+      IOSNotificationDetails notificationDetails,
+      {String payload}) async {
+    validateId(id);
+
+    await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': RepeatInterval.Weekly.index,
+      'repeatTime': notificationTime.toMap(),
+      'day': day.value,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
