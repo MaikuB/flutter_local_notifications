@@ -67,26 +67,6 @@ class AndroidFlutterLocalNotificationsPlugin
         'initialize', initializationSettings.toMap());
   }
 
-  /// Creates a notification channel with the specified details.
-  /// Due to how the Android notification APIs work, once created the details cannot be changed.
-  /// If they need to be changed, delete the notification channel using [deleteNotificationChannel]
-  /// and then recreate the notification channel with the new details.
-  Future<void> createNotificationChannel(
-      String id, String name, String description) {
-    return _channel.invokeMethod('createNotificationChannel', <String, dynamic>{
-      'id': id,
-      'name': name,
-      'description': description,
-    });
-  }
-
-  /// Deletes the notification channel with the associated id.
-  Future<void> deleteNotificationChannel(String id) {
-    return _channel.invokeMethod('deleteNotificationChannel', <String, dynamic> {
-      'id': id,
-    });
-  }
-
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
   /// The [androidAllowWhileIdle] parameter is Android-specific and determines if the notification should still be shown at the specified time
   /// even when in a low-power idle mode.
