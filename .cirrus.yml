@@ -12,7 +12,6 @@ build_example_ios_task:
     image: mojave-xcode-11.3-flutter
   pub_cache:
     folder: ~/.pub-cache
-  update_pods_script: pod repo update # to fetch all the latest versions
   build_script:
     - cd flutter_local_notifications/example
     - flutter build ios --no-codesign --debug
