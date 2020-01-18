@@ -1,3 +1,9 @@
+# [1.1.0]
+* Updated plugin to make use of `flutter_local_notifications_platform_interface` version 1.0.1. This allows for platform-specific
+  implementations of the platform interface to now be accessible.
+* **BREAKING CHANGE** Plugin callbacks are no longer publicly accessible
+* **BREAKING CHANGE** [iOS] Local notifications that launched the app should now only be processed by the plugin if they were created by the plugin.
+
 # [1.0.0]
 * **BREAKING CHANGE** [iOS] Added checks to ensure callbacks are only invoked for notifications originating from the plugin to improve compatibility with other notification plugins.
 * [Android] Bump Gradle plugin to 3.5.3

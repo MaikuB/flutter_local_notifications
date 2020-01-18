@@ -1,4 +1,4 @@
-import '../../flutter_local_notifications.dart';
+import '../../typedefs.dart';
 
 /// Plugin initialization settings for iOS
 class IOSInitializationSettings {

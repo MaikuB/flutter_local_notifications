@@ -1,4 +1,5 @@
-library flutter_local_notifications;
+export 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart'
+    show PendingNotificationRequest, RepeatInterval;
 
 export 'src/platform_specifics/android/styles/style_information.dart';
 export 'src/platform_specifics/android/styles/default_style_information.dart';
@@ -15,6 +16,8 @@ export 'src/platform_specifics/ios/initialization_settings.dart';
 export 'src/platform_specifics/ios/notification_details.dart';
 export 'src/notification_details.dart';
 export 'src/initialization_settings.dart';
-export 'src/flutter_local_notifications.dart';
-export 'src/notification_app_launch_details.dart';
-export 'src/pending_notification_request.dart';
+export 'src/flutter_local_notifications_plugin.dart';
+export 'src/platform_flutter_local_notifications.dart'
+    hide MethodChannelFlutterLocalNotificationsPlugin;
+export 'src/types.dart';
+export 'src/typedefs.dart';
