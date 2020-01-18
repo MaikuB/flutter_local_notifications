@@ -89,11 +89,13 @@ class FlutterLocalNotificationsPlugin {
     if (_platform.isAndroid) {
       return await (FlutterLocalNotificationsPlatform.instance
               as AndroidFlutterLocalNotificationsPlugin)
-          ?.initialize(initializationSettings?.android);
+          ?.initialize(initializationSettings?.android,
+              onSelectNotification: onSelectNotification);
     } else if (_platform.isIOS) {
       return await (FlutterLocalNotificationsPlatform.instance
               as IOSFlutterLocalNotificationsPlugin)
-          ?.initialize(initializationSettings?.ios);
+          ?.initialize(initializationSettings?.ios,
+              onSelectNotification: onSelectNotification);
     }
     throw Exception('Platform is not supported');
   }
