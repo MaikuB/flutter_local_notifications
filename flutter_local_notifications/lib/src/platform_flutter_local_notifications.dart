@@ -108,7 +108,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'body': body,
       'calledAt': DateTime.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
-      'platformSpecifics': notificationDetails,
+      'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
   }
@@ -220,7 +220,7 @@ class IOSFlutterLocalNotificationsPlugin
       'body': body,
       'calledAt': DateTime.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
-      'platformSpecifics': notificationDetails,
+      'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
   }
