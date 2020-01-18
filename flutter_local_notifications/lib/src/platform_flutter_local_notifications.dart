@@ -9,6 +9,7 @@ import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/notification_details.dart';
 import 'typedefs.dart';
+import 'types.dart';
 
 const MethodChannel _channel =
     MethodChannel('dexterous.com/flutter/local_notifications');
@@ -63,6 +64,39 @@ class AndroidFlutterLocalNotificationsPlugin
     );
   }
 
+  @override
+  Future<void> periodicallyShow(
+      int id, String title, String body, RepeatInterval repeatInterval,
+      {AndroidNotificationDetails notificationDetails, String payload}) async {
+    validateId(id);
+    await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': repeatInterval.index,
+      'platformSpecifics': notificationDetails,
+      'payload': payload ?? ''
+    });
+  }
+
+  /// Shows a notification on a daily interval at the specified time
+  Future<void> showDailyAtTime(int id, String title, String body,
+      Time notificationTime, AndroidNotificationDetails notificationDetails,
+      {String payload}) async {
+    validateId(id);
+    await _channel.invokeMethod('showDailyAtTime', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': RepeatInterval.Daily.index,
+      'repeatTime': notificationTime.toMap(),
+      'platformSpecifics': notificationDetails?.toMap(),
+      'payload': payload ?? ''
+    });
+  }
+
   Future<void> _handleMethod(MethodCall call) {
     switch (call.method) {
       case 'selectNotification':
@@ -101,6 +135,39 @@ class IOSFlutterLocalNotificationsPlugin
         'platformSpecifics': notificationDetails?.toMap(),
       },
     );
+  }
+
+  @override
+  Future<void> periodicallyShow(
+      int id, String title, String body, RepeatInterval repeatInterval,
+      {IOSNotificationDetails notificationDetails, String payload}) async {
+    validateId(id);
+    await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': repeatInterval.index,
+      'platformSpecifics': notificationDetails,
+      'payload': payload ?? ''
+    });
+  }
+
+  /// Shows a notification on a daily interval at the specified time
+  Future<void> showDailyAtTime(int id, String title, String body,
+      Time notificationTime, IOSNotificationDetails notificationDetails,
+      {String payload}) async {
+    validateId(id);
+    await _channel.invokeMethod('showDailyAtTime', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': RepeatInterval.Daily.index,
+      'repeatTime': notificationTime.toMap(),
+      'platformSpecifics': notificationDetails?.toMap(),
+      'payload': payload ?? ''
+    });
   }
 
   Future<void> _handleMethod(MethodCall call) {
