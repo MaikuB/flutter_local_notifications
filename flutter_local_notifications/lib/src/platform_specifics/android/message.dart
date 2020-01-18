@@ -1,5 +1,6 @@
 import 'person.dart';
 
+/// Represents a message used in Android messaging style notifications
 class Message {
   /// The message text
   final String text;

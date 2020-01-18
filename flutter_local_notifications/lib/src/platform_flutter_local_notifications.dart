@@ -14,6 +14,7 @@ import 'types.dart';
 const MethodChannel _channel =
     MethodChannel('dexterous.com/flutter/local_notifications');
 
+/// An implementation of a local notifications platform using method channels
 class MethodChannelFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
   @override
@@ -49,10 +50,14 @@ class MethodChannelFlutterLocalNotificationsPlugin
   }
 }
 
+/// Android implementation of the local notifications plugin
 class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback _onSelectNotification;
 
+  /// Initializes the plugin. Call this method on application before using the plugin further.
+  /// This should only be done once. When a notification created by this plugin was used to launch the app,
+  /// calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
   Future<bool> initialize(AndroidInitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
     _onSelectNotification = onSelectNotification;
@@ -164,12 +169,16 @@ class AndroidFlutterLocalNotificationsPlugin
   }
 }
 
+/// iOS implementation of the local notifications plugin
 class IOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback _onSelectNotification;
 
   DidReceiveLocalNotificationCallback _onDidReceiveLocalNotificationCallback;
 
+  /// Initializes the plugin. Call this method on application before using the plugin further.
+  /// This should only be done once. When a notification created by this plugin was used to launch the app,
+  /// calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
   Future<bool> initialize(IOSInitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
     _onSelectNotification = onSelectNotification;

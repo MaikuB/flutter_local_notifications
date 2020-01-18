@@ -9,6 +9,7 @@ import 'platform_flutter_local_notifications.dart';
 import 'typedefs.dart';
 import 'types.dart';
 
+/// `FlutterLocalNotificationsPlugin` allows applications to display a local notification.
 class FlutterLocalNotificationsPlugin {
   factory FlutterLocalNotificationsPlugin() => _instance;
 
@@ -29,7 +30,9 @@ class FlutterLocalNotificationsPlugin {
 
   final Platform _platform;
 
-  /// Initializes the plugin. Call this method on application before using the plugin further. This should only be done once. When a notification created by this plugin was used to launch the app, calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
+  /// Initializes the plugin. Call this method on application before using the plugin further.
+  /// This should only be done once. When a notification created by this plugin was used to launch the app,
+  /// calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
   Future<bool> initialize(InitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
     if (_platform.isAndroid) {
