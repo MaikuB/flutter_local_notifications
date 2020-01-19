@@ -225,6 +225,13 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
+                    buttonText:
+                        'Show notification that times out after 3 seconds [Android]',
+                    onPressed: () async {
+                      await _showTimeoutNotification();
+                    },
+                  ),
+                  PaddedRaisedButton(
                     buttonText: 'Show big picture notification [Android]',
                     onPressed: () async {
                       await _showBigPictureNotification();
@@ -394,6 +401,21 @@ class _HomePageState extends State<HomePage> {
         '<b>silent</b> body', platformChannelSpecifics);
   }
 
+  Future<void> _showTimeoutNotification() async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'silent channel id',
+        'silent channel name',
+        'silent channel description',
+        timeoutAfter: 3000,
+        styleInformation: DefaultStyleInformation(true, true));
+    var iOSPlatformChannelSpecifics =
+        IOSNotificationDetails(presentSound: false);
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(0, 'timeout notification',
+        'Times out after 3 seconds', platformChannelSpecifics);
+  }
+
   Future<String> _downloadAndSaveImage(String url, String fileName) async {
     var directory = await getApplicationDocumentsDirectory();
     var filePath = '${directory.path}/$fileName';
@@ -557,6 +579,7 @@ class _HomePageState extends State<HomePage> {
         'message channel id',
         'message channel name',
         'message channel description',
+        category: 'msg',
         style: AndroidNotificationStyle.Messaging,
         styleInformation: messagingStyle);
     var platformChannelSpecifics =
