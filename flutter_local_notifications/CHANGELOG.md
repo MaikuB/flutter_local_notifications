@@ -1,3 +1,7 @@
+# [1.1.1]
+* [Android] Added ability to specify timeout duration of notification
+* [Android] Added ability to specify the notification category
+
 # [1.1.0]
 * Updated plugin to make use of `flutter_local_notifications_platform_interface` version 1.0.1. This allows for platform-specific
   implementations of the platform interface to now be accessible.

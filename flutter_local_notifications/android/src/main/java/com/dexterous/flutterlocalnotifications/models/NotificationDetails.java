@@ -18,6 +18,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class NotificationDetails {
+    private static final String ID = "id";
+    private static final String TITLE = "title";
+    private static final String BODY = "body";
     private static final String PAYLOAD = "payload";
     private static final String MILLISECONDS_SINCE_EPOCH = "millisecondsSinceEpoch";
     private static final String CALLED_AT = "calledAt";
@@ -90,16 +93,12 @@ public class NotificationDetails {
 
     private static final String LED_ON_MS = "ledOnMs";
     private static final String LED_OFF_MS = "ledOffMs";
-
     private static final String VISIBILITY = "visibility";
 
-
-    public static final String ID = "id";
-    public static final String TITLE = "title";
-    public static final String BODY = "body";
-
-    public static final String TICKER = "ticker";
-    public static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
+    private static final String TICKER = "ticker";
+    private static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
+    private static final String CATEGORY = "category";
+    private static final String TIMEOUT_AFTER = "timeoutAfter";
 
     public Integer id;
     public String title;
@@ -144,6 +143,8 @@ public class NotificationDetails {
     public String ticker;
     public Integer visibility;
     public Boolean allowWhileIdle;
+    public Long timeoutAfter;
+    public String category;
 
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted.
@@ -215,6 +216,16 @@ public class NotificationDetails {
             notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
             notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
             notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
+            Object timeoutAfter =  platformChannelSpecifics.get(TIMEOUT_AFTER);
+            if(timeoutAfter != null) {
+                if(timeoutAfter instanceof Integer) {
+                    notificationDetails.timeoutAfter = ((Integer) timeoutAfter).longValue();
+                }
+                else if(timeoutAfter instanceof Long) {
+                    notificationDetails.timeoutAfter = (Long) timeoutAfter;
+                }
+            }
+            notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
         }
         return notificationDetails;
     }

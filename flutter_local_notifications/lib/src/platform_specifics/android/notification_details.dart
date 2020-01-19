@@ -97,7 +97,7 @@ class AndroidNotificationDetails {
   /// Sets how long the light colour will remain off. Not applicable for Android 8.0+
   int ledOffMs;
 
-  /// Set the "ticker" text which is sent to accessibility services.
+  /// Set the "ticker" text which is sent to accessibility services
   String ticker;
 
   /// The action to take for managing notification channels. Defaults to creating the notification channel using the provided details if it doesn't exist
@@ -105,6 +105,13 @@ class AndroidNotificationDetails {
 
   /// Defines the notification visibility on the lockscreen
   NotificationVisibility visibility;
+
+  /// The duration in milliseconds after which the notification will be cancelled if it hasn't already
+  int timeoutAfter;
+
+  /// The notification category. Refer to Android notification API documentation at https://developer.android.com/reference/androidx/core/app/NotificationCompat.html#constants_2
+  /// for the available categories
+  String category;
 
   AndroidNotificationDetails(
       this.channelId, this.channelName, this.channelDescription,
@@ -137,7 +144,9 @@ class AndroidNotificationDetails {
       this.ledOnMs,
       this.ledOffMs,
       this.ticker,
-      this.visibility});
+      this.visibility,
+      this.timeoutAfter,
+      this.category});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -181,7 +190,9 @@ class AndroidNotificationDetails {
       'ledOnMs': ledOnMs,
       'ledOffMs': ledOffMs,
       'ticker': ticker,
-      'visibility': visibility?.index
+      'visibility': visibility?.index,
+      'timeoutAfter': timeoutAfter,
+      'category': category
     };
   }
 }

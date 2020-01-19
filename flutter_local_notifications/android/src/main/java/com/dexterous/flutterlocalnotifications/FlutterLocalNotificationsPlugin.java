@@ -111,7 +111,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-    public static Notification createNotification(Context context, NotificationDetails notificationDetails) {
+    private static Notification createNotification(Context context, NotificationDetails notificationDetails) {
         setupNotificationChannel(context, notificationDetails);
         Intent intent = new Intent(context, getMainActivityClass(context));
         intent.setAction(SELECT_NOTIFICATION);
@@ -143,6 +143,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         setLights(notificationDetails, builder);
         setStyle(context, notificationDetails, builder);
         setProgress(notificationDetails, builder);
+        setCategory(notificationDetails, builder);
+        setTimeoutAfter(notificationDetails, builder);
         return builder.build();
     }
 
@@ -163,7 +165,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     @NonNull
-    public static Gson buildGson() {
+    static Gson buildGson() {
         RuntimeTypeAdapterFactory<StyleInformation> styleInformationAdapter =
                 RuntimeTypeAdapterFactory
                         .of(StyleInformation.class)
@@ -206,7 +208,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin(registrar);
     }
 
-    public static void removeNotificationFromCache(Integer notificationId, Context context) {
+    static void removeNotificationFromCache(Integer notificationId, Context context) {
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
             NotificationDetails notificationDetails = it.next();
@@ -419,6 +421,20 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
+    private static void setCategory(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        if(notificationDetails.category == null) {
+            return;
+        }
+        builder.setCategory(notificationDetails.category);
+    }
+
+    private static void setTimeoutAfter(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        if(notificationDetails.timeoutAfter == null) {
+            return;
+        }
+        builder.setTimeoutAfter(notificationDetails.timeoutAfter);
+    }
+
     private static Class getMainActivityClass(Context context) {
         String packageName = context.getPackageName();
         Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
@@ -433,8 +449,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private static void setStyle(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
         switch (notificationDetails.style) {
-            case Default:
-                break;
             case BigPicture:
                 setBigPictureStyle(context, notificationDetails, builder);
                 break;
@@ -630,7 +644,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return true;
     }
 
-    public static void showNotification(Context context, NotificationDetails notificationDetails) {
+    static void showNotification(Context context, NotificationDetails notificationDetails) {
         Notification notification = createNotification(context, notificationDetails);
         NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
         notificationManagerCompat.notify(notificationDetails.id, notification);
