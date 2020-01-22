@@ -196,6 +196,13 @@ class _HomePageState extends State<HomePage> {
                       await _scheduleNotification();
                     },
                   ),
+                  PaddedRaisedButton(
+                    buttonText:
+                        'Schedule notification to appear in 7 seconds and wakes screen',
+                    onPressed: () async {
+                      await _scheduleNotificationWakeUp();
+                    },
+                  ),
                   Text(
                       'NOTE: red colour, large icon and red LED are Android-specific'),
                   PaddedRaisedButton(
@@ -384,6 +391,39 @@ class _HomePageState extends State<HomePage> {
         'scheduled body',
         scheduledNotificationDateTime,
         platformChannelSpecifics);
+  }
+
+  Future<void> _scheduleNotificationWakeUp() async {
+    var scheduledNotificationDateTime =
+        DateTime.now().add(Duration(seconds: 7));
+
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your other channel id',
+      'your other channel name',
+      'your other channel description',
+      playSound: true,
+      importance: Importance.Max,
+      priority: Priority.High,
+    );
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+    var platformChannelSpecifics = NotificationDetails(
+      androidPlatformChannelSpecifics,
+      iOSPlatformChannelSpecifics,
+    );
+    await flutterLocalNotificationsPlugin.schedule(
+      scheduledNotificationDateTime.hashCode,
+      'Title',
+      'Body',
+      scheduledNotificationDateTime,
+      platformChannelSpecifics,
+      payload: 'payload',
+      androidAllowWhileIdle: true,
+      androidWakeScreen: true,
+    );
   }
 
   Future<void> _showNotificationWithNoSound() async {

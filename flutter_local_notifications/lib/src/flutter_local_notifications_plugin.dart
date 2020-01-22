@@ -102,13 +102,17 @@ class FlutterLocalNotificationsPlugin {
   /// even when in a low-power idle mode.
   Future<void> schedule(int id, String title, String body,
       DateTime scheduledDate, NotificationDetails notificationDetails,
-      {String payload, bool androidAllowWhileIdle = false}) async {
+      {String payload,
+      bool androidAllowWhileIdle = false,
+      bool androidWakeScreen = false}) async {
     if (_platform.isAndroid) {
       await (FlutterLocalNotificationsPlatform.instance
               as AndroidFlutterLocalNotificationsPlugin)
           ?.schedule(
               id, title, body, scheduledDate, notificationDetails?.android,
-              payload: payload, androidAllowWhileIdle: androidAllowWhileIdle);
+              payload: payload,
+              androidAllowWhileIdle: androidAllowWhileIdle,
+              androidWakeScreen: androidWakeScreen);
     } else if (_platform.isIOS) {
       await (FlutterLocalNotificationsPlatform.instance
               as IOSFlutterLocalNotificationsPlugin)

@@ -97,6 +97,7 @@ public class NotificationDetails {
 
     private static final String TICKER = "ticker";
     private static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
+    private static final String WAKE_SCREEN = "wakeScreen";
     private static final String CATEGORY = "category";
     private static final String TIMEOUT_AFTER = "timeoutAfter";
 
@@ -145,6 +146,7 @@ public class NotificationDetails {
     public Boolean allowWhileIdle;
     public Long timeoutAfter;
     public String category;
+    public Boolean wakeScreen;
 
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted.
@@ -216,6 +218,7 @@ public class NotificationDetails {
             notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
             notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
             notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
+            notificationDetails.wakeScreen = (Boolean) platformChannelSpecifics.get(WAKE_SCREEN);
             Object timeoutAfter =  platformChannelSpecifics.get(TIMEOUT_AFTER);
             if(timeoutAfter != null) {
                 if(timeoutAfter instanceof Integer) {

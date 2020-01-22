@@ -4,6 +4,9 @@ import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.os.PowerManager;
+
 import androidx.core.app.NotificationManagerCompat;
 
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
@@ -42,6 +45,16 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
             Type type = new TypeToken<NotificationDetails>() {
             }.getType();
             NotificationDetails notificationDetails  = gson.fromJson(notificationDetailsJson, type);
+            if (notificationDetails.wakeScreen) {
+                PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                boolean screenOn = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH ? pm.isInteractive()
+                        : pm.isScreenOn();
+                if (!screenOn) {
+                    PowerManager.WakeLock wl = pm.newWakeLock(
+                            PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "seagull:WAKE_LOCK");
+                    wl.acquire(4000);
+                }
+            }
             FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
             if (repeat) {
                 return;

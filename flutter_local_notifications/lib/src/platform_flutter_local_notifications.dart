@@ -72,11 +72,14 @@ class AndroidFlutterLocalNotificationsPlugin
   /// even when in a low-power idle mode.
   Future<void> schedule(int id, String title, String body,
       DateTime scheduledDate, AndroidNotificationDetails notificationDetails,
-      {String payload, bool androidAllowWhileIdle = false}) async {
+      {String payload,
+      bool androidAllowWhileIdle = false,
+      bool androidWakeScreen = false}) async {
     validateId(id);
     var serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? Map<String, dynamic>();
     serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
+    serializedPlatformSpecifics['wakeScreen'] = androidWakeScreen;
     await _channel.invokeMethod('schedule', <String, dynamic>{
       'id': id,
       'title': title,
