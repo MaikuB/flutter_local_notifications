@@ -1,3 +1,7 @@
+# [1.1.2]
+* Passing a null notification id now throws an `ArgumentError`. Thanks to PR from [talmor_guy](https://github.com/talmor-guy)
+* Slight tweak to message displayed with by `ArgumentError` when notification id is not within range of a 32-bit integer
+
 # [1.1.1]
 * [Android] Added ability to specify timeout duration of notification
 * [Android] Added ability to specify the notification category
