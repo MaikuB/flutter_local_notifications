@@ -77,8 +77,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD = "getNotificationAppLaunchDetails";
     private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
     private static final String PAYLOAD = "payload";
-    private static final String MISSING_ID_ERROR_CODE = "MISSING_ID";
-    private static final String MISSING_ID_ERROR_MESSAGE = "Must provide a notification id";
     private static final String INVALID_ICON_ERROR_CODE = "INVALID_ICON";
     private static final String INVALID_LARGE_ICON_ERROR_CODE = "INVALID_LARGE_ICON";
     private static final String INVALID_BIG_PICTURE_ERROR_CODE = "INVALID_BIG_PICTURE";
@@ -730,13 +728,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         Map<String, Object> arguments = call.arguments();
         NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
         if (notificationDetails != null) {
-            if (notificationDetails.id == null) {
-                result.error(MISSING_ID_ERROR_CODE, MISSING_ID_ERROR_MESSAGE, null);
-            }
-            else {
-                scheduleNotification(registrar.context(), notificationDetails, true);
-                result.success(null);
-            }
+            scheduleNotification(registrar.context(), notificationDetails, true);
+            result.success(null);
         }
     }
 
@@ -876,5 +869,3 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return false;
     }
 }
-
-
