@@ -56,6 +56,9 @@ class FlutterLocalNotificationsPlugin {
 
   /// Returns info on if a notification had been used to launch the application.
   /// An example of how this could be used is to change the initial route of your application when it starts up.
+  ///
+  /// If the plugin isn't running on either Android or iOS then it defaults to indicate that a notification wasn't
+  /// used to launch the app.
   Future<NotificationAppLaunchDetails> getNotificationAppLaunchDetails() async {
     if (_platform.isAndroid) {
       return await (FlutterLocalNotificationsPlatform.instance
