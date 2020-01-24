@@ -67,7 +67,7 @@ class FlutterLocalNotificationsPlugin {
           ?.getNotificationAppLaunchDetails();
     } else {
       return await FlutterLocalNotificationsPlatform.instance
-          .getNotificationAppLaunchDetails();
+          ?.getNotificationAppLaunchDetails();
     }
   }
 
@@ -87,18 +87,18 @@ class FlutterLocalNotificationsPlugin {
           ?.show(id, title, body,
               notificationDetails: notificationDetails?.iOS, payload: payload);
     } else {
-      await FlutterLocalNotificationsPlatform.instance.show(id, title, body);
+      await FlutterLocalNotificationsPlatform.instance?.show(id, title, body);
     }
   }
 
   /// Cancel/remove the notification with the specified id. This applies to notifications that have been scheduled and those that have already been presented.
   Future<void> cancel(int id) async {
-    await FlutterLocalNotificationsPlatform.instance.cancel(id);
+    await FlutterLocalNotificationsPlatform.instance?.cancel(id);
   }
 
   /// Cancels/removes all notifications. This applies to notifications that have been scheduled and those that have already been presented.
   Future<void> cancelAll() async {
-    await FlutterLocalNotificationsPlatform.instance.cancelAll();
+    await FlutterLocalNotificationsPlatform.instance?.cancelAll();
   }
 
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
@@ -139,7 +139,7 @@ class FlutterLocalNotificationsPlugin {
               notificationDetails: notificationDetails?.iOS, payload: payload);
     } else {
       await FlutterLocalNotificationsPlatform.instance
-          .periodicallyShow(id, title, body, repeatInterval);
+          ?.periodicallyShow(id, title, body, repeatInterval);
     }
   }
 
@@ -184,6 +184,6 @@ class FlutterLocalNotificationsPlugin {
   /// Returns a list of notifications pending to be delivered/shown
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() {
     return FlutterLocalNotificationsPlatform.instance
-        .pendingNotificationRequests();
+        ?.pendingNotificationRequests();
   }
 }
