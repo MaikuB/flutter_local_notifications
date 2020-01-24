@@ -1,5 +1,8 @@
 export 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart'
-    show PendingNotificationRequest, RepeatInterval;
+    show
+        PendingNotificationRequest,
+        RepeatInterval,
+        NotificationAppLaunchDetails;
 
 export 'src/platform_specifics/android/styles/style_information.dart';
 export 'src/platform_specifics/android/styles/default_style_information.dart';

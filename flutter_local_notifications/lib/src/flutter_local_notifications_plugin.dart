@@ -10,6 +10,8 @@ import 'typedefs.dart';
 import 'types.dart';
 
 /// `FlutterLocalNotificationsPlugin` allows applications to display a local notification.
+/// The plugin will check the platform that is running on to use the appropriate platform-specific
+/// implementation of the plugin. The plugin methods will be a no-op when the platform can't be detected.
 class FlutterLocalNotificationsPlugin {
   factory FlutterLocalNotificationsPlugin() => _instance;
 
@@ -33,6 +35,9 @@ class FlutterLocalNotificationsPlugin {
   /// Initializes the plugin. Call this method on application before using the plugin further.
   /// This should only be done once. When a notification created by this plugin was used to launch the app,
   /// calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
+  ///
+  /// Will return a [bool] value to indicate if initialization succeeded. When running in environment that is
+  /// neither Android and iOS (e.g. when running tests), this will be a no-op and return true.
   Future<bool> initialize(InitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
     if (_platform.isAndroid) {
@@ -45,13 +50,15 @@ class FlutterLocalNotificationsPlugin {
               as IOSFlutterLocalNotificationsPlugin)
           ?.initialize(initializationSettings?.ios,
               onSelectNotification: onSelectNotification);
-    } else {
-      throw UnimplementedError('initialize() has not been implemented');
     }
+    return true;
   }
 
   /// Returns info on if a notification had been used to launch the application.
   /// An example of how this could be used is to change the initial route of your application when it starts up.
+  ///
+  /// If the plugin isn't running on either Android or iOS then it defaults to indicate that a notification wasn't
+  /// used to launch the app.
   Future<NotificationAppLaunchDetails> getNotificationAppLaunchDetails() async {
     if (_platform.isAndroid) {
       return await (FlutterLocalNotificationsPlatform.instance
@@ -63,7 +70,8 @@ class FlutterLocalNotificationsPlugin {
           ?.getNotificationAppLaunchDetails();
     } else {
       return await FlutterLocalNotificationsPlatform.instance
-          .getNotificationAppLaunchDetails();
+              ?.getNotificationAppLaunchDetails() ??
+          NotificationAppLaunchDetails(false, null);
     }
   }
 
@@ -83,18 +91,18 @@ class FlutterLocalNotificationsPlugin {
           ?.show(id, title, body,
               notificationDetails: notificationDetails?.iOS, payload: payload);
     } else {
-      await FlutterLocalNotificationsPlatform.instance.show(id, title, body);
+      await FlutterLocalNotificationsPlatform.instance?.show(id, title, body);
     }
   }
 
   /// Cancel/remove the notification with the specified id. This applies to notifications that have been scheduled and those that have already been presented.
   Future<void> cancel(int id) async {
-    await FlutterLocalNotificationsPlatform.instance.cancel(id);
+    await FlutterLocalNotificationsPlatform.instance?.cancel(id);
   }
 
   /// Cancels/removes all notifications. This applies to notifications that have been scheduled and those that have already been presented.
   Future<void> cancelAll() async {
-    await FlutterLocalNotificationsPlatform.instance.cancelAll();
+    await FlutterLocalNotificationsPlatform.instance?.cancelAll();
   }
 
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
@@ -114,8 +122,6 @@ class FlutterLocalNotificationsPlugin {
               as IOSFlutterLocalNotificationsPlugin)
           ?.schedule(id, title, body, scheduledDate, notificationDetails?.iOS,
               payload: payload);
-    } else {
-      throw UnimplementedError('schedule() has not been implemented');
     }
   }
 
@@ -137,7 +143,7 @@ class FlutterLocalNotificationsPlugin {
               notificationDetails: notificationDetails?.iOS, payload: payload);
     } else {
       await FlutterLocalNotificationsPlatform.instance
-          .periodicallyShow(id, title, body, repeatInterval);
+          ?.periodicallyShow(id, title, body, repeatInterval);
     }
   }
 
@@ -157,8 +163,6 @@ class FlutterLocalNotificationsPlugin {
           ?.showDailyAtTime(
               id, title, body, notificationTime, notificationDetails?.iOS,
               payload: payload);
-    } else {
-      throw UnimplementedError('showDailyAtTime() has not been implemented');
     }
   }
 
@@ -178,15 +182,12 @@ class FlutterLocalNotificationsPlugin {
           ?.showWeeklyAtDayAndTime(
               id, title, body, day, notificationTime, notificationDetails?.iOS,
               payload: payload);
-    } else {
-      throw UnimplementedError(
-          'showWeeklyAtDayAndTime() has not been implemented');
     }
   }
 
   /// Returns a list of notifications pending to be delivered/shown
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() {
     return FlutterLocalNotificationsPlatform.instance
-        .pendingNotificationRequests();
+        ?.pendingNotificationRequests();
   }
 }
