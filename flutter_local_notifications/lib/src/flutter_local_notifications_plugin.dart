@@ -10,6 +10,8 @@ import 'typedefs.dart';
 import 'types.dart';
 
 /// `FlutterLocalNotificationsPlugin` allows applications to display a local notification.
+/// The plugin will check the platform that is running on to use the appropriate platform-specific
+/// implementation of the plugin. The plugin methods will be a no-op when the platform can't be detected.
 class FlutterLocalNotificationsPlugin {
   factory FlutterLocalNotificationsPlugin() => _instance;
 
@@ -33,6 +35,9 @@ class FlutterLocalNotificationsPlugin {
   /// Initializes the plugin. Call this method on application before using the plugin further.
   /// This should only be done once. When a notification created by this plugin was used to launch the app,
   /// calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
+  ///
+  /// Will return a [bool] value to indicate if initialization succeeded. When running in environment that is
+  /// neither Android and iOS (e.g. when running tests), this will be a no-op and return true.
   Future<bool> initialize(InitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
     if (_platform.isAndroid) {
@@ -45,9 +50,8 @@ class FlutterLocalNotificationsPlugin {
               as IOSFlutterLocalNotificationsPlugin)
           ?.initialize(initializationSettings?.ios,
               onSelectNotification: onSelectNotification);
-    } else {
-      throw UnimplementedError('initialize() has not been implemented');
     }
+    return true;
   }
 
   /// Returns info on if a notification had been used to launch the application.
@@ -114,8 +118,6 @@ class FlutterLocalNotificationsPlugin {
               as IOSFlutterLocalNotificationsPlugin)
           ?.schedule(id, title, body, scheduledDate, notificationDetails?.iOS,
               payload: payload);
-    } else {
-      throw UnimplementedError('schedule() has not been implemented');
     }
   }
 
@@ -157,8 +159,6 @@ class FlutterLocalNotificationsPlugin {
           ?.showDailyAtTime(
               id, title, body, notificationTime, notificationDetails?.iOS,
               payload: payload);
-    } else {
-      throw UnimplementedError('showDailyAtTime() has not been implemented');
     }
   }
 
@@ -178,9 +178,6 @@ class FlutterLocalNotificationsPlugin {
           ?.showWeeklyAtDayAndTime(
               id, title, body, day, notificationTime, notificationDetails?.iOS,
               payload: payload);
-    } else {
-      throw UnimplementedError(
-          'showWeeklyAtDayAndTime() has not been implemented');
     }
   }
 

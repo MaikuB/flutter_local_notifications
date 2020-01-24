@@ -1,3 +1,8 @@
+# [1.1.3]
+* Expose `NotificationAppLaunchDetails` via main plugin
+* Retroactively updated changelog for 1.1.0 to indicate breaking change on moving to using platform interface
+* Made plugin methods be a no-op to fix issue with version 1.1.0 where test code involving the plugin would fail when running on an environment that is neither Android or iOS
+
 # [1.1.2]
 * Passing a null notification id now throws an `ArgumentError`. Thanks to PR from [talmor_guy](https://github.com/talmor-guy)
 * Slight tweak to message displayed with by `ArgumentError` when notification id is not within range of a 32-bit integer
@@ -7,8 +12,8 @@
 * [Android] Added ability to specify the notification category
 
 # [1.1.0]
-* Updated plugin to make use of `flutter_local_notifications_platform_interface` version 1.0.1. This allows for platform-specific
-  implementations of the platform interface to now be accessible.
+* **BREAKING CHANGE** Updated plugin to make use of `flutter_local_notifications_platform_interface` version 1.0.1. This allows for platform-specific implementations of the platform interface to now be accessible. Note that the plugin will check which platform the plugin is running on.
+  *Note*: this may have inadvertently broke some tests for users as the plugin now checks which platform the plugin is executing code on and would throw an `UnimplementedError` since neither iOS or Android can be detected. Another issue is that `NotificationAppLaunchDetails` was no longer exposed via the main plugin. Please upgrade to 1.1.3 to have both of these issues fixed
 * **BREAKING CHANGE** Plugin callbacks are no longer publicly accessible
 * **BREAKING CHANGE** [iOS] Local notifications that launched the app should now only be processed by the plugin if they were created by the plugin.
 
