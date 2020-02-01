@@ -141,7 +141,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     @Override
     public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
         binding.addOnNewIntentListener(this);
-        mainActivity = binding.getActivity();    }
+        mainActivity = binding.getActivity();
+    }
 
     @Override
     public void onDetachedFromActivity() {
