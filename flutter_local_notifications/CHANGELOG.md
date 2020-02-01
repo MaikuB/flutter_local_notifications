@@ -1,3 +1,7 @@
+# [1.1.5]
+* [Android] minor optimisation on scheduling related code so that `Gson` instance is reused instead of being rebuilt each time
+* Changed plugin to require 1.12.3+hotfix.5 or greater since pub has issues resolving 1.12.3+hotfix.6
+
 # [1.1.4]
 * Support v2 Android embedding. Note that there is currently a [known issue](https://github.com/flutter/flutter/issues/49365) in the Flutter SDK that will cause `onSelectNotification` to fire twice on Android. The fix is in the master channel but hasn't rolled out to other channels. Subscribe to the issue for updates.
 * Require Flutter SDK 1.12.3+hotfix.6 or greater
