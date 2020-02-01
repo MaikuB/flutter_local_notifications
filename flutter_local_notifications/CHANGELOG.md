@@ -1,3 +1,6 @@
+# [1.1.5+1]
+* No function changes. Fixed a reported formatting issue.
+
 # [1.1.5]
 * [Android] minor optimisation on scheduling related code so that `Gson` instance is reused instead of being rebuilt each time
 * Changed plugin to require 1.12.3+hotfix.5 or greater since pub has issues resolving 1.12.3+hotfix.6
