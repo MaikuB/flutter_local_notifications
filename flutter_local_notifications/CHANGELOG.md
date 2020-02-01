@@ -1,6 +1,11 @@
+# [1.1.5]
+* [Android] minor optimisation on scheduling related code so that `Gson` instance is reused instead of being rebuilt each time
+* Changed plugin to require 1.12.3+hotfix.5 or greater since pub has issues resolving 1.12.3+hotfix.6
+* Updated changelog entry for version 1.1.4 to mention removal of upper bound constraint on Flutter SDK requirement
+
 # [1.1.4]
 * Support v2 Android embedding. Note that there is currently a [known issue](https://github.com/flutter/flutter/issues/49365) in the Flutter SDK that will cause `onSelectNotification` to fire twice on Android. The fix is in the master channel but hasn't rolled out to other channels. Subscribe to the issue for updates.
-* Require Flutter SDK 1.12.3+hotfix.6 or greater
+* Require Flutter SDK 1.12.3+hotfix.6 or greater. Maximum SDK restraint has also been removed
 
 # [1.1.3]
 * Expose `NotificationAppLaunchDetails` via main plugin

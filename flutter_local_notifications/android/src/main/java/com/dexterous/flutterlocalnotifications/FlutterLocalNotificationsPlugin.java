@@ -98,6 +98,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private MethodChannel channel;
     private Context applicationContext;
     private Activity mainActivity;
+    static Gson gson;
 
 
     public static void registerWith(Registrar registrar) {
@@ -124,7 +125,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     @Override
     public void onDetachedFromEngine(FlutterPluginBinding binding) {
-
     }
 
     @Override
@@ -215,16 +215,19 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     @NonNull
     static Gson buildGson() {
-        RuntimeTypeAdapterFactory<StyleInformation> styleInformationAdapter =
-                RuntimeTypeAdapterFactory
-                        .of(StyleInformation.class)
-                        .registerSubtype(DefaultStyleInformation.class)
-                        .registerSubtype(BigTextStyleInformation.class)
-                        .registerSubtype(BigPictureStyleInformation.class)
-                        .registerSubtype(InboxStyleInformation.class)
-                        .registerSubtype(MessagingStyleInformation.class);
-        GsonBuilder builder = new GsonBuilder().registerTypeAdapterFactory(styleInformationAdapter);
-        return builder.create();
+        if(gson == null) {
+            RuntimeTypeAdapterFactory<StyleInformation> styleInformationAdapter =
+                    RuntimeTypeAdapterFactory
+                            .of(StyleInformation.class)
+                            .registerSubtype(DefaultStyleInformation.class)
+                            .registerSubtype(BigTextStyleInformation.class)
+                            .registerSubtype(BigPictureStyleInformation.class)
+                            .registerSubtype(InboxStyleInformation.class)
+                            .registerSubtype(MessagingStyleInformation.class);
+            GsonBuilder builder = new GsonBuilder().registerTypeAdapterFactory(styleInformationAdapter);
+            gson = builder.create();
+        }
+        return gson;
     }
 
     private static ArrayList<NotificationDetails> loadScheduledNotifications(Context context) {
