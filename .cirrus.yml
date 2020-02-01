@@ -9,7 +9,7 @@ build_example_android_task:
 
 build_example_ios_task:
   osx_instance:
-    image: mojave-xcode-11.3-flutter
+    image: catalina-flutter
   pub_cache:
     folder: ~/.pub-cache
   build_script:

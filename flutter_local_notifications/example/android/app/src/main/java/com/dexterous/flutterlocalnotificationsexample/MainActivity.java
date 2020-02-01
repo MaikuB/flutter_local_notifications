@@ -4,8 +4,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
 
-import io.flutter.app.FlutterActivity;
-import io.flutter.plugin.common.MethodCall;
+import io.flutter.embedding.android.FlutterActivity;
+import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 
@@ -22,18 +22,14 @@ public class MainActivity extends FlutterActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        GeneratedPluginRegistrant.registerWith(this);
-        new MethodChannel(getFlutterView(), "crossingthestreams.io/resourceResolver").setMethodCallHandler(
-                new MethodChannel.MethodCallHandler() {
-                    @Override
-                    public void onMethodCall(MethodCall call, MethodChannel.Result result) {
-                        if ("drawableToUri".equals(call.method)) {
-                            int resourceId = MainActivity.this.getResources().getIdentifier((String) call.arguments, "drawable", MainActivity.this.getPackageName());
-                            String uriString = resourceToUriString(MainActivity.this.getApplicationContext(), resourceId);
-                            result.success(uriString);
-                        }
+    public void configureFlutterEngine(FlutterEngine flutterEngine) {
+        GeneratedPluginRegistrant.registerWith(flutterEngine);
+        new MethodChannel(flutterEngine.getDartExecutor(), "crossingthestreams.io/resourceResolver").setMethodCallHandler(
+                (call, result) -> {
+                    if ("drawableToUri".equals(call.method)) {
+                        int resourceId = MainActivity.this.getResources().getIdentifier((String) call.arguments, "drawable", MainActivity.this.getPackageName());
+                        String uriString = resourceToUriString(MainActivity.this.getApplicationContext(), resourceId);
+                        result.success(uriString);
                     }
                 });
     }
