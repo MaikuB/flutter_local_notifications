@@ -1,3 +1,7 @@
+# [1.1.4]
+* Support v2 Android embedding. Note that there is currently a [known issue](https://github.com/flutter/flutter/issues/49365) in the Flutter SDK that will cause `onSelectNotification` to fire twice on Android. The fix is in the master channel but hasn't rolled out to other channels. Subscribe to the issue for updates.
+* Require Flutter SDK 1.12.3+hotfix.6 or greater
+
 # [1.1.3]
 * Expose `NotificationAppLaunchDetails` via main plugin
 * Retroactively updated changelog for 1.1.0 to indicate breaking change on moving to using platform interface
