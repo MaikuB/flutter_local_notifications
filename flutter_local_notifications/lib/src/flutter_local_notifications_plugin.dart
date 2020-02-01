@@ -15,6 +15,14 @@ import 'types.dart';
 class FlutterLocalNotificationsPlugin {
   factory FlutterLocalNotificationsPlugin() => _instance;
 
+  /// Used internally for creating the appropriate platform-specific implementation of the plugin.
+  /// This can be used for tests as well. For example, the following code
+  ///
+  /// ```
+  /// FlutterLocalNotificationsPlugin.private(FakePlatform(operatingSystem: 'android'))
+  /// ```
+  ///
+  /// could be used in a test needs the plugin to use Android implementation
   @visibleForTesting
   FlutterLocalNotificationsPlugin.private(Platform platform)
       : _platform = platform {
