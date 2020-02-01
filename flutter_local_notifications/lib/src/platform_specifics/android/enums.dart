@@ -5,7 +5,14 @@ enum BitmapSource { Drawable, FilePath }
 enum IconSource { Drawable, FilePath, ContentUri }
 
 /// The available notification styles on Android
-enum AndroidNotificationStyle { Default, BigPicture, BigText, Inbox, Messaging, Media }
+enum AndroidNotificationStyle {
+  Default,
+  BigPicture,
+  BigText,
+  Inbox,
+  Messaging,
+  Media
+}
 
 /// The available actions for managing notification channels.
 /// [CreateIfNotExists]: will create a channel if it doesn't exist
@@ -52,8 +59,10 @@ enum GroupAlertBehavior { All, Summary, Children }
 enum NotificationVisibility {
   /// Show this notification on all lockscreens, but conceal sensitive or private information on secure lockscreens.
   Private,
+
   /// Show this notification in its entirety on all lockscreens.
   Public,
+
   /// Do not reveal any part of this notification on a secure lockscreen.
   Secret,
 }
