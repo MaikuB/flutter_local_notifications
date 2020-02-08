@@ -9,6 +9,7 @@
     bool _displayAlert;
     bool _playSound;
     bool _updateBadge;
+    int _badgeNumber;
     bool _initialized;
     bool _launchingAppFromNotification;
     NSUserDefaults *_persistentState;
@@ -40,6 +41,7 @@ NSString *const REQUEST_BADGE_PERMISSION = @"requestBadgePermission";
 NSString *const DEFAULT_PRESENT_ALERT = @"defaultPresentAlert";
 NSString *const DEFAULT_PRESENT_SOUND = @"defaultPresentSound";
 NSString *const DEFAULT_PRESENT_BADGE = @"defaultPresentBadge";
+NSString *const DEFAULT_BADGE_NUMBER = @"defaultBadgeNumber";
 NSString *const CALLBACK_DISPATCHER = @"callbackDispatcher";
 NSString *const ON_NOTIFICATION_CALLBACK_DISPATCHER = @"onNotificationCallbackDispatcher";
 NSString *const PLATFORM_SPECIFICS = @"platformSpecifics";
@@ -50,6 +52,7 @@ NSString *const SOUND = @"sound";
 NSString *const PRESENT_ALERT = @"presentAlert";
 NSString *const PRESENT_SOUND = @"presentSound";
 NSString *const PRESENT_BADGE = @"presentBadge";
+NSString *const BADGE_NUMBER = @"badgeNumber";
 NSString *const MILLISECONDS_SINCE_EPOCH = @"millisecondsSinceEpoch";
 NSString *const REPEAT_INTERVAL = @"repeatInterval";
 NSString *const REPEAT_TIME = @"repeatTime";
@@ -145,6 +148,9 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if(arguments[DEFAULT_PRESENT_BADGE] != [NSNull null]) {
         _updateBadge = [[arguments objectForKey:DEFAULT_PRESENT_BADGE] boolValue];
     }
+    if(arguments[DEFAULT_BADGE_NUMBER] != [NSNull null]) {
+        _badgeNumber = [[arguments objectForKey:DEFAULT_BADGE_NUMBER] intValue];
+    }
     bool requestedSoundPermission = false;
     bool requestedAlertPermission = false;
     bool requestedBadgePermission = false;
@@ -212,6 +218,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     notificationDetails.presentAlert = _displayAlert;
     notificationDetails.presentSound = _playSound;
     notificationDetails.presentBadge = _updateBadge;
+    notificationDetails.badgeNumber = [NSNumber numberWithInt:_badgeNumber];
     if(call.arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
         NSDictionary *platformSpecifics = call.arguments[PLATFORM_SPECIFICS];
         
@@ -223,6 +230,9 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         }
         if(platformSpecifics[PRESENT_BADGE] != [NSNull null]) {
             notificationDetails.presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
+        }
+        if(platformSpecifics[BADGE_NUMBER] != [NSNull null]) {
+            notificationDetails.badgeNumber = [platformSpecifics objectForKey:BADGE_NUMBER];
         }
         notificationDetails.sound = platformSpecifics[SOUND];
     }
@@ -328,6 +338,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     UNNotificationTrigger *trigger;
     content.title = notificationDetails.title;
     content.body = notificationDetails.body;
+    content.badge = notificationDetails.badgeNumber;
     if(notificationDetails.presentSound) {
         if(!notificationDetails.sound || [notificationDetails.sound isKindOfClass:[NSNull class]]) {
             content.sound = UNNotificationSound.defaultSound;
@@ -396,6 +407,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 - (void) showLocalNotification:(NotificationDetails *) notificationDetails {
     UILocalNotification *notification = [[UILocalNotification alloc] init];
     notification.alertBody = notificationDetails.body;
+    notification.applicationIconBadgeNumber = [notificationDetails.badgeNumber integerValue];
     if(@available(iOS 8.2, *)) {
         notification.alertTitle = notificationDetails.title;
     }
