@@ -1,5 +1,9 @@
+# [1.1.6]
+* [iOS] Added ability to set badge number. Thanks to PR from [FelixYew](https://github.com/FelixYew)
+* Fixed a spelling mistake in the 1.1.5+1 changelog entry
+
 # [1.1.5+1]
-* No function changes. Fixed a reported formatting issue.
+* No functional changes. Fixed a reported formatting issue.
 * Mention removal of named constructor argument in 1.1.0 changelog entry
 * Add API docs to `FlutterLocalNotificationsPlugin.private()` on how it could be used for testing
 * Update notes on testing to mention that the `FlutterLocalNotificationsPlugin.private()` named constructor may be of use

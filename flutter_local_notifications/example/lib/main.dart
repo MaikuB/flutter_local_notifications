@@ -381,7 +381,7 @@ class _HomePageState extends State<HomePage> {
         ledOnMs: 1000,
         ledOffMs: 500);
     var iOSPlatformChannelSpecifics =
-        IOSNotificationDetails(sound: "slow_spring_board.aiff");
+        IOSNotificationDetails(sound: 'slow_spring_board.aiff');
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.schedule(
@@ -841,11 +841,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationWithIconBadge() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'icon badge channel',
-        'icon badge name',
-        'icon badge description');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails(
-        badgeNumber: 1);
+        'icon badge channel', 'icon badge name', 'icon badge description');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails(badgeNumber: 1);
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
