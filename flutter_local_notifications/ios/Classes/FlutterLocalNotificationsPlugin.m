@@ -9,7 +9,7 @@
     bool _displayAlert;
     bool _playSound;
     bool _updateBadge;
-    int _badgeNumber;
+    NSNumber *_badgeNumber;
     bool _initialized;
     bool _launchingAppFromNotification;
     NSUserDefaults *_persistentState;
@@ -149,7 +149,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         _updateBadge = [[arguments objectForKey:DEFAULT_PRESENT_BADGE] boolValue];
     }
     if(arguments[DEFAULT_BADGE_NUMBER] != [NSNull null]) {
-        _badgeNumber = [[arguments objectForKey:DEFAULT_BADGE_NUMBER] intValue];
+        _badgeNumber = [arguments objectForKey:DEFAULT_BADGE_NUMBER];
     }
     bool requestedSoundPermission = false;
     bool requestedAlertPermission = false;
@@ -218,7 +218,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     notificationDetails.presentAlert = _displayAlert;
     notificationDetails.presentSound = _playSound;
     notificationDetails.presentBadge = _updateBadge;
-    notificationDetails.badgeNumber = [NSNumber numberWithInt:_badgeNumber];
+    notificationDetails.badgeNumber = _badgeNumber;
     if(call.arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
         NSDictionary *platformSpecifics = call.arguments[PLATFORM_SPECIFICS];
         

@@ -12,7 +12,9 @@ class IOSNotificationDetails {
   /// Specifies the name of the file to play for the notification. Requires setting [presentSound] to true. If [presentSound] is set to true but [sound] isn't specified then it will use the default notification sound.
   final String sound;
 
-  /// Show the badge number for this specific notification
+  /// Specify the number to display as the app icon's badge when the notification arrives.
+  /// Specify the number 0 to remove the current badge, if present. Greater than 0 to display a badge with that number.
+  /// Specify nil to leave the current badge unchanged.
   final int badgeNumber;
 
   IOSNotificationDetails(
