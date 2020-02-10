@@ -18,7 +18,11 @@ class IOSNotificationDetails {
   final int badgeNumber;
 
   IOSNotificationDetails(
-      {this.presentAlert, this.presentBadge, this.presentSound, this.sound, this.badgeNumber});
+      {this.presentAlert,
+      this.presentBadge,
+      this.presentSound,
+      this.sound,
+      this.badgeNumber});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
