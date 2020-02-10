@@ -14,7 +14,7 @@ class IOSNotificationDetails {
 
   /// Specify the number to display as the app icon's badge when the notification arrives.
   /// Specify the number 0 to remove the current badge, if present. Greater than 0 to display a badge with that number.
-  /// Specify nil to leave the current badge unchanged.
+  /// Specify null to leave the current badge unchanged.
   final int badgeNumber;
 
   IOSNotificationDetails(
