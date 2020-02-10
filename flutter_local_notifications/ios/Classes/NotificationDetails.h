@@ -14,4 +14,5 @@
     @property(nonatomic, strong) NSNumber *repeatInterval;
     @property(nonatomic, strong) NotificationTime *repeatTime;
     @property(nonatomic, strong) NSNumber *day;
+    @property(nonatomic, strong) NSNumber *badgeNumber;
 @end

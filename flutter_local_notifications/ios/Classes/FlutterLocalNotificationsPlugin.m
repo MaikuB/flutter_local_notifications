@@ -50,6 +50,7 @@ NSString *const SOUND = @"sound";
 NSString *const PRESENT_ALERT = @"presentAlert";
 NSString *const PRESENT_SOUND = @"presentSound";
 NSString *const PRESENT_BADGE = @"presentBadge";
+NSString *const BADGE_NUMBER = @"badgeNumber";
 NSString *const MILLISECONDS_SINCE_EPOCH = @"millisecondsSinceEpoch";
 NSString *const REPEAT_INTERVAL = @"repeatInterval";
 NSString *const REPEAT_TIME = @"repeatTime";
@@ -224,6 +225,9 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         if(platformSpecifics[PRESENT_BADGE] != [NSNull null]) {
             notificationDetails.presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
         }
+        if(platformSpecifics[BADGE_NUMBER] != [NSNull null]) {
+            notificationDetails.badgeNumber = [platformSpecifics objectForKey:BADGE_NUMBER];
+        }
         notificationDetails.sound = platformSpecifics[SOUND];
     }
     if([SCHEDULE_METHOD isEqualToString:call.method]) {
@@ -328,6 +332,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     UNNotificationTrigger *trigger;
     content.title = notificationDetails.title;
     content.body = notificationDetails.body;
+    content.badge = notificationDetails.badgeNumber;
     if(notificationDetails.presentSound) {
         if(!notificationDetails.sound || [notificationDetails.sound isKindOfClass:[NSNull class]]) {
             content.sound = UNNotificationSound.defaultSound;
@@ -396,6 +401,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 - (void) showLocalNotification:(NotificationDetails *) notificationDetails {
     UILocalNotification *notification = [[UILocalNotification alloc] init];
     notification.alertBody = notificationDetails.body;
+    notification.applicationIconBadgeNumber = [notificationDetails.badgeNumber integerValue];
     if(@available(iOS 8.2, *)) {
         notification.alertTitle = notificationDetails.title;
     }
