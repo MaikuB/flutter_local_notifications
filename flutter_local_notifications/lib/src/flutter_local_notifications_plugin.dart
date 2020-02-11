@@ -119,17 +119,32 @@ class FlutterLocalNotificationsPlugin {
   Future<void> schedule(int id, String title, String body,
       DateTime scheduledDate, NotificationDetails notificationDetails,
       {String payload, bool androidAllowWhileIdle = false}) async {
+    await scheduleNotifications([
+      NotificationData(
+        id,
+        title,
+        body,
+        scheduledDate,
+        notificationDetails,
+        payload: payload,
+        allowWhileIdle: androidAllowWhileIdle,
+      )
+    ]);
+  }
+
+  /// Schedules a list of notifications to be shown at the specified time with an optional payload that is passed through when a notification is tapped
+  /// The [androidAllowWhileIdle] parameter is Android-specific and determines if the notification should still be shown at the specified time
+  /// even when in a low-power idle mode.
+  Future<void> scheduleNotifications(
+      List<NotificationData> notifications) async {
     if (_platform.isAndroid) {
       await (FlutterLocalNotificationsPlatform.instance
               as AndroidFlutterLocalNotificationsPlugin)
-          ?.schedule(
-              id, title, body, scheduledDate, notificationDetails?.android,
-              payload: payload, androidAllowWhileIdle: androidAllowWhileIdle);
+          ?.schedule(notifications);
     } else if (_platform.isIOS) {
       await (FlutterLocalNotificationsPlatform.instance
               as IOSFlutterLocalNotificationsPlugin)
-          ?.schedule(id, title, body, scheduledDate, notificationDetails?.iOS,
-              payload: payload);
+          ?.schedule(notifications);
     }
   }
 

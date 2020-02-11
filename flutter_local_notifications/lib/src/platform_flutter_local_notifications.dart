@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 
+import 'notification_details.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
@@ -67,24 +68,16 @@ class AndroidFlutterLocalNotificationsPlugin
         'initialize', initializationSettings.toMap());
   }
 
-  /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
+  /// Schedules a list of notifications to be shown at the specified time with an optional payload that is passed through when a notification is tapped
   /// The [androidAllowWhileIdle] parameter is Android-specific and determines if the notification should still be shown at the specified time
   /// even when in a low-power idle mode.
-  Future<void> schedule(int id, String title, String body,
-      DateTime scheduledDate, AndroidNotificationDetails notificationDetails,
-      {String payload, bool androidAllowWhileIdle = false}) async {
-    validateId(id);
-    var serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? Map<String, dynamic>();
-    serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
-    await _channel.invokeMethod('schedule', <String, dynamic>{
-      'id': id,
-      'title': title,
-      'body': body,
-      'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
-      'platformSpecifics': serializedPlatformSpecifics,
-      'payload': payload ?? ''
-    });
+  Future<void> schedule(List<NotificationData> notifications) async {
+    final data = notifications.map((n) {
+      validateId(n.id);
+      return n.toMap();
+    }).toList();
+
+    await _channel.invokeMethod('schedule', data);
   }
 
   /// Shows a notification on a daily interval at the specified time
@@ -191,18 +184,11 @@ class IOSFlutterLocalNotificationsPlugin
   }
 
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
-  Future<void> schedule(int id, String title, String body,
-      DateTime scheduledDate, IOSNotificationDetails notificationDetails,
-      {String payload}) async {
-    validateId(id);
-    await _channel.invokeMethod('schedule', <String, dynamic>{
-      'id': id,
-      'title': title,
-      'body': body,
-      'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
-      'platformSpecifics': notificationDetails?.toMap(),
-      'payload': payload ?? ''
-    });
+  Future<void> schedule(List<NotificationData> notifications) async {
+    for (NotificationData data in notifications) {
+      validateId(data.id);
+      await _channel.invokeMethod('schedule', data.toMap());
+    }
   }
 
   /// Shows a notification on a daily interval at the specified time
