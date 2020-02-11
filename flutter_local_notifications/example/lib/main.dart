@@ -319,6 +319,12 @@ class _HomePageState extends State<HomePage> {
                       await _showNotificationWithIconBadge();
                     },
                   ),
+                  PaddedRaisedButton(
+                    buttonText: 'Bulk schedule 60 notifications',
+                    onPressed: () async {
+                      await _bulkScheduleNotifications();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -326,6 +332,29 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  /// Schedules a notification that specifies a different icon, sound and vibration pattern
+  Future<void> _bulkScheduleNotifications() async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+
+    final now = DateTime.now();
+
+    final notifications = List.generate(60, (i) =>
+        NotificationData(
+          i,
+          "scheduled title $i",
+          "scheduled body $i",
+          now.add(Duration(seconds: i)),
+          platformChannelSpecifics,
+        ));
+
+    await flutterLocalNotificationsPlugin.scheduleNotifications(notifications);
   }
 
   Future<void> _showNotification() async {
