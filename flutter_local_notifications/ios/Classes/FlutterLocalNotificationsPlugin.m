@@ -31,6 +31,7 @@ NSString *const CHANNEL = @"dexterous.com/flutter/local_notifications";
 NSString *const CALLBACK_CHANNEL = @"dexterous.com/flutter/local_notifications_background";
 NSString *const ON_NOTIFICATION_METHOD = @"onNotification";
 NSString *const DID_RECEIVE_LOCAL_NOTIFICATION = @"didReceiveLocalNotification";
+NSString *const REQUEST_PERMISSIONS_METHOD = @"requestPermissions";
 
 NSString *const DAY = @"day";
 
@@ -136,6 +137,11 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 }
 
 - (void)initialize:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
+    [self requestPermissions:call result:result];
+    _initialized = true;
+}
+
+- (void)requestPermissions:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
     NSDictionary *arguments = [call arguments];
     if(arguments[DEFAULT_PRESENT_ALERT] != [NSNull null]) {
         _displayAlert = [[arguments objectForKey:DEFAULT_PRESENT_ALERT] boolValue];
@@ -158,10 +164,10 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if (arguments[REQUEST_BADGE_PERMISSION] != [NSNull null]) {
         requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
     }
-    
+
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        
+
         UNAuthorizationOptions authorizationOptions = 0;
         if (requestedSoundPermission) {
             authorizationOptions += UNAuthorizationOptionSound;
@@ -197,7 +203,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         }
         result(@YES);
     }
-    _initialized = true;
 }
 
 - (void)showNotification:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
@@ -297,6 +302,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     } else if ([SHOW_METHOD isEqualToString:call.method] || [SCHEDULE_METHOD isEqualToString:call.method] || [PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]
                || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
         [self showNotification:call result:result];
+    } else if([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
+            [self requestPermissions:call result:result];
     } else if([CANCEL_METHOD isEqualToString:call.method]) {
         [self cancelNotification:call result:result];
     } else if([CANCEL_ALL_METHOD isEqualToString:call.method]) {

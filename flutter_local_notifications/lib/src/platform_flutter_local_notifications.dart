@@ -4,11 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 
+import 'helpers.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/notification_details.dart';
-import 'helpers.dart';
 import 'typedefs.dart';
 import 'types.dart';
 
@@ -188,6 +188,18 @@ class IOSFlutterLocalNotificationsPlugin
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
         'initialize', initializationSettings.toMap());
+  }
+
+  Future<bool> requestPermissions({
+    bool requestSoundPermission,
+    bool requestAlertPermission,
+    bool requestBadgePermission,
+  }) {
+    return _channel.invokeMethod('requestPermissions', {
+      'requestSoundPermission': requestSoundPermission,
+      'requestAlertPermission': requestAlertPermission,
+      'requestBadgePermission': requestBadgePermission,
+    });
   }
 
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped

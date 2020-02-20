@@ -1,8 +1,10 @@
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:platform/platform.dart';
+
 import 'initialization_settings.dart';
 import 'notification_details.dart';
 import 'platform_flutter_local_notifications.dart';
@@ -60,6 +62,23 @@ class FlutterLocalNotificationsPlugin {
               onSelectNotification: onSelectNotification);
     }
     return true;
+  }
+
+  Future<bool> requestPermissions({
+    bool requestSoundPermission,
+    bool requestAlertPermission,
+    bool requestBadgePermission,
+  }) {
+    if (_platform.isAndroid) {
+      return Future.value(true);
+    }
+    return (FlutterLocalNotificationsPlatform.instance
+            as IOSFlutterLocalNotificationsPlugin)
+        ?.requestPermissions(
+      requestSoundPermission: requestSoundPermission,
+      requestAlertPermission: requestAlertPermission,
+      requestBadgePermission: requestBadgePermission,
+    );
   }
 
   /// Returns info on if a notification had been used to launch the application.
