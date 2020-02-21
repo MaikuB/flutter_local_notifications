@@ -55,13 +55,9 @@ class MethodChannelFlutterLocalNotificationsPlugin
 class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   /// Android specific plugin instance or null when not running in Android environment
-  static AndroidFlutterLocalNotificationsPlugin get instance {
-    if (FlutterLocalNotificationsPlatform.instance
-        is AndroidFlutterLocalNotificationsPlugin) {
-      return FlutterLocalNotificationsPlatform.instance;
-    }
-    return null;
-  }
+  static AndroidFlutterLocalNotificationsPlugin get instance =>
+      FlutterLocalNotificationsPlatform.instance
+          as AndroidFlutterLocalNotificationsPlugin;
 
   SelectNotificationCallback _onSelectNotification;
 
@@ -183,13 +179,9 @@ class AndroidFlutterLocalNotificationsPlugin
 class IOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   /// IOS specific instance of plugin or null when not running in iOS environment
-  static IOSFlutterLocalNotificationsPlugin get instance {
-    if (FlutterLocalNotificationsPlatform.instance
-        is IOSFlutterLocalNotificationsPlugin) {
-      return FlutterLocalNotificationsPlatform.instance;
-    }
-    return null;
-  }
+  static IOSFlutterLocalNotificationsPlugin get instance =>
+      FlutterLocalNotificationsPlatform.instance
+          as IOSFlutterLocalNotificationsPlugin;
 
   SelectNotificationCallback _onSelectNotification;
 
