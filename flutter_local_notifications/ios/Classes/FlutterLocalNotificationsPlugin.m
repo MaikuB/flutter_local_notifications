@@ -140,11 +140,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 }
 
 - (void)initialize:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
-    [self requestPermissions:call result:result];
-    _initialized = true;
-}
-
-- (void)requestPermissions:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
     NSDictionary *arguments = [call arguments];
     if(arguments[DEFAULT_PRESENT_ALERT] != [NSNull null]) {
         _displayAlert = [[arguments objectForKey:DEFAULT_PRESENT_ALERT] boolValue];
@@ -158,55 +153,80 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     bool requestedSoundPermission = false;
     bool requestedAlertPermission = false;
     bool requestedBadgePermission = false;
+    if (arguments[REQUEST_SOUND_PERMISSION] != [NSNull null]) {
+        requestedSoundPermission = [arguments[REQUEST_SOUND_PERMISSION] boolValue];
+    }
+    if (arguments[REQUEST_ALERT_PERMISSION] != [NSNull null]) {
+        requestedAlertPermission = [arguments[REQUEST_ALERT_PERMISSION] boolValue];
+    }
+    if (arguments[REQUEST_BADGE_PERMISSION] != [NSNull null]) {
+        requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
+    }
+    [self requestPermissionsImpl:requestedSoundPermission alertPermission:requestedAlertPermission badgePermission:requestedBadgePermission result:result];
+
+    _initialized = true;
+}
+
+- (void)requestPermissions:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
+    NSDictionary *arguments = [call arguments];
+    bool soundPermission = false;
+    bool alertPermission = false;
+    bool badgePermission = false;
     if (arguments[SOUND_PERMISSION] != [NSNull null]) {
-        requestedSoundPermission = [arguments[SOUND_PERMISSION] boolValue];
+        soundPermission = [arguments[SOUND_PERMISSION] boolValue];
     }
     if (arguments[ALERT_PERMISSION] != [NSNull null]) {
-        requestedAlertPermission = [arguments[ALERT_PERMISSION] boolValue];
+        alertPermission = [arguments[ALERT_PERMISSION] boolValue];
     }
     if (arguments[BADGE_PERMISSION] != [NSNull null]) {
-        requestedBadgePermission = [arguments[BADGE_PERMISSION] boolValue];
+        badgePermission = [arguments[BADGE_PERMISSION] boolValue];
     }
+    [self requestPermissionsImpl:soundPermission alertPermission:alertPermission badgePermission:badgePermission result:result];
+  }
 
+- (void)requestPermissionsImpl:(bool)soundPermission
+               alertPermission:(bool)alertPermission
+               badgePermission:(bool)badgePermission result:(FlutterResult _Nonnull)result{
     if(@available(iOS 10.0, *)) {
-        UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
 
-        UNAuthorizationOptions authorizationOptions = 0;
-        if (requestedSoundPermission) {
-            authorizationOptions += UNAuthorizationOptionSound;
-        }
-        if (requestedAlertPermission) {
-            authorizationOptions += UNAuthorizationOptionAlert;
-        }
-        if (requestedBadgePermission) {
-            authorizationOptions += UNAuthorizationOptionBadge;
-        }
-        [center requestAuthorizationWithOptions:(authorizationOptions) completionHandler:^(BOOL granted, NSError * _Nullable error) {
-            if(self->_launchPayload != nil) {
-                [self handleSelectNotification:self->_launchPayload];
-            }
-            result(@(granted));
-        }];
-    } else {
-        UIUserNotificationType notificationTypes = 0;
-        if (requestedSoundPermission) {
-            notificationTypes |= UIUserNotificationTypeSound;
-        }
-        if (requestedAlertPermission) {
-            notificationTypes |= UIUserNotificationTypeAlert;
-        }
-        if (requestedBadgePermission) {
-            notificationTypes |= UIUserNotificationTypeBadge;
-        }
-        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:notificationTypes categories:nil];
-        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-        if(_launchNotification != nil && [self isAFlutterLocalNotification:_launchNotification.userInfo]) {
-            NSString *payload = _launchNotification.userInfo[PAYLOAD];
-            [self handleSelectNotification:payload];
-        }
-        result(@YES);
-    }
+         UNAuthorizationOptions authorizationOptions = 0;
+         if (soundPermission) {
+             authorizationOptions += UNAuthorizationOptionSound;
+         }
+         if (alertPermission) {
+             authorizationOptions += UNAuthorizationOptionAlert;
+         }
+         if (badgePermission) {
+             authorizationOptions += UNAuthorizationOptionBadge;
+         }
+         [center requestAuthorizationWithOptions:(authorizationOptions) completionHandler:^(BOOL granted, NSError * _Nullable error) {
+             if(self->_launchPayload != nil) {
+                 [self handleSelectNotification:self->_launchPayload];
+             }
+             result(@(granted));
+         }];
+     } else {
+         UIUserNotificationType notificationTypes = 0;
+         if (soundPermission) {
+             notificationTypes |= UIUserNotificationTypeSound;
+         }
+         if (alertPermission) {
+             notificationTypes |= UIUserNotificationTypeAlert;
+         }
+         if (badgePermission) {
+             notificationTypes |= UIUserNotificationTypeBadge;
+         }
+         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:notificationTypes categories:nil];
+         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+         if(_launchNotification != nil && [self isAFlutterLocalNotification:_launchNotification.userInfo]) {
+             NSString *payload = _launchNotification.userInfo[PAYLOAD];
+             [self handleSelectNotification:payload];
+         }
+         result(@YES);
+     }
 }
+
 
 - (void)showNotification:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
     NotificationDetails *notificationDetails = [[NotificationDetails alloc]init];
