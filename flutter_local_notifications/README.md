@@ -125,13 +125,12 @@ var initializationSettings = new InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: onSelectNotification);
-/* some logic */
-var result = await flutterLocalNotificationsPlugin.requestPermissions(
+
+var result = await IOSFlutterLocalNotificationsPlugin.instance?.requestPermissions(
         requestSoundPermission: false,
         requestBadgePermission: false,
         requestAlertPermission: false,
     );
-print('notification permissions were ${result ? '' : 'not '}granted');
 ```
 
 ### Displaying a notification

@@ -860,7 +860,8 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     }
-    final result = await flutterLocalNotificationsPlugin.requestPermissions(
+    final result =
+        await IOSFlutterLocalNotificationsPlugin.instance?.requestPermissions(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,

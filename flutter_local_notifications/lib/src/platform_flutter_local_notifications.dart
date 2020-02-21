@@ -208,6 +208,7 @@ class IOSFlutterLocalNotificationsPlugin
         'initialize', initializationSettings.toMap());
   }
 
+  /// Requests given permission from user and returns current permission status.
   Future<bool> requestPermissions({
     bool requestSoundPermission,
     bool requestAlertPermission,

@@ -64,23 +64,6 @@ class FlutterLocalNotificationsPlugin {
     return true;
   }
 
-  Future<bool> requestPermissions({
-    bool requestSoundPermission,
-    bool requestAlertPermission,
-    bool requestBadgePermission,
-  }) {
-    if (_platform.isAndroid) {
-      return Future.value(true);
-    }
-    return (FlutterLocalNotificationsPlatform.instance
-            as IOSFlutterLocalNotificationsPlugin)
-        ?.requestPermissions(
-      requestSoundPermission: requestSoundPermission,
-      requestAlertPermission: requestAlertPermission,
-      requestBadgePermission: requestBadgePermission,
-    );
-  }
-
   /// Returns info on if a notification had been used to launch the application.
   /// An example of how this could be used is to change the initial route of your application when it starts up.
   ///
