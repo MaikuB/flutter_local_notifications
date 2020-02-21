@@ -201,15 +201,11 @@ class IOSFlutterLocalNotificationsPlugin
   }
 
   /// Requests the specified permission(s) from user and returns current permission status.
-  Future<bool> requestPermissions({
-    bool requestSoundPermission,
-    bool requestAlertPermission,
-    bool requestBadgePermission,
-  }) {
+  Future<bool> requestPermissions({bool sound, bool alert, bool badge}) {
     return _channel.invokeMethod('requestPermissions', {
-      'requestSoundPermission': requestSoundPermission,
-      'requestAlertPermission': requestAlertPermission,
-      'requestBadgePermission': requestBadgePermission,
+      'sound': sound,
+      'alert': alert,
+      'badge': badge,
     });
   }
 

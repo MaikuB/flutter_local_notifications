@@ -127,9 +127,9 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: onSelectNotification);
 
 var result = await IOSFlutterLocalNotificationsPlugin.instance?.requestPermissions(
-        requestSoundPermission: false,
-        requestBadgePermission: false,
-        requestAlertPermission: false,
+        sound: true,
+        badge: true,
+        alert: true,
     );
 ```
 

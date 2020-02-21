@@ -862,9 +862,9 @@ class _HomePageState extends State<HomePage> {
     }
     final result =
         await IOSFlutterLocalNotificationsPlugin.instance?.requestPermissions(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
+      alert: true,
+      badge: true,
+      sound: true,
     );
     return showDialog(
       context: context,

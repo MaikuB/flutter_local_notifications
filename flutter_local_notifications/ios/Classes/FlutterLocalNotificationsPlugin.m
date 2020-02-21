@@ -38,6 +38,9 @@ NSString *const DAY = @"day";
 NSString *const REQUEST_SOUND_PERMISSION = @"requestSoundPermission";
 NSString *const REQUEST_ALERT_PERMISSION = @"requestAlertPermission";
 NSString *const REQUEST_BADGE_PERMISSION = @"requestBadgePermission";
+NSString *const SOUND_PERMISSION = @"sound";
+NSString *const ALERT_PERMISSION = @"alert";
+NSString *const BADGE_PERMISSION = @"badge";
 NSString *const DEFAULT_PRESENT_ALERT = @"defaultPresentAlert";
 NSString *const DEFAULT_PRESENT_SOUND = @"defaultPresentSound";
 NSString *const DEFAULT_PRESENT_BADGE = @"defaultPresentBadge";
@@ -155,14 +158,14 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     bool requestedSoundPermission = false;
     bool requestedAlertPermission = false;
     bool requestedBadgePermission = false;
-    if (arguments[REQUEST_SOUND_PERMISSION] != [NSNull null]) {
-        requestedSoundPermission = [arguments[REQUEST_SOUND_PERMISSION] boolValue];
+    if (arguments[SOUND_PERMISSION] != [NSNull null]) {
+        requestedSoundPermission = [arguments[SOUND_PERMISSION] boolValue];
     }
-    if (arguments[REQUEST_ALERT_PERMISSION] != [NSNull null]) {
-        requestedAlertPermission = [arguments[REQUEST_ALERT_PERMISSION] boolValue];
+    if (arguments[ALERT_PERMISSION] != [NSNull null]) {
+        requestedAlertPermission = [arguments[ALERT_PERMISSION] boolValue];
     }
-    if (arguments[REQUEST_BADGE_PERMISSION] != [NSNull null]) {
-        requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
+    if (arguments[BADGE_PERMISSION] != [NSNull null]) {
+        requestedBadgePermission = [arguments[BADGE_PERMISSION] boolValue];
     }
 
     if(@available(iOS 10.0, *)) {
