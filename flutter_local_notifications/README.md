@@ -109,7 +109,7 @@ By default this plugin will request notification permission when it is initializ
 1. `requestAlertPermission`
 that control this behaviour.
 
-If you want to delay permission request, set all of the above to false, then later call `requestPermissions` method with desired permissions.
+If you want to delay permission request, set all of the above to false.
 
 ```dart
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
@@ -125,7 +125,11 @@ var initializationSettings = new InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: onSelectNotification);
+```
 
+Then later call `requestPermissions` method with desired permissions.
+
+```dart
 var result = await IOSFlutterLocalNotificationsPlugin.instance?.requestPermissions(
         sound: true,
         badge: true,
