@@ -96,6 +96,22 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _requestIOSPermissions();
+    _configureDidReceiveLocalNotificationSubject();
+    _configureSelectNotificationSubject();
+  }
+
+  void _requestIOSPermissions() {
+    if (Platform.isIOS) {
+      IOSFlutterLocalNotificationsPlugin.instance?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    }
+  }
+
+  void _configureDidReceiveLocalNotificationSubject() {
     didReceiveLocalNotificationSubject.stream
         .listen((ReceivedNotification receivedNotification) async {
       await showDialog(
@@ -126,6 +142,9 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     });
+  }
+
+  void _configureSelectNotificationSubject() {
     selectNotificationSubject.stream.listen((String payload) async {
       await Navigator.push(
         context,
@@ -315,12 +334,6 @@ class _HomePageState extends State<HomePage> {
                     buttonText: 'Cancel all notifications',
                     onPressed: () async {
                       await _cancelAllNotifications();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Request permissions [iOS]',
-                    onPressed: () async {
-                      await _requestPermissions(context);
                     },
                   ),
                   PaddedRaisedButton(
@@ -847,33 +860,6 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.show(0, 'public notification title',
         'public notification body', platformChannelSpecifics,
         payload: 'item x');
-  }
-
-  Future<void> _requestPermissions(BuildContext context) async {
-    if (!Platform.isIOS) {
-      return showDialog(
-        context: context,
-        builder: (context) => SimpleDialog(
-          children: <Widget>[
-            Center(child: Text('Only supported on iOS.')),
-          ],
-        ),
-      );
-    }
-    final result =
-        await IOSFlutterLocalNotificationsPlugin.instance?.requestPermissions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-    return showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        children: <Widget>[
-          Center(child: Text('result: $result')),
-        ],
-      ),
-    );
   }
 
   Future<void> _showNotificationWithIconBadge() async {
