@@ -1,4 +1,4 @@
-/// The days of the week
+/// The days of the week.
 class Day {
   static const Sunday = Day(1);
   static const Monday = Day(2);
@@ -16,15 +16,21 @@ class Day {
   const Day(this.value);
 }
 
-/// Used for specifying a time in 24 hour format
+/// Used for specifying a time in 24 hour format.
 class Time {
-  /// The hour component of the time. Accepted range is 0 to 23 inclusive
+  /// The hour component of the time.
+  ///
+  /// Accepted range is 0 to 23 inclusive.
   final int hour;
 
-  /// The minutes component of the time. Accepted range is 0 to 59 inclusive
+  /// The minutes component of the time.
+  ///
+  /// Accepted range is 0 to 59 inclusive.
   final int minute;
 
-  /// The seconds component of the time. Accepted range is 0 to 59 inclusive
+  /// The seconds component of the time.
+  ///
+  /// Accepted range is 0 to 59 inclusive.
   final int second;
 
   Time([this.hour = 0, this.minute = 0, this.second = 0]) {

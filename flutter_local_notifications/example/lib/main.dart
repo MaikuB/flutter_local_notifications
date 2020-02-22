@@ -45,6 +45,8 @@ Future<void> main() async {
   //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
   var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+  // Note: permissions aren't requested here just to demonstrate that can be done later using the `requestPermissions()` method
+  // of the `IOSFlutterLocalNotificationsPlugin` class
   var initializationSettingsIOS = IOSInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
@@ -56,13 +58,14 @@ Future<void> main() async {
       });
   var initializationSettings = InitializationSettings(
       initializationSettingsAndroid, initializationSettingsIOS);
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: (String payload) async {
+  var initialised = await flutterLocalNotificationsPlugin.initialize(
+      initializationSettings, onSelectNotification: (String payload) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
     }
     selectNotificationSubject.add(payload);
   });
+  print('initialised: $initialised');
   runApp(
     MaterialApp(
       home: HomePage(),

@@ -1,10 +1,10 @@
 /// Specifies the source for a bitmap used by Android notifications.
 enum BitmapSource { Drawable, FilePath }
 
-/// Specifies the source for icons
+/// Specifies the source for icons.
 enum IconSource { Drawable, FilePath, ContentUri }
 
-/// The available notification styles on Android
+/// The available notification styles on Android.
 enum AndroidNotificationStyle {
   Default,
   BigPicture,
@@ -15,11 +15,13 @@ enum AndroidNotificationStyle {
 }
 
 /// The available actions for managing notification channels.
-/// [CreateIfNotExists]: will create a channel if it doesn't exist
-/// [Update]: will update the details of an existing channel. Note that some details can not be changed once a channel has been created
+///
+/// [CreateIfNotExists]: will create a channel if it doesn't exist.
+/// [Update]: will update the details of an existing channel. Note that some details can not be changed once a channel has been created.
 enum AndroidNotificationChannelAction { CreateIfNotExists, Update }
 
 /// The available importance levels for Android notifications.
+///
 /// Required for Android 8.0+
 class Importance {
   static const Unspecified = Importance(-1000);
@@ -37,7 +39,7 @@ class Importance {
   const Importance(this.value);
 }
 
-/// Priority for notifications on Android 7.1 and lower
+/// Priority for notifications on Android 7.1 and lower.
 class Priority {
   static const Min = Priority(-2);
   static const Low = Priority(-1);
@@ -52,10 +54,10 @@ class Priority {
   const Priority(this.value);
 }
 
-/// The available alert behaviours for grouped notifications
+/// The available alert behaviours for grouped notifications.
 enum GroupAlertBehavior { All, Summary, Children }
 
-/// Defines the notification visibility on the lockscreen
+/// Defines the notification visibility on the lockscreen.
 enum NotificationVisibility {
   /// Show this notification on all lockscreens, but conceal sensitive or private information on secure lockscreens.
   Private,
