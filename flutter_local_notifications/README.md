@@ -39,8 +39,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Group notifications
 * [Android] Show progress notifications
 * [Android] Configure notification visibility on the lockscreen
-* [iOS] Request notification permissions when needed (e.g. in response to user turning on a setting)
-* [iOS] Customise the permissions to be requested around displaying notifications
+* [iOS] Request notification permissions and customise the permissions being requested around displaying notifications
 
 Note that this plugin aims to provide abstractions for all platforms as opposed to having methods that only work on specific platforms. However, each method allows passing in "platform-specifics" that contains data that is specific for customising notifications on each platform. This approach means that some scenarios may not be covered by the plugin. Developers can either fork or maintain their code for showing notifications in these situations. Note that the plugin still under development so expect the API surface to change over time.
 
@@ -453,7 +452,7 @@ When using custom notification sound, developers should be aware that iOS enforc
 
 https://developer.apple.com/documentation/usernotifications/unnotificationsound?language=objc
 
-**IMPORTANT**: There is an issue that prevents this plugin working properly with the `firebase_messaging` plugin at this point in time. This is being tracked [here](https://github.com/FirebaseExtended/flutterfire/issues/1455). Please upvote if this issue is important to you for the Flutter team to prioritise
+**IMPORTANT**: There is an issue that prevents this plugin working properly with the `firebase_messaging` plugin at this point in time. This is being tracked [here](https://github.com/FirebaseExtended/flutterfire/issues/1455). Please upvote if this issue is important to you for the Flutter team to prioritise. I currently have a pull request to the `firebase_messaging` plugin waiting to be reviewed on this issue. For those that want to use my fork for their apps whilst waiting for the issue to be fixed, it can be found at https://github.com/MaikuB/flutterfire. See [here](https://github.com/MaikuB/flutter_firebase_local_notifications_examples/blob/55c3208c2bf19be487c5987be3661438a76529e1/java_objc/pubspec.yaml#L22) to see how it can be referenced in your application's `pubspec.yaml` file.
 
 ## Testing
 

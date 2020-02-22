@@ -1,8 +1,13 @@
+# [1.1.7+1]
+
+* Minor update to readme on description around requesting notification permissions
+* Add link to forked `firebase_messaging` plugin to readme for those that want to use it whilst the PR to fix the compatibility issues with this plugin is waiting to be reviewed
+
 # [1.1.7]
 
 * [iOS] Added `requestPermissions()` method to `IOSFlutterLocalNotificationsPlugin` class. This can be used to request notification permissions separately from plugin initialisation. To facilitate this the `IOSFlutterLocalNotificationsPlugin` and `AndroidFlutterLocalNotificationsPlugin` now expose a static `instance` property that can be used obtain the platform-specific implementation of the plugin so that platform-specific methods can be used. Thanks to the PR from [Dariusz Łuksza](https://github.com/dluksza)
 * Updated documentation to clarify that `getNotificationAppLaunchDetails()` is intended to be used more on if a notification from this plugin triggered launch an application
-* Updated API docs for consistency and to better follow the guidelines on effective Dart documentation.
+* Updated API docs for consistency and to better follow the guidelines on effective Dart documentation
 
 # [1.1.6]
 
@@ -11,7 +16,7 @@
 
 # [1.1.5+1]
 
-* No functional changes. Fixed a reported formatting issue.
+* No functional changes. Fixed a reported formatting issue
 * Mention removal of named constructor argument in 1.1.0 changelog entry
 * Add API docs to `FlutterLocalNotificationsPlugin.private()` on how it could be used for testing
 * Update notes on testing to mention that the `FlutterLocalNotificationsPlugin.private()` named constructor may be of use
