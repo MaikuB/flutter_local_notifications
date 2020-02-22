@@ -31,12 +31,16 @@ NSString *const CHANNEL = @"dexterous.com/flutter/local_notifications";
 NSString *const CALLBACK_CHANNEL = @"dexterous.com/flutter/local_notifications_background";
 NSString *const ON_NOTIFICATION_METHOD = @"onNotification";
 NSString *const DID_RECEIVE_LOCAL_NOTIFICATION = @"didReceiveLocalNotification";
+NSString *const REQUEST_PERMISSIONS_METHOD = @"requestPermissions";
 
 NSString *const DAY = @"day";
 
 NSString *const REQUEST_SOUND_PERMISSION = @"requestSoundPermission";
 NSString *const REQUEST_ALERT_PERMISSION = @"requestAlertPermission";
 NSString *const REQUEST_BADGE_PERMISSION = @"requestBadgePermission";
+NSString *const SOUND_PERMISSION = @"sound";
+NSString *const ALERT_PERMISSION = @"alert";
+NSString *const BADGE_PERMISSION = @"badge";
 NSString *const DEFAULT_PRESENT_ALERT = @"defaultPresentAlert";
 NSString *const DEFAULT_PRESENT_SOUND = @"defaultPresentSound";
 NSString *const DEFAULT_PRESENT_BADGE = @"defaultPresentBadge";
@@ -158,47 +162,72 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if (arguments[REQUEST_BADGE_PERMISSION] != [NSNull null]) {
         requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
     }
+    [self requestPermissionsImpl:requestedSoundPermission alertPermission:requestedAlertPermission badgePermission:requestedBadgePermission checkLaunchNotification:true result:result];
     
+    _initialized = true;
+}
+
+- (void)requestPermissions:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
+    NSDictionary *arguments = [call arguments];
+    bool soundPermission = false;
+    bool alertPermission = false;
+    bool badgePermission = false;
+    if (arguments[SOUND_PERMISSION] != [NSNull null]) {
+        soundPermission = [arguments[SOUND_PERMISSION] boolValue];
+    }
+    if (arguments[ALERT_PERMISSION] != [NSNull null]) {
+        alertPermission = [arguments[ALERT_PERMISSION] boolValue];
+    }
+    if (arguments[BADGE_PERMISSION] != [NSNull null]) {
+        badgePermission = [arguments[BADGE_PERMISSION] boolValue];
+    }
+    [self requestPermissionsImpl:soundPermission alertPermission:alertPermission badgePermission:badgePermission checkLaunchNotification:false result:result];
+}
+
+- (void)requestPermissionsImpl:(bool)soundPermission
+               alertPermission:(bool)alertPermission
+               badgePermission:(bool)badgePermission
+       checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Nonnull)result{
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         
         UNAuthorizationOptions authorizationOptions = 0;
-        if (requestedSoundPermission) {
+        if (soundPermission) {
             authorizationOptions += UNAuthorizationOptionSound;
         }
-        if (requestedAlertPermission) {
+        if (alertPermission) {
             authorizationOptions += UNAuthorizationOptionAlert;
         }
-        if (requestedBadgePermission) {
+        if (badgePermission) {
             authorizationOptions += UNAuthorizationOptionBadge;
         }
         [center requestAuthorizationWithOptions:(authorizationOptions) completionHandler:^(BOOL granted, NSError * _Nullable error) {
-            if(self->_launchPayload != nil) {
+            if(checkLaunchNotification && self->_launchPayload != nil) {
                 [self handleSelectNotification:self->_launchPayload];
             }
             result(@(granted));
         }];
     } else {
         UIUserNotificationType notificationTypes = 0;
-        if (requestedSoundPermission) {
+        if (soundPermission) {
             notificationTypes |= UIUserNotificationTypeSound;
         }
-        if (requestedAlertPermission) {
+        if (alertPermission) {
             notificationTypes |= UIUserNotificationTypeAlert;
         }
-        if (requestedBadgePermission) {
+        if (badgePermission) {
             notificationTypes |= UIUserNotificationTypeBadge;
         }
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:notificationTypes categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-        if(_launchNotification != nil && [self isAFlutterLocalNotification:_launchNotification.userInfo]) {
+        if(checkLaunchNotification && _launchNotification != nil && [self isAFlutterLocalNotification:_launchNotification.userInfo]) {
             NSString *payload = _launchNotification.userInfo[PAYLOAD];
             [self handleSelectNotification:payload];
         }
         result(@YES);
     }
-    _initialized = true;
 }
+
 
 - (void)showNotification:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
     NotificationDetails *notificationDetails = [[NotificationDetails alloc]init];
@@ -297,6 +326,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     } else if ([SHOW_METHOD isEqualToString:call.method] || [SCHEDULE_METHOD isEqualToString:call.method] || [PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]
                || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
         [self showNotification:call result:result];
+    } else if([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
+        [self requestPermissions:call result:result];
     } else if([CANCEL_METHOD isEqualToString:call.method]) {
         [self cancelNotification:call result:result];
     } else if([CANCEL_ALL_METHOD isEqualToString:call.method]) {
@@ -486,7 +517,6 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 }
 
 - (void)handleSelectNotification:(NSString *)payload {
-    NSLog(@"handleSelectNotification");
     [_channel invokeMethod:@"selectNotification" arguments:payload];
 }
 

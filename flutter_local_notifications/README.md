@@ -39,6 +39,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Group notifications
 * [Android] Show progress notifications
 * [Android] Configure notification visibility on the lockscreen
+* [iOS] Delay requesting notification permission
 * [iOS] Customise the permissions to be requested around displaying notifications
 
 Note that this plugin aims to provide abstractions for all platforms as opposed to having methods that only work on specific platforms. However, each method allows passing in "platform-specifics" that contains data that is specific for customising notifications on each platform. This approach means that some scenarios may not be covered by the plugin. Developers can either fork or maintain their code for showing notifications in these situations. Note that the plugin still under development so expect the API surface to change over time.
@@ -99,6 +100,42 @@ Future onSelectNotification(String payload) async {
 In the real world, this payload could represent the id of the item you want to display the details of. Once the initialisation has been done, then you can manage the displaying of notifications.
 
 *Notes around initialisation*: if the app had been launched by tapping on a notification created by this plugin, calling `initialize` is what will trigger the `onSelectNotification` to trigger to handle the notification that the user tapped on. An alternative to handling the "launch notification" is to call the `getNotificationAppLaunchDetails` method that is available in the plugin. This could be used, for example, to change the home route of the app for deep-linking. Calling `initialize` will still cause the `onSelectNotification` callback to fire for the launch notification. It will be up to developers to ensure that they don't process the same notification twice (e.g. by storing and comparing the notification id).
+
+### [iOS only] Requesting notification permission
+
+By default this plugin will request notification permission when it is initialized. `IOSInitializationSettings` have three named parameters:
+1. `requestSoundPermission`,
+1. `requestBadgePermission`,
+1. `requestAlertPermission`
+that control this behaviour.
+
+If you want to delay permission request, set all of the above to false.
+
+```dart
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+var initializationSettingsAndroid =
+    new AndroidInitializationSettings('app_icon');
+var initializationSettingsIOS = new IOSInitializationSettings(
+        requestSoundPermission: false,
+        requestBadgePermission: false,
+        requestAlertPermission: false,
+        onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+    );
+var initializationSettings = new InitializationSettings(
+    initializationSettingsAndroid, initializationSettingsIOS);
+flutterLocalNotificationsPlugin.initialize(initializationSettings,
+    onSelectNotification: onSelectNotification);
+```
+
+Then later call `requestPermissions` method with desired permissions.
+
+```dart
+var result = await IOSFlutterLocalNotificationsPlugin.instance?.requestPermissions(
+        sound: true,
+        badge: true,
+        alert: true,
+    );
+```
 
 ### Displaying a notification
 

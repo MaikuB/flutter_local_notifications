@@ -4,11 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 
+import 'helpers.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/notification_details.dart';
-import 'helpers.dart';
 import 'typedefs.dart';
 import 'types.dart';
 
@@ -54,6 +54,15 @@ class MethodChannelFlutterLocalNotificationsPlugin
 /// Android implementation of the local notifications plugin
 class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
+  /// Android specific plugin instance or null when not running in Android environment
+  static AndroidFlutterLocalNotificationsPlugin get instance {
+    if (FlutterLocalNotificationsPlatform.instance
+        is AndroidFlutterLocalNotificationsPlugin) {
+      return FlutterLocalNotificationsPlatform.instance;
+    }
+    return null;
+  }
+
   SelectNotificationCallback _onSelectNotification;
 
   /// Initializes the plugin. Call this method on application before using the plugin further.
@@ -173,6 +182,15 @@ class AndroidFlutterLocalNotificationsPlugin
 /// iOS implementation of the local notifications plugin
 class IOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
+  /// IOS specific instance of plugin or null when not running in iOS environment
+  static IOSFlutterLocalNotificationsPlugin get instance {
+    if (FlutterLocalNotificationsPlatform.instance
+        is IOSFlutterLocalNotificationsPlugin) {
+      return FlutterLocalNotificationsPlatform.instance;
+    }
+    return null;
+  }
+
   SelectNotificationCallback _onSelectNotification;
 
   DidReceiveLocalNotificationCallback _onDidReceiveLocalNotification;
@@ -188,6 +206,15 @@ class IOSFlutterLocalNotificationsPlugin
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
         'initialize', initializationSettings.toMap());
+  }
+
+  /// Requests the specified permission(s) from user and returns current permission status.
+  Future<bool> requestPermissions({bool sound, bool alert, bool badge}) {
+    return _channel.invokeMethod('requestPermissions', {
+      'sound': sound,
+      'alert': alert,
+      'badge': badge,
+    });
   }
 
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
