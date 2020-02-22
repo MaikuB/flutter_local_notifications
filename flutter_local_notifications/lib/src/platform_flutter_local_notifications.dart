@@ -198,6 +198,12 @@ class IOSFlutterLocalNotificationsPlugin
   /// Initializes the plugin. Call this method on application before using the plugin further.
   /// This should only be done once. When a notification created by this plugin was used to launch the app,
   /// calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
+  ///
+  /// Initialisation may also request notification permissions where users will see a permissions prompt. This may be fine
+  /// in cases where it's acceptable to do this when the application runs for the first time. However, if your application
+  /// needs to do this at a later point in time, set the [IOSInitializationSettings.requestAlertPermission],
+  /// [IOSInitializationSettings.requestBadgePermission] and [IOSInitializationSettings.requestSoundPermission] values to false.
+  /// [requestPermissions] can then be called to request permissions when needed.
   Future<bool> initialize(IOSInitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
     _onSelectNotification = onSelectNotification;

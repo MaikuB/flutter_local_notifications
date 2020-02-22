@@ -11,13 +11,15 @@ import 'platform_flutter_local_notifications.dart';
 import 'typedefs.dart';
 import 'types.dart';
 
-/// `FlutterLocalNotificationsPlugin` allows applications to display a local notification.
+/// Provides cross-platform functionality for displaying local notifications.
+///
 /// The plugin will check the platform that is running on to use the appropriate platform-specific
 /// implementation of the plugin. The plugin methods will be a no-op when the platform can't be detected.
 class FlutterLocalNotificationsPlugin {
   factory FlutterLocalNotificationsPlugin() => _instance;
 
   /// Used internally for creating the appropriate platform-specific implementation of the plugin.
+  ///
   /// This can be used for tests as well. For example, the following code
   ///
   /// ```
@@ -42,12 +44,21 @@ class FlutterLocalNotificationsPlugin {
 
   final Platform _platform;
 
-  /// Initializes the plugin. Call this method on application before using the plugin further.
-  /// This should only be done once. When a notification created by this plugin was used to launch the app,
-  /// calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
+  /// Initializes the plugin.
   ///
-  /// Will return a [bool] value to indicate if initialization succeeded. When running in environment that is
-  /// neither Android and iOS (e.g. when running tests), this will be a no-op and return true.
+  /// Call this method on application before using the plugin further. This should only be done once. When a notification
+  /// created by this plugin was used to launch the app, calling `initialize` is what will trigger to the `onSelectNotification`
+  /// callback to be fire.
+  ///
+  /// Will return a [bool] value to indicate if initialization succeeded. On iOS this is dependent on if permissions have been
+  /// granted to show notification When running in environment that is neither Android and iOS (e.g. when running tests),
+  /// this will be a no-op and return true.
+  ///
+  /// Note that on iOS, initialisation may also request notification permissions where users will see a permissions prompt.
+  /// This may be fine in cases where it's acceptable to do this when the application runs for the first time. However, if your application
+  /// needs to do this at a later point in time, set the [IOSInitializationSettings.requestAlertPermission],
+  /// [IOSInitializationSettings.requestBadgePermission] and [IOSInitializationSettings.requestSoundPermission] values to false.
+  /// [requestPermissions] can then be called to request permissions when needed.
   Future<bool> initialize(InitializationSettings initializationSettings,
       {SelectNotificationCallback onSelectNotification}) async {
     if (_platform.isAndroid) {
@@ -64,9 +75,9 @@ class FlutterLocalNotificationsPlugin {
     return true;
   }
 
-  /// Returns info on if a notification had been used to launch the application.
-  /// An example of how this could be used is to change the initial route of your application when it starts up.
+  /// Returns info on if a notification created from this plugin had been used to launch the application.
   ///
+  /// An example of how this could be used is to change the initial route of your application when it starts up.
   /// If the plugin isn't running on either Android or iOS then it defaults to indicate that a notification wasn't
   /// used to launch the app.
   Future<NotificationAppLaunchDetails> getNotificationAppLaunchDetails() async {
@@ -85,7 +96,7 @@ class FlutterLocalNotificationsPlugin {
     }
   }
 
-  /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped
+  /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped.
   Future<void> show(int id, String title, String body,
       NotificationDetails notificationDetails,
       {String payload}) async {
@@ -105,17 +116,22 @@ class FlutterLocalNotificationsPlugin {
     }
   }
 
-  /// Cancel/remove the notification with the specified id. This applies to notifications that have been scheduled and those that have already been presented.
+  /// Cancel/remove the notification with the specified id.
+  ///
+  /// This applies to notifications that have been scheduled and those that have already been presented.
   Future<void> cancel(int id) async {
     await FlutterLocalNotificationsPlatform.instance?.cancel(id);
   }
 
-  /// Cancels/removes all notifications. This applies to notifications that have been scheduled and those that have already been presented.
+  /// Cancels/removes all notifications.
+  ///
+  /// This applies to notifications that have been scheduled and those that have already been presented.
   Future<void> cancelAll() async {
     await FlutterLocalNotificationsPlatform.instance?.cancelAll();
   }
 
-  /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
+  /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped.
+  ///
   /// The [androidAllowWhileIdle] parameter is Android-specific and determines if the notification should still be shown at the specified time
   /// even when in a low-power idle mode.
   Future<void> schedule(int id, String title, String body,
@@ -136,6 +152,7 @@ class FlutterLocalNotificationsPlugin {
   }
 
   /// Periodically show a notification using the specified interval.
+  ///
   /// For example, specifying a hourly interval means the first time the notification will be an hour after the method has been called and then every hour after that.
   Future<void> periodicallyShow(int id, String title, String body,
       RepeatInterval repeatInterval, NotificationDetails notificationDetails,
@@ -157,7 +174,7 @@ class FlutterLocalNotificationsPlugin {
     }
   }
 
-  /// Shows a notification on a daily interval at the specified time
+  /// Shows a notification on a daily interval at the specified time.
   Future<void> showDailyAtTime(int id, String title, String body,
       Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
@@ -176,7 +193,7 @@ class FlutterLocalNotificationsPlugin {
     }
   }
 
-  /// Shows a notification on a daily interval at the specified time
+  /// Shows a notification on a daily interval at the specified time.
   Future<void> showWeeklyAtDayAndTime(int id, String title, String body,
       Day day, Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
@@ -195,7 +212,7 @@ class FlutterLocalNotificationsPlugin {
     }
   }
 
-  /// Returns a list of notifications pending to be delivered/shown
+  /// Returns a list of notifications pending to be delivered/shown.
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() {
     return FlutterLocalNotificationsPlatform.instance
         ?.pendingNotificationRequests();

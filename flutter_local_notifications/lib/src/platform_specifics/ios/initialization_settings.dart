@@ -1,26 +1,44 @@
 import '../../typedefs.dart';
 
-/// Plugin initialization settings for iOS
+/// Plugin initialization settings for iOS.
 class IOSInitializationSettings {
-  /// Request permission to display an alert. Default value is true.
+  /// Request permission to display an alert.
+  ///
+  /// Default value is true.
   final bool requestAlertPermission;
 
-  /// Request permission to play a sound. Default value is true.
+  /// Request permission to play a sound.
+  ///
+  /// Default value is true.
   final bool requestSoundPermission;
 
-  /// Request permission to badge app icon. Default value is true.
+  /// Request permission to badge app icon.
+  ///
+  /// Default value is true.
   final bool requestBadgePermission;
 
-  /// Default setting that indiciates an alert should be displayed when a notification is triggered while app is in the foreground. Default value is true. iOS 10+ only
+  /// Configures the default setting on if an alert should be displayed when a notification is triggered while app is in the foreground.
+  ///
+  /// Default value is true.
+  /// Applicable to iOS 10 and above.
+
   final bool defaultPresentAlert;
 
-  /// Default setting that indiciates if a sound should be played when a notification is triggered while app is in the foreground. Default value is true. iOS 10+ only
+  /// Configures the default setting on if a sound should be played when a notification is triggered while app is in the foreground by default.
+  ///
+  /// Default value is true.
+  /// Applicable to iOS 10 and above.
   final bool defaultPresentSound;
 
-  /// Default setting that indicates if a badge value should be applied when a notification is triggered while app is in the foreground. Default value is true. iOS 10+ only
+  /// Configures the default setting on if a badge value should be applied when a notification is triggered while app is in the foreground by default.
+  ///
+  /// Default value is true.
+  /// Applicable to iOS 10 and above.
   final bool defaultPresentBadge;
 
-  /// Callback for handling when a notification is triggered while the app is in the foreground. Applicable to iOS versions < 10 only
+  /// Callback for handling when a notification is triggered while the app is in the foreground.
+  ///
+  /// Applicable to iOS versions below 10.
   final DidReceiveLocalNotificationCallback onDidReceiveLocalNotification;
 
   const IOSInitializationSettings(

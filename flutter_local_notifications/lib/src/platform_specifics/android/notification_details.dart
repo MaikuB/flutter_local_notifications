@@ -5,102 +5,136 @@ import 'enums.dart';
 import 'styles/style_information.dart';
 import 'styles/default_style_information.dart';
 
-/// Configures the notification on Android
+/// Configures the notification on Android.
 class AndroidNotificationDetails {
-  /// The icon that should be used when displaying the notification. When not specified, this will use the default icon that has been configured.
+  /// The icon that should be used when displaying the notification.
+  ///
+  /// When not specified, this will use the default icon that has been configured.
   final String icon;
 
-  /// The channel's id. Required for Android 8.0+
+  /// The channel's id.
+  ///
+  /// Required for Android 8.0+.
   final String channelId;
 
-  /// The channel's name. Required for Android 8.0+
+  /// The channel's name.
+  ///
+  /// Required for Android 8.0+.
   final String channelName;
 
-  /// The channel's description. Required for Android 8.0+
+  /// The channel's description.
+  ///
+  /// Required for Android 8.0+.
   final String channelDescription;
 
   /// Whether notifications posted to this channel can appear as application icon badges in a Launcher
   final bool channelShowBadge;
 
-  /// The importance of the notification
+  /// The importance of the notification.
   Importance importance;
 
   /// The priority of the notification
   Priority priority;
 
-  /// Indicates if a sound should be played when the notification is displayed. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  /// Indicates if a sound should be played when the notification is displayed.
+  ///
+  /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   bool playSound;
 
-  /// The sound to play for the notification. Requires setting [playSound] to true for it to work. If [playSound] is set to true but this is not specified then the default sound is played. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  /// The sound to play for the notification.
+  ///
+  /// Requires setting [playSound] to true for it to work.
+  /// If [playSound] is set to true but this is not specified then the default sound is played.
+  /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   String sound;
 
-  /// Indicates if vibration should be enabled when the notification is displayed. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  /// Indicates if vibration should be enabled when the notification is displayed.
+  ///
+  /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   bool enableVibration;
 
-  /// Indicates if lights should be enabled when the notification is displayed. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  /// Indicates if lights should be enabled when the notification is displayed.
+  ///
+  /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   bool enableLights;
 
-  /// The vibration pattern. Requires setting [enableVibration] to true for it to work. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  /// Configures the vibration pattern.
+  ///
+  /// Requires setting [enableVibration] to true for it to work.
+  /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   Int64List vibrationPattern;
 
-  /// Defines the notification style
+  /// Defines the notification style.
   AndroidNotificationStyle style;
 
-  /// Contains extra information for the specified notification [style]
+  /// Contains extra information for the specified notification [style].
   StyleInformation styleInformation;
 
-  /// Specifies the group that this notification belongs to. For Android 7.0+ (API level 24)
+  /// Specifies the group that this notification belongs to.
+  ///
+  /// For Android 7.0+ (API level 24)
   String groupKey;
 
-  /// Specifies if this notification will function as the summary for grouped notifications
+  /// Specifies if this notification will function as the summary for grouped notifications.
   bool setAsGroupSummary;
 
-  /// Sets the group alert behavior for this notification. Default is AlertAll. See https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#setGroupAlertBehavior(int)
+  /// Sets the group alert behavior for this notification.
+  ///
+  /// Default is AlertAll.
+  /// See https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#setGroupAlertBehavior(int) for more details.
   GroupAlertBehavior groupAlertBehavior;
 
-  /// Specifies if the notification should automatically dismissed upon tapping on it
+  /// Specifies if the notification should automatically dismissed upon tapping on it.
   bool autoCancel;
 
   /// Specifies if the notification will be "ongoing".
   bool ongoing;
 
-  /// Sets the color
+  /// Sets the color.
   Color color;
 
   /// Specifics the large icon to use. This will be either the name of the drawable of an actual file path based on the value of [largeIconBitmapSource].
   String largeIcon;
 
-  /// Specifies the source for the large icon
+  /// Specifies the source for the large icon.
   BitmapSource largeIconBitmapSource;
 
   /// Specifies if you would only like the sound, vibrate and ticker to be played if the notification is not already showing.
   bool onlyAlertOnce;
 
-  /// Specifies if the notification will be used to show progress
+  /// Specifies if the notification will be used to show progress.
   bool showProgress;
 
-  /// The maximum progress value
+  /// The maximum progress value.
   int maxProgress;
 
-  /// The current progress value
+  /// The current progress value.
   int progress;
 
-  /// Specifies if an indeterminate progress bar will be shown
+  /// Specifies if an indeterminate progress bar will be shown.
   bool indeterminate;
 
-  /// Sets the light color of the notification. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  /// Sets the light color of the notification.
+  ///
+  /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   Color ledColor;
 
-  /// Sets how long the light colour will remain on. Not applicable for Android 8.0+
+  /// Sets how long the light colour will remain on.
+  ///
+  /// Not applicable for Android 8.0+
   int ledOnMs;
 
-  /// Sets how long the light colour will remain off. Not applicable for Android 8.0+
+  /// Sets how long the light colour will remain off.
+  ///
+  /// Not applicable for Android 8.0+
   int ledOffMs;
 
-  /// Set the "ticker" text which is sent to accessibility services
+  /// Set the "ticker" text which is sent to accessibility services.
   String ticker;
 
-  /// The action to take for managing notification channels. Defaults to creating the notification channel using the provided details if it doesn't exist
+  /// The action to take for managing notification channels.
+  ///
+  /// Defaults to creating the notification channel using the provided details if it doesn't exist
   AndroidNotificationChannelAction channelAction;
 
   /// Defines the notification visibility on the lockscreen
@@ -109,8 +143,9 @@ class AndroidNotificationDetails {
   /// The duration in milliseconds after which the notification will be cancelled if it hasn't already
   int timeoutAfter;
 
-  /// The notification category. Refer to Android notification API documentation at https://developer.android.com/reference/androidx/core/app/NotificationCompat.html#constants_2
-  /// for the available categories
+  /// The notification category.
+  ///
+  /// Refer to Android notification API documentation at https://developer.android.com/reference/androidx/core/app/NotificationCompat.html#constants_2 for the available categories
   String category;
 
   AndroidNotificationDetails(
