@@ -58,14 +58,13 @@ Future<void> main() async {
       });
   var initializationSettings = InitializationSettings(
       initializationSettingsAndroid, initializationSettingsIOS);
-  var initialised = await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings, onSelectNotification: (String payload) async {
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
     }
     selectNotificationSubject.add(payload);
   });
-  print('initialised: $initialised');
   runApp(
     MaterialApp(
       home: HomePage(),
@@ -105,13 +104,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _requestIOSPermissions() {
-    if (Platform.isIOS) {
-      IOSFlutterLocalNotificationsPlugin.instance?.requestPermissions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-    }
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
   }
 
   void _configureDidReceiveLocalNotificationSubject() {

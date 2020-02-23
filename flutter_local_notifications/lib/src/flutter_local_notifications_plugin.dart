@@ -15,6 +15,9 @@ import 'types.dart';
 ///
 /// The plugin will check the platform that is running on to use the appropriate platform-specific
 /// implementation of the plugin. The plugin methods will be a no-op when the platform can't be detected.
+///
+/// Use [resolvePlatformSpecificImplementation] and pass the platform-specific type of the plugin to get the
+/// underlying platform-specific implementation being used to access platform-specific methods
 class FlutterLocalNotificationsPlugin {
   factory FlutterLocalNotificationsPlugin() => _instance;
 
@@ -43,6 +46,33 @@ class FlutterLocalNotificationsPlugin {
       FlutterLocalNotificationsPlugin.private(const LocalPlatform());
 
   final Platform _platform;
+
+  /// Returns the underlying platform-specific implementation of given type [T], which
+  /// must be the type of a concrete [FlutterLocalNotificationsPlatform] subclass.
+  ///
+  /// Requires running on the appropriate platform that matches the specified type for a result to be returned.
+  /// For example, when the specified type argument is of type [AndroidFlutterLocalNotificatiosPlugin],
+  /// this will only return a result of that type when running on Android.
+  T resolvePlatformSpecificImplementation<
+      T extends FlutterLocalNotificationsPlatform>() {
+    if (T == FlutterLocalNotificationsPlatform) {
+      throw ArgumentError.value(T,
+          'The type argument must be a concrete subclass of FlutterLocalNotificationsPlatform');
+    }
+    if (_platform.isAndroid && T == AndroidFlutterLocalNotificationsPlugin) {
+      if (FlutterLocalNotificationsPlatform.instance
+          is AndroidFlutterLocalNotificationsPlugin) {
+        return FlutterLocalNotificationsPlatform.instance;
+      }
+    } else if (_platform.isIOS && T == IOSFlutterLocalNotificationsPlugin) {
+      if (FlutterLocalNotificationsPlatform.instance
+          is IOSFlutterLocalNotificationsPlugin) {
+        return FlutterLocalNotificationsPlatform.instance;
+      }
+    }
+
+    return null;
+  }
 
   /// Initializes the plugin.
   ///
