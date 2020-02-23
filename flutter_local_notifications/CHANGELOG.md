@@ -1,3 +1,12 @@
+# [1.2.0]
+
+* Added the `resolvePlatformSpecificImplementation()` method to the `FlutterLocalNotificationsPlugin` class. This can be used to resolve the underlying platform implementation in order to access platform-specific APIs.
+* **BREAKING CHANGE* the static `instance` properties in the `IOSFlutterLocalNotificationsPlugin` and `AndroidFlutterLocalNotificationsPlugin` classes have been removed due to addition of the `resolvePlatformSpecificImplementation()`
+* Updated readme to remove use of `new` keyword in code snippets
+* Bumped e2e dependency
+* Bumped example app dependencies
+* Make the pedantic dev_dependency explicit
+
 # [1.1.7+1]
 
 * Minor update to readme on description around requesting notification permissions

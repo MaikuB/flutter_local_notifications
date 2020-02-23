@@ -1,4 +1,5 @@
-build_example_android_task:
+task:
+  name: Build Android example app
   container:
     image: cirrusci/flutter:stable
   pub_cache:
@@ -7,7 +8,8 @@ build_example_android_task:
     - cd flutter_local_notifications/example
     - flutter build apk --debug
 
-build_example_ios_task:
+task:
+  name: Build iOS example app
   osx_instance:
     image: catalina-flutter
   pub_cache:
@@ -16,14 +18,16 @@ build_example_ios_task:
     - cd flutter_local_notifications/example
     - flutter build ios --no-codesign --debug
 
-test_platform_interface_task:
+task:
+  name: Run platform interface tests
   container:
     image: cirrusci/flutter:stable
   test_script:
     - cd flutter_local_notifications_platform_interface
     - flutter test
 
-test_plugin_task:
+task:
+  name: Run plugin unit tests
   container:
     image: cirrusci/flutter:stable
   pub_cache:

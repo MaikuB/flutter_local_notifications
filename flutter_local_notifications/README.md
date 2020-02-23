@@ -70,10 +70,9 @@ The GitHub repository has an example app that should demonstrate of all the supp
 The following samples will demonstrate the more commonly used functionalities. The first step is to create a new instance of the plugin class and then initialise it with the settings to use for each platform
 
 ```dart
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
-var initializationSettingsAndroid =
-    new AndroidInitializationSettings('app_icon');
+var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
 var initializationSettingsIOS = IOSInitializationSettings(
     onDidReceiveLocalNotification: onDidReceiveLocalNotification);
 var initializationSettings = InitializationSettings(
@@ -91,7 +90,7 @@ Future onSelectNotification(String payload) async {
     }
     await Navigator.push(
       context,
-      new MaterialPageRoute(builder: (context) => new SecondScreen(payload)),
+      MaterialPageRoute(builder: (context) => SecondScreen(payload)),
     );
 }
 ```
@@ -108,19 +107,19 @@ By default this plugin will request notification permissions when it is initiali
 1. `requestAlertPermission`
 that control this behaviour.
 
-If you want to request permissions at a later point in your application, set all of the above to false.
+If you want to request permissions at a later point in your application on iOS, set all of the above to false.
 
 ```dart
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =  FlutterLocalNotificationsPlugin();
 var initializationSettingsAndroid =
-    new AndroidInitializationSettings('app_icon');
-var initializationSettingsIOS = new IOSInitializationSettings(
+    AndroidInitializationSettings('app_icon');
+var initializationSettingsIOS = IOSInitializationSettings(
         requestSoundPermission: false,
         requestBadgePermission: false,
         requestAlertPermission: false,
         onDidReceiveLocalNotification: onDidReceiveLocalNotification,
     );
-var initializationSettings = new InitializationSettings(
+var initializationSettings = InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
 await flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: onSelectNotification);
@@ -129,12 +128,17 @@ await flutterLocalNotificationsPlugin.initialize(initializationSettings,
 Then call `requestPermissions` method with desired permissions at the appropriate point in your application
 
 ```dart
-var result = await IOSFlutterLocalNotificationsPlugin.instance?.requestPermissions(
-        sound: true,
-        badge: true,
-        alert: true,
-    );
+var result = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
 ```
+
+Here the call to `flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()` returns the iOS implementation of the plugin that contains APIs specific to iOS, provided that the application is running on iOS. The `?.` operator is used here as the result will be null when run on other platforms. Developers may alternative choose to guard this call by checking the platform their application is running on.
 
 ### Displaying a notification
 
@@ -156,13 +160,13 @@ In this block of code, the details for each platform have been specified. This i
 
 ```dart
 var scheduledNotificationDateTime =
-        new DateTime.now().add(new Duration(seconds: 5));
+        DateTime.now().add(Duration(seconds: 5));
 var androidPlatformChannelSpecifics =
-    new AndroidNotificationDetails('your other channel id',
+    AndroidNotificationDetails('your other channel id',
         'your other channel name', 'your other channel description');
 var iOSPlatformChannelSpecifics =
-    new IOSNotificationDetails();
-NotificationDetails platformChannelSpecifics = new NotificationDetails(
+    IOSNotificationDetails();
+NotificationDetails platformChannelSpecifics = NotificationDetails(
     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.schedule(
     0,
@@ -179,11 +183,11 @@ Note that on Android devices, the default behaviour is that the notification may
 ```dart
 // Show a notification every minute with the first appearance happening a minute after invoking the method
 var androidPlatformChannelSpecifics =
-    new AndroidNotificationDetails('repeating channel id',
+    AndroidNotificationDetails('repeating channel id',
         'repeating channel name', 'repeating description');
 var iOSPlatformChannelSpecifics =
-    new IOSNotificationDetails();
-var platformChannelSpecifics = new NotificationDetails(
+    IOSNotificationDetails();
+var platformChannelSpecifics = NotificationDetails(
     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
     'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
@@ -192,13 +196,13 @@ await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
 ### Show a daily notification at a specific time
 
 ```dart
-var time = new Time(10, 0, 0);
+var time = Time(10, 0, 0);
 var androidPlatformChannelSpecifics =
-    new AndroidNotificationDetails('repeatDailyAtTime channel id',
+    AndroidNotificationDetails('repeatDailyAtTime channel id',
         'repeatDailyAtTime channel name', 'repeatDailyAtTime description');
 var iOSPlatformChannelSpecifics =
-    new IOSNotificationDetails();
-var platformChannelSpecifics = new NotificationDetails(
+    IOSNotificationDetails();
+var platformChannelSpecifics = NotificationDetails(
     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.showDailyAtTime(
     0,
@@ -211,13 +215,13 @@ await flutterLocalNotificationsPlugin.showDailyAtTime(
 ### Show a weekly notification on specific day and time
 
 ```dart
-var time = new Time(10, 0, 0);
+var time = Time(10, 0, 0);
 var androidPlatformChannelSpecifics =
-    new AndroidNotificationDetails('show weekly channel id',
+    AndroidNotificationDetails('show weekly channel id',
         'show weekly channel name', 'show weekly description');
 var iOSPlatformChannelSpecifics =
-    new IOSNotificationDetails();
-var platformChannelSpecifics = new NotificationDetails(
+    IOSNotificationDetails();
+var platformChannelSpecifics = NotificationDetails(
     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
     0,
@@ -247,23 +251,23 @@ String groupChannelName = 'grouped channel name';
 String groupChannelDescription = 'grouped channel description';
 // example based on https://developer.android.com/training/notify-user/group.html
 AndroidNotificationDetails firstNotificationAndroidSpecifics =
-    new AndroidNotificationDetails(
+    AndroidNotificationDetails(
         groupChannelId, groupChannelName, groupChannelDescription,
         importance: Importance.Max,
         priority: Priority.High,
         groupKey: groupKey);
 NotificationDetails firstNotificationPlatformSpecifics =
-    new NotificationDetails(firstNotificationAndroidSpecifics, null);
+    NotificationDetails(firstNotificationAndroidSpecifics, null);
 await flutterLocalNotificationsPlugin.show(1, 'Alex Faarborg',
     'You will not believe...', firstNotificationPlatformSpecifics);
 AndroidNotificationDetails secondNotificationAndroidSpecifics =
-    new AndroidNotificationDetails(
+    AndroidNotificationDetails(
         groupChannelId, groupChannelName, groupChannelDescription,
         importance: Importance.Max,
         priority: Priority.High,
         groupKey: groupKey);
 NotificationDetails secondNotificationPlatformSpecifics =
-    new NotificationDetails(secondNotificationAndroidSpecifics, null);
+    NotificationDetails(secondNotificationAndroidSpecifics, null);
 await flutterLocalNotificationsPlugin.show(
     2,
     'Jeff Chang',
@@ -271,22 +275,22 @@ await flutterLocalNotificationsPlugin.show(
     secondNotificationPlatformSpecifics);
 
 // create the summary notification required for older devices that pre-date Android 7.0 (API level 24)
-List<String> lines = new List<String>();
+List<String> lines = List<String>();
 lines.add('Alex Faarborg  Check this out');
 lines.add('Jeff Chang    Launch Party');
-InboxStyleInformation inboxStyleInformation = new InboxStyleInformation(
+InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
     lines,
     contentTitle: '2 new messages',
     summaryText: 'janedoe@example.com');
 AndroidNotificationDetails androidPlatformChannelSpecifics =
-    new AndroidNotificationDetails(
+    AndroidNotificationDetails(
         groupChannelId, groupChannelName, groupChannelDescription,
         style: NotificationStyleAndroid.Inbox,
         styleInformation: inboxStyleInformation,
         groupKey: groupKey,
         setAsGroupSummary: true);
 NotificationDetails platformChannelSpecifics =
-    new NotificationDetails(androidPlatformChannelSpecifics, null);
+    NotificationDetails(androidPlatformChannelSpecifics, null);
 await flutterLocalNotificationsPlugin.show(
     3, 'Attention', 'Two new messages', platformChannelSpecifics);
 ```
@@ -389,10 +393,10 @@ By design, iOS applications do not display notifications when they're in the for
 ```dart
 // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
 var initializationSettingsAndroid =
-    new AndroidInitializationSettings('app_icon');
-var initializationSettingsIOS = new IOSInitializationSettings(
+    AndroidInitializationSettings('app_icon');
+var initializationSettingsIOS = IOSInitializationSettings(
     onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-var initializationSettings = new InitializationSettings(
+var initializationSettings = InitializationSettings(
     initializationSettingsAndroid, initializationSettingsIOS);
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: onSelectNotification);
@@ -404,19 +408,19 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
     // display a dialog with the notification details, tap ok to go to another page
     showDialog(
       context: context,
-      builder: (BuildContext context) => new CupertinoAlertDialog(
-            title: new Text(title),
-            content: new Text(body),
+      builder: (BuildContext context) => CupertinoAlertDialog(
+            title: Text(title),
+            content: Text(body),
             actions: [
               CupertinoDialogAction(
                 isDefaultAction: true,
-                child: new Text('Ok'),
+                child: Text('Ok'),
                 onPressed: () async {
                   Navigator.of(context, rootNavigator: true).pop();
                   await Navigator.push(
                     context,
-                    new MaterialPageRoute(
-                      builder: (context) => new SecondScreen(payload),
+                    MaterialPageRoute(
+                      builder: (context) => SecondScreen(payload),
                     ),
                   );
                 },
