@@ -1,6 +1,6 @@
 # [1.2.1]
 
-* The `values` properties for the `Day` and `Importance` enumerations now return a `List` of the same type instead of being dynamic
+* The static `values` properties for the `Day` and `Importance` classes now return `List<Day>` and `List<Importance>` respectively instead of being dynamic
 * Added more public API documentation
 * Updated readme to move issues and contributions section to the readme within the repository
 * Added screenshots to readme
