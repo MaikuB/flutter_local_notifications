@@ -32,7 +32,9 @@ class Importance {
   static const High = Importance(4);
   static const Max = Importance(5);
 
-  static get values => [Unspecified, None, Min, Low, Default, High, Max];
+  /// All the possible values for the [Importance] enumeration.
+  static List<Importance> get values =>
+      [Unspecified, None, Min, Low, Default, High, Max];
 
   final int value;
 
