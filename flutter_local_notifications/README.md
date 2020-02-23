@@ -51,8 +51,8 @@ Note that this plugin aims to provide abstractions for all platforms as opposed 
 
 ## Screenshots
 
-<img height="480" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/android_notification.png">
-<img height="414" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/ios_notification.png">
+<img height="480" src="https://github.com/MaikuB/flutter_local_notifications/raw/doc_updates/images/android_notification.png">
+<img height="414" src="https://github.com/MaikuB/flutter_local_notifications/raw/doc_updates/images/ios_notification.png">
 
 
 ## Acknowledgements
