@@ -4,6 +4,7 @@
 * Added more public API documentation
 * Updated readme to move issues and contributions section to the readme within the repository
 * Added screenshots to readme
+* Updated how breaking changes are highlighted in changelog to all the letters aren't capitalised
 
 # [1.2.0]
 
