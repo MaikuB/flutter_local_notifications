@@ -1,4 +1,4 @@
-# [1.2.1]
+# [1.2.0+1]
 
 * The static `values` properties for the `Day` and `Importance` classes now return `List<Day>` and `List<Importance>` respectively instead of being dynamic
 * Added more public API documentation
