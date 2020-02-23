@@ -11,6 +11,9 @@ class DefaultStyleInformation extends StyleInformation {
   DefaultStyleInformation(this.htmlFormatContent, this.htmlFormatTitle)
       : super();
 
+  /// Create a [Map] object that describes the [DefaultStyleInformation] object.
+  ///
+  /// Mainly for internal use to send the data over a platform channel.
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'htmlFormatContent': htmlFormatContent,

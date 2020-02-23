@@ -50,6 +50,9 @@ class IOSInitializationSettings {
       this.defaultPresentBadge = true,
       this.onDidReceiveLocalNotification});
 
+  /// Create a [Map] object that describes the [IOSInitializationSettings] object.
+  ///
+  /// Mainly for internal use to send the data over a platform channel.
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'requestAlertPermission': requestAlertPermission,

@@ -32,6 +32,9 @@ class Person {
       this.name,
       this.uri});
 
+  /// Create a [Map] object that describes the [Person] object.
+  ///
+  /// Mainly for internal use to send the data over a platform channel.
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'bot': bot,

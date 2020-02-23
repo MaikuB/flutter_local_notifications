@@ -1,7 +1,15 @@
+# [1.2.0+1]
+
+* The static `values` properties for the `Day` and `Importance` classes now return `List<Day>` and `List<Importance>` respectively instead of being dynamic
+* Added more public API documentation
+* Updated readme to move issues and contributions section to the readme within the repository
+* Added screenshots to readme
+* Updated how breaking changes are highlighted in changelog to all the letters aren't capitalised
+
 # [1.2.0]
 
 * Added the `resolvePlatformSpecificImplementation()` method to the `FlutterLocalNotificationsPlugin` class. This can be used to resolve the underlying platform implementation in order to access platform-specific APIs.
-* **BREAKING CHANGE* the static `instance` properties in the `IOSFlutterLocalNotificationsPlugin` and `AndroidFlutterLocalNotificationsPlugin` classes have been removed due to addition of the `resolvePlatformSpecificImplementation()`
+* **Breaking change** the static `instance` properties in the `IOSFlutterLocalNotificationsPlugin` and `AndroidFlutterLocalNotificationsPlugin` classes have been removed due to addition of the `resolvePlatformSpecificImplementation()`
 * Updated readme to remove use of `new` keyword in code snippets
 * Bumped e2e dependency
 * Bumped example app dependencies
@@ -59,15 +67,15 @@
 
 # [1.1.0]
 
-* **BREAKING CHANGE** Updated plugin to make use of `flutter_local_notifications_platform_interface` version 1.0.1. This allows for platform-specific implementations of the platform interface to now be accessible. Note that the plugin will check which platform the plugin is running on.
+* **Breaking change** Updated plugin to make use of `flutter_local_notifications_platform_interface` version 1.0.1. This allows for platform-specific implementations of the platform interface to now be accessible. Note that the plugin will check which platform the plugin is running on.
   *Note*: this may have inadvertently broke some tests for users as the plugin now checks which platform the plugin is executing code on and would throw an `UnimplementedError` since neither iOS or Android can be detected. Another issue is that `NotificationAppLaunchDetails` was no longer exposed via the main plugin. Please upgrade to 1.1.3 to have both of these issues fixed
-* **BREAKING CHANGE** Plugin callbacks are no longer publicly accessible
-* **BREAKING CHANGE** [iOS] Local notifications that launched the app should now only be processed by the plugin if they were created by the plugin.
-* **BREAKING CHANGE** `MethodChannel` argument has been removed from the named constructor that was visible for testing purposes
+* **Breaking change** Plugin callbacks are no longer publicly accessible
+* **Breaking change** [iOS] Local notifications that launched the app should now only be processed by the plugin if they were created by the plugin.
+* **Breaking change** `MethodChannel` argument has been removed from the named constructor that was visible for testing purposes
 
 # [1.0.0]
 
-* **BREAKING CHANGE** [iOS] Added checks to ensure callbacks are only invoked for notifications originating from the plugin to improve compatibility with other notification plugins.
+* **Breaking change** [iOS] Added checks to ensure callbacks are only invoked for notifications originating from the plugin to improve compatibility with other notification plugins.
 * [Android] Bump Gradle plugin to 3.5.3
 
 # [0.9.1+3]
@@ -95,10 +103,10 @@
 
 * [Android] Add ability to customise visibility of a notification on the lockscreen. Thanks to PR by [gianlucaparadise](https://github.com/gianlucaparadise)
 * [Android] Bumped compile and target SDK to 29
-* **BREAKING CHANGE** [iOS] Plugin no longer registers as a `UNUserNotificationCenterDelegate`. This is to enable compatibility with other plugins that display notifications. Developers must now do this themselves. Refer to the updated iOS integration section for more info on this
+* **Breaking change** [iOS] Plugin no longer registers as a `UNUserNotificationCenterDelegate`. This is to enable compatibility with other plugins that display notifications. Developers must now do this themselves. Refer to the updated iOS integration section for more info on this
 * Updated info about configuring Proguard configuration rules and included a file that could be used for reference in the example app
 * Removed dependency on the `meta` package
-* **BREAKING CHANGE** Now requires Flutter SDK 1.10.0 or greater
+* **Breaking change** Now requires Flutter SDK 1.10.0 or greater
 * Migrate the plugin to the pubspec platforms manifest
 
 # [0.8.4+3]
@@ -144,8 +152,8 @@
 # [0.8.0]
 
 * Added an optional parameter named `androidAllowWhileIdle` to `schedule` method. This will allow notifications to still display at the specified time when the Android device is in an low-power idle mode.
-* **BREAKING CHANGE** Bump minimum Flutter version to 1.5.0
-* **BREAKING CHANGE** Update Flutter dependencies
+* **Breaking change** Bump minimum Flutter version to 1.5.0
+* **Breaking change** Update Flutter dependencies
 
 # [0.7.1+3]
 
@@ -166,7 +174,7 @@
 
 # [0.7.0]
 
-* **BREAKING CHANGE** [Android] Updated to Gradle 5.1.1 and Android Gradle plugin has been updated to 3.4.0 (aligns with Android Studio 3.4 release). Example app has also been updated to Gradle 5.1.1. Apps will need to update to use the plugin. Please see [here](https://developer.android.com/studio/releases/gradle-plugin) for more information if you need help on updating
+* **Breaking change** [Android] Updated to Gradle 5.1.1 and Android Gradle plugin has been updated to 3.4.0 (aligns with Android Studio 3.4 release). Example app has also been updated to Gradle 5.1.1. Apps will need to update to use the plugin. Please see [here](https://developer.android.com/studio/releases/gradle-plugin) for more information if you need help on updating
 * [Android] Add ability to specify the LED colour of the notification. Updated example app to show this can be done. Note that for Android 8.0+ (i.e. API 26+) that this is tied to the notification channel
 
 
@@ -180,8 +188,8 @@
 
 # [0.6.0]
 
-* **BREAKING CHANGE** [Android] Updated Gradle plugin to 3.3.2
-* **BREAKING CHANGE** [Android] Changed to store the name of drawable specified as the small icon to be used for Android notifications instead of the resource ID. This should fix the scenario where an app could be updated and the resource IDs got change and cause scheduled notifications to not appear. Believe this fix should retroactively apply for notifications scheduled with an icon specified but won't apply to those that were scheduled to use the default icon specified via the `initialize` method. This is due to the fact the name of the default icon wasn't being cached in previous ones but this has now changed so it's cached in shared preferences from this version onwards
+* **Breaking change** [Android] Updated Gradle plugin to 3.3.2
+* **Breaking change** [Android] Changed to store the name of drawable specified as the small icon to be used for Android notifications instead of the resource ID. This should fix the scenario where an app could be updated and the resource IDs got change and cause scheduled notifications to not appear. Believe this fix should retroactively apply for notifications scheduled with an icon specified but won't apply to those that were scheduled to use the default icon specified via the `initialize` method. This is due to the fact the name of the default icon wasn't being cached in previous ones but this has now changed so it's cached in shared preferences from this version onwards
 
 # [0.5.2]
 
@@ -203,7 +211,7 @@
 
 # [0.5.0]
 
-* **BREAKING CHANGE** Migrated to use AndroidX as the Android support libraries are deprecated. There shouldn't be any functional changes. Developers may require migrating their apps to support this following [this guide](https://developer.android.com/jetpack/androidx/migrate). This addresses issue [162](https://github.com/MaikuB/flutter_local_notifications/issues/162). Thanks to [Jeff Scaturro](https://github.com/JeffScaturro) for submitting the PR for this work. Note that if you don't want to migrate your app to use AndroidX yet then you may need to pin dependencies to a specific version
+* **Breaking change** Migrated to use AndroidX as the Android support libraries are deprecated. There shouldn't be any functional changes. Developers may require migrating their apps to support this following [this guide](https://developer.android.com/jetpack/androidx/migrate). This addresses issue [162](https://github.com/MaikuB/flutter_local_notifications/issues/162). Thanks to [Jeff Scaturro](https://github.com/JeffScaturro) for submitting the PR for this work. Note that if you don't want to migrate your app to use AndroidX yet then you may need to pin dependencies to a specific version
 
 # [0.4.5]
 
@@ -215,11 +223,11 @@
 
 # [0.4.4+1]
 
-* **BREAKING CHANGE** Fix naming of `onDidReceiveLocalNotification` property in the `IOSInitializationSettings` class (was previously named `onDidReceiveLocalNotificationCallback` by accident)
+* **Breaking change** Fix naming of `onDidReceiveLocalNotification` property in the `IOSInitializationSettings` class (was previously named `onDidReceiveLocalNotificationCallback` by accident)
 
 # [0.4.4]
 
-*  **BREAKING CHANGE** removed `registerUNNotificationCenterDelegate` argument for the `IOSInitializationSettings` class as it wasn't actually used.
+*  **Breaking change** removed `registerUNNotificationCenterDelegate` argument for the `IOSInitializationSettings` class as it wasn't actually used.
 * Plugin can now handle `didReceiveLocalNotification` delegate method in iOS and allow developers to handle the associated callback in Flutter. Added a `onDidReceiveLocalNotificationCallback` argument to the `IOSInitializationSettings` class to enable this and updated the sample code to demonstrate the usage. This should resolve issue [14](https://github.com/MaikuB/flutter_local_notifications/issues/14).
 
 # [0.4.3]
@@ -234,16 +242,16 @@
 
 # [0.4.2]
 
-* **BREAKING CHANGE** Fix issue [127](https://github.com/MaikuB/flutter_local_notifications/issues/127) by changing plugin to Android Support Library version 27.1.1, compile and target SDK version to 27 due to issues Flutter has with API 28. 
+* **Breaking change** Fix issue [127](https://github.com/MaikuB/flutter_local_notifications/issues/127) by changing plugin to Android Support Library version 27.1.1, compile and target SDK version to 27 due to issues Flutter has with API 28. 
 
 # [0.4.1+1]
 * Remove unused code in example app
 
 # [0.4.1]
 
-* **BREAKING CHANGE** renamed the `selectNotification` callback exposed by the `initialize` function to `onSelectNotification`
-* **BREAKING CHANGE** renamed the `MessageHandler` typedef to `SelectNotificationCallback`
-* **BREAKING CHANGE** updated plugin to Android Support Library version 28.0, compile and target SDK version to 28
+* **Breaking change** renamed the `selectNotification` callback exposed by the `initialize` function to `onSelectNotification`
+* **Breaking change** renamed the `MessageHandler` typedef to `SelectNotificationCallback`
+* **Breaking change** updated plugin to Android Support Library version 28.0, compile and target SDK version to 28
 * Address issue [115](https://github.com/MaikuB/flutter_local_notifications/issues/115) by adding validation to the notification ID values. This ensure they're within the range of a 32-bit integer as notification IDs on Android need to be within that range. Note that an `ArgumentError` is thrown when a value is out of range. 
 * Updated the Android Integration section around registering receivers via the Android manifest as per the suggestion in [116](https://github.com/MaikuB/flutter_local_notifications/issues/116)
 * Updated version of the http dependency for used by the example app
@@ -277,7 +285,7 @@
 
 ## [0.3.4]
 
-* [Android] Fix issue [71](https://github.com/MaikuB/flutter_local_notifications/issues/71) where the wrong time on when the notification occurred is being displayed. **BREAKING CHANGE** this involves changing it the receiver for displaying a scheduled notification will only build the notification prior to displaying it. There is a fix applied to existing scheduled notifications in this release that will be eventually be removed as going forward all scheduled notifications will work as just described
+* [Android] Fix issue [71](https://github.com/MaikuB/flutter_local_notifications/issues/71) where the wrong time on when the notification occurred is being displayed. **Breaking change** this involves changing it the receiver for displaying a scheduled notification will only build the notification prior to displaying it. There is a fix applied to existing scheduled notifications in this release that will be eventually be removed as going forward all scheduled notifications will work as just described
 * [Android] Fix an issue with serialising and deserialising the notifications so that additional style types (big picture and inbox) would be recognised. This affected scheduled notifications where upon rebooting the device, the plugin would need to reschedule the notifications using information saved in shared preferences.
 
 ## [0.3.3]
@@ -398,8 +406,8 @@
 
 ## [0.0.9]
 
-* [iOS] Enable ability to customise the sound for notifications (**IMPORTANT** requires testing on older iOS versions < 10)
-* [iOS] Can now specify default presentation options (**BREAKING CHANGE** named parameters for iOS initialisation have changed) that can also be overridden at the notification level).
+* [iOS] Enable ability to customise the sound for notifications (**Important** requires testing on older iOS versions < 10)
+* [iOS] Can now specify default presentation options (**Breaking change** named parameters for iOS initialisation have changed) that can also be overridden at the notification level).
 * [iOS] Fixes for reading in specified options
 
 ## [0.0.8]

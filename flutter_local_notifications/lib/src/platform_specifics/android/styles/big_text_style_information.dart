@@ -30,6 +30,10 @@ class BigTextStyleInformation extends DefaultStyleInformation {
       bool htmlFormatTitle = false})
       : super(htmlFormatContent, htmlFormatTitle);
 
+  /// Create a [Map] object that describes the [BigTextStyleInformation] object.
+  ///
+  /// Mainly for internal use to send the data over a platform channel.
+  @override
   Map<String, dynamic> toMap() {
     var styleJson = super.toMap();
 

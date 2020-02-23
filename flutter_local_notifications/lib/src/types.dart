@@ -8,7 +8,8 @@ class Day {
   static const Friday = Day(6);
   static const Saturday = Day(7);
 
-  static get values =>
+  /// All the possible values for the [Day] enumeration.
+  static List<Day> get values =>
       [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
 
   final int value;
@@ -39,6 +40,9 @@ class Time {
     assert(this.second >= 0 && this.second < 60);
   }
 
+  /// Create a [Map] object that describes the [Time] object.
+  ///
+  /// Mainly for internal use to send the data over a platform channel.
   Map<String, int> toMap() {
     return <String, int>{
       'hour': hour,
