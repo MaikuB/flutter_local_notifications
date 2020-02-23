@@ -49,7 +49,8 @@ class Priority {
   static const High = Priority(1);
   static const Max = Priority(2);
 
-  static get values => [Min, Low, Default, High, Max];
+  /// All the possible values for the [Priority] enumeration.
+  static List<Priority> get values => [Min, Low, Default, High, Max];
 
   final int value;
 

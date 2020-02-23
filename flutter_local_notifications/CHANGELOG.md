@@ -1,3 +1,7 @@
+# [1.2.0+2]
+
+* Make the static `values` propeerty of the `Priority` class return `List<Priority>` instead of being dynamic and added API docs for the property.
+
 # [1.2.0+1]
 
 * The static `values` properties for the `Day` and `Importance` classes now return `List<Day>` and `List<Importance>` respectively instead of being dynamic
