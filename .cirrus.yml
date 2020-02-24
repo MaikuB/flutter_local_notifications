@@ -43,6 +43,7 @@ task:
     ANDROID_ABI: "default;x86"
     cpu: 4
     memory: 10G
+    kvm: true
   container:
     image: cirrusci/flutter:stable
   pub_cache:
