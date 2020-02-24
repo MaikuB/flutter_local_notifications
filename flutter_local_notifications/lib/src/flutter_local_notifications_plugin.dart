@@ -48,10 +48,10 @@ class FlutterLocalNotificationsPlugin {
   final Platform _platform;
 
   /// Returns the underlying platform-specific implementation of given type [T], which
-  /// must be the type of a concrete [FlutterLocalNotificationsPlatform] subclass.
+  /// must be the type of a concrete [FlutterLocalNotificationsPlatform](https://pub.dev/documentation/flutter_local_notifications_platform_interface/latest/flutter_local_notifications_platform_interface/FlutterLocalNotificationsPlatform-class.html) subclass.
   ///
   /// Requires running on the appropriate platform that matches the specified type for a result to be returned.
-  /// For example, when the specified type argument is of type [AndroidFlutterLocalNotificatiosPlugin],
+  /// For example, when the specified type argument is of type [AndroidFlutterLocalNotificationsPlugin],
   /// this will only return a result of that type when running on Android.
   T resolvePlatformSpecificImplementation<
       T extends FlutterLocalNotificationsPlatform>() {
