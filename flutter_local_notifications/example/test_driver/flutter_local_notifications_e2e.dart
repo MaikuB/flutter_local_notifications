@@ -8,33 +8,69 @@ void main() {
   E2EWidgetsFlutterBinding.ensureInitialized();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  setUp(() async {
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    final initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
-    final initializationSettingsIOS = IOSInitializationSettings();
-    final initializationSettings = InitializationSettings(
-        initializationSettingsAndroid, initializationSettingsIOS);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  });
+  group('resolvePlatformSpecificImplementation()', () {
+    setUpAll(() async {
+      flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+      final initializationSettingsAndroid =
+          AndroidInitializationSettings('app_icon');
+      final initializationSettingsIOS = IOSInitializationSettings();
+      final initializationSettings = InitializationSettings(
+          initializationSettingsAndroid, initializationSettingsIOS);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    });
 
-  testWidgets(
-      'Can resolve platform-specific plugin implementation when run on appropriate platform',
-      (WidgetTester tester) async {
     if (Platform.isIOS) {
-      expect(
-          flutterLocalNotificationsPlugin
-              .resolvePlatformSpecificImplementation<
-                  IOSFlutterLocalNotificationsPlugin>()
-              .runtimeType,
-          IOSFlutterLocalNotificationsPlugin);
-    } else if (Platform.isAndroid) {
-      expect(
-          flutterLocalNotificationsPlugin
-              .resolvePlatformSpecificImplementation<
-                  AndroidFlutterLocalNotificationsPlugin>()
-              .runtimeType,
-          AndroidFlutterLocalNotificationsPlugin);
+      testWidgets('Can resolve iOS plugin implementation when running on iOS',
+          (WidgetTester tester) async {
+        expect(
+            flutterLocalNotificationsPlugin
+                .resolvePlatformSpecificImplementation<
+                    IOSFlutterLocalNotificationsPlugin>(),
+            isA<IOSFlutterLocalNotificationsPlugin>());
+      });
     }
+
+    if (Platform.isAndroid) {
+      testWidgets(
+          'Can resolve Android plugin implementation when running on Android',
+          (WidgetTester tester) async {
+        expect(
+            flutterLocalNotificationsPlugin
+                .resolvePlatformSpecificImplementation<
+                    AndroidFlutterLocalNotificationsPlugin>(),
+            isA<AndroidFlutterLocalNotificationsPlugin>());
+      });
+    }
+
+    if (Platform.isIOS) {
+      testWidgets(
+          'Returns null trying to resolve Android plugin implementation when running on iOS',
+          (WidgetTester tester) async {
+        expect(
+            flutterLocalNotificationsPlugin
+                .resolvePlatformSpecificImplementation<
+                    AndroidFlutterLocalNotificationsPlugin>(),
+            isNull);
+      });
+    }
+    if (Platform.isAndroid) {
+      testWidgets(
+          'Returns null trying to resolve iOS plugin implementation when running on Android',
+          (WidgetTester tester) async {
+        expect(
+            flutterLocalNotificationsPlugin
+                .resolvePlatformSpecificImplementation<
+                    IOSFlutterLocalNotificationsPlugin>(),
+            isNull);
+      });
+    }
+
+    testWidgets('Throws argument error requesting base class type',
+        (WidgetTester tester) async {
+      expect(
+          () => flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation(),
+          throwsArgumentError);
+    });
   });
 }
