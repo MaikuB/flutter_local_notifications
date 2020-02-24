@@ -38,12 +38,12 @@ task:
 
 task:
   name: Run integration tests (Android)
+  cpu: 4
+  memory: 10G
+  kvm: true
   env:
     EMULATOR_API_LEVEL: 28
     ANDROID_ABI: "default;x86"
-    cpu: 4
-    memory: 10G
-    kvm: true
   container:
     image: cirrusci/flutter:stable
   pub_cache:
