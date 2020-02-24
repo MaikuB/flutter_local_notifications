@@ -35,3 +35,28 @@ task:
   test_script:
     - cd flutter_local_notifications
     - flutter test
+
+task:
+  name: Run integration tests (Android)
+  env:
+    EMULATOR_API_LEVEL: 28
+    ANDROID_ABI: "default;x86"
+  container:
+    image: cirrusci/flutter:stable
+    cpu: 4
+    memory: 10G
+    kvm: true
+  pub_cache:
+    folder: ~/.pub-cache
+  kvm_script: sudo chown cirrus:cirrus /dev/kvm
+  install_images_script: sdkmanager "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
+  create_device_script:
+    echo no | avdmanager create avd --force -n test -k "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
+  start_emulator_background_script:
+    $ANDROID_HOME/emulator/emulator-headless -verbose -avd test -no-audio -no-window
+  wait_for_emulator_script:
+    android-wait-for-emulator
+  test_script:
+    - cd flutter_local_notifications
+    - cd example
+    - flutter drive --driver=test_driver/flutter_local_notifications_e2e_test.dart test_driver/flutter_local_notifications_e2e.dart
