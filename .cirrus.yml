@@ -38,16 +38,17 @@ task:
 
 task:
   name: Run integration tests (Android)
-  cpu: 4
-  memory: 10G
-  kvm: true
   env:
     EMULATOR_API_LEVEL: 28
     ANDROID_ABI: "default;x86"
   container:
     image: cirrusci/flutter:stable
+    cpu: 4
+    memory: 10G
+    kvm: true
   pub_cache:
     folder: ~/.pub-cache
+  kvm_script: sudo chown cirrus:cirrus /dev/kvm
   install_images_script: sdkmanager "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
   create_device_script:
     echo no | avdmanager create avd --force -n test -k "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
