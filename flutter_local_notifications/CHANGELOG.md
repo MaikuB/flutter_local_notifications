@@ -1,3 +1,7 @@
+# [1.2.0+3]
+
+* Updated API docs for `resolvePlatformSpecificImplementation()` method
+
 # [1.2.0+2]
 
 * Make the static `values` propeerty of the `Priority` class return `List<Priority>` instead of being dynamic and added API docs for the property.
