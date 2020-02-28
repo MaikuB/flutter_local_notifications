@@ -1,4 +1,4 @@
-# Flutter Local Notifications Plugin
+# flutter_local_notifications
 
 [![pub package](https://img.shields.io/pub/v/flutter_local_notifications.svg)](https://pub.dartlang.org/packages/flutter_local_notifications)
 [![Build Status](https://api.cirrus-ci.com/github/MaikuB/flutter_local_notifications.svg)](https://cirrus-ci.com/github/MaikuB/flutter_local_notifications/master)
@@ -320,9 +320,11 @@ await flutterLocalNotificationsPlugin.cancelAll();
 
 This should cover the basic functionality. Please check out the `example` directory for a sample app that illustrates the rest of the functionality available and refer to the API docs for more information. Also read the below on what you need to configure on each platform
 
-## Android Integration
+## Android integration
 
-If your application needs the ability to schedule notifications then you need to request permissions to be notified when the phone has been booted as scheduled notifications uses the `AlarmManager` API to determine when notifications should be displayed. However, they are cleared when a phone has been turned off. Requesting permission requires adding the following to the manifest
+### Configuration for scheduled notifications
+
+If your application needs the ability to schedule notifications then you need to request permissions to be notified when the phone has been booted as scheduled notifications uses the `AlarmManager` API to determine when notifications should be displayed. However, they are cleared when a phone has been turned off. Requesting permission requires adding the following to the manifest (i.e. your application's `AndroidManifest.xml` file)
 
 ```xml
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -350,6 +352,10 @@ If the vibration pattern of an Android notification will be customised then add 
 <uses-permission android:name="android.permission.VIBRATE" />
 ```
 
+For reference, the example app's `AndroidManifest.xml` file can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/AndroidManifest.xml)
+
+### Adding notification icons and sounds
+
 Notification icons should be added as a drawable resource. The example project/code shows how to set default icon for all notifications and how to specify one for each notification. It is possible to use launcher icon/mipmap and this by default is `@mipmap/ic_launcher` in the Android manifest and can be passed `AndroidInitializationSettings` constructor. However, the offical Android guidance is that you should use drawable resources. Custom notification sounds should be added as a raw resource and the sample illustrates how to play a notification with a custom sound. Refer to the following links around Android resources and notification icons.
 
  * https://developer.android.com/guide/topics/resources/providing-resources
@@ -360,19 +366,23 @@ When specifying the large icon bitmap or big picture bitmap (associated with the
 
 Note that with Android 8.0+, sounds and vibrations are associated with notification channels and can only be configured when they are first created. Showing/scheduling a notification will create a channel with the specified id if it doesn't exist already. If another notification specifies the same channel id but tries to specify another sound or vibration pattern then nothing occurs.
 
-When doing a release build of your app, you'll likely need to customise your ProGuard configuration file as per this [link](https://developer.android.com/studio/build/shrink-code#keep-code) and add the following line. 
+### Release build configuration
+
+When doing a release build of your app, which is the default setting when building an APK or app bundle, you'll likely need to customise your ProGuard configuration file as per this [link](https://developer.android.com/studio/build/shrink-code#keep-code) and add the following line. 
 
 ```
 -keep class com.dexterous.** { *; }
 ```
 
-The plugin also makes use of GSON and the Proguard rules can be found [here](https://github.com/google/gson/blob/master/examples/android-proguard-example/proguard.cfg). The example app has a consolidate Proguard rules (`proguard-rules.pro`) file that combines these together for reference.
+The plugin also makes use of GSON and the Proguard rules can be found [here](https://github.com/google/gson/blob/master/examples/android-proguard-example/proguard.cfg). The example app has a consolidated Proguard rules (`proguard-rules.pro`) file that combines these together for reference [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/proguard-rules.pro).
 
-If you have resource shrinking enabled, ensure that you have customised the resources that should be kept so that things like your notification images aren't discarded by following the instructions [here](https://developer.android.com/studio/build/shrink-code#keep-resources).
+You will also need to ensure that you have configured the resources that should be kept so that resources like your notification icons aren't discarded by the R8 compiler by following the instructions [here](https://developer.android.com/studio/build/shrink-code#keep-resources). Without doing this, you might not see the icon you've specified in your app's notifications. The configuration used by the example app can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/keep.xml) where it is specifying that all drawable resources should be kept, as well as the file used to play a custom notification sound (sound file is located [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/slow_spring_board.mp3)).
 
 **IMPORTANT**: Starting from version 0.5.0, this library no longer uses the deprecated Android support libraries and has migrated to AndroidX. Developers may require migrating their apps to support this following [this guide](https://developer.android.com/jetpack/androidx/migrate)
 
-## iOS Integration
+## iOS integration
+
+### General setup
 
 Add the following lines to the `didFinishLaunchingWithOptions` method in the AppDelegate.m/AppDelegate.swift file of your iOS project
 
@@ -453,6 +463,8 @@ if(!UserDefaults.standard.bool(forKey: "Notification")) {
     UserDefaults.standard.set(true, forKey: "Notification")
 }
 ```
+
+### Custom notification sound restrictions 
 
 When using custom notification sound, developers should be aware that iOS enforces restrictions on this (e.g. supported file formats). As of this writing, this is documented by Apple at
 
