@@ -1,3 +1,8 @@
+# [1.2.0+4]
+
+* Updated readme to add subsections under the Android and iOS integration guide
+* Added links in the readme under the release build configuration section that point to the configuration files used by the example app
+
 # [1.2.0+3]
 
 * Updated API docs for `resolvePlatformSpecificImplementation()` method
