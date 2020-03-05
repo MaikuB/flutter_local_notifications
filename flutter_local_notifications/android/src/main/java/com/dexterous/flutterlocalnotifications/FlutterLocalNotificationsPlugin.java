@@ -19,8 +19,8 @@ import android.text.Html;
 import android.text.Spanned;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 import androidx.core.app.AlarmManagerCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
 import androidx.core.graphics.drawable.IconCompat;
@@ -95,58 +95,17 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     static String NOTIFICATION = "notification";
     static String NOTIFICATION_DETAILS = "notificationDetails";
     static String REPEAT = "repeat";
+    static Gson gson;
     private MethodChannel channel;
     private Context applicationContext;
     private Activity mainActivity;
-    static Gson gson;
-
+    private boolean initialized;
 
     public static void registerWith(Registrar registrar) {
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
         plugin.setActivity(registrar.activity());
         registrar.addNewIntentListener(plugin);
         plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
-    }
-
-    private void setActivity(Activity flutterActivity) {
-        this.mainActivity = flutterActivity;
-    }
-
-    private void onAttachedToEngine(Context context, BinaryMessenger binaryMessenger) {
-        this.applicationContext = context;
-        this.channel = new MethodChannel(binaryMessenger, METHOD_CHANNEL);
-        this.channel.setMethodCallHandler(this);
-    }
-
-    @Override
-    public void onAttachedToEngine(FlutterPluginBinding binding) {
-        onAttachedToEngine(binding.getApplicationContext(), binding.getBinaryMessenger());
-    }
-
-    @Override
-    public void onDetachedFromEngine(FlutterPluginBinding binding) {
-    }
-
-    @Override
-    public void onAttachedToActivity(ActivityPluginBinding binding) {
-        binding.addOnNewIntentListener(this);
-        mainActivity = binding.getActivity();
-    }
-
-    @Override
-    public void onDetachedFromActivityForConfigChanges() {
-        this.mainActivity = null;
-    }
-
-    @Override
-    public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
-        binding.addOnNewIntentListener(this);
-        mainActivity = binding.getActivity();
-    }
-
-    @Override
-    public void onDetachedFromActivity() {
-        this.mainActivity = null;
     }
 
     static void rescheduleNotifications(Context context) {
@@ -242,7 +201,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
         return scheduledNotifications;
     }
-
 
     private static void saveScheduledNotifications(Context context, ArrayList<NotificationDetails> scheduledNotifications) {
         Gson gson = buildGson();
@@ -699,6 +657,47 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return NotificationManagerCompat.from(context);
     }
 
+    private void setActivity(Activity flutterActivity) {
+        this.mainActivity = flutterActivity;
+    }
+
+    private void onAttachedToEngine(Context context, BinaryMessenger binaryMessenger) {
+        this.applicationContext = context;
+        this.channel = new MethodChannel(binaryMessenger, METHOD_CHANNEL);
+        this.channel.setMethodCallHandler(this);
+    }
+
+    @Override
+    public void onAttachedToEngine(FlutterPluginBinding binding) {
+        onAttachedToEngine(binding.getApplicationContext(), binding.getBinaryMessenger());
+    }
+
+    @Override
+    public void onDetachedFromEngine(FlutterPluginBinding binding) {
+    }
+
+    @Override
+    public void onAttachedToActivity(ActivityPluginBinding binding) {
+        binding.addOnNewIntentListener(this);
+        mainActivity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+        this.mainActivity = null;
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
+        binding.addOnNewIntentListener(this);
+        mainActivity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+        this.mainActivity = null;
+    }
+
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         switch (call.method) {
@@ -790,7 +789,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private void getNotificationAppLaunchDetails(Result result) {
         Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
         String payload = null;
-        Boolean notificationLaunchedApp = (mainActivity != null && SELECT_NOTIFICATION.equals(mainActivity.getIntent().getAction()));
+        Boolean notificationLaunchedApp = !initialized && mainActivity != null && SELECT_NOTIFICATION.equals(mainActivity.getIntent().getAction());
         notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
         if (notificationLaunchedApp) {
             payload = mainActivity.getIntent().getStringExtra(PAYLOAD);
@@ -813,6 +812,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (mainActivity != null) {
             sendNotificationPayloadMessage(mainActivity.getIntent());
         }
+        initialized = true;
         result.success(true);
     }
 

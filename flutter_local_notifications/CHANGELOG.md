@@ -1,3 +1,8 @@
+# [1.2.1]
+
+* [Android] Fixed issue [512](https://github.com/MaikuB/flutter_local_notifications/issues/512) where calling `getNotificationAppLaunchDetails()` within the `onSelectNotification` callback could indicating that the app was launched by tapping on a notification when it wasn't the case
+* Update example app to indicate if a notification launched the app and include the launch notification payload
+
 # [1.2.0+4]
 
 * Title at the top of the readme is now the same name as the plugin

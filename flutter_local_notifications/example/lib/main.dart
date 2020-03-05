@@ -21,6 +21,8 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
 final BehaviorSubject<String> selectNotificationSubject =
     BehaviorSubject<String>();
 
+NotificationAppLaunchDetails notificationAppLaunchDetails;
+
 class ReceivedNotification {
   final int id;
   final String title;
@@ -39,10 +41,9 @@ class ReceivedNotification {
 Future<void> main() async {
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
-  // NOTE: if you want to find out if the app was launched via notification then you could use the following call and then do something like
-  // change the default route of the app
-  // var notificationAppLaunchDetails =
-  //     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
+  notificationAppLaunchDetails =
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
   var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
   // Note: permissions aren't requested here just to demonstrate that can be done later using the `requestPermissions()` method
@@ -182,6 +183,41 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                         'Tap on a notification when it appears to trigger navigation'),
                   ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                    child: Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Did notification launch app? ',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(
+                            text:
+                                '${notificationAppLaunchDetails?.didNotificationLaunchApp ?? false}',
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (notificationAppLaunchDetails?.didNotificationLaunchApp ??
+                      false)
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Launch notification payload: ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: notificationAppLaunchDetails.payload,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
                   PaddedRaisedButton(
                     buttonText: 'Show plain notification with payload',
                     onPressed: () async {
