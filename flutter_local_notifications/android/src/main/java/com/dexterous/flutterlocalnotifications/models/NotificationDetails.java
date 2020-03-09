@@ -99,7 +99,7 @@ public class NotificationDetails {
     private static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
     private static final String CATEGORY = "category";
     private static final String TIMEOUT_AFTER = "timeoutAfter";
-    private static final String SET_SHOW_WHEN = "setShowWhen";
+    private static final String SHOW_WHEN = "showWhen";
 
 
     public Integer id;
@@ -147,7 +147,7 @@ public class NotificationDetails {
     public Boolean allowWhileIdle;
     public Long timeoutAfter;
     public String category;
-    public Boolean setShowWhen;
+    public Boolean showWhen;
 
 
 

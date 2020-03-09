@@ -381,6 +381,12 @@ class _HomePageState extends State<HomePage> {
                       await _showNotificationWithIconBadge();
                     },
                   ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show notification without displaying occurred time [Android]',
+                    onPressed: () async {
+                      await _showNotificationWithoutOccurredTime();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -911,6 +917,19 @@ class _HomePageState extends State<HomePage> {
         0, 'icon badge title', 'icon badge body', platformChannelSpecifics,
         payload: 'item x');
   }
+
+  Future<void> _showNotificationWithoutOccurredTime() async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High, ticker: 'ticker' , showWhen : false);
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
+  }
+
 
   String _toTwoDigitString(int value) {
     return value.toString().padLeft(2, '0');

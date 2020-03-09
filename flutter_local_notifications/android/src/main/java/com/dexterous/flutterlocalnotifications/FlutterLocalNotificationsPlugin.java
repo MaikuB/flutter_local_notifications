@@ -134,8 +134,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setContentIntent(pendingIntent)
                 .setPriority(notificationDetails.priority)
                 .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
-                .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce))
-                .setShowWhen(BooleanUtils.getValue(notificationDetails.setShowWhen));
+                .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
 
         setSmallIcon(context, notificationDetails, builder);
         if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
@@ -144,6 +143,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (notificationDetails.color != null) {
             builder.setColor(notificationDetails.color.intValue());
         }
+
+        if (notificationDetails.showWhen != null){
+            builder.setShowWhen(BooleanUtils.getValue(notificationDetails.showWhen));
+        }
+
 
         setVisibility(notificationDetails, builder);
         applyGrouping(notificationDetails, builder);

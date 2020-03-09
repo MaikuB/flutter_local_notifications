@@ -102,7 +102,7 @@ class AndroidNotificationDetails {
   /// Specifies if you would only like the sound, vibrate and ticker to be played if the notification is not already showing.
   bool onlyAlertOnce;
 
-  /// Specifies if you would like showing notification update time
+  /// Specifies if the notification should display the timestamp of when it occurred.
   bool showWhen;
 
   /// Specifies if the notification will be used to show progress.
@@ -171,7 +171,7 @@ class AndroidNotificationDetails {
       this.largeIcon,
       this.largeIconBitmapSource,
       this.onlyAlertOnce,
-      this.showWhen,
+      this.showWhen = true,
       this.channelShowBadge = true,
       this.showProgress = false,
       this.maxProgress = 0,
