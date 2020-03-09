@@ -194,7 +194,7 @@ public class NotificationDetails {
             notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
             notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
             notificationDetails.onlyAlertOnce = (Boolean) platformChannelSpecifics.get(ONLY_ALERT_ONCE);
-            notificationDetails.setShowWhen = (Boolean) platformChannelSpecifics.get(SET_SHOW_WHEN);
+            notificationDetails.showWhen = (Boolean) platformChannelSpecifics.get(SHOW_WHEN);
             notificationDetails.showProgress = (Boolean) platformChannelSpecifics.get(SHOW_PROGRESS);
             if (platformChannelSpecifics.containsKey(MAX_PROGRESS)) {
                 notificationDetails.maxProgress = (Integer) platformChannelSpecifics.get(MAX_PROGRESS);
