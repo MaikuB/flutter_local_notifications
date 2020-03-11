@@ -99,6 +99,8 @@ public class NotificationDetails {
     private static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
     private static final String CATEGORY = "category";
     private static final String TIMEOUT_AFTER = "timeoutAfter";
+    private static final String SHOW_WHEN = "showWhen";
+
 
     public Integer id;
     public String title;
@@ -145,6 +147,8 @@ public class NotificationDetails {
     public Boolean allowWhileIdle;
     public Long timeoutAfter;
     public String category;
+    public Boolean showWhen;
+
 
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted.
@@ -190,6 +194,7 @@ public class NotificationDetails {
             notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
             notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
             notificationDetails.onlyAlertOnce = (Boolean) platformChannelSpecifics.get(ONLY_ALERT_ONCE);
+            notificationDetails.showWhen = (Boolean) platformChannelSpecifics.get(SHOW_WHEN);
             notificationDetails.showProgress = (Boolean) platformChannelSpecifics.get(SHOW_PROGRESS);
             if (platformChannelSpecifics.containsKey(MAX_PROGRESS)) {
                 notificationDetails.maxProgress = (Integer) platformChannelSpecifics.get(MAX_PROGRESS);

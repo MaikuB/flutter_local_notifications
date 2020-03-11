@@ -144,6 +144,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             builder.setColor(notificationDetails.color.intValue());
         }
 
+        if (notificationDetails.showWhen != null){
+            builder.setShowWhen(BooleanUtils.getValue(notificationDetails.showWhen));
+        }
+
+
         setVisibility(notificationDetails, builder);
         applyGrouping(notificationDetails, builder);
         setSound(context, notificationDetails, builder);

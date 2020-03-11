@@ -102,6 +102,9 @@ class AndroidNotificationDetails {
   /// Specifies if you would only like the sound, vibrate and ticker to be played if the notification is not already showing.
   bool onlyAlertOnce;
 
+  /// Specifies if the notification should display the timestamp of when it occurred.
+  bool showWhen;
+
   /// Specifies if the notification will be used to show progress.
   bool showProgress;
 
@@ -168,6 +171,7 @@ class AndroidNotificationDetails {
       this.largeIcon,
       this.largeIconBitmapSource,
       this.onlyAlertOnce,
+      this.showWhen = true,
       this.channelShowBadge = true,
       this.showProgress = false,
       this.maxProgress = 0,
@@ -216,6 +220,7 @@ class AndroidNotificationDetails {
       'largeIcon': largeIcon,
       'largeIconBitmapSource': largeIconBitmapSource?.index,
       'onlyAlertOnce': onlyAlertOnce,
+      'showWhen': showWhen,
       'showProgress': showProgress,
       'maxProgress': maxProgress,
       'progress': progress,
