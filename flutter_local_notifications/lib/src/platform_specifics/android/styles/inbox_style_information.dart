@@ -20,15 +20,16 @@ class InboxStyleInformation extends DefaultStyleInformation {
   /// Specifies if formatting should be applied to the first line of text after the detail section in the big form of the template.
   final bool htmlFormatSummaryText;
 
-  InboxStyleInformation(this.lines,
-      {this.htmlFormatLines = false,
-      this.contentTitle,
-      this.htmlFormatContentTitle = false,
-      this.summaryText,
-      this.htmlFormatSummaryText = false,
-      bool htmlFormatContent = false,
-      bool htmlFormatTitle = false})
-      : super(htmlFormatContent, htmlFormatTitle);
+  InboxStyleInformation(
+    this.lines, {
+    this.htmlFormatLines = false,
+    this.contentTitle,
+    this.htmlFormatContentTitle = false,
+    this.summaryText,
+    this.htmlFormatSummaryText = false,
+    bool htmlFormatContent = false,
+    bool htmlFormatTitle = false,
+  }) : super(htmlFormatContent, htmlFormatTitle);
 
   /// Create a [Map] object that describes the [InboxStyleInformation] object.
   ///

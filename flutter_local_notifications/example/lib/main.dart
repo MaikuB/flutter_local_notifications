@@ -29,11 +29,12 @@ class ReceivedNotification {
   final String body;
   final String payload;
 
-  ReceivedNotification(
-      {@required this.id,
-      @required this.title,
-      @required this.body,
-      @required this.payload});
+  ReceivedNotification({
+    @required this.id,
+    @required this.title,
+    @required this.body,
+    @required this.payload,
+  });
 }
 
 /// IMPORTANT: running the following code on its own won't work as there is setup required for each platform head project.
@@ -76,8 +77,11 @@ Future<void> main() async {
 class PaddedRaisedButton extends StatelessWidget {
   final String buttonText;
   final VoidCallback onPressed;
-  const PaddedRaisedButton(
-      {@required this.buttonText, @required this.onPressed});
+
+  const PaddedRaisedButton({
+    @required this.buttonText,
+    @required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -23,14 +23,15 @@ class Person {
   /// Uri for this person.
   final String uri;
 
-  Person(
-      {this.bot,
-      this.icon,
-      this.iconSource,
-      this.important,
-      this.key,
-      this.name,
-      this.uri});
+  Person({
+    this.bot,
+    this.icon,
+    this.iconSource,
+    this.important,
+    this.key,
+    this.name,
+    this.uri,
+  });
 
   /// Create a [Map] object that describes the [Person] object.
   ///

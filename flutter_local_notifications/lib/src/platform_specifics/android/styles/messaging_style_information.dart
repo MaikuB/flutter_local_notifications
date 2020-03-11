@@ -16,13 +16,14 @@ class MessagingStyleInformation extends DefaultStyleInformation {
   /// Messages to be displayed by this notification
   final List<Message> messages;
 
-  MessagingStyleInformation(this.person,
-      {this.conversationTitle,
-      this.groupConversation,
-      this.messages,
-      bool htmlFormatContent = false,
-      bool htmlFormatTitle = false})
-      : super(htmlFormatContent, htmlFormatTitle) {
+  MessagingStyleInformation(
+    this.person, {
+    this.conversationTitle,
+    this.groupConversation,
+    this.messages,
+    bool htmlFormatContent = false,
+    bool htmlFormatTitle = false,
+  }) : super(htmlFormatContent, htmlFormatTitle) {
     assert(this.person?.name != null, 'Must provide the details of the person');
   }
 
