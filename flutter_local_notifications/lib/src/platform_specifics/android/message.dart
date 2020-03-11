@@ -21,8 +21,13 @@ class Message {
   /// The original text will be used if the content or MIME type isn't supported
   final String dataUri;
 
-  Message(this.text, this.timestamp, this.person,
-      {this.dataMimeType, this.dataUri}) {
+  Message(
+    this.text,
+    this.timestamp,
+    this.person, {
+    this.dataMimeType,
+    this.dataUri,
+  }) {
     assert(timestamp != null, 'timestamp must be provided');
     assert(
         (dataMimeType == null && dataUri == null) ||

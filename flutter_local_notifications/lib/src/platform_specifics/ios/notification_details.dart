@@ -26,12 +26,13 @@ class IOSNotificationDetails {
   /// Specify null to leave the current badge unchanged.
   final int badgeNumber;
 
-  IOSNotificationDetails(
-      {this.presentAlert,
-      this.presentBadge,
-      this.presentSound,
-      this.sound,
-      this.badgeNumber});
+  IOSNotificationDetails({
+    this.presentAlert,
+    this.presentBadge,
+    this.presentSound,
+    this.sound,
+    this.badgeNumber,
+  });
 
   /// Create a [Map] object that describes the [IOSNotificationDetails] object.
   ///

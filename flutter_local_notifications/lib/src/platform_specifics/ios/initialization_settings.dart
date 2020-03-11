@@ -41,14 +41,15 @@ class IOSInitializationSettings {
   /// Applicable to iOS versions below 10.
   final DidReceiveLocalNotificationCallback onDidReceiveLocalNotification;
 
-  const IOSInitializationSettings(
-      {this.requestAlertPermission = true,
-      this.requestSoundPermission = true,
-      this.requestBadgePermission = true,
-      this.defaultPresentAlert = true,
-      this.defaultPresentSound = true,
-      this.defaultPresentBadge = true,
-      this.onDidReceiveLocalNotification});
+  const IOSInitializationSettings({
+    this.requestAlertPermission = true,
+    this.requestSoundPermission = true,
+    this.requestBadgePermission = true,
+    this.defaultPresentAlert = true,
+    this.defaultPresentSound = true,
+    this.defaultPresentBadge = true,
+    this.onDidReceiveLocalNotification,
+  });
 
   /// Create a [Map] object that describes the [IOSInitializationSettings] object.
   ///
