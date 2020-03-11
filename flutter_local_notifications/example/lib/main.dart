@@ -382,9 +382,9 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
-                    buttonText: 'Show notification without displaying occurred time [Android]',
+                    buttonText: 'Show notification without timestamp [Android]',
                     onPressed: () async {
-                      await _showNotificationWithoutOccurredTime();
+                      await _showNotificationWithoutTimestamp();
                     },
                   ),
                 ],
@@ -918,10 +918,10 @@ class _HomePageState extends State<HomePage> {
         payload: 'item x');
   }
 
-  Future<void> _showNotificationWithoutOccurredTime() async {
+  Future<void> _showNotificationWithoutTimestamp() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker' , showWhen : false);
+        importance: Importance.Max, priority: Priority.High, showWhen: false);
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
@@ -929,7 +929,6 @@ class _HomePageState extends State<HomePage> {
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');
   }
-
 
   String _toTwoDigitString(int value) {
     return value.toString().padLeft(2, '0');
