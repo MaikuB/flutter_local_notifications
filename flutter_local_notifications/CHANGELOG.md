@@ -1,3 +1,7 @@
+# [1.2.2]
+
+* [Android] Added ability to specify if the timestamp for when a notification occurred should be displayed. Thanks to the PR from [mojtabaghiasi](https://github.com/mojtabaghiasi)
+
 # [1.2.1]
 
 * [Android] Fixed issue [512](https://github.com/MaikuB/flutter_local_notifications/issues/512) where calling `getNotificationAppLaunchDetails()` within the `onSelectNotification` callback could indicating that the app was launched by tapping on a notification when it wasn't the case
