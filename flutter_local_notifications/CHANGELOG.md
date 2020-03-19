@@ -1,3 +1,7 @@
+# [1.2.2+1]
+
+* Updated readme on using `firebase_messaging` together with `flutter_local_notifications` to let community that `firebase_messaging` 6.0.13 can be used to resolve compatibility issues when both plugins are used togetger 
+
 # [1.2.2]
 
 * [Android] Added ability to specify if the timestamp for when a notification occurred should be displayed. Thanks to the PR from [mojtabaghiasi](https://github.com/mojtabaghiasi)
