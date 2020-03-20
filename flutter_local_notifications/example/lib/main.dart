@@ -391,6 +391,12 @@ class _HomePageState extends State<HomePage> {
                       await _showNotificationWithoutTimestamp();
                     },
                   ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show notification with attachment [iOS]',
+                    onPressed: () async {
+                      await _showNotificationWithAttachment();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -932,6 +938,30 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');
+  }
+
+  Future<void> _showNotificationWithAttachment() async {
+    var bigPicturePath = await _downloadAndSaveImage(
+        'http://via.placeholder.com/600x200', 'bigPicture.jpg');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails(
+        presentAlert: true,
+        presentSound: false,
+        presentBadge: false,
+        attachments: [IOSNotificationAttachment('id', bigPicturePath)]);
+    var bigPictureAndroidStyle = BigPictureStyleInformation(
+        bigPicturePath, BitmapSource.FilePath,
+        contentTitle: "Test Title", summaryText: "Test Subtitle");
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'fltr_id', 'flt channel', 'flr channel for local pushes',
+        importance: Importance.High,
+        priority: Priority.High,
+        ticker: 'ticker',
+        style: AndroidNotificationStyle.BigPicture,
+        styleInformation: bigPictureAndroidStyle);
+    var notificationDetails = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'Simple title', 'Simple body', notificationDetails);
   }
 
   String _toTwoDigitString(int value) {
