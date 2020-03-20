@@ -952,7 +952,7 @@ class _HomePageState extends State<HomePage> {
         bigPicturePath, BitmapSource.FilePath,
         contentTitle: "Test Title", summaryText: "Test Subtitle");
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'fltr_id', 'flt channel', 'flr channel for local pushes',
+        'andr_id', 'andr channel', 'andr channel for local pushes',
         importance: Importance.High,
         priority: Priority.High,
         ticker: 'ticker',
