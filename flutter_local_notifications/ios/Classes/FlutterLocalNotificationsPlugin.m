@@ -51,6 +51,9 @@ NSString *const ID = @"id";
 NSString *const TITLE = @"title";
 NSString *const BODY = @"body";
 NSString *const SOUND = @"sound";
+NSString *const ATTACHMENTS = @"attachments";
+NSString *const ATTACHMENT_IDENTIFIER = @"identifier";
+NSString *const ATTACHMENT_FILE_PATH = @"filePath";
 NSString *const PRESENT_ALERT = @"presentAlert";
 NSString *const PRESENT_SOUND = @"presentSound";
 NSString *const PRESENT_BADGE = @"presentBadge";
@@ -78,7 +81,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     FlutterMethodChannel *channel = [FlutterMethodChannel
                                      methodChannelWithName:CHANNEL
                                      binaryMessenger:[registrar messenger]];
-    
+
     FlutterLocalNotificationsPlugin* instance = [[FlutterLocalNotificationsPlugin alloc] initWithChannel:channel registrar:registrar];
     [registrar addApplicationDelegate:instance];
     [registrar addMethodCallDelegate:instance channel:channel];
@@ -86,13 +89,13 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 
 - (instancetype)initWithChannel:(FlutterMethodChannel *)channel registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
     self = [super init];
-    
+
     if (self) {
         _channel = channel;
         _registrar = registrar;
         _persistentState = [NSUserDefaults standardUserDefaults];
     }
-    
+
     return self;
 }
 
@@ -112,6 +115,16 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                 }
                 if (request.content.userInfo[PAYLOAD] != [NSNull null]) {
                     pendingNotificationRequest[PAYLOAD] = request.content.userInfo[PAYLOAD];
+                }
+                if (request.content.attachments != nil) {
+                    NSMutableArray<NSDictionary *> *attachments = [NSMutableArray array];
+                    for (UNNotificationAttachment *attachment in request.content.attachments) {
+                        [attachments addObject:@{
+                            ATTACHMENT_IDENTIFIER: attachment.identifier,
+                            ATTACHMENT_FILE_PATH: attachment.URL.absoluteString
+                        }];
+                    }
+                    pendingNotificationRequest[ATTACHMENTS] = attachments;
                 }
                 [pendingNotificationRequests addObject:pendingNotificationRequest];
             }
@@ -163,7 +176,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
     }
     [self requestPermissionsImpl:requestedSoundPermission alertPermission:requestedAlertPermission badgePermission:requestedBadgePermission checkLaunchNotification:true result:result];
-    
+
     _initialized = true;
 }
 
@@ -190,7 +203,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
        checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Nonnull)result{
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-        
+
         UNAuthorizationOptions authorizationOptions = 0;
         if (soundPermission) {
             authorizationOptions += UNAuthorizationOptionSound;
@@ -244,7 +257,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     notificationDetails.presentBadge = _updateBadge;
     if(call.arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
         NSDictionary *platformSpecifics = call.arguments[PLATFORM_SPECIFICS];
-        
+
         if(platformSpecifics[PRESENT_ALERT] != [NSNull null]) {
             notificationDetails.presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
         }
@@ -258,6 +271,20 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
             notificationDetails.badgeNumber = [platformSpecifics objectForKey:BADGE_NUMBER];
         }
         notificationDetails.sound = platformSpecifics[SOUND];
+
+        if(platformSpecifics[ATTACHMENTS] != [NSNull null]) {
+            NSArray<NSDictionary *> *attachments = platformSpecifics[ATTACHMENTS];
+            if(attachments.count > 0) {
+                NSMutableArray<NotificationAttachment *> *models = [NSMutableArray arrayWithCapacity:attachments.count];
+                for (NSDictionary *attachment in attachments) {
+                    NotificationAttachment *model = [NotificationAttachment new];
+                    model.identifier = attachment[ATTACHMENT_IDENTIFIER];
+                    model.filePath = attachment[ATTACHMENT_FILE_PATH];
+                    [models addObject:model];
+                }
+                notificationDetails.attachments = models;
+            }
+        }
     }
     if([SCHEDULE_METHOD isEqualToString:call.method]) {
         notificationDetails.secondsSinceEpoch = @([call.arguments[MILLISECONDS_SINCE_EPOCH] longLongValue] / 1000);
@@ -364,6 +391,18 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     content.title = notificationDetails.title;
     content.body = notificationDetails.body;
     content.badge = notificationDetails.badgeNumber;
+    if (notificationDetails.attachments) {
+        NSMutableArray<UNNotificationAttachment *> *attachments = [NSMutableArray arrayWithCapacity:notificationDetails.attachments.count];
+        for (NotificationAttachment *model in notificationDetails.attachments) {
+            NSError *error;
+            UNNotificationAttachment *attachment = [UNNotificationAttachment attachmentWithIdentifier:model.identifier
+                                                                                                  URL:[NSURL fileURLWithPath:model.filePath]
+                                                                                              options:nil error:&error];
+            if (error) continue;
+            [attachments addObject:attachment];
+        }
+        content.attachments = attachments;
+    }
     if(notificationDetails.presentSound) {
         if(!notificationDetails.sound || [notificationDetails.sound isKindOfClass:[NSNull class]]) {
             content.sound = UNNotificationSound.defaultSound;
@@ -426,7 +465,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
             NSLog(@"Unable to Add Notification Request");
         }
     }];
-    
+
 }
 
 - (void) showLocalNotification:(NotificationDetails *) notificationDetails {
@@ -436,7 +475,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if(@available(iOS 8.2, *)) {
         notification.alertTitle = notificationDetails.title;
     }
-    
+
     if(notificationDetails.presentSound) {
         if(!notificationDetails.sound || [notificationDetails.sound isKindOfClass:[NSNull class]]){
             notification.soundName = UILocalNotificationDefaultSoundName;
@@ -444,12 +483,12 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
             notification.soundName = notificationDetails.sound;
         }
     }
-    
+
     notification.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload];
     if(notificationDetails.secondsSinceEpoch == nil) {
         if(notificationDetails.repeatInterval != nil) {
             NSTimeInterval timeInterval = 0;
-            
+
             switch([notificationDetails.repeatInterval integerValue]) {
                 case EveryMinute:
                     timeInterval = 60;
@@ -504,15 +543,15 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if(presentAlert) {
         presentationOptions |= UNNotificationPresentationOptionAlert;
     }
-    
+
     if(presentSound){
         presentationOptions |= UNNotificationPresentationOptionSound;
     }
-    
+
     if(presentBadge) {
         presentationOptions |= UNNotificationPresentationOptionBadge;
     }
-    
+
     completionHandler(presentationOptions);
 }
 
@@ -542,7 +581,7 @@ didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
             _launchNotification = launchNotification;
         }
     }
-    
+
     return YES;
 }
 
@@ -554,7 +593,7 @@ didReceiveLocalNotification:(UILocalNotification*)notification {
     if(![self isAFlutterLocalNotification:notification.userInfo]) {
         return;
     }
-    
+
     NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
     arguments[ID]= notification.userInfo[NOTIFICATION_ID];
     if (notification.userInfo[TITLE] != [NSNull null]) {
