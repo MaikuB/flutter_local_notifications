@@ -1,10 +1,12 @@
 #import <Foundation/Foundation.h>
 #import "NotificationTime.h"
+#import "NotificationAttachment.h"
 
 @interface NotificationDetails : NSObject
     @property(nonatomic, strong) NSNumber *id;
     @property(nonatomic, strong) NSString *title;
     @property(nonatomic, strong) NSString *body;
+    @property(nonatomic, strong) NSArray<NotificationAttachment *> *attachments;
     @property(nonatomic, strong) NSString *payload;
     @property(nonatomic) bool presentAlert;
     @property(nonatomic) bool presentSound;
