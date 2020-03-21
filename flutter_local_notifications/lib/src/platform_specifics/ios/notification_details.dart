@@ -28,18 +28,19 @@ class IOSNotificationDetails {
   /// Specify null to leave the current badge unchanged.
   final int badgeNumber;
 
-  /// Specifies the list of attachments that have to be included with the notification.
+  /// Specifies the list of attachments included with the notification.
   ///
-  /// Specify empty list or null to keep the notification without attachments
+  /// Applicable to iOS 10 and above.
   final List<IOSNotificationAttachment> attachments;
 
-  IOSNotificationDetails(
-      {this.presentAlert,
-      this.presentBadge,
-      this.presentSound,
-      this.sound,
-      this.badgeNumber,
-      this.attachments});
+  IOSNotificationDetails({
+    this.presentAlert,
+    this.presentBadge,
+    this.presentSound,
+    this.sound,
+    this.badgeNumber,
+    this.attachments,
+  });
 
   /// Create a [Map] object that describes the [IOSNotificationDetails] object.
   ///
@@ -51,9 +52,7 @@ class IOSNotificationDetails {
       'presentBadge': presentBadge,
       'sound': sound,
       'badgeNumber': badgeNumber,
-      'attachments': attachments != null
-          ? attachments.map((a) => a.toMap()).toList()
-          : null
+      'attachments': attachments?.map((a) => a.toMap())?.toList()
     };
   }
 }
