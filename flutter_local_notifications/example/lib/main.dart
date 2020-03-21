@@ -391,6 +391,12 @@ class _HomePageState extends State<HomePage> {
                       await _showNotificationWithoutTimestamp();
                     },
                   ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show notification with attachment [iOS]',
+                    onPressed: () async {
+                      await _showNotificationWithAttachment();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -494,7 +500,7 @@ class _HomePageState extends State<HomePage> {
         'Times out after 3 seconds', platformChannelSpecifics);
   }
 
-  Future<String> _downloadAndSaveImage(String url, String fileName) async {
+  Future<String> _downloadAndSaveFile(String url, String fileName) async {
     var directory = await getApplicationDocumentsDirectory();
     var filePath = '${directory.path}/$fileName';
     var response = await http.get(url);
@@ -504,9 +510,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showBigPictureNotification() async {
-    var largeIconPath = await _downloadAndSaveImage(
+    var largeIconPath = await _downloadAndSaveFile(
         'http://via.placeholder.com/48x48', 'largeIcon');
-    var bigPicturePath = await _downloadAndSaveImage(
+    var bigPicturePath = await _downloadAndSaveFile(
         'http://via.placeholder.com/400x800', 'bigPicture');
     var bigPictureStyleInformation = BigPictureStyleInformation(
         bigPicturePath, BitmapSource.FilePath,
@@ -529,9 +535,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showBigPictureNotificationHideExpandedLargeIcon() async {
-    var largeIconPath = await _downloadAndSaveImage(
+    var largeIconPath = await _downloadAndSaveFile(
         'http://via.placeholder.com/48x48', 'largeIcon');
-    var bigPicturePath = await _downloadAndSaveImage(
+    var bigPicturePath = await _downloadAndSaveFile(
         'http://via.placeholder.com/400x800', 'bigPicture');
     var bigPictureStyleInformation = BigPictureStyleInformation(
         bigPicturePath, BitmapSource.FilePath,
@@ -555,7 +561,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showNotificationMediaStyle() async {
-    var largeIconPath = await _downloadAndSaveImage(
+    var largeIconPath = await _downloadAndSaveFile(
         'http://via.placeholder.com/128x128/00FF00/000000', 'largeIcon');
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'media channel id',
@@ -630,7 +636,7 @@ class _HomePageState extends State<HomePage> {
         icon: 'coworker',
         iconSource: IconSource.Drawable);
     // download the icon that would be use for the lunch bot person
-    var largeIconPath = await _downloadAndSaveImage(
+    var largeIconPath = await _downloadAndSaveFile(
         'http://via.placeholder.com/48x48', 'largeIcon');
     // this person object will use an icon that was downloaded
     var lunchBot = Person(
@@ -932,6 +938,28 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');
+  }
+
+  Future<void> _showNotificationWithAttachment() async {
+    var bigPicturePath = await _downloadAndSaveFile(
+        'http://via.placeholder.com/600x200', 'bigPicture.jpg');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails(
+        attachments: [IOSNotificationAttachment(bigPicturePath)]);
+    var bigPictureAndroidStyle =
+        BigPictureStyleInformation(bigPicturePath, BitmapSource.FilePath);
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.High,
+        priority: Priority.High,
+        style: AndroidNotificationStyle.BigPicture,
+        styleInformation: bigPictureAndroidStyle);
+    var notificationDetails = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0,
+        'notification with attachment title',
+        'notification with attachment body',
+        notificationDetails);
   }
 
   String _toTwoDigitString(int value) {

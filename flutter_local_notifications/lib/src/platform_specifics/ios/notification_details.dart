@@ -1,3 +1,5 @@
+import 'notification_attachment.dart';
+
 /// Configures the notification details on iOS.
 class IOSNotificationDetails {
   /// Display an alert when the notification is triggered while app is in the foreground.
@@ -26,12 +28,18 @@ class IOSNotificationDetails {
   /// Specify null to leave the current badge unchanged.
   final int badgeNumber;
 
+  /// Specifies the list of attachments included with the notification.
+  ///
+  /// Applicable to iOS 10 and above.
+  final List<IOSNotificationAttachment> attachments;
+
   IOSNotificationDetails({
     this.presentAlert,
     this.presentBadge,
     this.presentSound,
     this.sound,
     this.badgeNumber,
+    this.attachments,
   });
 
   /// Create a [Map] object that describes the [IOSNotificationDetails] object.
@@ -44,6 +52,7 @@ class IOSNotificationDetails {
       'presentBadge': presentBadge,
       'sound': sound,
       'badgeNumber': badgeNumber,
+      'attachments': attachments?.map((a) => a.toMap())?.toList()
     };
   }
 }

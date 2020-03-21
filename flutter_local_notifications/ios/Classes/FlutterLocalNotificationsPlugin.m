@@ -51,6 +51,9 @@ NSString *const ID = @"id";
 NSString *const TITLE = @"title";
 NSString *const BODY = @"body";
 NSString *const SOUND = @"sound";
+NSString *const ATTACHMENTS = @"attachments";
+NSString *const ATTACHMENT_IDENTIFIER = @"identifier";
+NSString *const ATTACHMENT_FILE_PATH = @"filePath";
 NSString *const PRESENT_ALERT = @"presentAlert";
 NSString *const PRESENT_SOUND = @"presentSound";
 NSString *const PRESENT_BADGE = @"presentBadge";
@@ -73,6 +76,12 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     Daily,
     Weekly
 };
+
+static FlutterError *getFlutterError(NSError *error) {
+  return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
+                             message:error.localizedDescription
+                             details:error.domain];
+}
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel *channel = [FlutterMethodChannel
@@ -258,6 +267,20 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
             notificationDetails.badgeNumber = [platformSpecifics objectForKey:BADGE_NUMBER];
         }
         notificationDetails.sound = platformSpecifics[SOUND];
+        
+        if(platformSpecifics[ATTACHMENTS] != [NSNull null]) {
+            NSArray<NSDictionary *> *attachments = platformSpecifics[ATTACHMENTS];
+            if(attachments.count > 0) {
+                NSMutableArray<NotificationAttachment *> *models = [NSMutableArray arrayWithCapacity:attachments.count];
+                for (NSDictionary *attachment in attachments) {
+                    NotificationAttachment *model = [[NotificationAttachment alloc] init];
+                    model.identifier = attachment[ATTACHMENT_IDENTIFIER];
+                    model.filePath = attachment[ATTACHMENT_FILE_PATH];
+                    [models addObject:model];
+                }
+                notificationDetails.attachments = models;
+            }
+        }
     }
     if([SCHEDULE_METHOD isEqualToString:call.method]) {
         notificationDetails.secondsSinceEpoch = @([call.arguments[MILLISECONDS_SINCE_EPOCH] longLongValue] / 1000);
@@ -281,10 +304,10 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         notificationDetails.repeatInterval = @([call.arguments[REPEAT_INTERVAL] integerValue]);
     }
     if(@available(iOS 10.0, *)) {
-        [self showUserNotification:notificationDetails];
-    } else {
-        [self showLocalNotification:notificationDetails];
+        [self showUserNotification:notificationDetails result:result];
+        return;
     }
+    [self showLocalNotification:notificationDetails];
     result(nil);
 }
 
@@ -358,12 +381,27 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     return userInfo != nil && userInfo[NOTIFICATION_ID] && userInfo[TITLE] && userInfo[PRESENT_ALERT] && userInfo[PRESENT_SOUND] && userInfo[PRESENT_BADGE] && userInfo[PAYLOAD];
 }
 
-- (void) showUserNotification:(NotificationDetails *) notificationDetails NS_AVAILABLE_IOS(10.0) {
+- (void) showUserNotification:(NotificationDetails *) notificationDetails result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
     UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
     UNNotificationTrigger *trigger;
     content.title = notificationDetails.title;
     content.body = notificationDetails.body;
     content.badge = notificationDetails.badgeNumber;
+    if (notificationDetails.attachments) {
+        NSMutableArray<UNNotificationAttachment *> *attachments = [NSMutableArray arrayWithCapacity:notificationDetails.attachments.count];
+        for (NotificationAttachment *model in notificationDetails.attachments) {
+            NSError *error;
+            UNNotificationAttachment *attachment = [UNNotificationAttachment attachmentWithIdentifier:model.identifier
+                                                                                                  URL:[NSURL fileURLWithPath:model.filePath]
+                                                                                              options:nil error:&error];
+            if (error) {
+                result(getFlutterError(error));
+                return;
+            }
+            [attachments addObject:attachment];
+        }
+        content.attachments = attachments;
+    }
     if(notificationDetails.presentSound) {
         if(!notificationDetails.sound || [notificationDetails.sound isKindOfClass:[NSNull class]]) {
             content.sound = UNNotificationSound.defaultSound;
@@ -422,9 +460,11 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                                                   requestWithIdentifier:[notificationDetails.id stringValue] content:content trigger:trigger];
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     [center addNotificationRequest:notificationRequest withCompletionHandler:^(NSError * _Nullable error) {
-        if (error != nil) {
-            NSLog(@"Unable to Add Notification Request");
+        if (error == nil) {
+            result(nil);
+            return;
         }
+        result(getFlutterError(error));
     }];
     
 }
