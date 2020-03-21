@@ -1,7 +1,8 @@
-# [1.2.3]
+# [1.3.0]
 
-* [iOS] Added ability to associate notifications with attachments. Only applicable to iOS 10+ that uses the UserNotification APIs
-* Updated readme on using `firebase_messaging` together with `flutter_local_notifications` to let community that `firebase_messaging` 6.0.13 can be used to resolve compatibility issues when both plugins are used togetger 
+* [iOS] **BREAKING CHANGE** Plugin will now throw a `PlatformException` if there was an error returned upon calling the native [`addNotificationRequest`](https://developer.apple.com/documentation/usernotifications/unusernotificationcenter/1649508-addnotificationrequest) method. Previously the error was logged on the native side the using [`NSLog`](https://developer.apple.com/documentation/foundation/1395275-nslog) function.
+* [iOS] Added ability to associate notifications with attachments. Only applicable to iOS 10+ that uses the UserNotification APIs. Thanks to the PR from [Pavel Sipaylo](https://github.com/psipaylo)
+* Updated readme on using `firebase_messaging` together with `flutter_local_notifications` to let community that `firebase_messaging` 6.0.13 can be used to resolve compatibility issues when both plugins are used together
 
 # [1.2.2]
 
