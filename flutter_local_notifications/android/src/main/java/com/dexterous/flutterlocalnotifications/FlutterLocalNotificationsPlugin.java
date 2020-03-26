@@ -351,7 +351,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case Drawable:
                 icon = IconCompat.createWithResource(context, getDrawableResourceId(context, iconPath));
                 break;
-            case FilePath:
+            case BitmapFilePath:
                 icon = IconCompat.createWithBitmap(BitmapFactory.decodeFile(iconPath));
                 break;
             case ContentUri:

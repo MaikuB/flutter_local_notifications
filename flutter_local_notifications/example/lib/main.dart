@@ -644,7 +644,7 @@ class _HomePageState extends State<HomePage> {
         key: 'bot',
         bot: true,
         icon: largeIconPath,
-        iconSource: IconSource.FilePath);
+        iconSource: IconSource.BitmapFilePath);
     messages.add(Message('Hi', DateTime.now(), null));
     messages.add(Message(
         'What\'s up?', DateTime.now().add(Duration(minutes: 5)), coworker));
