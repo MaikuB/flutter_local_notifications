@@ -23,6 +23,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - icons/
 
 environment:
   sdk: ">=2.3.0 <3.0.0"
