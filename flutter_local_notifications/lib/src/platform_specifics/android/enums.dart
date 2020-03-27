@@ -14,6 +14,7 @@ enum AndroidNotificationStyle {
   Media
 }
 
+/// Specifies the source of the custom sound used for Android notifications.
 enum AndroidNotificationSoundSource {
   RawResource,
   Uri,
