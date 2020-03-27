@@ -358,7 +358,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 icon = IconCompat.createWithContentUri(iconPath);
                 break;
             case BitmapAsset:
-                try {†
+                try {
                     AssetFileDescriptor assetFileDescriptor = context.getAssets().openFd(FlutterMain.getLookupKeyForAsset(iconPath));
                     FileInputStream fileInputStream = assetFileDescriptor.createInputStream();
                     icon = IconCompat.createWithBitmap(BitmapFactory.decodeStream(fileInputStream));
