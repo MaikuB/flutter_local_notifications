@@ -342,8 +342,7 @@ public class NotificationDetails {
     private static ArrayList<MessageDetails> readMessages(ArrayList<Map<String, Object>> messages) {
         ArrayList<MessageDetails> result = new ArrayList<>();
         if (messages != null) {
-            for (Iterator<Map<String, Object>> it = messages.iterator(); it.hasNext(); ) {
-                Map<String, Object> messageData = it.next();
+            for (Map<String, Object> messageData : messages) {
                 result.add(new MessageDetails((String) messageData.get(TEXT), (Long) messageData.get(TIMESTAMP), readPersonDetails((Map<String, Object>) messageData.get(PERSON)), (String) messageData.get(DATA_MIME_TYPE), (String) messageData.get(DATA_URI)));
             }
         }

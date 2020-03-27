@@ -405,7 +405,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static void applyGrouping(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
-        Boolean isGrouped = false;
+        boolean isGrouped = false;
         if (!StringUtils.isNullOrEmpty(notificationDetails.groupKey)) {
             builder.setGroup(notificationDetails.groupKey);
             isGrouped = true;
@@ -555,8 +555,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             messagingStyle.setConversationTitle(messagingStyleInformation.conversationTitle);
         }
         if (messagingStyleInformation.messages != null && !messagingStyleInformation.messages.isEmpty()) {
-            for (Iterator<MessageDetails> it = messagingStyleInformation.messages.iterator(); it.hasNext(); ) {
-                NotificationCompat.MessagingStyle.Message message = createMessage(context, it.next());
+            for (MessageDetails messageDetails : messagingStyleInformation.messages) {
+                NotificationCompat.MessagingStyle.Message message = createMessage(context, messageDetails);
                 messagingStyle.addMessage(message);
             }
         }
