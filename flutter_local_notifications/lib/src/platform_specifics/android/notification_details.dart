@@ -50,7 +50,7 @@ class AndroidNotificationDetails {
 
   /// Specifies the source of the [sound] file.
   ///
-  /// Required when a [sound] is specified as it dictates how sound file will be loaded. For example if [soundSource]
+  /// Dictates how the file referred to by [sound] will be loaded. For example if [soundSource]
   /// is [AndroidNotificationSoundSource.RawResource], then this means the [sound] is Android raw resource that is
   /// located `res/raw` directory of the Android project.
   AndroidNotificationSoundSource soundSource;
