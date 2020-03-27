@@ -14,6 +14,11 @@ enum AndroidNotificationStyle {
   Media
 }
 
+enum AndroidNotificationSoundSource {
+  RawResource,
+  Uri,
+}
+
 /// The available actions for managing notification channels.
 ///
 /// [CreateIfNotExists]: will create a channel if it doesn't exist.

@@ -48,6 +48,13 @@ class AndroidNotificationDetails {
   /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   String sound;
 
+  /// Specifies the source of the [sound] file.
+  ///
+  /// Required when a [sound] is specified as it dictates how sound file will be loaded. For example if [soundSource]
+  /// is [AndroidNotificationSoundSource.RawResource], then this means the [sound] is Android raw resource that is
+  /// located `res/raw` directory of the Android project.
+  AndroidNotificationSoundSource soundSource;
+
   /// Indicates if vibration should be enabled when the notification is displayed.
   ///
   /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
@@ -162,6 +169,7 @@ class AndroidNotificationDetails {
     this.styleInformation,
     this.playSound = true,
     this.sound,
+    this.soundSource,
     this.enableVibration = true,
     this.vibrationPattern,
     this.groupKey,
@@ -205,6 +213,7 @@ class AndroidNotificationDetails {
       'priority': priority.value,
       'playSound': playSound,
       'sound': sound,
+      'soundSource': soundSource?.index,
       'enableVibration': enableVibration,
       'vibrationPattern': vibrationPattern,
       'style': style.index,

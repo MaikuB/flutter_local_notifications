@@ -644,13 +644,17 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static Uri retrieveSoundResourceUri(Context context, NotificationDetails notificationDetails) {
-        Uri uri;
+        Uri uri = null;
         if (StringUtils.isNullOrEmpty(notificationDetails.sound)) {
             uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         } else {
-
-            int soundResourceId = context.getResources().getIdentifier(notificationDetails.sound, "raw", context.getPackageName());
-            return Uri.parse("android.resource://" + context.getPackageName() + "/" + soundResourceId);
+            // allow null as soundSource was added later and prior to that, it was assumed to be a raw resource
+            if (notificationDetails.soundSource == null || notificationDetails.soundSource == SoundSource.RawResource) {
+                int soundResourceId = context.getResources().getIdentifier(notificationDetails.sound, "raw", context.getPackageName());
+                uri = Uri.parse("android.resource://" + context.getPackageName() + "/" + soundResourceId);
+            } else if (notificationDetails.soundSource == SoundSource.Uri) {
+                uri = Uri.parse(notificationDetails.sound);
+            }
         }
         return uri;
     }
@@ -843,7 +847,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (hasInvalidIcon(result, notificationDetails.icon) ||
                 hasInvalidLargeIcon(result, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource) ||
                 hasInvalidBigPictureResources(result, notificationDetails) ||
-                hasInvalidSound(result, notificationDetails.sound) ||
+                hasInvalidRawSoundResource(result, notificationDetails) ||
                 hasInvalidLedDetails(result, notificationDetails)) {
             return null;
         }
@@ -859,9 +863,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return false;
     }
 
-    private boolean hasInvalidSound(Result result, String sound) {
-        if (!StringUtils.isNullOrEmpty(sound)) {
-            int soundResourceId = applicationContext.getResources().getIdentifier(sound, "raw", applicationContext.getPackageName());
+    private boolean hasInvalidRawSoundResource(Result result, NotificationDetails notificationDetails) {
+        if (!StringUtils.isNullOrEmpty(notificationDetails.sound) && (notificationDetails.soundSource == null || notificationDetails.soundSource == SoundSource.RawResource)) {
+            int soundResourceId = applicationContext.getResources().getIdentifier(notificationDetails.sound, "raw", applicationContext.getPackageName());
             if (soundResourceId == 0) {
                 result.error(INVALID_SOUND_ERROR_CODE, INVALID_RAW_RESOURCE_ERROR_MESSAGE, null);
                 return true;

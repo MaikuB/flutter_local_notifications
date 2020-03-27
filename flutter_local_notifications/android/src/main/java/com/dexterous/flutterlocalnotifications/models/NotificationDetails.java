@@ -6,6 +6,7 @@ import android.os.Build;
 import com.dexterous.flutterlocalnotifications.BitmapSource;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.RepeatInterval;
+import com.dexterous.flutterlocalnotifications.SoundSource;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
@@ -34,6 +35,7 @@ public class NotificationDetails {
     private static final String PRIORITY = "priority";
     private static final String PLAY_SOUND = "playSound";
     private static final String SOUND = "sound";
+    private static final String SOUND_SOURCE = "soundSource";
     private static final String ENABLE_VIBRATION = "enableVibration";
     private static final String VIBRATION_PATTERN = "vibrationPattern";
     private static final String GROUP_KEY = "groupKey";
@@ -114,6 +116,7 @@ public class NotificationDetails {
     public Integer priority;
     public Boolean playSound;
     public String sound;
+    public SoundSource soundSource;
     public Boolean enableVibration;
     public long[] vibrationPattern;
     public NotificationStyle style;
@@ -188,6 +191,10 @@ public class NotificationDetails {
             notificationDetails.priority = (Integer) platformChannelSpecifics.get(PRIORITY);
             notificationDetails.playSound = (Boolean) platformChannelSpecifics.get(PLAY_SOUND);
             notificationDetails.sound = (String) platformChannelSpecifics.get(SOUND);
+            Integer soundSourceIndex = (Integer)platformChannelSpecifics.get(SOUND_SOURCE);
+            if(soundSourceIndex != null) {
+                notificationDetails.soundSource = SoundSource.values()[soundSourceIndex];
+            }
             notificationDetails.enableVibration = (Boolean) platformChannelSpecifics.get(ENABLE_VIBRATION);
             notificationDetails.vibrationPattern = (long[]) platformChannelSpecifics.get(VIBRATION_PATTERN);
             notificationDetails.groupKey = (String) platformChannelSpecifics.get(GROUP_KEY);

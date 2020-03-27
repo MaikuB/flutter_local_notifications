@@ -292,6 +292,13 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PaddedRaisedButton(
                     buttonText:
+                        'Show notification using Android Uri sound [Android]',
+                    onPressed: () async {
+                      await _showSoundUriNotification();
+                    },
+                  ),
+                  PaddedRaisedButton(
+                    buttonText:
                         'Show notification that times out after 3 seconds [Android]',
                     onPressed: () async {
                       await _showTimeoutNotification();
@@ -308,6 +315,12 @@ class _HomePageState extends State<HomePage> {
                         'Show big picture notification, hide large icon on expand [Android]',
                     onPressed: () async {
                       await _showBigPictureNotificationHideExpandedLargeIcon();
+                    },
+                  ),
+                  PaddedRaisedButton(
+                    buttonText: 'Show media notification [Android]',
+                    onPressed: () async {
+                      await _showNotificationMediaStyle();
                     },
                   ),
                   PaddedRaisedButton(
@@ -483,6 +496,24 @@ class _HomePageState extends State<HomePage> {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(0, '<b>silent</b> title',
         '<b>silent</b> body', platformChannelSpecifics);
+  }
+
+  Future<void> _showSoundUriNotification() async {
+    // this calls a method over a platform channel implemented within the example app to return the Uri for the default
+    // alarm sound and uses as the notification sound
+    String alarmUri = await platform.invokeMethod('getAlarmUri');
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'uri channel id', 'uri channel name', 'uri channel description',
+        sound: alarmUri,
+        soundSource: AndroidNotificationSoundSource.Uri,
+        playSound: true,
+        styleInformation: DefaultStyleInformation(true, true));
+    var iOSPlatformChannelSpecifics =
+        IOSNotificationDetails(presentSound: false);
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'uri sound title', 'uri sound body', platformChannelSpecifics);
   }
 
   Future<void> _showTimeoutNotification() async {
