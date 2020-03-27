@@ -180,6 +180,11 @@ public class NotificationDetails {
         if (arguments.containsKey(DAY)) {
             notificationDetails.day = (Integer) arguments.get(DAY);
         }
+        readPlatformSpecifics(arguments, notificationDetails);
+        return notificationDetails;
+    }
+
+    private static void readPlatformSpecifics(Map<String, Object> arguments, NotificationDetails notificationDetails) {
         @SuppressWarnings("unchecked")
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get(PLATFORM_SPECIFICS);
         if (platformChannelSpecifics != null) {
@@ -189,42 +194,17 @@ public class NotificationDetails {
             readStyleInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.icon = (String) platformChannelSpecifics.get(ICON);
             notificationDetails.priority = (Integer) platformChannelSpecifics.get(PRIORITY);
-            notificationDetails.playSound = (Boolean) platformChannelSpecifics.get(PLAY_SOUND);
-            notificationDetails.sound = (String) platformChannelSpecifics.get(SOUND);
-            Integer soundSourceIndex = (Integer)platformChannelSpecifics.get(SOUND_SOURCE);
-            if(soundSourceIndex != null) {
-                notificationDetails.soundSource = SoundSource.values()[soundSourceIndex];
-            }
+            readSoundInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.enableVibration = (Boolean) platformChannelSpecifics.get(ENABLE_VIBRATION);
             notificationDetails.vibrationPattern = (long[]) platformChannelSpecifics.get(VIBRATION_PATTERN);
-            notificationDetails.groupKey = (String) platformChannelSpecifics.get(GROUP_KEY);
-            notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
-            notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
+            readGroupingInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.onlyAlertOnce = (Boolean) platformChannelSpecifics.get(ONLY_ALERT_ONCE);
             notificationDetails.showWhen = (Boolean) platformChannelSpecifics.get(SHOW_WHEN);
-            notificationDetails.showProgress = (Boolean) platformChannelSpecifics.get(SHOW_PROGRESS);
-            if (platformChannelSpecifics.containsKey(MAX_PROGRESS)) {
-                notificationDetails.maxProgress = (Integer) platformChannelSpecifics.get(MAX_PROGRESS);
-            }
-
-            if (platformChannelSpecifics.containsKey(PROGRESS)) {
-                notificationDetails.progress = (Integer) platformChannelSpecifics.get(PROGRESS);
-            }
-
-            if (platformChannelSpecifics.containsKey(INDETERMINATE)) {
-                notificationDetails.indeterminate = (Boolean) platformChannelSpecifics.get(INDETERMINATE);
-            }
-
+            readProgressInformation(notificationDetails, platformChannelSpecifics);
             readColor(notificationDetails, platformChannelSpecifics);
             readChannelInformation(notificationDetails, platformChannelSpecifics);
             readLedInformation(notificationDetails, platformChannelSpecifics);
-            notificationDetails.largeIcon = (String) platformChannelSpecifics.get(LARGE_ICON);
-            if (platformChannelSpecifics.containsKey(LARGE_ICON_BITMAP_SOURCE)) {
-                Integer argumentValue = (Integer) platformChannelSpecifics.get(LARGE_ICON_BITMAP_SOURCE);
-                if (argumentValue != null) {
-                    notificationDetails.largeIconBitmapSource = BitmapSource.values()[argumentValue];
-                }
-            }
+            readLargeIconInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
             notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
             notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
@@ -239,7 +219,46 @@ public class NotificationDetails {
             }
             notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
         }
-        return notificationDetails;
+    }
+
+    private static void readProgressInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
+        notificationDetails.showProgress = (Boolean) platformChannelSpecifics.get(SHOW_PROGRESS);
+        if (platformChannelSpecifics.containsKey(MAX_PROGRESS)) {
+            notificationDetails.maxProgress = (Integer) platformChannelSpecifics.get(MAX_PROGRESS);
+        }
+
+        if (platformChannelSpecifics.containsKey(PROGRESS)) {
+            notificationDetails.progress = (Integer) platformChannelSpecifics.get(PROGRESS);
+        }
+
+        if (platformChannelSpecifics.containsKey(INDETERMINATE)) {
+            notificationDetails.indeterminate = (Boolean) platformChannelSpecifics.get(INDETERMINATE);
+        }
+    }
+
+    private static void readLargeIconInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
+        notificationDetails.largeIcon = (String) platformChannelSpecifics.get(LARGE_ICON);
+        if (platformChannelSpecifics.containsKey(LARGE_ICON_BITMAP_SOURCE)) {
+            Integer argumentValue = (Integer) platformChannelSpecifics.get(LARGE_ICON_BITMAP_SOURCE);
+            if (argumentValue != null) {
+                notificationDetails.largeIconBitmapSource = BitmapSource.values()[argumentValue];
+            }
+        }
+    }
+
+    private static void readGroupingInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
+        notificationDetails.groupKey = (String) platformChannelSpecifics.get(GROUP_KEY);
+        notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
+        notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
+    }
+
+    private static void readSoundInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
+        notificationDetails.playSound = (Boolean) platformChannelSpecifics.get(PLAY_SOUND);
+        notificationDetails.sound = (String) platformChannelSpecifics.get(SOUND);
+        Integer soundSourceIndex = (Integer)platformChannelSpecifics.get(SOUND_SOURCE);
+        if(soundSourceIndex != null) {
+            notificationDetails.soundSource = SoundSource.values()[soundSourceIndex];
+        }
     }
 
     private static void readColor(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
