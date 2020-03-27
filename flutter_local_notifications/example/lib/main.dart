@@ -633,8 +633,8 @@ class _HomePageState extends State<HomePage> {
         name: 'Coworker',
         key: '2',
         uri: 'tel:9876543210',
-        icon: 'coworker',
-        iconSource: IconSource.Drawable);
+        icon: 'icons/coworker.png',
+        iconSource: IconSource.BitmapAsset);
     // download the icon that would be use for the lunch bot person
     var largeIconPath = await _downloadAndSaveFile(
         'http://via.placeholder.com/48x48', 'largeIcon');
@@ -644,7 +644,7 @@ class _HomePageState extends State<HomePage> {
         key: 'bot',
         bot: true,
         icon: largeIconPath,
-        iconSource: IconSource.FilePath);
+        iconSource: IconSource.BitmapFilePath);
     messages.add(Message('Hi', DateTime.now(), null));
     messages.add(Message(
         'What\'s up?', DateTime.now().add(Duration(minutes: 5)), coworker));

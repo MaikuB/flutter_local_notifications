@@ -9,6 +9,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
@@ -42,6 +43,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -60,6 +63,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+import io.flutter.view.FlutterMain;
 
 /**
  * FlutterLocalNotificationsPlugin
@@ -144,7 +148,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             builder.setColor(notificationDetails.color.intValue());
         }
 
-        if (notificationDetails.showWhen != null){
+        if (notificationDetails.showWhen != null) {
             builder.setShowWhen(BooleanUtils.getValue(notificationDetails.showWhen));
         }
 
@@ -179,7 +183,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     @NonNull
     static Gson buildGson() {
-        if(gson == null) {
+        if (gson == null) {
             RuntimeTypeAdapterFactory<StyleInformation> styleInformationAdapter =
                     RuntimeTypeAdapterFactory
                             .of(StyleInformation.class)
@@ -347,11 +351,22 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case Drawable:
                 icon = IconCompat.createWithResource(context, getDrawableResourceId(context, iconPath));
                 break;
-            case FilePath:
+            case BitmapFilePath:
                 icon = IconCompat.createWithBitmap(BitmapFactory.decodeFile(iconPath));
                 break;
             case ContentUri:
                 icon = IconCompat.createWithContentUri(iconPath);
+                break;
+            case BitmapAsset:
+                try {
+                    AssetFileDescriptor assetFileDescriptor = context.getAssets().openFd(FlutterMain.getLookupKeyForAsset(iconPath));
+                    FileInputStream fileInputStream = assetFileDescriptor.createInputStream();
+                    icon = IconCompat.createWithBitmap(BitmapFactory.decodeStream(fileInputStream));
+                    fileInputStream.close();
+                    assetFileDescriptor.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             default:
                 break;
@@ -361,8 +376,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     /**
      * Sets the visibility property to the input Notification Builder
+     *
      * @throws IllegalArgumentException If `notificationDetails.visibility` is not null but also
-     * not matches any known index.
+     *                                  not matches any known index.
      */
     private static void setVisibility(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
         if (notificationDetails.visibility == null) {
@@ -430,14 +446,14 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static void setCategory(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
-        if(notificationDetails.category == null) {
+        if (notificationDetails.category == null) {
             return;
         }
         builder.setCategory(notificationDetails.category);
     }
 
     private static void setTimeoutAfter(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
-        if(notificationDetails.timeoutAfter == null) {
+        if (notificationDetails.timeoutAfter == null) {
             return;
         }
         builder.setTimeoutAfter(notificationDetails.timeoutAfter);
@@ -905,8 +921,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     @Override
     public boolean onNewIntent(Intent intent) {
-        boolean res =  sendNotificationPayloadMessage(intent);
-        if(res && mainActivity != null) {
+        boolean res = sendNotificationPayloadMessage(intent);
+        if (res && mainActivity != null) {
             mainActivity.setIntent(intent);
         }
         return res;
