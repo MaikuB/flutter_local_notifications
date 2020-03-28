@@ -36,16 +36,14 @@ class InboxStyleInformation extends DefaultStyleInformation {
   /// Mainly for internal use to send the data over a platform channel.
   @override
   Map<String, dynamic> toMap() {
-    var styleJson = super.toMap();
-    var bigTextStyleJson = <String, dynamic>{
-      'contentTitle': contentTitle,
-      'htmlFormatContentTitle': htmlFormatContentTitle,
-      'summaryText': summaryText,
-      'htmlFormatSummaryText': htmlFormatSummaryText,
-      'lines': lines ?? List<String>(),
-      'htmlFormatLines': htmlFormatLines
-    };
-    styleJson.addAll(bigTextStyleJson);
-    return styleJson;
+    return super.toMap()
+      ..addAll(<String, dynamic>{
+        'contentTitle': contentTitle,
+        'htmlFormatContentTitle': htmlFormatContentTitle,
+        'summaryText': summaryText,
+        'htmlFormatSummaryText': htmlFormatSummaryText,
+        'lines': lines ?? List<String>(),
+        'htmlFormatLines': htmlFormatLines
+      });
   }
 }

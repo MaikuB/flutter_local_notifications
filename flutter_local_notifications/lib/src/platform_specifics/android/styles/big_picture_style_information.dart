@@ -42,19 +42,16 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
   /// Mainly for internal use to send the data over a platform channel.
   @override
   Map<String, dynamic> toMap() {
-    var styleMap = super.toMap();
-    var bigPictureStyleJson = <String, dynamic>{
-      'contentTitle': contentTitle,
-      'summaryText': summaryText,
-      'htmlFormatContentTitle': htmlFormatContentTitle,
-      'htmlFormatSummaryText': htmlFormatSummaryText,
-      'hideExpandedLargeIcon': hideExpandedLargeIcon
-    }
+    return super.toMap()
       ..addAll(_convertBigPictureToMap())
-      ..addAll(_convertLargeIconToMap());
-
-    styleMap.addAll(bigPictureStyleJson);
-    return styleMap;
+      ..addAll(_convertLargeIconToMap())
+      ..addAll(<String, dynamic>{
+        'contentTitle': contentTitle,
+        'summaryText': summaryText,
+        'htmlFormatContentTitle': htmlFormatContentTitle,
+        'htmlFormatSummaryText': htmlFormatSummaryText,
+        'hideExpandedLargeIcon': hideExpandedLargeIcon
+      });
   }
 
   Map<String, dynamic> _convertBigPictureToMap() {

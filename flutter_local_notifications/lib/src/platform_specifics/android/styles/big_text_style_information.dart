@@ -35,17 +35,14 @@ class BigTextStyleInformation extends DefaultStyleInformation {
   /// Mainly for internal use to send the data over a platform channel.
   @override
   Map<String, dynamic> toMap() {
-    var styleJson = super.toMap();
-
-    var bigTextStyleJson = <String, dynamic>{
-      'bigText': bigText,
-      'htmlFormatBigText': htmlFormatBigText,
-      'contentTitle': contentTitle,
-      'htmlFormatContentTitle': htmlFormatContentTitle,
-      'summaryText': summaryText,
-      'htmlFormatSummaryText': htmlFormatSummaryText
-    };
-    styleJson.addAll(bigTextStyleJson);
-    return styleJson;
+    return super.toMap()
+      ..addAll(<String, dynamic>{
+        'bigText': bigText,
+        'htmlFormatBigText': htmlFormatBigText,
+        'contentTitle': contentTitle,
+        'htmlFormatContentTitle': htmlFormatContentTitle,
+        'summaryText': summaryText,
+        'htmlFormatSummaryText': htmlFormatSummaryText
+      });
   }
 }
