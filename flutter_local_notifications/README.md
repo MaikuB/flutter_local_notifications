@@ -287,7 +287,6 @@ InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
 AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
         groupChannelId, groupChannelName, groupChannelDescription,
-        style: NotificationStyleAndroid.Inbox,
         styleInformation: inboxStyleInformation,
         groupKey: groupKey,
         setAsGroupSummary: true);
