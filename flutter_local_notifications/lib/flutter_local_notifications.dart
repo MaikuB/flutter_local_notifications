@@ -10,6 +10,7 @@ export 'src/platform_specifics/android/styles/big_text_style_information.dart';
 export 'src/platform_specifics/android/styles/big_picture_style_information.dart';
 export 'src/platform_specifics/android/styles/inbox_style_information.dart';
 export 'src/platform_specifics/android/styles/messaging_style_information.dart';
+export 'src/platform_specifics/android/bitmap.dart' hide AndroidBitmap;
 export 'src/platform_specifics/android/enums.dart'
     hide AndroidNotificationSoundSource;
 export 'src/platform_specifics/android/initialization_settings.dart';

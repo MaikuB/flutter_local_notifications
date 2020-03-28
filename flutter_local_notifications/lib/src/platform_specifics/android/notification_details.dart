@@ -98,7 +98,7 @@ class AndroidNotificationDetails {
   String largeIcon;
 
   /// Specifies the source for the large icon.
-  BitmapSource largeIconBitmapSource;
+  AndroidBitmapSource largeIconBitmapSource;
 
   /// Specifies if you would only like the sound, vibrate and ticker to be played if the notification is not already showing.
   bool onlyAlertOnce;
@@ -243,12 +243,12 @@ class AndroidNotificationDetails {
   }
 
   Map<String, dynamic> _convertSoundToMap() {
-    if (sound is RawResourceAndroidNotificationSound) {
+    if (sound is AndroidRawResourceNotificationSound) {
       return <String, dynamic>{
         'sound': sound.sound,
         'soundSource': AndroidNotificationSoundSource.RawResource.index,
       };
-    } else if (sound is UriAndroidNotificationSound) {
+    } else if (sound is AndroidUriNotificationSound) {
       return <String, dynamic>{
         'sound': sound.sound,
         'soundSource': AndroidNotificationSoundSource.Uri.index,

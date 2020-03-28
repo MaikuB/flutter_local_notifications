@@ -456,9 +456,9 @@ class _HomePageState extends State<HomePage> {
         'your other channel name',
         'your other channel description',
         icon: 'secondary_icon',
-        sound: RawResourceAndroidNotificationSound('slow_spring_board'),
+        sound: AndroidRawResourceNotificationSound('slow_spring_board'),
         largeIcon: 'sample_large_icon',
-        largeIconBitmapSource: BitmapSource.Drawable,
+        largeIconBitmapSource: AndroidBitmapSource.Drawable,
         vibrationPattern: vibrationPattern,
         enableLights: true,
         color: const Color.fromARGB(255, 255, 0, 0),
@@ -496,7 +496,7 @@ class _HomePageState extends State<HomePage> {
     // this calls a method over a platform channel implemented within the example app to return the Uri for the default
     // alarm sound and uses as the notification sound
     String alarmUri = await platform.invokeMethod('getAlarmUri');
-    final x = UriAndroidNotificationSound(alarmUri);
+    final x = AndroidUriNotificationSound(alarmUri);
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'uri channel id', 'uri channel name', 'uri channel description',
         sound: x,
@@ -540,9 +540,8 @@ class _HomePageState extends State<HomePage> {
     var bigPicturePath = await _downloadAndSaveFile(
         'http://via.placeholder.com/400x800', 'bigPicture');
     var bigPictureStyleInformation = BigPictureStyleInformation(
-        bigPicturePath, BitmapSource.FilePath,
-        largeIcon: largeIconPath,
-        largeIconBitmapSource: BitmapSource.FilePath,
+        AndroidFilePathBitmap(bigPicturePath),
+        largeIcon: AndroidFilePathBitmap(largeIconPath),
         contentTitle: 'overridden <b>big</b> content title',
         htmlFormatContentTitle: true,
         summaryText: 'summary <i>text</i>',
@@ -565,7 +564,7 @@ class _HomePageState extends State<HomePage> {
     var bigPicturePath = await _downloadAndSaveFile(
         'http://via.placeholder.com/400x800', 'bigPicture');
     var bigPictureStyleInformation = BigPictureStyleInformation(
-        bigPicturePath, BitmapSource.FilePath,
+        AndroidFilePathBitmap(bigPicturePath),
         hideExpandedLargeIcon: true,
         contentTitle: 'overridden <b>big</b> content title',
         htmlFormatContentTitle: true,
@@ -576,7 +575,7 @@ class _HomePageState extends State<HomePage> {
         'big text channel name',
         'big text channel description',
         largeIcon: largeIconPath,
-        largeIconBitmapSource: BitmapSource.FilePath,
+        largeIconBitmapSource: AndroidBitmapSource.FilePath,
         style: AndroidNotificationStyle.BigPicture,
         styleInformation: bigPictureStyleInformation);
     var platformChannelSpecifics =
@@ -593,7 +592,7 @@ class _HomePageState extends State<HomePage> {
       'media channel name',
       'media channel description',
       largeIcon: largeIconPath,
-      largeIconBitmapSource: BitmapSource.FilePath,
+      largeIconBitmapSource: AndroidBitmapSource.FilePath,
       style: AndroidNotificationStyle.Media,
     );
     var platformChannelSpecifics =
@@ -971,7 +970,7 @@ class _HomePageState extends State<HomePage> {
     var iOSPlatformChannelSpecifics = IOSNotificationDetails(
         attachments: [IOSNotificationAttachment(bigPicturePath)]);
     var bigPictureAndroidStyle =
-        BigPictureStyleInformation(bigPicturePath, BitmapSource.FilePath);
+        BigPictureStyleInformation(AndroidFilePathBitmap(bigPicturePath));
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
         importance: Importance.High,
