@@ -6,6 +6,7 @@ import android.os.Build;
 import com.dexterous.flutterlocalnotifications.BitmapSource;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.RepeatInterval;
+import com.dexterous.flutterlocalnotifications.SoundSource;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
@@ -34,6 +35,7 @@ public class NotificationDetails {
     private static final String PRIORITY = "priority";
     private static final String PLAY_SOUND = "playSound";
     private static final String SOUND = "sound";
+    private static final String SOUND_SOURCE = "soundSource";
     private static final String ENABLE_VIBRATION = "enableVibration";
     private static final String VIBRATION_PATTERN = "vibrationPattern";
     private static final String GROUP_KEY = "groupKey";
@@ -114,6 +116,7 @@ public class NotificationDetails {
     public Integer priority;
     public Boolean playSound;
     public String sound;
+    public SoundSource soundSource;
     public Boolean enableVibration;
     public long[] vibrationPattern;
     public NotificationStyle style;
@@ -177,6 +180,11 @@ public class NotificationDetails {
         if (arguments.containsKey(DAY)) {
             notificationDetails.day = (Integer) arguments.get(DAY);
         }
+        readPlatformSpecifics(arguments, notificationDetails);
+        return notificationDetails;
+    }
+
+    private static void readPlatformSpecifics(Map<String, Object> arguments, NotificationDetails notificationDetails) {
         @SuppressWarnings("unchecked")
         Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get(PLATFORM_SPECIFICS);
         if (platformChannelSpecifics != null) {
@@ -186,38 +194,17 @@ public class NotificationDetails {
             readStyleInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.icon = (String) platformChannelSpecifics.get(ICON);
             notificationDetails.priority = (Integer) platformChannelSpecifics.get(PRIORITY);
-            notificationDetails.playSound = (Boolean) platformChannelSpecifics.get(PLAY_SOUND);
-            notificationDetails.sound = (String) platformChannelSpecifics.get(SOUND);
+            readSoundInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.enableVibration = (Boolean) platformChannelSpecifics.get(ENABLE_VIBRATION);
             notificationDetails.vibrationPattern = (long[]) platformChannelSpecifics.get(VIBRATION_PATTERN);
-            notificationDetails.groupKey = (String) platformChannelSpecifics.get(GROUP_KEY);
-            notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
-            notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
+            readGroupingInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.onlyAlertOnce = (Boolean) platformChannelSpecifics.get(ONLY_ALERT_ONCE);
             notificationDetails.showWhen = (Boolean) platformChannelSpecifics.get(SHOW_WHEN);
-            notificationDetails.showProgress = (Boolean) platformChannelSpecifics.get(SHOW_PROGRESS);
-            if (platformChannelSpecifics.containsKey(MAX_PROGRESS)) {
-                notificationDetails.maxProgress = (Integer) platformChannelSpecifics.get(MAX_PROGRESS);
-            }
-
-            if (platformChannelSpecifics.containsKey(PROGRESS)) {
-                notificationDetails.progress = (Integer) platformChannelSpecifics.get(PROGRESS);
-            }
-
-            if (platformChannelSpecifics.containsKey(INDETERMINATE)) {
-                notificationDetails.indeterminate = (Boolean) platformChannelSpecifics.get(INDETERMINATE);
-            }
-
+            readProgressInformation(notificationDetails, platformChannelSpecifics);
             readColor(notificationDetails, platformChannelSpecifics);
             readChannelInformation(notificationDetails, platformChannelSpecifics);
             readLedInformation(notificationDetails, platformChannelSpecifics);
-            notificationDetails.largeIcon = (String) platformChannelSpecifics.get(LARGE_ICON);
-            if (platformChannelSpecifics.containsKey(LARGE_ICON_BITMAP_SOURCE)) {
-                Integer argumentValue = (Integer) platformChannelSpecifics.get(LARGE_ICON_BITMAP_SOURCE);
-                if (argumentValue != null) {
-                    notificationDetails.largeIconBitmapSource = BitmapSource.values()[argumentValue];
-                }
-            }
+            readLargeIconInformation(notificationDetails, platformChannelSpecifics);
             notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
             notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
             notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
@@ -232,7 +219,46 @@ public class NotificationDetails {
             }
             notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
         }
-        return notificationDetails;
+    }
+
+    private static void readProgressInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
+        notificationDetails.showProgress = (Boolean) platformChannelSpecifics.get(SHOW_PROGRESS);
+        if (platformChannelSpecifics.containsKey(MAX_PROGRESS)) {
+            notificationDetails.maxProgress = (Integer) platformChannelSpecifics.get(MAX_PROGRESS);
+        }
+
+        if (platformChannelSpecifics.containsKey(PROGRESS)) {
+            notificationDetails.progress = (Integer) platformChannelSpecifics.get(PROGRESS);
+        }
+
+        if (platformChannelSpecifics.containsKey(INDETERMINATE)) {
+            notificationDetails.indeterminate = (Boolean) platformChannelSpecifics.get(INDETERMINATE);
+        }
+    }
+
+    private static void readLargeIconInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
+        notificationDetails.largeIcon = (String) platformChannelSpecifics.get(LARGE_ICON);
+        if (platformChannelSpecifics.containsKey(LARGE_ICON_BITMAP_SOURCE)) {
+            Integer argumentValue = (Integer) platformChannelSpecifics.get(LARGE_ICON_BITMAP_SOURCE);
+            if (argumentValue != null) {
+                notificationDetails.largeIconBitmapSource = BitmapSource.values()[argumentValue];
+            }
+        }
+    }
+
+    private static void readGroupingInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
+        notificationDetails.groupKey = (String) platformChannelSpecifics.get(GROUP_KEY);
+        notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
+        notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
+    }
+
+    private static void readSoundInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
+        notificationDetails.playSound = (Boolean) platformChannelSpecifics.get(PLAY_SOUND);
+        notificationDetails.sound = (String) platformChannelSpecifics.get(SOUND);
+        Integer soundSourceIndex = (Integer)platformChannelSpecifics.get(SOUND_SOURCE);
+        if(soundSourceIndex != null) {
+            notificationDetails.soundSource = SoundSource.values()[soundSourceIndex];
+        }
     }
 
     private static void readColor(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
@@ -316,8 +342,7 @@ public class NotificationDetails {
     private static ArrayList<MessageDetails> readMessages(ArrayList<Map<String, Object>> messages) {
         ArrayList<MessageDetails> result = new ArrayList<>();
         if (messages != null) {
-            for (Iterator<Map<String, Object>> it = messages.iterator(); it.hasNext(); ) {
-                Map<String, Object> messageData = it.next();
+            for (Map<String, Object> messageData : messages) {
                 result.add(new MessageDetails((String) messageData.get(TEXT), (Long) messageData.get(TIMESTAMP), readPersonDetails((Map<String, Object>) messageData.get(PERSON)), (String) messageData.get(DATA_MIME_TYPE), (String) messageData.get(DATA_URI)));
             }
         }

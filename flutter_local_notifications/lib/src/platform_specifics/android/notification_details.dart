@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'enums.dart';
+import 'notification_sound.dart';
 import 'styles/style_information.dart';
 import 'styles/default_style_information.dart';
 
@@ -46,7 +47,7 @@ class AndroidNotificationDetails {
   /// Requires setting [playSound] to true for it to work.
   /// If [playSound] is set to true but this is not specified then the default sound is played.
   /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
-  String sound;
+  AndroidNotificationSound sound;
 
   /// Indicates if vibration should be enabled when the notification is displayed.
   ///
@@ -204,7 +205,6 @@ class AndroidNotificationDetails {
       'importance': importance.value,
       'priority': priority.value,
       'playSound': playSound,
-      'sound': sound,
       'enableVibration': enableVibration,
       'vibrationPattern': vibrationPattern,
       'style': style.index,
@@ -239,6 +239,22 @@ class AndroidNotificationDetails {
       'visibility': visibility?.index,
       'timeoutAfter': timeoutAfter,
       'category': category
-    };
+    }..addAll(_convertSoundToMap());
+  }
+
+  Map<String, dynamic> _convertSoundToMap() {
+    if (sound is RawResourceAndroidNotificationSound) {
+      return <String, dynamic>{
+        'sound': sound.sound,
+        'soundSource': AndroidNotificationSoundSource.RawResource.index,
+      };
+    } else if (sound is UriAndroidNotificationSound) {
+      return <String, dynamic>{
+        'sound': sound.sound,
+        'soundSource': AndroidNotificationSoundSource.Uri.index,
+      };
+    } else {
+      return <String, dynamic>{};
+    }
   }
 }
