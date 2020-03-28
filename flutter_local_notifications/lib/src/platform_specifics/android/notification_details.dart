@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'bitmap.dart';
 import 'enums.dart';
 import 'notification_sound.dart';
 import 'styles/style_information.dart';
@@ -94,11 +95,8 @@ class AndroidNotificationDetails {
   /// Sets the color.
   Color color;
 
-  /// Specifics the large icon to use. This will be either the name of the drawable of an actual file path based on the value of [largeIconBitmapSource].
-  String largeIcon;
-
-  /// Specifies the source for the large icon.
-  AndroidBitmapSource largeIconBitmapSource;
+  /// Specifics the large icon to use.
+  AndroidBitmap largeIcon;
 
   /// Specifies if you would only like the sound, vibrate and ticker to be played if the notification is not already showing.
   bool onlyAlertOnce;
@@ -172,7 +170,6 @@ class AndroidNotificationDetails {
     this.ongoing,
     this.color,
     this.largeIcon,
-    this.largeIconBitmapSource,
     this.onlyAlertOnce,
     this.showWhen = true,
     this.channelShowBadge = true,
@@ -220,8 +217,6 @@ class AndroidNotificationDetails {
       'colorRed': color?.red,
       'colorGreen': color?.green,
       'colorBlue': color?.blue,
-      'largeIcon': largeIcon,
-      'largeIconBitmapSource': largeIconBitmapSource?.index,
       'onlyAlertOnce': onlyAlertOnce,
       'showWhen': showWhen,
       'showProgress': showProgress,
@@ -239,7 +234,25 @@ class AndroidNotificationDetails {
       'visibility': visibility?.index,
       'timeoutAfter': timeoutAfter,
       'category': category
-    }..addAll(_convertSoundToMap());
+    }
+      ..addAll(_convertSoundToMap())
+      ..addAll(_convertLargeIconToMap());
+  }
+
+  Map<String, dynamic> _convertLargeIconToMap() {
+    if (largeIcon is DrawableResourceAndroidBitmap) {
+      return <String, dynamic>{
+        'largeIcon': largeIcon.bitmap,
+        'largeIconBitmapSource': AndroidBitmapSource.Drawable.index,
+      };
+    } else if (largeIcon is FilePathAndroidBitmap) {
+      return <String, dynamic>{
+        'largeIcon': largeIcon.bitmap,
+        'largeIconBitmapSource': AndroidBitmapSource.FilePath.index,
+      };
+    } else {
+      return <String, dynamic>{};
+    }
   }
 
   Map<String, dynamic> _convertSoundToMap() {

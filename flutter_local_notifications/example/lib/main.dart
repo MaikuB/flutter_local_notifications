@@ -457,8 +457,7 @@ class _HomePageState extends State<HomePage> {
         'your other channel description',
         icon: 'secondary_icon',
         sound: RawResourceAndroidNotificationSound('slow_spring_board'),
-        largeIcon: 'sample_large_icon',
-        largeIconBitmapSource: AndroidBitmapSource.Drawable,
+        largeIcon: DrawableResourceAndroidBitmap('sample_large_icon'),
         vibrationPattern: vibrationPattern,
         enableLights: true,
         color: const Color.fromARGB(255, 255, 0, 0),
@@ -574,8 +573,7 @@ class _HomePageState extends State<HomePage> {
         'big text channel id',
         'big text channel name',
         'big text channel description',
-        largeIcon: largeIconPath,
-        largeIconBitmapSource: AndroidBitmapSource.FilePath,
+        largeIcon: FilePathAndroidBitmap(largeIconPath),
         style: AndroidNotificationStyle.BigPicture,
         styleInformation: bigPictureStyleInformation);
     var platformChannelSpecifics =
@@ -591,8 +589,7 @@ class _HomePageState extends State<HomePage> {
       'media channel id',
       'media channel name',
       'media channel description',
-      largeIcon: largeIconPath,
-      largeIconBitmapSource: AndroidBitmapSource.FilePath,
+      largeIcon: FilePathAndroidBitmap(largeIconPath),
       style: AndroidNotificationStyle.Media,
     );
     var platformChannelSpecifics =

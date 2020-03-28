@@ -12,7 +12,7 @@ export 'src/platform_specifics/android/styles/inbox_style_information.dart';
 export 'src/platform_specifics/android/styles/messaging_style_information.dart';
 export 'src/platform_specifics/android/bitmap.dart' hide AndroidBitmap;
 export 'src/platform_specifics/android/enums.dart'
-    hide AndroidNotificationSoundSource, AndroidIconSource;
+    hide AndroidBitmapSource, AndroidIconSource, AndroidNotificationSoundSource;
 export 'src/platform_specifics/android/icon.dart' hide AndroidIcon;
 export 'src/platform_specifics/android/initialization_settings.dart';
 export 'src/platform_specifics/android/notification_details.dart';
