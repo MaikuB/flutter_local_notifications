@@ -462,7 +462,7 @@ class _HomePageState extends State<HomePage> {
         'your other channel name',
         'your other channel description',
         icon: 'secondary_icon',
-        sound: 'slow_spring_board',
+        sound: RawResourceAndroidNotificationSound('slow_spring_board'),
         largeIcon: 'sample_large_icon',
         largeIconBitmapSource: BitmapSource.Drawable,
         vibrationPattern: vibrationPattern,
@@ -502,10 +502,10 @@ class _HomePageState extends State<HomePage> {
     // this calls a method over a platform channel implemented within the example app to return the Uri for the default
     // alarm sound and uses as the notification sound
     String alarmUri = await platform.invokeMethod('getAlarmUri');
+    final x = UriAndroidNotificationSound(alarmUri);
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'uri channel id', 'uri channel name', 'uri channel description',
-        sound: alarmUri,
-        soundSource: AndroidNotificationSoundSource.Uri,
+        sound: x,
         playSound: true,
         styleInformation: DefaultStyleInformation(true, true));
     var iOSPlatformChannelSpecifics =
