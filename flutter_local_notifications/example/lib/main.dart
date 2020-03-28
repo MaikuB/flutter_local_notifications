@@ -324,12 +324,6 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
-                    buttonText: 'Show media notification [Android]',
-                    onPressed: () async {
-                      await _showNotificationMediaStyle();
-                    },
-                  ),
-                  PaddedRaisedButton(
                     buttonText: 'Show big text notification [Android]',
                     onPressed: () async {
                       await _showBigTextNotification();
