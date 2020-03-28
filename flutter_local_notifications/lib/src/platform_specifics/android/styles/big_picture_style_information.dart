@@ -68,8 +68,9 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
         'bigPicture': bigPicture.bitmap,
         'bigPictureBitmapSource': AndroidBitmapSource.FilePath.index,
       };
+    } else {
+      return <String, dynamic>{};
     }
-    return <String, dynamic>{};
   }
 
   Map<String, dynamic> _convertLargeIconToMap() {
@@ -83,7 +84,8 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
         'largeIcon': largeIcon.bitmap,
         'largeIconBitmapSource': AndroidBitmapSource.FilePath.index,
       };
+    } else {
+      return <String, dynamic>{};
     }
-    return <String, dynamic>{};
   }
 }

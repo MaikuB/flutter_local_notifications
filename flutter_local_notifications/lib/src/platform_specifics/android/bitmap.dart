@@ -17,7 +17,7 @@ class AndroidDrawableResourceBitmap extends AndroidBitmap {
   String get bitmap => _bitmap;
 }
 
-/// Used to represent a file path on the Android device that contains a bitmap
+/// Represents a bitmap on Android that can be referenced to using a file path.
 class AndroidFilePathBitmap extends AndroidBitmap {
   AndroidFilePathBitmap(this._bitmap);
 

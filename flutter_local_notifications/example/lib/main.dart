@@ -648,27 +648,27 @@ class _HomePageState extends State<HomePage> {
     var messages = List<Message>();
     // First two person objects will use icons that part of the Android app's drawable resources
     var me = Person(
-        name: 'Me',
-        key: '1',
-        uri: 'tel:1234567890',
-        icon: 'me',
-        iconSource: IconSource.Drawable);
+      name: 'Me',
+      key: '1',
+      uri: 'tel:1234567890',
+      icon: AndroidDrawableResourceIcon('me'),
+    );
     var coworker = Person(
-        name: 'Coworker',
-        key: '2',
-        uri: 'tel:9876543210',
-        icon: 'icons/coworker.png',
-        iconSource: IconSource.BitmapAsset);
+      name: 'Coworker',
+      key: '2',
+      uri: 'tel:9876543210',
+      icon: AndroidBitmapAssetIcon('icons/coworker.png'),
+    );
     // download the icon that would be use for the lunch bot person
     var largeIconPath = await _downloadAndSaveFile(
         'http://via.placeholder.com/48x48', 'largeIcon');
     // this person object will use an icon that was downloaded
     var lunchBot = Person(
-        name: 'Lunch bot',
-        key: 'bot',
-        bot: true,
-        icon: largeIconPath,
-        iconSource: IconSource.BitmapFilePath);
+      name: 'Lunch bot',
+      key: 'bot',
+      bot: true,
+      icon: AndroidBitmapFilePathIcon(largeIconPath),
+    );
     messages.add(Message('Hi', DateTime.now(), null));
     messages.add(Message(
         'What\'s up?', DateTime.now().add(Duration(minutes: 5)), coworker));
