@@ -549,7 +549,6 @@ class _HomePageState extends State<HomePage> {
         'big text channel id',
         'big text channel name',
         'big text channel description',
-        style: AndroidNotificationStyle.BigPicture,
         styleInformation: bigPictureStyleInformation);
     var platformChannelSpecifics =
         NotificationDetails(androidPlatformChannelSpecifics, null);
@@ -574,7 +573,6 @@ class _HomePageState extends State<HomePage> {
         'big text channel name',
         'big text channel description',
         largeIcon: FilePathAndroidBitmap(largeIconPath),
-        style: AndroidNotificationStyle.BigPicture,
         styleInformation: bigPictureStyleInformation);
     var platformChannelSpecifics =
         NotificationDetails(androidPlatformChannelSpecifics, null);
@@ -590,7 +588,6 @@ class _HomePageState extends State<HomePage> {
       'media channel name',
       'media channel description',
       largeIcon: FilePathAndroidBitmap(largeIconPath),
-      style: AndroidNotificationStyle.Media,
     );
     var platformChannelSpecifics =
         NotificationDetails(androidPlatformChannelSpecifics, null);
@@ -610,7 +607,6 @@ class _HomePageState extends State<HomePage> {
         'big text channel id',
         'big text channel name',
         'big text channel description',
-        style: AndroidNotificationStyle.BigText,
         styleInformation: bigTextStyleInformation);
     var platformChannelSpecifics =
         NotificationDetails(androidPlatformChannelSpecifics, null);
@@ -630,7 +626,6 @@ class _HomePageState extends State<HomePage> {
         htmlFormatSummaryText: true);
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'inbox channel id', 'inboxchannel name', 'inbox channel description',
-        style: AndroidNotificationStyle.Inbox,
         styleInformation: inboxStyleInformation);
     var platformChannelSpecifics =
         NotificationDetails(androidPlatformChannelSpecifics, null);
@@ -685,7 +680,6 @@ class _HomePageState extends State<HomePage> {
         'message channel name',
         'message channel description',
         category: 'msg',
-        style: AndroidNotificationStyle.Messaging,
         styleInformation: messagingStyle);
     var platformChannelSpecifics =
         NotificationDetails(androidPlatformChannelSpecifics, null);
@@ -738,7 +732,6 @@ class _HomePageState extends State<HomePage> {
         contentTitle: '2 messages', summaryText: 'janedoe@example.com');
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         groupChannelId, groupChannelName, groupChannelDescription,
-        style: AndroidNotificationStyle.Inbox,
         styleInformation: inboxStyleInformation,
         groupKey: groupKey,
         setAsGroupSummary: true);
@@ -972,7 +965,6 @@ class _HomePageState extends State<HomePage> {
         'your channel id', 'your channel name', 'your channel description',
         importance: Importance.High,
         priority: Priority.High,
-        style: AndroidNotificationStyle.BigPicture,
         styleInformation: bigPictureAndroidStyle);
     var notificationDetails = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);

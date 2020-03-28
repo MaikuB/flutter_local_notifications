@@ -9,7 +9,7 @@ class InboxStyleInformation extends DefaultStyleInformation {
   final String summaryText;
 
   /// The lines that form part of the digest section for inbox-style notifications.
-  List<String> lines;
+  final List<String> lines;
 
   /// Specifies if the lines should have formatting applied through HTML markup.
   final bool htmlFormatLines;

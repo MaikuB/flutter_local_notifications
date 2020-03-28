@@ -11,7 +11,7 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
   /// Set the first line of text after the detail section in the big form of the template.
   final String summaryText;
 
-  /// Specifies if the overridden ContentTitle should have formatting applies through HTML markup.
+  /// Specifies if the overridden ContentTitle should have formatting applied through HTML markup.
   final bool htmlFormatContentTitle;
 
   /// Specifies if formatting should be applied to the first line of text after the detail section in the big form of the template.
