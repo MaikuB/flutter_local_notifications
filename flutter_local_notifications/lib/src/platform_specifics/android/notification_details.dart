@@ -243,12 +243,12 @@ class AndroidNotificationDetails {
   }
 
   Map<String, dynamic> _convertSoundToMap() {
-    if (sound is AndroidRawResourceNotificationSound) {
+    if (sound is RawResourceAndroidNotificationSound) {
       return <String, dynamic>{
         'sound': sound.sound,
         'soundSource': AndroidNotificationSoundSource.RawResource.index,
       };
-    } else if (sound is AndroidUriNotificationSound) {
+    } else if (sound is UriAndroidNotificationSound) {
       return <String, dynamic>{
         'sound': sound.sound,
         'soundSource': AndroidNotificationSoundSource.Uri.index,

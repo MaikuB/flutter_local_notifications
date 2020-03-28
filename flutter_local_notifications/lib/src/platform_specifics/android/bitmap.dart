@@ -4,9 +4,9 @@ abstract class AndroidBitmap {
   String get bitmap;
 }
 
-/// Represents a bitmap on Android that is a drawable resource belonging to an Android application.
-class AndroidDrawableResourceBitmap extends AndroidBitmap {
-  AndroidDrawableResourceBitmap(this._bitmap);
+/// Represents a drawable resource belonging to the Android application that should be used as a bitmap on Android.
+class DrawableResourceAndroidBitmap extends AndroidBitmap {
+  DrawableResourceAndroidBitmap(this._bitmap);
 
   final String _bitmap;
 
@@ -17,9 +17,9 @@ class AndroidDrawableResourceBitmap extends AndroidBitmap {
   String get bitmap => _bitmap;
 }
 
-/// Represents a bitmap on Android that can be referenced to using a file path.
-class AndroidFilePathBitmap extends AndroidBitmap {
-  AndroidFilePathBitmap(this._bitmap);
+/// Represents a file path that should be used for a bitmap on Android.
+class FilePathAndroidBitmap extends AndroidBitmap {
+  FilePathAndroidBitmap(this._bitmap);
 
   final String _bitmap;
 

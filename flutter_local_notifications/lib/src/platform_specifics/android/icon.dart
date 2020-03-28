@@ -4,9 +4,9 @@ abstract class AndroidIcon {
   String get icon;
 }
 
-/// Represents an icon on Android that is a drawable resource belonging to an Android application.
-class AndroidDrawableResourceIcon extends AndroidIcon {
-  AndroidDrawableResourceIcon(this._icon);
+/// Represents a drawable resource belonging to the Android application that should be used as an icon on Android.
+class DrawableResourceAndroidIcon extends AndroidIcon {
+  DrawableResourceAndroidIcon(this._icon);
 
   final String _icon;
 
@@ -17,9 +17,9 @@ class AndroidDrawableResourceIcon extends AndroidIcon {
   String get icon => _icon;
 }
 
-/// Represents a bitmap icon on Android that can be referenced to using a file path.
-class AndroidBitmapFilePathIcon extends AndroidIcon {
-  AndroidBitmapFilePathIcon(this._icon);
+/// Represents a file path to a bitmap that should be used for as an icon on Android.
+class BitmapFilePathAndroidIcon extends AndroidIcon {
+  BitmapFilePathAndroidIcon(this._icon);
 
   final String _icon;
 
@@ -28,9 +28,9 @@ class AndroidBitmapFilePathIcon extends AndroidIcon {
   String get icon => _icon;
 }
 
-/// Represents an icon on Android that can be referenced to using a content URI.
-class AndroidContentUriIcon extends AndroidIcon {
-  AndroidContentUriIcon(this._icon);
+/// Represents a content URI that should be used for as an icon on Android.
+class ContentUriAndroidIcon extends AndroidIcon {
+  ContentUriAndroidIcon(this._icon);
 
   final String _icon;
 
@@ -39,9 +39,9 @@ class AndroidContentUriIcon extends AndroidIcon {
   String get icon => _icon;
 }
 
-/// Represents an bitmap icon on Android that can be referenced to using a path to a Flutter asset.
-class AndroidBitmapAssetIcon extends AndroidIcon {
-  AndroidBitmapAssetIcon(this._icon);
+/// Represents a bitmap asset belonging to the Flutter application that should be used for as an icon on Android.
+class BitmapAssetAndroidIcon extends AndroidIcon {
+  BitmapAssetAndroidIcon(this._icon);
 
   final String _icon;
 

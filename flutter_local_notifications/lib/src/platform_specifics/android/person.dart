@@ -45,22 +45,22 @@ class Person {
   }
 
   Map<String, dynamic> _convertIconToMap() {
-    if (icon is AndroidDrawableResourceIcon) {
+    if (icon is DrawableResourceAndroidIcon) {
       return <String, dynamic>{
         'icon': icon.icon,
         'iconSource': AndroidIconSource.DrawableResource.index,
       };
-    } else if (icon is AndroidBitmapFilePathIcon) {
+    } else if (icon is BitmapFilePathAndroidIcon) {
       return <String, dynamic>{
         'icon': icon.icon,
         'iconSource': AndroidIconSource.BitmapFilePath.index,
       };
-    } else if (icon is AndroidContentUriIcon) {
+    } else if (icon is ContentUriAndroidIcon) {
       return <String, dynamic>{
         'icon': icon.icon,
         'iconSource': AndroidIconSource.ContentUri.index,
       };
-    } else if (icon is AndroidBitmapAssetIcon) {
+    } else if (icon is BitmapAssetAndroidIcon) {
       return <String, dynamic>{
         'icon': icon.icon,
         'iconSource': AndroidIconSource.BitmapAsset.index,

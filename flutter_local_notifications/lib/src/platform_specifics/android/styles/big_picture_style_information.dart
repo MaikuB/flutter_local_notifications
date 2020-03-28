@@ -58,12 +58,12 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
   }
 
   Map<String, dynamic> _convertBigPictureToMap() {
-    if (bigPicture is AndroidDrawableResourceBitmap) {
+    if (bigPicture is DrawableResourceAndroidBitmap) {
       return <String, dynamic>{
         'bigPicture': bigPicture.bitmap,
         'bigPictureBitmapSource': AndroidBitmapSource.Drawable.index,
       };
-    } else if (bigPicture is AndroidFilePathBitmap) {
+    } else if (bigPicture is FilePathAndroidBitmap) {
       return <String, dynamic>{
         'bigPicture': bigPicture.bitmap,
         'bigPictureBitmapSource': AndroidBitmapSource.FilePath.index,
@@ -74,12 +74,12 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
   }
 
   Map<String, dynamic> _convertLargeIconToMap() {
-    if (largeIcon is AndroidDrawableResourceBitmap) {
+    if (largeIcon is DrawableResourceAndroidBitmap) {
       return <String, dynamic>{
         'largeIcon': largeIcon.bitmap,
         'largeIconBitmapSource': AndroidBitmapSource.Drawable.index,
       };
-    } else if (largeIcon is AndroidFilePathBitmap) {
+    } else if (largeIcon is FilePathAndroidBitmap) {
       return <String, dynamic>{
         'largeIcon': largeIcon.bitmap,
         'largeIconBitmapSource': AndroidBitmapSource.FilePath.index,

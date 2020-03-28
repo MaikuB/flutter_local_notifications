@@ -4,11 +4,11 @@ abstract class AndroidNotificationSound {
   String get sound;
 }
 
-/// Represents a notification sound that is a raw resource belonging to the Android application.
+/// Represents a raw resource belonging to the Android application that should be used for the notification sound.
 ///
 /// These resources would be found in the `res/raw` directory of the Android application
-class AndroidRawResourceNotificationSound implements AndroidNotificationSound {
-  AndroidRawResourceNotificationSound(this._sound);
+class RawResourceAndroidNotificationSound implements AndroidNotificationSound {
+  RawResourceAndroidNotificationSound(this._sound);
 
   final String _sound;
 
@@ -17,12 +17,12 @@ class AndroidRawResourceNotificationSound implements AndroidNotificationSound {
   String get sound => _sound;
 }
 
-/// Represents a notification sound that is on the Android device that is represented by a URI.
+/// Represents a URI on the Android device that should be used for the notification sound.
 ///
 /// One way of obtaining such URIs is to use the native Android RingtoneManager APIs,
 /// which may require developers to write their own to access the API.
-class AndroidUriNotificationSound implements AndroidNotificationSound {
-  AndroidUriNotificationSound(this._sound);
+class UriAndroidNotificationSound implements AndroidNotificationSound {
+  UriAndroidNotificationSound(this._sound);
 
   final String _sound;
 
