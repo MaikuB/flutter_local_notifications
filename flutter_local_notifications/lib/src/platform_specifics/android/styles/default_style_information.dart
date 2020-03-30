@@ -3,13 +3,12 @@ import 'style_information.dart';
 /// The default Android notification style.
 class DefaultStyleInformation extends StyleInformation {
   /// Specifies if formatting should be applied to the content through HTML markup.
-  bool htmlFormatContent;
+  final bool htmlFormatContent;
 
   /// Specifies if formatting should be applied to the title through HTML markup.
-  bool htmlFormatTitle;
+  final bool htmlFormatTitle;
 
-  DefaultStyleInformation(this.htmlFormatContent, this.htmlFormatTitle)
-      : super();
+  DefaultStyleInformation(this.htmlFormatContent, this.htmlFormatTitle);
 
   /// Create a [Map] object that describes the [DefaultStyleInformation] object.
   ///

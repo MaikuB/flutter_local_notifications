@@ -32,11 +32,12 @@ class MessagingStyleInformation extends DefaultStyleInformation {
   /// Mainly for internal use to send the data over a platform channel.
   @override
   Map<String, dynamic> toMap() {
-    var styleJson = super.toMap();
-    styleJson['person'] = person.toMap();
-    styleJson['conversationTitle'] = conversationTitle;
-    styleJson['groupConversation'] = groupConversation;
-    styleJson['messages'] = messages?.map((m) => m.toMap())?.toList();
-    return styleJson;
+    return super.toMap()
+      ..addAll(<String, dynamic>{
+        'person': person.toMap(),
+        'conversationTitle': conversationTitle,
+        'groupConversation': groupConversation,
+        'messages': messages?.map((m) => m.toMap())?.toList()
+      });
   }
 }

@@ -1,3 +1,5 @@
+import 'package:flutter_local_notifications/src/platform_specifics/android/bitmap.dart';
+
 import 'default_style_information.dart';
 import '../enums.dart';
 
@@ -9,66 +11,78 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
   /// Set the first line of text after the detail section in the big form of the template.
   final String summaryText;
 
-  /// Specifies if the overridden ContentTitle should have formatting applies through HTML markup.
+  /// Specifies if the overridden ContentTitle should have formatting applied through HTML markup.
   final bool htmlFormatContentTitle;
 
   /// Specifies if formatting should be applied to the first line of text after the detail section in the big form of the template.
   final bool htmlFormatSummaryText;
 
-  /// Path the bitmap that will override the large icon when the big notification is shown.
-  ///
-  /// This will be either the name of the drawable of an actual file path based on the value of [largeIconBitmapSource].
-  final String largeIcon;
+  /// The bitmap that will override the large icon when the big notification is shown.
+  final AndroidBitmap largeIcon;
 
-  /// Specifics the source for bitmap that will override the large icon specified in this style.
-  final BitmapSource largeIconBitmapSource;
-
-  /// Path to the bitmap to be used as the payload for the BigPicture notification.
-  ///
-  /// This will be either the name of the drawable of an actual file path based on the value of [bigPictureBitmapSource].
-  final String bigPicture;
-
-  /// Specifies the source for the bitmap to be used as the payload for the BigPicture notification.
-  final BitmapSource bigPictureBitmapSource;
+  /// The bitmap to be used as the payload for the BigPicture notification.
+  final AndroidBitmap bigPicture;
 
   /// Hides the large icon when showing the expanded notification.
   final bool hideExpandedLargeIcon;
 
-  BigPictureStyleInformation(this.bigPicture, this.bigPictureBitmapSource,
+  BigPictureStyleInformation(this.bigPicture,
       {this.contentTitle,
       this.summaryText,
       this.htmlFormatContentTitle = false,
       this.htmlFormatSummaryText = false,
       this.largeIcon,
-      this.largeIconBitmapSource,
       bool htmlFormatContent = false,
       bool htmlFormatTitle = false,
       this.hideExpandedLargeIcon = false})
       : super(htmlFormatContent, htmlFormatTitle);
 
-  /// Create a [Map] object that describes the [BigPictureStyleInformation] object.
+  /// Creates a [Map] object that describes the [BigPictureStyleInformation] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
   @override
   Map<String, dynamic> toMap() {
-    var styleJson = super.toMap();
-    var bigPictureStyleJson = <String, dynamic>{
-      'contentTitle': contentTitle,
-      'summaryText': summaryText,
-      'htmlFormatContentTitle': htmlFormatContentTitle,
-      'htmlFormatSummaryText': htmlFormatSummaryText,
-      'largeIcon': largeIcon,
-      'bigPicture': bigPicture,
-      'bigPictureBitmapSource': bigPictureBitmapSource?.index,
-      'hideExpandedLargeIcon': hideExpandedLargeIcon
-    };
+    return super.toMap()
+      ..addAll(_convertBigPictureToMap())
+      ..addAll(_convertLargeIconToMap())
+      ..addAll(<String, dynamic>{
+        'contentTitle': contentTitle,
+        'summaryText': summaryText,
+        'htmlFormatContentTitle': htmlFormatContentTitle,
+        'htmlFormatSummaryText': htmlFormatSummaryText,
+        'hideExpandedLargeIcon': hideExpandedLargeIcon
+      });
+  }
 
-    if (largeIconBitmapSource != null) {
-      bigPictureStyleJson['largeIconBitmapSource'] =
-          largeIconBitmapSource.index;
+  Map<String, dynamic> _convertBigPictureToMap() {
+    if (bigPicture is DrawableResourceAndroidBitmap) {
+      return <String, dynamic>{
+        'bigPicture': bigPicture.bitmap,
+        'bigPictureBitmapSource': AndroidBitmapSource.Drawable.index,
+      };
+    } else if (bigPicture is FilePathAndroidBitmap) {
+      return <String, dynamic>{
+        'bigPicture': bigPicture.bitmap,
+        'bigPictureBitmapSource': AndroidBitmapSource.FilePath.index,
+      };
+    } else {
+      return <String, dynamic>{};
     }
+  }
 
-    styleJson.addAll(bigPictureStyleJson);
-    return styleJson;
+  Map<String, dynamic> _convertLargeIconToMap() {
+    if (largeIcon is DrawableResourceAndroidBitmap) {
+      return <String, dynamic>{
+        'largeIcon': largeIcon.bitmap,
+        'largeIconBitmapSource': AndroidBitmapSource.Drawable.index,
+      };
+    } else if (largeIcon is FilePathAndroidBitmap) {
+      return <String, dynamic>{
+        'largeIcon': largeIcon.bitmap,
+        'largeIconBitmapSource': AndroidBitmapSource.FilePath.index,
+      };
+    } else {
+      return <String, dynamic>{};
+    }
   }
 }

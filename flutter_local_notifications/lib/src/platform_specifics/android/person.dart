@@ -1,3 +1,5 @@
+import 'package:flutter_local_notifications/src/platform_specifics/android/icon.dart';
+
 import 'enums.dart';
 
 /// Details of a person e.g. someone who sent a message.
@@ -6,10 +8,7 @@ class Person {
   final bool bot;
 
   /// Icon for this person.
-  final String icon;
-
-  /// Determines how the icon should be interpreted/resolved e.g. as a drawable.
-  final IconSource iconSource;
+  final AndroidIcon icon;
 
   /// Whether or not this is an important person.
   final bool important;
@@ -26,25 +25,48 @@ class Person {
   Person({
     this.bot,
     this.icon,
-    this.iconSource,
     this.important,
     this.key,
     this.name,
     this.uri,
   });
 
-  /// Create a [Map] object that describes the [Person] object.
+  /// Creates a [Map] object that describes the [Person] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'bot': bot,
-      'icon': icon,
-      'iconSource': iconSource?.index,
       'important': important,
       'key': key,
       'name': name,
       'uri': uri
-    };
+    }..addAll(_convertIconToMap());
+  }
+
+  Map<String, dynamic> _convertIconToMap() {
+    if (icon is DrawableResourceAndroidIcon) {
+      return <String, dynamic>{
+        'icon': icon.icon,
+        'iconSource': AndroidIconSource.DrawableResource.index,
+      };
+    } else if (icon is BitmapFilePathAndroidIcon) {
+      return <String, dynamic>{
+        'icon': icon.icon,
+        'iconSource': AndroidIconSource.BitmapFilePath.index,
+      };
+    } else if (icon is ContentUriAndroidIcon) {
+      return <String, dynamic>{
+        'icon': icon.icon,
+        'iconSource': AndroidIconSource.ContentUri.index,
+      };
+    } else if (icon is BitmapAssetAndroidIcon) {
+      return <String, dynamic>{
+        'icon': icon.icon,
+        'iconSource': AndroidIconSource.BitmapAsset.index,
+      };
+    } else {
+      return <String, dynamic>{};
+    }
   }
 }
