@@ -7,23 +7,23 @@ Please note that there are a number of breaking changes in this release to impro
 
   * `RawResourceAndroidNotificationSound`: use this when the sound is raw resource associated with the Android application. Previously, this was the only type of sound supported so applications using the plugin prior to 1.4.0 can migrate their application by using this class. For example, if your previous code was
 
-  ```dart
-  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-    'your other channel id',
-    'your other channel name',
-    'your other channel description',
-    sound: 'slow_spring_board');
-  ```
+    ```dart
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your other channel id',
+      'your other channel name',
+      'your other channel description',
+      sound: 'slow_spring_board');
+    ```
 
-  Replace it with
+    Replace it with
 
-  ```dart
-  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-    'your other channel id',
-    'your other channel name',
-    'your other channel description',
-    sound: RawResourceAndroidNotificationSound('slow_spring_board');
-  ```
+    ```dart
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your other channel id',
+      'your other channel name',
+      'your other channel description',
+      sound: RawResourceAndroidNotificationSound('slow_spring_board');
+    ```
 
   * `UriAndroidNotificationSound`: use this when a URI refers to the sound on the Android device. This is a new feature being supported as part of this release.
 * [Android] **BREAKING CHANGE** The `BitmapSource` enum has been replaced by the newly `AndroidBitmap` abstract class and its subclasses. This removes the need to specify the name/path of the bitmap and the source of the bitmap as two separate properties (e.g. the `largeIcon` and `largeIconBitmapSource` properties of the `AndroidNotificationDetails` class). This change affects the following classes
@@ -31,33 +31,33 @@ Please note that there are a number of breaking changes in this release to impro
   * `AndroidNotificationDetails`: the `largeIcon` is now an `AndroidBitmap` type instead of a `String` and the `largeIconBitmapSource` property has been removed
   * `BigPictureStyleInformation`: the `largeIcon` is now an `AndroidBitmap` type instead of a `String` and the `largeIconBitmapSource` property has been removed. The `bigPicture` is now a `AndroidBitmap` type instead of a `String` and the `bigPictureBitmapSource` property has been removed
 
-The following describes how each `BitmapSource` value maps to the `AndroidBitmap` subclasses
+  The following describes how each `BitmapSource` value maps to the `AndroidBitmap` subclasses
 
   * `BitmapSource.Drawable` -> `DrawableResourceAndroidBitmap`
   * `BitmapSource.FilePath` -> `FilePathAndroidBitmap`
 
   Each of these subclasses has a constructor that an argument referring to the bitmap itself. For example, if you previously had the following code 
 
-  ```dart
-  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-    'your other channel id',
-    'your other channel name',
-    'your other channel description',
-    largeIcon: 'sample_large_icon',
-    largeIconBitmapSource: BitmapSource.Drawable,
-  )
-  ```
+    ```dart
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your other channel id',
+      'your other channel name',
+      'your other channel description',
+      largeIcon: 'sample_large_icon',
+      largeIconBitmapSource: BitmapSource.Drawable,
+    )
+    ```
 
-  This would now be replaced with
+    This would now be replaced with
 
-  ```dart
-  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-    'your other channel id',
-    'your other channel name',
-    'your other channel description',
-    largeIcon: DrawableResourceAndroidBitmap('sample_large_icon'),
-  )
-  ```
+    ```dart
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your other channel id',
+      'your other channel name',
+      'your other channel description',
+      largeIcon: DrawableResourceAndroidBitmap('sample_large_icon'),
+    )
+    ```
 * [Android] **BREAKING CHANGE** The `IconSource` enum has been replaced by the newly added `AndroidIcon` abstract class and its subclasses. This change was done for similar reasons in replacing the `BitmapSource` enum. This change only affects the `Person` class that is used when displaying each person in a messaging-style notification, where the `icon` property is now an `AndroidIcon` type instead of a `String` and the `iconSource` property has been removed.
 
   The following describes how each `IconSource` value maps to the `AndroidIcon` subclasses
