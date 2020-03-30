@@ -36,54 +36,54 @@ The following describes how each `BitmapSource` value maps to the `AndroidBitmap
   * `BitmapSource.Drawable` -> `DrawableResourceAndroidBitmap`
   * `BitmapSource.FilePath` -> `FilePathAndroidBitmap`
 
-Each of these subclasses has a constructor that an argument referring to the bitmap itself. For example, if you previously had the following code 
+  Each of these subclasses has a constructor that an argument referring to the bitmap itself. For example, if you previously had the following code 
 
-```dart
-var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-  'your other channel id',
-  'your other channel name',
-  'your other channel description',
-  largeIcon: 'sample_large_icon',
-  largeIconBitmapSource: BitmapSource.Drawable,
-)
-```
+  ```dart
+  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    'your other channel id',
+    'your other channel name',
+    'your other channel description',
+    largeIcon: 'sample_large_icon',
+    largeIconBitmapSource: BitmapSource.Drawable,
+  )
+  ```
 
-This would now be replaced with
+  This would now be replaced with
 
-```dart
-var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-  'your other channel id',
-  'your other channel name',
-  'your other channel description',
-  largeIcon: DrawableResourceAndroidBitmap('sample_large_icon'),
-)
-```
+  ```dart
+  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    'your other channel id',
+    'your other channel name',
+    'your other channel description',
+    largeIcon: DrawableResourceAndroidBitmap('sample_large_icon'),
+  )
+  ```
 * [Android] **BREAKING CHANGE** The `IconSource` enum has been replaced by the newly added `AndroidIcon` abstract class and its subclasses. This change was done for similar reasons in replacing the `BitmapSource` enum. This change only affects the `Person` class that is used when displaying each person in a messaging-style notification, where the `icon` property is now an `AndroidIcon` type instead of a `String` and the `iconSource` property has been removed.
 
-The following describes how each `IconSource` value maps to the `AndroidIcon` subclasses
+  The following describes how each `IconSource` value maps to the `AndroidIcon` subclasses
 
-  * `IconSource.Drawable` -> `DrawableResourceAndroidIcon`
-  * `IconSource.FilePath` -> `BitmapFilePathAndroidIcon`
-  * `IconSource.ContentUri` -> `ContentUriAndroidIcon`
+    * `IconSource.Drawable` -> `DrawableResourceAndroidIcon`
+    * `IconSource.FilePath` -> `BitmapFilePathAndroidIcon`
+    * `IconSource.ContentUri` -> `ContentUriAndroidIcon`
 
-Each of these subclasses has a constructor that accepts an argument referring to the icon itself. For example, if you previously had the following code
+  Each of these subclasses has a constructor that accepts an argument referring to the icon itself. For example, if you previously had the following code
 
-```dart
-Person(
-  icon: 'me',
-  iconSource: IconSource.Drawable,
-)
-```
+  ```dart
+  Person(
+    icon: 'me',
+    iconSource: IconSource.Drawable,
+  )
+  ```
 
-This would now be replaced with
+  This would now be replaced with
 
-```dart
-Person(
-  icon: DrawableResourceAndroidIcon('me'),
-)
-```
+  ```dart
+  Person(
+    icon: DrawableResourceAndroidIcon('me'),
+  )
+  ```
 
-The `AndroidIcon` also has a `BitmapAssetAndroidIcon` subclass to enables the usage bitmap icons that have been registered as an asset in the Flutter application via the `pubspec.yaml` file.
+  The `AndroidIcon` also has a `BitmapAssetAndroidIcon` subclass to enables the usage bitmap icons that have been registered as an asset in the Flutter application via the `pubspec.yaml` file.
 * [Android] **BREAKING CHANGE** All properties in the `AndroidNotificationDetails`, `DefaultStyleInformation` and `InboxStyleInformation` classes have been made `final`.
 * Updates to API docs and readme
 
