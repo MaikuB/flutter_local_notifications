@@ -35,7 +35,7 @@ class Message {
         'Must provide both dataMimeType and dataUri together or not at all.');
   }
 
-  /// Create a [Map] object that describes the [Message] object.
+  /// Creates a [Map] object that describes the [Message] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
   Map<String, dynamic> toMap() {

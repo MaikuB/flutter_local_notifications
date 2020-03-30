@@ -31,7 +31,7 @@ class InboxStyleInformation extends DefaultStyleInformation {
     bool htmlFormatTitle = false,
   }) : super(htmlFormatContent, htmlFormatTitle);
 
-  /// Create a [Map] object that describes the [InboxStyleInformation] object.
+  /// Creates a [Map] object that describes the [InboxStyleInformation] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
   @override

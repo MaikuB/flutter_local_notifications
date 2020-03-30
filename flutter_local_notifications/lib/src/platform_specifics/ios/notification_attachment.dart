@@ -16,7 +16,7 @@ class IOSNotificationAttachment {
     this.identifier,
   }) : assert(filePath != null);
 
-  /// Create a [Map] object that describes the [IOSNotificationAttachment] object.
+  /// Creates a [Map] object that describes the [IOSNotificationAttachment] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
   Map<String, dynamic> toMap() {

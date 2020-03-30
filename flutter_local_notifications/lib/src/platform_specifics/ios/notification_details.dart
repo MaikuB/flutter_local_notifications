@@ -42,7 +42,7 @@ class IOSNotificationDetails {
     this.attachments,
   });
 
-  /// Create a [Map] object that describes the [IOSNotificationDetails] object.
+  /// Creates a [Map] object that describes the [IOSNotificationDetails] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
   Map<String, dynamic> toMap() {

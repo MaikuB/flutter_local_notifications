@@ -40,7 +40,7 @@ class Time {
     assert(this.second >= 0 && this.second < 60);
   }
 
-  /// Create a [Map] object that describes the [Time] object.
+  /// Creates a [Map] object that describes the [Time] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
   Map<String, int> toMap() {

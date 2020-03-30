@@ -27,7 +27,7 @@ class MessagingStyleInformation extends DefaultStyleInformation {
     assert(this.person?.name != null, 'Must provide the details of the person');
   }
 
-  /// Create a [Map] object that describes the [MessagingStyleInformation] object.
+  /// Creates a [Map] object that describes the [MessagingStyleInformation] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
   @override
