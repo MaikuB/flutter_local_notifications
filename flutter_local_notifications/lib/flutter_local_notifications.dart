@@ -9,6 +9,7 @@ export 'src/platform_specifics/android/styles/default_style_information.dart';
 export 'src/platform_specifics/android/styles/big_text_style_information.dart';
 export 'src/platform_specifics/android/styles/big_picture_style_information.dart';
 export 'src/platform_specifics/android/styles/inbox_style_information.dart';
+export 'src/platform_specifics/android/styles/media_style_information.dart';
 export 'src/platform_specifics/android/styles/messaging_style_information.dart';
 export 'src/platform_specifics/android/bitmap.dart';
 export 'src/platform_specifics/android/enums.dart'

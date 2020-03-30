@@ -4,16 +4,19 @@ import 'notification_attachment.dart';
 class IOSNotificationDetails {
   /// Display an alert when the notification is triggered while app is in the foreground.
   ///
+  /// Leave this as null to use the default setting given to [IOSInitializationSettings.defaultPresentAlert].
   /// Applicable to iOS 10 and above.
   final bool presentAlert;
 
   /// Play a sound when the notification is triggered while app is in the foreground.
   ///
+  /// Leave this as null to use the default setting given to [IOSInitializationSettings.defaultPresentSound].
   /// Applicable to iOS 10 and above.
   final bool presentSound;
 
   /// Apply the badge value when the notification is triggered while app is in the foreground.
   ///
+  /// Leave this as null to use the default setting given to [IOSInitializationSettings.defaultPresentBadge].
   /// Applicable to iOS 10 and above.
   final bool presentBadge;
 

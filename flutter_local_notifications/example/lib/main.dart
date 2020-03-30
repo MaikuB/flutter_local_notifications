@@ -588,6 +588,7 @@ class _HomePageState extends State<HomePage> {
       'media channel name',
       'media channel description',
       largeIcon: FilePathAndroidBitmap(largeIconPath),
+      styleInformation: MediaStyleInformation(),
     );
     var platformChannelSpecifics =
         NotificationDetails(androidPlatformChannelSpecifics, null);
