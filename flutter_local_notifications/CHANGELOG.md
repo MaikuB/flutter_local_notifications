@@ -1,9 +1,9 @@
 # [1.4.0]
 
-Please note that there are a number of breaking changes in this release to improve the developer experience in using the plugin APIs. Please through the changes carefully. The steps migrate your code has been covered below but developers also can refer to the Git history of the example application's `main.dart` file for extra guidance if required
+Please note that there are a number of breaking changes in this release to improve the developer experience when using the plugin APIs. The changes should hopefully be straightforward but please through the changelog carefully just in case. The steps migrate your code has been covered below but developers also can refer to the Git history of the example application's `main.dart` file for extra guidance if required
 
-* [Android] **BREAKING CHANGE** The `style` property of the `AndroidNotificationDetails` class has been removed as it was redundant. No changes are needed unless your application was displaying media-style notifications (i.e. `style` was seto `AndroidNotificationStyle.Media`). If this is the case, you can migrate your code setting the `styleInformation` property of the `AndroidNotificationDetails` to an instance of the `MediaNotificationStyle` class. This class is a new addition in this release
-* [Android] **BREAKING CHANGE** The `AndroidNotificationSound` abstract class has been introduced to represent Android notification sounds. The `sound` property of the `AndroidNotificationDetails` class has changed from being a `String` type but an `AndroidNotificationSound` type. In this release, the `AndroidNotificationSound` has the following subclasses
+* [Android] **BREAKING CHANGE** The `style` property of the `AndroidNotificationDetails` class has been removed as it was redundant. No changes are needed unless your application was displaying media-style notifications (i.e. `style` was set to `AndroidNotificationStyle.Media`). If this is the case, you can migrate your code by setting the `styleInformation` property of the `AndroidNotificationDetails` to an instance of the `MediaNotificationStyleInformation` class. This class is a new addition in this release
+* [Android] **BREAKING CHANGE** The `AndroidNotificationSound` abstract class has been introduced to represent Android notification sounds. The `sound` property of the `AndroidNotificationDetails` class has changed from being a `String` type to an `AndroidNotificationSound` type. In this release, the `AndroidNotificationSound` has the following subclasses
 
   * `RawResourceAndroidNotificationSound`: use this when the sound is raw resource associated with the Android application. Previously, this was the only type of sound supported so applications using the plugin prior to 1.4.0 can migrate their application by using this class. For example, if your previous code was
 
@@ -25,7 +25,7 @@ Please note that there are a number of breaking changes in this release to impro
       sound: RawResourceAndroidNotificationSound('slow_spring_board');
     ```
 
-  * `UriAndroidNotificationSound`: use this when a URI refers to the sound on the Android device. This is a new feature being supported as part of this release.
+  * `UriAndroidNotificationSound`: use this when a URI refers to the sound on the Android device. This is a new feature being supported as part of this release. Developers may need to write their code to access native Android APIs (e.g. the `RingtoneManager` APIs) to obtain the URIs they need.
 * [Android] **BREAKING CHANGE** The `BitmapSource` enum has been replaced by the newly `AndroidBitmap` abstract class and its subclasses. This removes the need to specify the name/path of the bitmap and the source of the bitmap as two separate properties (e.g. the `largeIcon` and `largeIconBitmapSource` properties of the `AndroidNotificationDetails` class). This change affects the following classes
 
   * `AndroidNotificationDetails`: the `largeIcon` is now an `AndroidBitmap` type instead of a `String` and the `largeIconBitmapSource` property has been removed
@@ -58,7 +58,7 @@ Please note that there are a number of breaking changes in this release to impro
       largeIcon: DrawableResourceAndroidBitmap('sample_large_icon'),
     )
     ```
-* [Android] **BREAKING CHANGE** The `IconSource` enum has been replaced by the newly added `AndroidIcon` abstract class and its subclasses. This change was done for similar reasons in replacing the `BitmapSource` enum. This change only affects the `Person` class that is used when displaying each person in a messaging-style notification, where the `icon` property is now an `AndroidIcon` type instead of a `String` and the `iconSource` property has been removed.
+* [Android] **BREAKING CHANGE** The `IconSource` enum has been replaced by the newly added `AndroidIcon` abstract class and its subclasses. This change was done for similar reasons in replacing the `BitmapSource` enum. This only affectsthe `Person` class is affected, which is used when displaying each person in a messaging-style notification, where the `icon` property is now an `AndroidIcon` type instead of a `String` and the `iconSource` property has been removed.
 
   The following describes how each `IconSource` value maps to the `AndroidIcon` subclasses
 
@@ -83,7 +83,7 @@ Please note that there are a number of breaking changes in this release to impro
   )
   ```
 
-  The `AndroidIcon` also has a `BitmapAssetAndroidIcon` subclass to enables the usage bitmap icons that have been registered as an asset in the Flutter application via the `pubspec.yaml` file.
+  The `AndroidIcon` also has a `BitmapAssetAndroidIcon` subclass to enables the usage of bitmap icons that have been registered as a Flutter asset via the `pubspec.yaml` file.
 * [Android] **BREAKING CHANGE** All properties in the `AndroidNotificationDetails`, `DefaultStyleInformation` and `InboxStyleInformation` classes have been made `final`.
 * Updates to API docs and readme
 
