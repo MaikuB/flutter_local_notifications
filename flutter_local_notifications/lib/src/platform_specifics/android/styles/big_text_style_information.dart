@@ -20,15 +20,16 @@ class BigTextStyleInformation extends DefaultStyleInformation {
   /// Specifies if formatting should be applied to the first line of text after the detail section in the big form of the template.
   final bool htmlFormatSummaryText;
 
-  BigTextStyleInformation(this.bigText,
-      {this.htmlFormatBigText = false,
-      this.contentTitle,
-      this.htmlFormatContentTitle = false,
-      this.summaryText,
-      this.htmlFormatSummaryText = false,
-      bool htmlFormatContent = false,
-      bool htmlFormatTitle = false})
-      : super(htmlFormatContent, htmlFormatTitle);
+  BigTextStyleInformation(
+    this.bigText, {
+    this.htmlFormatBigText = false,
+    this.contentTitle,
+    this.htmlFormatContentTitle = false,
+    this.summaryText,
+    this.htmlFormatSummaryText = false,
+    bool htmlFormatContent = false,
+    bool htmlFormatTitle = false,
+  }) : super(htmlFormatContent, htmlFormatTitle);
 
   /// Creates a [Map] object that describes the [BigTextStyleInformation] object.
   ///

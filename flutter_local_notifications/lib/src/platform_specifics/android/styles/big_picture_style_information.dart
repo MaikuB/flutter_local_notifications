@@ -26,16 +26,17 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
   /// Hides the large icon when showing the expanded notification.
   final bool hideExpandedLargeIcon;
 
-  BigPictureStyleInformation(this.bigPicture,
-      {this.contentTitle,
-      this.summaryText,
-      this.htmlFormatContentTitle = false,
-      this.htmlFormatSummaryText = false,
-      this.largeIcon,
-      bool htmlFormatContent = false,
-      bool htmlFormatTitle = false,
-      this.hideExpandedLargeIcon = false})
-      : super(htmlFormatContent, htmlFormatTitle);
+  BigPictureStyleInformation(
+    this.bigPicture, {
+    this.contentTitle,
+    this.summaryText,
+    this.htmlFormatContentTitle = false,
+    this.htmlFormatSummaryText = false,
+    this.largeIcon,
+    bool htmlFormatContent = false,
+    bool htmlFormatTitle = false,
+    this.hideExpandedLargeIcon = false,
+  }) : super(htmlFormatContent, htmlFormatTitle);
 
   /// Creates a [Map] object that describes the [BigPictureStyleInformation] object.
   ///

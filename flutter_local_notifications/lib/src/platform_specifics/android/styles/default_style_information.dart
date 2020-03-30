@@ -8,7 +8,10 @@ class DefaultStyleInformation extends StyleInformation {
   /// Specifies if formatting should be applied to the title through HTML markup.
   final bool htmlFormatTitle;
 
-  DefaultStyleInformation(this.htmlFormatContent, this.htmlFormatTitle);
+  DefaultStyleInformation(
+    this.htmlFormatContent,
+    this.htmlFormatTitle,
+  );
 
   /// Creates a [Map] object that describes the [DefaultStyleInformation] object.
   ///
