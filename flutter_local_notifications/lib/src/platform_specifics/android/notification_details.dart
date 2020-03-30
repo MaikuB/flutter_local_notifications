@@ -16,7 +16,7 @@ import 'styles/default_style_information.dart';
 class AndroidNotificationDetails {
   /// The icon that should be used when displaying the notification.
   ///
-  /// When not specified, this will use the default icon that has been configured.
+  /// When this is set to `null`, the default icon given to [AndroidInitializationSettings.defaultIcon] will be used.
   final String icon;
 
   /// The channel's id.
