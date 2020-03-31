@@ -6,7 +6,7 @@ enum AndroidIconSource {
   DrawableResource,
   BitmapFilePath,
   ContentUri,
-  BitmapAsset
+  FlutterBitmapAsset
 }
 
 /// The available notification styles on Android.

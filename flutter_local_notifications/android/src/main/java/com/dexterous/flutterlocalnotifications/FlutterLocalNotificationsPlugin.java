@@ -336,7 +336,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private static Bitmap getBitmapFromSource(Context context, String bitmapPath, BitmapSource bitmapSource) {
         Bitmap bitmap = null;
-        if (bitmapSource == BitmapSource.Drawable) {
+        if (bitmapSource == BitmapSource.DrawableResource) {
             bitmap = BitmapFactory.decodeResource(context.getResources(), getDrawableResourceId(context, bitmapPath));
         } else if (bitmapSource == BitmapSource.FilePath) {
             bitmap = BitmapFactory.decodeFile(bitmapPath);
@@ -348,7 +348,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static IconCompat getIconFromSource(Context context, String iconPath, IconSource iconSource) {
         IconCompat icon = null;
         switch (iconSource) {
-            case Drawable:
+            case DrawableResource:
                 icon = IconCompat.createWithResource(context, getDrawableResourceId(context, iconPath));
                 break;
             case BitmapFilePath:
@@ -357,7 +357,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case ContentUri:
                 icon = IconCompat.createWithContentUri(iconPath);
                 break;
-            case BitmapAsset:
+            case FlutterBitmapAsset:
                 try {
                     AssetFileDescriptor assetFileDescriptor = context.getAssets().openFd(FlutterMain.getLookupKeyForAsset(iconPath));
                     FileInputStream fileInputStream = assetFileDescriptor.createInputStream();
@@ -879,13 +879,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             BigPictureStyleInformation bigPictureStyleInformation = (BigPictureStyleInformation) notificationDetails.styleInformation;
             if (hasInvalidLargeIcon(result, bigPictureStyleInformation.largeIcon, bigPictureStyleInformation.largeIconBitmapSource))
                 return true;
-            return bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(applicationContext, bigPictureStyleInformation.bigPicture, result, INVALID_BIG_PICTURE_ERROR_CODE);
+            return bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.DrawableResource && !isValidDrawableResource(applicationContext, bigPictureStyleInformation.bigPicture, result, INVALID_BIG_PICTURE_ERROR_CODE);
         }
         return false;
     }
 
     private boolean hasInvalidLargeIcon(Result result, String largeIcon, BitmapSource largeIconBitmapSource) {
-        return !StringUtils.isNullOrEmpty(largeIcon) && largeIconBitmapSource == BitmapSource.Drawable && !isValidDrawableResource(applicationContext, largeIcon, result, INVALID_LARGE_ICON_ERROR_CODE);
+        return !StringUtils.isNullOrEmpty(largeIcon) && largeIconBitmapSource == BitmapSource.DrawableResource && !isValidDrawableResource(applicationContext, largeIcon, result, INVALID_LARGE_ICON_ERROR_CODE);
     }
 
     private boolean hasInvalidIcon(Result result, String icon) {

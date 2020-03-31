@@ -40,8 +40,8 @@ class ContentUriAndroidIcon extends AndroidIcon {
 }
 
 /// Represents a bitmap asset belonging to the Flutter application that should be used for as an icon on Android.
-class BitmapAssetAndroidIcon extends AndroidIcon {
-  BitmapAssetAndroidIcon(this._icon);
+class FlutterBitmapAssetAndroidIcon extends AndroidIcon {
+  FlutterBitmapAssetAndroidIcon(this._icon);
 
   final String _icon;
 

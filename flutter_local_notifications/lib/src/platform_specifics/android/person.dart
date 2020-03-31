@@ -60,10 +60,10 @@ class Person {
         'icon': icon.icon,
         'iconSource': AndroidIconSource.ContentUri.index,
       };
-    } else if (icon is BitmapAssetAndroidIcon) {
+    } else if (icon is FlutterBitmapAssetAndroidIcon) {
       return <String, dynamic>{
         'icon': icon.icon,
-        'iconSource': AndroidIconSource.BitmapAsset.index,
+        'iconSource': AndroidIconSource.FlutterBitmapAsset.index,
       };
     } else {
       return <String, dynamic>{};

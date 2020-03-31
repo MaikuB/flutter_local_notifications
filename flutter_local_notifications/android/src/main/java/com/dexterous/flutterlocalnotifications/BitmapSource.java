@@ -1,6 +1,6 @@
 package com.dexterous.flutterlocalnotifications;
 
 public enum BitmapSource {
-    Drawable,
+    DrawableResource,
     FilePath
 }
