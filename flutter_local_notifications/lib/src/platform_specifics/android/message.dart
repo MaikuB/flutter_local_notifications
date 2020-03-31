@@ -23,6 +23,9 @@ class Message {
   final DateTime timestamp;
 
   /// Person that sent this message.
+  ///
+  /// When this is set to `null` the `Person` given to [MessagingStyleInformation.person]
+  /// i.e. this would indicate that the message was sent from the user.
   final Person person;
 
   /// MIME type for this message context when the [dataUri] is provided.
