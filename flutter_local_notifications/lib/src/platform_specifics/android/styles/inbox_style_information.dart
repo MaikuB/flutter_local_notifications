@@ -2,6 +2,17 @@ import 'default_style_information.dart';
 
 /// Used to pass the content for an Android notification displayed using the inbox style.
 class InboxStyleInformation extends DefaultStyleInformation {
+  const InboxStyleInformation(
+    this.lines, {
+    this.htmlFormatLines = false,
+    this.contentTitle,
+    this.htmlFormatContentTitle = false,
+    this.summaryText,
+    this.htmlFormatSummaryText = false,
+    bool htmlFormatContent = false,
+    bool htmlFormatTitle = false,
+  }) : super(htmlFormatContent, htmlFormatTitle);
+
   /// Overrides ContentTitle in the big form of the template.
   final String contentTitle;
 
@@ -19,17 +30,6 @@ class InboxStyleInformation extends DefaultStyleInformation {
 
   /// Specifies if formatting should be applied to the first line of text after the detail section in the big form of the template.
   final bool htmlFormatSummaryText;
-
-  InboxStyleInformation(
-    this.lines, {
-    this.htmlFormatLines = false,
-    this.contentTitle,
-    this.htmlFormatContentTitle = false,
-    this.summaryText,
-    this.htmlFormatSummaryText = false,
-    bool htmlFormatContent = false,
-    bool htmlFormatTitle = false,
-  }) : super(htmlFormatContent, htmlFormatTitle);
 
   /// Creates a [Map] object that describes the [InboxStyleInformation] object.
   ///

@@ -1,5 +1,7 @@
 /// The days of the week.
 class Day {
+  const Day(this.value);
+
   static const Sunday = Day(1);
   static const Monday = Day(2);
   static const Tuesday = Day(3);
@@ -13,12 +15,18 @@ class Day {
       [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
 
   final int value;
-
-  const Day(this.value);
 }
 
 /// Used for specifying a time in 24 hour format.
 class Time {
+  const Time([
+    this.hour = 0,
+    this.minute = 0,
+    this.second = 0,
+  ])  : assert(hour >= 0 && hour < 24),
+        assert(minute >= 0 && minute < 60),
+        assert(second >= 0 && second < 60);
+
   /// The hour component of the time.
   ///
   /// Accepted range is 0 to 23 inclusive.
@@ -33,12 +41,6 @@ class Time {
   ///
   /// Accepted range is 0 to 59 inclusive.
   final int second;
-
-  Time([this.hour = 0, this.minute = 0, this.second = 0]) {
-    assert(this.hour >= 0 && this.hour < 24);
-    assert(this.minute >= 0 && this.minute < 60);
-    assert(this.second >= 0 && this.second < 60);
-  }
 
   /// Creates a [Map] object that describes the [Time] object.
   ///

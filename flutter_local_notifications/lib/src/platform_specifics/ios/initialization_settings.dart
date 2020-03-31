@@ -2,6 +2,16 @@ import '../../typedefs.dart';
 
 /// Plugin initialization settings for iOS.
 class IOSInitializationSettings {
+  const IOSInitializationSettings({
+    this.requestAlertPermission = true,
+    this.requestSoundPermission = true,
+    this.requestBadgePermission = true,
+    this.defaultPresentAlert = true,
+    this.defaultPresentSound = true,
+    this.defaultPresentBadge = true,
+    this.onDidReceiveLocalNotification,
+  });
+
   /// Request permission to display an alert.
   ///
   /// Default value is true.
@@ -40,16 +50,6 @@ class IOSInitializationSettings {
   ///
   /// Applicable to iOS versions below 10.
   final DidReceiveLocalNotificationCallback onDidReceiveLocalNotification;
-
-  const IOSInitializationSettings({
-    this.requestAlertPermission = true,
-    this.requestSoundPermission = true,
-    this.requestBadgePermission = true,
-    this.defaultPresentAlert = true,
-    this.defaultPresentSound = true,
-    this.defaultPresentBadge = true,
-    this.onDidReceiveLocalNotification,
-  });
 
   /// Creates a [Map] object that describes the [IOSInitializationSettings] object.
   ///

@@ -4,7 +4,7 @@ import 'default_style_information.dart';
 ///
 /// When used, the bitmap given to [AndroidNotificationDetails.largeIcon] will be treated as album artwork.
 class MediaStyleInformation extends DefaultStyleInformation {
-  MediaStyleInformation({
+  const MediaStyleInformation({
     bool htmlFormatContent = false,
     bool htmlFormatTitle = false,
   }) : super(htmlFormatContent, htmlFormatTitle);

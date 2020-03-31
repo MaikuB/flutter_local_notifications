@@ -8,7 +8,7 @@ abstract class AndroidNotificationSound {
 ///
 /// These resources would be found in the `res/raw` directory of the Android application
 class RawResourceAndroidNotificationSound implements AndroidNotificationSound {
-  RawResourceAndroidNotificationSound(this._sound);
+  const RawResourceAndroidNotificationSound(this._sound);
 
   final String _sound;
 
@@ -22,7 +22,7 @@ class RawResourceAndroidNotificationSound implements AndroidNotificationSound {
 /// One way of obtaining such URIs is to use the native Android RingtoneManager APIs,
 /// which may require developers to write their own to access the API.
 class UriAndroidNotificationSound implements AndroidNotificationSound {
-  UriAndroidNotificationSound(this._sound);
+  const UriAndroidNotificationSound(this._sound);
 
   final String _sound;
 

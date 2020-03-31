@@ -2,6 +2,15 @@ import 'notification_attachment.dart';
 
 /// Configures the notification details on iOS.
 class IOSNotificationDetails {
+  const IOSNotificationDetails({
+    this.presentAlert,
+    this.presentBadge,
+    this.presentSound,
+    this.sound,
+    this.badgeNumber,
+    this.attachments,
+  });
+
   /// Display an alert when the notification is triggered while app is in the foreground.
   ///
   /// When this is set to `null`, it will use the default setting given to [IOSInitializationSettings.defaultPresentAlert].
@@ -35,15 +44,6 @@ class IOSNotificationDetails {
   ///
   /// Applicable to iOS 10 and above.
   final List<IOSNotificationAttachment> attachments;
-
-  IOSNotificationDetails({
-    this.presentAlert,
-    this.presentBadge,
-    this.presentSound,
-    this.sound,
-    this.badgeNumber,
-    this.attachments,
-  });
 
   /// Creates a [Map] object that describes the [IOSNotificationDetails] object.
   ///
