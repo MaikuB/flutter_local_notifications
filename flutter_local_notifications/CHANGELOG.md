@@ -86,6 +86,7 @@ Please note that there are a number of breaking changes in this release to impro
   The `AndroidIcon` also has a `BitmapAssetAndroidIcon` subclass to enables the usage of bitmap icons that have been registered as a Flutter asset via the `pubspec.yaml` file.
 * [Android] **BREAKING CHANGE** All properties in the `AndroidNotificationDetails`, `DefaultStyleInformation` and `InboxStyleInformation` classes have been made `final`.
 * Updates to API docs and readme
+* Bump Android dependencies 
 
 # [1.3.0]
 
