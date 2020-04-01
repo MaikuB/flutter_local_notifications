@@ -89,6 +89,7 @@ Please note that there are a number of breaking changes in this release to impro
 * Where possible, classes in the plugins have been updated to provide `const` constructors
 * Updates to API docs and readme
 * Bump Android dependencies 
+* Fixed a grammar issue 0.9.1 changelog entry
 
 # [1.3.0]
 

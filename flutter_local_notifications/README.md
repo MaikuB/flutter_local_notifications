@@ -40,6 +40,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Show progress notifications
 * [Android] Configure notification visibility on the lockscreen
 * [iOS] Request notification permissions and customise the permissions being requested around displaying notifications
+* [iOS] Display notifications with attachments
 
 Note that this plugin aims to provide abstractions for all platforms as opposed to having methods that only work on specific platforms. However, each method allows passing in "platform-specifics" that contains data that is specific for customising notifications on each platform. This approach means that some scenarios may not be covered by the plugin. Developers can either fork or maintain their code for showing notifications in these situations. Note that the plugin still under development so expect the API surface to change over time.
 
