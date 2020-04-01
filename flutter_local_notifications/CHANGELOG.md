@@ -1,3 +1,96 @@
+# [1.4.0]
+
+Please note that there are a number of breaking changes in this release to improve the developer experience when using the plugin APIs. The changes should hopefully be straightforward but please through the changelog carefully just in case. The steps migrate your code has been covered below but the Git history of the example application's `main.dart` file can also be used as reference.
+
+* [Android] **BREAKING CHANGE** The `style` property of the `AndroidNotificationDetails` class has been removed as it was redundant. No changes are needed unless your application was displaying media notifications (i.e. `style` was set to `AndroidNotificationStyle.Media`). If this is the case, you can migrate your code by setting the `styleInformation` property of the `AndroidNotificationDetails` to an instance of the `MediaNotificationStyleInformation` class. This class is a new addition in this release
+* [Android] **BREAKING CHANGE** The `AndroidNotificationSound` abstract class has been introduced to represent Android notification sounds. The `sound` property of the `AndroidNotificationDetails` class has changed from being a `String` type to an `AndroidNotificationSound` type. In this release, the `AndroidNotificationSound` has the following subclasses
+
+  * `RawResourceAndroidNotificationSound`: use this when the sound is raw resource associated with the Android application. Previously, this was the only type of sound supported so applications using the plugin prior to 1.4.0 can migrate their application by using this class. For example, if your previous code was
+
+    ```dart
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your other channel id',
+      'your other channel name',
+      'your other channel description',
+      sound: 'slow_spring_board');
+    ```
+
+    Replace it with
+
+    ```dart
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your other channel id',
+      'your other channel name',
+      'your other channel description',
+      sound: RawResourceAndroidNotificationSound('slow_spring_board');
+    ```
+
+  * `UriAndroidNotificationSound`: use this when a URI refers to the sound on the Android device. This is a new feature being supported as part of this release. Developers may need to write their code to access native Android APIs (e.g. the `RingtoneManager` APIs) to obtain the URIs they need.
+* [Android] **BREAKING CHANGE** The `BitmapSource` enum has been replaced by the newly `AndroidBitmap` abstract class and its subclasses. This removes the need to specify the name/path of the bitmap and the source of the bitmap as two separate properties (e.g. the `largeIcon` and `largeIconBitmapSource` properties of the `AndroidNotificationDetails` class). This change affects the following classes
+
+  * `AndroidNotificationDetails`: the `largeIcon` is now an `AndroidBitmap` type instead of a `String` and the `largeIconBitmapSource` property has been removed
+  * `BigPictureStyleInformation`: the `largeIcon` is now an `AndroidBitmap` type instead of a `String` and the `largeIconBitmapSource` property has been removed. The `bigPicture` is now a `AndroidBitmap` type instead of a `String` and the `bigPictureBitmapSource` property has been removed
+
+  The following describes how each `BitmapSource` value maps to the `AndroidBitmap` subclasses
+
+  * `BitmapSource.Drawable` -> `DrawableResourceAndroidBitmap`
+  * `BitmapSource.FilePath` -> `FilePathAndroidBitmap`
+
+  Each of these subclasses has a constructor that an argument referring to the bitmap itself. For example, if you previously had the following code 
+
+    ```dart
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your other channel id',
+      'your other channel name',
+      'your other channel description',
+      largeIcon: 'sample_large_icon',
+      largeIconBitmapSource: BitmapSource.Drawable,
+    )
+    ```
+
+    This would now be replaced with
+
+    ```dart
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your other channel id',
+      'your other channel name',
+      'your other channel description',
+      largeIcon: DrawableResourceAndroidBitmap('sample_large_icon'),
+    )
+    ```
+* [Android] **BREAKING CHANGE** The `IconSource` enum has been replaced by the newly added `AndroidIcon` abstract class and its subclasses. This change was done for similar reasons in replacing the `BitmapSource` enum. This only affects the `Person` class, which is used when displaying each person in a messaging-style notification. Here the `icon` property is now an `AndroidIcon` type instead of a `String` and the `iconSource` property has been removed.
+
+  The following describes how each `IconSource` value maps to the `AndroidIcon` subclasses
+
+    * `IconSource.Drawable` -> `DrawableResourceAndroidIcon`
+    * `IconSource.FilePath` -> `BitmapFilePathAndroidIcon`
+    * `IconSource.ContentUri` -> `ContentUriAndroidIcon`
+
+  Each of these subclasses has a constructor that accepts an argument referring to the icon itself. For example, if you previously had the following code
+
+  ```dart
+  Person(
+    icon: 'me',
+    iconSource: IconSource.Drawable,
+  )
+  ```
+
+  This would now be replaced with
+
+  ```dart
+  Person(
+    icon: DrawableResourceAndroidIcon('me'),
+  )
+  ```
+
+  The `AndroidIcon` also has a `BitmapAssetAndroidIcon` subclass to enables the usage of bitmap icons that have been registered as a Flutter asset via the `pubspec.yaml` file.
+* [Android] **BREAKING CHANGE** All properties in the `AndroidNotificationDetails`, `DefaultStyleInformation` and `InboxStyleInformation` classes have been made `final`
+* The `DefaultStyleInformation` class now implements the `StyleInformation` class instead of extending it
+* Where possible, classes in the plugins have been updated to provide `const` constructors
+* Updates to API docs and readme
+* Bump Android dependencies 
+* Fixed a grammar issue 0.9.1 changelog entry
+
 # [1.3.0]
 
 * [iOS] **BREAKING CHANGE** Plugin will now throw a `PlatformException` if there was an error returned upon calling the native [`addNotificationRequest`](https://developer.apple.com/documentation/usernotifications/unusernotificationcenter/1649508-addnotificationrequest) method. Previously the error was logged on the native side the using [`NSLog`](https://developer.apple.com/documentation/foundation/1395275-nslog) function.
@@ -122,7 +215,7 @@
 
 # [0.9.1]
 
-* Add support for media notification. This currently only supports showing the specified image as album artwork. Thanks to PR by [gianlucaparadise](https://github.com/gianlucaparadise)
+* Added support for media notifications. This currently only supports showing the specified image as album artwork. Thanks to the PR by [gianlucaparadise](https://github.com/gianlucaparadise)
 
 # [0.9.0+1]
 

@@ -4,6 +4,17 @@ import '../message.dart';
 
 /// Used to pass the content for an Android notification displayed using the messaging style.
 class MessagingStyleInformation extends DefaultStyleInformation {
+  MessagingStyleInformation(
+    this.person, {
+    this.conversationTitle,
+    this.groupConversation,
+    this.messages,
+    bool htmlFormatContent = false,
+    bool htmlFormatTitle = false,
+  }) : super(htmlFormatContent, htmlFormatTitle) {
+    assert(this.person?.name != null, 'Must provide the details of the person');
+  }
+
   /// The person displayed for any messages that are sent by the user.
   final Person person;
 
@@ -16,18 +27,7 @@ class MessagingStyleInformation extends DefaultStyleInformation {
   /// Messages to be displayed by this notification
   final List<Message> messages;
 
-  MessagingStyleInformation(
-    this.person, {
-    this.conversationTitle,
-    this.groupConversation,
-    this.messages,
-    bool htmlFormatContent = false,
-    bool htmlFormatTitle = false,
-  }) : super(htmlFormatContent, htmlFormatTitle) {
-    assert(this.person?.name != null, 'Must provide the details of the person');
-  }
-
-  /// Create a [Map] object that describes the [MessagingStyleInformation] object.
+  /// Creates a [Map] object that describes the [MessagingStyleInformation] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
   @override

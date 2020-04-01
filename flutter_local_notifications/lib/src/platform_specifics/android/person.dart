@@ -4,6 +4,15 @@ import 'enums.dart';
 
 /// Details of a person e.g. someone who sent a message.
 class Person {
+  const Person({
+    this.bot,
+    this.icon,
+    this.important,
+    this.key,
+    this.name,
+    this.uri,
+  });
+
   /// Whether or not this person represents a machine rather than a human.
   final bool bot;
 
@@ -21,15 +30,6 @@ class Person {
 
   /// Uri for this person.
   final String uri;
-
-  Person({
-    this.bot,
-    this.icon,
-    this.important,
-    this.key,
-    this.name,
-    this.uri,
-  });
 
   /// Creates a [Map] object that describes the [Person] object.
   ///
@@ -60,10 +60,10 @@ class Person {
         'icon': icon.icon,
         'iconSource': AndroidIconSource.ContentUri.index,
       };
-    } else if (icon is BitmapAssetAndroidIcon) {
+    } else if (icon is FlutterBitmapAssetAndroidIcon) {
       return <String, dynamic>{
         'icon': icon.icon,
-        'iconSource': AndroidIconSource.BitmapAsset.index,
+        'iconSource': AndroidIconSource.FlutterBitmapAsset.index,
       };
     } else {
       return <String, dynamic>{};

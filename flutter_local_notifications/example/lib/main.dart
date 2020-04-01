@@ -588,6 +588,7 @@ class _HomePageState extends State<HomePage> {
       'media channel name',
       'media channel description',
       largeIcon: FilePathAndroidBitmap(largeIconPath),
+      styleInformation: MediaStyleInformation(),
     );
     var platformChannelSpecifics =
         NotificationDetails(androidPlatformChannelSpecifics, null);
@@ -649,7 +650,7 @@ class _HomePageState extends State<HomePage> {
       name: 'Coworker',
       key: '2',
       uri: 'tel:9876543210',
-      icon: BitmapAssetAndroidIcon('icons/coworker.png'),
+      icon: FlutterBitmapAssetAndroidIcon('icons/coworker.png'),
     );
     // download the icon that would be use for the lunch bot person
     var largeIconPath = await _downloadAndSaveFile(

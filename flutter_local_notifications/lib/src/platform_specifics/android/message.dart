@@ -2,6 +2,18 @@ import 'person.dart';
 
 /// Represents a message used in Android messaging style notifications.
 class Message {
+  const Message(
+    this.text,
+    this.timestamp,
+    this.person, {
+    this.dataMimeType,
+    this.dataUri,
+  })  : assert(timestamp != null, 'timestamp must be provided'),
+        assert(
+            (dataMimeType == null && dataUri == null) ||
+                (dataMimeType != null && dataUri != null),
+            'Must provide both dataMimeType and dataUri together or not at all.');
+
   /// The message text
   final String text;
 
@@ -11,6 +23,9 @@ class Message {
   final DateTime timestamp;
 
   /// Person that sent this message.
+  ///
+  /// When this is set to `null` the `Person` given to [MessagingStyleInformation.person]
+  /// i.e. this would indicate that the message was sent from the user.
   final Person person;
 
   /// MIME type for this message context when the [dataUri] is provided.
@@ -21,21 +36,7 @@ class Message {
   /// The original text will be used if the content or MIME type isn't supported
   final String dataUri;
 
-  Message(
-    this.text,
-    this.timestamp,
-    this.person, {
-    this.dataMimeType,
-    this.dataUri,
-  }) {
-    assert(timestamp != null, 'timestamp must be provided');
-    assert(
-        (dataMimeType == null && dataUri == null) ||
-            (dataMimeType != null && dataUri != null),
-        'Must provide both dataMimeType and dataUri together or not at all.');
-  }
-
-  /// Create a [Map] object that describes the [Message] object.
+  /// Creates a [Map] object that describes the [Message] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
   Map<String, dynamic> toMap() {

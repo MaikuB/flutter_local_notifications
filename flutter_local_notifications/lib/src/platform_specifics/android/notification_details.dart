@@ -14,9 +14,46 @@ import 'styles/default_style_information.dart';
 
 /// Configures the notification on Android.
 class AndroidNotificationDetails {
+  const AndroidNotificationDetails(
+    this.channelId,
+    this.channelName,
+    this.channelDescription, {
+    this.icon,
+    this.importance = Importance.Default,
+    this.priority = Priority.Default,
+    this.styleInformation,
+    this.playSound = true,
+    this.sound,
+    this.enableVibration = true,
+    this.vibrationPattern,
+    this.groupKey,
+    this.setAsGroupSummary,
+    this.groupAlertBehavior = GroupAlertBehavior.All,
+    this.autoCancel = true,
+    this.ongoing,
+    this.color,
+    this.largeIcon,
+    this.onlyAlertOnce,
+    this.showWhen = true,
+    this.channelShowBadge = true,
+    this.showProgress = false,
+    this.maxProgress = 0,
+    this.progress = 0,
+    this.indeterminate = false,
+    this.channelAction = AndroidNotificationChannelAction.CreateIfNotExists,
+    this.enableLights = false,
+    this.ledColor,
+    this.ledOnMs,
+    this.ledOffMs,
+    this.ticker,
+    this.visibility,
+    this.timeoutAfter,
+    this.category,
+  });
+
   /// The icon that should be used when displaying the notification.
   ///
-  /// When not specified, this will use the default icon that has been configured.
+  /// When this is set to `null`, the default icon given to [AndroidInitializationSettings.defaultIcon] will be used.
   final String icon;
 
   /// The channel's id.
@@ -152,44 +189,7 @@ class AndroidNotificationDetails {
   /// Refer to Android notification API documentation at https://developer.android.com/reference/androidx/core/app/NotificationCompat.html#constants_2 for the available categories
   final String category;
 
-  AndroidNotificationDetails(
-    this.channelId,
-    this.channelName,
-    this.channelDescription, {
-    this.icon,
-    this.importance = Importance.Default,
-    this.priority = Priority.Default,
-    this.styleInformation,
-    this.playSound = true,
-    this.sound,
-    this.enableVibration = true,
-    this.vibrationPattern,
-    this.groupKey,
-    this.setAsGroupSummary,
-    this.groupAlertBehavior = GroupAlertBehavior.All,
-    this.autoCancel = true,
-    this.ongoing,
-    this.color,
-    this.largeIcon,
-    this.onlyAlertOnce,
-    this.showWhen = true,
-    this.channelShowBadge = true,
-    this.showProgress = false,
-    this.maxProgress = 0,
-    this.progress = 0,
-    this.indeterminate = false,
-    this.channelAction = AndroidNotificationChannelAction.CreateIfNotExists,
-    this.enableLights = false,
-    this.ledColor,
-    this.ledOnMs,
-    this.ledOffMs,
-    this.ticker,
-    this.visibility,
-    this.timeoutAfter,
-    this.category,
-  });
-
-  /// Create a [Map] object that describes the [AndroidNotificationDetails] object.
+  /// Creates a [Map] object that describes the [AndroidNotificationDetails] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
   Map<String, dynamic> toMap() {

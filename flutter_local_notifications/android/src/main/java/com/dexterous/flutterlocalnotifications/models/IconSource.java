@@ -1,8 +1,8 @@
 package com.dexterous.flutterlocalnotifications.models;
 
 public enum IconSource {
-    Drawable,
+    DrawableResource,
     BitmapFilePath,
     ContentUri,
-    BitmapAsset
+    FlutterBitmapAsset
 }

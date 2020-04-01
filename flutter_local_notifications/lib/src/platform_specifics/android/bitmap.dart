@@ -5,8 +5,8 @@ abstract class AndroidBitmap {
 }
 
 /// Represents a drawable resource belonging to the Android application that should be used as a bitmap on Android.
-class DrawableResourceAndroidBitmap extends AndroidBitmap {
-  DrawableResourceAndroidBitmap(this._bitmap);
+class DrawableResourceAndroidBitmap implements AndroidBitmap {
+  const DrawableResourceAndroidBitmap(this._bitmap);
 
   final String _bitmap;
 
@@ -18,8 +18,8 @@ class DrawableResourceAndroidBitmap extends AndroidBitmap {
 }
 
 /// Represents a file path that should be used for a bitmap on Android.
-class FilePathAndroidBitmap extends AndroidBitmap {
-  FilePathAndroidBitmap(this._bitmap);
+class FilePathAndroidBitmap implements AndroidBitmap {
+  const FilePathAndroidBitmap(this._bitmap);
 
   final String _bitmap;
 

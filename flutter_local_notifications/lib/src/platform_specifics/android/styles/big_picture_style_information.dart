@@ -5,6 +5,18 @@ import '../enums.dart';
 
 /// Used to pass the content for an Android notification displayed using the big picture style.
 class BigPictureStyleInformation extends DefaultStyleInformation {
+  const BigPictureStyleInformation(
+    this.bigPicture, {
+    this.contentTitle,
+    this.summaryText,
+    this.htmlFormatContentTitle = false,
+    this.htmlFormatSummaryText = false,
+    this.largeIcon,
+    bool htmlFormatContent = false,
+    bool htmlFormatTitle = false,
+    this.hideExpandedLargeIcon = false,
+  }) : super(htmlFormatContent, htmlFormatTitle);
+
   /// Overrides ContentTitle in the big form of the template.
   final String contentTitle;
 
@@ -25,17 +37,6 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
 
   /// Hides the large icon when showing the expanded notification.
   final bool hideExpandedLargeIcon;
-
-  BigPictureStyleInformation(this.bigPicture,
-      {this.contentTitle,
-      this.summaryText,
-      this.htmlFormatContentTitle = false,
-      this.htmlFormatSummaryText = false,
-      this.largeIcon,
-      bool htmlFormatContent = false,
-      bool htmlFormatTitle = false,
-      this.hideExpandedLargeIcon = false})
-      : super(htmlFormatContent, htmlFormatTitle);
 
   /// Creates a [Map] object that describes the [BigPictureStyleInformation] object.
   ///
