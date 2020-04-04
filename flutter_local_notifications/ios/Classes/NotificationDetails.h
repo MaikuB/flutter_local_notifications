@@ -17,4 +17,6 @@
     @property(nonatomic, strong) NotificationTime *repeatTime;
     @property(nonatomic, strong) NSNumber *day;
     @property(nonatomic, strong) NSNumber *badgeNumber;
+    @property(nonatomic, strong) NSString *scheduledDateTime;
+    @property(nonatomic, strong) NSString *timezoneName;
 @end

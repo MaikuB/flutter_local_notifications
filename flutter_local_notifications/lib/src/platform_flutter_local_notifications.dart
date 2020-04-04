@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
+import 'package:timezone/timezone.dart';
 
 import 'helpers.dart';
 import 'platform_specifics/android/initialization_settings.dart';
@@ -11,6 +12,7 @@ import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/notification_details.dart';
 import 'typedefs.dart';
 import 'types.dart';
+import 'tz_datetime_mapper.dart';
 
 const MethodChannel _channel =
     MethodChannel('dexterous.com/flutter/local_notifications');
@@ -85,6 +87,23 @@ class AndroidFlutterLocalNotificationsPlugin
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
     });
+  }
+
+  Future<void> tzSchedule(int id, String title, String body,
+      TZDateTime scheduledDate, AndroidNotificationDetails notificationDetails,
+      {String payload}) async {
+    validateId(id);
+    var serializedPlatformSpecifics =
+        notificationDetails?.toMap() ?? Map<String, dynamic>();
+    await _channel.invokeMethod(
+        'tzSchedule',
+        <String, dynamic>{
+          'id': id,
+          'title': title,
+          'body': body,
+          'platformSpecifics': serializedPlatformSpecifics,
+          'payload': payload ?? ''
+        }..addAll(scheduledDate.toMap()));
   }
 
   /// Shows a notification on a daily interval at the specified time
@@ -218,6 +237,23 @@ class IOSFlutterLocalNotificationsPlugin
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
+  }
+
+  Future<void> tzSchedule(int id, String title, String body,
+      TZDateTime scheduledDate, IOSNotificationDetails notificationDetails,
+      {String payload}) async {
+    validateId(id);
+    var serializedPlatformSpecifics =
+        notificationDetails?.toMap() ?? Map<String, dynamic>();
+    await _channel.invokeMethod(
+        'tzSchedule',
+        <String, dynamic>{
+          'id': id,
+          'title': title,
+          'body': body,
+          'platformSpecifics': serializedPlatformSpecifics,
+          'payload': payload ?? ''
+        }..addAll(scheduledDate.toMap()));
   }
 
   /// Shows a notification on a daily interval at the specified time

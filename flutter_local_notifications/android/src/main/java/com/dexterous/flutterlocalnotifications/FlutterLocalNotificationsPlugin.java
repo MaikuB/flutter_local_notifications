@@ -46,6 +46,9 @@ import com.google.gson.reflect.TypeToken;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -80,6 +83,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String CANCEL_METHOD = "cancel";
     private static final String CANCEL_ALL_METHOD = "cancelAll";
     private static final String SCHEDULE_METHOD = "schedule";
+    private static final String TZ_SCHEDULE_METHOD = "tzSchedule";
     private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
     private static final String SHOW_DAILY_AT_TIME_METHOD = "showDailyAtTime";
     private static final String SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = "showWeeklyAtDayAndTime";
@@ -116,7 +120,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         for (NotificationDetails scheduledNotification : scheduledNotifications) {
             if (scheduledNotification.repeatInterval == null) {
-                scheduleNotification(context, scheduledNotification, false);
+                if(scheduledNotification.timezoneName == null) {
+                    scheduleNotification(context, scheduledNotification, false);
+                } else {
+                    tzScheduleNotification(context, scheduledNotification, false);
+                }
             } else {
                 repeatNotification(context, scheduledNotification, false);
             }
@@ -260,6 +268,29 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
         if (updateScheduledNotificationsCache) {
             saveScheduledNotification(context, notificationDetails);
+        }
+    }
+
+    private static void tzScheduleNotification(Context context, final NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            Gson gson = buildGson();
+            ZonedDateTime zonedDateTime = ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), ZoneId.of(notificationDetails.timezoneName));
+            long epochMilli = zonedDateTime.toInstant().toEpochMilli();
+            String notificationDetailsJson = gson.toJson(notificationDetails);
+            Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
+            notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            AlarmManager alarmManager = getAlarmManager(context);
+            if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
+                AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+            } else {
+                AlarmManagerCompat.setExact(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+            }
+
+            if (updateScheduledNotificationsCache) {
+                saveScheduledNotification(context, notificationDetails);
+            }
         }
     }
 
@@ -742,6 +773,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 schedule(call, result);
                 break;
             }
+            case TZ_SCHEDULE_METHOD: {
+                tzSchedule(call, result);
+                break;
+            }
             case PERIODICALLY_SHOW_METHOD:
             case SHOW_DAILY_AT_TIME_METHOD:
             case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD: {
@@ -798,6 +833,15 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
         if (notificationDetails != null) {
             scheduleNotification(applicationContext, notificationDetails, true);
+            result.success(null);
+        }
+    }
+
+    private void tzSchedule(MethodCall call, Result result) {
+        Map<String, Object> arguments = call.arguments();
+        NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
+        if (notificationDetails != null) {
+            tzScheduleNotification(applicationContext, notificationDetails, true);
             result.success(null);
         }
     }

@@ -20,6 +20,7 @@
 NSString *const INITIALIZE_METHOD = @"initialize";
 NSString *const SHOW_METHOD = @"show";
 NSString *const SCHEDULE_METHOD = @"schedule";
+NSString *const TZSCHEDULE_METHOD = @"tzSchedule";
 NSString *const PERIODICALLY_SHOW_METHOD = @"periodicallyShow";
 NSString *const SHOW_DAILY_AT_TIME_METHOD = @"showDailyAtTime";
 NSString *const SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = @"showWeeklyAtDayAndTime";
@@ -64,6 +65,8 @@ NSString *const REPEAT_TIME = @"repeatTime";
 NSString *const HOUR = @"hour";
 NSString *const MINUTE = @"minute";
 NSString *const SECOND = @"second";
+NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTime";
+NSString *const TIMEZONE_NAME = @"timezoneName";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
@@ -78,9 +81,9 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 };
 
 static FlutterError *getFlutterError(NSError *error) {
-  return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
-                             message:error.localizedDescription
-                             details:error.domain];
+    return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
+                               message:error.localizedDescription
+                               details:error.domain];
 }
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -302,9 +305,12 @@ static FlutterError *getFlutterError(NSError *error) {
             notificationDetails.day = @([call.arguments[DAY] integerValue]);
         }
         notificationDetails.repeatInterval = @([call.arguments[REPEAT_INTERVAL] integerValue]);
+    } else if([TZSCHEDULE_METHOD isEqualToString:call.method]) {
+        notificationDetails.scheduledDateTime  = call.arguments[SCHEDULED_DATE_TIME];
+        notificationDetails.timezoneName = call.arguments[TIMEZONE_NAME];
     }
     if(@available(iOS 10.0, *)) {
-        [self showUserNotification:notificationDetails result:result];
+        [self showUserNotification:notificationDetails result:result arguments:call.arguments];
         return;
     }
     [self showLocalNotification:notificationDetails];
@@ -347,7 +353,7 @@ static FlutterError *getFlutterError(NSError *error) {
     if([INITIALIZE_METHOD isEqualToString:call.method]) {
         [self initialize:call result:result];
     } else if ([SHOW_METHOD isEqualToString:call.method] || [SCHEDULE_METHOD isEqualToString:call.method] || [PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]
-               || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
+               || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [TZSCHEDULE_METHOD isEqualToString:call.method]) {
         [self showNotification:call result:result];
     } else if([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
         [self requestPermissions:call result:result];
@@ -372,8 +378,8 @@ static FlutterError *getFlutterError(NSError *error) {
     }
 }
 
-- (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge payload:(NSString *)payload {
-    NSDictionary *userDict =[NSDictionary dictionaryWithObjectsAndKeys:id, NOTIFICATION_ID, title, TITLE, [NSNumber numberWithBool:presentAlert], PRESENT_ALERT, [NSNumber numberWithBool:presentSound], PRESENT_SOUND, [NSNumber numberWithBool:presentBadge], PRESENT_BADGE, payload, PAYLOAD, nil];
+- (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge payload:(NSString *)payload scheduledDate:(NSString *)scheduledDate timezoneName:(NSString *)timezoneName {
+    NSDictionary *userDict =[NSDictionary dictionaryWithObjectsAndKeys:id, NOTIFICATION_ID, title, TITLE, [NSNumber numberWithBool:presentAlert], PRESENT_ALERT, [NSNumber numberWithBool:presentSound], PRESENT_SOUND, [NSNumber numberWithBool:presentBadge], PRESENT_BADGE, payload, PAYLOAD, scheduledDate, SCHEDULED_DATE_TIME, timezoneName, TIMEZONE_NAME, nil];
     return userDict;
 }
 
@@ -381,7 +387,7 @@ static FlutterError *getFlutterError(NSError *error) {
     return userInfo != nil && userInfo[NOTIFICATION_ID] && userInfo[TITLE] && userInfo[PRESENT_ALERT] && userInfo[PRESENT_SOUND] && userInfo[PRESENT_BADGE] && userInfo[PAYLOAD];
 }
 
-- (void) showUserNotification:(NotificationDetails *) notificationDetails result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
+- (void) showUserNotification:(NotificationDetails *) notificationDetails result:(FlutterResult _Nonnull)result arguments:(NSDictionary *)arguments NS_AVAILABLE_IOS(10.0) {
     UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
     UNNotificationTrigger *trigger;
     content.title = notificationDetails.title;
@@ -409,8 +415,24 @@ static FlutterError *getFlutterError(NSError *error) {
             content.sound = [UNNotificationSound soundNamed:notificationDetails.sound];
         }
     }
-    content.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload];
-    if(notificationDetails.secondsSinceEpoch == nil) {
+    content.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload scheduledDate:notificationDetails.scheduledDateTime timezoneName:notificationDetails.scheduledDateTime];
+    if(notificationDetails.scheduledDateTime != nil && notificationDetails.timezoneName != nil) {
+        NSTimeZone *timezone = [NSTimeZone timeZoneWithName:notificationDetails.timezoneName];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
+        [dateFormatter setTimeZone:timezone];
+        NSDate *date = [dateFormatter dateFromString:notificationDetails.scheduledDateTime];
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        NSDateComponents *dateComponents    = [calendar components:(NSCalendarUnitYear  |
+                                                                    NSCalendarUnitMonth |
+                                                                    NSCalendarUnitDay   |
+                                                                    NSCalendarUnitHour  |
+                                                                    NSCalendarUnitMinute|
+                                                                    NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
+        trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:false];
+        
+    }
+    else if(notificationDetails.secondsSinceEpoch == nil) {
         NSTimeInterval timeInterval = 0.1;
         Boolean repeats = NO;
         if(notificationDetails.repeatInterval != nil) {
@@ -485,7 +507,7 @@ static FlutterError *getFlutterError(NSError *error) {
         }
     }
     
-    notification.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload];
+    notification.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload scheduledDate:notificationDetails.scheduledDateTime timezoneName:notificationDetails.timezoneName];
     if(notificationDetails.secondsSinceEpoch == nil) {
         if(notificationDetails.repeatInterval != nil) {
             NSTimeInterval timeInterval = 0;
