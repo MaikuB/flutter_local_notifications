@@ -121,5 +121,10 @@ void main() {
             },
           }));
     });
+
+    test('cancel', () async {
+      await flutterLocalNotificationsPlugin.cancel(1);
+      expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);
+    });
   });
 }
