@@ -61,5 +61,65 @@ void main() {
         })
       ]);
     });
+    test('show with no iOS-specific details', () async {
+      const IOSInitializationSettings initializationSettingsIOS =
+          IOSInitializationSettings();
+      const InitializationSettings initializationSettings =
+          InitializationSettings(null, initializationSettingsIOS);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.show(
+          1, 'notification title', 'notification body', null);
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, Object>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': null,
+          }));
+    });
+    test('show with iOS-specific details', () async {
+      const IOSInitializationSettings initializationSettingsIOS =
+          IOSInitializationSettings();
+      const InitializationSettings initializationSettings =
+          InitializationSettings(null, initializationSettingsIOS);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const NotificationDetails notificationDetails = NotificationDetails(
+          null,
+          IOSNotificationDetails(
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
+              sound: 'sound.mp3',
+              badgeNumber: 1,
+              attachments: [
+                IOSNotificationAttachment('video.mp4',
+                    identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
+              ]));
+      await flutterLocalNotificationsPlugin.show(
+          1, 'notification title', 'notification body', notificationDetails);
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, Object>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, Object>{
+              'presentAlert': true,
+              'presentBadge': true,
+              'presentSound': true,
+              'sound': 'sound.mp3',
+              'badgeNumber': 1,
+              'attachments': [
+                <String, Object>{
+                  'filePath': 'video.mp4',
+                  'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                }
+              ],
+            },
+          }));
+    });
   });
 }
