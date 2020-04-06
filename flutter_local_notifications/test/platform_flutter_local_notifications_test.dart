@@ -7,6 +7,39 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
+  group('android', () {
+    const MethodChannel channel =
+        MethodChannel('dexterous.com/flutter/local_notifications');
+    List<MethodCall> log = <MethodCall>[];
+
+    setUp(() {
+      flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin.private(
+          FakePlatform(operatingSystem: 'android'));
+      channel.setMockMethodCallHandler((MethodCall methodCall) async {
+        log.add(methodCall);
+        if (methodCall.method == 'pendingNotificationRequests') {
+          return Future.value(List<Map<String, Object>>());
+        } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
+          return Future.value(Map<String, Object>());
+        }
+      });
+    });
+    tearDown(() {
+      log.clear();
+    });
+    test('initialize', () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      expect(log, <Matcher>[
+        isMethodCall('initialize', arguments: <String, Object>{
+          'defaultIcon': 'app_icon',
+        })
+      ]);
+    });
+  });
   group('ios', () {
     const MethodChannel channel =
         MethodChannel('dexterous.com/flutter/local_notifications');
@@ -28,10 +61,10 @@ void main() {
       log.clear();
     });
     test('initialize with default parameter values', () async {
-      const IOSInitializationSettings initializationSettingsIOS =
+      const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings();
       const InitializationSettings initializationSettings =
-          InitializationSettings(null, initializationSettingsIOS);
+          InitializationSettings(null, iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       expect(log, <Matcher>[
         isMethodCall('initialize', arguments: <String, Object>{
@@ -45,7 +78,7 @@ void main() {
       ]);
     });
     test('initialize with all settings off', () async {
-      const IOSInitializationSettings initializationSettingsIOS =
+      const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings(
               requestAlertPermission: false,
               requestBadgePermission: false,
@@ -54,7 +87,7 @@ void main() {
               defaultPresentBadge: false,
               defaultPresentSound: false);
       const InitializationSettings initializationSettings =
-          InitializationSettings(null, initializationSettingsIOS);
+          InitializationSettings(null, iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       expect(log, <Matcher>[
         isMethodCall('initialize', arguments: <String, Object>{
@@ -68,10 +101,10 @@ void main() {
       ]);
     });
     test('show without iOS-specific details', () async {
-      const IOSInitializationSettings initializationSettingsIOS =
+      const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings();
       const InitializationSettings initializationSettings =
-          InitializationSettings(null, initializationSettingsIOS);
+          InitializationSettings(null, iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       await flutterLocalNotificationsPlugin.show(
           1, 'notification title', 'notification body', null);
@@ -86,10 +119,10 @@ void main() {
           }));
     });
     test('show with iOS-specific details', () async {
-      const IOSInitializationSettings initializationSettingsIOS =
+      const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings();
       const InitializationSettings initializationSettings =
-          InitializationSettings(null, initializationSettingsIOS);
+          InitializationSettings(null, iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const NotificationDetails notificationDetails = NotificationDetails(
           null,
