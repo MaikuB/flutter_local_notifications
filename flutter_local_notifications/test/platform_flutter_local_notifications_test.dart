@@ -61,7 +61,7 @@ void main() {
         })
       ]);
     });
-    test('show with no iOS-specific details', () async {
+    test('show without iOS-specific details', () async {
       const IOSInitializationSettings initializationSettingsIOS =
           IOSInitializationSettings();
       const InitializationSettings initializationSettings =
@@ -125,6 +125,11 @@ void main() {
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
       expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);
+    });
+
+    test('cancelAll', () async {
+      await flutterLocalNotificationsPlugin.cancelAll();
+      expect(log, <Matcher>[isMethodCall('cancelAll', arguments: null)]);
     });
   });
 }
