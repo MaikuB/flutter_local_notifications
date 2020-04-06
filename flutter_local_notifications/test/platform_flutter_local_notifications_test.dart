@@ -11,12 +11,16 @@ void main() {
     const MethodChannel channel =
         MethodChannel('dexterous.com/flutter/local_notifications');
     List<MethodCall> log = <MethodCall>[];
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      log.add(methodCall);
-    });
+
     setUp(() {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin.private(
           FakePlatform(operatingSystem: 'ios'));
+      channel.setMockMethodCallHandler((MethodCall methodCall) async {
+        log.add(methodCall);
+        if (methodCall.method == 'pendingNotificationRequests') {
+          return Future.value(List<Map<String, Object>>());
+        }
+      });
     });
     tearDown(() {
       log.clear();
@@ -130,6 +134,13 @@ void main() {
     test('cancelAll', () async {
       await flutterLocalNotificationsPlugin.cancelAll();
       expect(log, <Matcher>[isMethodCall('cancelAll', arguments: null)]);
+    });
+
+    test('pendingNotificationRequests', () async {
+      await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+      expect(log, <Matcher>[
+        isMethodCall('pendingNotificationRequests', arguments: null)
+      ]);
     });
   });
 }
