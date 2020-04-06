@@ -19,6 +19,8 @@ void main() {
         log.add(methodCall);
         if (methodCall.method == 'pendingNotificationRequests') {
           return Future.value(List<Map<String, Object>>());
+        } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
+          return Future.value(Map<String, Object>());
         }
       });
     });
@@ -140,6 +142,12 @@ void main() {
       await flutterLocalNotificationsPlugin.pendingNotificationRequests();
       expect(log, <Matcher>[
         isMethodCall('pendingNotificationRequests', arguments: null)
+      ]);
+    });
+    test('getNotificationAppLaunchDetails', () async {
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+      expect(log, <Matcher>[
+        isMethodCall('getNotificationAppLaunchDetails', arguments: null)
       ]);
     });
   });
