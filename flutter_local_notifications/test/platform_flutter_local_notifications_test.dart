@@ -39,6 +39,46 @@ void main() {
         })
       ]);
     });
+    test('show without Android-specific details', () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.show(
+          1, 'notification title', 'notification body', null);
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, Object>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': null,
+          }));
+    });
+    test('cancel', () async {
+      await flutterLocalNotificationsPlugin.cancel(1);
+      expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);
+    });
+
+    test('cancelAll', () async {
+      await flutterLocalNotificationsPlugin.cancelAll();
+      expect(log, <Matcher>[isMethodCall('cancelAll', arguments: null)]);
+    });
+
+    test('pendingNotificationRequests', () async {
+      await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+      expect(log, <Matcher>[
+        isMethodCall('pendingNotificationRequests', arguments: null)
+      ]);
+    });
+    test('getNotificationAppLaunchDetails', () async {
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+      expect(log, <Matcher>[
+        isMethodCall('getNotificationAppLaunchDetails', arguments: null)
+      ]);
+    });
   });
   group('ios', () {
     const MethodChannel channel =
