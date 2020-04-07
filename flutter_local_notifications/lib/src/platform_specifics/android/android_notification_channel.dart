@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'enums.dart';
+import 'notification_sound.dart';
 
 class AndroidNotificationChannel {
   const AndroidNotificationChannel(
@@ -10,6 +11,7 @@ class AndroidNotificationChannel {
     this.channelDescription, {
     this.importance = Importance.Default,
     this.playSound = true,
+    this.sound,
     this.enableVibration = true,
     this.vibrationPattern,
     this.channelShowBadge = true,
@@ -40,6 +42,13 @@ class AndroidNotificationChannel {
   ///
   /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   final bool playSound;
+
+  /// The sound to play for the notification.
+  ///
+  /// Requires setting [playSound] to true for it to work.
+  /// If [playSound] is set to true but this is not specified then the default sound is played.
+  /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  final AndroidNotificationSound sound;
 
   /// Indicates if vibration should be enabled when the notification is displayed.
   ///
@@ -89,6 +98,22 @@ class AndroidNotificationChannel {
       'ledColorRed': ledColor?.red,
       'ledColorGreen': ledColor?.green,
       'ledColorBlue': ledColor?.blue,
-    };
+    }..addAll(_convertSoundToMap());
+  }
+
+  Map<String, dynamic> _convertSoundToMap() {
+    if (sound is RawResourceAndroidNotificationSound) {
+      return <String, dynamic>{
+        'sound': sound.sound,
+        'soundSource': AndroidNotificationSoundSource.RawResource.index,
+      };
+    } else if (sound is UriAndroidNotificationSound) {
+      return <String, dynamic>{
+        'sound': sound.sound,
+        'soundSource': AndroidNotificationSoundSource.Uri.index,
+      };
+    } else {
+      return <String, dynamic>{};
+    }
   }
 }

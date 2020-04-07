@@ -29,6 +29,7 @@ import androidx.core.graphics.drawable.IconCompat;
 import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelAction;
+import com.dexterous.flutterlocalnotifications.models.NotificationChannelPlugin;
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
 import com.dexterous.flutterlocalnotifications.models.PersonDetails;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
@@ -75,7 +76,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
-    private static final String INITIALIZE_CHANNEL_METHOD = "initialize_channel";
+    private static final String CREATE_CHANNEL_METHOD = "create_notification_channel";
     private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
     private static final String SHOW_METHOD = "show";
     private static final String CANCEL_METHOD = "cancel";
@@ -125,7 +126,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static Notification createNotification(Context context, NotificationDetails notificationDetails) {
-        setupNotificationChannel(context, notificationDetails);
+        setupNotificationChannel(context, NotificationChannelPlugin.fromNotificationDetails(notificationDetails));
         Intent intent = new Intent(context, getMainActivityClass(context));
         intent.setAction(SELECT_NOTIFICATION);
         intent.putExtra(PAYLOAD, notificationDetails.payload);
@@ -613,32 +614,43 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         builder.setStyle(bigTextStyle);
     }
 
-    private static void setupNotificationChannel(Context context, NotificationDetails notificationDetails) {
+    private static void setupNotificationChannel(Context context, NotificationChannelPlugin notificationChannelPlugin) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(notificationDetails.channelId);
+            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(notificationChannelPlugin.channelId);
             // only create/update the channel when needed/specified. Allow this happen to when channelAction may be null to support cases where notifications had been
             // created on older versions of the plugin where channel management options weren't available back then
-            if ((notificationChannel == null && (notificationDetails.channelAction == null || notificationDetails.channelAction == NotificationChannelAction.CreateIfNotExists)) || (notificationChannel != null && notificationDetails.channelAction == NotificationChannelAction.Update)) {
-                notificationChannel = new NotificationChannel(notificationDetails.channelId, notificationDetails.channelName, notificationDetails.importance);
-                notificationChannel.setDescription(notificationDetails.channelDescription);
-                if (notificationDetails.playSound) {
+            if ((notificationChannel == null && (notificationChannelPlugin.channelAction == null || notificationChannelPlugin.channelAction == NotificationChannelAction.CreateIfNotExists)) || (notificationChannel != null && notificationChannelPlugin.channelAction == NotificationChannelAction.Update)) {
+                notificationChannel = new NotificationChannel(notificationChannelPlugin.channelId, notificationChannelPlugin.channelName, notificationChannelPlugin.importance);
+                notificationChannel.setDescription(notificationChannelPlugin.channelDescription);
+                if (notificationChannelPlugin.playSound) {
                     AudioAttributes audioAttributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build();
-                    Uri uri = retrieveSoundResourceUri(context, notificationDetails);
+                    Uri uri = null;
+                    if (StringUtils.isNullOrEmpty(notificationChannelPlugin.sound)) {
+                        uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    } else {
+                        // allow null as soundSource was added later and prior to that, it was assumed to be a raw resource
+                        if (notificationChannelPlugin.soundSource == null || notificationChannelPlugin.soundSource == SoundSource.RawResource) {
+                            int soundResourceId = context.getResources().getIdentifier(notificationChannelPlugin.sound, "raw", context.getPackageName());
+                            uri = Uri.parse("android.resource://" + context.getPackageName() + "/" + soundResourceId);
+                        } else if (notificationChannelPlugin.soundSource == SoundSource.Uri) {
+                            uri = Uri.parse(notificationChannelPlugin.sound);
+                        }
+                    }
                     notificationChannel.setSound(uri, audioAttributes);
                 } else {
                     notificationChannel.setSound(null, null);
                 }
-                notificationChannel.enableVibration(BooleanUtils.getValue(notificationDetails.enableVibration));
-                if (notificationDetails.vibrationPattern != null && notificationDetails.vibrationPattern.length > 0) {
-                    notificationChannel.setVibrationPattern(notificationDetails.vibrationPattern);
+                notificationChannel.enableVibration(BooleanUtils.getValue(notificationChannelPlugin.enableVibration));
+                if (notificationChannelPlugin.vibrationPattern != null && notificationChannelPlugin.vibrationPattern.length > 0) {
+                    notificationChannel.setVibrationPattern(notificationChannelPlugin.vibrationPattern);
                 }
-                boolean enableLights = BooleanUtils.getValue(notificationDetails.enableLights);
+                boolean enableLights = BooleanUtils.getValue(notificationChannelPlugin.enableLights);
                 notificationChannel.enableLights(enableLights);
-                if (enableLights && notificationDetails.ledColor != null) {
-                    notificationChannel.setLightColor(notificationDetails.ledColor);
+                if (enableLights && notificationChannelPlugin.ledColor != null) {
+                    notificationChannel.setLightColor(notificationChannelPlugin.ledColor);
                 }
-                notificationChannel.setShowBadge(BooleanUtils.getValue(notificationDetails.channelShowBadge));
+                notificationChannel.setShowBadge(BooleanUtils.getValue(notificationChannelPlugin.channelShowBadge));
                 notificationManager.createNotificationChannel(notificationChannel);
             }
         }
@@ -758,7 +770,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case PENDING_NOTIFICATION_REQUESTS_METHOD:
                 pendingNotificationRequests(result);
                 break;
-            case INITIALIZE_CHANNEL_METHOD:
+            case CREATE_CHANNEL_METHOD:
                 initializeChannel(call, result);
                 break;
             default:
@@ -947,9 +959,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private void initializeChannel(MethodCall call, Result result) {
         Map<String, Object> arguments = call.arguments();
-        NotificationDetails notificationDetails = NotificationDetails.from(arguments);
-        if (notificationDetails != null) {
-            setupNotificationChannel(applicationContext, notificationDetails);
+        NotificationChannelPlugin notificationChannelPlugin = NotificationChannelPlugin.from(arguments);
+        if (notificationChannelPlugin != null) {
+            setupNotificationChannel(applicationContext, notificationChannelPlugin);
             result.success(true);
         }
     }

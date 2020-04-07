@@ -173,9 +173,7 @@ class AndroidFlutterLocalNotificationsPlugin
   /// Initializes channel for android API >= 26(from Oreo).This is necessary to 
   /// receive the first message from the background when the channel is not initialized.
   Future<bool> createNotificationChannel(AndroidNotificationChannel notificationDetails) async {
-    return await _channel.invokeMethod('initialize_channel',  <String, dynamic>{
-        'platformSpecifics': notificationDetails?.toMap(),
-      },);
+    return await _channel.invokeMethod('create_notification_channel', notificationDetails.toMap());
   }
 }
 
