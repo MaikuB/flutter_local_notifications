@@ -103,6 +103,8 @@ public class NotificationDetails {
     private static final String TIMEOUT_AFTER = "timeoutAfter";
     private static final String SHOW_WHEN = "showWhen";
 
+    private static final String CHANNEL_CREATE = "channelCreate";
+
 
     public Integer id;
     public String title;
@@ -151,6 +153,7 @@ public class NotificationDetails {
     public Long timeoutAfter;
     public String category;
     public Boolean showWhen;
+    public Boolean channelCreate;
 
 
 
@@ -292,6 +295,7 @@ public class NotificationDetails {
             notificationDetails.importance = (Integer) platformChannelSpecifics.get(IMPORTANCE);
             notificationDetails.channelShowBadge = (Boolean) platformChannelSpecifics.get(CHANNEL_SHOW_BADGE);
             notificationDetails.channelAction = NotificationChannelAction.values()[(Integer) platformChannelSpecifics.get(CHANNEL_ACTION)];
+            notificationDetails.channelCreate = (Boolean) platformChannelSpecifics.get(CHANNEL_CREATE);
         }
     }
 
