@@ -5,6 +5,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 
 import 'helpers.dart';
+import 'platform_specifics/android/android_notification_channel.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
@@ -171,7 +172,7 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Initializes channel for android API >= 26(from Oreo).This is necessary to 
   /// receive the first message from the background when the channel is not initialized.
-  Future<bool> initializeChannel(AndroidNotificationDetails notificationDetails) async {
+  Future<bool> createNotificationChannel(AndroidNotificationChannel notificationDetails) async {
     return await _channel.invokeMethod('initialize_channel',  <String, dynamic>{
         'platformSpecifics': notificationDetails?.toMap(),
       },);
