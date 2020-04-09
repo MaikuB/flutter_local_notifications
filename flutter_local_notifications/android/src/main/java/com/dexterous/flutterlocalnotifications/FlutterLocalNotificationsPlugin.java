@@ -76,7 +76,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
-    private static final String CREATE_CHANNEL_METHOD = "create_notification_channel";
+    private static final String CREATE_NOTIFICATION_CHANNEL_METHOD = "createNotificationChannel";
     private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
     private static final String SHOW_METHOD = "show";
     private static final String CANCEL_METHOD = "cancel";
@@ -770,8 +770,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case PENDING_NOTIFICATION_REQUESTS_METHOD:
                 pendingNotificationRequests(result);
                 break;
-            case CREATE_CHANNEL_METHOD:
-                initializeChannel(call, result);
+            case CREATE_NOTIFICATION_CHANNEL_METHOD:
+                createNotificationChannel(call, result);
                 break;
             default:
                 result.notImplemented();
@@ -957,13 +957,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return false;
     }
 
-    private void initializeChannel(MethodCall call, Result result) {
+    private void createNotificationChannel(MethodCall call, Result result) {
         Map<String, Object> arguments = call.arguments();
         NotificationChannelPlugin notificationChannelPlugin = NotificationChannelPlugin.from(arguments);
-        if (notificationChannelPlugin != null) {
-            setupNotificationChannel(applicationContext, notificationChannelPlugin);
-            result.success(true);
-        }
+        setupNotificationChannel(applicationContext, notificationChannelPlugin);
+        result.success(true);
     }
 }
 
