@@ -17,7 +17,6 @@ class AndroidNotificationChannel {
     this.showBadge = true,
     this.enableLights = false,
     this.ledColor,
-    this.channelAction = AndroidNotificationChannelAction.CreateIfNotExists,
   });
 
   /// The channel's id.
@@ -68,11 +67,6 @@ class AndroidNotificationChannel {
   /// Whether notifications posted to this channel can appear as application icon badges in a Launcher
   final bool showBadge;
 
-  /// The action to take for managing notification channels.
-  ///
-  /// Defaults to creating the notification channel using the provided details if it doesn't exist
-  final AndroidNotificationChannelAction channelAction;
-
   /// Creates a [Map] object that describes the [AndroidNotificationChannel] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
@@ -91,7 +85,8 @@ class AndroidNotificationChannel {
       'ledColorRed': ledColor?.red,
       'ledColorGreen': ledColor?.green,
       'ledColorBlue': ledColor?.blue,
-      'channelAction': channelAction?.index,
+      'channelAction':
+          AndroidNotificationChannelAction.CreateIfNotExists?.index,
     }..addAll(_convertSoundToMap());
   }
 
