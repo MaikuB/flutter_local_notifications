@@ -29,7 +29,7 @@ import androidx.core.graphics.drawable.IconCompat;
 import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelAction;
-import com.dexterous.flutterlocalnotifications.models.NotificationChannelPlugin;
+import com.dexterous.flutterlocalnotifications.models.NotificationChannelDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
 import com.dexterous.flutterlocalnotifications.models.PersonDetails;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
@@ -126,7 +126,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static Notification createNotification(Context context, NotificationDetails notificationDetails) {
-        setupNotificationChannel(context, NotificationChannelPlugin.fromNotificationDetails(notificationDetails));
+        setupNotificationChannel(context, NotificationChannelDetails.fromNotificationDetails(notificationDetails));
         Intent intent = new Intent(context, getMainActivityClass(context));
         intent.setAction(SELECT_NOTIFICATION);
         intent.putExtra(PAYLOAD, notificationDetails.payload);
@@ -614,59 +614,56 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         builder.setStyle(bigTextStyle);
     }
 
-    private static void setupNotificationChannel(Context context, NotificationChannelPlugin notificationChannelPlugin) {
+    private static void setupNotificationChannel(Context context, NotificationChannelDetails notificationChannelDetails) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(notificationChannelPlugin.channelId);
+            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(notificationChannelDetails.id);
             // only create/update the channel when needed/specified. Allow this happen to when channelAction may be null to support cases where notifications had been
             // created on older versions of the plugin where channel management options weren't available back then
-            if ((notificationChannel == null && (notificationChannelPlugin.channelAction == null || notificationChannelPlugin.channelAction == NotificationChannelAction.CreateIfNotExists)) || (notificationChannel != null && notificationChannelPlugin.channelAction == NotificationChannelAction.Update)) {
-                notificationChannel = new NotificationChannel(notificationChannelPlugin.channelId, notificationChannelPlugin.channelName, notificationChannelPlugin.importance);
-                notificationChannel.setDescription(notificationChannelPlugin.channelDescription);
-                if (notificationChannelPlugin.playSound) {
+            if ((notificationChannel == null && (notificationChannelDetails.channelAction == null || notificationChannelDetails.channelAction == NotificationChannelAction.CreateIfNotExists)) || (notificationChannel != null && notificationChannelDetails.channelAction == NotificationChannelAction.Update)) {
+                notificationChannel = new NotificationChannel(notificationChannelDetails.id, notificationChannelDetails.name, notificationChannelDetails.importance);
+                notificationChannel.setDescription(notificationChannelDetails.description);
+                if (notificationChannelDetails.playSound) {
                     AudioAttributes audioAttributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build();
-                    Uri uri = null;
-                    if (StringUtils.isNullOrEmpty(notificationChannelPlugin.sound)) {
-                        uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                    } else {
-                        // allow null as soundSource was added later and prior to that, it was assumed to be a raw resource
-                        if (notificationChannelPlugin.soundSource == null || notificationChannelPlugin.soundSource == SoundSource.RawResource) {
-                            int soundResourceId = context.getResources().getIdentifier(notificationChannelPlugin.sound, "raw", context.getPackageName());
-                            uri = Uri.parse("android.resource://" + context.getPackageName() + "/" + soundResourceId);
-                        } else if (notificationChannelPlugin.soundSource == SoundSource.Uri) {
-                            uri = Uri.parse(notificationChannelPlugin.sound);
-                        }
-                    }
+                    Uri uri = retrieveSoundResourceUri(context, notificationChannelDetails);
                     notificationChannel.setSound(uri, audioAttributes);
                 } else {
                     notificationChannel.setSound(null, null);
                 }
-                notificationChannel.enableVibration(BooleanUtils.getValue(notificationChannelPlugin.enableVibration));
-                if (notificationChannelPlugin.vibrationPattern != null && notificationChannelPlugin.vibrationPattern.length > 0) {
-                    notificationChannel.setVibrationPattern(notificationChannelPlugin.vibrationPattern);
+                notificationChannel.enableVibration(BooleanUtils.getValue(notificationChannelDetails.enableVibration));
+                if (notificationChannelDetails.vibrationPattern != null && notificationChannelDetails.vibrationPattern.length > 0) {
+                    notificationChannel.setVibrationPattern(notificationChannelDetails.vibrationPattern);
                 }
-                boolean enableLights = BooleanUtils.getValue(notificationChannelPlugin.enableLights);
+                boolean enableLights = BooleanUtils.getValue(notificationChannelDetails.enableLights);
                 notificationChannel.enableLights(enableLights);
-                if (enableLights && notificationChannelPlugin.ledColor != null) {
-                    notificationChannel.setLightColor(notificationChannelPlugin.ledColor);
+                if (enableLights && notificationChannelDetails.ledColor != null) {
+                    notificationChannel.setLightColor(notificationChannelDetails.ledColor);
                 }
-                notificationChannel.setShowBadge(BooleanUtils.getValue(notificationChannelPlugin.channelShowBadge));
+                notificationChannel.setShowBadge(BooleanUtils.getValue(notificationChannelDetails.showBadge));
                 notificationManager.createNotificationChannel(notificationChannel);
             }
         }
     }
 
     private static Uri retrieveSoundResourceUri(Context context, NotificationDetails notificationDetails) {
+        return retrieveSoundResourceUri(context, notificationDetails.sound, notificationDetails.soundSource);
+    }
+
+    private static Uri retrieveSoundResourceUri(Context context, NotificationChannelDetails notificationChannelDetails) {
+        return retrieveSoundResourceUri(context, notificationChannelDetails.sound, notificationChannelDetails.soundSource);
+    }
+
+    private static Uri retrieveSoundResourceUri(Context context, String sound, SoundSource soundSource ) {
         Uri uri = null;
-        if (StringUtils.isNullOrEmpty(notificationDetails.sound)) {
+        if (StringUtils.isNullOrEmpty(sound)) {
             uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         } else {
             // allow null as soundSource was added later and prior to that, it was assumed to be a raw resource
-            if (notificationDetails.soundSource == null || notificationDetails.soundSource == SoundSource.RawResource) {
-                int soundResourceId = context.getResources().getIdentifier(notificationDetails.sound, "raw", context.getPackageName());
+            if (soundSource == null || soundSource == SoundSource.RawResource) {
+                int soundResourceId = context.getResources().getIdentifier(sound, "raw", context.getPackageName());
                 uri = Uri.parse("android.resource://" + context.getPackageName() + "/" + soundResourceId);
-            } else if (notificationDetails.soundSource == SoundSource.Uri) {
-                uri = Uri.parse(notificationDetails.sound);
+            } else if (soundSource == SoundSource.Uri) {
+                uri = Uri.parse(sound);
             }
         }
         return uri;
@@ -959,10 +956,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private void createNotificationChannel(MethodCall call, Result result) {
         Map<String, Object> arguments = call.arguments();
-        NotificationChannelPlugin notificationChannelPlugin = NotificationChannelPlugin.from(arguments);
-        setupNotificationChannel(applicationContext, notificationChannelPlugin);
+        NotificationChannelDetails notificationChannelDetails = NotificationChannelDetails.from(arguments);
+        setupNotificationChannel(applicationContext, notificationChannelDetails);
         result.success(true);
     }
 }
-
-

@@ -71,11 +71,11 @@ public class NotificationChannelDetails {
 
     public static NotificationChannelDetails fromNotificationDetails(NotificationDetails notificationDetails) {
         NotificationChannelDetails notificationChannel = new NotificationChannelDetails();
-        notificationChannel.id = notificationDetails.id;
-        notificationChannel.name = notificationDetails.name;
-        notificationChannel.description = notificationDetails.description;
+        notificationChannel.id = notificationDetails.channelId;
+        notificationChannel.name = notificationDetails.channelName;
+        notificationChannel.description = notificationDetails.channelDescription;
         notificationChannel.importance = notificationDetails.importance;
-        notificationChannel.showBadge = notificationDetails.showBadge;
+        notificationChannel.showBadge = notificationDetails.channelShowBadge;
         notificationChannel.channelAction = notificationDetails.channelAction;
         notificationChannel.enableVibration = notificationDetails.enableVibration;
         notificationChannel.vibrationPattern = notificationDetails.vibrationPattern;

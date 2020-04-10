@@ -419,13 +419,34 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-  
+
   Future<void> _createNotificationChannel() async {
     var androidNotificationChannel = AndroidNotificationChannel(
-        'your channel id', 'your channel name', 'your channel description',
+      'your channel id',
+      'your channel name',
+      'your channel description',
     );
-    await flutterLocalNotificationsPlugin.createNotificationChannel(
-      androidNotificationChannel);
+    var result = await flutterLocalNotificationsPlugin.createNotificationChannel(androidNotificationChannel);
+    if (result) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return Scaffold(
+              appBar: AppBar(title: Text('Channel created')),
+              body: Center(
+                child: RaisedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Go back!'),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
   }
 
   Future<void> _showNotification() async {
