@@ -16,7 +16,7 @@ import 'types.dart';
 const MethodChannel _channel =
     MethodChannel('dexterous.com/flutter/local_notifications');
 
-/// An implementation of a local notifications platform using method channels
+/// An implementation of a local notifications platform using method channels.
 class MethodChannelFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
   @override
@@ -52,7 +52,7 @@ class MethodChannelFlutterLocalNotificationsPlugin
   }
 }
 
-/// Android implementation of the local notifications plugin
+/// Android implementation of the local notifications plugin.
 class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback _onSelectNotification;
@@ -68,7 +68,8 @@ class AndroidFlutterLocalNotificationsPlugin
         'initialize', initializationSettings.toMap());
   }
 
-  /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
+  /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped.
+  ///
   /// The [androidAllowWhileIdle] parameter is Android-specific and determines if the notification should still be shown at the specified time
   /// even when in a low-power idle mode.
   Future<void> schedule(int id, String title, String body,
@@ -105,7 +106,7 @@ class AndroidFlutterLocalNotificationsPlugin
     });
   }
 
-  /// Shows a notification on a daily interval at the specified time
+  /// Shows a notification on a daily interval at the specified time.
   Future<void> showWeeklyAtDayAndTime(
       int id,
       String title,
@@ -163,11 +164,15 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Creates a notification channel.
   ///
-  /// Only applies to Android 8.0+
+  /// Only applies to Android 8.0+.
   Future<void> createNotificationChannel(
       AndroidNotificationChannel notificationChannel) {
     return _channel.invokeMethod(
         'createNotificationChannel', notificationChannel.toMap());
+  }
+
+  Future<void> deleteNotificationChannel(String channelId) {
+    return _channel.invokeMethod('deleteNotificationChannel', channelId);
   }
 
   Future<void> _handleMethod(MethodCall call) {
@@ -180,14 +185,16 @@ class AndroidFlutterLocalNotificationsPlugin
   }
 }
 
-/// iOS implementation of the local notifications plugin
+/// iOS implementation of the local notifications plugin.
 class IOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback _onSelectNotification;
 
   DidReceiveLocalNotificationCallback _onDidReceiveLocalNotification;
 
-  /// Initializes the plugin. Call this method on application before using the plugin further.
+  /// Initializes the plugin.
+  ///
+  /// Call this method on application before using the plugin further.
   /// This should only be done once. When a notification created by this plugin was used to launch the app,
   /// calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
   ///
@@ -215,7 +222,7 @@ class IOSFlutterLocalNotificationsPlugin
     });
   }
 
-  /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped
+  /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped.
   Future<void> schedule(int id, String title, String body,
       DateTime scheduledDate, IOSNotificationDetails notificationDetails,
       {String payload}) async {
@@ -230,7 +237,7 @@ class IOSFlutterLocalNotificationsPlugin
     });
   }
 
-  /// Shows a notification on a daily interval at the specified time
+  /// Shows a notification on a daily interval at the specified time.
   Future<void> showDailyAtTime(int id, String title, String body,
       Time notificationTime, IOSNotificationDetails notificationDetails,
       {String payload}) async {
@@ -247,7 +254,7 @@ class IOSFlutterLocalNotificationsPlugin
     });
   }
 
-  /// Shows a notification on a daily interval at the specified time
+  /// Shows a notification on a daily interval at the specified time.
   Future<void> showWeeklyAtDayAndTime(
       int id,
       String title,

@@ -77,6 +77,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
     private static final String CREATE_NOTIFICATION_CHANNEL_METHOD = "createNotificationChannel";
+    private static final String DELETE_NOTIFICATION_CHANNEL_METHOD = "deleteNotificationChannel";
     private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
     private static final String SHOW_METHOD = "show";
     private static final String CANCEL_METHOD = "cancel";
@@ -93,6 +94,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INVALID_BIG_PICTURE_ERROR_CODE = "INVALID_BIG_PICTURE";
     private static final String INVALID_SOUND_ERROR_CODE = "INVALID_SOUND";
     private static final String INVALID_LED_DETAILS_ERROR_CODE = "INVALID_LED_DETAILS";
+    private static final String DELETE_NOTIFICATION_CHANNEL_FAILED = "DELETE_NOTIFICATION_CHANNEL_FAILED";
     private static final String INVALID_LED_DETAILS_ERROR_MESSAGE = "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of Android before Oreo";
     private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
@@ -762,6 +764,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case CREATE_NOTIFICATION_CHANNEL_METHOD:
                 createNotificationChannel(call, result);
                 break;
+            case DELETE_NOTIFICATION_CHANNEL_METHOD:
+                deleteNotificationChannel(call, result);
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -951,5 +956,14 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         NotificationChannelDetails notificationChannelDetails = NotificationChannelDetails.from(arguments);
         setupNotificationChannel(applicationContext, notificationChannelDetails);
         result.success(null);
+    }
+
+    private void deleteNotificationChannel(MethodCall call, Result result) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                String channelId = call.arguments();
+                notificationManager.deleteNotificationChannel(channelId);
+                result.success(null);
+        }
     }
 }

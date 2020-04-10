@@ -1328,6 +1328,16 @@ void main() {
       ]);
     });
 
+    test('deleteNotificationChannel', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          .deleteNotificationChannel('channelId');
+      expect(log, <Matcher>[
+        isMethodCall('deleteNotificationChannel', arguments: 'channelId')
+      ]);
+    });
+
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
       expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);

@@ -410,6 +410,12 @@ class _HomePageState extends State<HomePage> {
                       await _createNotificationChannel();
                     },
                   ),
+                  PaddedRaisedButton(
+                    buttonText: 'Delete notification channel [Android]',
+                    onPressed: () async {
+                      await _deleteNotificationChannel();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -995,6 +1001,29 @@ class _HomePageState extends State<HomePage> {
           return AlertDialog(
             content:
                 Text('Channel \"${androidNotificationChannel.name}\" created'),
+            actions: [
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<void> _deleteNotificationChannel() async {
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.deleteNotificationChannel('your channel id');
+
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Text('Channel \"your channel id\" deleted'),
             actions: [
               FlatButton(
                 child: Text('OK'),
