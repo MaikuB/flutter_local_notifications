@@ -999,8 +999,8 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            content:
-                Text('Channel \"${androidNotificationChannel.name}\" created'),
+            content: Text(
+                'Channel with name \"${androidNotificationChannel.name}\" created'),
             actions: [
               FlatButton(
                 child: Text('OK'),
@@ -1014,16 +1014,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _deleteNotificationChannel() async {
+    const channelId = 'your channel id 2';
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
-        ?.deleteNotificationChannel('your channel id');
+        ?.deleteNotificationChannel(channelId);
 
     await showDialog<void>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            content: Text('Channel \"your channel id\" deleted'),
+            content: Text('Channel with id \"$channelId\" deleted'),
             actions: [
               FlatButton(
                 child: Text('OK'),
