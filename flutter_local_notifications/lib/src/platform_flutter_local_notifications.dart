@@ -173,8 +173,8 @@ class AndroidFlutterLocalNotificationsPlugin
   /// Creates a notification channel.
   ///  
   /// Only applies to Android 8.0+
-  Future<bool> createNotificationChannel(AndroidNotificationChannel notificationDetails) async {
-    return await _channel.invokeMethod('createNotificationChannel', notificationDetails.toMap());
+  Future<void> createNotificationChannel(AndroidNotificationChannel notificationDetails) {
+    return _channel.invokeMethod('createNotificationChannel', notificationDetails.toMap());
   }
 }
 

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/src/platform_specifics/android/notification_channel.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:platform/platform.dart';
 
@@ -247,14 +246,5 @@ class FlutterLocalNotificationsPlugin {
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() {
     return FlutterLocalNotificationsPlatform.instance
         ?.pendingNotificationRequests();
-  }
-
-  Future<bool> createNotificationChannel(AndroidNotificationChannel notificationChannel) async {
-    if (_platform.isAndroid) {
-      return await resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.createNotificationChannel(notificationChannel);
-    }
-    return null;
   }
 }

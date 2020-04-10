@@ -440,7 +440,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private static void setSound(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
         if (BooleanUtils.getValue(notificationDetails.playSound)) {
-            Uri uri = retrieveSoundResourceUri(context, notificationDetails);
+            Uri uri = retrieveSoundResourceUri(context, notificationDetails.sound, notificationDetails.soundSource);
             builder.setSound(uri);
         } else {
             builder.setSound(null);
@@ -625,7 +625,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 notificationChannel.setDescription(notificationChannelDetails.description);
                 if (notificationChannelDetails.playSound) {
                     AudioAttributes audioAttributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build();
-                    Uri uri = retrieveSoundResourceUri(context, notificationChannelDetails);
+                    Uri uri = retrieveSoundResourceUri(context, notificationChannelDetails.sound, notificationChannelDetails.soundSource);
                     notificationChannel.setSound(uri, audioAttributes);
                 } else {
                     notificationChannel.setSound(null, null);
@@ -643,14 +643,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 notificationManager.createNotificationChannel(notificationChannel);
             }
         }
-    }
-
-    private static Uri retrieveSoundResourceUri(Context context, NotificationDetails notificationDetails) {
-        return retrieveSoundResourceUri(context, notificationDetails.sound, notificationDetails.soundSource);
-    }
-
-    private static Uri retrieveSoundResourceUri(Context context, NotificationChannelDetails notificationChannelDetails) {
-        return retrieveSoundResourceUri(context, notificationChannelDetails.sound, notificationChannelDetails.soundSource);
     }
 
     private static Uri retrieveSoundResourceUri(Context context, String sound, SoundSource soundSource ) {
@@ -958,6 +950,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         Map<String, Object> arguments = call.arguments();
         NotificationChannelDetails notificationChannelDetails = NotificationChannelDetails.from(arguments);
         setupNotificationChannel(applicationContext, notificationChannelDetails);
-        result.success(true);
+        result.success(null);
     }
 }
