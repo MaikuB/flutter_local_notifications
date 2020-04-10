@@ -1479,6 +1479,32 @@ void main() {
           }));
     });
 
+    test('requestPermissions with default settings', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          .requestPermissions();
+      expect(log, <Matcher>[
+        isMethodCall('requestPermissions', arguments: <String, Object>{
+          'sound': null,
+          'badge': null,
+          'alert': null,
+        })
+      ]);
+    });
+    test('requestPermissions with all settings requested', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          .requestPermissions(sound: true, badge: true, alert: true);
+      expect(log, <Matcher>[
+        isMethodCall('requestPermissions', arguments: <String, Object>{
+          'sound': true,
+          'badge': true,
+          'alert': true,
+        })
+      ]);
+    });
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
       expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);
