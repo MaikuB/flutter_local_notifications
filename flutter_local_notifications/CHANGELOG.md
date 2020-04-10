@@ -1,3 +1,8 @@
+# [1.4.1]
+
+* [Android] added the ability to create notification channels before a notification is shown. This can be done by calling the `createNotificationChannel` within the `AndroidFlutterLocalNotificationsPlugin` class. This allows applications to create notification channels before a notification is shown. Thanks to the PR from [Vladimir Gerashchenko](https://github.com/ZaarU).
+* [Android] added the ability to delete notification channels. This can be done by calling `deleteNotificationChannel`  within `AndroidFlutterLocalNotificationsPlugin` class.
+
 # [1.4.0]
 
 Please note that there are a number of breaking changes in this release to improve the developer experience when using the plugin APIs. The changes should hopefully be straightforward but please through the changelog carefully just in case. The steps migrate your code has been covered below but the Git history of the example application's `main.dart` file can also be used as reference.
