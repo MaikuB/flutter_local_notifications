@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/src/platform_specifics/android/enums.dart';
@@ -1248,6 +1249,67 @@ void main() {
               },
             },
           }));
+    });
+    test('createNotificationChannel with default settings', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          .createNotificationChannel(AndroidNotificationChannel(
+              'channelId', 'channelName', 'channelDescription'));
+      expect(log, <Matcher>[
+        isMethodCall('createNotificationChannel', arguments: <String, dynamic>{
+          'id': 'channelId',
+          'name': 'channelName',
+          'description': 'channelDescription',
+          'showBadge': true,
+          'importance': Importance.Default.value,
+          'playSound': true,
+          'enableVibration': true,
+          'vibrationPattern': null,
+          'enableLights': false,
+          'ledColorAlpha': null,
+          'ledColorRed': null,
+          'ledColorGreen': null,
+          'ledColorBlue': null,
+          'channelAction':
+              AndroidNotificationChannelAction.CreateIfNotExists?.index,
+        })
+      ]);
+    });
+    test('createNotificationChannel with non-default settings', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          .createNotificationChannel(AndroidNotificationChannel(
+            'channelId',
+            'channelName',
+            'channelDescription',
+            showBadge: false,
+            importance: Importance.Max,
+            playSound: false,
+            enableLights: true,
+            enableVibration: false,
+            ledColor: const Color.fromARGB(255, 255, 0, 0),
+          ));
+      expect(log, <Matcher>[
+        isMethodCall('createNotificationChannel', arguments: <String, dynamic>{
+          'id': 'channelId',
+          'name': 'channelName',
+          'description': 'channelDescription',
+          'showBadge': false,
+          'importance': Importance.Max.value,
+          'playSound': false,
+          'enableVibration': false,
+          'vibrationPattern': null,
+          'enableLights': true,
+          'ledColorAlpha': 255,
+          'ledColorRed': 255,
+          'ledColorGreen': 0,
+          'ledColorBlue': 0,
+          'channelAction':
+              AndroidNotificationChannelAction.CreateIfNotExists?.index,
+        })
+      ]);
     });
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
