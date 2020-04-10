@@ -80,12 +80,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -125,7 +125,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.Default.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
@@ -157,12 +157,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -204,7 +204,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.Default.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
@@ -235,12 +235,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -282,7 +282,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.Default.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
@@ -313,12 +313,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -358,7 +358,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.Default.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
                 'htmlFormatTitle': true,
               },
@@ -391,12 +391,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -436,7 +436,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.BigPicture.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
                 'bigPicture': 'bigPictureDrawable',
@@ -484,12 +484,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -529,7 +529,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.BigPicture.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
                 'htmlFormatTitle': true,
                 'bigPicture': 'bigPictureDrawable',
@@ -571,12 +571,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -616,7 +616,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.BigPicture.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
                 'bigPicture': 'bigPictureFilePath',
@@ -664,12 +664,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -709,7 +709,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.BigPicture.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
                 'htmlFormatTitle': true,
                 'bigPicture': 'bigPictureFilePath',
@@ -749,12 +749,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -794,7 +794,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.Inbox.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
                 'lines': ['line1'],
@@ -838,12 +838,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -883,7 +883,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.Inbox.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
                 'htmlFormatTitle': true,
                 'lines': ['line1'],
@@ -918,12 +918,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -963,7 +963,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.Media.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
@@ -995,12 +995,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -1040,7 +1040,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.Media.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
                 'htmlFormatTitle': true,
               },
@@ -1079,12 +1079,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -1124,10 +1124,10 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.Messaging.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
-                'person': <String, dynamic>{
+                'person': <String, Object>{
                   'bot': null,
                   'important': null,
                   'key': null,
@@ -1137,7 +1137,7 @@ void main() {
                 'conversationTitle': null,
                 'groupConversation': null,
                 'messages': [
-                  <String, dynamic>{
+                  <String, Object>{
                     'text': 'message 1',
                     'timestamp': messageDateTime.millisecondsSinceEpoch,
                     'person': null,
@@ -1192,12 +1192,12 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, dynamic>{
+          isMethodCall('show', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, dynamic>{
+            'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -1237,10 +1237,10 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'style': AndroidNotificationStyle.Messaging.index,
-              'styleInformation': <String, dynamic>{
+              'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
-                'person': <String, dynamic>{
+                'person': <String, Object>{
                   'bot': true,
                   'important': true,
                   'key': 'key',
@@ -1252,7 +1252,7 @@ void main() {
                 'conversationTitle': 'conversationTitle',
                 'groupConversation': true,
                 'messages': [
-                  <String, dynamic>{
+                  <String, Object>{
                     'text': 'message 1',
                     'timestamp': messageDateTime.millisecondsSinceEpoch,
                     'person': null,
@@ -1272,7 +1272,7 @@ void main() {
           .createNotificationChannel(AndroidNotificationChannel(
               'channelId', 'channelName', 'channelDescription'));
       expect(log, <Matcher>[
-        isMethodCall('createNotificationChannel', arguments: <String, dynamic>{
+        isMethodCall('createNotificationChannel', arguments: <String, Object>{
           'id': 'channelId',
           'name': 'channelName',
           'description': 'channelDescription',
@@ -1308,7 +1308,7 @@ void main() {
             ledColor: const Color.fromARGB(255, 255, 0, 0),
           ));
       expect(log, <Matcher>[
-        isMethodCall('createNotificationChannel', arguments: <String, dynamic>{
+        isMethodCall('createNotificationChannel', arguments: <String, Object>{
           'id': 'channelId',
           'name': 'channelName',
           'description': 'channelDescription',
@@ -1325,6 +1325,16 @@ void main() {
           'channelAction':
               AndroidNotificationChannelAction.CreateIfNotExists?.index,
         })
+      ]);
+    });
+
+    test('deleteNotificationChannel', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          .deleteNotificationChannel('channelId');
+      expect(log, <Matcher>[
+        isMethodCall('deleteNotificationChannel', arguments: 'channelId')
       ]);
     });
 

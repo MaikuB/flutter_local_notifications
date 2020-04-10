@@ -24,7 +24,7 @@ public class NotificationChannelDetails {
     private static final String LED_COLOR_GREEN = "ledColorGreen";
     private static final String LED_COLOR_BLUE = "ledColorBlue";
 
-    public String id = "Default_Id";
+    public String id;
     public String name;
     public String description;
     public Boolean showBadge;
