@@ -39,6 +39,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Group notifications
 * [Android] Show progress notifications
 * [Android] Configure notification visibility on the lockscreen
+* [Android] Ability to create and delete notification channels
 * [iOS] Request notification permissions and customise the permissions being requested around displaying notifications
 * [iOS] Display notifications with attachments
 
@@ -70,7 +71,11 @@ Note that this plugin aims to provide abstractions for all platforms as opposed 
 
 The GitHub repository has an example app that should demonstrate of all the supported features of the plugin. Please check the example for more detailed code samples. If you only copy and paste the Dart code then this will not work as there's setup required for each platform. Pub also generates API docs for the latest version [here](https://pub.dartlang.org/documentation/flutter_local_notifications/latest/). Besides referring to the example app and getting started section, please ensure that you have performed the steps in the integration guide for each platform further below.
 
-The following samples will demonstrate the more commonly used functionalities. The first step is to create a new instance of the plugin class and then initialise it with the settings to use for each platform
+The following samples will demonstrate the more commonly used functionalities.
+
+### Initialisation
+
+The first step is to create a new instance of the plugin class and then initialise it with the settings to use for each platform
 
 ```dart
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
