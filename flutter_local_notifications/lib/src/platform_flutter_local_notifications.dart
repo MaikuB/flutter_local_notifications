@@ -5,6 +5,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 
 import 'helpers.dart';
+import 'platform_specifics/android/notification_channel.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
@@ -158,6 +159,15 @@ class AndroidFlutterLocalNotificationsPlugin
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
+  }
+
+  /// Creates a notification channel.
+  ///
+  /// Only applies to Android 8.0+
+  Future<void> createNotificationChannel(
+      AndroidNotificationChannel notificationChannel) {
+    return _channel.invokeMethod(
+        'createNotificationChannel', notificationChannel.toMap());
   }
 
   Future<void> _handleMethod(MethodCall call) {
