@@ -161,6 +161,15 @@ class AndroidFlutterLocalNotificationsPlugin
     });
   }
 
+  /// Creates a notification channel.
+  ///
+  /// Only applies to Android 8.0+
+  Future<void> createNotificationChannel(
+      AndroidNotificationChannel notificationChannel) {
+    return _channel.invokeMethod(
+        'createNotificationChannel', notificationChannel.toMap());
+  }
+
   Future<void> _handleMethod(MethodCall call) {
     switch (call.method) {
       case 'selectNotification':
@@ -168,13 +177,6 @@ class AndroidFlutterLocalNotificationsPlugin
       default:
         return Future.error('method not defined');
     }
-  }
-
-  /// Creates a notification channel.
-  ///  
-  /// Only applies to Android 8.0+
-  Future<void> createNotificationChannel(AndroidNotificationChannel notificationDetails) {
-    return _channel.invokeMethod('createNotificationChannel', notificationDetails.toMap());
   }
 }
 
