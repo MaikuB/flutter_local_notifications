@@ -404,6 +404,18 @@ class _HomePageState extends State<HomePage> {
                       await _showNotificationWithAttachment();
                     },
                   ),
+                  PaddedRaisedButton(
+                    buttonText: 'Create notification channel [Android]',
+                    onPressed: () async {
+                      await _createNotificationChannel();
+                    },
+                  ),
+                  PaddedRaisedButton(
+                    buttonText: 'Delete notification channel [Android]',
+                    onPressed: () async {
+                      await _deleteNotificationChannel();
+                    },
+                  ),
                 ],
               ),
             ),
@@ -745,10 +757,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> _checkPendingNotificationRequests() async {
     var pendingNotificationRequests =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
-    for (var pendingNotificationRequest in pendingNotificationRequests) {
-      debugPrint(
-          'pending notification: [id: ${pendingNotificationRequest.id}, title: ${pendingNotificationRequest.title}, body: ${pendingNotificationRequest.body}, payload: ${pendingNotificationRequest.payload}]');
-    }
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -976,35 +984,61 @@ class _HomePageState extends State<HomePage> {
         notificationDetails);
   }
 
-  String _toTwoDigitString(int value) {
-    return value.toString().padLeft(2, '0');
+  Future<void> _createNotificationChannel() async {
+    var androidNotificationChannel = AndroidNotificationChannel(
+      'your channel id 2',
+      'your channel name 2',
+      'your channel description 2',
+    );
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(androidNotificationChannel);
+
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Text(
+                'Channel with name \"${androidNotificationChannel.name}\" created'),
+            actions: [
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
-  Future<void> onDidReceiveLocalNotification(
-      int id, String title, String body, String payload) async {
-    // display a dialog with the notification details, tap ok to go to another page
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: title != null ? Text(title) : null,
-        content: body != null ? Text(body) : null,
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            child: Text('Ok'),
-            onPressed: () async {
-              Navigator.of(context, rootNavigator: true).pop();
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SecondScreen(payload),
-                ),
-              );
-            },
-          )
-        ],
-      ),
-    );
+  Future<void> _deleteNotificationChannel() async {
+    const channelId = 'your channel id 2';
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.deleteNotificationChannel(channelId);
+
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Text('Channel with id \"$channelId\" deleted'),
+            actions: [
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  String _toTwoDigitString(int value) {
+    return value.toString().padLeft(2, '0');
   }
 }
 
