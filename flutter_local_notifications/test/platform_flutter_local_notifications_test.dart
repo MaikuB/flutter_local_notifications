@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_local_notifications/src/platform_specifics/android/enums.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:platform/platform.dart';
 
@@ -55,6 +56,1197 @@ void main() {
             'body': 'notification body',
             'payload': '',
             'platformSpecifics': null,
+          }));
+    });
+    test('show with default Android-specific details', () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+              'channelId', 'channelName', 'channelDescription');
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.Default.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': false,
+                'htmlFormatTitle': false,
+              },
+            },
+          }));
+    });
+
+    test(
+        'show with default Android-specific details and custom sound from raw resource',
+        () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        'channelDescription',
+        sound: RawResourceAndroidNotificationSound('sound.mp3'),
+        playSound: true,
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'sound': 'sound.mp3',
+              'soundSource': AndroidNotificationSoundSource.RawResource.index,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.Default.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': false,
+                'htmlFormatTitle': false,
+              },
+            },
+          }));
+    });
+
+    test('show with default Android-specific details and custom sound from uri',
+        () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        'channelDescription',
+        sound: UriAndroidNotificationSound('uri'),
+        playSound: true,
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'sound': 'uri',
+              'soundSource': AndroidNotificationSoundSource.Uri.index,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.Default.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': false,
+                'htmlFormatTitle': false,
+              },
+            },
+          }));
+    });
+    test(
+        'show with default Android-specific details and html formatted title and content/body',
+        () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        'channelDescription',
+        styleInformation: DefaultStyleInformation(true, true),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.Default.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': true,
+                'htmlFormatTitle': true,
+              },
+            },
+          }));
+    });
+
+    test(
+        'show with default Android big picture style settings using a drawable resource',
+        () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        'channelDescription',
+        styleInformation: BigPictureStyleInformation(
+          DrawableResourceAndroidBitmap('bigPictureDrawable'),
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.BigPicture.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': false,
+                'htmlFormatTitle': false,
+                'bigPicture': 'bigPictureDrawable',
+                'bigPictureBitmapSource': AndroidBitmapSource.Drawable.index,
+                'contentTitle': null,
+                'summaryText': null,
+                'htmlFormatContentTitle': false,
+                'htmlFormatSummaryText': false,
+                'hideExpandedLargeIcon': false,
+              },
+            },
+          }));
+    });
+    test(
+        'show with non-default Android big picture style settings using a drawable resource',
+        () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        'channelDescription',
+        styleInformation: BigPictureStyleInformation(
+          DrawableResourceAndroidBitmap('bigPictureDrawable'),
+          contentTitle: 'contentTitle',
+          summaryText: 'summaryText',
+          htmlFormatContentTitle: true,
+          htmlFormatSummaryText: true,
+          largeIcon: DrawableResourceAndroidBitmap('largeDrawableIcon'),
+          htmlFormatContent: true,
+          htmlFormatTitle: true,
+          hideExpandedLargeIcon: true,
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.BigPicture.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': true,
+                'htmlFormatTitle': true,
+                'bigPicture': 'bigPictureDrawable',
+                'bigPictureBitmapSource': AndroidBitmapSource.Drawable.index,
+                'largeIcon': 'largeDrawableIcon',
+                'largeIconBitmapSource': AndroidBitmapSource.Drawable.index,
+                'contentTitle': 'contentTitle',
+                'summaryText': 'summaryText',
+                'htmlFormatContentTitle': true,
+                'htmlFormatSummaryText': true,
+                'hideExpandedLargeIcon': true,
+              },
+            },
+          }));
+    });
+    test(
+        'show with default Android big picture style settings using a file path',
+        () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        'channelDescription',
+        styleInformation: BigPictureStyleInformation(
+          FilePathAndroidBitmap('bigPictureFilePath'),
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.BigPicture.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': false,
+                'htmlFormatTitle': false,
+                'bigPicture': 'bigPictureFilePath',
+                'bigPictureBitmapSource': AndroidBitmapSource.FilePath.index,
+                'contentTitle': null,
+                'summaryText': null,
+                'htmlFormatContentTitle': false,
+                'htmlFormatSummaryText': false,
+                'hideExpandedLargeIcon': false,
+              },
+            },
+          }));
+    });
+    test(
+        'show with non-default Android big picture style settings using a file path',
+        () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        'channelDescription',
+        styleInformation: BigPictureStyleInformation(
+          FilePathAndroidBitmap('bigPictureFilePath'),
+          contentTitle: 'contentTitle',
+          summaryText: 'summaryText',
+          htmlFormatContentTitle: true,
+          htmlFormatSummaryText: true,
+          largeIcon: FilePathAndroidBitmap('largeFilePathIcon'),
+          htmlFormatContent: true,
+          htmlFormatTitle: true,
+          hideExpandedLargeIcon: true,
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.BigPicture.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': true,
+                'htmlFormatTitle': true,
+                'bigPicture': 'bigPictureFilePath',
+                'bigPictureBitmapSource': AndroidBitmapSource.FilePath.index,
+                'largeIcon': 'largeFilePathIcon',
+                'largeIconBitmapSource': AndroidBitmapSource.FilePath.index,
+                'contentTitle': 'contentTitle',
+                'summaryText': 'summaryText',
+                'htmlFormatContentTitle': true,
+                'htmlFormatSummaryText': true,
+                'hideExpandedLargeIcon': true,
+              },
+            },
+          }));
+    });
+    test('show with default Android inbox style settings', () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        'channelDescription',
+        styleInformation: InboxStyleInformation(
+          ['line1'],
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.Inbox.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': false,
+                'htmlFormatTitle': false,
+                'lines': ['line1'],
+                'contentTitle': null,
+                'summaryText': null,
+                'htmlFormatContentTitle': false,
+                'htmlFormatSummaryText': false,
+                'htmlFormatLines': false,
+              },
+            },
+          }));
+    });
+    test('show with non-default Android inbox style settings', () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        'channelDescription',
+        styleInformation: InboxStyleInformation(
+          ['line1'],
+          htmlFormatLines: true,
+          htmlFormatContent: true,
+          htmlFormatContentTitle: true,
+          htmlFormatSummaryText: true,
+          htmlFormatTitle: true,
+          contentTitle: 'contentTitle',
+          summaryText: 'summaryText',
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.Inbox.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': true,
+                'htmlFormatTitle': true,
+                'lines': ['line1'],
+                'contentTitle': 'contentTitle',
+                'summaryText': 'summaryText',
+                'htmlFormatContentTitle': true,
+                'htmlFormatSummaryText': true,
+                'htmlFormatLines': true,
+              },
+            },
+          }));
+    });
+    test('show with default Android media style settings', () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        'channelDescription',
+        styleInformation: MediaStyleInformation(),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.Media.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': false,
+                'htmlFormatTitle': false,
+              },
+            },
+          }));
+    });
+    test('show with non-default Android media style settings', () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        'channelDescription',
+        styleInformation: MediaStyleInformation(
+          htmlFormatTitle: true,
+          htmlFormatContent: true,
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.Media.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': true,
+                'htmlFormatTitle': true,
+              },
+            },
+          }));
+    });
+    test('show with default Android messaging style settings', () async {
+      final DateTime messageDateTime = DateTime.now();
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      final AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        'channelDescription',
+        styleInformation: MessagingStyleInformation(
+          Person(name: 'name'),
+          messages: [
+            Message(
+              'message 1',
+              messageDateTime,
+              null,
+            ),
+          ],
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.Messaging.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': false,
+                'htmlFormatTitle': false,
+                'person': <String, dynamic>{
+                  'bot': null,
+                  'important': null,
+                  'key': null,
+                  'name': 'name',
+                  'uri': null,
+                },
+                'conversationTitle': null,
+                'groupConversation': null,
+                'messages': [
+                  <String, dynamic>{
+                    'text': 'message 1',
+                    'timestamp': messageDateTime.millisecondsSinceEpoch,
+                    'person': null,
+                    'dataMimeType': null,
+                    'dataUri': null,
+                  }
+                ],
+              },
+            },
+          }));
+    });
+    test('show with non-default Android messaging style settings', () async {
+      final DateTime messageDateTime = DateTime.now();
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      final AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        'channelDescription',
+        styleInformation: MessagingStyleInformation(
+          Person(
+            bot: true,
+            icon: DrawableResourceAndroidIcon('drawablePersonIcon'),
+            important: true,
+            key: 'key',
+            name: 'name',
+            uri: 'uri',
+          ),
+          conversationTitle: 'conversationTitle',
+          groupConversation: true,
+          messages: [
+            Message(
+              'message 1',
+              messageDateTime,
+              null,
+              dataMimeType: 'dataMimeType',
+              dataUri: 'dataUri',
+            ),
+          ],
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, dynamic>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, dynamic>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.Messaging.index,
+              'styleInformation': <String, dynamic>{
+                'htmlFormatContent': false,
+                'htmlFormatTitle': false,
+                'person': <String, dynamic>{
+                  'bot': true,
+                  'important': true,
+                  'key': 'key',
+                  'name': 'name',
+                  'uri': 'uri',
+                  'icon': 'drawablePersonIcon',
+                  'iconSource': AndroidIconSource.DrawableResource.index,
+                },
+                'conversationTitle': 'conversationTitle',
+                'groupConversation': true,
+                'messages': [
+                  <String, dynamic>{
+                    'text': 'message 1',
+                    'timestamp': messageDateTime.millisecondsSinceEpoch,
+                    'person': null,
+                    'dataMimeType': 'dataMimeType',
+                    'dataUri': 'dataUri',
+                  }
+                ],
+              },
+            },
           }));
     });
     test('cancel', () async {
