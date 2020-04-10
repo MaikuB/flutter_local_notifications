@@ -26,9 +26,11 @@ void main() {
         }
       });
     });
+
     tearDown(() {
       log.clear();
     });
+
     test('initialize', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
@@ -41,6 +43,7 @@ void main() {
         })
       ]);
     });
+
     test('show without Android-specific details', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
@@ -59,6 +62,7 @@ void main() {
             'platformSpecifics': null,
           }));
     });
+
     test('show with default Android-specific details', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
@@ -285,6 +289,7 @@ void main() {
             },
           }));
     });
+
     test(
         'show with default Android-specific details and html formatted title and content/body',
         () async {
@@ -445,6 +450,7 @@ void main() {
             },
           }));
     });
+
     test(
         'show with non-default Android big picture style settings using a drawable resource',
         () async {
@@ -539,6 +545,7 @@ void main() {
             },
           }));
     });
+
     test(
         'show with default Android big picture style settings using a file path',
         () async {
@@ -623,6 +630,7 @@ void main() {
             },
           }));
     });
+
     test(
         'show with non-default Android big picture style settings using a file path',
         () async {
@@ -717,6 +725,7 @@ void main() {
             },
           }));
     });
+
     test('show with default Android inbox style settings', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
@@ -798,6 +807,7 @@ void main() {
             },
           }));
     });
+
     test('show with non-default Android inbox style settings', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
@@ -886,6 +896,7 @@ void main() {
             },
           }));
     });
+
     test('show with default Android media style settings', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
@@ -959,6 +970,7 @@ void main() {
             },
           }));
     });
+
     test('show with non-default Android media style settings', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
@@ -1035,6 +1047,7 @@ void main() {
             },
           }));
     });
+
     test('show with default Android messaging style settings', () async {
       final DateTime messageDateTime = DateTime.now();
       const AndroidInitializationSettings androidInitializationSettings =
@@ -1136,6 +1149,7 @@ void main() {
             },
           }));
     });
+
     test('show with non-default Android messaging style settings', () async {
       final DateTime messageDateTime = DateTime.now();
       const AndroidInitializationSettings androidInitializationSettings =
@@ -1250,6 +1264,7 @@ void main() {
             },
           }));
     });
+
     test('createNotificationChannel with default settings', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -1276,6 +1291,7 @@ void main() {
         })
       ]);
     });
+
     test('createNotificationChannel with non-default settings', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -1311,6 +1327,7 @@ void main() {
         })
       ]);
     });
+
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
       expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);
@@ -1327,6 +1344,7 @@ void main() {
         isMethodCall('pendingNotificationRequests', arguments: null)
       ]);
     });
+
     test('getNotificationAppLaunchDetails', () async {
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
       expect(log, <Matcher>[
@@ -1334,6 +1352,7 @@ void main() {
       ]);
     });
   });
+
   group('ios', () {
     const MethodChannel channel =
         MethodChannel('dexterous.com/flutter/local_notifications');
@@ -1351,9 +1370,11 @@ void main() {
         }
       });
     });
+
     tearDown(() {
       log.clear();
     });
+
     test('initialize with default parameter values', () async {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings();
@@ -1371,6 +1392,7 @@ void main() {
         })
       ]);
     });
+
     test('initialize with all settings off', () async {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings(
@@ -1394,6 +1416,7 @@ void main() {
         })
       ]);
     });
+
     test('show without iOS-specific details', () async {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings();
@@ -1412,6 +1435,7 @@ void main() {
             'platformSpecifics': null,
           }));
     });
+
     test('show with iOS-specific details', () async {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings();
@@ -1471,6 +1495,7 @@ void main() {
         isMethodCall('pendingNotificationRequests', arguments: null)
       ]);
     });
+
     test('getNotificationAppLaunchDetails', () async {
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
       expect(log, <Matcher>[
