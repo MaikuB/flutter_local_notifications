@@ -46,7 +46,7 @@ public class NotificationChannelDetails {
         notificationChannel.description = (String) arguments.get(DESCRIPTION);
         notificationChannel.importance = (Integer) arguments.get(IMPORTANCE);
         notificationChannel.showBadge = (Boolean) arguments.get(SHOW_BADGE);
-        notificationChannel.channelAction = NotificationChannelAction.CreateIfNotExists;
+        notificationChannel.channelAction =  NotificationChannelAction.values()[(Integer) arguments.get(CHANNEL_ACTION)];
         notificationChannel.enableVibration = (Boolean) arguments.get(ENABLE_VIBRATION);
         notificationChannel.vibrationPattern = (long[]) arguments.get(VIBRATION_PATTERN);
 
@@ -76,7 +76,14 @@ public class NotificationChannelDetails {
         notificationChannel.description = notificationDetails.channelDescription;
         notificationChannel.importance = notificationDetails.importance;
         notificationChannel.showBadge = notificationDetails.channelShowBadge;
-        notificationChannel.channelAction = notificationDetails.channelAction;
+        if (notificationDetails.channelAction == null)
+        {
+            notificationChannel.channelAction = NotificationChannelAction.CreateIfNotExists;
+        }
+        else
+        {
+            notificationChannel.channelAction = notificationDetails.channelAction;
+        }
         notificationChannel.enableVibration = notificationDetails.enableVibration;
         notificationChannel.vibrationPattern = notificationDetails.vibrationPattern;
         notificationChannel.playSound = notificationDetails.playSound;
