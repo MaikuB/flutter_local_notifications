@@ -6,11 +6,11 @@ import com.dexterous.flutterlocalnotifications.SoundSource;
 
 import java.util.Map;
 
-public class NotificationChannelPlugin {
-    private static final String CHANNEL_ID = "channelId";
-    private static final String CHANNEL_NAME = "channelName";
-    private static final String CHANNEL_DESCRIPTION = "channelDescription";
-    private static final String CHANNEL_SHOW_BADGE = "channelShowBadge";
+public class NotificationChannelDetails {
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private static final String DESCRIPTION = "description";
+    private static final String SHOW_BADGE = "showBadge";
     private static final String IMPORTANCE = "importance";
     private static final String PLAY_SOUND = "playSound";
     private static final String SOUND = "sound";
@@ -24,10 +24,10 @@ public class NotificationChannelPlugin {
     private static final String LED_COLOR_GREEN = "ledColorGreen";
     private static final String LED_COLOR_BLUE = "ledColorBlue";
 
-    public String channelId = "Default_Channel_Id";
-    public String channelName;
-    public String channelDescription;
-    public Boolean channelShowBadge;
+    public String id = "Default_Id";
+    public String name;
+    public String description;
+    public Boolean showBadge;
     public Integer importance;
     public Boolean playSound;
     public String sound;
@@ -39,14 +39,14 @@ public class NotificationChannelPlugin {
     public Integer ledColor;
 
 
-    public static NotificationChannelPlugin from(Map<String, Object> arguments) {
-        NotificationChannelPlugin notificationChannel = new NotificationChannelPlugin();
-        notificationChannel.channelId = (String) arguments.get(CHANNEL_ID);
-        notificationChannel.channelName = (String) arguments.get(CHANNEL_NAME);
-        notificationChannel.channelDescription = (String) arguments.get(CHANNEL_DESCRIPTION);
+    public static NotificationChannelDetails from(Map<String, Object> arguments) {
+        NotificationChannelDetails notificationChannel = new NotificationChannelDetails();
+        notificationChannel.id = (String) arguments.get(ID);
+        notificationChannel.name = (String) arguments.get(NAME);
+        notificationChannel.description = (String) arguments.get(DESCRIPTION);
         notificationChannel.importance = (Integer) arguments.get(IMPORTANCE);
-        notificationChannel.channelShowBadge = (Boolean) arguments.get(CHANNEL_SHOW_BADGE);
-        notificationChannel.channelAction = NotificationChannelAction.values()[(Integer) arguments.get(CHANNEL_ACTION)];
+        notificationChannel.showBadge = (Boolean) arguments.get(SHOW_BADGE);
+        notificationChannel.channelAction =  NotificationChannelAction.values()[(Integer) arguments.get(CHANNEL_ACTION)];
         notificationChannel.enableVibration = (Boolean) arguments.get(ENABLE_VIBRATION);
         notificationChannel.vibrationPattern = (long[]) arguments.get(VIBRATION_PATTERN);
 
@@ -69,14 +69,21 @@ public class NotificationChannelPlugin {
         return notificationChannel;
     }
 
-    public static NotificationChannelPlugin fromNotificationDetails(NotificationDetails notificationDetails) {
-        NotificationChannelPlugin notificationChannel = new NotificationChannelPlugin();
-        notificationChannel.channelId = notificationDetails.channelId;
-        notificationChannel.channelName = notificationDetails.channelName;
-        notificationChannel.channelDescription = notificationDetails.channelDescription;
+    public static NotificationChannelDetails fromNotificationDetails(NotificationDetails notificationDetails) {
+        NotificationChannelDetails notificationChannel = new NotificationChannelDetails();
+        notificationChannel.id = notificationDetails.channelId;
+        notificationChannel.name = notificationDetails.channelName;
+        notificationChannel.description = notificationDetails.channelDescription;
         notificationChannel.importance = notificationDetails.importance;
-        notificationChannel.channelShowBadge = notificationDetails.channelShowBadge;
-        notificationChannel.channelAction = notificationDetails.channelAction;
+        notificationChannel.showBadge = notificationDetails.channelShowBadge;
+        if (notificationDetails.channelAction == null)
+        {
+            notificationChannel.channelAction = NotificationChannelAction.CreateIfNotExists;
+        }
+        else
+        {
+            notificationChannel.channelAction = notificationDetails.channelAction;
+        }
         notificationChannel.enableVibration = notificationDetails.enableVibration;
         notificationChannel.vibrationPattern = notificationDetails.vibrationPattern;
         notificationChannel.playSound = notificationDetails.playSound;

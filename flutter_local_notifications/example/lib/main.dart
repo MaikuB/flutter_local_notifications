@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/src/platform_specifics/android/notification_channel.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -404,6 +405,12 @@ class _HomePageState extends State<HomePage> {
                       await _showNotificationWithAttachment();
                     },
                   ),
+                  Platform.isAndroid ? PaddedRaisedButton(
+                    buttonText: 'Create notification channel [Android]',
+                    onPressed: () async {
+                      await _createNotificationChannel();
+                    },
+                  ) : Container()
                 ],
               ),
             ),
@@ -411,6 +418,35 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _createNotificationChannel() async {
+    var androidNotificationChannel = AndroidNotificationChannel(
+      'your channel id',
+      'your channel name',
+      'your channel description',
+    );
+    var result = await flutterLocalNotificationsPlugin.createNotificationChannel(androidNotificationChannel);
+    if (result) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return Scaffold(
+              appBar: AppBar(title: Text('Channel created')),
+              body: Center(
+                child: RaisedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Go back!'),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
   }
 
   Future<void> _showNotification() async {
