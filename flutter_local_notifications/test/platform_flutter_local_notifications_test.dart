@@ -4,6 +4,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/src/platform_specifics/android/enums.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:platform/platform.dart';
+import 'package:timezone/data/latest.dart';
+import 'package:timezone/timezone.dart' as timezone;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -1265,6 +1267,89 @@ void main() {
           }));
     });
 
+    test('tzSchedule', () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+      await initializeTimeZones();
+      timezone.setLocalLocation(timezone.getLocation('Australia/Sydney'));
+      final scheduledDate = timezone.TZDateTime.local(2020, 1, 1, 9);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+              'channelId', 'channelName', 'channelDescription');
+      await flutterLocalNotificationsPlugin.tzSchedule(
+          0,
+          'scheduled title',
+          'scheduled body',
+          scheduledDate,
+          NotificationDetails(androidNotificationDetails, null));
+
+      await flutterLocalNotificationsPlugin.tzSchedule(
+          1,
+          'notification title',
+          'notification body',
+          scheduledDate,
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('tzSchedule', arguments: <String, Object>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'timezoneName': 'Australia/Sydney',
+            'scheduledDateTime': '2020-01-01T09:00:00',
+            'platformSpecifics': <String, Object>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'style': AndroidNotificationStyle.Default.index,
+              'styleInformation': <String, Object>{
+                'htmlFormatContent': false,
+                'htmlFormatTitle': false,
+              },
+            },
+          }));
+    });
+
     test('createNotificationChannel with default settings', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -1464,8 +1549,10 @@ void main() {
                 IOSNotificationAttachment('video.mp4',
                     identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
               ]));
+
       await flutterLocalNotificationsPlugin.show(
           1, 'notification title', 'notification body', notificationDetails);
+
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1473,6 +1560,56 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
+            'platformSpecifics': <String, Object>{
+              'presentAlert': true,
+              'presentBadge': true,
+              'presentSound': true,
+              'sound': 'sound.mp3',
+              'badgeNumber': 1,
+              'attachments': [
+                <String, Object>{
+                  'filePath': 'video.mp4',
+                  'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                }
+              ],
+            },
+          }));
+    });
+
+    test('tzSchedule', () async {
+      const IOSInitializationSettings iosInitializationSettings =
+          IOSInitializationSettings();
+      const InitializationSettings initializationSettings =
+          InitializationSettings(null, iosInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await initializeTimeZones();
+      timezone.setLocalLocation(timezone.getLocation('Australia/Sydney'));
+      final scheduledDate = timezone.TZDateTime.local(2020, 1, 1, 9);
+      const NotificationDetails notificationDetails = NotificationDetails(
+          null,
+          IOSNotificationDetails(
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
+              sound: 'sound.mp3',
+              badgeNumber: 1,
+              attachments: [
+                IOSNotificationAttachment('video.mp4',
+                    identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
+              ]));
+
+      await flutterLocalNotificationsPlugin.tzSchedule(1, 'notification title',
+          'notification body', scheduledDate, notificationDetails);
+
+      expect(
+          log.last,
+          isMethodCall('tzSchedule', arguments: <String, Object>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'scheduledDateTime': '2020-01-01T09:00:00',
+            'timezoneName': 'Australia/Sydney',
             'platformSpecifics': <String, Object>{
               'presentAlert': true,
               'presentBadge': true,

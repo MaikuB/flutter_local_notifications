@@ -10,6 +10,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:timezone/data/latest.dart';
+import 'package:timezone/timezone.dart' as timezone;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -20,6 +22,9 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
 
 final BehaviorSubject<String> selectNotificationSubject =
     BehaviorSubject<String>();
+
+final MethodChannel platform =
+    MethodChannel('dexterx.dev/flutter_local_notifications_example');
 
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 
@@ -42,6 +47,8 @@ class ReceivedNotification {
 Future<void> main() async {
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
+
+  await _configureLocalTimeZone();
 
   notificationAppLaunchDetails =
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
@@ -74,6 +81,13 @@ Future<void> main() async {
   );
 }
 
+Future<void> _configureLocalTimeZone() async {
+  await initializeTimeZones();
+  final String timeZoneName = await platform.invokeMethod('getTimeZoneName');
+  timezone.setLocalLocation(timezone
+      .getLocation(timeZoneName)); //(timezone.getLocation(timeZoneName));
+}
+
 class PaddedRaisedButton extends StatelessWidget {
   final String buttonText;
   final VoidCallback onPressed;
@@ -98,8 +112,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final MethodChannel platform =
-      MethodChannel('crossingthestreams.io/resourceResolver');
   @override
   void initState() {
     super.initState();
@@ -264,6 +276,13 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Text(
                       'NOTE: red colour, large icon and red LED are Android-specific'),
+                  PaddedRaisedButton(
+                    buttonText:
+                        'Schedule notification to appear in 5 seconds based on local timezone',
+                    onPressed: () async {
+                      await _tzScheduleNotification();
+                    },
+                  ),
                   PaddedRaisedButton(
                     buttonText: 'Repeat notification every minute',
                     onPressed: () async {
@@ -486,6 +505,18 @@ class _HomePageState extends State<HomePage> {
         'scheduled body',
         scheduledNotificationDateTime,
         platformChannelSpecifics);
+  }
+
+  Future<void> _tzScheduleNotification() async {
+    await flutterLocalNotificationsPlugin.tzSchedule(
+        0,
+        'scheduled title',
+        'scheduled body',
+        timezone.TZDateTime.now(timezone.local).add(Duration(seconds: 300)),
+        NotificationDetails(
+            AndroidNotificationDetails('your channel id', 'your channel name',
+                'your channel description'),
+            IOSNotificationDetails()));
   }
 
   Future<void> _showNotificationWithNoSound() async {

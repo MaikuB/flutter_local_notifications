@@ -470,12 +470,12 @@ static FlutterError *getFlutterError(NSError *error) {
     } else {
         NSDate *date = [NSDate dateWithTimeIntervalSince1970:[notificationDetails.secondsSinceEpoch longLongValue]];
         NSCalendar *calendar = [NSCalendar currentCalendar];
-        NSDateComponents *dateComponents    = [calendar components:(NSCalendarUnitYear  |
-                                                                    NSCalendarUnitMonth |
-                                                                    NSCalendarUnitDay   |
-                                                                    NSCalendarUnitHour  |
-                                                                    NSCalendarUnitMinute|
-                                                                    NSCalendarUnitSecond) fromDate:date];
+        NSDateComponents *dateComponents = [calendar components:(NSCalendarUnitYear  |
+                                                                 NSCalendarUnitMonth |
+                                                                 NSCalendarUnitDay   |
+                                                                 NSCalendarUnitHour  |
+                                                                 NSCalendarUnitMinute|
+                                                                 NSCalendarUnitSecond) fromDate:date];
         trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:false];
     }
     UNNotificationRequest* notificationRequest = [UNNotificationRequest
@@ -508,7 +508,16 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     
     notification.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload scheduledDate:notificationDetails.scheduledDateTime timezoneName:notificationDetails.timezoneName];
-    if(notificationDetails.secondsSinceEpoch == nil) {
+    if(notificationDetails.scheduledDateTime != nil && notificationDetails.timezoneName != nil) {
+        NSTimeZone *timezone = [NSTimeZone timeZoneWithName:notificationDetails.timezoneName];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
+        [dateFormatter setTimeZone:timezone];
+        NSDate *date = [dateFormatter dateFromString:notificationDetails.scheduledDateTime];
+        notification.fireDate = date;
+        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+    }
+    else if(notificationDetails.secondsSinceEpoch == nil) {
         if(notificationDetails.repeatInterval != nil) {
             NSTimeInterval timeInterval = 0;
             

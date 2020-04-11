@@ -124,7 +124,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         for (NotificationDetails scheduledNotification : scheduledNotifications) {
             if (scheduledNotification.repeatInterval == null) {
-                if(scheduledNotification.timezoneName == null) {
+                if (scheduledNotification.timezoneName == null) {
                     scheduleNotification(context, scheduledNotification, false);
                 } else {
                     tzScheduleNotification(context, scheduledNotification, false);
@@ -276,27 +276,24 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static void tzScheduleNotification(Context context, final NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            Gson gson = buildGson();
-            ZonedDateTime zonedDateTime = ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), ZoneId.of(notificationDetails.timezoneName));
-            long epochMilli = zonedDateTime.toInstant().toEpochMilli();
-            String notificationDetailsJson = gson.toJson(notificationDetails);
-            Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
-            notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Gson gson = buildGson();
+        String notificationDetailsJson = gson.toJson(notificationDetails);
+        Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
+        notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = getAlarmManager(context);
+        long epochMilli = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ? ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), ZoneId.of(notificationDetails.timezoneName)).toInstant().toEpochMilli() : org.threeten.bp.ZonedDateTime.of(org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime), org.threeten.bp.ZoneId.of(notificationDetails.timezoneName)).toInstant().toEpochMilli();
+        if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
+            AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+        } else {
+            AlarmManagerCompat.setExact(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+        }
 
-            AlarmManager alarmManager = getAlarmManager(context);
-            if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
-                AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
-            } else {
-                AlarmManagerCompat.setExact(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
-            }
-
-            if (updateScheduledNotificationsCache) {
-                saveScheduledNotification(context, notificationDetails);
-            }
+        if (updateScheduledNotificationsCache) {
+            saveScheduledNotification(context, notificationDetails);
         }
     }
+
 
     private static void repeatNotification(Context context, NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
         Gson gson = buildGson();
@@ -1004,10 +1001,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private void deleteNotificationChannel(MethodCall call, Result result) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
-                String channelId = call.arguments();
-                notificationManager.deleteNotificationChannel(channelId);
-                result.success(null);
+            NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            String channelId = call.arguments();
+            notificationManager.deleteNotificationChannel(channelId);
+            result.success(null);
         }
     }
 }
