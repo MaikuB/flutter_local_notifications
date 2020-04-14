@@ -1,5 +1,5 @@
 /// The available intervals for periodically showing notifications
-enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
+enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly, Monthly }
 
 /// Details of a pending notification that has not been delivered
 class PendingNotificationRequest {

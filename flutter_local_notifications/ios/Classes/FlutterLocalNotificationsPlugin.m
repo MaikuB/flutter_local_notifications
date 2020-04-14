@@ -74,7 +74,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     EveryMinute,
     Hourly,
     Daily,
-    Weekly
+    Weekly,
+    Monthly
 };
 
 static FlutterError *getFlutterError(NSError *error) {
@@ -427,6 +428,9 @@ static FlutterError *getFlutterError(NSError *error) {
                 case Weekly:
                     timeInterval = 60 * 60 * 24 * 7;
                     break;
+                case Monthly:
+                    timeInterval = 60 * 60 * 24 * 7 * 30;
+                    break;
             }
             repeats = YES;
         }
@@ -506,6 +510,10 @@ static FlutterError *getFlutterError(NSError *error) {
                 case Weekly:
                     timeInterval = 60 * 60 * 24 * 7;
                     notification.repeatInterval = NSCalendarUnitWeekOfYear;
+                    break;
+                case Monthly:
+                    timeInterval = 60 * 60 * 24 * 30;
+                    notification.repeatInterval = NSCalendarUnitMonth;
                     break;
             }
             if (notificationDetails.repeatTime != nil) {
