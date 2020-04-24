@@ -148,11 +148,12 @@ class AndroidNotificationDetails {
 
   /// Specifies the timestamp of the notification.
   ///
-  /// If not specified, this will be set to the current time when the
-  /// notification gets created.
-  ///
   /// To control whether the timestamp is shown in the notification, use
   /// [showWhen].
+  ///
+  /// The timestamp is expressed as the number of milliseconds since the "Unix epoch" 1970-01-01T00:00:00Z (UTC).
+  /// If it's not specified but a timestamp should be shown (i.e. [showWhen] is set to `true`),
+  /// then Android will default to showing when the notification occurred.
   final int when;
 
   /// Specifies if the notification will be used to show progress.
