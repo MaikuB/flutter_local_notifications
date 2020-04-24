@@ -399,6 +399,13 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
+                    buttonText:
+                        'Show notification with custom timestamp [Android]',
+                    onPressed: () async {
+                      await _showNotificationWithCustomTimestamp();
+                    },
+                  ),
+                  PaddedRaisedButton(
                     buttonText: 'Show notification with attachment [iOS]',
                     onPressed: () async {
                       await _showNotificationWithAttachment();
@@ -955,6 +962,24 @@ class _HomePageState extends State<HomePage> {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
         importance: Importance.Max, priority: Priority.High, showWhen: false);
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
+  }
+
+  Future<void> _showNotificationWithCustomTimestamp() async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      'your channel description',
+      importance: Importance.Max,
+      priority: Priority.High,
+      showWhen: true,
+      when: DateTime.now().millisecondsSinceEpoch - 120 * 1000,
+    );
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);

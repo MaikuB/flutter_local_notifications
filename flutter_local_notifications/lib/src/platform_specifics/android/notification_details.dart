@@ -35,6 +35,7 @@ class AndroidNotificationDetails {
     this.largeIcon,
     this.onlyAlertOnce,
     this.showWhen = true,
+    this.when,
     this.channelShowBadge = true,
     this.showProgress = false,
     this.maxProgress = 0,
@@ -141,7 +142,18 @@ class AndroidNotificationDetails {
   final bool onlyAlertOnce;
 
   /// Specifies if the notification should display the timestamp of when it occurred.
+  ///
+  /// To control the actual timestamp of the notification, use [when].
   final bool showWhen;
+
+  /// Specifies the timestamp of the notification.
+  ///
+  /// If not specified, this will be set to the current time when the
+  /// notification gets created.
+  ///
+  /// To control whether the timestamp is shown in the notification, use
+  /// [showWhen].
+  final int when;
 
   /// Specifies if the notification will be used to show progress.
   final bool showProgress;
@@ -216,6 +228,7 @@ class AndroidNotificationDetails {
       'colorBlue': color?.blue,
       'onlyAlertOnce': onlyAlertOnce,
       'showWhen': showWhen,
+      'when': when,
       'showProgress': showProgress,
       'maxProgress': maxProgress,
       'progress': progress,
