@@ -53,3 +53,8 @@ class Time {
     };
   }
 }
+
+enum CalendarUnit {
+  Days,
+  Weeks,
+}

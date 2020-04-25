@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_local_notifications/src/scheduled_notification_trigger.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
 
@@ -94,10 +95,24 @@ class AndroidFlutterLocalNotificationsPlugin
   /// Schedules a notification to be shown at the specified time relative to a specific timezone.
   Future<void> tzSchedule(int id, String title, String body,
       TZDateTime scheduledDate, AndroidNotificationDetails notificationDetails,
-      {String payload}) async {
+      {String payload,
+      ScheduledNotificationTrigger scheduledNotificationTrigger}) async {
     validateId(id);
     var serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? Map<String, dynamic>();
+    var serializedScheduledNotificationTrigger = <String, Object>{};
+    Map<String, Object> serializedScheduledNotificationTrigger = {};
+    if (scheduledNotificationTrigger is CalendarScheduledNotificationTrigger) {
+      serializedPlatformSpecifics = {
+        'calendarUnit': scheduledNotificationTrigger.calendarUnit.index,
+        'interval': scheduledNotificationTrigger.interval,
+      };
+    } else if (scheduledNotificationTrigger
+        is TimeIntervalScheduledNotificationTrigger) {
+      serializedPlatformSpecifics = {
+        'seconds': scheduledNotificationTrigger.seconds
+      };
+    }
     await _channel.invokeMethod(
         'tzSchedule',
         <String, dynamic>{
@@ -106,7 +121,9 @@ class AndroidFlutterLocalNotificationsPlugin
           'body': body,
           'platformSpecifics': serializedPlatformSpecifics,
           'payload': payload ?? ''
-        }..addAll(scheduledDate.toMap()));
+        }
+          ..addAll(serializedScheduledNotificationTrigger)
+          ..addAll(scheduledDate.toMap()));
   }
 
   /// Shows a notification on a daily interval at the specified time.
@@ -260,7 +277,8 @@ class IOSFlutterLocalNotificationsPlugin
   /// Schedules a notification to be shown at the specified time relative to a specific timezone.
   Future<void> tzSchedule(int id, String title, String body,
       TZDateTime scheduledDate, IOSNotificationDetails notificationDetails,
-      {String payload}) async {
+      {String payload,
+      ScheduledNotificationTrigger scheduledNotificationTrigger}) async {
     validateId(id);
     var serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? Map<String, dynamic>();
@@ -275,7 +293,6 @@ class IOSFlutterLocalNotificationsPlugin
         }..addAll(scheduledDate.toMap()));
   }
 
-  /// Shows a notification on a daily interval at the specified time
   /// Shows a notification on a daily interval at the specified time.
   Future<void> showDailyAtTime(int id, String title, String body,
       Time notificationTime, IOSNotificationDetails notificationDetails,
