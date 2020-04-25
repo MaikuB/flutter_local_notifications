@@ -94,7 +94,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INVALID_BIG_PICTURE_ERROR_CODE = "INVALID_BIG_PICTURE";
     private static final String INVALID_SOUND_ERROR_CODE = "INVALID_SOUND";
     private static final String INVALID_LED_DETAILS_ERROR_CODE = "INVALID_LED_DETAILS";
-    private static final String DELETE_NOTIFICATION_CHANNEL_FAILED = "DELETE_NOTIFICATION_CHANNEL_FAILED";
     private static final String INVALID_LED_DETAILS_ERROR_MESSAGE = "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of Android before Oreo";
     private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
