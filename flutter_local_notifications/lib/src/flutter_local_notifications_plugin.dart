@@ -223,7 +223,7 @@ class FlutterLocalNotificationsPlugin {
     }
   }
 
-  /// Shows a notification on a daily interval at the specified time.
+  /// Shows a notification on weekly interval at the specified day and time.
   Future<void> showWeeklyAtDayAndTime(int id, String title, String body,
       Day day, Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
