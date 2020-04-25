@@ -109,7 +109,7 @@ class AndroidFlutterLocalNotificationsPlugin
         }..addAll(scheduledDate.toMap()));
   }
 
-  /// Shows a notification on a daily interval at the specified time
+  /// Shows a notification on a daily interval at the specified time.
   Future<void> showDailyAtTime(int id, String title, String body,
       Time notificationTime, AndroidNotificationDetails notificationDetails,
       {String payload}) async {
@@ -126,7 +126,7 @@ class AndroidFlutterLocalNotificationsPlugin
     });
   }
 
-  /// Shows a notification on a daily interval at the specified time.
+  /// Shows a notification on weekly interval at the specified day and time.
   Future<void> showWeeklyAtDayAndTime(
       int id,
       String title,
@@ -293,7 +293,7 @@ class IOSFlutterLocalNotificationsPlugin
     });
   }
 
-  /// Shows a notification on a daily interval at the specified time.
+  /// Shows a notification on weekly interval at the specified day and time.
   Future<void> showWeeklyAtDayAndTime(
       int id,
       String title,
