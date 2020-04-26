@@ -1415,6 +1415,7 @@ void main() {
               'colorBlue': null,
               'onlyAlertOnce': null,
               'showWhen': true,
+              'when': null,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
