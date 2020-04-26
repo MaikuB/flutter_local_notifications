@@ -29,5 +29,5 @@ export 'src/initialization_settings.dart';
 export 'src/flutter_local_notifications_plugin.dart';
 export 'src/platform_flutter_local_notifications.dart'
     hide MethodChannelFlutterLocalNotificationsPlugin;
-export 'src/types.dart';
+export 'src/types.dart' hide ScheduledNotificationRepeatTriggerType;
 export 'src/typedefs.dart';

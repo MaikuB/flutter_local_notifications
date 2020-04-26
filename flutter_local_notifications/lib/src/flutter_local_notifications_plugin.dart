@@ -191,7 +191,7 @@ class FlutterLocalNotificationsPlugin {
   Future<void> tzSchedule(int id, String title, String body,
       TZDateTime scheduledDate, NotificationDetails notificationDetails,
       {String payload,
-      ScheduledNotificationTrigger scheduledNotificationTrigger}) async {
+      ScheduledNotificationRepeatTrigger scheduledNotificationTrigger}) async {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()

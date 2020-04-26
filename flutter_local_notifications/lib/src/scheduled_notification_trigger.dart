@@ -1,20 +1,20 @@
 import 'types.dart';
 
-abstract class ScheduledNotificationTrigger {}
+abstract class ScheduledNotificationRepeatTrigger {}
 
 /// Used to schedule a notification that appears on a regular time interval expressed in seconds.
-class TimeIntervalScheduledNotificationTrigger
-    extends ScheduledNotificationTrigger {
-  TimeIntervalScheduledNotificationTrigger(this.seconds)
+class TimeIntervalScheduledNotificationRepeatTrigger
+    extends ScheduledNotificationRepeatTrigger {
+  TimeIntervalScheduledNotificationRepeatTrigger(this.seconds)
       : assert(seconds != null);
 
   /// The time interval measured in seconds.
   final int seconds;
 }
 
-class CalendarScheduledNotificationTrigger
-    extends ScheduledNotificationTrigger {
-  CalendarScheduledNotificationTrigger(
+class CalendarUnitScheduledNotificationRepeatTrigger
+    extends ScheduledNotificationRepeatTrigger {
+  CalendarUnitScheduledNotificationRepeatTrigger(
     this.calendarUnit, {
     this.interval = 1,
   }) : assert(calendarUnit != null && interval > 0);

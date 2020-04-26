@@ -19,6 +19,31 @@ import 'tz_datetime_mapper.dart';
 const MethodChannel _channel =
     MethodChannel('dexterous.com/flutter/local_notifications');
 
+Map<String, Object> _convertScheduledNotificationTrigger(
+    ScheduledNotificationRepeatTrigger scheduledNotificationTrigger) {
+  if (scheduledNotificationTrigger
+      is CalendarUnitScheduledNotificationRepeatTrigger) {
+    return {
+      'scheduledNotificationTriggerType':
+          ScheduledNotificationRepeatTriggerType.CalendarUnit.index,
+      'scheduledNotificationTrigger': {
+        'calendarUnit': scheduledNotificationTrigger.calendarUnit.index,
+        'interval': scheduledNotificationTrigger.interval,
+      },
+    };
+  } else if (scheduledNotificationTrigger
+      is TimeIntervalScheduledNotificationRepeatTrigger) {
+    return {
+      'scheduledNotificationTriggerType':
+          ScheduledNotificationRepeatTriggerType.TimeInterval.index,
+      'scheduledNotificationTrigger': {
+        {'seconds': scheduledNotificationTrigger.seconds},
+      },
+    };
+  }
+  return {};
+}
+
 /// An implementation of a local notifications platform using method channels.
 class MethodChannelFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
@@ -96,23 +121,11 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<void> tzSchedule(int id, String title, String body,
       TZDateTime scheduledDate, AndroidNotificationDetails notificationDetails,
       {String payload,
-      ScheduledNotificationTrigger scheduledNotificationTrigger}) async {
+      ScheduledNotificationRepeatTrigger scheduledNotificationTrigger}) async {
     validateId(id);
     var serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? Map<String, dynamic>();
-    var serializedScheduledNotificationTrigger = <String, Object>{};
-    Map<String, Object> serializedScheduledNotificationTrigger = {};
-    if (scheduledNotificationTrigger is CalendarScheduledNotificationTrigger) {
-      serializedPlatformSpecifics = {
-        'calendarUnit': scheduledNotificationTrigger.calendarUnit.index,
-        'interval': scheduledNotificationTrigger.interval,
-      };
-    } else if (scheduledNotificationTrigger
-        is TimeIntervalScheduledNotificationTrigger) {
-      serializedPlatformSpecifics = {
-        'seconds': scheduledNotificationTrigger.seconds
-      };
-    }
+
     await _channel.invokeMethod(
         'tzSchedule',
         <String, dynamic>{
@@ -122,7 +135,8 @@ class AndroidFlutterLocalNotificationsPlugin
           'platformSpecifics': serializedPlatformSpecifics,
           'payload': payload ?? ''
         }
-          ..addAll(serializedScheduledNotificationTrigger)
+          ..addAll(_convertScheduledNotificationTrigger(
+              scheduledNotificationTrigger))
           ..addAll(scheduledDate.toMap()));
   }
 
@@ -278,7 +292,7 @@ class IOSFlutterLocalNotificationsPlugin
   Future<void> tzSchedule(int id, String title, String body,
       TZDateTime scheduledDate, IOSNotificationDetails notificationDetails,
       {String payload,
-      ScheduledNotificationTrigger scheduledNotificationTrigger}) async {
+      ScheduledNotificationRepeatTrigger scheduledNotificationTrigger}) async {
     validateId(id);
     var serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? Map<String, dynamic>();
@@ -290,7 +304,10 @@ class IOSFlutterLocalNotificationsPlugin
           'body': body,
           'platformSpecifics': serializedPlatformSpecifics,
           'payload': payload ?? ''
-        }..addAll(scheduledDate.toMap()));
+        }
+          ..addAll(_convertScheduledNotificationTrigger(
+              scheduledNotificationTrigger))
+          ..addAll(scheduledDate.toMap()));
   }
 
   /// Shows a notification on a daily interval at the specified time.
