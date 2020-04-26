@@ -10,8 +10,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
-import 'package:timezone/data/latest.dart';
-import 'package:timezone/timezone.dart' as timezone;
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -82,10 +82,10 @@ Future<void> main() async {
 }
 
 Future<void> _configureLocalTimeZone() async {
-  await initializeTimeZones();
+  tz.initializeTimeZones();
   final String timeZoneName = await platform.invokeMethod('getTimeZoneName');
-  timezone.setLocalLocation(timezone
-      .getLocation(timeZoneName)); //(timezone.getLocation(timeZoneName));
+  tz.setLocalLocation(
+      tz.getLocation(timeZoneName)); //(timezone.getLocation(timeZoneName));
 }
 
 class PaddedRaisedButton extends StatelessWidget {
@@ -519,7 +519,7 @@ class _HomePageState extends State<HomePage> {
         0,
         'scheduled title',
         'scheduled body',
-        timezone.TZDateTime.now(timezone.local).add(Duration(seconds: 300)),
+        tz.TZDateTime.now(tz.local).add(Duration(seconds: 300)),
         NotificationDetails(
             AndroidNotificationDetails('your channel id', 'your channel name',
                 'your channel description'),
