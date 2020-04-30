@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/src/scheduled_notification_trigger.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:platform/platform.dart';
 import 'package:timezone/timezone.dart';
@@ -190,21 +189,18 @@ class FlutterLocalNotificationsPlugin {
   /// repeated.
   Future<void> tzSchedule(int id, String title, String body,
       TZDateTime scheduledDate, NotificationDetails notificationDetails,
-      {String payload,
-      ScheduledNotificationRepeatTrigger scheduledNotificationTrigger}) async {
+      {String payload}) async {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           .tzSchedule(
               id, title, body, scheduledDate, notificationDetails?.android,
-              payload: payload,
-              scheduledNotificationTrigger: scheduledNotificationTrigger);
+              payload: payload);
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.tzSchedule(id, title, body, scheduledDate, notificationDetails?.iOS,
-              payload: payload,
-              scheduledNotificationTrigger: scheduledNotificationTrigger);
+              payload: payload);
     }
   }
 

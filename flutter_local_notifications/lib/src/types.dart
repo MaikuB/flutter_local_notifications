@@ -53,7 +53,3 @@ class Time {
     };
   }
 }
-
-enum CalendarUnit { Days, Weeks }
-
-enum ScheduledNotificationRepeatTriggerType { CalendarUnit, TimeInterval }

@@ -1,14 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_local_notifications/src/scheduled_notification_trigger.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
 
 import 'helpers.dart';
-import 'platform_specifics/android/notification_channel.dart';
 import 'platform_specifics/android/initialization_settings.dart';
+import 'platform_specifics/android/notification_channel.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/notification_details.dart';
@@ -18,31 +16,6 @@ import 'tz_datetime_mapper.dart';
 
 const MethodChannel _channel =
     MethodChannel('dexterous.com/flutter/local_notifications');
-
-Map<String, Object> _convertScheduledNotificationTrigger(
-    ScheduledNotificationRepeatTrigger scheduledNotificationTrigger) {
-  if (scheduledNotificationTrigger
-      is CalendarUnitScheduledNotificationRepeatTrigger) {
-    return {
-      'scheduledNotificationTriggerType':
-          ScheduledNotificationRepeatTriggerType.CalendarUnit.index,
-      'scheduledNotificationTrigger': {
-        'calendarUnit': scheduledNotificationTrigger.calendarUnit.index,
-        'interval': scheduledNotificationTrigger.interval,
-      },
-    };
-  } else if (scheduledNotificationTrigger
-      is TimeIntervalScheduledNotificationRepeatTrigger) {
-    return {
-      'scheduledNotificationTriggerType':
-          ScheduledNotificationRepeatTriggerType.TimeInterval.index,
-      'scheduledNotificationTrigger': {
-        {'seconds': scheduledNotificationTrigger.seconds},
-      },
-    };
-  }
-  return {};
-}
 
 /// An implementation of a local notifications platform using method channels.
 class MethodChannelFlutterLocalNotificationsPlugin
@@ -120,8 +93,7 @@ class AndroidFlutterLocalNotificationsPlugin
   /// Schedules a notification to be shown at the specified time relative to a specific timezone.
   Future<void> tzSchedule(int id, String title, String body,
       TZDateTime scheduledDate, AndroidNotificationDetails notificationDetails,
-      {String payload,
-      ScheduledNotificationRepeatTrigger scheduledNotificationTrigger}) async {
+      {String payload}) async {
     validateId(id);
     var serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? Map<String, dynamic>();
@@ -134,10 +106,7 @@ class AndroidFlutterLocalNotificationsPlugin
           'body': body,
           'platformSpecifics': serializedPlatformSpecifics,
           'payload': payload ?? ''
-        }
-          ..addAll(_convertScheduledNotificationTrigger(
-              scheduledNotificationTrigger))
-          ..addAll(scheduledDate.toMap()));
+        }..addAll(scheduledDate.toMap()));
   }
 
   /// Shows a notification on a daily interval at the specified time.
@@ -291,8 +260,7 @@ class IOSFlutterLocalNotificationsPlugin
   /// Schedules a notification to be shown at the specified time relative to a specific timezone.
   Future<void> tzSchedule(int id, String title, String body,
       TZDateTime scheduledDate, IOSNotificationDetails notificationDetails,
-      {String payload,
-      ScheduledNotificationRepeatTrigger scheduledNotificationTrigger}) async {
+      {String payload}) async {
     validateId(id);
     var serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? Map<String, dynamic>();
@@ -304,10 +272,7 @@ class IOSFlutterLocalNotificationsPlugin
           'body': body,
           'platformSpecifics': serializedPlatformSpecifics,
           'payload': payload ?? ''
-        }
-          ..addAll(_convertScheduledNotificationTrigger(
-              scheduledNotificationTrigger))
-          ..addAll(scheduledDate.toMap()));
+        }..addAll(scheduledDate.toMap()));
   }
 
   /// Shows a notification on a daily interval at the specified time.

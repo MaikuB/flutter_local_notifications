@@ -1,6 +1,5 @@
-import 'package:flutter_local_notifications/src/platform_specifics/android/icon.dart';
-
 import 'enums.dart';
+import 'icon.dart';
 
 /// Details of a person e.g. someone who sent a message.
 class Person {

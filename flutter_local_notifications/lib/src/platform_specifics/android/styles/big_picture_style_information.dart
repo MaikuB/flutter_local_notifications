@@ -1,7 +1,6 @@
-import 'package:flutter_local_notifications/src/platform_specifics/android/bitmap.dart';
-
-import 'default_style_information.dart';
+import '../bitmap.dart';
 import '../enums.dart';
+import 'default_style_information.dart';
 
 /// Used to pass the content for an Android notification displayed using the big picture style.
 class BigPictureStyleInformation extends DefaultStyleInformation {
