@@ -50,6 +50,7 @@ class AndroidNotificationDetails {
     this.visibility,
     this.timeoutAfter,
     this.category,
+    this.extraFlags = 0,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -202,6 +203,12 @@ class AndroidNotificationDetails {
   /// Refer to Android notification API documentation at https://developer.android.com/reference/androidx/core/app/NotificationCompat.html#constants_2 for the available categories
   final String category;
 
+  /// Extra notification flags.
+  ///
+  /// These flags will get added to the Notification object's flags field: https://developer.android.com/reference/android/app/Notification#flags
+  /// Values are the constants that start with FLAG_: https://developer.android.com/reference/android/app/Notification#FLAG_AUTO_CANCEL
+  final int extraFlags;
+
   /// Creates a [Map] object that describes the [AndroidNotificationDetails] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
@@ -244,7 +251,8 @@ class AndroidNotificationDetails {
       'ticker': ticker,
       'visibility': visibility?.index,
       'timeoutAfter': timeoutAfter,
-      'category': category
+      'category': category,
+      'extraFlags': extraFlags
     }
       ..addAll(_convertStyleInformationToMap())
       ..addAll(_convertSoundToMap())
