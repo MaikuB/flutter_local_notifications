@@ -50,7 +50,7 @@ class AndroidNotificationDetails {
     this.visibility,
     this.timeoutAfter,
     this.category,
-    this.extraFlags = 0,
+    this.additionalFlags = 0,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -206,8 +206,9 @@ class AndroidNotificationDetails {
   /// Extra notification flags.
   ///
   /// These flags will get added to the Notification object's flags field: https://developer.android.com/reference/android/app/Notification#flags
-  /// Values are the constants that start with FLAG_: https://developer.android.com/reference/android/app/Notification#FLAG_AUTO_CANCEL
-  final int extraFlags;
+  /// For a list of a values, refer to the documented constants prefixed with "FLAG_" (without the quotes) at https://developer.android.com/reference/android/app/Notification.html#constants_1.
+  /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
+  final int additionalFlags;
 
   /// Creates a [Map] object that describes the [AndroidNotificationDetails] object.
   ///
@@ -252,7 +253,7 @@ class AndroidNotificationDetails {
       'visibility': visibility?.index,
       'timeoutAfter': timeoutAfter,
       'category': category,
-      'extraFlags': extraFlags
+      'additionalFlags': additionalFlags
     }
       ..addAll(_convertStyleInformationToMap())
       ..addAll(_convertSoundToMap())

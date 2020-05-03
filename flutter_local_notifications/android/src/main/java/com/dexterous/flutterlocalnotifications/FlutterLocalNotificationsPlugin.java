@@ -169,8 +169,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         setCategory(notificationDetails, builder);
         setTimeoutAfter(notificationDetails, builder);
         Notification notification = builder.build();
-        if (notificationDetails.extraFlags != null) {
-            notification.flags |= notificationDetails.extraFlags;
+        if (notificationDetails.additionalFlags != null) {
+            notification.flags |= notificationDetails.additionalFlags;
         }
         return notification;
     }
