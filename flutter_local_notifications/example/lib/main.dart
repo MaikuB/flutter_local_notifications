@@ -268,14 +268,11 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
-                    buttonText:
-                        'Schedule notification to appear in 5 seconds, custom sound, red colour, large icon, red LED',
+                    buttonText: 'Show notification with custom sound',
                     onPressed: () async {
-                      await _scheduleNotification();
+                      await _showNotificationCustomSound();
                     },
                   ),
-                  Text(
-                      'NOTE: red colour, large icon and red LED are Android-specific'),
                   PaddedRaisedButton(
                     buttonText:
                         'Schedule notification to appear in 5 seconds based on local timezone',
@@ -309,90 +306,139 @@ class _HomePageState extends State<HomePage> {
                       await _showNotificationWithNoSound();
                     },
                   ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show notification using Android Uri sound [Android]',
-                    onPressed: () async {
-                      await _showSoundUriNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show notification that times out after 3 seconds [Android]',
-                    onPressed: () async {
-                      await _showTimeoutNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show big picture notification [Android]',
-                    onPressed: () async {
-                      await _showBigPictureNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show big picture notification, hide large icon on expand [Android]',
-                    onPressed: () async {
-                      await _showBigPictureNotificationHideExpandedLargeIcon();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show media notification [Android]',
-                    onPressed: () async {
-                      await _showNotificationMediaStyle();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show big text notification [Android]',
-                    onPressed: () async {
-                      await _showBigTextNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show inbox notification [Android]',
-                    onPressed: () async {
-                      await _showInboxNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show messaging notification [Android]',
-                    onPressed: () async {
-                      await _showMessagingNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show grouped notifications [Android]',
-                    onPressed: () async {
-                      await _showGroupedNotifications();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show ongoing notification [Android]',
-                    onPressed: () async {
-                      await _showOngoingNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show notification with no badge, alert only once [Android]',
-                    onPressed: () async {
-                      await _showNotificationWithNoBadge();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show progress notification - updates every second [Android]',
-                    onPressed: () async {
-                      await _showProgressNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show indeterminate progress notification [Android]',
-                    onPressed: () async {
-                      await _showIndeterminateProgressNotification();
-                    },
-                  ),
+                  if (Platform.isAndroid) ...[
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show notification with custom vibration pattern, LED and icon [Android]',
+                      onPressed: () async {
+                        await _showNotificationCustomVibrationIconLed();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show notification using Android Uri sound [Android]',
+                      onPressed: () async {
+                        await _showSoundUriNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show notification that times out after 3 seconds [Android]',
+                      onPressed: () async {
+                        await _showTimeoutNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show big picture notification [Android]',
+                      onPressed: () async {
+                        await _showBigPictureNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show big picture notification, hide large icon on expand [Android]',
+                      onPressed: () async {
+                        await _showBigPictureNotificationHideExpandedLargeIcon();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show media notification [Android]',
+                      onPressed: () async {
+                        await _showNotificationMediaStyle();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show big text notification [Android]',
+                      onPressed: () async {
+                        await _showBigTextNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show inbox notification [Android]',
+                      onPressed: () async {
+                        await _showInboxNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show messaging notification [Android]',
+                      onPressed: () async {
+                        await _showMessagingNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show grouped notifications [Android]',
+                      onPressed: () async {
+                        await _showGroupedNotifications();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show ongoing notification [Android]',
+                      onPressed: () async {
+                        await _showOngoingNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show notification with no badge, alert only once [Android]',
+                      onPressed: () async {
+                        await _showNotificationWithNoBadge();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show progress notification - updates every second [Android]',
+                      onPressed: () async {
+                        await _showProgressNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show indeterminate progress notification [Android]',
+                      onPressed: () async {
+                        await _showIndeterminateProgressNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show notification without timestamp [Android]',
+                      onPressed: () async {
+                        await _showNotificationWithoutTimestamp();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show notification with custom timestamp [Android]',
+                      onPressed: () async {
+                        await _showNotificationWithCustomTimestamp();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Create notification channel [Android]',
+                      onPressed: () async {
+                        await _createNotificationChannel();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Delete notification channel [Android]',
+                      onPressed: () async {
+                        await _deleteNotificationChannel();
+                      },
+                    ),
+                  ],
+                  if (Platform.isIOS) ...[
+                    PaddedRaisedButton(
+                      buttonText: 'Show notification with icon badge [iOS]',
+                      onPressed: () async {
+                        await _showNotificationWithIconBadge();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show notification with attachment [iOS]',
+                      onPressed: () async {
+                        await _showNotificationWithAttachment();
+                      },
+                    ),
+                  ],
                   PaddedRaisedButton(
                     buttonText: 'Check pending notifications',
                     onPressed: () async {
@@ -403,43 +449,6 @@ class _HomePageState extends State<HomePage> {
                     buttonText: 'Cancel all notifications',
                     onPressed: () async {
                       await _cancelAllNotifications();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show notification with icon badge [iOS]',
-                    onPressed: () async {
-                      await _showNotificationWithIconBadge();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show notification without timestamp [Android]',
-                    onPressed: () async {
-                      await _showNotificationWithoutTimestamp();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show notification with custom timestamp [Android]',
-                    onPressed: () async {
-                      await _showNotificationWithCustomTimestamp();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show notification with attachment [iOS]',
-                    onPressed: () async {
-                      await _showNotificationWithAttachment();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Create notification channel [Android]',
-                    onPressed: () async {
-                      await _createNotificationChannel();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Delete notification channel [Android]',
-                    onPressed: () async {
-                      await _deleteNotificationChannel();
                     },
                   ),
                 ],
@@ -479,10 +488,7 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.cancel(0);
   }
 
-  /// Schedules a notification that specifies a different icon, sound and vibration pattern
-  Future<void> _scheduleNotification() async {
-    var scheduledNotificationDateTime =
-        DateTime.now().add(Duration(seconds: 5));
+  Future<void> _showNotificationCustomSound() async {
     var vibrationPattern = Int64List(4);
     vibrationPattern[0] = 0;
     vibrationPattern[1] = 1000;
@@ -490,11 +496,34 @@ class _HomePageState extends State<HomePage> {
     vibrationPattern[3] = 2000;
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your other channel id',
-        'your other channel name',
-        'your other channel description',
+      'your other channel id',
+      'your other channel name',
+      'your other channel description',
+      sound: RawResourceAndroidNotificationSound('slow_spring_board'),
+    );
+    var iOSPlatformChannelSpecifics =
+        IOSNotificationDetails(sound: 'slow_spring_board.aiff');
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0,
+        'custom sound notification title',
+        'custom sound notification body',
+        platformChannelSpecifics);
+  }
+
+  Future<void> _showNotificationCustomVibrationIconLed() async {
+    var vibrationPattern = Int64List(4);
+    vibrationPattern[0] = 0;
+    vibrationPattern[1] = 1000;
+    vibrationPattern[2] = 5000;
+    vibrationPattern[3] = 2000;
+
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'other custom channel id',
+        'other custom channel name',
+        'other custom channel description',
         icon: 'secondary_icon',
-        sound: RawResourceAndroidNotificationSound('slow_spring_board'),
         largeIcon: DrawableResourceAndroidBitmap('sample_large_icon'),
         vibrationPattern: vibrationPattern,
         enableLights: true,
@@ -506,11 +535,10 @@ class _HomePageState extends State<HomePage> {
         IOSNotificationDetails(sound: 'slow_spring_board.aiff');
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.schedule(
+    await flutterLocalNotificationsPlugin.show(
         0,
-        'scheduled title',
-        'scheduled body',
-        scheduledNotificationDateTime,
+        'title of notification with custom vibration pattern, LED and icon',
+        'body of notification with custom vibration pattern, LED and icon',
         platformChannelSpecifics);
   }
 
@@ -519,7 +547,7 @@ class _HomePageState extends State<HomePage> {
         0,
         'scheduled title',
         'scheduled body',
-        tz.TZDateTime.now(tz.local).add(Duration(seconds: 300)),
+        tz.TZDateTime.now(tz.local).add(Duration(seconds: 5)),
         NotificationDetails(
             AndroidNotificationDetails('your channel id', 'your channel name',
                 'your channel description'),

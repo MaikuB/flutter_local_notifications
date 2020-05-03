@@ -1,3 +1,9 @@
+# [1.5.0+beta1]
+
+* Added the `tzSchedule` method to the plugin that allows for scheduling notifications to occur on a specific date and time, within a specific timezone. The `schedule` method has been marked as a deprecated due to problems with timezones, particularly when it comes to daylight savings. Note that to support timezone-based scheduling, the plugin now depends on the `timezone` package so that an instance of the `TZDateTime` class is required to the specify the time the notification should occur. This should work in most cases as it is IANA-based and native platforms have timezones that are IANA-based as well. Should you run into issues please submit feedback via the GitHub repository.
+* [Android] Bump Gradle plugin to 3.6.3
+* Updated example app so examples specific to a platform are only visible when running on the appropriate platform
+
 # [1.4.2]
 
 * [Android] added the ability to specify the timestamp shown in the notification (issue [596](https://github.com/MaikuB/flutter_local_notifications/issues/596)). Thanks to the PR from [Nicolas Schneider](https://github.com/nioncode).

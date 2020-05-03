@@ -166,6 +166,8 @@ class FlutterLocalNotificationsPlugin {
   ///
   /// The [androidAllowWhileIdle] parameter determines if the notification should still be shown at the exact time
   /// when the device is in a low-power idle mode.
+  @Deprecated(
+      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use tzSchedule instead.')
   Future<void> schedule(int id, String title, String body,
       DateTime scheduledDate, NotificationDetails notificationDetails,
       {String payload, bool androidAllowWhileIdle = false}) async {
@@ -185,8 +187,9 @@ class FlutterLocalNotificationsPlugin {
 
   /// Schedules a notification to be shown at the specified time relative to a specific timezone.
   ///
-  /// An optional [scheduledNotificationTrigger] can be specified that can be used to have the notification
-  /// repeated.
+  /// Note that to get the appropriate representation of the time at the native level (i.e. Android/iOS),
+  /// the plugin needs to pass the time over the platform channel in yyyy-mm-dd hh:mm:ss format.
+  /// Therefore, the precision is at the best to the second.
   Future<void> tzSchedule(int id, String title, String body,
       TZDateTime scheduledDate, NotificationDetails notificationDetails,
       {String payload}) async {

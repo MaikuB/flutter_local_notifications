@@ -73,6 +73,8 @@ class AndroidFlutterLocalNotificationsPlugin
   ///
   /// The [androidAllowWhileIdle] parameter determines if the notification should still be shown at the exact time
   /// when the device is in a low-power idle mode.
+  @Deprecated(
+      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use tzSchedule instead.')
   Future<void> schedule(int id, String title, String body,
       DateTime scheduledDate, AndroidNotificationDetails notificationDetails,
       {String payload, bool androidAllowWhileIdle = false}) async {
@@ -243,6 +245,8 @@ class IOSFlutterLocalNotificationsPlugin
   }
 
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped.
+  @Deprecated(
+      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use tzSchedule instead.')
   Future<void> schedule(int id, String title, String body,
       DateTime scheduledDate, IOSNotificationDetails notificationDetails,
       {String payload}) async {
