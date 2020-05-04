@@ -305,8 +305,7 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
-                    buttonText:
-                        'Show insistent notification [Android]',
+                    buttonText: 'Show insistent notification [Android]',
                     onPressed: () async {
                       await _showInsistentNotification();
                     },
@@ -552,10 +551,12 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showInsistentNotification() async {
     // value from: https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTENT
-    int insistentFlag = 4;
+    var insistentFlag = 4;
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker',
+        importance: Importance.Max,
+        priority: Priority.High,
+        ticker: 'ticker',
         additionalFlags: insistentFlag);
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
