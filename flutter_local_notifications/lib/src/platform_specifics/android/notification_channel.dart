@@ -59,7 +59,7 @@ class AndroidNotificationChannel {
   /// Tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   final Int64List vibrationPattern;
 
-  /// Sets the light color of the notification.
+  /// Specifies the light color of the notification.
   ///
   /// Tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   final Color ledColor;
