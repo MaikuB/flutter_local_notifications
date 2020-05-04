@@ -550,14 +550,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showInsistentNotification() async {
-    // value from: https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTENT
+    // This value is from: https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTENT
     var insistentFlag = 4;
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
         importance: Importance.Max,
         priority: Priority.High,
         ticker: 'ticker',
-        additionalFlags: insistentFlag);
+        additionalFlags: Int32List.fromList([insistentFlag]));
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);

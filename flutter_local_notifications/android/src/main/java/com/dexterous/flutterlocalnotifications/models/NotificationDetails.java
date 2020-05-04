@@ -152,7 +152,7 @@ public class NotificationDetails {
     public Boolean allowWhileIdle;
     public Long timeoutAfter;
     public String category;
-    public Integer additionalFlags;
+    public int[] additionalFlags;
     public Boolean showWhen;
     public Long when;
 
@@ -215,7 +215,7 @@ public class NotificationDetails {
             notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
             notificationDetails.timeoutAfter = parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
             notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
-            notificationDetails.additionalFlags = (Integer) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
+            notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
         }
     }
 

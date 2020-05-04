@@ -208,7 +208,7 @@ class AndroidNotificationDetails {
   /// These flags will get added to the native Android notification's flags field: https://developer.android.com/reference/android/app/Notification#flags
   /// For a list of a values, refer to the documented constants prefixed with "FLAG_" (without the quotes) at https://developer.android.com/reference/android/app/Notification.html#constants_1.
   /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
-  final int additionalFlags;
+  final Int32List additionalFlags;
 
   /// Creates a [Map] object that describes the [AndroidNotificationDetails] object.
   ///
