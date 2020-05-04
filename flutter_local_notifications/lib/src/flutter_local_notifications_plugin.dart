@@ -192,18 +192,24 @@ class FlutterLocalNotificationsPlugin {
   /// Therefore, the precision is at the best to the second.
   Future<void> tzSchedule(int id, String title, String body,
       TZDateTime scheduledDate, NotificationDetails notificationDetails,
-      {String payload}) async {
+      {String payload,
+      ScheduledNotificationRepeatFrequency
+          scheduledNotificationRepeatFrequency}) async {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           .tzSchedule(
               id, title, body, scheduledDate, notificationDetails?.android,
-              payload: payload);
+              payload: payload,
+              scheduledNotificationRepeatFrequency:
+                  scheduledNotificationRepeatFrequency);
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.tzSchedule(id, title, body, scheduledDate, notificationDetails?.iOS,
-              payload: payload);
+              payload: payload,
+              scheduledNotificationRepeatFrequency:
+                  scheduledNotificationRepeatFrequency);
     }
   }
 
@@ -231,6 +237,8 @@ class FlutterLocalNotificationsPlugin {
   }
 
   /// Shows a notification on a daily interval at the specified time.
+  @Deprecated(
+      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use tzSchedule instead.')
   Future<void> showDailyAtTime(int id, String title, String body,
       Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
@@ -250,6 +258,8 @@ class FlutterLocalNotificationsPlugin {
   }
 
   /// Shows a notification on weekly interval at the specified day and time.
+  @Deprecated(
+      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use tzSchedule instead.')
   Future<void> showWeeklyAtDayAndTime(int id, String title, String body,
       Day day, Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {

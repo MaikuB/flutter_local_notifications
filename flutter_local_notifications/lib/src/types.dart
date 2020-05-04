@@ -53,3 +53,8 @@ class Time {
     };
   }
 }
+
+enum ScheduledNotificationRepeatFrequency {
+  Daily,
+  Weekly,
+}

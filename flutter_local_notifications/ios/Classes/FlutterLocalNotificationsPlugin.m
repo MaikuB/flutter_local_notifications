@@ -67,6 +67,7 @@ NSString *const MINUTE = @"minute";
 NSString *const SECOND = @"second";
 NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTime";
 NSString *const TIMEZONE_NAME = @"timezoneName";
+NSString *const SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY = @"scheduledNotificationRepeatFrequency";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
@@ -78,6 +79,11 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     Hourly,
     Daily,
     Weekly
+};
+
+typedef NS_ENUM(NSInteger, ScheduledNotificationRepeatFrequency) {
+    DailyFrequency,
+    WeeklyFrequency
 };
 
 static FlutterError *getFlutterError(NSError *error) {
@@ -308,6 +314,9 @@ static FlutterError *getFlutterError(NSError *error) {
     } else if([TZSCHEDULE_METHOD isEqualToString:call.method]) {
         notificationDetails.scheduledDateTime  = call.arguments[SCHEDULED_DATE_TIME];
         notificationDetails.timezoneName = call.arguments[TIMEZONE_NAME];
+        if(call.arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY] != [NSNull null]) {
+            notificationDetails.scheduledNotificationRepeatFrequency = @([call.arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY] integerValue]);
+        }
     }
     if(@available(iOS 10.0, *)) {
         [self showUserNotification:notificationDetails result:result arguments:call.arguments];
@@ -423,13 +432,29 @@ static FlutterError *getFlutterError(NSError *error) {
         [dateFormatter setTimeZone:timezone];
         NSDate *date = [dateFormatter dateFromString:notificationDetails.scheduledDateTime];
         NSCalendar *calendar = [NSCalendar currentCalendar];
-        NSDateComponents *dateComponents    = [calendar components:(NSCalendarUnitYear  |
-                                                                    NSCalendarUnitMonth |
-                                                                    NSCalendarUnitDay   |
-                                                                    NSCalendarUnitHour  |
-                                                                    NSCalendarUnitMinute|
-                                                                    NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
-        trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:false];
+        if(notificationDetails.scheduledNotificationRepeatFrequency == nil) {
+            NSDateComponents *dateComponents    = [calendar components:(NSCalendarUnitYear  |
+                                                                        NSCalendarUnitMonth |
+                                                                        NSCalendarUnitDay   |
+                                                                        NSCalendarUnitHour  |
+                                                                        NSCalendarUnitMinute|
+                                                                        NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
+            trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:false];
+        }
+        else if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
+            NSDateComponents *dateComponents    = [calendar components:(
+                                                                        NSCalendarUnitHour  |
+                                                                        NSCalendarUnitMinute|
+                                                                        NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
+            trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:true];
+        }
+        else if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
+            NSDateComponents *dateComponents    = [calendar components:( NSCalendarUnitWeekday |
+                                                                        NSCalendarUnitHour  |
+                                                                        NSCalendarUnitMinute|
+                                                                        NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
+            trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:true];
+        }
         
     }
     else if(notificationDetails.secondsSinceEpoch == nil) {
@@ -515,6 +540,11 @@ static FlutterError *getFlutterError(NSError *error) {
         [dateFormatter setTimeZone:timezone];
         NSDate *date = [dateFormatter dateFromString:notificationDetails.scheduledDateTime];
         notification.fireDate = date;
+        if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
+            notification.repeatInterval = NSCalendarUnitDay;
+        } else  if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
+                   notification.repeatInterval = NSCalendarUnitWeekOfYear;
+               }
         [[UIApplication sharedApplication] scheduleLocalNotification:notification];
     }
     else if(notificationDetails.secondsSinceEpoch == nil) {

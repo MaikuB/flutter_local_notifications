@@ -873,38 +873,35 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showDailyAtTime() async {
-    var time = Time(10, 0, 0);
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'repeatDailyAtTime channel id',
-        'repeatDailyAtTime channel name',
-        'repeatDailyAtTime description');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.showDailyAtTime(
+    await flutterLocalNotificationsPlugin.tzSchedule(
         0,
-        'show daily title',
-        'Daily notification shown at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
-        time,
-        platformChannelSpecifics);
+        'daily scheduled notification title',
+        'daily scheduled notification body',
+        tz.TZDateTime.now(tz.local).add(Duration(seconds: 5)),
+        NotificationDetails(
+            AndroidNotificationDetails(
+                'daily notification channel id',
+                'daily notification channel name',
+                'daily notification description'),
+            IOSNotificationDetails()),
+        scheduledNotificationRepeatFrequency:
+            ScheduledNotificationRepeatFrequency.Daily);
   }
 
   Future<void> _showWeeklyAtDayAndTime() async {
-    var time = Time(10, 0, 0);
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'show weekly channel id',
-        'show weekly channel name',
-        'show weekly description');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
-        0,
-        'show weekly title',
-        'Weekly notification shown on Monday at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
-        Day.Monday,
-        time,
-        platformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.tzSchedule(
+        1,
+        'weekly scheduled notification title',
+        'weekly scheduled notification body',
+        tz.TZDateTime.now(tz.local).add(Duration(seconds: 5)),
+        NotificationDetails(
+            AndroidNotificationDetails(
+                'weekly notification channel id',
+                'weekly notification channel name',
+                'weekly notificationdescription'),
+            IOSNotificationDetails()),
+        scheduledNotificationRepeatFrequency:
+            ScheduledNotificationRepeatFrequency.Weekly);
   }
 
   Future<void> _showNotificationWithNoBadge() async {
@@ -1119,10 +1116,6 @@ class _HomePageState extends State<HomePage> {
             ],
           );
         });
-  }
-
-  String _toTwoDigitString(int value) {
-    return value.toString().padLeft(2, '0');
   }
 }
 

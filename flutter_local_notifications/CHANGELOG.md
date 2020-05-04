@@ -532,7 +532,7 @@ Please note that there are a number of breaking changes in this release to impro
 
 ## [0.1.2]
 
-* [Android] Bug fix in calculating when to show a scheduled  notification. Ensure scheduled Android notifications will remain scheduled even after rebooting.
+* [Android] Bug fix in calculating when to show a scheduled notification. Ensure scheduled Android notifications will remain scheduled even after rebooting.
 
 ## [0.1.1]
 
