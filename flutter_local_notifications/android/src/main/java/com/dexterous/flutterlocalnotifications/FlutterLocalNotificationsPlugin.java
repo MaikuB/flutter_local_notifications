@@ -168,7 +168,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         setProgress(notificationDetails, builder);
         setCategory(notificationDetails, builder);
         setTimeoutAfter(notificationDetails, builder);
-        return builder.build();
+        Notification notification = builder.build();
+        if (notificationDetails.additionalFlags != null && notificationDetails.additionalFlags.length > 0) {
+            for(int additionalFlag:notificationDetails.additionalFlags) {
+                notification.flags |= additionalFlag;
+            }
+        }
+        return notification;
     }
 
     private static void setSmallIcon(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {

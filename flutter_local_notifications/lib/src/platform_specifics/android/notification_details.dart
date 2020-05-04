@@ -50,6 +50,7 @@ class AndroidNotificationDetails {
     this.visibility,
     this.timeoutAfter,
     this.category,
+    this.additionalFlags,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -120,7 +121,7 @@ class AndroidNotificationDetails {
   /// Specifies if this notification will function as the summary for grouped notifications.
   final bool setAsGroupSummary;
 
-  /// Sets the group alert behavior for this notification.
+  /// Specifies the group alert behavior for this notification.
   ///
   /// Default is AlertAll.
   /// See https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#setGroupAlertBehavior(int) for more details.
@@ -132,7 +133,7 @@ class AndroidNotificationDetails {
   /// Specifies if the notification will be "ongoing".
   final bool ongoing;
 
-  /// Sets the color.
+  /// Specifies the color.
   final Color color;
 
   /// Specifics the large icon to use.
@@ -168,22 +169,22 @@ class AndroidNotificationDetails {
   /// Specifies if an indeterminate progress bar will be shown.
   final bool indeterminate;
 
-  /// Sets the light color of the notification.
+  /// Specifies the light color of the notification.
   ///
   /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   final Color ledColor;
 
-  /// Sets how long the light colour will remain on.
+  /// Specifies how long the light colour will remain on.
   ///
   /// Not applicable for Android 8.0+
   final int ledOnMs;
 
-  /// Sets how long the light colour will remain off.
+  /// Specifies how long the light colour will remain off.
   ///
   /// Not applicable for Android 8.0+
   final int ledOffMs;
 
-  /// Set the "ticker" text which is sent to accessibility services.
+  /// Specifies the "ticker" text which is sent to accessibility services.
   final String ticker;
 
   /// The action to take for managing notification channels.
@@ -201,6 +202,13 @@ class AndroidNotificationDetails {
   ///
   /// Refer to Android notification API documentation at https://developer.android.com/reference/androidx/core/app/NotificationCompat.html#constants_2 for the available categories
   final String category;
+
+  /// Specifies the additional flags.
+  ///
+  /// These flags will get added to the native Android notification's flags field: https://developer.android.com/reference/android/app/Notification#flags
+  /// For a list of a values, refer to the documented constants prefixed with "FLAG_" (without the quotes) at https://developer.android.com/reference/android/app/Notification.html#constants_1.
+  /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
+  final Int32List additionalFlags;
 
   /// Creates a [Map] object that describes the [AndroidNotificationDetails] object.
   ///
@@ -244,7 +252,8 @@ class AndroidNotificationDetails {
       'ticker': ticker,
       'visibility': visibility?.index,
       'timeoutAfter': timeoutAfter,
-      'category': category
+      'category': category,
+      'additionalFlags': additionalFlags
     }
       ..addAll(_convertStyleInformationToMap())
       ..addAll(_convertSoundToMap())

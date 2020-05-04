@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -125,6 +126,81 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
+              'style': AndroidNotificationStyle.Default.index,
+              'styleInformation': <String, Object>{
+                'htmlFormatContent': false,
+                'htmlFormatTitle': false,
+              },
+            },
+          }));
+    });
+
+    test('show with default Android-specific details and additional flags',
+        () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(androidInitializationSettings, null);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      final AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+              'channelId', 'channelName', 'channelDescription',
+              additionalFlags: Int32List.fromList([4, 32]));
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(androidNotificationDetails, null));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, Object>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, Object>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.CreateIfNotExists.index,
+              'importance': Importance.Default.value,
+              'priority': Priority.Default.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.All.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'when': null,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'additionalFlags': [4, 32],
               'style': AndroidNotificationStyle.Default.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -200,6 +276,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.Default.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -280,6 +357,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.Default.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -359,6 +437,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.Default.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -436,6 +515,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.Default.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -515,6 +595,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.BigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -609,6 +690,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.BigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -697,6 +779,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.BigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -791,6 +874,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.BigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -877,6 +961,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.Inbox.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -967,6 +1052,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.Inbox.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -1048,6 +1134,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.Media.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1126,6 +1213,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.Media.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -1211,6 +1299,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.Messaging.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1325,6 +1414,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.Messaging.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,

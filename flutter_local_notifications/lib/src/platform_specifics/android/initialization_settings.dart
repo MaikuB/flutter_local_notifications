@@ -2,7 +2,7 @@
 class AndroidInitializationSettings {
   const AndroidInitializationSettings(this.defaultIcon);
 
-  /// Sets the default icon for notifications.
+  /// Specifies the default icon for notifications.
   final String defaultIcon;
 
   /// Creates a [Map] object that describes the [AndroidInitializationSettings] object.

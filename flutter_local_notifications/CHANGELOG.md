@@ -1,3 +1,8 @@
+# [1.4.3]
+
+* [Android] added the ability to specify additional flags for the notification. For example, this could be used to allow the audio to repeat. See the API docs and update example app for more details. Thanks to the PR from [andylei](https://github.com/andylei)
+* Minor cleanup of API docs
+
 # [1.4.2]
 
 * [Android] added the ability to specify the timestamp shown in the notification (issue [596](https://github.com/MaikuB/flutter_local_notifications/issues/596)). Thanks to the PR from [Nicolas Schneider](https://github.com/nioncode).

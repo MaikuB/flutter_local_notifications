@@ -103,6 +103,7 @@ public class NotificationDetails {
     private static final String TIMEOUT_AFTER = "timeoutAfter";
     private static final String SHOW_WHEN = "showWhen";
     private static final String WHEN = "when";
+    private static final String ADDITIONAL_FLAGS = "additionalFlags";
 
 
     public Integer id;
@@ -151,6 +152,7 @@ public class NotificationDetails {
     public Boolean allowWhileIdle;
     public Long timeoutAfter;
     public String category;
+    public int[] additionalFlags;
     public Boolean showWhen;
     public Long when;
 
@@ -213,6 +215,7 @@ public class NotificationDetails {
             notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
             notificationDetails.timeoutAfter = parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
             notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
+            notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
         }
     }
 
