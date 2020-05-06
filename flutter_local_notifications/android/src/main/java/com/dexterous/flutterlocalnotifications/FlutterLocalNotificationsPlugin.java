@@ -94,10 +94,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INVALID_BIG_PICTURE_ERROR_CODE = "INVALID_BIG_PICTURE";
     private static final String INVALID_SOUND_ERROR_CODE = "INVALID_SOUND";
     private static final String INVALID_LED_DETAILS_ERROR_CODE = "INVALID_LED_DETAILS";
+    private static final String INVALID_BROADCAST_TARGET_ERROR_CODE = "INVALID_BROADCAST_TARGET";
     private static final String INVALID_LED_DETAILS_ERROR_MESSAGE = "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of Android before Oreo";
     private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
     private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a raw resource to your Android head project.";
+    private static final String INVALID_BROADCAST_TARGET_ERROR_MESSAGE = "The specified class name doesn't match any existing class in the project";
     static String NOTIFICATION_ID = "notification_id";
     static String NOTIFICATION = "notification";
     static String NOTIFICATION_DETAILS = "notificationDetails";
@@ -686,8 +688,21 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     static void showNotification(Context context, NotificationDetails notificationDetails) {
         Notification notification = createNotification(context, notificationDetails);
-        NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
-        notificationManagerCompat.notify(notificationDetails.id, notification);
+        if (notificationDetails.broadcastTarget == null) {
+            NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
+            notificationManagerCompat.notify(notificationDetails.id, notification);
+        }
+        else {
+            try {
+                Class broadcastTargetClass = Class.forName(notificationDetails.broadcastTarget);
+                Intent intent = new Intent(context, broadcastTargetClass);
+                intent.putExtra("notificationId", notificationDetails.id);
+                intent.putExtra("notification", notification);
+                context.sendBroadcast(intent);
+            } catch (ClassNotFoundException e) {
+                return;
+            }
+        }
     }
 
     private static NotificationManagerCompat getNotificationManager(Context context) {
@@ -866,7 +881,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 hasInvalidLargeIcon(result, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource) ||
                 hasInvalidBigPictureResources(result, notificationDetails) ||
                 hasInvalidRawSoundResource(result, notificationDetails) ||
-                hasInvalidLedDetails(result, notificationDetails)) {
+                hasInvalidLedDetails(result, notificationDetails) ||
+                hasInvalidTargetClass(result, notificationDetails)) {
             return null;
         }
 
@@ -908,6 +924,19 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private boolean hasInvalidIcon(Result result, String icon) {
         return !StringUtils.isNullOrEmpty(icon) && !isValidDrawableResource(applicationContext, icon, result, INVALID_ICON_ERROR_CODE);
+    }
+
+    private boolean hasInvalidTargetClass(Result result, NotificationDetails notificationDetails) {
+        if (notificationDetails.broadcastTarget == null) {
+            return false;
+        }
+        try {
+            Class.forName(notificationDetails.broadcastTarget);
+        } catch (ClassNotFoundException e) {
+            result.error(INVALID_BROADCAST_TARGET_ERROR_CODE, INVALID_BROADCAST_TARGET_ERROR_MESSAGE, null);
+            return true;
+        }
+        return false;
     }
 
     private void cancelNotification(Integer id) {

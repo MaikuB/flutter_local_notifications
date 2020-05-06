@@ -23,6 +23,7 @@ public class NotificationDetails {
     private static final String TITLE = "title";
     private static final String BODY = "body";
     private static final String PAYLOAD = "payload";
+    private static final String BROADCAST_TARGET = "broadcastTarget";
     private static final String MILLISECONDS_SINCE_EPOCH = "millisecondsSinceEpoch";
     private static final String CALLED_AT = "calledAt";
     private static final String REPEAT_INTERVAL = "repeatInterval";
@@ -128,6 +129,7 @@ public class NotificationDetails {
     public Long millisecondsSinceEpoch;
     public Long calledAt;
     public String payload;
+    public String broadcastTarget;
     public String groupKey;
     public Boolean setAsGroupSummary;
     public Integer groupAlertBehavior;
@@ -164,6 +166,7 @@ public class NotificationDetails {
     public static NotificationDetails from(Map<String, Object> arguments) {
         NotificationDetails notificationDetails = new NotificationDetails();
         notificationDetails.payload = (String) arguments.get(PAYLOAD);
+        notificationDetails.broadcastTarget = (String) arguments.get(BROADCAST_TARGET);
         notificationDetails.id = (Integer) arguments.get(ID);
         notificationDetails.title = (String) arguments.get(TITLE);
         notificationDetails.body = (String) arguments.get(BODY);

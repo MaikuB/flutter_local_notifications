@@ -6,11 +6,11 @@ import 'enums.dart';
 import 'notification_sound.dart';
 import 'styles/big_picture_style_information.dart';
 import 'styles/big_text_style_information.dart';
+import 'styles/default_style_information.dart';
 import 'styles/inbox_style_information.dart';
 import 'styles/media_style_information.dart';
 import 'styles/messaging_style_information.dart';
 import 'styles/style_information.dart';
-import 'styles/default_style_information.dart';
 
 /// Configures the notification on Android.
 class AndroidNotificationDetails {
@@ -51,6 +51,7 @@ class AndroidNotificationDetails {
     this.timeoutAfter,
     this.category,
     this.additionalFlags,
+    this.broadcastTarget,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -210,6 +211,11 @@ class AndroidNotificationDetails {
   /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
   final Int32List additionalFlags;
 
+  /// The broadcast target className.
+  ///
+  /// Lookup will be done via `Class.forName` in Android
+  final String broadcastTarget;
+
   /// Creates a [Map] object that describes the [AndroidNotificationDetails] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
@@ -253,7 +259,8 @@ class AndroidNotificationDetails {
       'visibility': visibility?.index,
       'timeoutAfter': timeoutAfter,
       'category': category,
-      'additionalFlags': additionalFlags
+      'additionalFlags': additionalFlags,
+      'broadcastTarget': broadcastTarget
     }
       ..addAll(_convertStyleInformationToMap())
       ..addAll(_convertSoundToMap())
