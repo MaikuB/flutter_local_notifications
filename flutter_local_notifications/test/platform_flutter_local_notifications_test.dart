@@ -127,6 +127,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.Default.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -201,6 +202,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': [4, 32],
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.Default.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -277,6 +279,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.Default.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -358,6 +361,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.Default.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -438,6 +442,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.Default.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -516,6 +521,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.Default.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -596,6 +602,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.BigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -691,6 +698,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.BigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -780,6 +788,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.BigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -875,6 +884,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.BigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -962,6 +972,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.Inbox.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1053,6 +1064,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.Inbox.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -1135,6 +1147,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.Media.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1214,6 +1227,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.Media.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -1300,6 +1314,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.Messaging.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1415,6 +1430,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
+              'broadcastTarget': null,
               'style': AndroidNotificationStyle.Messaging.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
