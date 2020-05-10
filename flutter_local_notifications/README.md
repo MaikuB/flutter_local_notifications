@@ -278,7 +278,9 @@ await flutterLocalNotificationsPlugin.show(
     'Please join us to celebrate the...',
     secondNotificationPlatformSpecifics);
 
-// create the summary notification required for older devices that pre-date Android 7.0 (API level 24)
+// create the summary notification to support older devices that pre-date Android 7.0 (API level 24).
+// recommended to create this regardless as the behaviour may vary as mentioned in
+// https://developer.android.com/training/notify-user/group
 List<String> lines = List<String>();
 lines.add('Alex Faarborg  Check this out');
 lines.add('Jeff Chang    Launch Party');

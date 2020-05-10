@@ -826,7 +826,8 @@ class _HomePageState extends State<HomePage> {
         secondNotificationPlatformSpecifics);
 
     // create the summary notification to support older devices that pre-date Android 7.0 (API level 24).
-    // this is required is regardless of which versions of Android your application is going to support
+    // recommended to create this regardless as the behaviour may vary as mentioned in
+    // https://developer.android.com/training/notify-user/group
     var lines = List<String>();
     lines.add('Alex Faarborg  Check this out');
     lines.add('Jeff Chang    Launch Party');
