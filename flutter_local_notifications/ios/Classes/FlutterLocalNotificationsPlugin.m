@@ -114,48 +114,55 @@ static FlutterError *getFlutterError(NSError *error) {
     return self;
 }
 
-- (void)pendingNotificationRequests:(FlutterResult _Nonnull)result {
-    if(@available(iOS 10.0, *)) {
-        UNUserNotificationCenter *center =  [UNUserNotificationCenter currentNotificationCenter];
-        [center getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> * _Nonnull requests) {
-            NSMutableArray<NSMutableDictionary<NSString *, NSObject *> *> *pendingNotificationRequests = [[NSMutableArray alloc] initWithCapacity:[requests count]];
-            for (UNNotificationRequest *request in requests) {
-                NSMutableDictionary *pendingNotificationRequest = [[NSMutableDictionary alloc] init];
-                pendingNotificationRequest[ID] = request.content.userInfo[NOTIFICATION_ID];
-                if (request.content.title != nil) {
-                    pendingNotificationRequest[TITLE] = request.content.title;
-                }
-                if (request.content.body != nil) {
-                    pendingNotificationRequest[BODY] = request.content.body;
-                }
-                if (request.content.userInfo[PAYLOAD] != [NSNull null]) {
-                    pendingNotificationRequest[PAYLOAD] = request.content.userInfo[PAYLOAD];
-                }
-                [pendingNotificationRequests addObject:pendingNotificationRequest];
-            }
-            result(pendingNotificationRequests);
-        }];
-    } else {
-        NSArray *notifications = [UIApplication sharedApplication].scheduledLocalNotifications;
-        NSMutableArray<NSDictionary<NSString *, NSObject *> *> *pendingNotificationRequests = [[NSMutableArray alloc] initWithCapacity:[notifications count]];
-        for( int i = 0; i < [notifications count]; i++) {
-            UILocalNotification* localNotification = [notifications objectAtIndex:i];
+- (void)pendingUserNotificationRequests:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
+    UNUserNotificationCenter *center =  [UNUserNotificationCenter currentNotificationCenter];
+    [center getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> * _Nonnull requests) {
+        NSMutableArray<NSMutableDictionary<NSString *, NSObject *> *> *pendingNotificationRequests = [[NSMutableArray alloc] initWithCapacity:[requests count]];
+        for (UNNotificationRequest *request in requests) {
             NSMutableDictionary *pendingNotificationRequest = [[NSMutableDictionary alloc] init];
-            pendingNotificationRequest[ID] = localNotification.userInfo[NOTIFICATION_ID];
-            if (localNotification.userInfo[TITLE] != [NSNull null]) {
-                pendingNotificationRequest[TITLE] = localNotification.userInfo[TITLE];
+            pendingNotificationRequest[ID] = request.content.userInfo[NOTIFICATION_ID];
+            if (request.content.title != nil) {
+                pendingNotificationRequest[TITLE] = request.content.title;
             }
-            if (localNotification.alertBody) {
-                pendingNotificationRequest[BODY] = localNotification.alertBody;
+            if (request.content.body != nil) {
+                pendingNotificationRequest[BODY] = request.content.body;
             }
-            if (localNotification.userInfo[PAYLOAD] != [NSNull null]) {
-                pendingNotificationRequest[PAYLOAD] = localNotification.userInfo[PAYLOAD];
+            if (request.content.userInfo[PAYLOAD] != [NSNull null]) {
+                pendingNotificationRequest[PAYLOAD] = request.content.userInfo[PAYLOAD];
             }
             [pendingNotificationRequests addObject:pendingNotificationRequest];
         }
         result(pendingNotificationRequests);
-    }
+    }];
 }
+
+- (void)pendingLocalNotificationRequests:(FlutterResult _Nonnull)result {
+    NSArray *notifications = [UIApplication sharedApplication].scheduledLocalNotifications;
+    NSMutableArray<NSDictionary<NSString *, NSObject *> *> *pendingNotificationRequests = [[NSMutableArray alloc] initWithCapacity:[notifications count]];
+    for( int i = 0; i < [notifications count]; i++) {
+        UILocalNotification* localNotification = [notifications objectAtIndex:i];
+        NSMutableDictionary *pendingNotificationRequest = [[NSMutableDictionary alloc] init];
+        pendingNotificationRequest[ID] = localNotification.userInfo[NOTIFICATION_ID];
+        if (localNotification.userInfo[TITLE] != [NSNull null]) {
+            pendingNotificationRequest[TITLE] = localNotification.userInfo[TITLE];
+        }
+        if (localNotification.alertBody) {
+            pendingNotificationRequest[BODY] = localNotification.alertBody;
+        }
+        if (localNotification.userInfo[PAYLOAD] != [NSNull null]) {
+            pendingNotificationRequest[PAYLOAD] = localNotification.userInfo[PAYLOAD];
+        }
+        [pendingNotificationRequests addObject:pendingNotificationRequest];
+    }
+    result(pendingNotificationRequests);
+}
+
+- (void)pendingNotificationRequests:(FlutterResult _Nonnull)result {
+    if(@available(iOS 10.0, *)) {
+        [self pendingUserNotificationRequests:result];
+    } else {
+        [self pendingLocalNotificationRequests:result];
+    }}
 
 - (void)initialize:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
     NSDictionary *arguments = [call arguments];
@@ -543,8 +550,8 @@ static FlutterError *getFlutterError(NSError *error) {
         if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
             notification.repeatInterval = NSCalendarUnitDay;
         } else  if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
-                   notification.repeatInterval = NSCalendarUnitWeekOfYear;
-               }
+            notification.repeatInterval = NSCalendarUnitWeekOfYear;
+        }
         [[UIApplication sharedApplication] scheduleLocalNotification:notification];
     }
     else if(notificationDetails.secondsSinceEpoch == nil) {
