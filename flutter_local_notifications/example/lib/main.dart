@@ -914,7 +914,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showWeeklyAtDayAndTime() async {
     await flutterLocalNotificationsPlugin.tzSchedule(
-        1,
+        0,
         'weekly scheduled notification title',
         'weekly scheduled notification body',
         tz.TZDateTime.now(tz.local).add(Duration(seconds: 5)),
