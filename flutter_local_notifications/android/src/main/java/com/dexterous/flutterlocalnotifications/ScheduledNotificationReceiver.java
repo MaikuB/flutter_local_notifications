@@ -1,13 +1,10 @@
 package com.dexterous.flutterlocalnotifications;
 
-import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import androidx.core.app.NotificationManagerCompat;
 
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
-import com.dexterous.flutterlocalnotifications.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -28,10 +25,14 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
         }.getType();
         NotificationDetails notificationDetails  = gson.fromJson(notificationDetailsJson, type);
         FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
-        if(notificationDetails.scheduledNotificationRepeatFrequency == null && notificationDetails.repeatInterval == null) {
-            FlutterLocalNotificationsPlugin.removeNotificationFromCache(notificationDetails.id, context);
+        if(notificationDetails.repeatInterval != null) {
+            if(notificationDetails.scheduledNotificationRepeatFrequency != null) {
+                FlutterLocalNotificationsPlugin.zonedScheduleNextNotification(context, notificationDetails);
+            } else {
+                FlutterLocalNotificationsPlugin.scheduleNextRepeatingNotification(context, notificationDetails);
+            }
         } else {
-            FlutterLocalNotificationsPlugin.scheduleNextNotification(context, notificationDetails);
+            FlutterLocalNotificationsPlugin.removeNotificationFromCache(context, notificationDetails.id);
         }
 
     }

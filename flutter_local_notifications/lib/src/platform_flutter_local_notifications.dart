@@ -186,16 +186,21 @@ class AndroidFlutterLocalNotificationsPlugin
   @override
   Future<void> periodicallyShow(
       int id, String title, String body, RepeatInterval repeatInterval,
-      {AndroidNotificationDetails notificationDetails, String payload}) async {
+      {AndroidNotificationDetails notificationDetails,
+      String payload,
+      bool androidAllowWhileIdle = false}) async {
     validateId(id);
+    var serializedPlatformSpecifics =
+        notificationDetails?.toMap() ?? Map<String, dynamic>();
+    serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
     await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
       'id': id,
       'title': title,
       'body': body,
       'calledAt': DateTime.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
-      'platformSpecifics': notificationDetails?.toMap(),
-      'payload': payload ?? ''
+      'platformSpecifics': serializedPlatformSpecifics,
+      'payload': payload ?? '',
     });
   }
 

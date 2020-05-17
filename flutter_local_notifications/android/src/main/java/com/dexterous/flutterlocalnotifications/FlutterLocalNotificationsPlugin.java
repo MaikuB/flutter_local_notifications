@@ -105,7 +105,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
     private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a raw resource to your Android head project.";
     static String NOTIFICATION_DETAILS = "notificationDetails";
-    static String REPEAT = "repeat";
     static Gson gson;
     private MethodChannel channel;
     private Context applicationContext;
@@ -240,7 +239,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         editor.commit();
     }
 
-    static void removeNotificationFromCache(Integer notificationId, Context context) {
+    static void removeNotificationFromCache(Context context, Integer notificationId) {
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
             NotificationDetails notificationDetails = it.next();
@@ -301,14 +300,65 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-
-    private static void repeatNotification(Context context, NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
+    static void scheduleNextRepeatingNotification(Context context, NotificationDetails notificationDetails) {
+        long repeatInterval = calculateRepeatIntervalMilliseconds(notificationDetails);
+        long notificationTriggerTime = calculateNextNotificationTrigger(notificationDetails.calledAt, repeatInterval);
         Gson gson = buildGson();
         String notificationDetailsJson = gson.toJson(notificationDetails);
         Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
         notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = getAlarmManager(context);
+        AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, notificationTriggerTime, pendingIntent);
+        saveScheduledNotification(context, notificationDetails);
+    }
+
+    private static void repeatNotification(Context context, NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
+        long repeatInterval = calculateRepeatIntervalMilliseconds(notificationDetails);
+
+        long notificationTriggerTime = notificationDetails.calledAt;
+        if (notificationDetails.repeatTime != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, notificationDetails.repeatTime.hour);
+            calendar.set(Calendar.MINUTE, notificationDetails.repeatTime.minute);
+            calendar.set(Calendar.SECOND, notificationDetails.repeatTime.second);
+            if (notificationDetails.day != null) {
+                calendar.set(Calendar.DAY_OF_WEEK, notificationDetails.day);
+            }
+
+            notificationTriggerTime = calendar.getTimeInMillis();
+        }
+
+        notificationTriggerTime = calculateNextNotificationTrigger(notificationTriggerTime, repeatInterval);
+
+        Gson gson = buildGson();
+        String notificationDetailsJson = gson.toJson(notificationDetails);
+        Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
+        notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = getAlarmManager(context);
+
+        if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
+            AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, notificationTriggerTime, pendingIntent);
+        } else {
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, notificationTriggerTime, repeatInterval, pendingIntent);
+        }
+        if (updateScheduledNotificationsCache) {
+            saveScheduledNotification(context, notificationDetails);
+        }
+    }
+
+    private static long calculateNextNotificationTrigger(long notificationTriggerTime, long repeatInterval) {
+        // ensures that time is in the future
+        long currentTime = System.currentTimeMillis();
+        while (notificationTriggerTime < currentTime) {
+            notificationTriggerTime += repeatInterval;
+        }
+        return notificationTriggerTime;
+    }
+
+    private static long calculateRepeatIntervalMilliseconds(NotificationDetails notificationDetails) {
         long repeatInterval = 0;
         switch (notificationDetails.repeatInterval) {
             case EveryMinute:
@@ -326,32 +376,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             default:
                 break;
         }
-
-        long startTimeMilliseconds = notificationDetails.calledAt;
-        if (notificationDetails.repeatTime != null) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.HOUR_OF_DAY, notificationDetails.repeatTime.hour);
-            calendar.set(Calendar.MINUTE, notificationDetails.repeatTime.minute);
-            calendar.set(Calendar.SECOND, notificationDetails.repeatTime.second);
-            if (notificationDetails.day != null) {
-                calendar.set(Calendar.DAY_OF_WEEK, notificationDetails.day);
-            }
-
-            startTimeMilliseconds = calendar.getTimeInMillis();
-        }
-
-        // ensure that start time is in the future
-        long currentTime = System.currentTimeMillis();
-        while (startTimeMilliseconds < currentTime) {
-            startTimeMilliseconds += repeatInterval;
-        }
-
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, startTimeMilliseconds, repeatInterval, pendingIntent);
-
-        if (updateScheduledNotificationsCache) {
-            saveScheduledNotification(context, notificationDetails);
-        }
+        return repeatInterval;
     }
 
     private static void saveScheduledNotification(Context context, NotificationDetails notificationDetails) {
@@ -715,7 +740,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         notificationManagerCompat.notify(notificationDetails.id, notification);
     }
 
-    static void scheduleNextNotification(Context context, NotificationDetails notificationDetails) {
+    static void zonedScheduleNextNotification(Context context, NotificationDetails notificationDetails) {
         String nextFireDate = getNextFireDate(notificationDetails);
         if (nextFireDate == null) {
             return;
@@ -986,7 +1011,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         alarmManager.cancel(pendingIntent);
         NotificationManagerCompat notificationManager = getNotificationManager(applicationContext);
         notificationManager.cancel(id);
-        removeNotificationFromCache(id, applicationContext);
+        removeNotificationFromCache(applicationContext, id);
     }
 
     private void cancelAllNotifications(Result result) {

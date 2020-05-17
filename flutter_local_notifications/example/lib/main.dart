@@ -893,7 +893,8 @@ class _HomePageState extends State<HomePage> {
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
-        'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
+        'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics,
+        androidAllowWhileIdle: true);
   }
 
   Future<void> _showDailyAtTime() async {
