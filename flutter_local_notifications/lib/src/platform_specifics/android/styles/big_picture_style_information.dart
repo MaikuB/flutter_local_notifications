@@ -41,11 +41,11 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
   ///
   /// Mainly for internal use to send the data over a platform channel.
   @override
-  Map<String, dynamic> toMap() {
+  Map<String, Object> toMap() {
     return super.toMap()
       ..addAll(_convertBigPictureToMap())
       ..addAll(_convertLargeIconToMap())
-      ..addAll(<String, dynamic>{
+      ..addAll(<String, Object>{
         'contentTitle': contentTitle,
         'summaryText': summaryText,
         'htmlFormatContentTitle': htmlFormatContentTitle,
@@ -54,35 +54,35 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
       });
   }
 
-  Map<String, dynamic> _convertBigPictureToMap() {
+  Map<String, Object> _convertBigPictureToMap() {
     if (bigPicture is DrawableResourceAndroidBitmap) {
-      return <String, dynamic>{
+      return <String, Object>{
         'bigPicture': bigPicture.bitmap,
         'bigPictureBitmapSource': AndroidBitmapSource.Drawable.index,
       };
     } else if (bigPicture is FilePathAndroidBitmap) {
-      return <String, dynamic>{
+      return <String, Object>{
         'bigPicture': bigPicture.bitmap,
         'bigPictureBitmapSource': AndroidBitmapSource.FilePath.index,
       };
     } else {
-      return <String, dynamic>{};
+      return <String, Object>{};
     }
   }
 
-  Map<String, dynamic> _convertLargeIconToMap() {
+  Map<String, Object> _convertLargeIconToMap() {
     if (largeIcon is DrawableResourceAndroidBitmap) {
-      return <String, dynamic>{
+      return <String, Object>{
         'largeIcon': largeIcon.bitmap,
         'largeIconBitmapSource': AndroidBitmapSource.Drawable.index,
       };
     } else if (largeIcon is FilePathAndroidBitmap) {
-      return <String, dynamic>{
+      return <String, Object>{
         'largeIcon': largeIcon.bitmap,
         'largeIconBitmapSource': AndroidBitmapSource.FilePath.index,
       };
     } else {
-      return <String, dynamic>{};
+      return <String, Object>{};
     }
   }
 }

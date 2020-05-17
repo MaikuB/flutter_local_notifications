@@ -70,8 +70,8 @@ class AndroidNotificationChannel {
   /// Creates a [Map] object that describes the [AndroidNotificationChannel] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+  Map<String, Object> toMap() {
+    return <String, Object>{
       'id': id,
       'name': name,
       'description': description,
@@ -90,19 +90,19 @@ class AndroidNotificationChannel {
     }..addAll(_convertSoundToMap());
   }
 
-  Map<String, dynamic> _convertSoundToMap() {
+  Map<String, Object> _convertSoundToMap() {
     if (sound is RawResourceAndroidNotificationSound) {
-      return <String, dynamic>{
+      return <String, Object>{
         'sound': sound.sound,
         'soundSource': AndroidNotificationSoundSource.RawResource.index,
       };
     } else if (sound is UriAndroidNotificationSound) {
-      return <String, dynamic>{
+      return <String, Object>{
         'sound': sound.sound,
         'soundSource': AndroidNotificationSoundSource.Uri.index,
       };
     } else {
-      return <String, dynamic>{};
+      return <String, Object>{};
     }
   }
 }

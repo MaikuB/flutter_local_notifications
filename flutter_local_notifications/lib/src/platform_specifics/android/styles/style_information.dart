@@ -1,4 +1,4 @@
 /// Abstract class for defining an Android notification style
 abstract class StyleInformation {
-  Map<String, dynamic> toMap();
+  Map<String, Object> toMap();
 }

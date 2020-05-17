@@ -33,8 +33,8 @@ class Person {
   /// Creates a [Map] object that describes the [Person] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+  Map<String, Object> toMap() {
+    return <String, Object>{
       'bot': bot,
       'important': important,
       'key': key,
@@ -43,29 +43,29 @@ class Person {
     }..addAll(_convertIconToMap());
   }
 
-  Map<String, dynamic> _convertIconToMap() {
+  Map<String, Object> _convertIconToMap() {
     if (icon is DrawableResourceAndroidIcon) {
-      return <String, dynamic>{
+      return <String, Object>{
         'icon': icon.icon,
         'iconSource': AndroidIconSource.DrawableResource.index,
       };
     } else if (icon is BitmapFilePathAndroidIcon) {
-      return <String, dynamic>{
+      return <String, Object>{
         'icon': icon.icon,
         'iconSource': AndroidIconSource.BitmapFilePath.index,
       };
     } else if (icon is ContentUriAndroidIcon) {
-      return <String, dynamic>{
+      return <String, Object>{
         'icon': icon.icon,
         'iconSource': AndroidIconSource.ContentUri.index,
       };
     } else if (icon is FlutterBitmapAssetAndroidIcon) {
-      return <String, dynamic>{
+      return <String, Object>{
         'icon': icon.icon,
         'iconSource': AndroidIconSource.FlutterBitmapAsset.index,
       };
     } else {
-      return <String, dynamic>{};
+      return <String, Object>{};
     }
   }
 }

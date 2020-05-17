@@ -16,8 +16,8 @@ class DefaultStyleInformation implements StyleInformation {
   /// Creates a [Map] object that describes the [DefaultStyleInformation] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+  Map<String, Object> toMap() {
+    return <String, Object>{
       'htmlFormatContent': htmlFormatContent,
       'htmlFormatTitle': htmlFormatTitle
     };

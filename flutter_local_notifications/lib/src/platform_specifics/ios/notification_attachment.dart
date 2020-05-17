@@ -19,8 +19,8 @@ class IOSNotificationAttachment {
   /// Creates a [Map] object that describes the [IOSNotificationAttachment] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+  Map<String, Object> toMap() {
+    return <String, Object>{
       'identifier': identifier ?? '',
       'filePath': filePath,
     };

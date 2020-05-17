@@ -213,8 +213,8 @@ class AndroidNotificationDetails {
   /// Creates a [Map] object that describes the [AndroidNotificationDetails] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+  Map<String, Object> toMap() {
+    return <String, Object>{
       'icon': icon,
       'channelId': channelId,
       'channelName': channelName,
@@ -260,74 +260,74 @@ class AndroidNotificationDetails {
       ..addAll(_convertLargeIconToMap());
   }
 
-  Map<String, dynamic> _convertStyleInformationToMap() {
+  Map<String, Object> _convertStyleInformationToMap() {
     if (styleInformation is BigPictureStyleInformation) {
-      return <String, dynamic>{
+      return <String, Object>{
         'style': AndroidNotificationStyle.BigPicture.index,
         'styleInformation': styleInformation.toMap(),
       };
     } else if (styleInformation is BigTextStyleInformation) {
-      return <String, dynamic>{
+      return <String, Object>{
         'style': AndroidNotificationStyle.BigText.index,
         'styleInformation': styleInformation.toMap(),
       };
     } else if (styleInformation is InboxStyleInformation) {
-      return <String, dynamic>{
+      return <String, Object>{
         'style': AndroidNotificationStyle.Inbox.index,
         'styleInformation': styleInformation.toMap(),
       };
     } else if (styleInformation is MessagingStyleInformation) {
-      return <String, dynamic>{
+      return <String, Object>{
         'style': AndroidNotificationStyle.Messaging.index,
         'styleInformation': styleInformation.toMap(),
       };
     } else if (styleInformation is MediaStyleInformation) {
-      return <String, dynamic>{
+      return <String, Object>{
         'style': AndroidNotificationStyle.Media.index,
         'styleInformation': styleInformation.toMap(),
       };
     } else if (styleInformation is DefaultStyleInformation) {
-      return <String, dynamic>{
+      return <String, Object>{
         'style': AndroidNotificationStyle.Default.index,
         'styleInformation': styleInformation.toMap(),
       };
     } else {
-      return <String, dynamic>{
+      return <String, Object>{
         'style': AndroidNotificationStyle.Default.index,
         'styleInformation': DefaultStyleInformation(false, false).toMap(),
       };
     }
   }
 
-  Map<String, dynamic> _convertLargeIconToMap() {
+  Map<String, Object> _convertLargeIconToMap() {
     if (largeIcon is DrawableResourceAndroidBitmap) {
-      return <String, dynamic>{
+      return <String, Object>{
         'largeIcon': largeIcon.bitmap,
         'largeIconBitmapSource': AndroidBitmapSource.Drawable.index,
       };
     } else if (largeIcon is FilePathAndroidBitmap) {
-      return <String, dynamic>{
+      return <String, Object>{
         'largeIcon': largeIcon.bitmap,
         'largeIconBitmapSource': AndroidBitmapSource.FilePath.index,
       };
     } else {
-      return <String, dynamic>{};
+      return <String, Object>{};
     }
   }
 
-  Map<String, dynamic> _convertSoundToMap() {
+  Map<String, Object> _convertSoundToMap() {
     if (sound is RawResourceAndroidNotificationSound) {
-      return <String, dynamic>{
+      return <String, Object>{
         'sound': sound.sound,
         'soundSource': AndroidNotificationSoundSource.RawResource.index,
       };
     } else if (sound is UriAndroidNotificationSound) {
-      return <String, dynamic>{
+      return <String, Object>{
         'sound': sound.sound,
         'soundSource': AndroidNotificationSoundSource.Uri.index,
       };
     } else {
-      return <String, dynamic>{};
+      return <String, Object>{};
     }
   }
 }

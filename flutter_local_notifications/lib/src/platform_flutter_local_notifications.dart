@@ -80,9 +80,9 @@ class AndroidFlutterLocalNotificationsPlugin
       {String payload, bool androidAllowWhileIdle = false}) async {
     validateId(id);
     var serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? Map<String, dynamic>();
+        notificationDetails?.toMap() ?? Map<String, Object>();
     serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
-    await _channel.invokeMethod('schedule', <String, dynamic>{
+    await _channel.invokeMethod('schedule', <String, Object>{
       'id': id,
       'title': title,
       'body': body,
@@ -102,11 +102,11 @@ class AndroidFlutterLocalNotificationsPlugin
     //assert(scheduledDate.isAfter(DateTime.now()));
 
     var serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? Map<String, dynamic>();
+        notificationDetails?.toMap() ?? Map<String, Object>();
 
     await _channel.invokeMethod(
         'zonedSchedule',
-        <String, dynamic>{
+        <String, Object>{
           'id': id,
           'title': title,
           'body': body,
@@ -129,7 +129,7 @@ class AndroidFlutterLocalNotificationsPlugin
       Time notificationTime, AndroidNotificationDetails notificationDetails,
       {String payload}) async {
     validateId(id);
-    await _channel.invokeMethod('showDailyAtTime', <String, dynamic>{
+    await _channel.invokeMethod('showDailyAtTime', <String, Object>{
       'id': id,
       'title': title,
       'body': body,
@@ -154,7 +154,7 @@ class AndroidFlutterLocalNotificationsPlugin
       {String payload}) async {
     validateId(id);
 
-    await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, dynamic>{
+    await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, Object>{
       'id': id,
       'title': title,
       'body': body,
@@ -173,7 +173,7 @@ class AndroidFlutterLocalNotificationsPlugin
     validateId(id);
     return _channel.invokeMethod(
       'show',
-      <String, dynamic>{
+      <String, Object>{
         'id': id,
         'title': title,
         'body': body,
@@ -191,9 +191,9 @@ class AndroidFlutterLocalNotificationsPlugin
       bool androidAllowWhileIdle = false}) async {
     validateId(id);
     var serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? Map<String, dynamic>();
+        notificationDetails?.toMap() ?? Map<String, Object>();
     serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
-    await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
+    await _channel.invokeMethod('periodicallyShow', <String, Object>{
       'id': id,
       'title': title,
       'body': body,
@@ -271,7 +271,7 @@ class IOSFlutterLocalNotificationsPlugin
       DateTime scheduledDate, IOSNotificationDetails notificationDetails,
       {String payload}) async {
     validateId(id);
-    await _channel.invokeMethod('schedule', <String, dynamic>{
+    await _channel.invokeMethod('schedule', <String, Object>{
       'id': id,
       'title': title,
       'body': body,
@@ -290,10 +290,10 @@ class IOSFlutterLocalNotificationsPlugin
     validateId(id);
     assert(scheduledDate.isAfter(DateTime.now()));
     var serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? Map<String, dynamic>();
+        notificationDetails?.toMap() ?? Map<String, Object>();
     await _channel.invokeMethod(
         'zonedSchedule',
-        <String, dynamic>{
+        <String, Object>{
           'id': id,
           'title': title,
           'body': body,
@@ -316,7 +316,7 @@ class IOSFlutterLocalNotificationsPlugin
       Time notificationTime, IOSNotificationDetails notificationDetails,
       {String payload}) async {
     validateId(id);
-    await _channel.invokeMethod('showDailyAtTime', <String, dynamic>{
+    await _channel.invokeMethod('showDailyAtTime', <String, Object>{
       'id': id,
       'title': title,
       'body': body,
@@ -341,7 +341,7 @@ class IOSFlutterLocalNotificationsPlugin
       {String payload}) async {
     validateId(id);
 
-    await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, dynamic>{
+    await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, Object>{
       'id': id,
       'title': title,
       'body': body,
@@ -360,7 +360,7 @@ class IOSFlutterLocalNotificationsPlugin
     validateId(id);
     return _channel.invokeMethod(
       'show',
-      <String, dynamic>{
+      <String, Object>{
         'id': id,
         'title': title,
         'body': body,
@@ -375,7 +375,7 @@ class IOSFlutterLocalNotificationsPlugin
       int id, String title, String body, RepeatInterval repeatInterval,
       {IOSNotificationDetails notificationDetails, String payload}) async {
     validateId(id);
-    await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
+    await _channel.invokeMethod('periodicallyShow', <String, Object>{
       'id': id,
       'title': title,
       'body': body,
