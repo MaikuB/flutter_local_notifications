@@ -88,7 +88,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String CANCEL_METHOD = "cancel";
     private static final String CANCEL_ALL_METHOD = "cancelAll";
     private static final String SCHEDULE_METHOD = "schedule";
-    private static final String TZ_SCHEDULE_METHOD = "tzSchedule";
+    private static final String ZONED_SCHEDULE_METHOD = "zonedSchedule";
     private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
     private static final String SHOW_DAILY_AT_TIME_METHOD = "showDailyAtTime";
     private static final String SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = "showWeeklyAtDayAndTime";
@@ -126,7 +126,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 if (scheduledNotification.timezoneName == null) {
                     scheduleNotification(context, scheduledNotification, false);
                 } else {
-                    tzScheduleNotification(context, scheduledNotification, false);
+                    zonedScheduleNotification(context, scheduledNotification, false);
                 }
             } else {
                 repeatNotification(context, scheduledNotification, false);
@@ -283,7 +283,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-    private static void tzScheduleNotification(Context context, final NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
+    private static void zonedScheduleNotification(Context context, final NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
         Gson gson = buildGson();
         String notificationDetailsJson = gson.toJson(notificationDetails);
         Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
@@ -721,7 +721,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             return;
         }
         notificationDetails.scheduledDateTime = nextFireDate;
-        tzScheduleNotification(context, notificationDetails, true);
+        zonedScheduleNotification(context, notificationDetails, true);
     }
 
     static String getNextFireDate(NotificationDetails notificationDetails) {
@@ -810,8 +810,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 schedule(call, result);
                 break;
             }
-            case TZ_SCHEDULE_METHOD: {
-                tzSchedule(call, result);
+            case ZONED_SCHEDULE_METHOD: {
+                zonedSchedule(call, result);
                 break;
             }
             case PERIODICALLY_SHOW_METHOD:
@@ -880,11 +880,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-    private void tzSchedule(MethodCall call, Result result) {
+    private void zonedSchedule(MethodCall call, Result result) {
         Map<String, Object> arguments = call.arguments();
         NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
         if (notificationDetails != null) {
-            tzScheduleNotification(applicationContext, notificationDetails, true);
+            zonedScheduleNotification(applicationContext, notificationDetails, true);
             result.success(null);
         }
     }

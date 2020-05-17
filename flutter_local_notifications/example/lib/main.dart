@@ -277,7 +277,7 @@ class _HomePageState extends State<HomePage> {
                     buttonText:
                         'Schedule notification to appear in 5 seconds based on local timezone',
                     onPressed: () async {
-                      await _tzScheduleNotification();
+                      await _zonedScheduleNotification();
                     },
                   ),
                   PaddedRaisedButton(
@@ -548,8 +548,8 @@ class _HomePageState extends State<HomePage> {
         platformChannelSpecifics);
   }
 
-  Future<void> _tzScheduleNotification() async {
-    await flutterLocalNotificationsPlugin.tzSchedule(
+  Future<void> _zonedScheduleNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         'scheduled title',
         'scheduled body',
@@ -897,7 +897,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showDailyAtTime() async {
-    await flutterLocalNotificationsPlugin.tzSchedule(
+    await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         'daily scheduled notification title',
         'daily scheduled notification body',
@@ -913,7 +913,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showWeeklyAtDayAndTime() async {
-    await flutterLocalNotificationsPlugin.tzSchedule(
+    await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         'weekly scheduled notification title',
         'weekly scheduled notification body',

@@ -20,7 +20,7 @@
 NSString *const INITIALIZE_METHOD = @"initialize";
 NSString *const SHOW_METHOD = @"show";
 NSString *const SCHEDULE_METHOD = @"schedule";
-NSString *const TZSCHEDULE_METHOD = @"tzSchedule";
+NSString *const ZONED_SCHEDULE_METHOD = @"zonedSchedule";
 NSString *const PERIODICALLY_SHOW_METHOD = @"periodicallyShow";
 NSString *const SHOW_DAILY_AT_TIME_METHOD = @"showDailyAtTime";
 NSString *const SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = @"showWeeklyAtDayAndTime";
@@ -318,7 +318,7 @@ static FlutterError *getFlutterError(NSError *error) {
             notificationDetails.day = @([call.arguments[DAY] integerValue]);
         }
         notificationDetails.repeatInterval = @([call.arguments[REPEAT_INTERVAL] integerValue]);
-    } else if([TZSCHEDULE_METHOD isEqualToString:call.method]) {
+    } else if([ZONED_SCHEDULE_METHOD isEqualToString:call.method]) {
         notificationDetails.scheduledDateTime  = call.arguments[SCHEDULED_DATE_TIME];
         notificationDetails.timezoneName = call.arguments[TIMEZONE_NAME];
         if(call.arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY] != [NSNull null]) {
@@ -369,7 +369,7 @@ static FlutterError *getFlutterError(NSError *error) {
     if([INITIALIZE_METHOD isEqualToString:call.method]) {
         [self initialize:call result:result];
     } else if ([SHOW_METHOD isEqualToString:call.method] || [SCHEDULE_METHOD isEqualToString:call.method] || [PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]
-               || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [TZSCHEDULE_METHOD isEqualToString:call.method]) {
+               || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [ZONED_SCHEDULE_METHOD isEqualToString:call.method]) {
         [self showNotification:call result:result];
     } else if([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
         [self requestPermissions:call result:result];

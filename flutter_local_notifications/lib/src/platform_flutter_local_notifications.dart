@@ -74,7 +74,7 @@ class AndroidFlutterLocalNotificationsPlugin
   /// The [androidAllowWhileIdle] parameter determines if the notification should still be shown at the exact time
   /// when the device is in a low-power idle mode.
   @Deprecated(
-      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use tzSchedule instead.')
+      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use zonedSchedule instead.')
   Future<void> schedule(int id, String title, String body,
       DateTime scheduledDate, AndroidNotificationDetails notificationDetails,
       {String payload, bool androidAllowWhileIdle = false}) async {
@@ -93,19 +93,19 @@ class AndroidFlutterLocalNotificationsPlugin
   }
 
   /// Schedules a notification to be shown at the specified time relative to a specific timezone.
-  Future<void> tzSchedule(int id, String title, String body,
+  Future<void> zonedSchedule(int id, String title, String body,
       TZDateTime scheduledDate, AndroidNotificationDetails notificationDetails,
       {String payload,
       ScheduledNotificationRepeatFrequency
           scheduledNotificationRepeatFrequency}) async {
     validateId(id);
-    assert(scheduledDate.isAfter(DateTime.now()));
+    //assert(scheduledDate.isAfter(DateTime.now()));
 
     var serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? Map<String, dynamic>();
 
     await _channel.invokeMethod(
-        'tzSchedule',
+        'zonedSchedule',
         <String, dynamic>{
           'id': id,
           'title': title,
@@ -124,7 +124,7 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Shows a notification on a daily interval at the specified time.
   @Deprecated(
-      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use tzSchedule instead.')
+      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use zonedSchedule instead.')
   Future<void> showDailyAtTime(int id, String title, String body,
       Time notificationTime, AndroidNotificationDetails notificationDetails,
       {String payload}) async {
@@ -143,7 +143,7 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Shows a notification on weekly interval at the specified day and time.
   @Deprecated(
-      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use tzSchedule instead.')
+      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use zonedSchedule instead.')
   Future<void> showWeeklyAtDayAndTime(
       int id,
       String title,
@@ -261,7 +261,7 @@ class IOSFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified time with an optional payload that is passed through when a notification is tapped.
   @Deprecated(
-      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use tzSchedule instead.')
+      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use zonedSchedule instead.')
   Future<void> schedule(int id, String title, String body,
       DateTime scheduledDate, IOSNotificationDetails notificationDetails,
       {String payload}) async {
@@ -277,7 +277,7 @@ class IOSFlutterLocalNotificationsPlugin
   }
 
   /// Schedules a notification to be shown at the specified time relative to a specific timezone.
-  Future<void> tzSchedule(int id, String title, String body,
+  Future<void> zonedSchedule(int id, String title, String body,
       TZDateTime scheduledDate, IOSNotificationDetails notificationDetails,
       {String payload,
       ScheduledNotificationRepeatFrequency
@@ -287,7 +287,7 @@ class IOSFlutterLocalNotificationsPlugin
     var serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? Map<String, dynamic>();
     await _channel.invokeMethod(
-        'tzSchedule',
+        'zonedSchedule',
         <String, dynamic>{
           'id': id,
           'title': title,
@@ -306,7 +306,7 @@ class IOSFlutterLocalNotificationsPlugin
 
   /// Shows a notification on a daily interval at the specified time.
   @Deprecated(
-      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use tzSchedule instead.')
+      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use zonedSchedule instead.')
   Future<void> showDailyAtTime(int id, String title, String body,
       Time notificationTime, IOSNotificationDetails notificationDetails,
       {String payload}) async {
@@ -325,7 +325,7 @@ class IOSFlutterLocalNotificationsPlugin
 
   /// Shows a notification on weekly interval at the specified day and time.
   @Deprecated(
-      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use tzSchedule instead.')
+      'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use zonedSchedule instead.')
   Future<void> showWeeklyAtDayAndTime(
       int id,
       String title,

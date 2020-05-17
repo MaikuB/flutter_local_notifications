@@ -5,8 +5,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/src/platform_specifics/android/enums.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:platform/platform.dart';
-import 'package:timezone/data/latest.dart';
-import 'package:timezone/timezone.dart' as timezone;
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -1446,27 +1446,28 @@ void main() {
           }));
     });
 
-    test('tzSchedule', () async {
+    test('zonedSchedule', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(androidInitializationSettings, null);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-      await initializeTimeZones();
-      timezone.setLocalLocation(timezone.getLocation('Australia/Sydney'));
-      final scheduledDate = timezone.TZDateTime.local(2020, 1, 1, 9);
+      await tz.initializeTimeZones();
+      tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
+      final scheduledDate =
+          tz.TZDateTime.now(tz.local).add(Duration(seconds: 5));
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
               'channelId', 'channelName', 'channelDescription');
-      await flutterLocalNotificationsPlugin.tzSchedule(
+      await flutterLocalNotificationsPlugin.zonedSchedule(
           0,
           'scheduled title',
           'scheduled body',
           scheduledDate,
           NotificationDetails(androidNotificationDetails, null));
 
-      await flutterLocalNotificationsPlugin.tzSchedule(
+      await flutterLocalNotificationsPlugin.zonedSchedule(
           1,
           'notification title',
           'notification body',
@@ -1474,13 +1475,13 @@ void main() {
           NotificationDetails(androidNotificationDetails, null));
       expect(
           log.last,
-          isMethodCall('tzSchedule', arguments: <String, Object>{
+          isMethodCall('zonedSchedule', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
             'timezoneName': 'Australia/Sydney',
-            'scheduledDateTime': '2020-01-01T09:00:00',
+            'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
             'platformSpecifics': <String, Object>{
               'icon': null,
               'channelId': 'channelId',
@@ -1521,6 +1522,7 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
+              'additionalFlags': null,
               'style': AndroidNotificationStyle.Default.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1756,15 +1758,16 @@ void main() {
           }));
     });
 
-    test('tzSchedule', () async {
+    test('zonedSchedule', () async {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings();
       const InitializationSettings initializationSettings =
           InitializationSettings(null, iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-      await initializeTimeZones();
-      timezone.setLocalLocation(timezone.getLocation('Australia/Sydney'));
-      final scheduledDate = timezone.TZDateTime.local(2020, 1, 1, 9);
+      await tz.initializeTimeZones();
+      tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
+      final scheduledDate =
+          tz.TZDateTime.now(tz.local).add(Duration(seconds: 5));
       const NotificationDetails notificationDetails = NotificationDetails(
           null,
           IOSNotificationDetails(
@@ -1778,17 +1781,21 @@ void main() {
                     identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
               ]));
 
-      await flutterLocalNotificationsPlugin.tzSchedule(1, 'notification title',
-          'notification body', scheduledDate, notificationDetails);
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+          1,
+          'notification title',
+          'notification body',
+          scheduledDate,
+          notificationDetails);
 
       expect(
           log.last,
-          isMethodCall('tzSchedule', arguments: <String, Object>{
+          isMethodCall('zonedSchedule', arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'scheduledDateTime': '2020-01-01T09:00:00',
+            'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
             'timezoneName': 'Australia/Sydney',
             'platformSpecifics': <String, Object>{
               'presentAlert': true,
@@ -1856,4 +1863,22 @@ void main() {
       ]);
     });
   });
+}
+
+String _convertDateToISO8601String(tz.TZDateTime dateTime) {
+  String _twoDigits(int n) {
+    if (n >= 10) return "$n";
+    return "0$n";
+  }
+
+  String _fourDigits(int n) {
+    var absN = n.abs();
+    var sign = n < 0 ? "-" : "";
+    if (absN >= 1000) return "$n";
+    if (absN >= 100) return "${sign}0$absN";
+    if (absN >= 10) return "${sign}00$absN";
+    return "${sign}000$absN";
+  }
+
+  return '${_fourDigits(dateTime.year)}-${_twoDigits(dateTime.month)}-${_twoDigits(dateTime.day)}T${_twoDigits(dateTime.hour)}:${_twoDigits(dateTime.minute)}:${_twoDigits(dateTime.second)}';
 }
