@@ -14,6 +14,7 @@
     @property(nonatomic, strong) NSString *sound;
     @property(nonatomic, strong) NSNumber *secondsSinceEpoch;
     @property(nonatomic, strong) NSNumber *repeatInterval;
+    @property(nonatomic, strong) NSNumber *repeatIntervalQuantity;
     @property(nonatomic, strong) NotificationTime *repeatTime;
     @property(nonatomic, strong) NSNumber *day;
     @property(nonatomic, strong) NSNumber *badgeNumber;

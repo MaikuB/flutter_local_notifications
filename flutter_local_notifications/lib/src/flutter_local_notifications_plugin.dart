@@ -186,21 +186,27 @@ class FlutterLocalNotificationsPlugin {
   /// For example, specifying a hourly interval means the first time the notification will be an hour after the method has been called and then every hour after that.
   Future<void> periodicallyShow(int id, String title, String body,
       RepeatInterval repeatInterval, NotificationDetails notificationDetails,
-      {String payload}) async {
+      {String payload, int intervalQuantity}) async {
+    var internalIntervalQuantity = intervalQuantity ?? 1;
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin>()
           ?.periodicallyShow(id, title, body, repeatInterval,
-              notificationDetails: notificationDetails?.android,
-              payload: payload);
+          notificationDetails: notificationDetails?.android,
+          payload: payload, intervalQuantity: internalIntervalQuantity
+      );
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
+          IOSFlutterLocalNotificationsPlugin>()
           ?.periodicallyShow(id, title, body, repeatInterval,
-              notificationDetails: notificationDetails?.iOS, payload: payload);
+          notificationDetails: notificationDetails?.iOS,
+          payload: payload,
+          intervalQuantity: internalIntervalQuantity
+      );
     } else {
       await FlutterLocalNotificationsPlatform.instance
-          ?.periodicallyShow(id, title, body, repeatInterval);
+          ?.periodicallyShow(id, title, body, repeatInterval
+      );
     }
   }
 

@@ -149,7 +149,7 @@ class AndroidFlutterLocalNotificationsPlugin
   @override
   Future<void> periodicallyShow(
       int id, String title, String body, RepeatInterval repeatInterval,
-      {AndroidNotificationDetails notificationDetails, String payload}) async {
+      {AndroidNotificationDetails notificationDetails, String payload, int intervalQuantity}) async {
     validateId(id);
     await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
       'id': id,
@@ -157,6 +157,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'body': body,
       'calledAt': DateTime.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
+      'repeatIntervalQuantity': intervalQuantity,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
@@ -297,7 +298,7 @@ class IOSFlutterLocalNotificationsPlugin
   @override
   Future<void> periodicallyShow(
       int id, String title, String body, RepeatInterval repeatInterval,
-      {IOSNotificationDetails notificationDetails, String payload}) async {
+      {IOSNotificationDetails notificationDetails, String payload, int intervalQuantity}) async {
     validateId(id);
     await _channel.invokeMethod('periodicallyShow', <String, dynamic>{
       'id': id,
@@ -305,6 +306,7 @@ class IOSFlutterLocalNotificationsPlugin
       'body': body,
       'calledAt': DateTime.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
+      'repeatIntervalQuantity': intervalQuantity,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });

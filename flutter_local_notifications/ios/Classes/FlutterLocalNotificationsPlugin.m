@@ -60,6 +60,7 @@ NSString *const PRESENT_BADGE = @"presentBadge";
 NSString *const BADGE_NUMBER = @"badgeNumber";
 NSString *const MILLISECONDS_SINCE_EPOCH = @"millisecondsSinceEpoch";
 NSString *const REPEAT_INTERVAL = @"repeatInterval";
+NSString *const REPEAT_INTERVAL_QUANTITY = @"repeatIntervalQuantity";
 NSString *const REPEAT_TIME = @"repeatTime";
 NSString *const HOUR = @"hour";
 NSString *const MINUTE = @"minute";
@@ -302,6 +303,11 @@ static FlutterError *getFlutterError(NSError *error) {
             notificationDetails.day = @([call.arguments[DAY] integerValue]);
         }
         notificationDetails.repeatInterval = @([call.arguments[REPEAT_INTERVAL] integerValue]);
+        if (call.arguments[REPEAT_INTERVAL_QUANTITY]) {
+            notificationDetails.repeatIntervalQuantity = @([call.arguments[REPEAT_INTERVAL_QUANTITY] integerValue]);
+        } else {
+            notificationDetails.repeatIntervalQuantity = @1;
+        }
     }
     if(@available(iOS 10.0, *)) {
         [self showUserNotification:notificationDetails result:result];
@@ -428,6 +434,7 @@ static FlutterError *getFlutterError(NSError *error) {
                     timeInterval = 60 * 60 * 24 * 7;
                     break;
             }
+            timeInterval *= notificationDetails.repeatIntervalQuantity.integerValue;
             repeats = YES;
         }
         if (notificationDetails.repeatTime != nil) {
