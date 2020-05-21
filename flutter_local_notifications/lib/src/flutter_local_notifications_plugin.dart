@@ -61,16 +61,16 @@ class FlutterLocalNotificationsPlugin {
       throw ArgumentError.value(T,
           'The type argument must be a concrete subclass of FlutterLocalNotificationsPlatform');
     }
-    if (_platform.isAndroid && T == AndroidFlutterLocalNotificationsPlugin) {
-      if (FlutterLocalNotificationsPlatform.instance
-          is AndroidFlutterLocalNotificationsPlugin) {
-        return FlutterLocalNotificationsPlatform.instance;
-      }
-    } else if (_platform.isIOS && T == IOSFlutterLocalNotificationsPlugin) {
-      if (FlutterLocalNotificationsPlatform.instance
-          is IOSFlutterLocalNotificationsPlugin) {
-        return FlutterLocalNotificationsPlatform.instance;
-      }
+    if (_platform.isAndroid &&
+        T == AndroidFlutterLocalNotificationsPlugin &&
+        FlutterLocalNotificationsPlatform.instance
+            is AndroidFlutterLocalNotificationsPlugin) {
+      return FlutterLocalNotificationsPlatform.instance;
+    } else if (_platform.isIOS &&
+        T == IOSFlutterLocalNotificationsPlugin &&
+        FlutterLocalNotificationsPlatform.instance
+            is IOSFlutterLocalNotificationsPlugin) {
+      return FlutterLocalNotificationsPlatform.instance;
     }
 
     return null;
@@ -101,7 +101,7 @@ class FlutterLocalNotificationsPlugin {
     } else if (_platform.isIOS) {
       return await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
-          ?.initialize(initializationSettings?.ios,
+          ?.initialize(initializationSettings?.iOS,
               onSelectNotification: onSelectNotification);
     }
     return true;
@@ -165,7 +165,7 @@ class FlutterLocalNotificationsPlugin {
   /// Schedules a notification to be shown at the specified time.
   ///
   /// The [androidAllowWhileIdle] parameter determines if the notification should still be shown at the exact time
-  /// when the device is in a low-power idle mode.
+  /// even when the device is in a low-power idle mode.
   @Deprecated(
       'Deprecated due to problems with timezones, particularly when it comes to daylight savings. Use zonedSchedule instead.')
   Future<void> schedule(int id, String title, String body,
@@ -182,6 +182,8 @@ class FlutterLocalNotificationsPlugin {
               IOSFlutterLocalNotificationsPlugin>()
           ?.schedule(id, title, body, scheduledDate, notificationDetails?.iOS,
               payload: payload);
+    } else if (_platform.isMacOS) {
+      throw UnimplementedError();
     }
   }
 
@@ -217,6 +219,9 @@ class FlutterLocalNotificationsPlugin {
   /// Periodically show a notification using the specified interval.
   ///
   /// For example, specifying a hourly interval means the first time the notification will be an hour after the method has been called and then every hour after that.
+  /// If [androidAllowWhileIdle] is `false`, the Android `AlarmManager` APIs are used to set a recurring inexact alarm that would present the notification. This means that there may be delay in
+  /// on when notifications are displayed. If [androidAllowWhileIdle] is `true`, the Android `AlarmManager` APIs are used to schedule a single notification to be shown at the exact time
+  /// even when the device is in a low-power idle mode. After it is shown, the next one would be scheduled and this would repeat.
   Future<void> periodicallyShow(int id, String title, String body,
       RepeatInterval repeatInterval, NotificationDetails notificationDetails,
       {String payload, bool androidAllowWhileIdle = false}) async {
@@ -256,6 +261,8 @@ class FlutterLocalNotificationsPlugin {
           ?.showDailyAtTime(
               id, title, body, notificationTime, notificationDetails?.iOS,
               payload: payload);
+    } else if (_platform.isMacOS) {
+      throw UnimplementedError();
     }
   }
 
@@ -277,6 +284,8 @@ class FlutterLocalNotificationsPlugin {
           ?.showWeeklyAtDayAndTime(
               id, title, body, day, notificationTime, notificationDetails?.iOS,
               payload: payload);
+    } else if (_platform.isMacOS) {
+      throw UnimplementedError();
     }
   }
 

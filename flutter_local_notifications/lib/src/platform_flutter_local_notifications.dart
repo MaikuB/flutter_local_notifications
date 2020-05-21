@@ -222,7 +222,7 @@ class AndroidFlutterLocalNotificationsPlugin
       case 'selectNotification':
         return _onSelectNotification(call.arguments);
       default:
-        return Future.error('method not defined');
+        return Future.error('Method not defined');
     }
   }
 }
@@ -398,7 +398,7 @@ class IOSFlutterLocalNotificationsPlugin
             call.arguments['body'],
             call.arguments['payload']);
       default:
-        return Future.error('method not defined');
+        return Future.error('Method not defined');
     }
   }
 }

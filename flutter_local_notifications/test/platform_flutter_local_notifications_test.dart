@@ -38,7 +38,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       expect(log, <Matcher>[
         isMethodCall('initialize', arguments: <String, Object>{
@@ -51,7 +51,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       await flutterLocalNotificationsPlugin.show(
           1, 'notification title', 'notification body', null);
@@ -70,7 +70,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -80,7 +80,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -143,7 +143,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       final AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -154,7 +154,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -218,7 +218,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       final int timestamp = DateTime.now().millisecondsSinceEpoch;
 
@@ -230,7 +230,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -294,7 +294,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -309,7 +309,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -374,7 +374,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -389,7 +389,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -455,7 +455,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -469,7 +469,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -533,7 +533,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -549,7 +549,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -620,7 +620,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -644,7 +644,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -717,7 +717,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -733,7 +733,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -804,7 +804,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -828,7 +828,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -899,7 +899,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -915,7 +915,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -983,7 +983,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -1006,7 +1006,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1074,7 +1074,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -1088,7 +1088,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1150,7 +1150,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -1167,7 +1167,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1230,7 +1230,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       final AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -1253,7 +1253,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1334,7 +1334,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       final AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -1368,7 +1368,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1450,7 +1450,7 @@ void main() {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-          InitializationSettings(androidInitializationSettings, null);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
       await tz.initializeTimeZones();
@@ -1460,19 +1460,13 @@ void main() {
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
               'channelId', 'channelName', 'channelDescription');
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-          0,
-          'scheduled title',
-          'scheduled body',
-          scheduledDate,
-          NotificationDetails(androidNotificationDetails, null));
 
       await flutterLocalNotificationsPlugin.zonedSchedule(
           1,
           'notification title',
           'notification body',
           scheduledDate,
-          NotificationDetails(androidNotificationDetails, null));
+          NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('zonedSchedule', arguments: <String, Object>{
@@ -1656,7 +1650,7 @@ void main() {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings();
       const InitializationSettings initializationSettings =
-          InitializationSettings(null, iosInitializationSettings);
+          InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       expect(log, <Matcher>[
         isMethodCall('initialize', arguments: <String, Object>{
@@ -1680,7 +1674,7 @@ void main() {
               defaultPresentBadge: false,
               defaultPresentSound: false);
       const InitializationSettings initializationSettings =
-          InitializationSettings(null, iosInitializationSettings);
+          InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       expect(log, <Matcher>[
         isMethodCall('initialize', arguments: <String, Object>{
@@ -1698,7 +1692,7 @@ void main() {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings();
       const InitializationSettings initializationSettings =
-          InitializationSettings(null, iosInitializationSettings);
+          InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       await flutterLocalNotificationsPlugin.show(
           1, 'notification title', 'notification body', null);
@@ -1717,20 +1711,19 @@ void main() {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings();
       const InitializationSettings initializationSettings =
-          InitializationSettings(null, iosInitializationSettings);
+          InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const NotificationDetails notificationDetails = NotificationDetails(
-          null,
-          IOSNotificationDetails(
+          iOS: IOSNotificationDetails(
               presentAlert: true,
               presentBadge: true,
               presentSound: true,
               sound: 'sound.mp3',
               badgeNumber: 1,
               attachments: [
-                IOSNotificationAttachment('video.mp4',
-                    identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
-              ]));
+            IOSNotificationAttachment('video.mp4',
+                identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373'),
+          ]));
 
       await flutterLocalNotificationsPlugin.show(
           1, 'notification title', 'notification body', notificationDetails);
@@ -1762,24 +1755,23 @@ void main() {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings();
       const InitializationSettings initializationSettings =
-          InitializationSettings(null, iosInitializationSettings);
+          InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       await tz.initializeTimeZones();
       tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
       final scheduledDate =
           tz.TZDateTime.now(tz.local).add(Duration(seconds: 5));
       const NotificationDetails notificationDetails = NotificationDetails(
-          null,
-          IOSNotificationDetails(
+          iOS: IOSNotificationDetails(
               presentAlert: true,
               presentBadge: true,
               presentSound: true,
               sound: 'sound.mp3',
               badgeNumber: 1,
               attachments: [
-                IOSNotificationAttachment('video.mp4',
-                    identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
-              ]));
+            IOSNotificationAttachment('video.mp4',
+                identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
+          ]));
 
       await flutterLocalNotificationsPlugin.zonedSchedule(
           1,
