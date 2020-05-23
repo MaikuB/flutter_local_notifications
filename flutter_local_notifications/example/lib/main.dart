@@ -469,7 +469,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+        importance: Importance.max, priority: Priority.high, ticker: 'ticker');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
@@ -482,7 +482,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotificationWithNoBody() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+        importance: Importance.max, priority: Priority.high, ticker: 'ticker');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
@@ -620,8 +620,8 @@ class _HomePageState extends State<HomePage> {
     var insistentFlag = 4;
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         ticker: 'ticker',
         additionalFlags: Int32List.fromList([insistentFlag]));
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
@@ -813,8 +813,8 @@ class _HomePageState extends State<HomePage> {
     // example based on https://developer.android.com/training/notify-user/group.html
     var firstNotificationAndroidSpecifics = AndroidNotificationDetails(
         groupChannelId, groupChannelName, groupChannelDescription,
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         groupKey: groupKey);
     var firstNotificationPlatformSpecifics =
         NotificationDetails(android: firstNotificationAndroidSpecifics);
@@ -822,8 +822,8 @@ class _HomePageState extends State<HomePage> {
         'You will not believe...', firstNotificationPlatformSpecifics);
     var secondNotificationAndroidSpecifics = AndroidNotificationDetails(
         groupChannelId, groupChannelName, groupChannelDescription,
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         groupKey: groupKey);
     var secondNotificationPlatformSpecifics =
         NotificationDetails(android: secondNotificationAndroidSpecifics);
@@ -881,8 +881,8 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showOngoingNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         ongoing: true,
         autoCancel: false);
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
@@ -920,7 +920,7 @@ class _HomePageState extends State<HomePage> {
                 'daily notification description'),
             iOS: IOSNotificationDetails()),
         scheduledNotificationRepeatFrequency:
-            ScheduledNotificationRepeatFrequency.Daily);
+            ScheduledNotificationRepeatFrequency.daily);
   }
 
   Future<void> _showWeeklyAtDayAndTime() async {
@@ -936,15 +936,15 @@ class _HomePageState extends State<HomePage> {
                 'weekly notificationdescription'),
             iOS: IOSNotificationDetails()),
         scheduledNotificationRepeatFrequency:
-            ScheduledNotificationRepeatFrequency.Weekly);
+            ScheduledNotificationRepeatFrequency.weekly);
   }
 
   Future<void> _showNotificationWithNoBadge() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'no badge channel', 'no badge name', 'no badge description',
         channelShowBadge: false,
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         onlyAlertOnce: true);
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
@@ -964,8 +964,8 @@ class _HomePageState extends State<HomePage> {
             'progress channel',
             'progress channel description',
             channelShowBadge: false,
-            importance: Importance.Max,
-            priority: Priority.High,
+            importance: Importance.max,
+            priority: Priority.high,
             onlyAlertOnce: true,
             showProgress: true,
             maxProgress: maxProgress,
@@ -990,8 +990,8 @@ class _HomePageState extends State<HomePage> {
         'indeterminate progress channel',
         'indeterminate progress channel description',
         channelShowBadge: false,
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         onlyAlertOnce: true,
         showProgress: true,
         indeterminate: true);
@@ -1012,9 +1012,9 @@ class _HomePageState extends State<HomePage> {
         'your channel id',
         'your channel name',
         'your updated channel description',
-        importance: Importance.Max,
-        priority: Priority.High,
-        channelAction: AndroidNotificationChannelAction.Update);
+        importance: Importance.max,
+        priority: Priority.high,
+        channelAction: AndroidNotificationChannelAction.update);
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
@@ -1030,10 +1030,10 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showPublicNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         ticker: 'ticker',
-        visibility: NotificationVisibility.Public);
+        visibility: NotificationVisibility.public);
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
@@ -1058,7 +1058,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotificationWithoutTimestamp() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, showWhen: false);
+        importance: Importance.max, priority: Priority.high, showWhen: false);
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
@@ -1073,8 +1073,8 @@ class _HomePageState extends State<HomePage> {
       'your channel id',
       'your channel name',
       'your channel description',
-      importance: Importance.Max,
-      priority: Priority.High,
+      importance: Importance.max,
+      priority: Priority.high,
       showWhen: true,
       when: DateTime.now().millisecondsSinceEpoch - 120 * 1000,
     );
@@ -1096,8 +1096,8 @@ class _HomePageState extends State<HomePage> {
         BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath));
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.High,
-        priority: Priority.High,
+        importance: Importance.high,
+        priority: Priority.high,
         styleInformation: bigPictureAndroidStyle);
     var notificationDetails = NotificationDetails(
         android: androidPlatformChannelSpecifics,

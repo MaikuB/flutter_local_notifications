@@ -45,7 +45,7 @@ extension AndroidNotificationChannelMapper on AndroidNotificationChannel {
         'ledColorGreen': ledColor?.green,
         'ledColorBlue': ledColor?.blue,
         'channelAction':
-            AndroidNotificationChannelAction.CreateIfNotExists?.index,
+            AndroidNotificationChannelAction.createIfNotExists?.index,
       }..addAll(_convertNotificationSoundToMap(sound));
 }
 
@@ -54,12 +54,12 @@ Map<String, Object> _convertNotificationSoundToMap(
   if (sound is RawResourceAndroidNotificationSound) {
     return <String, Object>{
       'sound': sound.sound,
-      'soundSource': AndroidNotificationSoundSource.RawResource.index,
+      'soundSource': AndroidNotificationSoundSource.rawResource.index,
     };
   } else if (sound is UriAndroidNotificationSound) {
     return <String, Object>{
       'sound': sound.sound,
-      'soundSource': AndroidNotificationSoundSource.Uri.index,
+      'soundSource': AndroidNotificationSoundSource.uri.index,
     };
   } else {
     return <String, Object>{};
@@ -79,22 +79,22 @@ extension PersonMapper on Person {
     if (icon is DrawableResourceAndroidIcon) {
       return <String, Object>{
         'icon': icon.icon,
-        'iconSource': AndroidIconSource.DrawableResource.index,
+        'iconSource': AndroidIconSource.drawableResource.index,
       };
     } else if (icon is BitmapFilePathAndroidIcon) {
       return <String, Object>{
         'icon': icon.icon,
-        'iconSource': AndroidIconSource.BitmapFilePath.index,
+        'iconSource': AndroidIconSource.bitmapFilePath.index,
       };
     } else if (icon is ContentUriAndroidIcon) {
       return <String, Object>{
         'icon': icon.icon,
-        'iconSource': AndroidIconSource.ContentUri.index,
+        'iconSource': AndroidIconSource.contentUri.index,
       };
     } else if (icon is FlutterBitmapAssetAndroidIcon) {
       return <String, Object>{
         'icon': icon.icon,
-        'iconSource': AndroidIconSource.FlutterBitmapAsset.index,
+        'iconSource': AndroidIconSource.flutterBitmapAsset.index,
       };
     } else {
       return <String, Object>{};
@@ -129,12 +129,12 @@ extension BigPictureStyleInformationMapper on BigPictureStyleInformation {
     if (bigPicture is DrawableResourceAndroidBitmap) {
       return <String, Object>{
         'bigPicture': bigPicture.bitmap,
-        'bigPictureBitmapSource': AndroidBitmapSource.Drawable.index,
+        'bigPictureBitmapSource': AndroidBitmapSource.drawable.index,
       };
     } else if (bigPicture is FilePathAndroidBitmap) {
       return <String, Object>{
         'bigPicture': bigPicture.bitmap,
-        'bigPictureBitmapSource': AndroidBitmapSource.FilePath.index,
+        'bigPictureBitmapSource': AndroidBitmapSource.filePath.index,
       };
     } else {
       return <String, Object>{};
@@ -145,12 +145,12 @@ extension BigPictureStyleInformationMapper on BigPictureStyleInformation {
     if (largeIcon is DrawableResourceAndroidBitmap) {
       return <String, Object>{
         'largeIcon': largeIcon.bitmap,
-        'largeIconBitmapSource': AndroidBitmapSource.Drawable.index,
+        'largeIconBitmapSource': AndroidBitmapSource.drawable.index,
       };
     } else if (largeIcon is FilePathAndroidBitmap) {
       return <String, Object>{
         'largeIcon': largeIcon.bitmap,
-        'largeIconBitmapSource': AndroidBitmapSource.FilePath.index,
+        'largeIconBitmapSource': AndroidBitmapSource.filePath.index,
       };
     } else {
       return <String, Object>{};
@@ -243,43 +243,43 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
   Map<String, Object> _convertStyleInformationToMap() {
     if (styleInformation is BigPictureStyleInformation) {
       return <String, Object>{
-        'style': AndroidNotificationStyle.BigPicture.index,
+        'style': AndroidNotificationStyle.bigPicture.index,
         'styleInformation':
             (styleInformation as BigPictureStyleInformation)?.toMap(),
       };
     } else if (styleInformation is BigTextStyleInformation) {
       return <String, Object>{
-        'style': AndroidNotificationStyle.BigText.index,
+        'style': AndroidNotificationStyle.bigText.index,
         'styleInformation':
             (styleInformation as BigTextStyleInformation)?.toMap(),
       };
     } else if (styleInformation is InboxStyleInformation) {
       return <String, Object>{
-        'style': AndroidNotificationStyle.Inbox.index,
+        'style': AndroidNotificationStyle.inbox.index,
         'styleInformation':
             (styleInformation as InboxStyleInformation)?.toMap(),
       };
     } else if (styleInformation is MessagingStyleInformation) {
       return <String, Object>{
-        'style': AndroidNotificationStyle.Messaging.index,
+        'style': AndroidNotificationStyle.messaging.index,
         'styleInformation':
             (styleInformation as MessagingStyleInformation)?.toMap(),
       };
     } else if (styleInformation is MediaStyleInformation) {
       return <String, Object>{
-        'style': AndroidNotificationStyle.Media.index,
+        'style': AndroidNotificationStyle.media.index,
         'styleInformation':
             (styleInformation as MediaStyleInformation)?.toMap(),
       };
     } else if (styleInformation is DefaultStyleInformation) {
       return <String, Object>{
-        'style': AndroidNotificationStyle.Standard.index,
+        'style': AndroidNotificationStyle.defaultStyle.index,
         'styleInformation':
             (styleInformation as DefaultStyleInformation)?.toMap(),
       };
     } else {
       return <String, Object>{
-        'style': AndroidNotificationStyle.Standard.index,
+        'style': AndroidNotificationStyle.defaultStyle.index,
         'styleInformation': const DefaultStyleInformation(false, false).toMap(),
       };
     }
@@ -289,12 +289,12 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
     if (largeIcon is DrawableResourceAndroidBitmap) {
       return <String, Object>{
         'largeIcon': largeIcon.bitmap,
-        'largeIconBitmapSource': AndroidBitmapSource.Drawable.index,
+        'largeIconBitmapSource': AndroidBitmapSource.drawable.index,
       };
     } else if (largeIcon is FilePathAndroidBitmap) {
       return <String, Object>{
         'largeIcon': largeIcon.bitmap,
-        'largeIconBitmapSource': AndroidBitmapSource.FilePath.index,
+        'largeIconBitmapSource': AndroidBitmapSource.filePath.index,
       };
     } else {
       return <String, Object>{};

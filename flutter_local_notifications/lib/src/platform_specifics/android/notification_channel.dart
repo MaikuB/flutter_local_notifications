@@ -9,7 +9,7 @@ class AndroidNotificationChannel {
     this.id,
     this.name,
     this.description, {
-    this.importance = Importance.Default,
+    this.importance = Importance.defaultImportance,
     this.playSound = true,
     this.sound,
     this.enableVibration = true,

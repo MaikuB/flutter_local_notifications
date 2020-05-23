@@ -5,6 +5,13 @@
 * [Android] Bump Gradle plugin to 3.6.3
 * **BREAKING CHANGE** The `InitializationSettings` and `NotificationDetails` classes no longer have positional parameters but now have named parameters called `android` and `iOS` for passing in data specific to Android and iOS.
 * **BREAKING CHANGE** The `toMap` method that was used internally to transfer data over platform channels is no longer publicly accessible
+* **BREAKING CHANGE** All enum values have been renamed to follow lower camel case convention. This affects the following enums
+  * `Day`
+  * `AndroidNotificationChannelAction`
+  * `Importance` (note: as `default` is a keyword, what use to be `Default` is now `defaultImportance`)
+  * `Priority` (note: as `default` is a keyword, what use to be `Default` is now `defaultPriority`)
+  * `GroupAlertBehavior`
+  * `NotificationVisibility`
 * Updated example app so that code for demonstrating functionality that is specific to a platform are only visible when running on the appropriate platform
 * Bumped e2e dev dependency
 

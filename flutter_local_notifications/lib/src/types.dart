@@ -2,17 +2,17 @@
 class Day {
   const Day(this.value);
 
-  static const Day Sunday = Day(1);
-  static const Day Monday = Day(2);
-  static const Day Tuesday = Day(3);
-  static const Day Wednesday = Day(4);
-  static const Day Thursday = Day(5);
-  static const Day Friday = Day(6);
-  static const Day Saturday = Day(7);
+  static const Day sunday = Day(1);
+  static const Day monday = Day(2);
+  static const Day tuesday = Day(3);
+  static const Day wednesday = Day(4);
+  static const Day thursday = Day(5);
+  static const Day friday = Day(6);
+  static const Day saturday = Day(7);
 
   /// All the possible values for the [Day] enumeration.
   static List<Day> get values =>
-      <Day>[Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
+      <Day>[sunday, monday, tuesday, wednesday, thursday, friday, saturday];
 
   final int value;
 }
@@ -44,6 +44,6 @@ class Time {
 }
 
 enum ScheduledNotificationRepeatFrequency {
-  Daily,
-  Weekly,
+  daily,
+  weekly,
 }
