@@ -41,17 +41,6 @@ class Time {
   ///
   /// Accepted range is 0 to 59 inclusive.
   final int second;
-
-  /// Creates a [Map] object that describes the [Time] object.
-  ///
-  /// Mainly for internal use to send the data over a platform channel.
-  Map<String, int> toMap() {
-    return <String, int>{
-      'hour': hour,
-      'minute': minute,
-      'second': second,
-    };
-  }
 }
 
 enum ScheduledNotificationRepeatFrequency {

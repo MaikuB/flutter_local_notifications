@@ -14,6 +14,7 @@ import 'platform_specifics/ios/method_channel_mappers.dart';
 import 'platform_specifics/ios/notification_details.dart';
 import 'typedefs.dart';
 import 'types.dart';
+import 'type_mappers.dart';
 import 'tz_datetime_mapper.dart';
 
 const MethodChannel _channel =
