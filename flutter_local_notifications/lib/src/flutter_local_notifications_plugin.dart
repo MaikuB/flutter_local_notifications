@@ -201,8 +201,6 @@ class FlutterLocalNotificationsPlugin {
               IOSFlutterLocalNotificationsPlugin>()
           ?.schedule(id, title, body, scheduledDate, notificationDetails?.iOS,
               payload: payload);
-    } else if (_platform.isMacOS) {
-      throw UnimplementedError();
     }
   }
 
@@ -290,8 +288,6 @@ class FlutterLocalNotificationsPlugin {
           ?.showDailyAtTime(
               id, title, body, notificationTime, notificationDetails?.iOS,
               payload: payload);
-    } else if (_platform.isMacOS) {
-      throw UnimplementedError();
     }
   }
 
@@ -313,8 +309,6 @@ class FlutterLocalNotificationsPlugin {
           ?.showWeeklyAtDayAndTime(
               id, title, body, day, notificationTime, notificationDetails?.iOS,
               payload: payload);
-    } else if (_platform.isMacOS) {
-      throw UnimplementedError();
     }
   }
 
