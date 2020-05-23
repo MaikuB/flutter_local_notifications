@@ -15,7 +15,7 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  e2e: ^0.2.4+2
+  e2e: ^0.4.3+1
   mockito: ^4.1.1
   plugin_platform_interface: ^1.0.1
   pedantic: ^1.8.0

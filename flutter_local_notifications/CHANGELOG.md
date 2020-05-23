@@ -6,6 +6,7 @@
 * **BREAKING CHANGE** The `InitializationSettings` and `NotificationDetails` classes no longer have positional parameters but now have named parameters called `android` and `iOS` for passing in data specific to Android and iOS.
 * **BREAKING CHANGE** The `toMap` method that was used internally to transfer data over platform channels is no longer publicly accessible
 * Updated example app so that code for demonstrating functionality that is specific to a platform are only visible when running on the appropriate platform
+* Bumped e2e dev dependency
 
 # [1.4.3]
 

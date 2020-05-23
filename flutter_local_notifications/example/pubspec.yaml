@@ -19,7 +19,7 @@ dev_dependencies:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  e2e: ^0.2.4+2
+  e2e: ^0.4.3+1
   pedantic: ^1.8.0
 
 flutter:
@@ -28,5 +28,5 @@ flutter:
     - icons/
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
+  sdk: ">=2.6.0 <3.0.0"
   flutter: ">=1.12.13+hotfix.5"
