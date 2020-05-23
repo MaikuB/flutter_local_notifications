@@ -4,15 +4,9 @@ import 'dart:ui';
 import 'bitmap.dart';
 import 'enums.dart';
 import 'notification_sound.dart';
-import 'styles/big_picture_style_information.dart';
-import 'styles/big_text_style_information.dart';
-import 'styles/inbox_style_information.dart';
-import 'styles/media_style_information.dart';
-import 'styles/messaging_style_information.dart';
 import 'styles/style_information.dart';
-import 'styles/default_style_information.dart';
 
-/// Configures the notification on Android.
+/// Contains notification details specific to Android.
 class AndroidNotificationDetails {
   const AndroidNotificationDetails(
     this.channelId,
@@ -209,125 +203,4 @@ class AndroidNotificationDetails {
   /// For a list of a values, refer to the documented constants prefixed with "FLAG_" (without the quotes) at https://developer.android.com/reference/android/app/Notification.html#constants_1.
   /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
   final Int32List additionalFlags;
-
-  /// Creates a [Map] object that describes the [AndroidNotificationDetails] object.
-  ///
-  /// Mainly for internal use to send the data over a platform channel.
-  Map<String, Object> toMap() {
-    return <String, Object>{
-      'icon': icon,
-      'channelId': channelId,
-      'channelName': channelName,
-      'channelDescription': channelDescription,
-      'channelShowBadge': channelShowBadge,
-      'channelAction': channelAction?.index,
-      'importance': importance.value,
-      'priority': priority.value,
-      'playSound': playSound,
-      'enableVibration': enableVibration,
-      'vibrationPattern': vibrationPattern,
-      'groupKey': groupKey,
-      'setAsGroupSummary': setAsGroupSummary,
-      'groupAlertBehavior': groupAlertBehavior.index,
-      'autoCancel': autoCancel,
-      'ongoing': ongoing,
-      'colorAlpha': color?.alpha,
-      'colorRed': color?.red,
-      'colorGreen': color?.green,
-      'colorBlue': color?.blue,
-      'onlyAlertOnce': onlyAlertOnce,
-      'showWhen': showWhen,
-      'when': when,
-      'showProgress': showProgress,
-      'maxProgress': maxProgress,
-      'progress': progress,
-      'indeterminate': indeterminate,
-      'enableLights': enableLights,
-      'ledColorAlpha': ledColor?.alpha,
-      'ledColorRed': ledColor?.red,
-      'ledColorGreen': ledColor?.green,
-      'ledColorBlue': ledColor?.blue,
-      'ledOnMs': ledOnMs,
-      'ledOffMs': ledOffMs,
-      'ticker': ticker,
-      'visibility': visibility?.index,
-      'timeoutAfter': timeoutAfter,
-      'category': category,
-      'additionalFlags': additionalFlags
-    }
-      ..addAll(_convertStyleInformationToMap())
-      ..addAll(_convertSoundToMap())
-      ..addAll(_convertLargeIconToMap());
-  }
-
-  Map<String, Object> _convertStyleInformationToMap() {
-    if (styleInformation is BigPictureStyleInformation) {
-      return <String, Object>{
-        'style': AndroidNotificationStyle.BigPicture.index,
-        'styleInformation': styleInformation.toMap(),
-      };
-    } else if (styleInformation is BigTextStyleInformation) {
-      return <String, Object>{
-        'style': AndroidNotificationStyle.BigText.index,
-        'styleInformation': styleInformation.toMap(),
-      };
-    } else if (styleInformation is InboxStyleInformation) {
-      return <String, Object>{
-        'style': AndroidNotificationStyle.Inbox.index,
-        'styleInformation': styleInformation.toMap(),
-      };
-    } else if (styleInformation is MessagingStyleInformation) {
-      return <String, Object>{
-        'style': AndroidNotificationStyle.Messaging.index,
-        'styleInformation': styleInformation.toMap(),
-      };
-    } else if (styleInformation is MediaStyleInformation) {
-      return <String, Object>{
-        'style': AndroidNotificationStyle.Media.index,
-        'styleInformation': styleInformation.toMap(),
-      };
-    } else if (styleInformation is DefaultStyleInformation) {
-      return <String, Object>{
-        'style': AndroidNotificationStyle.Default.index,
-        'styleInformation': styleInformation.toMap(),
-      };
-    } else {
-      return <String, Object>{
-        'style': AndroidNotificationStyle.Default.index,
-        'styleInformation': DefaultStyleInformation(false, false).toMap(),
-      };
-    }
-  }
-
-  Map<String, Object> _convertLargeIconToMap() {
-    if (largeIcon is DrawableResourceAndroidBitmap) {
-      return <String, Object>{
-        'largeIcon': largeIcon.bitmap,
-        'largeIconBitmapSource': AndroidBitmapSource.Drawable.index,
-      };
-    } else if (largeIcon is FilePathAndroidBitmap) {
-      return <String, Object>{
-        'largeIcon': largeIcon.bitmap,
-        'largeIconBitmapSource': AndroidBitmapSource.FilePath.index,
-      };
-    } else {
-      return <String, Object>{};
-    }
-  }
-
-  Map<String, Object> _convertSoundToMap() {
-    if (sound is RawResourceAndroidNotificationSound) {
-      return <String, Object>{
-        'sound': sound.sound,
-        'soundSource': AndroidNotificationSoundSource.RawResource.index,
-      };
-    } else if (sound is UriAndroidNotificationSound) {
-      return <String, Object>{
-        'sound': sound.sound,
-        'soundSource': AndroidNotificationSoundSource.Uri.index,
-      };
-    } else {
-      return <String, Object>{};
-    }
-  }
 }

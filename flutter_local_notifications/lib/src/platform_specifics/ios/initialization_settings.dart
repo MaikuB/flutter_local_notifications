@@ -50,18 +50,4 @@ class IOSInitializationSettings {
   ///
   /// Applicable to iOS versions below 10.
   final DidReceiveLocalNotificationCallback onDidReceiveLocalNotification;
-
-  /// Creates a [Map] object that describes the [IOSInitializationSettings] object.
-  ///
-  /// Mainly for internal use to send the data over a platform channel.
-  Map<String, Object> toMap() {
-    return <String, Object>{
-      'requestAlertPermission': requestAlertPermission,
-      'requestSoundPermission': requestSoundPermission,
-      'requestBadgePermission': requestBadgePermission,
-      'defaultPresentAlert': defaultPresentAlert,
-      'defaultPresentSound': defaultPresentSound,
-      'defaultPresentBadge': defaultPresentBadge
-    };
-  }
 }

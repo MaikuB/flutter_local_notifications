@@ -1,5 +1,4 @@
 import '../bitmap.dart';
-import '../enums.dart';
 import 'default_style_information.dart';
 
 /// Used to pass the content for an Android notification displayed using the big picture style.
@@ -36,53 +35,4 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
 
   /// Hides the large icon when showing the expanded notification.
   final bool hideExpandedLargeIcon;
-
-  /// Creates a [Map] object that describes the [BigPictureStyleInformation] object.
-  ///
-  /// Mainly for internal use to send the data over a platform channel.
-  @override
-  Map<String, Object> toMap() {
-    return super.toMap()
-      ..addAll(_convertBigPictureToMap())
-      ..addAll(_convertLargeIconToMap())
-      ..addAll(<String, Object>{
-        'contentTitle': contentTitle,
-        'summaryText': summaryText,
-        'htmlFormatContentTitle': htmlFormatContentTitle,
-        'htmlFormatSummaryText': htmlFormatSummaryText,
-        'hideExpandedLargeIcon': hideExpandedLargeIcon
-      });
-  }
-
-  Map<String, Object> _convertBigPictureToMap() {
-    if (bigPicture is DrawableResourceAndroidBitmap) {
-      return <String, Object>{
-        'bigPicture': bigPicture.bitmap,
-        'bigPictureBitmapSource': AndroidBitmapSource.Drawable.index,
-      };
-    } else if (bigPicture is FilePathAndroidBitmap) {
-      return <String, Object>{
-        'bigPicture': bigPicture.bitmap,
-        'bigPictureBitmapSource': AndroidBitmapSource.FilePath.index,
-      };
-    } else {
-      return <String, Object>{};
-    }
-  }
-
-  Map<String, Object> _convertLargeIconToMap() {
-    if (largeIcon is DrawableResourceAndroidBitmap) {
-      return <String, Object>{
-        'largeIcon': largeIcon.bitmap,
-        'largeIconBitmapSource': AndroidBitmapSource.Drawable.index,
-      };
-    } else if (largeIcon is FilePathAndroidBitmap) {
-      return <String, Object>{
-        'largeIcon': largeIcon.bitmap,
-        'largeIconBitmapSource': AndroidBitmapSource.FilePath.index,
-      };
-    } else {
-      return <String, Object>{};
-    }
-  }
 }

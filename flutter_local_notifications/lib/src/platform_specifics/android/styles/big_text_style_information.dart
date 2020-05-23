@@ -30,20 +30,4 @@ class BigTextStyleInformation extends DefaultStyleInformation {
 
   /// Specifies if formatting should be applied to the first line of text after the detail section in the big form of the template.
   final bool htmlFormatSummaryText;
-
-  /// Creates a [Map] object that describes the [BigTextStyleInformation] object.
-  ///
-  /// Mainly for internal use to send the data over a platform channel.
-  @override
-  Map<String, Object> toMap() {
-    return super.toMap()
-      ..addAll(<String, Object>{
-        'bigText': bigText,
-        'htmlFormatBigText': htmlFormatBigText,
-        'contentTitle': contentTitle,
-        'htmlFormatContentTitle': htmlFormatContentTitle,
-        'summaryText': summaryText,
-        'htmlFormatSummaryText': htmlFormatSummaryText
-      });
-  }
 }

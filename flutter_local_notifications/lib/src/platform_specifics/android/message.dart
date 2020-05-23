@@ -35,17 +35,4 @@ class Message {
   ///
   /// The original text will be used if the content or MIME type isn't supported
   final String dataUri;
-
-  /// Creates a [Map] object that describes the [Message] object.
-  ///
-  /// Mainly for internal use to send the data over a platform channel.
-  Map<String, Object> toMap() {
-    return <String, Object>{
-      'text': text,
-      'timestamp': timestamp.millisecondsSinceEpoch,
-      'person': person?.toMap(),
-      'dataMimeType': dataMimeType,
-      'dataUri': dataUri
-    };
-  }
 }

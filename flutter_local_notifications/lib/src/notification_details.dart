@@ -1,7 +1,7 @@
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/ios/notification_details.dart';
 
-/// Contains notification settings for each platform.
+/// Contains notification details specific to each platform.
 class NotificationDetails {
   const NotificationDetails({
     this.android,

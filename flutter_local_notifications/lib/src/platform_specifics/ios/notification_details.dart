@@ -1,6 +1,6 @@
 import 'notification_attachment.dart';
 
-/// Configures the notification details on iOS.
+/// Configures notification details specific to iOS.
 class IOSNotificationDetails {
   const IOSNotificationDetails({
     this.presentAlert,
@@ -44,18 +44,4 @@ class IOSNotificationDetails {
   ///
   /// Applicable to iOS 10 and above.
   final List<IOSNotificationAttachment> attachments;
-
-  /// Creates a [Map] object that describes the [IOSNotificationDetails] object.
-  ///
-  /// Mainly for internal use to send the data over a platform channel.
-  Map<String, Object> toMap() {
-    return <String, Object>{
-      'presentAlert': presentAlert,
-      'presentSound': presentSound,
-      'presentBadge': presentBadge,
-      'sound': sound,
-      'badgeNumber': badgeNumber,
-      'attachments': attachments?.map((a) => a.toMap())?.toList()
-    };
-  }
 }

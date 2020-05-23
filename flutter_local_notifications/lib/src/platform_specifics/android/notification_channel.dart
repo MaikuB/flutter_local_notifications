@@ -66,43 +66,4 @@ class AndroidNotificationChannel {
 
   /// Whether notifications posted to this channel can appear as application icon badges in a Launcher
   final bool showBadge;
-
-  /// Creates a [Map] object that describes the [AndroidNotificationChannel] object.
-  ///
-  /// Mainly for internal use to send the data over a platform channel.
-  Map<String, Object> toMap() {
-    return <String, Object>{
-      'id': id,
-      'name': name,
-      'description': description,
-      'showBadge': showBadge,
-      'importance': importance.value,
-      'playSound': playSound,
-      'enableVibration': enableVibration,
-      'vibrationPattern': vibrationPattern,
-      'enableLights': enableLights,
-      'ledColorAlpha': ledColor?.alpha,
-      'ledColorRed': ledColor?.red,
-      'ledColorGreen': ledColor?.green,
-      'ledColorBlue': ledColor?.blue,
-      'channelAction':
-          AndroidNotificationChannelAction.CreateIfNotExists?.index,
-    }..addAll(_convertSoundToMap());
-  }
-
-  Map<String, Object> _convertSoundToMap() {
-    if (sound is RawResourceAndroidNotificationSound) {
-      return <String, Object>{
-        'sound': sound.sound,
-        'soundSource': AndroidNotificationSoundSource.RawResource.index,
-      };
-    } else if (sound is UriAndroidNotificationSound) {
-      return <String, Object>{
-        'sound': sound.sound,
-        'soundSource': AndroidNotificationSoundSource.Uri.index,
-      };
-    } else {
-      return <String, Object>{};
-    }
-  }
 }

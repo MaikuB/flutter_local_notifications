@@ -4,6 +4,7 @@
 * [Android] Added `androidAllowWhileIdle` boolean argument to the `periodicallyShow` method. When set to true, this changes how recurring notifications are shown so that the Android `AlarmManager` API is used to schedule a notification with exact timing. When the notification appears, the next one is scheduled after that. This is get around the limitations where the `AlarmManager` APIs don't provide a way for work to be repeated with precising timing regardless of the power mode.
 * [Android] Bump Gradle plugin to 3.6.3
 * **BREAKING CHANGE** The `InitializationSettings` and `NotificationDetails` classes no longer have positional parameters but now have named parameters called `android` and `iOS` for passing in data specific to Android and iOS.
+* **BREAKING CHANGE** The `toMap` method that was used internally to transfer data over platform channels is no longer publicly accessible
 * Updated example app so that code for demonstrating functionality that is specific to a platform are only visible when running on the appropriate platform
 
 # [1.4.3]

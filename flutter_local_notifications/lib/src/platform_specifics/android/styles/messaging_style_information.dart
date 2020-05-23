@@ -26,18 +26,4 @@ class MessagingStyleInformation extends DefaultStyleInformation {
 
   /// Messages to be displayed by this notification
   final List<Message> messages;
-
-  /// Creates a [Map] object that describes the [MessagingStyleInformation] object.
-  ///
-  /// Mainly for internal use to send the data over a platform channel.
-  @override
-  Map<String, Object> toMap() {
-    return super.toMap()
-      ..addAll(<String, Object>{
-        'person': person.toMap(),
-        'conversationTitle': conversationTitle,
-        'groupConversation': groupConversation,
-        'messages': messages?.map((m) => m.toMap())?.toList()
-      });
-  }
 }
