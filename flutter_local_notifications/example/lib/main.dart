@@ -248,20 +248,6 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
-                    buttonText:
-                        'Show plain notification with payload and update channel description [Android]',
-                    onPressed: () async {
-                      await _showNotificationWithUpdatedChannelDescription();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show plain notification as public on every lockscreen [Android]',
-                    onPressed: () async {
-                      await _showPublicNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
                     buttonText: 'Cancel notification',
                     onPressed: () async {
                       await _cancelNotification();
@@ -307,6 +293,20 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   if (Platform.isAndroid) ...[
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show plain notification with payload and update channel description [Android]',
+                      onPressed: () async {
+                        await _showNotificationWithUpdatedChannelDescription();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show plain notification as public on every lockscreen [Android]',
+                      onPressed: () async {
+                        await _showPublicNotification();
+                      },
+                    ),
                     PaddedRaisedButton(
                       buttonText:
                           'Show notification with custom vibration pattern, LED and icon [Android]',
