@@ -8,24 +8,30 @@ class Message {
     this.person, {
     this.dataMimeType,
     this.dataUri,
-  })  : assert(timestamp != null, 'timestamp must be provided'),
+  })  : assert(
+          timestamp != null,
+          'timestamp must be provided',
+        ),
         assert(
-            (dataMimeType == null && dataUri == null) ||
-                (dataMimeType != null && dataUri != null),
-            'Must provide both dataMimeType and dataUri together or not at all.');
+          (dataMimeType == null && dataUri == null) ||
+              (dataMimeType != null && dataUri != null),
+          'Must provide both dataMimeType and dataUri together or not at all.',
+        );
 
   /// The message text
   final String text;
 
   /// Time at which the message arrived.
   ///
-  /// Note that this is eventually converted to milliseconds since epoch as required by Android.
+  /// Note that this is eventually converted to milliseconds since epoch as
+  /// required by Android.
   final DateTime timestamp;
 
   /// Person that sent this message.
   ///
-  /// When this is set to `null` the `Person` given to [MessagingStyleInformation.person]
-  /// i.e. this would indicate that the message was sent from the user.
+  /// When this is set to `null` the `Person` given to
+  /// [MessagingStyleInformation.person] i.e. this would indicate that the
+  /// message was sent from the user.
   final Person person;
 
   /// MIME type for this message context when the [dataUri] is provided.

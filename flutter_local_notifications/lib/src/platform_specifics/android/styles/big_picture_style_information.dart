@@ -1,7 +1,8 @@
 import '../bitmap.dart';
 import 'default_style_information.dart';
 
-/// Used to pass the content for an Android notification displayed using the big picture style.
+/// Used to pass the content for an Android notification displayed using the
+/// big picture style.
 class BigPictureStyleInformation extends DefaultStyleInformation {
   const BigPictureStyleInformation(
     this.bigPicture, {
@@ -18,16 +19,20 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
   /// Overrides ContentTitle in the big form of the template.
   final String contentTitle;
 
-  /// Set the first line of text after the detail section in the big form of the template.
+  /// Set the first line of text after the detail section in the big form of
+  /// the template.
   final String summaryText;
 
-  /// Specifies if the overridden ContentTitle should have formatting applied through HTML markup.
+  /// Specifies if the overridden ContentTitle should have formatting applied
+  /// through HTML markup.
   final bool htmlFormatContentTitle;
 
-  /// Specifies if formatting should be applied to the first line of text after the detail section in the big form of the template.
+  /// Specifies if formatting should be applied to the first line of text after
+  ///  the detail section in the big form of the template.
   final bool htmlFormatSummaryText;
 
-  /// The bitmap that will override the large icon when the big notification is shown.
+  /// The bitmap that will override the large icon when the big notification is
+  ///  shown.
   final AndroidBitmap largeIcon;
 
   /// The bitmap to be used as the payload for the BigPicture notification.

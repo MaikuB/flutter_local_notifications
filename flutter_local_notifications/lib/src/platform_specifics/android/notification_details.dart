@@ -49,7 +49,8 @@ class AndroidNotificationDetails {
 
   /// The icon that should be used when displaying the notification.
   ///
-  /// When this is set to `null`, the default icon given to [AndroidInitializationSettings.defaultIcon] will be used.
+  /// When this is set to `null`, the default icon given to
+  /// [AndroidInitializationSettings.defaultIcon] will be used.
   final String icon;
 
   /// The channel's id.
@@ -67,7 +68,8 @@ class AndroidNotificationDetails {
   /// Required for Android 8.0+.
   final String channelDescription;
 
-  /// Whether notifications posted to this channel can appear as application icon badges in a Launcher
+  /// Whether notifications posted to this channel can appear as application
+  /// icon badges in a Launcher
   final bool channelShowBadge;
 
   /// The importance of the notification.
@@ -78,33 +80,42 @@ class AndroidNotificationDetails {
 
   /// Indicates if a sound should be played when the notification is displayed.
   ///
-  /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  /// For Android 8.0+, this is tied to the specified channel cannot be changed
+  /// afterward the channel has been created for the first time.
   final bool playSound;
 
   /// The sound to play for the notification.
   ///
   /// Requires setting [playSound] to true for it to work.
-  /// If [playSound] is set to true but this is not specified then the default sound is played.
-  /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  /// If [playSound] is set to true but this is not specified then the default
+  /// sound is played.
+  ///
+  /// For Android 8.0+, this is tied to the specified channel cannot be changed
+  /// afterward the channel has been created for the first time.
   final AndroidNotificationSound sound;
 
-  /// Indicates if vibration should be enabled when the notification is displayed.
+  /// Indicates if vibration should be enabled when the notification is
+  /// displayed.
   ///
-  /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  /// For Android 8.0+, this is tied to the specified channel cannot be changed
+  /// afterward the channel has been created for the first time.
   final bool enableVibration;
 
   /// Indicates if lights should be enabled when the notification is displayed.
   ///
-  /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  /// For Android 8.0+, this is tied to the specified channel cannot be changed
+  /// afterward the channel has been created for the first time.
   final bool enableLights;
 
   /// Configures the vibration pattern.
   ///
   /// Requires setting [enableVibration] to true for it to work.
-  /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  /// For Android 8.0+, this is tied to the specified channel cannot be changed
+  /// afterward the channel has been created for the first time.
   final Int64List vibrationPattern;
 
-  /// Specifies the information of the rich notification style to apply to the notification.
+  /// Specifies the information of the rich notification style to apply to the
+  /// notification.
   final StyleInformation styleInformation;
 
   /// Specifies the group that this notification belongs to.
@@ -112,7 +123,8 @@ class AndroidNotificationDetails {
   /// For Android 7.0+ (API level 24)
   final String groupKey;
 
-  /// Specifies if this notification will function as the summary for grouped notifications.
+  /// Specifies if this notification will function as the summary for grouped
+  /// notifications.
   final bool setAsGroupSummary;
 
   /// Specifies the group alert behavior for this notification.
@@ -121,7 +133,8 @@ class AndroidNotificationDetails {
   /// See https://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html#setGroupAlertBehavior(int) for more details.
   final GroupAlertBehavior groupAlertBehavior;
 
-  /// Specifies if the notification should automatically dismissed upon tapping on it.
+  /// Specifies if the notification should automatically dismissed upon tapping
+  /// on it.
   final bool autoCancel;
 
   /// Specifies if the notification will be "ongoing".
@@ -133,10 +146,12 @@ class AndroidNotificationDetails {
   /// Specifics the large icon to use.
   final AndroidBitmap largeIcon;
 
-  /// Specifies if you would only like the sound, vibrate and ticker to be played if the notification is not already showing.
+  /// Specifies if you would only like the sound, vibrate and ticker to be
+  /// played if the notification is not already showing.
   final bool onlyAlertOnce;
 
-  /// Specifies if the notification should display the timestamp of when it occurred.
+  /// Specifies if the notification should display the timestamp of when it
+  ///  occurred.
   ///
   /// To control the actual timestamp of the notification, use [when].
   final bool showWhen;
@@ -146,8 +161,9 @@ class AndroidNotificationDetails {
   /// To control whether the timestamp is shown in the notification, use
   /// [showWhen].
   ///
-  /// The timestamp is expressed as the number of milliseconds since the "Unix epoch" 1970-01-01T00:00:00Z (UTC).
-  /// If it's not specified but a timestamp should be shown (i.e. [showWhen] is set to `true`),
+  /// The timestamp is expressed as the number of milliseconds since the
+  /// "Unix epoch" 1970-01-01T00:00:00Z (UTC). If it's not specified but a
+  /// timestamp should be shown (i.e. [showWhen] is set to `true`),
   /// then Android will default to showing when the notification occurred.
   final int when;
 
@@ -165,7 +181,8 @@ class AndroidNotificationDetails {
 
   /// Specifies the light color of the notification.
   ///
-  /// For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
+  /// For Android 8.0+, this is tied to the specified channel cannot be changed
+  /// afterward the channel has been created for the first time.
   final Color ledColor;
 
   /// Specifies how long the light colour will remain on.
@@ -183,13 +200,15 @@ class AndroidNotificationDetails {
 
   /// The action to take for managing notification channels.
   ///
-  /// Defaults to creating the notification channel using the provided details if it doesn't exist
+  /// Defaults to creating the notification channel using the provided details
+  /// if it doesn't exist
   final AndroidNotificationChannelAction channelAction;
 
   /// Defines the notification visibility on the lockscreen
   final NotificationVisibility visibility;
 
-  /// The duration in milliseconds after which the notification will be cancelled if it hasn't already
+  /// The duration in milliseconds after which the notification will be
+  /// cancelled if it hasn't already
   final int timeoutAfter;
 
   /// The notification category.

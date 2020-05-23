@@ -8,13 +8,17 @@ void main() {
   setUp(() {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   });
-  testWidgets('can initialise', (WidgetTester tester) async {
-    final initializationSettingsAndroid =
+  // ignore: always_specify_types
+  testWidgets('can initialise', (tester) async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('app_icon');
-    final initializationSettingsIOS = IOSInitializationSettings();
-    final initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    final initialised = await flutterLocalNotificationsPlugin
+    const IOSInitializationSettings initializationSettingsIOS =
+        IOSInitializationSettings();
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsIOS);
+    final bool initialised = await flutterLocalNotificationsPlugin
         .initialize(initializationSettings);
     expect(initialised, isTrue);
   });

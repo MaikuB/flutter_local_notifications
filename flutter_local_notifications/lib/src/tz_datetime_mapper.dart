@@ -3,25 +3,25 @@ import 'package:timezone/timezone.dart';
 extension TZDateTimeMapper on TZDateTime {
   Map<String, Object> toMap() {
     String twoDigits(int n) {
-      if (n >= 10) return "$n";
-      return "0$n";
+      if (n >= 10) {
+        return '$n';
+      }
+      return '0$n';
     }
 
     final String offsetMinutesComponent =
-        twoDigits(this.timeZoneOffset.inMinutes.remainder(60));
+        twoDigits(timeZoneOffset.inMinutes.remainder(60));
     final int offsetHoursComponent =
-        (this.timeZoneOffset.inMicroseconds ~/ Duration.microsecondsPerHour)
-            .abs();
-    final iso8601OffsetComponent =
-        '${this.timeZoneOffset.isNegative ? '-' : '+'}${twoDigits(offsetHoursComponent)}$offsetMinutesComponent';
-    final String iso8601DateComponent = this
-        .toIso8601String()
+        (timeZoneOffset.inMicroseconds ~/ Duration.microsecondsPerHour).abs();
+    final String iso8601OffsetComponent =
+        '${timeZoneOffset.isNegative ? '-' : '+'}${twoDigits(offsetHoursComponent)}$offsetMinutesComponent'; // ignore: lines_longer_than_80_chars
+    final String iso8601DateComponent = toIso8601String()
         .split('.')[0]
         .replaceAll(iso8601OffsetComponent, '')
         .replaceAll('Z', '');
 
     return <String, Object>{
-      'timezoneName': this.location.name,
+      'timezoneName': location.name,
       'scheduledDateTime': iso8601DateComponent,
     };
   }

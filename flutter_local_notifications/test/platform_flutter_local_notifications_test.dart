@@ -15,18 +15,21 @@ void main() {
   group('android', () {
     const MethodChannel channel =
         MethodChannel('dexterous.com/flutter/local_notifications');
-    List<MethodCall> log = <MethodCall>[];
+    final List<MethodCall> log = <MethodCall>[];
 
     setUp(() {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin.private(
           FakePlatform(operatingSystem: 'android'));
-      channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      // ignore: always_specify_types
+      channel.setMockMethodCallHandler((methodCall) async {
         log.add(methodCall);
         if (methodCall.method == 'pendingNotificationRequests') {
-          return Future.value(List<Map<String, Object>>());
+          return Future<List<Map<String, Object>>>.value(
+              <Map<String, Object>>[]);
         } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
-          return Future.value(Map<String, Object>());
+          return Future<Map<String, Object>>.value(<String, Object>{});
         }
+        return Future<void>.value();
       });
     });
 
@@ -80,7 +83,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -129,7 +132,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
-              'style': AndroidNotificationStyle.Default.index,
+              'style': AndroidNotificationStyle.Standard.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
@@ -148,7 +151,7 @@ void main() {
       final AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
               'channelId', 'channelName', 'channelDescription',
-              additionalFlags: Int32List.fromList([4, 32]));
+              additionalFlags: Int32List.fromList(<int>[4, 32]));
 
       await flutterLocalNotificationsPlugin.show(
           1,
@@ -202,8 +205,8 @@ void main() {
               'visibility': null,
               'timeoutAfter': null,
               'category': null,
-              'additionalFlags': [4, 32],
-              'style': AndroidNotificationStyle.Default.index,
+              'additionalFlags': <int>[4, 32],
+              'style': AndroidNotificationStyle.Standard.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
@@ -279,7 +282,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
-              'style': AndroidNotificationStyle.Default.index,
+              'style': AndroidNotificationStyle.Standard.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
@@ -289,8 +292,8 @@ void main() {
     });
 
     test(
-        'show with default Android-specific details and custom sound from raw resource',
-        () async {
+        'show with default Android-specific details and custom sound from raw '
+        'resource', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
@@ -302,14 +305,13 @@ void main() {
         'channelName',
         'channelDescription',
         sound: RawResourceAndroidNotificationSound('sound.mp3'),
-        playSound: true,
       );
 
       await flutterLocalNotificationsPlugin.show(
           1,
           'notification title',
           'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -360,7 +362,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
-              'style': AndroidNotificationStyle.Default.index,
+              'style': AndroidNotificationStyle.Standard.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
@@ -382,14 +384,13 @@ void main() {
         'channelName',
         'channelDescription',
         sound: UriAndroidNotificationSound('uri'),
-        playSound: true,
       );
 
       await flutterLocalNotificationsPlugin.show(
           1,
           'notification title',
           'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -440,7 +441,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
-              'style': AndroidNotificationStyle.Default.index,
+              'style': AndroidNotificationStyle.Standard.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
@@ -469,7 +470,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -518,7 +519,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
-              'style': AndroidNotificationStyle.Default.index,
+              'style': AndroidNotificationStyle.Standard.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
                 'htmlFormatTitle': true,
@@ -528,8 +529,8 @@ void main() {
     });
 
     test(
-        'show with default Android big picture style settings using a drawable resource',
-        () async {
+        'show with default Android big picture style settings using a drawable '
+        'resource', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
@@ -549,7 +550,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -615,8 +616,8 @@ void main() {
     });
 
     test(
-        'show with non-default Android big picture style settings using a drawable resource',
-        () async {
+        'show with non-default Android big picture style settings using a '
+        'drawable resource', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
@@ -644,7 +645,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -712,8 +713,8 @@ void main() {
     });
 
     test(
-        'show with default Android big picture style settings using a file path',
-        () async {
+        'show with default Android big picture style settings using a file '
+        'path', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
@@ -733,7 +734,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -799,8 +800,8 @@ void main() {
     });
 
     test(
-        'show with non-default Android big picture style settings using a file path',
-        () async {
+        'show with non-default Android big picture style settings using a file '
+        'path', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
@@ -828,7 +829,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -907,7 +908,7 @@ void main() {
         'channelName',
         'channelDescription',
         styleInformation: InboxStyleInformation(
-          ['line1'],
+          <String>['line1'],
         ),
       );
 
@@ -915,7 +916,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -968,7 +969,7 @@ void main() {
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
-                'lines': ['line1'],
+                'lines': <String>['line1'],
                 'contentTitle': null,
                 'summaryText': null,
                 'htmlFormatContentTitle': false,
@@ -991,7 +992,7 @@ void main() {
         'channelName',
         'channelDescription',
         styleInformation: InboxStyleInformation(
-          ['line1'],
+          <String>['line1'],
           htmlFormatLines: true,
           htmlFormatContent: true,
           htmlFormatContentTitle: true,
@@ -1006,7 +1007,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1059,7 +1060,7 @@ void main() {
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
                 'htmlFormatTitle': true,
-                'lines': ['line1'],
+                'lines': <String>['line1'],
                 'contentTitle': 'contentTitle',
                 'summaryText': 'summaryText',
                 'htmlFormatContentTitle': true,
@@ -1088,7 +1089,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1167,7 +1168,7 @@ void main() {
           1,
           'notification title',
           'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1238,8 +1239,8 @@ void main() {
         'channelName',
         'channelDescription',
         styleInformation: MessagingStyleInformation(
-          Person(name: 'name'),
-          messages: [
+          const Person(name: 'name'),
+          messages: <Message>[
             Message(
               'message 1',
               messageDateTime,
@@ -1315,7 +1316,7 @@ void main() {
                 },
                 'conversationTitle': null,
                 'groupConversation': null,
-                'messages': [
+                'messages': <Map<String, Object>>[
                   <String, Object>{
                     'text': 'message 1',
                     'timestamp': messageDateTime.millisecondsSinceEpoch,
@@ -1342,7 +1343,7 @@ void main() {
         'channelName',
         'channelDescription',
         styleInformation: MessagingStyleInformation(
-          Person(
+          const Person(
             bot: true,
             icon: DrawableResourceAndroidIcon('drawablePersonIcon'),
             important: true,
@@ -1352,7 +1353,7 @@ void main() {
           ),
           conversationTitle: 'conversationTitle',
           groupConversation: true,
-          messages: [
+          messages: <Message>[
             Message(
               'message 1',
               messageDateTime,
@@ -1432,7 +1433,7 @@ void main() {
                 },
                 'conversationTitle': 'conversationTitle',
                 'groupConversation': true,
-                'messages': [
+                'messages': <Map<String, Object>>[
                   <String, Object>{
                     'text': 'message 1',
                     'timestamp': messageDateTime.millisecondsSinceEpoch,
@@ -1453,10 +1454,10 @@ void main() {
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-      await tz.initializeTimeZones();
+      tz.initializeTimeZones();
       tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
-      final scheduledDate =
-          tz.TZDateTime.now(tz.local).add(Duration(seconds: 5));
+      final tz.TZDateTime scheduledDate =
+          tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
               'channelId', 'channelName', 'channelDescription');
@@ -1466,7 +1467,7 @@ void main() {
           'notification title',
           'notification body',
           scheduledDate,
-          NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('zonedSchedule', arguments: <String, Object>{
@@ -1517,7 +1518,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'additionalFlags': null,
-              'style': AndroidNotificationStyle.Default.index,
+              'style': AndroidNotificationStyle.Standard.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
@@ -1530,7 +1531,7 @@ void main() {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
-          .createNotificationChannel(AndroidNotificationChannel(
+          .createNotificationChannel(const AndroidNotificationChannel(
               'channelId', 'channelName', 'channelDescription'));
       expect(log, <Matcher>[
         isMethodCall('createNotificationChannel', arguments: <String, Object>{
@@ -1557,7 +1558,7 @@ void main() {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
-          .createNotificationChannel(AndroidNotificationChannel(
+          .createNotificationChannel(const AndroidNotificationChannel(
             'channelId',
             'channelName',
             'channelDescription',
@@ -1566,7 +1567,7 @@ void main() {
             playSound: false,
             enableLights: true,
             enableVibration: false,
-            ledColor: const Color.fromARGB(255, 255, 0, 0),
+            ledColor: Color.fromARGB(255, 255, 0, 0),
           ));
       expect(log, <Matcher>[
         isMethodCall('createNotificationChannel', arguments: <String, Object>{
@@ -1627,18 +1628,21 @@ void main() {
   group('ios', () {
     const MethodChannel channel =
         MethodChannel('dexterous.com/flutter/local_notifications');
-    List<MethodCall> log = <MethodCall>[];
+    final List<MethodCall> log = <MethodCall>[];
 
     setUp(() {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin.private(
           FakePlatform(operatingSystem: 'ios'));
-      channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      // ignore: always_specify_types
+      channel.setMockMethodCallHandler((methodCall) {
         log.add(methodCall);
         if (methodCall.method == 'pendingNotificationRequests') {
-          return Future.value(List<Map<String, Object>>());
+          return Future<List<Map<String, Object>>>.value(
+              <Map<String, Object>>[]);
         } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
-          return Future.value(Map<String, Object>());
+          return Future<Map<String, Object>>.value(<String, Object>{});
         }
+        return Future<void>.value();
       });
     });
 
@@ -1720,7 +1724,7 @@ void main() {
               presentSound: true,
               sound: 'sound.mp3',
               badgeNumber: 1,
-              attachments: [
+              attachments: <IOSNotificationAttachment>[
             IOSNotificationAttachment('video.mp4',
                 identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373'),
           ]));
@@ -1741,7 +1745,7 @@ void main() {
               'presentSound': true,
               'sound': 'sound.mp3',
               'badgeNumber': 1,
-              'attachments': [
+              'attachments': <Map<String, Object>>[
                 <String, Object>{
                   'filePath': 'video.mp4',
                   'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
@@ -1757,10 +1761,10 @@ void main() {
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-      await tz.initializeTimeZones();
+      tz.initializeTimeZones();
       tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
-      final scheduledDate =
-          tz.TZDateTime.now(tz.local).add(Duration(seconds: 5));
+      final tz.TZDateTime scheduledDate =
+          tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
       const NotificationDetails notificationDetails = NotificationDetails(
           iOS: IOSNotificationDetails(
               presentAlert: true,
@@ -1768,7 +1772,7 @@ void main() {
               presentSound: true,
               sound: 'sound.mp3',
               badgeNumber: 1,
-              attachments: [
+              attachments: <IOSNotificationAttachment>[
             IOSNotificationAttachment('video.mp4',
                 identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
           ]));
@@ -1795,7 +1799,7 @@ void main() {
               'presentSound': true,
               'sound': 'sound.mp3',
               'badgeNumber': 1,
-              'attachments': [
+              'attachments': <Map<String, Object>>[
                 <String, Object>{
                   'filePath': 'video.mp4',
                   'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
@@ -1859,18 +1863,26 @@ void main() {
 
 String _convertDateToISO8601String(tz.TZDateTime dateTime) {
   String _twoDigits(int n) {
-    if (n >= 10) return "$n";
-    return "0$n";
+    if (n >= 10) {
+      return '$n';
+    }
+    return '0$n';
   }
 
   String _fourDigits(int n) {
-    var absN = n.abs();
-    var sign = n < 0 ? "-" : "";
-    if (absN >= 1000) return "$n";
-    if (absN >= 100) return "${sign}0$absN";
-    if (absN >= 10) return "${sign}00$absN";
-    return "${sign}000$absN";
+    final int absN = n.abs();
+    final String sign = n < 0 ? '-' : '';
+    if (absN >= 1000) {
+      return '$n';
+    }
+    if (absN >= 100) {
+      return '${sign}0$absN';
+    }
+    if (absN >= 10) {
+      return '${sign}00$absN';
+    }
+    return '${sign}000$absN';
   }
 
-  return '${_fourDigits(dateTime.year)}-${_twoDigits(dateTime.month)}-${_twoDigits(dateTime.day)}T${_twoDigits(dateTime.hour)}:${_twoDigits(dateTime.minute)}:${_twoDigits(dateTime.second)}';
+  return '${_fourDigits(dateTime.year)}-${_twoDigits(dateTime.month)}-${_twoDigits(dateTime.day)}T${_twoDigits(dateTime.hour)}:${_twoDigits(dateTime.minute)}:${_twoDigits(dateTime.second)}'; // ignore: lines_longer_than_80_chars
 }

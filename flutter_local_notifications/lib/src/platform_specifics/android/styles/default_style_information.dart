@@ -7,9 +7,11 @@ class DefaultStyleInformation implements StyleInformation {
     this.htmlFormatTitle,
   );
 
-  /// Specifies if formatting should be applied to the content through HTML markup.
+  /// Specifies if formatting should be applied to the content through HTML
+  /// markup.
   final bool htmlFormatContent;
 
-  /// Specifies if formatting should be applied to the title through HTML markup.
+  /// Specifies if formatting should be applied to the title through HTML
+  /// markup.
   final bool htmlFormatTitle;
 }

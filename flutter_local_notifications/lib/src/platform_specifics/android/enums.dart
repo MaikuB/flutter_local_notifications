@@ -11,7 +11,7 @@ enum AndroidIconSource {
 
 /// The available notification styles on Android.
 enum AndroidNotificationStyle {
-  Default,
+  Standard,
   BigPicture,
   BigText,
   Inbox,
@@ -25,10 +25,14 @@ enum AndroidNotificationSoundSource {
 }
 
 /// The available actions for managing notification channels.
-///
-/// [CreateIfNotExists]: will create a channel if it doesn't exist.
-/// [Update]: will update the details of an existing channel. Note that some details can not be changed once a channel has been created.
-enum AndroidNotificationChannelAction { CreateIfNotExists, Update }
+enum AndroidNotificationChannelAction {
+  /// Create a channel if it doesn't exist.
+  CreateIfNotExists,
+
+  /// Updates the details of an existing channel. Note that some details can
+  /// not be changed once a channel has been created.
+  Update
+}
 
 /// The available importance levels for Android notifications.
 ///
@@ -36,17 +40,17 @@ enum AndroidNotificationChannelAction { CreateIfNotExists, Update }
 class Importance {
   const Importance(this.value);
 
-  static const Unspecified = Importance(-1000);
-  static const None = Importance(0);
-  static const Min = Importance(1);
-  static const Low = Importance(2);
-  static const Default = Importance(3);
-  static const High = Importance(4);
-  static const Max = Importance(5);
+  static const Importance Unspecified = Importance(-1000);
+  static const Importance None = Importance(0);
+  static const Importance Min = Importance(1);
+  static const Importance Low = Importance(2);
+  static const Importance Default = Importance(3);
+  static const Importance High = Importance(4);
+  static const Importance Max = Importance(5);
 
   /// All the possible values for the [Importance] enumeration.
   static List<Importance> get values =>
-      [Unspecified, None, Min, Low, Default, High, Max];
+      <Importance>[Unspecified, None, Min, Low, Default, High, Max];
 
   final int value;
 }
@@ -55,14 +59,14 @@ class Importance {
 class Priority {
   const Priority(this.value);
 
-  static const Min = Priority(-2);
-  static const Low = Priority(-1);
-  static const Default = Priority(0);
-  static const High = Priority(1);
-  static const Max = Priority(2);
+  static const Priority Min = Priority(-2);
+  static const Priority Low = Priority(-1);
+  static const Priority Default = Priority(0);
+  static const Priority High = Priority(1);
+  static const Priority Max = Priority(2);
 
   /// All the possible values for the [Priority] enumeration.
-  static List<Priority> get values => [Min, Low, Default, High, Max];
+  static List<Priority> get values => <Priority>[Min, Low, Default, High, Max];
 
   final int value;
 }
@@ -72,7 +76,8 @@ enum GroupAlertBehavior { All, Summary, Children }
 
 /// Defines the notification visibility on the lockscreen.
 enum NotificationVisibility {
-  /// Show this notification on all lockscreens, but conceal sensitive or private information on secure lockscreens.
+  /// Show this notification on all lockscreens, but conceal sensitive
+  /// or private information on secure lockscreens.
   Private,
 
   /// Show this notification in its entirety on all lockscreens.
