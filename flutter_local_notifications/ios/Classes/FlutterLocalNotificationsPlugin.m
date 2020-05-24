@@ -321,7 +321,7 @@ static FlutterError *getFlutterError(NSError *error) {
     } else if([ZONED_SCHEDULE_METHOD isEqualToString:call.method]) {
         notificationDetails.scheduledDateTime  = call.arguments[SCHEDULED_DATE_TIME];
         notificationDetails.timezoneName = call.arguments[TIMEZONE_NAME];
-        if(call.arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY] != [NSNull null]) {
+        if(call.arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY] != nil) {
             notificationDetails.scheduledNotificationRepeatFrequency = @([call.arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY] integerValue]);
         }
     }
@@ -394,8 +394,8 @@ static FlutterError *getFlutterError(NSError *error) {
     }
 }
 
-- (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge payload:(NSString *)payload scheduledDate:(NSString *)scheduledDate timezoneName:(NSString *)timezoneName {
-    NSDictionary *userDict =[NSDictionary dictionaryWithObjectsAndKeys:id, NOTIFICATION_ID, title, TITLE, [NSNumber numberWithBool:presentAlert], PRESENT_ALERT, [NSNumber numberWithBool:presentSound], PRESENT_SOUND, [NSNumber numberWithBool:presentBadge], PRESENT_BADGE, payload, PAYLOAD, scheduledDate, SCHEDULED_DATE_TIME, timezoneName, TIMEZONE_NAME, nil];
+- (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge payload:(NSString *)payload {
+    NSDictionary *userDict =[NSDictionary dictionaryWithObjectsAndKeys:id, NOTIFICATION_ID, title, TITLE, [NSNumber numberWithBool:presentAlert], PRESENT_ALERT, [NSNumber numberWithBool:presentSound], PRESENT_SOUND, [NSNumber numberWithBool:presentBadge], PRESENT_BADGE, payload, PAYLOAD, nil];
     return userDict;
 }
 
@@ -431,7 +431,7 @@ static FlutterError *getFlutterError(NSError *error) {
             content.sound = [UNNotificationSound soundNamed:notificationDetails.sound];
         }
     }
-    content.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload scheduledDate:notificationDetails.scheduledDateTime timezoneName:notificationDetails.scheduledDateTime];
+    content.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload];
     if(notificationDetails.scheduledDateTime != nil && notificationDetails.timezoneName != nil) {
         NSTimeZone *timezone = [NSTimeZone timeZoneWithName:notificationDetails.timezoneName];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -439,6 +439,7 @@ static FlutterError *getFlutterError(NSError *error) {
         [dateFormatter setTimeZone:timezone];
         NSDate *date = [dateFormatter dateFromString:notificationDetails.scheduledDateTime];
         NSCalendar *calendar = [NSCalendar currentCalendar];
+        calendar.timeZone = timezone;
         if(notificationDetails.scheduledNotificationRepeatFrequency == nil) {
             NSDateComponents *dateComponents    = [calendar components:(NSCalendarUnitYear  |
                                                                         NSCalendarUnitMonth |
@@ -539,7 +540,7 @@ static FlutterError *getFlutterError(NSError *error) {
         }
     }
     
-    notification.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload scheduledDate:notificationDetails.scheduledDateTime timezoneName:notificationDetails.timezoneName];
+    notification.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload];
     if(notificationDetails.scheduledDateTime != nil && notificationDetails.timezoneName != nil) {
         NSTimeZone *timezone = [NSTimeZone timeZoneWithName:notificationDetails.timezoneName];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];

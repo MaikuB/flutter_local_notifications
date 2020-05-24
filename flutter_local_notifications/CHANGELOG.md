@@ -13,6 +13,7 @@
   * `Priority` (note: as `default` is a keyword, what use to be `Default` is now `defaultPriority`)
   * `GroupAlertBehavior`
   * `NotificationVisibility`
+* **BREAKING CHANGE** assertions have been added to the `IOSInitializationSettings` constructor to prevent null values being passed in
 * Updated example app so that code for demonstrating functionality that is specific to a platform are only visible when running on the appropriate platform
 * Bumped e2e dev dependency
 

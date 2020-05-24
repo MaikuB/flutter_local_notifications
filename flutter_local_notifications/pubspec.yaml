@@ -28,6 +28,8 @@ flutter:
         pluginClass: FlutterLocalNotificationsPlugin
       ios:
         pluginClass: FlutterLocalNotificationsPlugin
+      macos:
+        pluginClass: FlutterLocalNotificationsPlugin
 
 
 environment:

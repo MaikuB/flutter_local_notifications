@@ -12,6 +12,9 @@ import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/method_channel_mappers.dart';
 import 'platform_specifics/ios/notification_details.dart';
+import 'platform_specifics/macos/initialization_settings.dart';
+import 'platform_specifics/macos/method_channel_mappers.dart';
+import 'platform_specifics/macos/notification_details.dart';
 import 'type_mappers.dart';
 import 'typedefs.dart';
 import 'types.dart';
@@ -407,6 +410,115 @@ class IOSFlutterLocalNotificationsPlugin
             call.arguments['title'],
             call.arguments['body'],
             call.arguments['payload']);
+      default:
+        return Future<void>.error('Method not defined');
+    }
+  }
+}
+
+/// macOS implementation of the local notifications plugin.
+class MacOSFlutterLocalNotificationsPlugin
+    extends MethodChannelFlutterLocalNotificationsPlugin {
+  SelectNotificationCallback _onSelectNotification;
+
+  /// Initializes the plugin.
+  ///
+  /// Call this method on application before using the plugin further.
+  /// This should only be done once. When a notification created by this plugin
+  /// was used to launch the app, calling `initialize` is what will trigger to
+  /// the `onSelectNotification` callback to be fire.
+  ///
+  /// Initialisation may also request notification permissions where users will
+  /// see a permissions prompt. This may be fine in cases where it's acceptable
+  /// to do this when the application runs for the first time. However, if your
+  /// applicationn needs to do this at a later point in time, set the
+  /// [MacOSInitializationSettings.requestAlertPermission],
+  /// [MacOSInitializationSettings.requestBadgePermission] and
+  /// [MacOSInitializationSettings.requestSoundPermission] values to false.
+  /// [requestPermissions] can then be called to request permissions when
+  /// needed.
+  Future<bool> initialize(MacOSInitializationSettings initializationSettings,
+      {SelectNotificationCallback onSelectNotification}) async {
+    _onSelectNotification = onSelectNotification;
+    _channel.setMethodCallHandler(_handleMethod);
+    return await _channel.invokeMethod(
+        'initialize', initializationSettings.toMap());
+  }
+
+  /// Requests the specified permission(s) from user and returns current
+  /// permission status.
+  Future<bool> requestPermissions({bool sound, bool alert, bool badge}) =>
+      _channel.invokeMethod<bool>('requestPermissions', <String, bool>{
+        'sound': sound,
+        'alert': alert,
+        'badge': badge,
+      });
+
+  /// Schedules a notification to be shown at the specified time relative to a
+  /// specific timezone.
+  Future<void> zonedSchedule(int id, String title, String body,
+      TZDateTime scheduledDate, MacOSNotificationDetails notificationDetails,
+      {String payload,
+      ScheduledNotificationRepeatFrequency
+          scheduledNotificationRepeatFrequency}) async {
+    validateId(id);
+    assert(scheduledDate.isAfter(DateTime.now()));
+    final Map<String, Object> serializedPlatformSpecifics =
+        notificationDetails?.toMap() ?? <String, Object>{};
+    await _channel.invokeMethod(
+        'zonedSchedule',
+        <String, Object>{
+          'id': id,
+          'title': title,
+          'body': body,
+          'platformSpecifics': serializedPlatformSpecifics,
+          'payload': payload ?? '',
+        }
+          ..addAll(scheduledDate.toMap())
+          ..addAll(scheduledNotificationRepeatFrequency == null
+              ? <String, Object>{}
+              : <String, Object>{
+                  'scheduledNotificationRepeatFrequency':
+                      scheduledNotificationRepeatFrequency.index
+                }));
+  }
+
+  @override
+  Future<void> show(int id, String title, String body,
+      {MacOSNotificationDetails notificationDetails, String payload}) {
+    validateId(id);
+    return _channel.invokeMethod(
+      'show',
+      <String, Object>{
+        'id': id,
+        'title': title,
+        'body': body,
+        'payload': payload ?? '',
+        'platformSpecifics': notificationDetails?.toMap(),
+      },
+    );
+  }
+
+  @override
+  Future<void> periodicallyShow(
+      int id, String title, String body, RepeatInterval repeatInterval,
+      {MacOSNotificationDetails notificationDetails, String payload}) async {
+    validateId(id);
+    await _channel.invokeMethod('periodicallyShow', <String, Object>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': repeatInterval.index,
+      'platformSpecifics': notificationDetails?.toMap(),
+      'payload': payload ?? ''
+    });
+  }
+
+  Future<void> _handleMethod(MethodCall call) {
+    switch (call.method) {
+      case 'selectNotification':
+        return _onSelectNotification(call.arguments);
       default:
         return Future<void>.error('Method not defined');
     }
