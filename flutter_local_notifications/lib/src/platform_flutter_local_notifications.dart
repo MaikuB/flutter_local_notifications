@@ -213,7 +213,7 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Creates a notification channel.
   ///
-  /// Only applies to Android 8.0+.
+  /// This property is only applicable to Android versions 8.0 and above.
   Future<void> createNotificationChannel(
           AndroidNotificationChannel notificationChannel) =>
       _channel.invokeMethod(

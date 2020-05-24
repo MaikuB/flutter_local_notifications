@@ -17,7 +17,8 @@ class MacOSNotificationDetails {
   ///
   /// When this is set to `null`, it will use the default setting given
   /// to [MacOSInitializationSettings.defaultPresentAlert].
-  /// Applicable to macOS 10.14 and above.
+  ///
+  /// This property is only applicable to macOS versions 10.14 and above.
   final bool presentAlert;
 
   /// Play a sound when the notification is triggered while app is in
@@ -25,7 +26,8 @@ class MacOSNotificationDetails {
   ///
   /// When this is set to `null`, it will use the default setting given to
   /// [MacOSInitializationSettings.defaultPresentSound].
-  /// Applicable to macOS 10.14 and above.
+  ///
+  /// This property is only applicable to macOS versions 10.14 and above.
   final bool presentSound;
 
   /// Apply the badge value when the notification is triggered while app is in
@@ -33,7 +35,8 @@ class MacOSNotificationDetails {
   ///
   /// When this is set to `null`, it will use the default setting given to
   /// [MacOSInitializationSettings.defaultPresentBadge].
-  /// Applicable to macOS 10.14 and above.
+  ///
+  /// This property is only applicable to macOS versions 10.14 and above.
   final bool presentBadge;
 
   /// Specifies the name of the file to play for the notification.
@@ -56,6 +59,6 @@ class MacOSNotificationDetails {
 
   /// Specifies the list of attachments included with the notification.
   ///
-  /// Applicable to macOS 10.14 and above.
+  /// This property is only applicable to macOS versions 10.14 and above.
   final List<MacOSNotificationAttachment> attachments;
 }

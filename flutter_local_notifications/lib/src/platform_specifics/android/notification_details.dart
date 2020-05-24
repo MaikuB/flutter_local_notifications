@@ -187,12 +187,12 @@ class AndroidNotificationDetails {
 
   /// Specifies how long the light colour will remain on.
   ///
-  /// Not applicable for Android 8.0+
+  /// This property is only applicable to Android versions below 8.0.
   final int ledOnMs;
 
   /// Specifies how long the light colour will remain off.
   ///
-  /// Not applicable for Android 8.0+
+  /// This property is only applicable to Android versions below 8.0.
   final int ledOffMs;
 
   /// Specifies the "ticker" text which is sent to accessibility services.

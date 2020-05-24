@@ -36,7 +36,8 @@ class IOSInitializationSettings {
   /// notification is triggered while app is in the foreground.
   ///
   /// Default value is true.
-  /// Applicable to iOS 10 and above.
+  ///
+  /// This property is only applicable to iOS versions 10 and above.
 
   final bool defaultPresentAlert;
 
@@ -44,19 +45,21 @@ class IOSInitializationSettings {
   /// notification is triggered while app is in the foreground by default.
   ///
   /// Default value is true.
-  /// Applicable to iOS 10 and above.
+  ///
+  /// This property is only applicable to iOS versions 10 and above.
   final bool defaultPresentSound;
 
   /// Configures the default setting on if a badge value should be applied when
   /// a notification is triggered while app is in the foreground by default.
   ///
   /// Default value is true.
-  /// Applicable to iOS 10 and above.
+  ///
+  /// This property is only applicable to iOS versions 10 and above.
   final bool defaultPresentBadge;
 
   /// Callback for handling when a notification is triggered while the app is
   /// in the foreground.
   ///
-  /// Applicable to iOS versions below 10.
+  /// This property is only applicable to iOS versions below 10.
   final DidReceiveLocalNotificationCallback onDidReceiveLocalNotification;
 }

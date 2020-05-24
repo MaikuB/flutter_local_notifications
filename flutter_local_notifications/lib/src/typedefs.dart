@@ -7,6 +7,6 @@ typedef SelectNotificationCallback = Future<dynamic> Function(String payload);
 /// Signature of the callback that is triggered when a notification is shown
 /// whilst the app is in the foreground.
 ///
-/// Applicable to iOS versions below 10.
+/// This property is only applicable to iOS versions below 10l
 typedef DidReceiveLocalNotificationCallback = Future<dynamic> Function(
     int id, String title, String body, String payload);
