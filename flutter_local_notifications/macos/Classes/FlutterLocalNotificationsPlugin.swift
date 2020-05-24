@@ -2,6 +2,7 @@ import Cocoa
 import FlutterMacOS
 import UserNotifications
 
+@available(OSX 10.14, *)
 public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNotificationCenterDelegate {
     
     enum ScheduledNotificationRepeatFrequency : Int {
@@ -32,15 +33,11 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "dexterous.com/flutter/local_notifications", binaryMessenger: registrar.messenger)
         let instance = FlutterLocalNotificationsPlugin.init(fromChannel: channel)
-        if #available(OSX 10.14, *) {
-            let center = UNUserNotificationCenter.current()
-            center.delegate = instance
-        } else {
-        }
+        let center = UNUserNotificationCenter.current()
+        center.delegate = instance
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     
-    @available(OSX 10.14, *)
     public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         var options:UNNotificationPresentationOptions = [];
         let presentAlert = notification.request.content.userInfo["presentAlert"] as! Bool
@@ -58,7 +55,6 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         completionHandler(options)
     }
     
-    @available(OSX 10.14, *)
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let payload = response.notification.request.content.userInfo["payload"] as? String
         if(initialized) {
@@ -93,86 +89,65 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let appLaunchDetails : [String: Any?] = ["notificationLaunchedApp" : launchingAppFromNotification, "payload": launchPayload]
             result(appLaunchDetails)
         case "cancel":
-            if #available(OSX 10.14, *) {
-                let center = UNUserNotificationCenter.current()
-                let idsToRemove = [String(call.arguments as! Int)]
-                center.removePendingNotificationRequests(withIdentifiers: idsToRemove)
-                center.removeDeliveredNotifications(withIdentifiers: idsToRemove)
-            }
-            else {
-                
-            }
+            let center = UNUserNotificationCenter.current()
+            let idsToRemove = [String(call.arguments as! Int)]
+            center.removePendingNotificationRequests(withIdentifiers: idsToRemove)
+            center.removeDeliveredNotifications(withIdentifiers: idsToRemove)
+            result(nil)
         case "cancelAll":
-            if #available(OSX 10.14, *) {
-                let center = UNUserNotificationCenter.current()
-                center.removeAllPendingNotificationRequests()
-                center.removeAllDeliveredNotifications()
-            }
+            let center = UNUserNotificationCenter.current()
+            center.removeAllPendingNotificationRequests()
+            center.removeAllDeliveredNotifications()
+            result(nil)
         case "pendingNotificationRequests":
-            if #available(OSX 10.14, *) {
-                 UNUserNotificationCenter.current().getPendingNotificationRequests { (requests) in
-                    var requestDictionaries:[Dictionary<String, Any?>] = []
-                    for request in requests {
-                        requestDictionaries.append(["id":Int(request.identifier) as Any, "title": request.content.title, "body": request.content.body, "payload": request.content.userInfo["payload"]])
-                    }
-                    result(requestDictionaries)
+            UNUserNotificationCenter.current().getPendingNotificationRequests { (requests) in
+                var requestDictionaries:[Dictionary<String, Any?>] = []
+                for request in requests {
+                    requestDictionaries.append(["id":Int(request.identifier) as Any, "title": request.content.title, "body": request.content.body, "payload": request.content.userInfo["payload"]])
                 }
-            } else {
-                // Fallback on earlier versions
+                result(requestDictionaries)
             }
         case "show":
-            if #available(OSX 10.14, *) {
-                do {
-                    let arguments = call.arguments as! Dictionary<String, AnyObject>
-                    let content = try buildUserNotificationContent(arguments: arguments)
-                    let center = UNUserNotificationCenter.current()
-                    let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: nil)
-                    center.add(request)
-                    result(nil)
-                } catch {
-                    result(FlutterError.init(code: "show_error", message: error.localizedDescription, details: "\(error)"))
-                }
-            } else {
-                // Fallback on earlier versions
+            do {
+                let arguments = call.arguments as! Dictionary<String, AnyObject>
+                let content = try buildUserNotificationContent(arguments: arguments)
+                let center = UNUserNotificationCenter.current()
+                let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: nil)
+                center.add(request)
+                result(nil)
+            } catch {
+                result(buildFlutterError(fromMethodName: call.method, withError: error))
             }
         case "zonedSchedule":
-            if #available(OSX 10.14, *) {
-                do {
-                    let arguments = call.arguments as! Dictionary<String, AnyObject>
-                    let content = try buildUserNotificationContent(arguments: arguments)
-                    let trigger = buildUserNotificationCalendarTrigger(fromArguments: arguments)
-                    let center = UNUserNotificationCenter.current()
-                    let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: trigger)
-                    center.add(request)
-                    result(nil)
-                } catch {
-                    result(FlutterError.init(code: "\(call.method)_error", message: error.localizedDescription, details: "\(error)"))
-                }
-            } else {
-                // Fallback on earlier versions
+            do {
+                let arguments = call.arguments as! Dictionary<String, AnyObject>
+                let content = try buildUserNotificationContent(arguments: arguments)
+                let trigger = buildUserNotificationCalendarTrigger(fromArguments: arguments)
+                let center = UNUserNotificationCenter.current()
+                let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: trigger)
+                center.add(request)
+                result(nil)
+            } catch {
+                result(buildFlutterError(fromMethodName: call.method, withError: error))
             }
+            
         case "periodicallyShow":
-            if #available(OSX 10.14, *) {
-                do {
-                    let arguments = call.arguments as! Dictionary<String, AnyObject>
-                    let content = try buildUserNotificationContent(arguments: arguments)
-                    let trigger = buildUserNotificationTimeIntervalTrigger(fromArguments: arguments)
-                    let center = UNUserNotificationCenter.current()
-                    let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: trigger)
-                    center.add(request)
-                    result(nil)
-                } catch {
-                    result(FlutterError.init(code: "\(call.method)_error", message: error.localizedDescription, details: "\(error)"))
-                }
-            } else {
-                // Fallback on earlier versions
+            do {
+                let arguments = call.arguments as! Dictionary<String, AnyObject>
+                let content = try buildUserNotificationContent(arguments: arguments)
+                let trigger = buildUserNotificationTimeIntervalTrigger(fromArguments: arguments)
+                let center = UNUserNotificationCenter.current()
+                let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: trigger)
+                center.add(request)
+                result(nil)
+            } catch {
+                result(buildFlutterError(fromMethodName: call.method, withError: error))
             }
         default:
             result(FlutterMethodNotImplemented)
         }
     }
     
-    @available(OSX 10.14, *)
     func buildUserNotificationContent(arguments: Dictionary<String, AnyObject>) throws -> UNNotificationContent {
         let content = UNMutableNotificationContent()
         if let title = arguments["title"] as? String {
@@ -220,7 +195,6 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         return content
     }
     
-    @available(OSX 10.14, *)
     func buildUserNotificationCalendarTrigger(fromArguments arguments:Dictionary<String, AnyObject>) -> UNCalendarNotificationTrigger {
         let scheduledDateTime = arguments["scheduledDateTime"] as! String;
         let timezoneName = arguments["timezoneName"] as! String;
@@ -247,7 +221,6 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         
     }
     
-    @available(OSX 10.14, *)
     func buildUserNotificationTimeIntervalTrigger(fromArguments arguments:Dictionary<String, AnyObject>) -> UNTimeIntervalNotificationTrigger {
         let rawRepeatInterval = arguments["repeatInterval"] as! Int
         let repeatInterval = RepeatInterval.init(rawValue: rawRepeatInterval)!
@@ -261,7 +234,6 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         case .weekly:
             return UNTimeIntervalNotificationTrigger.init(timeInterval: 60 * 60 * 24 * 7, repeats: true)
         }
-
     }
     
     func getIdentifier(fromArguments arguments: Dictionary<String, AnyObject>) -> String {
@@ -269,27 +241,27 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
     
     func requestPermissionsImpl(soundPermission: Bool, alertPermission: Bool, badgePermission: Bool, result: @escaping FlutterResult) {
-        if #available(OSX 10.14, *) {
-            let center = UNUserNotificationCenter.current()
-            var options: UNAuthorizationOptions = []
-            if(soundPermission) {
-                options.insert(.sound)
-            }
-            if(alertPermission) {
-                options.insert(.alert)
-            }
-            if(badgePermission) {
-                options.insert(.badge)
-            }
-            center.requestAuthorization(options: options) { (granted, error) in
-                result(granted)
-            }
-        } else {
-            // Fallback on earlier versions
+        let center = UNUserNotificationCenter.current()
+        var options: UNAuthorizationOptions = []
+        if(soundPermission) {
+            options.insert(.sound)
+        }
+        if(alertPermission) {
+            options.insert(.alert)
+        }
+        if(badgePermission) {
+            options.insert(.badge)
+        }
+        center.requestAuthorization(options: options) { (granted, error) in
+            result(granted)
         }
     }
     
     func handleSelectNotification(payload: String?) {
         channel.invokeMethod("selectNotification", arguments: payload)
+    }
+    
+    func buildFlutterError(fromMethodName methodName: String, withError error: Error) -> FlutterError {
+        return FlutterError.init(code: "\(methodName)_error", message: error.localizedDescription, details: "\(error)")
     }
 }
