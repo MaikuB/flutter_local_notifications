@@ -1,4 +1,4 @@
-## [1.1.0-beta.1]
+## [2.0.0-beta.1]
 
 * **BREAKING CHANGE** renamed `RepeatInterval` enum values to use lower camel casing
 
