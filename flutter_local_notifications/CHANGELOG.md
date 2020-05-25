@@ -1,10 +1,11 @@
 # [1.5.0-beta.1]
 
+* Added macOS implementation of the plugin
 * Added the `zonedSchedule` method to the plugin that allows for scheduling notifications to occur on a specific date and time, within a specific timezone. The `schedule` method has been marked as a deprecated due to problems with timezones, particularly when it comes to daylight savings. Note that to support timezone-based scheduling, the plugin now depends on the `timezone` package so that an instance of the `TZDateTime` class is required to the specify the time the notification should occur. This should work in most cases as it is IANA-based and native platforms have timezones that are IANA-based as well. Should you run into issues please submit feedback via the GitHub repository.
 * [Android] Added `androidAllowWhileIdle` boolean argument to the `periodicallyShow` method. When set to true, this changes how recurring notifications are shown so that the Android `AlarmManager` API is used to schedule a notification with exact timing. When the notification appears, the next one is scheduled after that. This is get around the limitations where the `AlarmManager` APIs don't provide a way for work to be repeated with precising timing regardless of the power mode.
 * [iOS] Updated the details in the plugin's podspec file
 * [Android] Bump Gradle plugin to 3.6.3
-* **BREAKING CHANGE** The `InitializationSettings` and `NotificationDetails` classes no longer have positional parameters but now have named parameters called `android` and `iOS` for passing in data specific to Android and iOS.
+* **BREAKING CHANGE** The `InitializationSettings` and `NotificationDetails` classes no longer have positional parameters but now have named parameters called `android` and `iOS` for passing in data specific to Android and iOS. There `macOS` named parameter has also been added for passing data specific to macOS
 * **BREAKING CHANGE** The `toMap` method that was used internally to transfer data over platform channels is no longer publicly accessible
 * **BREAKING CHANGE** All enum values have been renamed to follow lower camel case convention. This affects the following enums
   * `Day`
@@ -15,6 +16,7 @@
   * `NotificationVisibility`
 * **BREAKING CHANGE** assertions have been added to the `IOSInitializationSettings` constructor to prevent null values being passed in
 * Updated example app so that code for demonstrating functionality that is specific to a platform are only visible when running on the appropriate platform
+
 * Bumped e2e dev dependency
 
 # [1.4.3]
