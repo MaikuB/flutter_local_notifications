@@ -1467,7 +1467,9 @@ void main() {
           'notification title',
           'notification body',
           scheduledDate,
-          const NotificationDetails(android: androidNotificationDetails));
+          const NotificationDetails(android: androidNotificationDetails),
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime);
       expect(
           log.last,
           isMethodCall('zonedSchedule', arguments: <String, Object>{
@@ -1782,7 +1784,9 @@ void main() {
           'notification title',
           'notification body',
           scheduledDate,
-          notificationDetails);
+          notificationDetails,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime);
 
       expect(
           log.last,
@@ -1791,6 +1795,8 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
+            'uiLocalNotificationDateInterpretation':
+                UILocalNotificationDateInterpretation.absoluteTime.index,
             'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
             'timezoneName': 'Australia/Sydney',
             'platformSpecifics': <String, Object>{

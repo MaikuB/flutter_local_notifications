@@ -569,10 +569,13 @@ class _HomePageState extends State<HomePage> {
         0,
         'scheduled title',
         'scheduled body',
-        tz.TZDateTime.now(tz.local).add(Duration(seconds: 5)),
+        tz.TZDateTime.now(tz.getLocation('America/Vancouver'))
+            .add(Duration(seconds: 60)),
         NotificationDetails(
             android: AndroidNotificationDetails('your channel id',
-                'your channel name', 'your channel description')));
+                'your channel name', 'your channel description')),
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime);
   }
 
   Future<void> _showNotificationWithNoSound() async {
@@ -923,6 +926,8 @@ class _HomePageState extends State<HomePage> {
                 'daily notification channel name',
                 'daily notification description'),
             iOS: IOSNotificationDetails()),
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
         scheduledNotificationRepeatFrequency:
             ScheduledNotificationRepeatFrequency.daily);
   }
@@ -939,6 +944,8 @@ class _HomePageState extends State<HomePage> {
                 'weekly notification channel name',
                 'weekly notificationdescription'),
             iOS: IOSNotificationDetails()),
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
         scheduledNotificationRepeatFrequency:
             ScheduledNotificationRepeatFrequency.weekly);
   }

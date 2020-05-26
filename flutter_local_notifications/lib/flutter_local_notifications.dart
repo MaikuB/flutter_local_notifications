@@ -26,6 +26,7 @@ export 'src/platform_specifics/android/styles/inbox_style_information.dart';
 export 'src/platform_specifics/android/styles/media_style_information.dart';
 export 'src/platform_specifics/android/styles/messaging_style_information.dart';
 export 'src/platform_specifics/android/styles/style_information.dart';
+export 'src/platform_specifics/ios/enums.dart';
 export 'src/platform_specifics/ios/initialization_settings.dart';
 export 'src/platform_specifics/ios/notification_attachment.dart';
 export 'src/platform_specifics/ios/notification_details.dart';

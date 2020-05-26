@@ -68,6 +68,7 @@ NSString *const SECOND = @"second";
 NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTime";
 NSString *const TIMEZONE_NAME = @"timezoneName";
 NSString *const SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY = @"scheduledNotificationRepeatFrequency";
+NSString *const UILOCALNOTIFICATION_DATE_INTERPRETATION = @"uiLocalNotificationDateInterpretation";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
@@ -84,6 +85,11 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 typedef NS_ENUM(NSInteger, ScheduledNotificationRepeatFrequency) {
     DailyFrequency,
     WeeklyFrequency
+};
+
+typedef NS_ENUM(NSInteger, UILocalNotificationDateInterpretation) {
+    AbsoluteGMTTime,
+    WallClockTime
 };
 
 static FlutterError *getFlutterError(NSError *error) {
@@ -210,9 +216,9 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)requestPermissionsImpl:(bool)soundPermission
-               alertPermission:(bool)alertPermission
-               badgePermission:(bool)badgePermission
-       checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Nonnull)result{
+alertPermission:(bool)alertPermission
+badgePermission:(bool)badgePermission
+checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Nonnull)result{
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         
@@ -323,6 +329,9 @@ static FlutterError *getFlutterError(NSError *error) {
         notificationDetails.timezoneName = call.arguments[TIMEZONE_NAME];
         if(call.arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY] != nil) {
             notificationDetails.scheduledNotificationRepeatFrequency = @([call.arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY] integerValue]);
+        }
+        if(call.arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION] != nil) {
+            notificationDetails.uiLocalNotificationDateInterpretation = @([call.arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION] integerValue]);
         }
     }
     if(@available(iOS 10.0, *)) {
@@ -548,10 +557,19 @@ static FlutterError *getFlutterError(NSError *error) {
         [dateFormatter setTimeZone:timezone];
         NSDate *date = [dateFormatter dateFromString:notificationDetails.scheduledDateTime];
         notification.fireDate = date;
-        if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
-            notification.repeatInterval = NSCalendarUnitDay;
-        } else  if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
-            notification.repeatInterval = NSCalendarUnitWeekOfYear;
+        if (notificationDetails.uiLocalNotificationDateInterpretation != nil) {
+            if([notificationDetails.uiLocalNotificationDateInterpretation integerValue] == AbsoluteGMTTime) {
+                notification.timeZone = nil;
+            } else if([notificationDetails.uiLocalNotificationDateInterpretation integerValue] == WallClockTime) {
+                notification.timeZone = timezone;
+            }
+        }
+        if (notificationDetails.scheduledNotificationRepeatFrequency != nil) {
+            if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
+                notification.repeatInterval = NSCalendarUnitDay;
+            } else  if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
+                notification.repeatInterval = NSCalendarUnitWeekOfYear;
+            }
         }
         [[UIApplication sharedApplication] scheduleLocalNotification:notification];
     }
@@ -631,7 +649,7 @@ static FlutterError *getFlutterError(NSError *error) {
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
-         withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
+withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
     if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier] && [self isAFlutterLocalNotification:response.notification.request.content.userInfo]) {
         NSString *payload = (NSString *) response.notification.request.content.userInfo[PAYLOAD];
         if(_initialized) {

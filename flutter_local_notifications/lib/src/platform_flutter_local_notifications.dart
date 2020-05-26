@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
@@ -9,6 +10,7 @@ import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
 import 'platform_specifics/android/notification_channel.dart';
 import 'platform_specifics/android/notification_details.dart';
+import 'platform_specifics/ios/enums.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/method_channel_mappers.dart';
 import 'platform_specifics/ios/notification_details.dart';
@@ -295,15 +297,39 @@ class IOSFlutterLocalNotificationsPlugin
     });
   }
 
-  /// Schedules a notification to be shown at the specified time relative to a
-  /// specific timezone.
-  Future<void> zonedSchedule(int id, String title, String body,
-      TZDateTime scheduledDate, IOSNotificationDetails notificationDetails,
-      {String payload,
-      ScheduledNotificationRepeatFrequency
-          scheduledNotificationRepeatFrequency}) async {
+  /// Schedules a notification to be shown at the specified time in the
+  /// future in a specific timezone.
+  ///
+  /// Due to the limited support for timezones provided the UILocalNotification
+  /// APIs used on devices using iOS versions below 10, the
+  /// [uiLocalNotificationDateInterpretation] is needed to control how
+  /// [scheduledDate] is interpreted. See official docs at
+  /// https://developer.apple.com/documentation/uikit/uilocalnotification/1616659-timezone
+  /// for more details. Note that due to this limited support, it's likely that
+  /// on older iOS devices, there will still be issues with daylight savings
+  /// except for when the timezone used in the [scheduledDate] matches the
+  /// device's timezone and [uiLocalNotificationDateInterpretation] is set to
+  /// [UILocalNotificationDateInterpretation.wallClockTime].
+  Future<void> zonedSchedule(
+    int id,
+    String title,
+    String body,
+    TZDateTime scheduledDate,
+    IOSNotificationDetails notificationDetails, {
+    @required
+        UILocalNotificationDateInterpretation
+            uiLocalNotificationDateInterpretation,
+    String payload,
+    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
+  }) async {
     validateId(id);
-    assert(scheduledDate.isAfter(DateTime.now()));
+    if (!scheduledDate.isAfter(DateTime.now())) {
+      throw ArgumentError.value(
+          scheduledDate, 'scheduledDate', 'Must be a date in the future');
+    }
+    ArgumentError.checkNotNull(uiLocalNotificationDateInterpretation,
+        'uiLocalNotificationDateInterpretation');
+
     final Map<String, Object> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
     await _channel.invokeMethod(
@@ -314,6 +340,8 @@ class IOSFlutterLocalNotificationsPlugin
           'body': body,
           'platformSpecifics': serializedPlatformSpecifics,
           'payload': payload ?? '',
+          'uiLocalNotificationDateInterpretation':
+              uiLocalNotificationDateInterpretation.index,
         }
           ..addAll(scheduledDate.toMap())
           ..addAll(scheduledNotificationRepeatFrequency == null

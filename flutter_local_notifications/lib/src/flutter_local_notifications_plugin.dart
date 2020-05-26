@@ -236,9 +236,16 @@ class FlutterLocalNotificationsPlugin {
   /// level (i.e. Android/iOS), the plugin needs to pass the time over the
   /// platform channel in yyyy-mm-dd hh:mm:ss format. Therefore, the precision
   /// is at the best to the second.
-  Future<void> zonedSchedule(int id, String title, String body,
-      TZDateTime scheduledDate, NotificationDetails notificationDetails,
-      {String payload,
+  Future<void> zonedSchedule(
+      int id,
+      String title,
+      String body,
+      TZDateTime scheduledDate,
+      NotificationDetails notificationDetails,
+      {@required
+          UILocalNotificationDateInterpretation
+              uiLocalNotificationDateInterpretation,
+      String payload,
       ScheduledNotificationRepeatFrequency
           scheduledNotificationRepeatFrequency}) async {
     if (_platform.isAndroid) {
@@ -254,6 +261,8 @@ class FlutterLocalNotificationsPlugin {
               IOSFlutterLocalNotificationsPlugin>()
           ?.zonedSchedule(
               id, title, body, scheduledDate, notificationDetails?.iOS,
+              uiLocalNotificationDateInterpretation:
+                  uiLocalNotificationDateInterpretation,
               payload: payload,
               scheduledNotificationRepeatFrequency:
                   scheduledNotificationRepeatFrequency);
