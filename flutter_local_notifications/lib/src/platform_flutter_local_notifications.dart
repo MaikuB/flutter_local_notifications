@@ -70,8 +70,10 @@ class AndroidFlutterLocalNotificationsPlugin
   /// This should only be done once. When a notification created by this plugin
   /// was used to launch the app, calling `initialize` is what will trigger to
   /// the `onSelectNotification` callback to be fire.
-  Future<bool> initialize(AndroidInitializationSettings initializationSettings,
-      {SelectNotificationCallback onSelectNotification}) async {
+  Future<bool> initialize(
+    AndroidInitializationSettings initializationSettings, {
+    SelectNotificationCallback onSelectNotification,
+  }) async {
     _onSelectNotification = onSelectNotification;
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
@@ -85,9 +87,15 @@ class AndroidFlutterLocalNotificationsPlugin
   /// idle mode.
   @Deprecated(
       'Deprecated due to problems with timezones. Use zonedSchedule instead.')
-  Future<void> schedule(int id, String title, String body,
-      DateTime scheduledDate, AndroidNotificationDetails notificationDetails,
-      {String payload, bool androidAllowWhileIdle = false}) async {
+  Future<void> schedule(
+    int id,
+    String title,
+    String body,
+    DateTime scheduledDate,
+    AndroidNotificationDetails notificationDetails, {
+    String payload,
+    bool androidAllowWhileIdle = false,
+  }) async {
     validateId(id);
     final Map<String, Object> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
@@ -104,11 +112,15 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified time relative to a
   /// specific timezone.
-  Future<void> zonedSchedule(int id, String title, String body,
-      TZDateTime scheduledDate, AndroidNotificationDetails notificationDetails,
-      {String payload,
-      ScheduledNotificationRepeatFrequency
-          scheduledNotificationRepeatFrequency}) async {
+  Future<void> zonedSchedule(
+    int id,
+    String title,
+    String body,
+    TZDateTime scheduledDate,
+    AndroidNotificationDetails notificationDetails, {
+    String payload,
+    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
+  }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate);
     final Map<String, Object> serializedPlatformSpecifics =
@@ -134,9 +146,14 @@ class AndroidFlutterLocalNotificationsPlugin
   /// Shows a notification on a daily interval at the specified time.
   @Deprecated(
       'Deprecated due to problems with timezones. Use zonedSchedule instead.')
-  Future<void> showDailyAtTime(int id, String title, String body,
-      Time notificationTime, AndroidNotificationDetails notificationDetails,
-      {String payload}) async {
+  Future<void> showDailyAtTime(
+    int id,
+    String title,
+    String body,
+    Time notificationTime,
+    AndroidNotificationDetails notificationDetails, {
+    String payload,
+  }) async {
     validateId(id);
     await _channel.invokeMethod('showDailyAtTime', <String, Object>{
       'id': id,
@@ -154,13 +171,14 @@ class AndroidFlutterLocalNotificationsPlugin
   @Deprecated(
       'Deprecated due to problems with timezones. Use zonedSchedule instead.')
   Future<void> showWeeklyAtDayAndTime(
-      int id,
-      String title,
-      String body,
-      Day day,
-      Time notificationTime,
-      AndroidNotificationDetails notificationDetails,
-      {String payload}) async {
+    int id,
+    String title,
+    String body,
+    Day day,
+    Time notificationTime,
+    AndroidNotificationDetails notificationDetails, {
+    String payload,
+  }) async {
     validateId(id);
 
     await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, Object>{
@@ -177,8 +195,13 @@ class AndroidFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> show(int id, String title, String body,
-      {AndroidNotificationDetails notificationDetails, String payload}) {
+  Future<void> show(
+    int id,
+    String title,
+    String body, {
+    AndroidNotificationDetails notificationDetails,
+    String payload,
+  }) {
     validateId(id);
     return _channel.invokeMethod(
       'show',
@@ -194,10 +217,14 @@ class AndroidFlutterLocalNotificationsPlugin
 
   @override
   Future<void> periodicallyShow(
-      int id, String title, String body, RepeatInterval repeatInterval,
-      {AndroidNotificationDetails notificationDetails,
-      String payload,
-      bool androidAllowWhileIdle = false}) async {
+    int id,
+    String title,
+    String body,
+    RepeatInterval repeatInterval, {
+    AndroidNotificationDetails notificationDetails,
+    String payload,
+    bool androidAllowWhileIdle = false,
+  }) async {
     validateId(id);
     final Map<String, Object> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
@@ -258,8 +285,10 @@ class IOSFlutterLocalNotificationsPlugin
   /// [IOSInitializationSettings.requestSoundPermission] values to false.
   /// [requestPermissions] can then be called to request permissions when
   /// needed.
-  Future<bool> initialize(IOSInitializationSettings initializationSettings,
-      {SelectNotificationCallback onSelectNotification}) async {
+  Future<bool> initialize(
+    IOSInitializationSettings initializationSettings, {
+    SelectNotificationCallback onSelectNotification,
+  }) async {
     _onSelectNotification = onSelectNotification;
     _onDidReceiveLocalNotification =
         initializationSettings.onDidReceiveLocalNotification;
@@ -270,7 +299,11 @@ class IOSFlutterLocalNotificationsPlugin
 
   /// Requests the specified permission(s) from user and returns current
   /// permission status.
-  Future<bool> requestPermissions({bool sound, bool alert, bool badge}) =>
+  Future<bool> requestPermissions({
+    bool sound,
+    bool alert,
+    bool badge,
+  }) =>
       _channel.invokeMethod<bool>('requestPermissions', <String, bool>{
         'sound': sound,
         'alert': alert,
@@ -281,9 +314,14 @@ class IOSFlutterLocalNotificationsPlugin
   /// optional payload that is passed through when a notification is tapped.
   @Deprecated(
       'Deprecated due to problems with timezones. Use zonedSchedule instead.')
-  Future<void> schedule(int id, String title, String body,
-      DateTime scheduledDate, IOSNotificationDetails notificationDetails,
-      {String payload}) async {
+  Future<void> schedule(
+    int id,
+    String title,
+    String body,
+    DateTime scheduledDate,
+    IOSNotificationDetails notificationDetails, {
+    String payload,
+  }) async {
     validateId(id);
     await _channel.invokeMethod('schedule', <String, Object>{
       'id': id,
@@ -349,9 +387,14 @@ class IOSFlutterLocalNotificationsPlugin
   /// Shows a notification on a daily interval at the specified time.
   @Deprecated(
       'Deprecated due to problems with timezones. Use zonedSchedule instead.')
-  Future<void> showDailyAtTime(int id, String title, String body,
-      Time notificationTime, IOSNotificationDetails notificationDetails,
-      {String payload}) async {
+  Future<void> showDailyAtTime(
+    int id,
+    String title,
+    String body,
+    Time notificationTime,
+    IOSNotificationDetails notificationDetails, {
+    String payload,
+  }) async {
     validateId(id);
     await _channel.invokeMethod('showDailyAtTime', <String, Object>{
       'id': id,
@@ -369,13 +412,14 @@ class IOSFlutterLocalNotificationsPlugin
   @Deprecated(
       'Deprecated due to problems with timezones. Use zonedSchedule instead.')
   Future<void> showWeeklyAtDayAndTime(
-      int id,
-      String title,
-      String body,
-      Day day,
-      Time notificationTime,
-      IOSNotificationDetails notificationDetails,
-      {String payload}) async {
+    int id,
+    String title,
+    String body,
+    Day day,
+    Time notificationTime,
+    IOSNotificationDetails notificationDetails, {
+    String payload,
+  }) async {
     validateId(id);
     await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, Object>{
       'id': id,
@@ -391,8 +435,13 @@ class IOSFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> show(int id, String title, String body,
-      {IOSNotificationDetails notificationDetails, String payload}) {
+  Future<void> show(
+    int id,
+    String title,
+    String body, {
+    IOSNotificationDetails notificationDetails,
+    String payload,
+  }) {
     validateId(id);
     return _channel.invokeMethod(
       'show',
@@ -408,8 +457,13 @@ class IOSFlutterLocalNotificationsPlugin
 
   @override
   Future<void> periodicallyShow(
-      int id, String title, String body, RepeatInterval repeatInterval,
-      {IOSNotificationDetails notificationDetails, String payload}) async {
+    int id,
+    String title,
+    String body,
+    RepeatInterval repeatInterval, {
+    IOSNotificationDetails notificationDetails,
+    String payload,
+  }) async {
     validateId(id);
     await _channel.invokeMethod('periodicallyShow', <String, Object>{
       'id': id,
@@ -460,8 +514,10 @@ class MacOSFlutterLocalNotificationsPlugin
   /// [MacOSInitializationSettings.requestSoundPermission] values to false.
   /// [requestPermissions] can then be called to request permissions when
   /// needed.
-  Future<bool> initialize(MacOSInitializationSettings initializationSettings,
-      {SelectNotificationCallback onSelectNotification}) async {
+  Future<bool> initialize(
+    MacOSInitializationSettings initializationSettings, {
+    SelectNotificationCallback onSelectNotification,
+  }) async {
     _onSelectNotification = onSelectNotification;
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
@@ -470,7 +526,11 @@ class MacOSFlutterLocalNotificationsPlugin
 
   /// Requests the specified permission(s) from user and returns current
   /// permission status.
-  Future<bool> requestPermissions({bool sound, bool alert, bool badge}) =>
+  Future<bool> requestPermissions({
+    bool sound,
+    bool alert,
+    bool badge,
+  }) =>
       _channel.invokeMethod<bool>('requestPermissions', <String, bool>{
         'sound': sound,
         'alert': alert,
@@ -479,11 +539,15 @@ class MacOSFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified time relative to a
   /// specific timezone.
-  Future<void> zonedSchedule(int id, String title, String body,
-      TZDateTime scheduledDate, MacOSNotificationDetails notificationDetails,
-      {String payload,
-      ScheduledNotificationRepeatFrequency
-          scheduledNotificationRepeatFrequency}) async {
+  Future<void> zonedSchedule(
+    int id,
+    String title,
+    String body,
+    TZDateTime scheduledDate,
+    MacOSNotificationDetails notificationDetails, {
+    String payload,
+    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
+  }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate);
     final Map<String, Object> serializedPlatformSpecifics =
@@ -507,8 +571,13 @@ class MacOSFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> show(int id, String title, String body,
-      {MacOSNotificationDetails notificationDetails, String payload}) {
+  Future<void> show(
+    int id,
+    String title,
+    String body, {
+    MacOSNotificationDetails notificationDetails,
+    String payload,
+  }) {
     validateId(id);
     return _channel.invokeMethod(
       'show',
@@ -524,8 +593,13 @@ class MacOSFlutterLocalNotificationsPlugin
 
   @override
   Future<void> periodicallyShow(
-      int id, String title, String body, RepeatInterval repeatInterval,
-      {MacOSNotificationDetails notificationDetails, String payload}) async {
+    int id,
+    String title,
+    String body,
+    RepeatInterval repeatInterval, {
+    MacOSNotificationDetails notificationDetails,
+    String payload,
+  }) async {
     validateId(id);
     await _channel.invokeMethod('periodicallyShow', <String, Object>{
       'id': id,

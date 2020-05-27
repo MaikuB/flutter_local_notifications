@@ -112,8 +112,10 @@ class FlutterLocalNotificationsPlugin {
   /// [IOSInitializationSettings.requestSoundPermission] values to false.
   /// [IOSFlutterLocalNotificationsPlugin.requestPermissions] can then be called
   /// to request permissions when needed.
-  Future<bool> initialize(InitializationSettings initializationSettings,
-      {SelectNotificationCallback onSelectNotification}) async {
+  Future<bool> initialize(
+    InitializationSettings initializationSettings, {
+    SelectNotificationCallback onSelectNotification,
+  }) async {
     if (_platform.isAndroid) {
       return resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
@@ -162,9 +164,13 @@ class FlutterLocalNotificationsPlugin {
 
   /// Show a notification with an optional payload that will be passed back to
   /// the app when a notification is tapped.
-  Future<void> show(int id, String title, String body,
-      NotificationDetails notificationDetails,
-      {String payload}) async {
+  Future<void> show(
+    int id,
+    String title,
+    String body,
+    NotificationDetails notificationDetails, {
+    String payload,
+  }) async {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
@@ -210,9 +216,15 @@ class FlutterLocalNotificationsPlugin {
   /// low-power idle mode.
   @Deprecated(
       'Deprecated due to problems with timezones. Use zonedSchedule instead.')
-  Future<void> schedule(int id, String title, String body,
-      DateTime scheduledDate, NotificationDetails notificationDetails,
-      {String payload, bool androidAllowWhileIdle = false}) async {
+  Future<void> schedule(
+    int id,
+    String title,
+    String body,
+    DateTime scheduledDate,
+    NotificationDetails notificationDetails, {
+    String payload,
+    bool androidAllowWhileIdle = false,
+  }) async {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
@@ -237,17 +249,17 @@ class FlutterLocalNotificationsPlugin {
   /// platform channel in yyyy-mm-dd hh:mm:ss format. Therefore, the precision
   /// is at the best to the second.
   Future<void> zonedSchedule(
-      int id,
-      String title,
-      String body,
-      TZDateTime scheduledDate,
-      NotificationDetails notificationDetails,
-      {@required
-          UILocalNotificationDateInterpretation
-              uiLocalNotificationDateInterpretation,
-      String payload,
-      ScheduledNotificationRepeatFrequency
-          scheduledNotificationRepeatFrequency}) async {
+    int id,
+    String title,
+    String body,
+    TZDateTime scheduledDate,
+    NotificationDetails notificationDetails, {
+    @required
+        UILocalNotificationDateInterpretation
+            uiLocalNotificationDateInterpretation,
+    String payload,
+    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
+  }) async {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
@@ -291,9 +303,15 @@ class FlutterLocalNotificationsPlugin {
   /// to be shown at the exact time even when the device is in a low-power idle
   /// mode. After it is shown, the next one would be scheduled and this would
   /// repeat.
-  Future<void> periodicallyShow(int id, String title, String body,
-      RepeatInterval repeatInterval, NotificationDetails notificationDetails,
-      {String payload, bool androidAllowWhileIdle = false}) async {
+  Future<void> periodicallyShow(
+    int id,
+    String title,
+    String body,
+    RepeatInterval repeatInterval,
+    NotificationDetails notificationDetails, {
+    String payload,
+    bool androidAllowWhileIdle = false,
+  }) async {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
@@ -321,9 +339,14 @@ class FlutterLocalNotificationsPlugin {
   /// Shows a notification on a daily interval at the specified time.
   @Deprecated(
       'Deprecated due to problems with timezones. Use zonedSchedule instead.')
-  Future<void> showDailyAtTime(int id, String title, String body,
-      Time notificationTime, NotificationDetails notificationDetails,
-      {String payload}) async {
+  Future<void> showDailyAtTime(
+    int id,
+    String title,
+    String body,
+    Time notificationTime,
+    NotificationDetails notificationDetails, {
+    String payload,
+  }) async {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
@@ -344,9 +367,15 @@ class FlutterLocalNotificationsPlugin {
   /// Shows a notification on weekly interval at the specified day and time.
   @Deprecated(
       'Deprecated due to problems with timezones. Use zonedSchedule instead.')
-  Future<void> showWeeklyAtDayAndTime(int id, String title, String body,
-      Day day, Time notificationTime, NotificationDetails notificationDetails,
-      {String payload}) async {
+  Future<void> showWeeklyAtDayAndTime(
+    int id,
+    String title,
+    String body,
+    Day day,
+    Time notificationTime,
+    NotificationDetails notificationDetails, {
+    String payload,
+  }) async {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
