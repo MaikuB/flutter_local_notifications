@@ -7,11 +7,8 @@
 /// for more details.
 enum UILocalNotificationDateInterpretation {
   /// The date is interpreted as absolute GMT time.
-  ///
   absoluteTime,
 
   /// The date is interpreted as a wall-clock time.
-  ///
-  /// The `UILocalNotification`'s `timeZone` property will be set to `nil`
   wallClockTime
 }

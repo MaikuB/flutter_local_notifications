@@ -110,11 +110,9 @@ class AndroidFlutterLocalNotificationsPlugin
       ScheduledNotificationRepeatFrequency
           scheduledNotificationRepeatFrequency}) async {
     validateId(id);
-    //assert(scheduledDate.isAfter(DateTime.now()));
-
+    validateDateIsInTheFuture(scheduledDate);
     final Map<String, Object> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
-
     await _channel.invokeMethod(
         'zonedSchedule',
         <String, Object>{
@@ -323,13 +321,9 @@ class IOSFlutterLocalNotificationsPlugin
     ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
   }) async {
     validateId(id);
-    if (!scheduledDate.isAfter(DateTime.now())) {
-      throw ArgumentError.value(
-          scheduledDate, 'scheduledDate', 'Must be a date in the future');
-    }
+    validateDateIsInTheFuture(scheduledDate);
     ArgumentError.checkNotNull(uiLocalNotificationDateInterpretation,
         'uiLocalNotificationDateInterpretation');
-
     final Map<String, Object> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
     await _channel.invokeMethod(
@@ -383,7 +377,6 @@ class IOSFlutterLocalNotificationsPlugin
       IOSNotificationDetails notificationDetails,
       {String payload}) async {
     validateId(id);
-
     await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, Object>{
       'id': id,
       'title': title,
@@ -492,7 +485,7 @@ class MacOSFlutterLocalNotificationsPlugin
       ScheduledNotificationRepeatFrequency
           scheduledNotificationRepeatFrequency}) async {
     validateId(id);
-    assert(scheduledDate.isAfter(DateTime.now()));
+    validateDateIsInTheFuture(scheduledDate);
     final Map<String, Object> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
     await _channel.invokeMethod(
