@@ -569,8 +569,7 @@ class _HomePageState extends State<HomePage> {
         0,
         'scheduled title',
         'scheduled body',
-        tz.TZDateTime.now(tz.getLocation('America/Vancouver'))
-            .add(Duration(seconds: 60)),
+        tz.TZDateTime.now(tz.local).add(Duration(seconds: 5)),
         NotificationDetails(
             android: AndroidNotificationDetails('your channel id',
                 'your channel name', 'your channel description')),
