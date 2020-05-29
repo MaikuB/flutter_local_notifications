@@ -177,7 +177,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         setTimeoutAfter(notificationDetails, builder);
         Notification notification = builder.build();
         if (notificationDetails.additionalFlags != null && notificationDetails.additionalFlags.length > 0) {
-            for(int additionalFlag:notificationDetails.additionalFlags) {
+            for (int additionalFlag : notificationDetails.additionalFlags) {
                 notification.flags |= additionalFlag;
             }
         }
@@ -289,7 +289,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = getAlarmManager(context);
-        long epochMilli = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ? ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), ZoneId.of(notificationDetails.timeZoneName)).toInstant().toEpochMilli() : org.threeten.bp.ZonedDateTime.of(org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime), org.threeten.bp.ZoneId.of(notificationDetails.timeZoneName)).toInstant().toEpochMilli();
+        long epochMilli = ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), ZoneId.of(notificationDetails.timeZoneName)).toInstant().toEpochMilli();
         if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
             AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
         } else {
@@ -750,23 +750,14 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     static String getNextFireDate(NotificationDetails notificationDetails) {
-        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Daily) {
-                LocalDateTime localDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime).plusDays(1);
-                return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
-            } else if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Weekly) {
-                LocalDateTime localDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
-                return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
-            }
-        } else {
-            if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Daily) {
-                org.threeten.bp.LocalDateTime localDateTime = org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).plusDays(1);
-                return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
-            } else if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Weekly) {
-                org.threeten.bp.LocalDateTime localDateTime = org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
-                return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
-            }
+        if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Daily) {
+            LocalDateTime localDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime).plusDays(1);
+            return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+        } else if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Weekly) {
+            LocalDateTime localDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
+            return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
         }
+
         return null;
     }
 
