@@ -17,7 +17,7 @@ class IOSNotificationDetails {
   /// When this is set to `null`, it will use the default setting given
   /// to [IOSInitializationSettings.defaultPresentAlert].
   ///
-  /// This property is only applicable to iOS versions 10 and above.
+  /// This property is only applicable to iOS 10 or newer.
   final bool presentAlert;
 
   /// Play a sound when the notification is triggered while app is in
@@ -26,7 +26,7 @@ class IOSNotificationDetails {
   /// When this is set to `null`, it will use the default setting given to
   /// [IOSInitializationSettings.defaultPresentSound].
   ///
-  /// This property is only applicable to iOS versions 10 and above.
+  /// This property is only applicable to iOS 10 or newer.
   final bool presentSound;
 
   /// Apply the badge value when the notification is triggered while app is in
@@ -35,7 +35,7 @@ class IOSNotificationDetails {
   /// When this is set to `null`, it will use the default setting given to
   /// [IOSInitializationSettings.defaultPresentBadge].
   ///
-  /// This property is only applicable to iOS versions 10 and above.
+  /// This property is only applicable to iOS 10 or newer.
   final bool presentBadge;
 
   /// Specifies the name of the file to play for the notification.
@@ -55,6 +55,6 @@ class IOSNotificationDetails {
 
   /// Specifies the list of attachments included with the notification.
   ///
-  /// This property is only applicable to iOS versions 10 and above.
+  /// This property is only applicable to iOS 10 or newer.
   final List<IOSNotificationAttachment> attachments;
 }

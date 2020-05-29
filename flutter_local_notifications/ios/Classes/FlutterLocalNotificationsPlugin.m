@@ -66,7 +66,7 @@ NSString *const HOUR = @"hour";
 NSString *const MINUTE = @"minute";
 NSString *const SECOND = @"second";
 NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTime";
-NSString *const TIMEZONE_NAME = @"timezoneName";
+NSString *const TIME_ZONE_NAME = @"timeZoneName";
 NSString *const SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY = @"scheduledNotificationRepeatFrequency";
 NSString *const UILOCALNOTIFICATION_DATE_INTERPRETATION = @"uiLocalNotificationDateInterpretation";
 
@@ -276,13 +276,13 @@ checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Non
     if(call.arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
         NSDictionary *platformSpecifics = call.arguments[PLATFORM_SPECIFICS];
         
-        if(platformSpecifics[PRESENT_ALERT] != [NSNull null]) {
+        if(platformSpecifics[PRESENT_ALERT] != [NSNull null] && platformSpecifics[PRESENT_ALERT] != nil) {
             notificationDetails.presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
         }
-        if(platformSpecifics[PRESENT_SOUND] != [NSNull null]) {
+        if(platformSpecifics[PRESENT_SOUND] != [NSNull null] && platformSpecifics[PRESENT_SOUND] != nil) {
             notificationDetails.presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
         }
-        if(platformSpecifics[PRESENT_BADGE] != [NSNull null]) {
+        if(platformSpecifics[PRESENT_BADGE] != [NSNull null] && platformSpecifics[PRESENT_BADGE] != nil) {
             notificationDetails.presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
         }
         if(platformSpecifics[BADGE_NUMBER] != [NSNull null]) {
@@ -326,7 +326,7 @@ checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Non
         notificationDetails.repeatInterval = @([call.arguments[REPEAT_INTERVAL] integerValue]);
     } else if([ZONED_SCHEDULE_METHOD isEqualToString:call.method]) {
         notificationDetails.scheduledDateTime  = call.arguments[SCHEDULED_DATE_TIME];
-        notificationDetails.timezoneName = call.arguments[TIMEZONE_NAME];
+        notificationDetails.timeZoneName = call.arguments[TIME_ZONE_NAME];
         if(call.arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY] != nil) {
             notificationDetails.scheduledNotificationRepeatFrequency = @([call.arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY] integerValue]);
         }
@@ -441,8 +441,8 @@ checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Non
         }
     }
     content.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload];
-    if(notificationDetails.scheduledDateTime != nil && notificationDetails.timezoneName != nil) {
-        NSTimeZone *timezone = [NSTimeZone timeZoneWithName:notificationDetails.timezoneName];
+    if(notificationDetails.scheduledDateTime != nil && notificationDetails.timeZoneName != nil) {
+        NSTimeZone *timezone = [NSTimeZone timeZoneWithName:notificationDetails.timeZoneName];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
         [dateFormatter setTimeZone:timezone];
@@ -550,8 +550,8 @@ checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Non
     }
     
     notification.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload];
-    if(notificationDetails.scheduledDateTime != nil && notificationDetails.timezoneName != nil) {
-        NSTimeZone *timezone = [NSTimeZone timeZoneWithName:notificationDetails.timezoneName];
+    if(notificationDetails.scheduledDateTime != nil && notificationDetails.timeZoneName != nil) {
+        NSTimeZone *timezone = [NSTimeZone timeZoneWithName:notificationDetails.timeZoneName];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
         [dateFormatter setTimeZone:timezone];

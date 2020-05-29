@@ -122,7 +122,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         for (NotificationDetails scheduledNotification : scheduledNotifications) {
             if (scheduledNotification.repeatInterval == null) {
-                if (scheduledNotification.timezoneName == null) {
+                if (scheduledNotification.timeZoneName == null) {
                     scheduleNotification(context, scheduledNotification, false);
                 } else {
                     zonedScheduleNotification(context, scheduledNotification, false);
@@ -289,7 +289,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = getAlarmManager(context);
-        long epochMilli = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ? ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), ZoneId.of(notificationDetails.timezoneName)).toInstant().toEpochMilli() : org.threeten.bp.ZonedDateTime.of(org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime), org.threeten.bp.ZoneId.of(notificationDetails.timezoneName)).toInstant().toEpochMilli();
+        long epochMilli = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ? ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), ZoneId.of(notificationDetails.timeZoneName)).toInstant().toEpochMilli() : org.threeten.bp.ZonedDateTime.of(org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime), org.threeten.bp.ZoneId.of(notificationDetails.timeZoneName)).toInstant().toEpochMilli();
         if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
             AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
         } else {

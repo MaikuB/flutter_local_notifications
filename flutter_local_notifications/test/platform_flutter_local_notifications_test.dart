@@ -1468,6 +1468,7 @@ void main() {
           'notification body',
           scheduledDate,
           const NotificationDetails(android: androidNotificationDetails),
+          androidAllowWhileIdle: true,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime);
       expect(
@@ -1477,9 +1478,10 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'timezoneName': 'Australia/Sydney',
+            'timeZoneName': 'Australia/Sydney',
             'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
             'platformSpecifics': <String, Object>{
+              'allowWhileIdle': true,
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -1785,6 +1787,7 @@ void main() {
           'notification body',
           scheduledDate,
           notificationDetails,
+          androidAllowWhileIdle: true,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime);
 
@@ -1798,7 +1801,7 @@ void main() {
             'uiLocalNotificationDateInterpretation':
                 UILocalNotificationDateInterpretation.absoluteTime.index,
             'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
-            'timezoneName': 'Australia/Sydney',
+            'timeZoneName': 'Australia/Sydney',
             'platformSpecifics': <String, Object>{
               'presentAlert': true,
               'presentBadge': true,

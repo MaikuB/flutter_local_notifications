@@ -105,7 +105,7 @@ public class NotificationDetails {
     private static final String ADDITIONAL_FLAGS = "additionalFlags";
 
     private static final String SCHEDULED_DATE_TIME = "scheduledDateTime";
-    private static final String TIMEZONE_NAME = "timezoneName";
+    private static final String TIME_ZONE_NAME = "timeZoneName";
     private static final String SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY = "scheduledNotificationRepeatFrequency";
 
 
@@ -158,7 +158,7 @@ public class NotificationDetails {
     public int[] additionalFlags;
     public Boolean showWhen;
     public String scheduledDateTime;
-    public String timezoneName;
+    public String timeZoneName;
     public ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency;
     public Long when;
 
@@ -174,7 +174,7 @@ public class NotificationDetails {
         notificationDetails.title = (String) arguments.get(TITLE);
         notificationDetails.body = (String) arguments.get(BODY);
         notificationDetails.scheduledDateTime = (String) arguments.get(SCHEDULED_DATE_TIME);
-        notificationDetails.timezoneName = (String) arguments.get(TIMEZONE_NAME);
+        notificationDetails.timeZoneName = (String) arguments.get(TIME_ZONE_NAME);
         if(arguments.containsKey(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)) {
             notificationDetails.scheduledNotificationRepeatFrequency = ScheduledNotificationRepeatFrequency.values()[(Integer) arguments.get(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)];
         }

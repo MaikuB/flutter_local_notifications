@@ -37,7 +37,7 @@ class IOSInitializationSettings {
   ///
   /// Default value is true.
   ///
-  /// This property is only applicable to iOS versions 10 and above.
+  /// This property is only applicable to iOS 10 or newer.
 
   final bool defaultPresentAlert;
 
@@ -46,7 +46,7 @@ class IOSInitializationSettings {
   ///
   /// Default value is true.
   ///
-  /// This property is only applicable to iOS versions 10 and above.
+  /// This property is only applicable to iOS 10 or newer.
   final bool defaultPresentSound;
 
   /// Configures the default setting on if a badge value should be applied when
@@ -54,12 +54,12 @@ class IOSInitializationSettings {
   ///
   /// Default value is true.
   ///
-  /// This property is only applicable to iOS versions 10 and above.
+  /// This property is only applicable to iOS 10 or newer.
   final bool defaultPresentBadge;
 
   /// Callback for handling when a notification is triggered while the app is
   /// in the foreground.
   ///
-  /// This property is only applicable to iOS versions below 10.
+  /// This property is only applicable to iOS versions older than 10.
   final DidReceiveLocalNotificationCallback onDidReceiveLocalNotification;
 }

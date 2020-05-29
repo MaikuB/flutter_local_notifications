@@ -89,8 +89,7 @@ Future<void> main() async {
 Future<void> _configureLocalTimeZone() async {
   tz.initializeTimeZones();
   final String timeZoneName = await platform.invokeMethod('getTimeZoneName');
-  tz.setLocalLocation(
-      tz.getLocation(timeZoneName)); //(timezone.getLocation(timeZoneName));
+  tz.setLocalLocation(tz.getLocation(timeZoneName));
 }
 
 class PaddedRaisedButton extends StatelessWidget {
@@ -126,25 +125,22 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _requestPermissions() {
-    if (Platform.isIOS) {
-      flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
-    } else if (Platform.isMacOS) {
-      flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
-    }
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
   }
 
   void _configureDidReceiveLocalNotificationSubject() {
@@ -573,6 +569,7 @@ class _HomePageState extends State<HomePage> {
         NotificationDetails(
             android: AndroidNotificationDetails('your channel id',
                 'your channel name', 'your channel description')),
+        androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);
   }
@@ -841,8 +838,8 @@ class _HomePageState extends State<HomePage> {
         'Please join us to celebrate the...',
         secondNotificationPlatformSpecifics);
 
-    // create the summary notification to support older devices that pre-date Android 7.0 (API level 24).
-    // recommended to create this regardless as the behaviour may vary as mentioned in
+    // Create the summary notification to support older devices that pre-date Android 7.0 (API level 24).
+    // Recommended to create this regardless as the behaviour may vary as mentioned in
     // https://developer.android.com/training/notify-user/group
     var lines = List<String>();
     lines.add('Alex Faarborg  Check this out');
@@ -904,10 +901,8 @@ class _HomePageState extends State<HomePage> {
         'repeating channel id',
         'repeating channel name',
         'repeating description');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: iOSPlatformChannelSpecifics);
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
         'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics,
         androidAllowWhileIdle: true);
@@ -918,13 +913,14 @@ class _HomePageState extends State<HomePage> {
         0,
         'daily scheduled notification title',
         'daily scheduled notification body',
-        tz.TZDateTime.now(tz.local).add(Duration(seconds: 5)),
+        _nextInstanceOfTenAM(),
         NotificationDetails(
-            android: AndroidNotificationDetails(
-                'daily notification channel id',
-                'daily notification channel name',
-                'daily notification description'),
-            iOS: IOSNotificationDetails()),
+          android: AndroidNotificationDetails(
+              'daily notification channel id',
+              'daily notification channel name',
+              'daily notification description'),
+        ),
+        androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         scheduledNotificationRepeatFrequency:
@@ -936,17 +932,28 @@ class _HomePageState extends State<HomePage> {
         0,
         'weekly scheduled notification title',
         'weekly scheduled notification body',
-        tz.TZDateTime.now(tz.local).add(Duration(seconds: 5)),
+        _nextInstanceOfTenAM(),
         NotificationDetails(
-            android: AndroidNotificationDetails(
-                'weekly notification channel id',
-                'weekly notification channel name',
-                'weekly notificationdescription'),
-            iOS: IOSNotificationDetails()),
+          android: AndroidNotificationDetails(
+              'weekly notification channel id',
+              'weekly notification channel name',
+              'weekly notificationdescription'),
+        ),
+        androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         scheduledNotificationRepeatFrequency:
             ScheduledNotificationRepeatFrequency.weekly);
+  }
+
+  tz.TZDateTime _nextInstanceOfTenAM() {
+    var now = tz.TZDateTime.now(tz.local);
+    var scheduledDate =
+        tz.TZDateTime(tz.local, now.year, now.month, now.day, 10);
+    if (scheduledDate.isAfter(now)) {
+      scheduledDate = scheduledDate.add(Duration(days: 1));
+    }
+    return scheduledDate;
   }
 
   Future<void> _showNotificationWithNoBadge() async {

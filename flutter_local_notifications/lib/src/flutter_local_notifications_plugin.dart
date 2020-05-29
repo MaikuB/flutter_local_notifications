@@ -140,8 +140,13 @@ class FlutterLocalNotificationsPlugin {
   ///
   /// An example of how this could be used is to change the initial route of
   /// your application when it starts up. If the plugin isn't running on either
-  /// Android or iOS then it defaults to indicate that a notification wasn't
-  /// used to launch the app.
+  /// Android, iOS or macOS then an instance of the
+  /// `NotificationAppLaunchDetails` class is returned with
+  /// `didNotificationLaunchApp` set to false.
+  ///
+  /// Note that this will return null for applications running on macOS
+  /// versions older than 10.14. This is because there's currently no mechanism
+  /// for plugins to receive information on lifecycle events.
   Future<NotificationAppLaunchDetails> getNotificationAppLaunchDetails() async {
     if (_platform.isAndroid) {
       return await resolvePlatformSpecificImplementation<
@@ -209,13 +214,13 @@ class FlutterLocalNotificationsPlugin {
     await FlutterLocalNotificationsPlatform.instance?.cancelAll();
   }
 
-  /// Schedules a notification to be shown at the specified time.
+  /// Schedules a notification to be shown at the specified date and time.
   ///
   /// The [androidAllowWhileIdle] parameter determines if the notification
   /// should still be shown at the exact time even when the device is in a
   /// low-power idle mode.
   @Deprecated(
-      'Deprecated due to problems with timezones. Use zonedSchedule instead.')
+      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
   Future<void> schedule(
     int id,
     String title,
@@ -241,8 +246,8 @@ class FlutterLocalNotificationsPlugin {
     }
   }
 
-  /// Schedules a notification to be shown at the specified time relative to a
-  /// specific timezone.
+  /// Schedules a notification to be shown at the specified date and time
+  /// relative to a specific time zone.
   ///
   /// Note that to get the appropriate representation of the time at the native
   /// level (i.e. Android/iOS), the plugin needs to pass the time over the
@@ -257,6 +262,7 @@ class FlutterLocalNotificationsPlugin {
     @required
         UILocalNotificationDateInterpretation
             uiLocalNotificationDateInterpretation,
+    @required bool androidAllowWhileIdle,
     String payload,
     ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
   }) async {
@@ -266,6 +272,7 @@ class FlutterLocalNotificationsPlugin {
           .zonedSchedule(
               id, title, body, scheduledDate, notificationDetails?.android,
               payload: payload,
+              androidAllowWhileIdle: androidAllowWhileIdle,
               scheduledNotificationRepeatFrequency:
                   scheduledNotificationRepeatFrequency);
     } else if (_platform.isIOS) {
@@ -338,7 +345,7 @@ class FlutterLocalNotificationsPlugin {
 
   /// Shows a notification on a daily interval at the specified time.
   @Deprecated(
-      'Deprecated due to problems with timezones. Use zonedSchedule instead.')
+      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
   Future<void> showDailyAtTime(
     int id,
     String title,
@@ -366,7 +373,7 @@ class FlutterLocalNotificationsPlugin {
 
   /// Shows a notification on weekly interval at the specified day and time.
   @Deprecated(
-      'Deprecated due to problems with timezones. Use zonedSchedule instead.')
+      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
   Future<void> showWeeklyAtDayAndTime(
     int id,
     String title,

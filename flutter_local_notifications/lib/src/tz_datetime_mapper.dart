@@ -21,7 +21,7 @@ extension TZDateTimeMapper on TZDateTime {
         .replaceAll('Z', '');
 
     return <String, Object>{
-      'timezoneName': location.name,
+      'timeZoneName': location.name,
       'scheduledDateTime': iso8601DateComponent,
     };
   }

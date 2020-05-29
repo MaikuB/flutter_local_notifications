@@ -208,13 +208,13 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 let arguments = call.arguments as! Dictionary<String, AnyObject>
                 let notification = buildNSUserNotification(fromArguments: arguments)
                 let scheduledDateTime = arguments["scheduledDateTime"] as! String;
-                let timezoneName = arguments["timezoneName"] as! String;
-                let timezone = TimeZone.init(identifier: timezoneName)
+                let timeZoneName = arguments["timeZoneName"] as! String;
+                let timeZone = TimeZone.init(identifier: timeZoneName)
                 let dateFormatter = DateFormatter.init();
                 dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
                 let date = dateFormatter.date(from: scheduledDateTime)!
                 notification.deliveryDate = date
-                notification.deliveryTimeZone = timezone
+                notification.deliveryTimeZone = timeZone
                 if let rawRepeatFrequency = arguments["scheduledNotificationRepeatFrequency"] as? Int {
                     let repeatFrequency = ScheduledNotificationRepeatFrequency.init(rawValue: rawRepeatFrequency)!
                     switch repeatFrequency {
@@ -318,14 +318,14 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     @available(OSX 10.14, *)
     func buildUserNotificationCalendarTrigger(fromArguments arguments:Dictionary<String, AnyObject>) -> UNCalendarNotificationTrigger {
         let scheduledDateTime = arguments["scheduledDateTime"] as! String;
-        let timezoneName = arguments["timezoneName"] as! String;
-        let timezone = TimeZone.init(identifier: timezoneName)
+        let timeZoneName = arguments["timeZoneName"] as! String;
+        let timeZone = TimeZone.init(identifier: timeZoneName)
         let dateFormatter = DateFormatter.init();
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        dateFormatter.timeZone = timezone
+        dateFormatter.timeZone = timeZone
         let date = dateFormatter.date(from: scheduledDateTime)!
         var calendar = Calendar.current
-        calendar.timeZone = timezone!
+        calendar.timeZone = timeZone!
         if let rawRepeatFrequency = arguments["scheduledNotificationRepeatFrequency"] as? Int {
             let repeatFrequency = ScheduledNotificationRepeatFrequency.init(rawValue: rawRepeatFrequency)!
             switch repeatFrequency {

@@ -33,7 +33,7 @@ class MacOSInitializationSettings {
   /// notification is triggered while app is in the foreground.
   ///
   /// Default value is true.
-  /// This property is only applicable to macOS versions 10.14 and above.
+  /// This property is only applicable to macOS 10.14 or newer.
 
   final bool defaultPresentAlert;
 
@@ -42,7 +42,7 @@ class MacOSInitializationSettings {
   ///
   /// Default value is true.
   ///
-  /// This property is only applicable to macOS versions 10.14 and above.
+  /// This property is only applicable to macOS 10.14 or newer.
   final bool defaultPresentSound;
 
   /// Configures the default setting on if a badge value should be applied when
@@ -50,6 +50,6 @@ class MacOSInitializationSettings {
   ///
   /// Default value is true.
   ///
-  /// This property is only applicable to macOS versions 10.14 and above.
+  /// This property is only applicable to macOS 10.14 or newer.
   final bool defaultPresentBadge;
 }
