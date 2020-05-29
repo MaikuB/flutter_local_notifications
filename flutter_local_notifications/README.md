@@ -71,7 +71,7 @@ Note that this plugin aims to provide abstractions for all platforms as opposed 
 
 ## Getting Started
 
-The GitHub repository has an example application that should demonstrate of all the supported features of the plugin. Please check the example application for more detailed code samples. If you only copy and paste the Dart code then this will not work as there's setup required for each platform. The easiest way to get the example application running is to clone or download the repository. Besides referring to the example application and getting started section, please ensure that you have performed **all** of the steps in the integration guide for each platform that can be found further below. Pub also generates API docs for the latest version [here](https://pub.dartlang.org/documentation/flutter_local_notifications/latest/).
+The GitHub repository has an example app that should demonstrate of all the supported features of the plugin. Please check the example app for more detailed code samples. If you only copy and paste the Dart code then this will not work as there's setup required for each platform. The easiest way to get the example app running is to clone or download the repository. Besides referring to the example app and getting started section, please ensure that you have performed **all** of the steps in the integration guide for each platform that can be found further below. Pub also generates API docs for the latest version [here](https://pub.dartlang.org/documentation/flutter_local_notifications/latest/).
 
 The following samples will demonstrate the more commonly used functionalities.
 
@@ -94,7 +94,7 @@ await flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: selectNotification);
 ```
 
-Initialisation should only be done once and the place where this can be done is in the `main` function of the your application. Alternatively, this can be done within the first page shown in your app. Developers can refer to the example application that has code for the initialising within the `main` function. The code above has been simplified for explaining the concepts. Here we have specified the default icon to use for notifications on Android (refer to the Android Integration section) and designated the function (`selectNotification`) that should fire when a notification has been tapped on via the `onSelectNotification` callback. Specifying this callback is entirely optional but here it will trigger navigation to another page and display the payload associated with the notification.
+Initialisation should only be done once and the place where this can be done is in the `main` function of the your application. Alternatively, this can be done within the first page shown in your app. Developers can refer to the example app that has code for the initialising within the `main` function. The code above has been simplified for explaining the concepts. Here we have specified the default icon to use for notifications on Android (refer to the Android Integration section) and designated the function (`selectNotification`) that should fire when a notification has been tapped on via the `onSelectNotification` callback. Specifying this callback is entirely optional but here it will trigger navigation to another page and display the payload associated with the notification.
 
 ```dart
 Future selectNotification(String payload) async {
@@ -190,7 +190,7 @@ In this block of code, the details specific to the Android platform is specified
 
 Starting in version 1.5 of the plugin, scheduling notifications now requires developers to specify a date and time relative to a specific time zone. This is to solve issues with daylight savings that existed in the `schedule` method that is now deprecated. A new `zonedSchedule` method is provided that expects an instance `TZDateTime` class provided by the [`timezone`](https://pub.dev/packages/timezone) package. As the `flutter_local_notifications` plugin already depends on the `timezone` package, it's not necessary for developers to add the `timezone` package as a direct dependency. In other words, the `timezone` package will be a transitive dependency after you add the `flutter_local_notifications` plugin as a dependency in your application.
 
-Usage of the `timezone` package requires initialisation that is covered in the package's readme. For convenience the following are code snippets used by the example application.
+Usage of the `timezone` package requires initialisation that is covered in the package's readme. For convenience the following are code snippets used by the example app.
 
 Import the `timezone` package
 
@@ -211,7 +211,7 @@ Once the time zone database has been initialised, developers may optionally want
 tz.setLocalLocation(tz.getLocation(timeZoneName)); 
 ```
 
-The `timezone` package doesn't provide a way to obtain the current time zone on the device so developers will need to use platform channels (which is what the example application does) or use other packages that may be able to provide the information (e.g. [`flutter_native_timezone`](https://pub.dev/packages/flutter_native_timezone)).
+The `timezone` package doesn't provide a way to obtain the current time zone on the device so developers will need to use platform channels (which is what the example app does) or use other packages that may be able to provide the information (e.g. [`flutter_native_timezone`](https://pub.dev/packages/flutter_native_timezone)).
 
 Assuming the local location has been set, the `zonedScheduled` method can then be called in a manner similar to the following code
 
@@ -377,7 +377,7 @@ If the vibration pattern of an Android notification will be customised then add 
 <uses-permission android:name="android.permission.VIBRATE" />
 ```
 
-For reference, the example application's `AndroidManifest.xml` file can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/AndroidManifest.xml)
+For reference, the example app's `AndroidManifest.xml` file can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/AndroidManifest.xml)
 
 
 ### Release build configuration
@@ -388,9 +388,9 @@ When doing a release build of your app, which is the default setting when buildi
 -keep class com.dexterous.** { *; }
 ```
 
-After doing so, rules specific to the GSON dependency being used by the plugin will also needed to be added. These rules can be found [here](https://github.com/google/gson/blob/master/examples/android-proguard-example/proguard.cfg). The example application has a consolidated Proguard rules (`proguard-rules.pro`) file that combines these together for reference [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/proguard-rules.pro).
+After doing so, rules specific to the GSON dependency being used by the plugin will also needed to be added. These rules can be found [here](https://github.com/google/gson/blob/master/examples/android-proguard-example/proguard.cfg). The example app has a consolidated Proguard rules (`proguard-rules.pro`) file that combines these together for reference [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/proguard-rules.pro).
 
-You will also need to ensure that you have configured the resources that should be kept so that resources like your notification icons aren't discarded by the R8 compiler by following the instructions [here](https://developer.android.com/studio/build/shrink-code#keep-resources). Without doing this, you might not see the icon you've specified in your app's notifications. The configuration used by the example application can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/keep.xml) where it is specifying that all drawable resources should be kept, as well as the file used to play a custom notification sound (sound file is located [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/slow_spring_board.mp3)).
+You will also need to ensure that you have configured the resources that should be kept so that resources like your notification icons aren't discarded by the R8 compiler by following the instructions [here](https://developer.android.com/studio/build/shrink-code#keep-resources). Without doing this, you might not see the icon you've specified in your app's notifications. The configuration used by the example app can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/keep.xml) where it is specifying that all drawable resources should be kept, as well as the file used to play a custom notification sound (sound file is located [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/slow_spring_board.mp3)).
 
 ## iOS integration
 
