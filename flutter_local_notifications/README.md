@@ -110,7 +110,11 @@ Future selectNotification(String payload) async {
 
 In the real world, this payload could represent the id of the item you want to display the details of. Once the initialisation has been done, then you can manage the displaying of notifications.
 
+The `IOSInitializationSettings` and `MacOSInitializationSettings` provides default settings on how the notification be presented when it is triggered and the application is in the foreground. There are optional named parameters that can be modified to suit your application's purposes. Here, it is omitted and the default values for these named properties is set such that all presentation options (alert, sound, badge) are enabled.
+
 On iOS and macOS, initialisation may show a prompt to requires users to give the application permission to display notifications (note: permissions don't need to be requested on Android). Depending on when this happens, this may not be the ideal user experience for your application. If so, please refer to the next section on how to work around this.
+
+
 
 *Notes around initialisation*: if the app had been launched by tapping on a notification created by this plugin, calling `initialize` is what will trigger the `onSelectNotification` to trigger to handle the notification that the user tapped on. An alternative to handling the "launch notification" is to call the `getNotificationAppLaunchDetails` method that is available in the plugin. This could be used, for example, to change the home route of the app for deep-linking. Calling `initialize` will still cause the `onSelectNotification` callback to fire for the launch notification. It will be up to developers to ensure that they don't process the same notification twice (e.g. by storing and comparing the notification id).
 
@@ -349,6 +353,8 @@ Note that with Android 8.0+, sounds and vibrations are associated with notificat
 
 ### Configuration for scheduled notifications
 
+#### Update AndroidManifest.xml
+
 If your application needs the ability to schedule notifications then you need to request permissions to be notified when the phone has been booted as scheduled notifications uses the `AlarmManager` API to determine when notifications should be displayed. However, they are cleared when a phone has been turned off. Requesting permission requires adding the following to the manifest (i.e. your application's `AndroidManifest.xml` file)
 
 ```xml
@@ -379,6 +385,29 @@ If the vibration pattern of an Android notification will be customised then add 
 
 For reference, the example app's `AndroidManifest.xml` file can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/AndroidManifest.xml)
 
+#### Update application's build.gradle to use desugaring
+
+To enable the plugin to schedule notifications relative a specific time zone, you'll need to update Android application's `build.gradle` file to include the following
+
+```
+android {
+  defaultConfig {
+    multiDexEnabled true
+  }
+
+  compileOptions {
+    coreLibraryDesugaringEnabled true
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+
+dependencies {
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
+}
+```
+
+This is based on the steps described [here](https://developer.android.com/studio/releases/gradle-plugin#j8-library-desugaring) and required so that older Android versions can make use of newer Java language APIs that includes support for time zone aware date/time classes.
 
 ### Release build configuration
 
@@ -412,7 +441,7 @@ if #available(iOS 10.0, *) {
 }
 ```
 
-By design, iOS applications do not display notifications when they're in the foreground. For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. For older versions of iOS, you need to handle the callback as part of specifying the method that should be fired to the `onDidReceiveLocalNotification` argument when creating an instance `IOSInitializationSettings` object that is passed to the function for initializing the plugin. A snippet below from the sample app shows how this can be done
+By design (i.e. given how the native iOS notification APIs work), iOS applications do not display notifications when they're in the foreground. For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. This can be done at a application level where you can provide default values using the `IOSInitializationSettings` class or at a notification level using the `IOSNotificationDetails` class. For older versions of iOS, you need to handle the callback as part of specifying the method that should be fired to the `onDidReceiveLocalNotification` argument when creating an instance `IOSInitializationSettings` object that is passed to the function for initializing the plugin. A snippet below from the sample app shows how this can be done
 
 ```dart
 // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
@@ -486,7 +515,7 @@ Previously, there were issue that prevented this plugin working properly with th
 
 ## macOS
 
-Currently no additional setup is required on macOS.
+Currently no additional setup is required on macOS
 
 ### Custom notification sound restrictions
 

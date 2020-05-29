@@ -4,8 +4,28 @@
 * The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods has been marked as a deprecated due to problems with time zones,particularly when it comes to daylight savings.
 * Added the `zonedSchedule` method to the plugin that allows for scheduling notifications to occur on a specific date and time relative a specific time zone. This can be used to schedule daily and weekly notifications as well. The example app has been updated to demonstrate its usage. Note that to support time zone-based scheduling, the plugin now depends on the `timezone` package so that an instance of the `TZDateTime` class is required to the specify the time the notification should occur. This should work in most cases as it is IANA-based and native platforms have time zones that are IANA-based as well
 * [Android] Added `androidAllowWhileIdle` boolean argument to the `periodicallyShow` method. When set to true, this changes how recurring notifications are shown so that the Android `AlarmManager` API is used to schedule a notification with exact timing. When the notification appears, the next one is scheduled after that. This is get around the limitations where the `AlarmManager` APIs don't provide a way for work to be repeated with precising timing regardless of the power mode.
+* **BREAKING CHANGE** [Android] Bump Gradle plugin to 4.0.0. This enables to the plugin to make use of [Java 8 desugaring](https://developer.android.com/studio/releases/gradle-plugin#j8-library-desugaring) so it can use the newer `java.time` APIs that supports time zone aware date/time classes. Changes will be needed in the Android application's `build.gradle` file for this to work to ensure it includes the following
+
+```
+android {
+  defaultConfig {
+    multiDexEnabled true
+  }
+
+  compileOptions {
+    coreLibraryDesugaringEnabled true
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+
+dependencies {
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
+}
+```
+
+  The example app has been updated to include these changes so that it can be used as a reference as well
 * [iOS] Updated the details in the plugin's podspec file
-* [Android] Bump Gradle plugin to 3.6.3
 * **BREAKING CHANGE** The `InitializationSettings` and `NotificationDetails` classes no longer have positional parameters but now have named parameters called `android` and `iOS` for passing in data specific to Android and iOS. There `macOS` named parameter has also been added for passing data specific to macOS
 * **BREAKING CHANGE** The `toMap` method that was used internally to transfer data over platform channels is no longer publicly accessible
 * **BREAKING CHANGE** All enum values have been renamed to follow lower camel case convention. This affects the following enums
