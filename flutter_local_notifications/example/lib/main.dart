@@ -260,12 +260,6 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
-                    buttonText: 'Cancel notification',
-                    onPressed: () async {
-                      await _cancelNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
                     buttonText: 'Show notification with custom sound',
                     onPressed: () async {
                       await _showNotificationCustomSound();
@@ -273,7 +267,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PaddedRaisedButton(
                     buttonText:
-                        'Schedule notification to appear in 5 seconds based on local timezone',
+                        'Schedule notification to appear in 5 seconds based on local time zone',
                     onPressed: () async {
                       await _zonedScheduleNotification();
                     },
@@ -286,16 +280,16 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PaddedRaisedButton(
                     buttonText:
-                        'Repeat notification every day at approximately 10:00:00 am',
+                        'Schedule daily 10:00:00 am notification in your local time zone',
                     onPressed: () async {
-                      await _showDailyAtTime();
+                      await _scheduleDailyTenAMNotification();
                     },
                   ),
                   PaddedRaisedButton(
                     buttonText:
-                        'Repeat notification weekly on Monday at approximately 10:00:00 am',
+                        'Schedule weekly 10:00:00 am notification in your local time zone',
                     onPressed: () async {
-                      await _showWeeklyAtDayAndTime();
+                      await _scheduleWeeklyTenAMNotification();
                     },
                   ),
                   PaddedRaisedButton(
@@ -308,6 +302,12 @@ class _HomePageState extends State<HomePage> {
                     buttonText: 'Check pending notifications',
                     onPressed: () async {
                       await _checkPendingNotificationRequests();
+                    },
+                  ),
+                  PaddedRaisedButton(
+                    buttonText: 'Cancel notification',
+                    onPressed: () async {
+                      await _cancelNotification();
                     },
                   ),
                   PaddedRaisedButton(
@@ -908,7 +908,7 @@ class _HomePageState extends State<HomePage> {
         androidAllowWhileIdle: true);
   }
 
-  Future<void> _showDailyAtTime() async {
+  Future<void> _scheduleDailyTenAMNotification() async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         'daily scheduled notification title',
@@ -927,7 +927,7 @@ class _HomePageState extends State<HomePage> {
             ScheduledNotificationRepeatFrequency.daily);
   }
 
-  Future<void> _showWeeklyAtDayAndTime() async {
+  Future<void> _scheduleWeeklyTenAMNotification() async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         'weekly scheduled notification title',
@@ -950,7 +950,7 @@ class _HomePageState extends State<HomePage> {
     var now = tz.TZDateTime.now(tz.local);
     var scheduledDate =
         tz.TZDateTime(tz.local, now.year, now.month, now.day, 10);
-    if (scheduledDate.isAfter(now)) {
+    if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(Duration(days: 1));
     }
     return scheduledDate;
