@@ -2,8 +2,6 @@
 #import "NotificationTime.h"
 #import "NotificationDetails.h"
 
-
-
 @implementation FlutterLocalNotificationsPlugin{
     FlutterMethodChannel* _channel;
     bool _displayAlert;
@@ -120,6 +118,44 @@ static FlutterError *getFlutterError(NSError *error) {
     return self;
 }
 
+- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+    if([INITIALIZE_METHOD isEqualToString:call.method]) {
+        [self initialize:call.arguments result:result];
+    } else if([SHOW_METHOD isEqualToString:call.method]) {
+        [self show:call.arguments result:result];
+    } else if([ZONED_SCHEDULE_METHOD isEqualToString:call.method]) {
+        [self zonedSchedule:call.arguments result:result];
+    } else if([SCHEDULE_METHOD isEqualToString:call.method]) {
+        [self schedule:call.arguments result:result];
+    } else if([PERIODICALLY_SHOW_METHOD isEqualToString:call.method]) {
+        [self periodicallyShow:call.arguments result:result];
+    } else if([SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]) {
+        [self showDailyAtTime:call.arguments result:result];
+    } else if([SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
+        [self showWeeklyAtDayAndTime:call.arguments result:result];
+    } else if([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
+        [self requestPermissions:call.arguments result:result];
+    } else if([CANCEL_METHOD isEqualToString:call.method]) {
+        [self cancel:((NSNumber *)call.arguments) result:result];
+    } else if([CANCEL_ALL_METHOD isEqualToString:call.method]) {
+        [self cancelAll:result];
+    } else if([GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD isEqualToString:call.method]) {
+        NSString *payload;
+        if(_launchNotification != nil) {
+            payload = _launchNotification.userInfo[PAYLOAD];
+        } else {
+            payload = _launchPayload;
+        }
+        NSDictionary *notificationAppLaunchDetails = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:_launchingAppFromNotification], NOTIFICATION_LAUNCHED_APP, payload, PAYLOAD, nil];
+        result(notificationAppLaunchDetails);
+    } else if([PENDING_NOTIFICATIONS_REQUESTS_METHOD isEqualToString:call.method]) {
+        [self pendingNotificationRequests:result];
+    }
+    else {
+        result(FlutterMethodNotImplemented);
+    }
+}
+
 - (void)pendingUserNotificationRequests:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
     UNUserNotificationCenter *center =  [UNUserNotificationCenter currentNotificationCenter];
     [center getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> * _Nonnull requests) {
@@ -170,8 +206,7 @@ static FlutterError *getFlutterError(NSError *error) {
         [self pendingLocalNotificationRequests:result];
     }}
 
-- (void)initialize:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
-    NSDictionary *arguments = [call arguments];
+- (void)initialize:(NSDictionary * _Nonnull)arguments result:(FlutterResult _Nonnull)result {
     if(arguments[DEFAULT_PRESENT_ALERT] != [NSNull null]) {
         _displayAlert = [[arguments objectForKey:DEFAULT_PRESENT_ALERT] boolValue];
     }
@@ -198,8 +233,7 @@ static FlutterError *getFlutterError(NSError *error) {
     _initialized = true;
 }
 
-- (void)requestPermissions:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
-    NSDictionary *arguments = [call arguments];
+- (void)requestPermissions:(NSDictionary * _Nonnull)arguments result:(FlutterResult _Nonnull)result {
     bool soundPermission = false;
     bool alertPermission = false;
     bool badgePermission = false;
@@ -216,9 +250,9 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)requestPermissionsImpl:(bool)soundPermission
-alertPermission:(bool)alertPermission
-badgePermission:(bool)badgePermission
-checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Nonnull)result{
+               alertPermission:(bool)alertPermission
+               badgePermission:(bool)badgePermission
+       checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Nonnull)result{
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         
@@ -259,91 +293,217 @@ checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Non
     }
 }
 
-
-- (void)showNotification:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
-    NotificationDetails *notificationDetails = [[NotificationDetails alloc]init];
-    notificationDetails.id = call.arguments[ID];
-    if(call.arguments[TITLE] != [NSNull null]) {
-        notificationDetails.title = call.arguments[TITLE];
+- (UILocalNotification *)buildStandardUILocalNotification:(NSDictionary *)arguments {
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    if(arguments[BODY] != [NSNull null] && arguments[BODY] != nil) {
+        notification.alertBody = arguments[BODY];
     }
-    if(call.arguments[BODY] != [NSNull null]) {
-        notificationDetails.body = call.arguments[BODY];
+    
+    NSString *title;
+    if(arguments[TITLE] != [NSNull null] && arguments[TITLE] != nil) {
+        title = arguments[TITLE];
+        if(@available(iOS 8.2, *)) {
+            notification.alertTitle = title;
+        }
     }
-    notificationDetails.payload = call.arguments[PAYLOAD];
-    notificationDetails.presentAlert = _displayAlert;
-    notificationDetails.presentSound = _playSound;
-    notificationDetails.presentBadge = _updateBadge;
-    if(call.arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
-        NSDictionary *platformSpecifics = call.arguments[PLATFORM_SPECIFICS];
+    
+    bool presentAlert = _displayAlert;
+    bool presentSound = _playSound;
+    bool presentBadge = _updateBadge;
+    if(arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
+        NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
         
         if(platformSpecifics[PRESENT_ALERT] != [NSNull null] && platformSpecifics[PRESENT_ALERT] != nil) {
-            notificationDetails.presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
+            presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
         }
         if(platformSpecifics[PRESENT_SOUND] != [NSNull null] && platformSpecifics[PRESENT_SOUND] != nil) {
-            notificationDetails.presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
+            presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
         }
         if(platformSpecifics[PRESENT_BADGE] != [NSNull null] && platformSpecifics[PRESENT_BADGE] != nil) {
-            notificationDetails.presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
+            presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
         }
-        if(platformSpecifics[BADGE_NUMBER] != [NSNull null]) {
-            notificationDetails.badgeNumber = [platformSpecifics objectForKey:BADGE_NUMBER];
-        }
-        notificationDetails.sound = platformSpecifics[SOUND];
         
-        if(platformSpecifics[ATTACHMENTS] != [NSNull null]) {
-            NSArray<NSDictionary *> *attachments = platformSpecifics[ATTACHMENTS];
-            if(attachments.count > 0) {
-                NSMutableArray<NotificationAttachment *> *models = [NSMutableArray arrayWithCapacity:attachments.count];
-                for (NSDictionary *attachment in attachments) {
-                    NotificationAttachment *model = [[NotificationAttachment alloc] init];
-                    model.identifier = attachment[ATTACHMENT_IDENTIFIER];
-                    model.filePath = attachment[ATTACHMENT_FILE_PATH];
-                    [models addObject:model];
-                }
-                notificationDetails.attachments = models;
-            }
+        if(platformSpecifics[BADGE_NUMBER] != [NSNull null] && platformSpecifics[BADGE_NUMBER] != nil) {
+            notification.applicationIconBadgeNumber = [platformSpecifics[BADGE_NUMBER] integerValue];
+        }
+        
+        if(platformSpecifics[SOUND] != [NSNull null] && platformSpecifics[SOUND] != nil) {
+            notification.soundName = [platformSpecifics[SOUND] stringValue];
         }
     }
-    if([SCHEDULE_METHOD isEqualToString:call.method]) {
-        notificationDetails.secondsSinceEpoch = @([call.arguments[MILLISECONDS_SINCE_EPOCH] longLongValue] / 1000);
-    } else if([PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method] || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
-        if (call.arguments[REPEAT_TIME]) {
-            NSDictionary *timeArguments = (NSDictionary *) call.arguments[REPEAT_TIME];
-            notificationDetails.repeatTime = [[NotificationTime alloc] init];
-            if (timeArguments[HOUR] != [NSNull null]) {
-                notificationDetails.repeatTime.hour = @([timeArguments[HOUR] integerValue]);
-            }
-            if (timeArguments[MINUTE] != [NSNull null]) {
-                notificationDetails.repeatTime.minute = @([timeArguments[MINUTE] integerValue]);
-            }
-            if (timeArguments[SECOND] != [NSNull null]) {
-                notificationDetails.repeatTime.second = @([timeArguments[SECOND] integerValue]);
-            }
-        }
-        if (call.arguments[DAY]) {
-            notificationDetails.day = @([call.arguments[DAY] integerValue]);
-        }
-        notificationDetails.repeatInterval = @([call.arguments[REPEAT_INTERVAL] integerValue]);
-    } else if([ZONED_SCHEDULE_METHOD isEqualToString:call.method]) {
-        notificationDetails.scheduledDateTime  = call.arguments[SCHEDULED_DATE_TIME];
-        notificationDetails.timeZoneName = call.arguments[TIME_ZONE_NAME];
-        if(call.arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY] != nil) {
-            notificationDetails.scheduledNotificationRepeatFrequency = @([call.arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY] integerValue]);
-        }
-        if(call.arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION] != nil) {
-            notificationDetails.uiLocalNotificationDateInterpretation = @([call.arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION] integerValue]);
-        }
+    
+    if(presentSound && notification.soundName == nil) {
+        notification.soundName = UILocalNotificationDefaultSoundName;
     }
-    if(@available(iOS 10.0, *)) {
-        [self showUserNotification:notificationDetails result:result arguments:call.arguments];
-        return;
-    }
-    [self showLocalNotification:notificationDetails];
-    result(nil);
+    
+    notification.userInfo = [self buildUserDict:arguments[ID] title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge payload:arguments[PAYLOAD]];
+    return notification;
 }
 
-- (void)cancelNotification:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
-    NSNumber* id = (NSNumber*)call.arguments;
+- (NSString *)getIdentifier:(id)arguments {
+    return [arguments[ID] stringValue];
+}
+
+- (void)show:(NSDictionary * _Nonnull)arguments result:(FlutterResult _Nonnull)result {
+    if(@available(iOS 10.0, *)) {
+        UNMutableNotificationContent *content = [self buildStandardNotificationContent:arguments result:result];
+        [self addNotificationRequest:[self getIdentifier:arguments] content:content result:result trigger:nil];
+    } else {
+        UILocalNotification * notification = [self buildStandardUILocalNotification:arguments];
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+        result(nil);
+    }
+}
+
+- (void)zonedSchedule:(NSDictionary * _Nonnull)arguments result:(FlutterResult _Nonnull)result {
+    if(@available(iOS 10.0, *)) {
+        UNMutableNotificationContent *content = [self buildStandardNotificationContent:arguments result:result];
+        UNCalendarNotificationTrigger *trigger = [self buildUserNotificationCalendarTrigger:arguments];
+        [self addNotificationRequest:[self getIdentifier:arguments] content:content result:result trigger:trigger];
+        
+    } else {
+        UILocalNotification * notification = [self buildStandardUILocalNotification:arguments];
+        NSString *scheduledDateTime  = arguments[SCHEDULED_DATE_TIME];
+        NSString *timeZoneName = arguments[TIME_ZONE_NAME];
+        NSNumber *scheduledNotificationRepeatFrequency = arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY];
+        NSNumber *uiLocalNotificationDateInterpretation;
+        NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
+        [dateFormatter setTimeZone:timezone];
+        NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
+        notification.fireDate = date;
+        if (uiLocalNotificationDateInterpretation != nil) {
+            if([uiLocalNotificationDateInterpretation integerValue] == AbsoluteGMTTime) {
+                notification.timeZone = nil;
+            } else if([uiLocalNotificationDateInterpretation integerValue] == WallClockTime) {
+                notification.timeZone = timezone;
+            }
+        }
+        if (scheduledNotificationRepeatFrequency != nil) {
+            if([scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
+                notification.repeatInterval = NSCalendarUnitDay;
+            } else  if([scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
+                notification.repeatInterval = NSCalendarUnitWeekOfYear;
+            }
+        }
+        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+        result(nil);
+    }
+}
+
+- (void)schedule:(NSDictionary * _Nonnull)arguments result:(FlutterResult _Nonnull)result {
+    NSNumber *secondsSinceEpoch = @([arguments[MILLISECONDS_SINCE_EPOCH] longLongValue] / 1000);
+    if(@available(iOS 10.0, *)) {
+        UNMutableNotificationContent *content = [self buildStandardNotificationContent:arguments result:result];
+        NSDate *date = [NSDate dateWithTimeIntervalSince1970:[secondsSinceEpoch longLongValue]];
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        NSDateComponents *dateComponents = [calendar components:(NSCalendarUnitYear  |
+                                                                 NSCalendarUnitMonth |
+                                                                 NSCalendarUnitDay   |
+                                                                 NSCalendarUnitHour  |
+                                                                 NSCalendarUnitMinute|
+                                                                 NSCalendarUnitSecond) fromDate:date];
+        UNCalendarNotificationTrigger *trigger =   [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:false];
+        [self addNotificationRequest:[self getIdentifier:arguments] content:content result:result trigger:trigger];
+    } else {
+        UILocalNotification * notification = [self buildStandardUILocalNotification:arguments];
+        notification.fireDate = [NSDate dateWithTimeIntervalSince1970:[secondsSinceEpoch longLongValue]];
+        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+        result(nil);
+    }
+}
+
+- (void)periodicallyShow:(NSDictionary * _Nonnull)arguments result:(FlutterResult _Nonnull)result {
+    if(@available(iOS 10.0, *)) {
+        UNMutableNotificationContent *content = [self buildStandardNotificationContent:arguments result:result];
+        UNTimeIntervalNotificationTrigger *trigger = [self buildUserNotificationTimeIntervalTrigger:arguments];
+        [self addNotificationRequest:[self getIdentifier:arguments] content:content result:result trigger:trigger];
+    } else {
+        UILocalNotification * notification = [self buildStandardUILocalNotification:arguments];
+        NSTimeInterval timeInterval = 0;
+        switch([arguments[REPEAT_INTERVAL] integerValue]) {
+            case EveryMinute:
+                timeInterval = 60;
+                notification.repeatInterval = NSCalendarUnitMinute;
+                break;
+            case Hourly:
+                timeInterval = 60 * 60;
+                notification.repeatInterval = NSCalendarUnitHour;
+                break;
+            case Daily:
+                timeInterval = 60 * 60 * 24;
+                notification.repeatInterval = NSCalendarUnitDay;
+                break;
+            case Weekly:
+                timeInterval = 60 * 60 * 24 * 7;
+                notification.repeatInterval = NSCalendarUnitWeekOfYear;
+                break;
+        }
+        notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:timeInterval];
+        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+        result(nil);
+    }
+}
+
+- (void)showDailyAtTime:(NSDictionary * _Nonnull)arguments result:(FlutterResult _Nonnull)result {
+    NSDictionary *timeArguments = (NSDictionary *) arguments[REPEAT_TIME];
+    NSNumber *hourComponent = timeArguments[HOUR];
+    NSNumber *minutesComponent = timeArguments[MINUTE];
+    NSNumber *secondsComponent = timeArguments[SECOND];
+    if(@available(iOS 10.0, *)) {
+        UNMutableNotificationContent *content = [self buildStandardNotificationContent:arguments result:result];
+        NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+        [dateComponents setHour:[hourComponent integerValue]];
+        [dateComponents setMinute:[minutesComponent integerValue]];
+        [dateComponents setSecond:[secondsComponent integerValue]];
+        UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats: YES];
+        [self addNotificationRequest:[self getIdentifier:arguments] content:content result:result trigger:trigger];
+    } else {
+        UILocalNotification * notification = [self buildStandardUILocalNotification:arguments];
+        notification.repeatInterval = NSCalendarUnitDay;
+        NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+        [dateComponents setHour:[hourComponent integerValue]];
+        [dateComponents setMinute:[minutesComponent integerValue]];
+        [dateComponents setSecond:[secondsComponent integerValue]];
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        notification.fireDate = [calendar dateFromComponents:dateComponents];
+        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+        result(nil);
+    }
+}
+
+- (void)showWeeklyAtDayAndTime:(NSDictionary * _Nonnull)arguments result:(FlutterResult _Nonnull)result {
+    NSDictionary *timeArguments = (NSDictionary *) arguments[REPEAT_TIME];
+    NSNumber *dayOfWeekComponent = arguments[DAY];
+    NSNumber *hourComponent = timeArguments[HOUR];
+    NSNumber *minutesComponent = timeArguments[MINUTE];
+    NSNumber *secondsComponent = timeArguments[SECOND];
+    if(@available(iOS 10.0, *)) {
+        UNMutableNotificationContent *content = [self buildStandardNotificationContent:arguments result:result];
+        NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+        [dateComponents setHour:[hourComponent integerValue]];
+        [dateComponents setMinute:[minutesComponent integerValue]];
+        [dateComponents setSecond:[secondsComponent integerValue]];
+        [dateComponents setWeekday:[dayOfWeekComponent integerValue]];
+        UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats: YES];
+        [self addNotificationRequest:[self getIdentifier:arguments] content:content result:result trigger:trigger];
+    } else {
+        UILocalNotification * notification = [self buildStandardUILocalNotification:arguments];
+        notification.repeatInterval = NSCalendarUnitWeekOfYear;
+        NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+        [dateComponents setHour:[hourComponent integerValue]];
+        [dateComponents setMinute:[minutesComponent integerValue]];
+        [dateComponents setSecond:[secondsComponent integerValue]];
+        [dateComponents setWeekday:[dayOfWeekComponent integerValue]];
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        notification.fireDate = [calendar dateFromComponents:dateComponents];
+        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+        result(nil);
+    }
+}
+
+- (void)cancel:(NSNumber *)id result:(FlutterResult _Nonnull)result {
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center =  [UNUserNotificationCenter currentNotificationCenter];
         NSArray *idsToRemove = [[NSArray alloc] initWithObjects:[id stringValue], nil];
@@ -363,7 +523,7 @@ checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Non
     result(nil);
 }
 
-- (void)cancelAllNotifications:(FlutterResult _Nonnull) result {
+- (void)cancelAll:(FlutterResult _Nonnull) result {
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center =  [UNUserNotificationCenter currentNotificationCenter];
         [center removeAllPendingNotificationRequests];
@@ -374,154 +534,126 @@ checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Non
     result(nil);
 }
 
-- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-    if([INITIALIZE_METHOD isEqualToString:call.method]) {
-        [self initialize:call result:result];
-    } else if ([SHOW_METHOD isEqualToString:call.method] || [SCHEDULE_METHOD isEqualToString:call.method] || [PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]
-               || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [ZONED_SCHEDULE_METHOD isEqualToString:call.method]) {
-        [self showNotification:call result:result];
-    } else if([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
-        [self requestPermissions:call result:result];
-    } else if([CANCEL_METHOD isEqualToString:call.method]) {
-        [self cancelNotification:call result:result];
-    } else if([CANCEL_ALL_METHOD isEqualToString:call.method]) {
-        [self cancelAllNotifications:result];
-    } else if([GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD isEqualToString:call.method]) {
-        NSString *payload;
-        if(_launchNotification != nil) {
-            payload = _launchNotification.userInfo[PAYLOAD];
-        } else {
-            payload = _launchPayload;
+- (UNMutableNotificationContent *) buildStandardNotificationContent:(NSDictionary *) arguments result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)){
+    UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
+    if(arguments[TITLE] != [NSNull null] && arguments[TITLE] != nil) {
+        content.title = arguments[TITLE];
+    }
+    if(arguments[BODY] != [NSNull null] && arguments[BODY] != nil) {
+        content.body = arguments[BODY];
+    }
+    bool presentAlert = _displayAlert;
+    bool presentSound = _playSound;
+    bool presentBadge = _updateBadge;
+    if(arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
+        NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
+        if(platformSpecifics[PRESENT_ALERT] != [NSNull null] && platformSpecifics[PRESENT_ALERT] != nil) {
+            presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
         }
-        NSDictionary *notificationAppLaunchDetails = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:_launchingAppFromNotification], NOTIFICATION_LAUNCHED_APP, payload, PAYLOAD, nil];
-        result(notificationAppLaunchDetails);
-    } else if([PENDING_NOTIFICATIONS_REQUESTS_METHOD isEqualToString:call.method]) {
-        [self pendingNotificationRequests:result];
+        if(platformSpecifics[PRESENT_SOUND] != [NSNull null] && platformSpecifics[PRESENT_SOUND] != nil) {
+            presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
+        }
+        if(platformSpecifics[PRESENT_BADGE] != [NSNull null] && platformSpecifics[PRESENT_BADGE] != nil) {
+            presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
+        }
+        if(platformSpecifics[BADGE_NUMBER] != [NSNull null]) {
+            content.badge = [platformSpecifics objectForKey:BADGE_NUMBER];
+        }
+        if(platformSpecifics[ATTACHMENTS] != [NSNull null]) {
+            NSArray<NSDictionary *> *attachments = platformSpecifics[ATTACHMENTS];
+            if(attachments.count > 0) {
+                NSMutableArray<UNNotificationAttachment *> *notificationAttachments = [NSMutableArray arrayWithCapacity:attachments.count];
+                for (NSDictionary *attachment in attachments) {
+                    NSError *error;
+                    UNNotificationAttachment *notificationAttachment = [UNNotificationAttachment attachmentWithIdentifier:attachment[ATTACHMENT_IDENTIFIER]
+                                                                                                                      URL:[NSURL fileURLWithPath:attachment[ATTACHMENT_FILE_PATH]]
+                                                                                                                  options:nil error:&error];
+                    if(error) {
+                        result(getFlutterError(error));
+                        return nil;
+                    }
+                    [notificationAttachments addObject:notificationAttachment];
+                }
+                content.attachments = notificationAttachments;
+            }
+        }
+        if(platformSpecifics[SOUND] != [NSNull null] && platformSpecifics[SOUND] != nil) {
+            content.sound = [UNNotificationSound soundNamed:platformSpecifics[SOUND]];
+        }
     }
-    else {
-        result(FlutterMethodNotImplemented);
+    if(presentSound && content.sound == nil) {
+        content.sound = UNNotificationSound.defaultSound;
     }
+    content.userInfo = [self buildUserDict:arguments[ID] title:content.title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge payload:arguments[PAYLOAD]];
+    return content;
 }
+
+- (UNCalendarNotificationTrigger *) buildUserNotificationCalendarTrigger:(id) arguments NS_AVAILABLE_IOS(10.0) {
+    NSString *scheduledDateTime  = arguments[SCHEDULED_DATE_TIME];
+    NSString *timeZoneName = arguments[TIME_ZONE_NAME];
+    NSNumber *scheduledNotificationRepeatFrequency = arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
+    [dateFormatter setTimeZone:timezone];
+    NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
+    calendar.timeZone = timezone;
+    if(scheduledNotificationRepeatFrequency != nil) {
+        if([scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
+            NSDateComponents *dateComponents    = [calendar components:(
+                                                                        NSCalendarUnitHour  |
+                                                                        NSCalendarUnitMinute|
+                                                                        NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
+            return [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:YES];
+        }
+        else if([scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
+            NSDateComponents *dateComponents    = [calendar components:( NSCalendarUnitWeekday |
+                                                                        NSCalendarUnitHour  |
+                                                                        NSCalendarUnitMinute|
+                                                                        NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
+            return [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:YES];
+        }
+        return nil;
+    }
+    NSDateComponents *dateComponents    = [calendar components:(NSCalendarUnitYear  |
+                                                                NSCalendarUnitMonth |
+                                                                NSCalendarUnitDay   |
+                                                                NSCalendarUnitHour  |
+                                                                NSCalendarUnitMinute|
+                                                                NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
+    return [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:NO];
+}
+
+
+- (UNTimeIntervalNotificationTrigger *)buildUserNotificationTimeIntervalTrigger:(id)arguments  API_AVAILABLE(ios(10.0)){
+    switch([arguments[REPEAT_INTERVAL] integerValue]) {
+        case EveryMinute:
+            return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:60
+                                                                      repeats:YES];
+        case Hourly:
+            return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:60 * 60
+                                                                      repeats:YES];
+        case Daily:
+            return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:60 * 60 * 24
+                                                                      repeats:YES];
+            break;
+        case Weekly:
+            return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:60 * 60 * 24 * 7
+                                                                      repeats:YES];
+    }
+    return nil;
+}
+
 
 - (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge payload:(NSString *)payload {
     NSDictionary *userDict =[NSDictionary dictionaryWithObjectsAndKeys:id, NOTIFICATION_ID, title, TITLE, [NSNumber numberWithBool:presentAlert], PRESENT_ALERT, [NSNumber numberWithBool:presentSound], PRESENT_SOUND, [NSNumber numberWithBool:presentBadge], PRESENT_BADGE, payload, PAYLOAD, nil];
     return userDict;
 }
 
-- (BOOL)isAFlutterLocalNotification:(NSDictionary *)userInfo {
-    return userInfo != nil && userInfo[NOTIFICATION_ID] && userInfo[TITLE] && userInfo[PRESENT_ALERT] && userInfo[PRESENT_SOUND] && userInfo[PRESENT_BADGE] && userInfo[PAYLOAD];
-}
-
-- (void) showUserNotification:(NotificationDetails *) notificationDetails result:(FlutterResult _Nonnull)result arguments:(NSDictionary *)arguments NS_AVAILABLE_IOS(10.0) {
-    UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
-    UNNotificationTrigger *trigger;
-    content.title = notificationDetails.title;
-    content.body = notificationDetails.body;
-    content.badge = notificationDetails.badgeNumber;
-    if (notificationDetails.attachments) {
-        NSMutableArray<UNNotificationAttachment *> *attachments = [NSMutableArray arrayWithCapacity:notificationDetails.attachments.count];
-        for (NotificationAttachment *model in notificationDetails.attachments) {
-            NSError *error;
-            UNNotificationAttachment *attachment = [UNNotificationAttachment attachmentWithIdentifier:model.identifier
-                                                                                                  URL:[NSURL fileURLWithPath:model.filePath]
-                                                                                              options:nil error:&error];
-            if (error) {
-                result(getFlutterError(error));
-                return;
-            }
-            [attachments addObject:attachment];
-        }
-        content.attachments = attachments;
-    }
-    if(notificationDetails.presentSound) {
-        if(!notificationDetails.sound || [notificationDetails.sound isKindOfClass:[NSNull class]]) {
-            content.sound = UNNotificationSound.defaultSound;
-        } else {
-            content.sound = [UNNotificationSound soundNamed:notificationDetails.sound];
-        }
-    }
-    content.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload];
-    if(notificationDetails.scheduledDateTime != nil && notificationDetails.timeZoneName != nil) {
-        NSTimeZone *timezone = [NSTimeZone timeZoneWithName:notificationDetails.timeZoneName];
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
-        [dateFormatter setTimeZone:timezone];
-        NSDate *date = [dateFormatter dateFromString:notificationDetails.scheduledDateTime];
-        NSCalendar *calendar = [NSCalendar currentCalendar];
-        calendar.timeZone = timezone;
-        if(notificationDetails.scheduledNotificationRepeatFrequency == nil) {
-            NSDateComponents *dateComponents    = [calendar components:(NSCalendarUnitYear  |
-                                                                        NSCalendarUnitMonth |
-                                                                        NSCalendarUnitDay   |
-                                                                        NSCalendarUnitHour  |
-                                                                        NSCalendarUnitMinute|
-                                                                        NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
-            trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:false];
-        }
-        else if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
-            NSDateComponents *dateComponents    = [calendar components:(
-                                                                        NSCalendarUnitHour  |
-                                                                        NSCalendarUnitMinute|
-                                                                        NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
-            trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:true];
-        }
-        else if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
-            NSDateComponents *dateComponents    = [calendar components:( NSCalendarUnitWeekday |
-                                                                        NSCalendarUnitHour  |
-                                                                        NSCalendarUnitMinute|
-                                                                        NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
-            trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:true];
-        }
-        
-    }
-    else if(notificationDetails.secondsSinceEpoch == nil) {
-        NSTimeInterval timeInterval = 0.1;
-        Boolean repeats = NO;
-        if(notificationDetails.repeatInterval != nil) {
-            switch([notificationDetails.repeatInterval integerValue]) {
-                case EveryMinute:
-                    timeInterval = 60;
-                    break;
-                case Hourly:
-                    timeInterval = 60 * 60;
-                    break;
-                case Daily:
-                    timeInterval = 60 * 60 * 24;
-                    break;
-                case Weekly:
-                    timeInterval = 60 * 60 * 24 * 7;
-                    break;
-            }
-            repeats = YES;
-        }
-        if (notificationDetails.repeatTime != nil) {
-            NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier: NSCalendarIdentifierGregorian];
-            NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-            [dateComponents setCalendar:calendar];
-            if (notificationDetails.day != nil) {
-                [dateComponents setWeekday:[notificationDetails.day integerValue]];
-            }
-            [dateComponents setHour:[notificationDetails.repeatTime.hour integerValue]];
-            [dateComponents setMinute:[notificationDetails.repeatTime.minute integerValue]];
-            [dateComponents setSecond:[notificationDetails.repeatTime.second integerValue]];
-            trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats: repeats];
-        } else {
-            trigger = [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:timeInterval
-                                                                         repeats:repeats];
-        }
-    } else {
-        NSDate *date = [NSDate dateWithTimeIntervalSince1970:[notificationDetails.secondsSinceEpoch longLongValue]];
-        NSCalendar *calendar = [NSCalendar currentCalendar];
-        NSDateComponents *dateComponents = [calendar components:(NSCalendarUnitYear  |
-                                                                 NSCalendarUnitMonth |
-                                                                 NSCalendarUnitDay   |
-                                                                 NSCalendarUnitHour  |
-                                                                 NSCalendarUnitMinute|
-                                                                 NSCalendarUnitSecond) fromDate:date];
-        trigger = [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:false];
-    }
-    UNNotificationRequest* notificationRequest = [UNNotificationRequest
-                                                  requestWithIdentifier:[notificationDetails.id stringValue] content:content trigger:trigger];
+- (void)addNotificationRequest:(NSString*)identifier content:(UNMutableNotificationContent *)content result:(FlutterResult _Nonnull)result trigger:(UNNotificationTrigger *)trigger API_AVAILABLE(ios(10.0)){
+    UNNotificationRequest *notificationRequest = [UNNotificationRequest
+                                                  requestWithIdentifier:identifier content:content trigger:trigger];
     UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
     [center addNotificationRequest:notificationRequest withCompletionHandler:^(NSError * _Nullable error) {
         if (error == nil) {
@@ -530,96 +662,17 @@ checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Non
         }
         result(getFlutterError(error));
     }];
-    
 }
 
-- (void) showLocalNotification:(NotificationDetails *) notificationDetails {
-    UILocalNotification *notification = [[UILocalNotification alloc] init];
-    notification.alertBody = notificationDetails.body;
-    notification.applicationIconBadgeNumber = [notificationDetails.badgeNumber integerValue];
-    if(@available(iOS 8.2, *)) {
-        notification.alertTitle = notificationDetails.title;
-    }
-    
-    if(notificationDetails.presentSound) {
-        if(!notificationDetails.sound || [notificationDetails.sound isKindOfClass:[NSNull class]]){
-            notification.soundName = UILocalNotificationDefaultSoundName;
-        } else {
-            notification.soundName = notificationDetails.sound;
-        }
-    }
-    
-    notification.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload];
-    if(notificationDetails.scheduledDateTime != nil && notificationDetails.timeZoneName != nil) {
-        NSTimeZone *timezone = [NSTimeZone timeZoneWithName:notificationDetails.timeZoneName];
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
-        [dateFormatter setTimeZone:timezone];
-        NSDate *date = [dateFormatter dateFromString:notificationDetails.scheduledDateTime];
-        notification.fireDate = date;
-        if (notificationDetails.uiLocalNotificationDateInterpretation != nil) {
-            if([notificationDetails.uiLocalNotificationDateInterpretation integerValue] == AbsoluteGMTTime) {
-                notification.timeZone = nil;
-            } else if([notificationDetails.uiLocalNotificationDateInterpretation integerValue] == WallClockTime) {
-                notification.timeZone = timezone;
-            }
-        }
-        if (notificationDetails.scheduledNotificationRepeatFrequency != nil) {
-            if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
-                notification.repeatInterval = NSCalendarUnitDay;
-            } else  if([notificationDetails.scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
-                notification.repeatInterval = NSCalendarUnitWeekOfYear;
-            }
-        }
-        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-    }
-    else if(notificationDetails.secondsSinceEpoch == nil) {
-        if(notificationDetails.repeatInterval != nil) {
-            NSTimeInterval timeInterval = 0;
-            
-            switch([notificationDetails.repeatInterval integerValue]) {
-                case EveryMinute:
-                    timeInterval = 60;
-                    notification.repeatInterval = NSCalendarUnitMinute;
-                    break;
-                case Hourly:
-                    timeInterval = 60 * 60;
-                    notification.repeatInterval = NSCalendarUnitHour;
-                    break;
-                case Daily:
-                    timeInterval = 60 * 60 * 24;
-                    notification.repeatInterval = NSCalendarUnitDay;
-                    break;
-                case Weekly:
-                    timeInterval = 60 * 60 * 24 * 7;
-                    notification.repeatInterval = NSCalendarUnitWeekOfYear;
-                    break;
-            }
-            if (notificationDetails.repeatTime != nil) {
-                NSDate *now = [NSDate date];
-                NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier: NSCalendarIdentifierGregorian];
-                NSDateComponents *dateComponents = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:now];
-                [dateComponents setHour:[notificationDetails.repeatTime.hour integerValue]];
-                [dateComponents setMinute:[notificationDetails.repeatTime.minute integerValue]];
-                [dateComponents setSecond:[notificationDetails.repeatTime.second integerValue]];
-                if(notificationDetails.day != nil) {
-                    [dateComponents setWeekday:[notificationDetails.day integerValue]];
-                }
-                notification.fireDate = [calendar dateFromComponents:dateComponents];
-            } else {
-                notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:timeInterval];
-            }
-            [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-            return;
-        }
-        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-    } else {
-        notification.fireDate = [NSDate dateWithTimeIntervalSince1970:[notificationDetails.secondsSinceEpoch longLongValue]];
-        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-    }
+- (BOOL)isAFlutterLocalNotification:(NSDictionary *)userInfo {
+    return userInfo != nil && userInfo[NOTIFICATION_ID] && userInfo[TITLE] && userInfo[PRESENT_ALERT] && userInfo[PRESENT_SOUND] && userInfo[PRESENT_BADGE] && userInfo[PAYLOAD];
 }
 
+- (void)handleSelectNotification:(NSString *)payload {
+    [_channel invokeMethod:@"selectNotification" arguments:payload];
+}
 
+#pragma mark - UNUserNotificationCenterDelegate
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification :(UNNotification *)notification withCompletionHandler :(void (^)(UNNotificationPresentationOptions))completionHandler NS_AVAILABLE_IOS(10.0) {
     UNNotificationPresentationOptions presentationOptions = 0;
     NSNumber *presentAlertValue = (NSNumber*)notification.request.content.userInfo[PRESENT_ALERT];
@@ -643,13 +696,9 @@ checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Non
     completionHandler(presentationOptions);
 }
 
-- (void)handleSelectNotification:(NSString *)payload {
-    [_channel invokeMethod:@"selectNotification" arguments:payload];
-}
-
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
-withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
+         withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
     if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier] && [self isAFlutterLocalNotification:response.notification.request.content.userInfo]) {
         NSString *payload = (NSString *) response.notification.request.content.userInfo[PAYLOAD];
         if(_initialized) {
@@ -658,8 +707,11 @@ withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
             _launchPayload = payload;
             _launchingAppFromNotification = true;
         }
+        completionHandler();
     }
 }
+
+#pragma mark - AppDelegate
 - (BOOL)application:(UIApplication *)application
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     if (launchOptions != nil) {
@@ -685,7 +737,7 @@ didReceiveLocalNotification:(UILocalNotification*)notification {
     NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
     arguments[ID]= notification.userInfo[NOTIFICATION_ID];
     if (notification.userInfo[TITLE] != [NSNull null]) {
-        arguments[TITLE] =notification.userInfo[TITLE];
+        arguments[TITLE] = notification.userInfo[TITLE];
     }
     if (notification.alertBody != nil) {
         arguments[BODY] = notification.alertBody;
