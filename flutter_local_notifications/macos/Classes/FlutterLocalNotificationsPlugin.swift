@@ -4,6 +4,40 @@ import UserNotifications
 
 public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNotificationCenterDelegate, NSUserNotificationCenterDelegate {
     
+    struct MethodCallArguments {
+        static let presentAlert = "presentAlert"
+        static let presentSound = "presentSound"
+        static let presentBadge = "presentBadge"
+        static let payload = "payload"
+        static let defaultPresentAlert = "defaultPresentAlert"
+        static let defaultPresentSound = "defaultPresentSound"
+        static let defaultPresentBadge = "defaultPresentBadge"
+        static let requestAlertPermission = "requestAlertPermission"
+        static let requestSoundPermission = "requestSoundPermission"
+        static let requestBadgePermission = "requestBadgePermission"
+        static let alert = "alert"
+        static let sound = "sound"
+        static let badge = "badge"
+        static let notificationLaunchedApp = "notificationLaunchedApp"
+        static let id = "id"
+        static let title = "title"
+        static let subtitle = "subtitle"
+        static let body = "body"
+        static let scheduledDateTime = "scheduledDateTime"
+        static let timeZoneName = "timeZoneName"
+        static let scheduledNotificationRepeatFrequency = "scheduledNotificationRepeatFrequency"
+        static let platformSpecifics = "platformSpecifics"
+        static let badgeNumber = "badgeNumber"
+        static let repeatInterval = "repeatInterval"
+        static let attachments = "attachments"
+        static let identifier = "identifier"
+        static let filePath = "filePath"
+    }
+    
+    struct DateFormatStrings {
+        static let isoFormat = "yyyy-MM-dd'T'HH:mm:ss"
+    }
+    
     enum ScheduledNotificationRepeatFrequency : Int {
         case daily
         case weekly
@@ -45,9 +79,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     @available(OSX 10.14, *)
     public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         var options:UNNotificationPresentationOptions = [];
-        let presentAlert = notification.request.content.userInfo["presentAlert"] as! Bool
-        let presentSound = notification.request.content.userInfo["presentSound"] as! Bool
-        let presentBadge = notification.request.content.userInfo["presentBadge"] as! Bool
+        let presentAlert = notification.request.content.userInfo[MethodCallArguments.presentAlert] as! Bool
+        let presentSound = notification.request.content.userInfo[MethodCallArguments.presentSound] as! Bool
+        let presentBadge = notification.request.content.userInfo[MethodCallArguments.presentBadge] as! Bool
         if presentAlert {
             options.insert(.alert)
         }
@@ -62,7 +96,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     
     @available(OSX 10.14, *)
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        let payload = response.notification.request.content.userInfo["payload"] as? String
+        let payload = response.notification.request.content.userInfo[MethodCallArguments.payload] as? String
         if(initialized) {
             handleSelectNotification(payload: payload)
         } else {
@@ -73,7 +107,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     
     public func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
         if(notification.activationType == .contentsClicked) {
-            handleSelectNotification(payload: notification.userInfo!["payload"] as? String)
+            handleSelectNotification(payload: notification.userInfo![MethodCallArguments.payload] as? String)
         }
     }
     
@@ -85,13 +119,13 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         switch call.method {
         case "initialize":
             let arguments = call.arguments as! Dictionary<String, AnyObject>
-            defaultPresentAlert = arguments["defaultPresentAlert"] as! Bool
-            defaultPresentSound = arguments["defaultPresentSound"] as! Bool
-            defaultPresentBadge = arguments["defaultPresentBadge"] as! Bool
+            defaultPresentAlert = arguments[MethodCallArguments.defaultPresentAlert] as! Bool
+            defaultPresentSound = arguments[MethodCallArguments.defaultPresentSound] as! Bool
+            defaultPresentBadge = arguments[MethodCallArguments.defaultPresentBadge] as! Bool
             if #available(OSX 10.14, *) {
-                let requestedSoundPermission = arguments["requestSoundPermission"] as! Bool
-                let requestedAlertPermission = arguments["requestAlertPermission"] as! Bool
-                let requestedBadgePermission = arguments["requestBadgePermission"] as! Bool
+                let requestedAlertPermission = arguments[MethodCallArguments.requestAlertPermission] as! Bool
+                let requestedSoundPermission = arguments[MethodCallArguments.requestSoundPermission] as! Bool
+                let requestedBadgePermission = arguments[MethodCallArguments.requestBadgePermission] as! Bool
                 requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, result: result)
                 if(launchingAppFromNotification) {
                     handleSelectNotification(payload: launchPayload)
@@ -105,21 +139,21 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         case "requestPermissions":
             if #available(OSX 10.14, *) {
                 let arguments = call.arguments as! Dictionary<String, AnyObject>
-                let requestedSoundPermission = arguments["sound"] as! Bool
-                let requestedAlertPermission = arguments["alert"] as! Bool
-                let requestedBadgePermission = arguments["badge"] as! Bool
+                let requestedAlertPermission = arguments[MethodCallArguments.alert] as! Bool
+                let requestedSoundPermission = arguments[MethodCallArguments.sound] as! Bool
+                let requestedBadgePermission = arguments[MethodCallArguments.badge] as! Bool
                 requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, result: result)
             } else {
                 result(nil)
             }
         case "getNotificationAppLaunchDetails":
             if #available(OSX 10.14, *) {
-                let appLaunchDetails : [String: Any?] = ["notificationLaunchedApp" : launchingAppFromNotification, "payload": launchPayload]
+                let appLaunchDetails : [String: Any?] = [MethodCallArguments.notificationLaunchedApp : launchingAppFromNotification, MethodCallArguments.payload: launchPayload]
                 result(appLaunchDetails)
             } else {
                 result(nil)
             }
-
+            
         case "cancel":
             if #available(OSX 10.14, *) {
                 let center = UNUserNotificationCenter.current()
@@ -161,7 +195,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 UNUserNotificationCenter.current().getPendingNotificationRequests { (requests) in
                     var requestDictionaries:[Dictionary<String, Any?>] = []
                     for request in requests {
-                        requestDictionaries.append(["id":Int(request.identifier) as Any, "title": request.content.title, "body": request.content.body, "payload": request.content.userInfo["payload"]])
+                        requestDictionaries.append([MethodCallArguments.id:Int(request.identifier) as Any, MethodCallArguments.title: request.content.title, MethodCallArguments.body: request.content.body, MethodCallArguments.payload: request.content.userInfo[MethodCallArguments.payload]])
                     }
                     result(requestDictionaries)
                 }
@@ -169,7 +203,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 var requestDictionaries:[Dictionary<String, Any?>] = []
                 let center = NSUserNotificationCenter.default
                 for scheduledNotification in center.scheduledNotifications {
-                    requestDictionaries.append(["id":Int(scheduledNotification.identifier!) as Any, "title": scheduledNotification.title, "body": scheduledNotification.informativeText, "payload": scheduledNotification.userInfo!["payload"]])
+                    requestDictionaries.append([MethodCallArguments.id:Int(scheduledNotification.identifier!) as Any, MethodCallArguments.title: scheduledNotification.title, MethodCallArguments.body: scheduledNotification.informativeText, MethodCallArguments.payload: scheduledNotification.userInfo![MethodCallArguments.payload]])
                 }
                 result(requestDictionaries)
             }
@@ -183,7 +217,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                     center.add(request)
                     result(nil)
                 } catch {
-                    result(FlutterError.init(code: "show_error", message: error.localizedDescription, details: "\(error)"))
+                    result(FlutterError.init(code: "\(call.method)_error", message: error.localizedDescription, details: "\(error)"))
                 }
             } else {
                 let arguments = call.arguments as! Dictionary<String, AnyObject>
@@ -207,15 +241,15 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             } else {
                 let arguments = call.arguments as! Dictionary<String, AnyObject>
                 let notification = buildNSUserNotification(fromArguments: arguments)
-                let scheduledDateTime = arguments["scheduledDateTime"] as! String;
-                let timeZoneName = arguments["timeZoneName"] as! String;
+                let scheduledDateTime = arguments[MethodCallArguments.scheduledDateTime] as! String;
+                let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String;
                 let timeZone = TimeZone.init(identifier: timeZoneName)
                 let dateFormatter = DateFormatter.init();
-                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+                dateFormatter.dateFormat = DateFormatStrings.isoFormat
                 let date = dateFormatter.date(from: scheduledDateTime)!
                 notification.deliveryDate = date
                 notification.deliveryTimeZone = timeZone
-                if let rawRepeatFrequency = arguments["scheduledNotificationRepeatFrequency"] as? Int {
+                if let rawRepeatFrequency = arguments[MethodCallArguments.scheduledNotificationRepeatFrequency] as? Int {
                     let repeatFrequency = ScheduledNotificationRepeatFrequency.init(rawValue: rawRepeatFrequency)!
                     switch repeatFrequency {
                     case .daily:
@@ -243,7 +277,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             } else {
                 let arguments = call.arguments as! Dictionary<String, AnyObject>
                 let notification = buildNSUserNotification(fromArguments: arguments)
-                let rawRepeatInterval = arguments["repeatInterval"] as! Int
+                let rawRepeatInterval = arguments[MethodCallArguments.repeatInterval] as! Int
                 let repeatInterval = RepeatInterval.init(rawValue: rawRepeatInterval)!
                 switch repeatInterval {
                 case .everyMinute:
@@ -270,45 +304,45 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     @available(OSX 10.14, *)
     func buildUserNotificationContent(fromArguments arguments: Dictionary<String, AnyObject>) throws -> UNNotificationContent {
         let content = UNMutableNotificationContent()
-        if let title = arguments["title"] as? String {
+        if let title = arguments[MethodCallArguments.title] as? String {
             content.title = title
         }
-        if let subtitle = arguments["subtitle"] as? String {
+        if let subtitle = arguments[MethodCallArguments.subtitle] as? String {
             content.subtitle = subtitle
         }
-        if let body = arguments["body"] as? String {
+        if let body = arguments[MethodCallArguments.body] as? String {
             content.body = body
         }
         var presentSound = defaultPresentSound
         var presentBadge = defaultPresentBadge
         var presentAlert = defaultPresentAlert
-        if let platformSpecifics = arguments["platformSpecifics"] as? Dictionary<String, AnyObject> {
-            if let sound = platformSpecifics["sound"] as? String {
+        if let platformSpecifics = arguments[MethodCallArguments.platformSpecifics] as? Dictionary<String, AnyObject> {
+            if let sound = platformSpecifics[MethodCallArguments.sound] as? String {
                 content.sound = UNNotificationSound.init(named: UNNotificationSoundName.init(sound))
             }
-            if let badgeNumber = platformSpecifics["badgeNumber"] as? NSNumber {
+            if let badgeNumber = platformSpecifics[MethodCallArguments.badgeNumber] as? NSNumber {
                 content.badge = badgeNumber
             }
-            if !(platformSpecifics["presentSound"] is NSNull) && platformSpecifics["presentSound"] != nil {
-                presentSound = platformSpecifics["presentSound"] as! Bool
+            if !(platformSpecifics[MethodCallArguments.presentSound] is NSNull) && platformSpecifics[MethodCallArguments.presentSound] != nil {
+                presentSound = platformSpecifics[MethodCallArguments.presentSound] as! Bool
             }
-            if !(platformSpecifics["presentAlert"] is NSNull) && platformSpecifics["presentAlert"] != nil {
-                presentAlert = platformSpecifics["presentAlert"] as! Bool
+            if !(platformSpecifics[MethodCallArguments.presentAlert] is NSNull) && platformSpecifics[MethodCallArguments.presentAlert] != nil {
+                presentAlert = platformSpecifics[MethodCallArguments.presentAlert] as! Bool
             }
-            if !(platformSpecifics["presentBadge"] is NSNull) && platformSpecifics["presentBadge"] != nil {
-                presentBadge = platformSpecifics["presentBadge"] as! Bool
+            if !(platformSpecifics[MethodCallArguments.presentBadge] is NSNull) && platformSpecifics[MethodCallArguments.presentBadge] != nil {
+                presentBadge = platformSpecifics[MethodCallArguments.presentBadge] as! Bool
             }
-            if let attachments = platformSpecifics["attachments"] as? [Dictionary<String, AnyObject>] {
+            if let attachments = platformSpecifics[MethodCallArguments.attachments] as? [Dictionary<String, AnyObject>] {
                 content.attachments = []
                 for attachment in attachments {
-                    let identifier = attachment["identifier"] as! String
-                    let filePath = attachment["filePath"] as! String
+                    let identifier = attachment[MethodCallArguments.identifier] as! String
+                    let filePath = attachment[MethodCallArguments.filePath] as! String
                     let notificationAttachment = try UNNotificationAttachment.init(identifier: identifier, url: URL.init(fileURLWithPath: filePath))
                     content.attachments.append(notificationAttachment)
                 }
             }
         }
-        content.userInfo = ["payload": arguments["payload"] as Any, "presentSound": presentSound, "presentBadge": presentBadge, "presentAlert": presentAlert]
+        content.userInfo = [MethodCallArguments.payload: arguments[MethodCallArguments.payload] as Any, MethodCallArguments.presentSound: presentSound, MethodCallArguments.presentBadge: presentBadge, MethodCallArguments.presentAlert: presentAlert]
         if presentSound && content.sound == nil {
             content.sound = UNNotificationSound.default
         }
@@ -317,16 +351,16 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     
     @available(OSX 10.14, *)
     func buildUserNotificationCalendarTrigger(fromArguments arguments:Dictionary<String, AnyObject>) -> UNCalendarNotificationTrigger {
-        let scheduledDateTime = arguments["scheduledDateTime"] as! String;
-        let timeZoneName = arguments["timeZoneName"] as! String;
+        let scheduledDateTime = arguments[MethodCallArguments.scheduledDateTime] as! String;
+        let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String;
         let timeZone = TimeZone.init(identifier: timeZoneName)
         let dateFormatter = DateFormatter.init();
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        dateFormatter.dateFormat = DateFormatStrings.isoFormat
         dateFormatter.timeZone = timeZone
         let date = dateFormatter.date(from: scheduledDateTime)!
         var calendar = Calendar.current
         calendar.timeZone = timeZone!
-        if let rawRepeatFrequency = arguments["scheduledNotificationRepeatFrequency"] as? Int {
+        if let rawRepeatFrequency = arguments[MethodCallArguments.scheduledNotificationRepeatFrequency] as? Int {
             let repeatFrequency = ScheduledNotificationRepeatFrequency.init(rawValue: rawRepeatFrequency)!
             switch repeatFrequency {
             case .daily:
@@ -343,7 +377,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     
     @available(OSX 10.14, *)
     func buildUserNotificationTimeIntervalTrigger(fromArguments arguments:Dictionary<String, AnyObject>) -> UNTimeIntervalNotificationTrigger {
-        let rawRepeatInterval = arguments["repeatInterval"] as! Int
+        let rawRepeatInterval = arguments[MethodCallArguments.repeatInterval] as! Int
         let repeatInterval = RepeatInterval.init(rawValue: rawRepeatInterval)!
         switch repeatInterval {
         case .everyMinute:
@@ -378,27 +412,27 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     func buildNSUserNotification(fromArguments arguments: Dictionary<String, AnyObject>) -> NSUserNotification {
         let notification = NSUserNotification.init()
         notification.identifier = getIdentifier(fromArguments: arguments)
-        if let title = arguments["title"] as? String {
+        if let title = arguments[MethodCallArguments.title] as? String {
             notification.title = title
         }
-        if let subtitle = arguments["subtitle"] as? String {
+        if let subtitle = arguments[MethodCallArguments.subtitle] as? String {
             notification.subtitle = subtitle
         }
-        if let body = arguments["body"] as? String {
+        if let body = arguments[MethodCallArguments.body] as? String {
             notification.informativeText = body
         }
         var presentSound = defaultPresentSound
-        if let platformSpecifics = arguments["platformSpecifics"] as? Dictionary<String, AnyObject> {
-            if let sound = platformSpecifics["sound"] as? String {
+        if let platformSpecifics = arguments[MethodCallArguments.platformSpecifics] as? Dictionary<String, AnyObject> {
+            if let sound = platformSpecifics[MethodCallArguments.sound] as? String {
                 notification.soundName = sound
             }
             
-            if !(platformSpecifics["presentSound"] is NSNull) && platformSpecifics["presentSound"] != nil {
-                presentSound = platformSpecifics["presentSound"] as! Bool
+            if !(platformSpecifics[MethodCallArguments.presentSound] is NSNull) && platformSpecifics[MethodCallArguments.presentSound] != nil {
+                presentSound = platformSpecifics[MethodCallArguments.presentSound] as! Bool
             }
             
         }
-        notification.userInfo = ["payload": arguments["payload"] as Any]
+        notification.userInfo = [MethodCallArguments.payload: arguments[MethodCallArguments.payload] as Any]
         if presentSound && notification.soundName == nil {
             notification.soundName = NSUserNotificationDefaultSoundName
         }
@@ -406,7 +440,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
     
     func getIdentifier(fromArguments arguments: Dictionary<String, AnyObject>) -> String {
-        return String(arguments["id"] as! Int)
+        return String(arguments[MethodCallArguments.id] as! Int)
     }
     
     func handleSelectNotification(payload: String?) {
