@@ -314,8 +314,7 @@ class IOSFlutterLocalNotificationsPlugin
       });
 
   /// Schedules a notification to be shown at the specified date and time with
-  /// an
-  /// optional payload that is passed through when a notification is tapped.
+  /// an optional payload that is passed through when a notification is tapped.
   @Deprecated(
       'Deprecated due to problems with time zones. Use zonedSchedule instead.')
   Future<void> schedule(
