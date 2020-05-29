@@ -118,186 +118,221 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         case "initialize":
-            let arguments = call.arguments as! Dictionary<String, AnyObject>
-            defaultPresentAlert = arguments[MethodCallArguments.defaultPresentAlert] as! Bool
-            defaultPresentSound = arguments[MethodCallArguments.defaultPresentSound] as! Bool
-            defaultPresentBadge = arguments[MethodCallArguments.defaultPresentBadge] as! Bool
-            if #available(OSX 10.14, *) {
-                let requestedAlertPermission = arguments[MethodCallArguments.requestAlertPermission] as! Bool
-                let requestedSoundPermission = arguments[MethodCallArguments.requestSoundPermission] as! Bool
-                let requestedBadgePermission = arguments[MethodCallArguments.requestBadgePermission] as! Bool
-                requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, result: result)
-                if(launchingAppFromNotification) {
-                    handleSelectNotification(payload: launchPayload)
-                }
-                initialized = true
-            }
-            else {
-                result(true)
-                initialized = true
-            }
+            initialize(call, result)
         case "requestPermissions":
-            if #available(OSX 10.14, *) {
-                let arguments = call.arguments as! Dictionary<String, AnyObject>
-                let requestedAlertPermission = arguments[MethodCallArguments.alert] as! Bool
-                let requestedSoundPermission = arguments[MethodCallArguments.sound] as! Bool
-                let requestedBadgePermission = arguments[MethodCallArguments.badge] as! Bool
-                requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, result: result)
-            } else {
-                result(nil)
-            }
+            requestPermissions(call, result)
         case "getNotificationAppLaunchDetails":
-            if #available(OSX 10.14, *) {
-                let appLaunchDetails : [String: Any?] = [MethodCallArguments.notificationLaunchedApp : launchingAppFromNotification, MethodCallArguments.payload: launchPayload]
-                result(appLaunchDetails)
-            } else {
-                result(nil)
-            }
-            
+            getNotificationAppLaunchDetails(result)
         case "cancel":
-            if #available(OSX 10.14, *) {
-                let center = UNUserNotificationCenter.current()
-                let idsToRemove = [String(call.arguments as! Int)]
-                center.removePendingNotificationRequests(withIdentifiers: idsToRemove)
-                center.removeDeliveredNotifications(withIdentifiers: idsToRemove)
-                result(nil)
-            }
-            else {
-                let id = String(call.arguments as! Int)
-                let center = NSUserNotificationCenter.default
-                for scheduledNotification in center.scheduledNotifications {
-                    if (scheduledNotification.identifier == id) {
-                        center.removeScheduledNotification(scheduledNotification)
-                        break
-                    }
-                }
-                let notification = NSUserNotification.init()
-                notification.identifier = id
-                center.removeDeliveredNotification(notification)
-                result(nil)
-            }
+            cancel(call, result)
         case "cancelAll":
-            if #available(OSX 10.14, *) {
-                let center = UNUserNotificationCenter.current()
-                center.removeAllPendingNotificationRequests()
-                center.removeAllDeliveredNotifications()
-                result(nil)
-            } else {
-                let center = NSUserNotificationCenter.default
-                for scheduledNotification in center.scheduledNotifications {
-                    center.removeScheduledNotification(scheduledNotification)
-                }
-                center.removeAllDeliveredNotifications()
-                result(nil)
-            }
+            cancelAll(result)
         case "pendingNotificationRequests":
-            if #available(OSX 10.14, *) {
-                UNUserNotificationCenter.current().getPendingNotificationRequests { (requests) in
-                    var requestDictionaries:[Dictionary<String, Any?>] = []
-                    for request in requests {
-                        requestDictionaries.append([MethodCallArguments.id:Int(request.identifier) as Any, MethodCallArguments.title: request.content.title, MethodCallArguments.body: request.content.body, MethodCallArguments.payload: request.content.userInfo[MethodCallArguments.payload]])
-                    }
-                    result(requestDictionaries)
+            pendingNotificationRequests(result)
+        case "show":
+            show(call, result)
+        case "zonedSchedule":
+            zonedSchedule(call, result)
+        case "periodicallyShow":
+            periodicallyShow(call, result)
+        default:
+            result(FlutterMethodNotImplemented)
+        }
+    }
+    
+    func initialize(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        let arguments = call.arguments as! Dictionary<String, AnyObject>
+        defaultPresentAlert = arguments[MethodCallArguments.defaultPresentAlert] as! Bool
+        defaultPresentSound = arguments[MethodCallArguments.defaultPresentSound] as! Bool
+        defaultPresentBadge = arguments[MethodCallArguments.defaultPresentBadge] as! Bool
+        if #available(OSX 10.14, *) {
+            let requestedAlertPermission = arguments[MethodCallArguments.requestAlertPermission] as! Bool
+            let requestedSoundPermission = arguments[MethodCallArguments.requestSoundPermission] as! Bool
+            let requestedBadgePermission = arguments[MethodCallArguments.requestBadgePermission] as! Bool
+            requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, result: result)
+            if(launchingAppFromNotification) {
+                handleSelectNotification(payload: launchPayload)
+            }
+            initialized = true
+        }
+        else {
+            result(true)
+            initialized = true
+        }
+    }
+    
+    func requestPermissions(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        if #available(OSX 10.14, *) {
+            let arguments = call.arguments as! Dictionary<String, AnyObject>
+            let requestedAlertPermission = arguments[MethodCallArguments.alert] as! Bool
+            let requestedSoundPermission = arguments[MethodCallArguments.sound] as! Bool
+            let requestedBadgePermission = arguments[MethodCallArguments.badge] as! Bool
+            requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, result: result)
+        } else {
+            result(nil)
+        }
+    }
+    
+    func getNotificationAppLaunchDetails(_ result: @escaping FlutterResult) {
+        if #available(OSX 10.14, *) {
+            let appLaunchDetails : [String: Any?] = [MethodCallArguments.notificationLaunchedApp : launchingAppFromNotification, MethodCallArguments.payload: launchPayload]
+            result(appLaunchDetails)
+        } else {
+            result(nil)
+        }
+    }
+    
+    func cancel(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        if #available(OSX 10.14, *) {
+            let center = UNUserNotificationCenter.current()
+            let idsToRemove = [String(call.arguments as! Int)]
+            center.removePendingNotificationRequests(withIdentifiers: idsToRemove)
+            center.removeDeliveredNotifications(withIdentifiers: idsToRemove)
+            result(nil)
+        }
+        else {
+            let id = String(call.arguments as! Int)
+            let center = NSUserNotificationCenter.default
+            for scheduledNotification in center.scheduledNotifications {
+                if (scheduledNotification.identifier == id) {
+                    center.removeScheduledNotification(scheduledNotification)
+                    break
                 }
-            } else {
+            }
+            let notification = NSUserNotification.init()
+            notification.identifier = id
+            center.removeDeliveredNotification(notification)
+            result(nil)
+        }
+    }
+    
+    func cancelAll(_ result: @escaping FlutterResult) {
+        if #available(OSX 10.14, *) {
+            let center = UNUserNotificationCenter.current()
+            center.removeAllPendingNotificationRequests()
+            center.removeAllDeliveredNotifications()
+            result(nil)
+        } else {
+            let center = NSUserNotificationCenter.default
+            for scheduledNotification in center.scheduledNotifications {
+                center.removeScheduledNotification(scheduledNotification)
+            }
+            center.removeAllDeliveredNotifications()
+            result(nil)
+        }
+    }
+    
+    func pendingNotificationRequests(_ result: @escaping FlutterResult) {
+        if #available(OSX 10.14, *) {
+            UNUserNotificationCenter.current().getPendingNotificationRequests { (requests) in
                 var requestDictionaries:[Dictionary<String, Any?>] = []
-                let center = NSUserNotificationCenter.default
-                for scheduledNotification in center.scheduledNotifications {
-                    requestDictionaries.append([MethodCallArguments.id:Int(scheduledNotification.identifier!) as Any, MethodCallArguments.title: scheduledNotification.title, MethodCallArguments.body: scheduledNotification.informativeText, MethodCallArguments.payload: scheduledNotification.userInfo![MethodCallArguments.payload]])
+                for request in requests {
+                    requestDictionaries.append([MethodCallArguments.id:Int(request.identifier) as Any, MethodCallArguments.title: request.content.title, MethodCallArguments.body: request.content.body, MethodCallArguments.payload: request.content.userInfo[MethodCallArguments.payload]])
                 }
                 result(requestDictionaries)
             }
-        case "show":
-            if #available(OSX 10.14, *) {
-                do {
-                    let arguments = call.arguments as! Dictionary<String, AnyObject>
-                    let content = try buildUserNotificationContent(fromArguments: arguments)
-                    let center = UNUserNotificationCenter.current()
-                    let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: nil)
-                    center.add(request)
-                    result(nil)
-                } catch {
-                    result(FlutterError.init(code: "\(call.method)_error", message: error.localizedDescription, details: "\(error)"))
-                }
-            } else {
-                let arguments = call.arguments as! Dictionary<String, AnyObject>
-                let notification = buildNSUserNotification(fromArguments: arguments)
-                NSUserNotificationCenter.default.deliver(notification)
-                result(nil)
+        } else {
+            var requestDictionaries:[Dictionary<String, Any?>] = []
+            let center = NSUserNotificationCenter.default
+            for scheduledNotification in center.scheduledNotifications {
+                requestDictionaries.append([MethodCallArguments.id:Int(scheduledNotification.identifier!) as Any, MethodCallArguments.title: scheduledNotification.title, MethodCallArguments.body: scheduledNotification.informativeText, MethodCallArguments.payload: scheduledNotification.userInfo![MethodCallArguments.payload]])
             }
-        case "zonedSchedule":
-            if #available(OSX 10.14, *) {
-                do {
-                    let arguments = call.arguments as! Dictionary<String, AnyObject>
-                    let content = try buildUserNotificationContent(fromArguments: arguments)
-                    let trigger = buildUserNotificationCalendarTrigger(fromArguments: arguments)
-                    let center = UNUserNotificationCenter.current()
-                    let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: trigger)
-                    center.add(request)
-                    result(nil)
-                } catch {
-                    result(FlutterError.init(code: "\(call.method)_error", message: error.localizedDescription, details: "\(error)"))
-                }
-            } else {
+            result(requestDictionaries)
+        }
+    }
+    
+    func show(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        if #available(OSX 10.14, *) {
+            do {
                 let arguments = call.arguments as! Dictionary<String, AnyObject>
-                let notification = buildNSUserNotification(fromArguments: arguments)
-                let scheduledDateTime = arguments[MethodCallArguments.scheduledDateTime] as! String;
-                let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String;
-                let timeZone = TimeZone.init(identifier: timeZoneName)
-                let dateFormatter = DateFormatter.init();
-                dateFormatter.dateFormat = DateFormatStrings.isoFormat
-                let date = dateFormatter.date(from: scheduledDateTime)!
-                notification.deliveryDate = date
-                notification.deliveryTimeZone = timeZone
-                if let rawRepeatFrequency = arguments[MethodCallArguments.scheduledNotificationRepeatFrequency] as? Int {
-                    let repeatFrequency = ScheduledNotificationRepeatFrequency.init(rawValue: rawRepeatFrequency)!
-                    switch repeatFrequency {
-                    case .daily:
-                        notification.deliveryRepeatInterval = DateComponents.init(day: 1)
-                    case .weekly:
-                        notification.deliveryRepeatInterval = DateComponents.init(weekOfYear: 1)
-                    }
-                }
-                NSUserNotificationCenter.default.scheduleNotification(notification)
+                let content = try buildUserNotificationContent(fromArguments: arguments)
+                let center = UNUserNotificationCenter.current()
+                let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: nil)
+                center.add(request)
                 result(nil)
+            } catch {
+                result(buildFlutterError(forMethodCallName: call.method, withError: error))
             }
-        case "periodicallyShow":
-            if #available(OSX 10.14, *) {
-                do {
-                    let arguments = call.arguments as! Dictionary<String, AnyObject>
-                    let content = try buildUserNotificationContent(fromArguments: arguments)
-                    let trigger = buildUserNotificationTimeIntervalTrigger(fromArguments: arguments)
-                    let center = UNUserNotificationCenter.current()
-                    let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: trigger)
-                    center.add(request)
-                    result(nil)
-                } catch {
-                    result(FlutterError.init(code: "\(call.method)_error", message: error.localizedDescription, details: "\(error)"))
-                }
-            } else {
+        } else {
+            let arguments = call.arguments as! Dictionary<String, AnyObject>
+            let notification = buildNSUserNotification(fromArguments: arguments)
+            NSUserNotificationCenter.default.deliver(notification)
+            result(nil)
+        }
+    }
+    
+    func zonedSchedule(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        if #available(OSX 10.14, *) {
+            do {
                 let arguments = call.arguments as! Dictionary<String, AnyObject>
-                let notification = buildNSUserNotification(fromArguments: arguments)
-                let rawRepeatInterval = arguments[MethodCallArguments.repeatInterval] as! Int
-                let repeatInterval = RepeatInterval.init(rawValue: rawRepeatInterval)!
-                switch repeatInterval {
-                case .everyMinute:
-                    notification.deliveryDate = Date.init(timeIntervalSinceNow: 60)
-                    notification.deliveryRepeatInterval = DateComponents.init(minute: 1)
-                case .hourly:
-                    notification.deliveryDate = Date.init(timeIntervalSinceNow: 60 * 60)
-                    notification.deliveryRepeatInterval = DateComponents.init(hour: 1)
+                let content = try buildUserNotificationContent(fromArguments: arguments)
+                let trigger = buildUserNotificationCalendarTrigger(fromArguments: arguments)
+                let center = UNUserNotificationCenter.current()
+                let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: trigger)
+                center.add(request)
+                result(nil)
+            } catch {
+                result(buildFlutterError(forMethodCallName: call.method, withError: error))
+            }
+        } else {
+            let arguments = call.arguments as! Dictionary<String, AnyObject>
+            let notification = buildNSUserNotification(fromArguments: arguments)
+            let scheduledDateTime = arguments[MethodCallArguments.scheduledDateTime] as! String;
+            let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String;
+            let timeZone = TimeZone.init(identifier: timeZoneName)
+            let dateFormatter = DateFormatter.init();
+            dateFormatter.dateFormat = DateFormatStrings.isoFormat
+            let date = dateFormatter.date(from: scheduledDateTime)!
+            notification.deliveryDate = date
+            notification.deliveryTimeZone = timeZone
+            if let rawRepeatFrequency = arguments[MethodCallArguments.scheduledNotificationRepeatFrequency] as? Int {
+                let repeatFrequency = ScheduledNotificationRepeatFrequency.init(rawValue: rawRepeatFrequency)!
+                switch repeatFrequency {
                 case .daily:
-                    notification.deliveryDate = Date.init(timeIntervalSinceNow: 60 * 60 * 24)
                     notification.deliveryRepeatInterval = DateComponents.init(day: 1)
                 case .weekly:
-                    notification.deliveryDate = Date.init(timeIntervalSinceNow: 60 * 60 * 24 * 7)
                     notification.deliveryRepeatInterval = DateComponents.init(weekOfYear: 1)
                 }
-                NSUserNotificationCenter.default.scheduleNotification(notification)
-                result(nil)
             }
-        default:
-            result(FlutterMethodNotImplemented)
+            NSUserNotificationCenter.default.scheduleNotification(notification)
+            result(nil)
+        }
+    }
+    
+    func periodicallyShow(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        if #available(OSX 10.14, *) {
+            do {
+                let arguments = call.arguments as! Dictionary<String, AnyObject>
+                let content = try buildUserNotificationContent(fromArguments: arguments)
+                let trigger = buildUserNotificationTimeIntervalTrigger(fromArguments: arguments)
+                let center = UNUserNotificationCenter.current()
+                let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: trigger)
+                center.add(request)
+                result(nil)
+            } catch {
+                result(buildFlutterError(forMethodCallName: call.method, withError: error))
+            }
+        } else {
+            let arguments = call.arguments as! Dictionary<String, AnyObject>
+            let notification = buildNSUserNotification(fromArguments: arguments)
+            let rawRepeatInterval = arguments[MethodCallArguments.repeatInterval] as! Int
+            let repeatInterval = RepeatInterval.init(rawValue: rawRepeatInterval)!
+            switch repeatInterval {
+            case .everyMinute:
+                notification.deliveryDate = Date.init(timeIntervalSinceNow: 60)
+                notification.deliveryRepeatInterval = DateComponents.init(minute: 1)
+            case .hourly:
+                notification.deliveryDate = Date.init(timeIntervalSinceNow: 60 * 60)
+                notification.deliveryRepeatInterval = DateComponents.init(hour: 1)
+            case .daily:
+                notification.deliveryDate = Date.init(timeIntervalSinceNow: 60 * 60 * 24)
+                notification.deliveryRepeatInterval = DateComponents.init(day: 1)
+            case .weekly:
+                notification.deliveryDate = Date.init(timeIntervalSinceNow: 60 * 60 * 24 * 7)
+                notification.deliveryRepeatInterval = DateComponents.init(weekOfYear: 1)
+            }
+            NSUserNotificationCenter.default.scheduleNotification(notification)
+            result(nil)
         }
     }
     
@@ -347,6 +382,11 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             content.sound = UNNotificationSound.default
         }
         return content
+    }
+    
+    
+    func buildFlutterError(forMethodCallName methodCallName: String, withError error: Error) -> FlutterError {
+        return FlutterError.init(code: "\(methodCallName)_error", message: error.localizedDescription, details: "\(error)")
     }
     
     @available(OSX 10.14, *)
