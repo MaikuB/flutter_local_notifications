@@ -66,6 +66,8 @@ The notification APIs used on iOS versions older than 10 (aka the `UILocalNotifi
 
 Due to limitations currently within the macOS Flutter engine, `getNotificationAppLaunchDetails` will return null on macOS versions older than 10.14. These limitations will mean that conflicts may occur when using this plugin with other notification plugins (e.g. for push notifications).
 
+The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods that were implemented before macOS support was added and have been marked as deprecated aren't implemented on macOS.
+
 ## 📷 Screenshots
 
 | Android | iOS |
