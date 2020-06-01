@@ -53,7 +53,7 @@ task:
   create_device_script:
     echo no | avdmanager create avd --force -n test -k "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
   start_emulator_background_script:
-    $ANDROID_HOME/emulator/emulator-headless -verbose -avd test -no-audio -no-window
+    $ANDROID_HOME/emulator/emulator -no-window -verbose -avd test -no-audio -no-window
   wait_for_emulator_script:
     android-wait-for-emulator
   test_script:
