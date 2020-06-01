@@ -1,3 +1,8 @@
+# [1.4.4]
+
+* [iOS] Fixes to ensure that the native completion handlers were called appropriately. If you had some issues using this plugin combined with push notifications (e.g. via `firebase_messaging`) when the app was in the foreground then I would recommend updating to this version. Thanks to [Paweł Szot](https://github.com/szotp) for picking up the gap in the code in handling the native `willPresentNotification` call
+* The readme has been been touched up and had some sections rearranged. Thanks to the PR from [psyanite](https://github.com/psyanite)
+
 # [1.4.3]
 
 * [Android] added the ability to specify additional flags for the notification. For example, this could be used to allow the audio to repeat. See the API docs and update example app for more details. Thanks to the PR from [andylei](https://github.com/andylei)

@@ -534,6 +534,9 @@ static FlutterError *getFlutterError(NSError *error) {
 
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification :(UNNotification *)notification withCompletionHandler :(void (^)(UNNotificationPresentationOptions))completionHandler NS_AVAILABLE_IOS(10.0) {
+    if(![self isAFlutterLocalNotification:notification.request.content.userInfo]) {
+        return;
+    }
     UNNotificationPresentationOptions presentationOptions = 0;
     NSNumber *presentAlertValue = (NSNumber*)notification.request.content.userInfo[PRESENT_ALERT];
     NSNumber *presentSoundValue = (NSNumber*)notification.request.content.userInfo[PRESENT_SOUND];
@@ -571,6 +574,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
             _launchPayload = payload;
             _launchingAppFromNotification = true;
         }
+        completionHandler();
     }
 }
 - (BOOL)application:(UIApplication *)application
