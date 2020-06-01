@@ -1,6 +1,7 @@
 ## [2.0.0-beta.1]
 
 * **BREAKING CHANGE** renamed `RepeatInterval` enum values to use lower camel casing
+* Bump `plugin_platform_interface` dependency
 
 ## [1.0.1]
 
