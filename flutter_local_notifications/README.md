@@ -5,7 +5,7 @@
 
 A cross platform plugin for displaying local notifications. 
 
-## 📱 Supported Platforms
+## 📱 Supported platforms
 * **Android API 16+** (4.1+, the minimum version supported by Flutter). Uses the NotificationCompat APIs so it can be run older Android devices
 * **iOS 8.0+** (the minimum version supported by Flutter). Supports the old and new iOS notification APIs (the User Notifications Framework introduced in iOS 10 but will use the UILocalNotification APIs for devices predating iOS 10)
 
@@ -45,22 +45,22 @@ A cross platform plugin for displaying local notifications.
 
 
 
-## ⚠ Caveats and Limitations
+## ⚠ Caveats and limitations
 Note that this plugin aims to provide abstractions for all platforms as opposed to having methods that only work on specific platforms. Each method allows passing in "platform-specifics" that contains data that is specific for customising notifications on each platform. This approach means that some scenarios may not be covered by the plugin. Feel free to fork or maintain your code for showing notifications in these situations.
 
-##### firebase_messaging
-Previously, there were issue that prevented this plugin working properly with the `firebase_messaging` plugin. This meant that callbacks from each plugin might not be invoked. Version 6.0.13 of `firebase_messaging` should resolve this issue so please bump your `firebase_messaging` dependency and follow the steps covered in `firebase_messaging`'s readme file.
+##### Compatibility with firebase_messaging
+Previously, there were issues that prevented this plugin working properly with the `firebase_messaging` plugin. This meant that callbacks from each plugin might not be invoked. Version 6.0.13 of `firebase_messaging` should resolve this issue so please bump your `firebase_messaging` dependency and follow the steps covered in `firebase_messaging`'s readme file.
 
-##### Recurring Android Notifications
+##### Recurring Android notifications
 This feature uses the [Alarm Manager](https://developer.android.com/reference/android/app/AlarmManager) API. This is standard practice but does mean the delivery of the notifications/alarms are inexact and this is documented Android behaviour as per the previous link. It has been reported that Samsung's implementation of Android has imposed a maximum of 500 alarms that can be scheduled via this API and exceptions can occur when going over the limit.
 
-##### iOS Pending Notifications Limit
+##### iOS pending notifications limit
 There is a limit imposed by iOS where it will only keep 64 notifications that will fire the soonest
 
-##### Scheduled Notifications and Daylight Savings
+##### Scheduled notifications and daylight savings
 Daylight saving issues for scheduled notifications is a known issue. This functionality may be deprecated to be replaced by another that only deals with elapsed time since epoch instead of a date.
 
-##### Custom Notification Sounds
+##### Custom notification sounds
 [iOS restrictions](https://developer.apple.com/documentation/usernotifications/unnotificationsound?language=objc) apply (e.g. supported file formats)
 
 
@@ -112,7 +112,7 @@ When specifying the large icon bitmap or big picture bitmap (associated with the
 ⚠️ For Android 8.0+, sounds and vibrations are associated with notification channels and can only be configured when they are first created. Showing/scheduling a notification will create a channel with the specified id if it doesn't exist already. If another notification specifies the same channel id but tries to specify another sound or vibration pattern then nothing occurs.
 
 
-#### Scheduled Notifications
+#### Scheduled notifications
 
 If your application needs the ability to schedule notifications then you need to request permissions to be notified when the phone has been booted as scheduled notifications uses the `AlarmManager` API to determine when notifications should be displayed. However, they are cleared when a phone has been turned off. Requesting permission requires adding the following to the manifest (i.e. your application's `AndroidManifest.xml` file)
 
@@ -159,9 +159,9 @@ After doing so, rules specific to the GSON dependency being used by the plugin w
 
 
 
-## ⚙️ iOS Setup
+## ⚙️ iOS setup
 
-#### General
+#### General setup
 
 Add the following lines to the `didFinishLaunchingWithOptions` method in the AppDelegate.m/AppDelegate.swift file of your iOS project
 
@@ -236,10 +236,10 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
 Before going on to copy-paste the code snippets in this section, double-check you have configured your application correctly.
 If you encounter any issues please refer to the API docs and the sample code in the `example` directory before opening a request on Github.
 
-### Example App
+### Example app
 The `example` directory has a sample application that demonstrates the features of this plugin.
 
-### API Reference
+### API reference
 Checkout the lovely [API documentation](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/flutter_local_notifications-library.html) generated by pub. 
 
 
@@ -334,7 +334,7 @@ On Android devices, notifications will **only** in appear in the tray and **won'
 
 The "ticker" text is passed here though it is optional and specific to Android. This allows for text to be shown in the status bar on older versions of Android when the notification is shown.
 
-### Schedule a notification
+### Scheduling a notification
 
 ```dart
 var scheduledNotificationDateTime =
@@ -356,7 +356,7 @@ await flutterLocalNotificationsPlugin.schedule(
 
 On Android devices, the default behaviour is that the notification may not be delivered at the specified time when the device in a low-power idle mode. This behaviour can be changed by setting the optional parameter named `androidAllowWhileIdle` to true when calling the `schedule` method.
 
-### Periodically show a notification with a specified interval
+### Periodically showing a notification with a specified interval
 
 ```dart
 // Show a notification every minute with the first appearance happening a minute after invoking the method
@@ -371,7 +371,7 @@ await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
     'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
 ```
 
-### Show a daily notification at a specific time
+### Showing a daily notification at a specific time
 
 ```dart
 var time = Time(10, 0, 0);
@@ -390,7 +390,7 @@ await flutterLocalNotificationsPlugin.showDailyAtTime(
     platformChannelSpecifics);
 ```
 
-### Show a weekly notification on specific day and time
+### Showing a weekly notification on specific day and time
 
 ```dart
 var time = Time(10, 0, 0);
@@ -410,7 +410,7 @@ await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
     platformChannelSpecifics);
 ```
 
-### Retrieve pending notification requests
+### Retrieveing pending notification requests
 
 ```dart
 var pendingNotificationRequests =
@@ -486,7 +486,7 @@ await flutterLocalNotificationsPlugin.cancelAll();
 ```
 
 
-### Get details on if the app was launched via a notification created by this plugin
+### Getting details on if the app was launched via a notification created by this plugin
 
 ```dart
  var notificationAppLaunchDetails =
