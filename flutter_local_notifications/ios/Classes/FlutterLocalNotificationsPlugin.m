@@ -1,6 +1,4 @@
 #import "FlutterLocalNotificationsPlugin.h"
-#import "NotificationTime.h"
-#import "NotificationDetails.h"
 
 @implementation FlutterLocalNotificationsPlugin{
     FlutterMethodChannel* _channel;
