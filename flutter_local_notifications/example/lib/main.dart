@@ -904,7 +904,7 @@ class _HomePageState extends State<HomePage> {
     var platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
-        'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics,
+        'repeating body', RepeatInterval.everyMinute, platformChannelSpecifics,
         androidAllowWhileIdle: true);
   }
 
