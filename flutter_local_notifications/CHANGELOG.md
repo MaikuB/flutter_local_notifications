@@ -23,6 +23,7 @@
 * Bumped `e2e` dev dependency
 * Bumped Android dependencies
 * Updated example app's Proguard rules file to match latest configuration required by GSON
+* Bumped lower bound of Dart SDK dependency to 2.6
 
 # [1.4.4]
 
