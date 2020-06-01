@@ -366,7 +366,7 @@ static FlutterError *getFlutterError(NSError *error) {
         NSString *scheduledDateTime  = arguments[SCHEDULED_DATE_TIME];
         NSString *timeZoneName = arguments[TIME_ZONE_NAME];
         NSNumber *scheduledNotificationRepeatFrequency = arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY];
-        NSNumber *uiLocalNotificationDateInterpretation;
+        NSNumber *uiLocalNotificationDateInterpretation = arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION];
         NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
