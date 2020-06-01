@@ -60,7 +60,7 @@ There is a limit imposed by iOS where it will only keep 64 notifications that wi
 The notification APIs used on iOS versions older than 10 (aka the `UILocalNotification` APIs) have limited supported for time zones.
 
 ##### Custom notification sounds
-[iOS restrictions](https://developer.apple.com/documentation/usernotifications/unnotificationsound?language=objc) apply (e.g. supported file formats).
+[iOS and macOS restrictions](https://developer.apple.com/documentation/usernotifications/unnotificationsound?language=objc) apply (e.g. supported file formats).
 
 ##### macOS differences
 
