@@ -3,13 +3,14 @@
 * Added macOS implementation of the plugin
 * The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods has been marked as a deprecated due to problems with time zones,particularly when it comes to daylight savings.
 * Added the `zonedSchedule` method to the plugin that allows for scheduling notifications to occur on a specific date and time relative a specific time zone. This can be used to schedule daily and weekly notifications as well. The example app has been updated to demonstrate its usage. Note that to support time zone-based scheduling, the plugin now depends on the `timezone` package so that an instance of the `TZDateTime` class is required to the specify the time the notification should occur. This should work in most cases as it is IANA-based and native platforms have time zones that are IANA-based as well. To support time zone aware dates on older versions of Android (which use older Java APIs), the plugin depends on the [ThreeTen Android Backport library](https://github.com/JakeWharton/ThreeTenABP). Once Flutter's support for Android Studio 4.0 and Android Gradle plugin 4.0 has stabilised, the plugin will be updated to make use of [desugaring](https://developer.android.com/studio/releases/gradle-plugin#j8-library-desugaring) instead of relying on the ThreeTen Android Backport library.
+* [Android] As part of cleaning up the plugin, I'm removing th kludge I put in version 0.3.4 that I stated I would eventually remove. This was to fix the timestamps of notifications (relates to [this issue](https://github.com/MaikuB/flutter_local_notifications/issues/71)) scheduled prior to 0.3.4. This will make the plugin more easier to maintain
 * [Android] Fixed an issue where the error message for an invalid source resource wasn't formatted correctly to include the name of the specified resource
 * [Android] Added `androidAllowWhileIdle` boolean argument to the `periodicallyShow` method. When set to true, this changes how recurring notifications are shown so that the Android `AlarmManager` API is used to schedule a notification with exact timing. When the notification appears, the next one is scheduled after that. This is get around the limitations where the `AlarmManager` APIs don't provide a way for work to be repeated with precising timing regardless of the power mode.
   The example app has been updated to include these changes so that it can be used as a reference as well
 * [iOS] Updated the details in the plugin's podspec file
-* **BREAKING CHANGE** The `InitializationSettings` and `NotificationDetails` classes no longer have positional parameters but now have named parameters called `android` and `iOS` for passing in data specific to Android and iOS. There `macOS` named parameter has also been added for passing data specific to macOS
-* **BREAKING CHANGE** The `toMap` method that was used internally to transfer data over platform channels is no longer publicly accessible
-* **BREAKING CHANGE** All enum values have been renamed to follow lower camel case convention. This affects the following enums
+* **Breaking change** The `InitializationSettings` and `NotificationDetails` classes no longer have positional parameters but now have named parameters called `android` and `iOS` for passing in data specific to Android and iOS. There `macOS` named parameter has also been added for passing data specific to macOS
+* **Breaking change** The `toMap` method that was used internally to transfer data over platform channels is no longer publicly accessible
+* **Breaking change** All enum values have been renamed to follow lower camel case convention. This affects the following enums
   * `Day`
   * `AndroidNotificationChannelAction`
   * `Importance` (note: as `default` is a keyword, what use to be `Default` is now `defaultImportance`)
@@ -17,7 +18,7 @@
   * `GroupAlertBehavior`
   * `NotificationVisibility`
   * `RepeatInterval`
-* **BREAKING CHANGE** assertions have been added to the `IOSInitializationSettings` constructor to prevent null values being passed in
+* **Breaking change** assertions have been added to the `IOSInitializationSettings` constructor to prevent null values being passed in
 * Updated example app so that code for demonstrating functionality that is specific to a platform are only visible when running on the appropriate platform
 * Bumped `e2e` dev dependency
 * Bumped Android dependencies
@@ -48,8 +49,8 @@
 
 Please note that there are a number of breaking changes in this release to improve the developer experience when using the plugin APIs. The changes should hopefully be straightforward but please through the changelog carefully just in case. The steps migrate your code has been covered below but the Git history of the example application's `main.dart` file can also be used as reference.
 
-* [Android] **BREAKING CHANGE** The `style` property of the `AndroidNotificationDetails` class has been removed as it was redundant. No changes are needed unless your application was displaying media notifications (i.e. `style` was set to `AndroidNotificationStyle.Media`). If this is the case, you can migrate your code by setting the `styleInformation` property of the `AndroidNotificationDetails` to an instance of the `MediaNotificationStyleInformation` class. This class is a new addition in this release
-* [Android] **BREAKING CHANGE** The `AndroidNotificationSound` abstract class has been introduced to represent Android notification sounds. The `sound` property of the `AndroidNotificationDetails` class has changed from being a `String` type to an `AndroidNotificationSound` type. In this release, the `AndroidNotificationSound` has the following subclasses
+* [Android] **Breaking change** The `style` property of the `AndroidNotificationDetails` class has been removed as it was redundant. No changes are needed unless your application was displaying media notifications (i.e. `style` was set to `AndroidNotificationStyle.Media`). If this is the case, you can migrate your code by setting the `styleInformation` property of the `AndroidNotificationDetails` to an instance of the `MediaNotificationStyleInformation` class. This class is a new addition in this release
+* [Android] **Breaking change** The `AndroidNotificationSound` abstract class has been introduced to represent Android notification sounds. The `sound` property of the `AndroidNotificationDetails` class has changed from being a `String` type to an `AndroidNotificationSound` type. In this release, the `AndroidNotificationSound` has the following subclasses
 
   * `RawResourceAndroidNotificationSound`: use this when the sound is raw resource associated with the Android application. Previously, this was the only type of sound supported so applications using the plugin prior to 1.4.0 can migrate their application by using this class. For example, if your previous code was
 
@@ -72,7 +73,7 @@ Please note that there are a number of breaking changes in this release to impro
     ```
 
   * `UriAndroidNotificationSound`: use this when a URI refers to the sound on the Android device. This is a new feature being supported as part of this release. Developers may need to write their code to access native Android APIs (e.g. the `RingtoneManager` APIs) to obtain the URIs they need.
-* [Android] **BREAKING CHANGE** The `BitmapSource` enum has been replaced by the newly `AndroidBitmap` abstract class and its subclasses. This removes the need to specify the name/path of the bitmap and the source of the bitmap as two separate properties (e.g. the `largeIcon` and `largeIconBitmapSource` properties of the `AndroidNotificationDetails` class). This change affects the following classes
+* [Android] **Breaking change** The `BitmapSource` enum has been replaced by the newly `AndroidBitmap` abstract class and its subclasses. This removes the need to specify the name/path of the bitmap and the source of the bitmap as two separate properties (e.g. the `largeIcon` and `largeIconBitmapSource` properties of the `AndroidNotificationDetails` class). This change affects the following classes
 
   * `AndroidNotificationDetails`: the `largeIcon` is now an `AndroidBitmap` type instead of a `String` and the `largeIconBitmapSource` property has been removed
   * `BigPictureStyleInformation`: the `largeIcon` is now an `AndroidBitmap` type instead of a `String` and the `largeIconBitmapSource` property has been removed. The `bigPicture` is now a `AndroidBitmap` type instead of a `String` and the `bigPictureBitmapSource` property has been removed
@@ -104,7 +105,7 @@ Please note that there are a number of breaking changes in this release to impro
       largeIcon: DrawableResourceAndroidBitmap('sample_large_icon'),
     )
     ```
-* [Android] **BREAKING CHANGE** The `IconSource` enum has been replaced by the newly added `AndroidIcon` abstract class and its subclasses. This change was done for similar reasons in replacing the `BitmapSource` enum. This only affects the `Person` class, which is used when displaying each person in a messaging-style notification. Here the `icon` property is now an `AndroidIcon` type instead of a `String` and the `iconSource` property has been removed.
+* [Android] **Breaking change** The `IconSource` enum has been replaced by the newly added `AndroidIcon` abstract class and its subclasses. This change was done for similar reasons in replacing the `BitmapSource` enum. This only affects the `Person` class, which is used when displaying each person in a messaging-style notification. Here the `icon` property is now an `AndroidIcon` type instead of a `String` and the `iconSource` property has been removed.
 
   The following describes how each `IconSource` value maps to the `AndroidIcon` subclasses
 
@@ -130,7 +131,7 @@ Please note that there are a number of breaking changes in this release to impro
   ```
 
   The `AndroidIcon` also has a `BitmapAssetAndroidIcon` subclass to enables the usage of bitmap icons that have been registered as a Flutter asset via the `pubspec.yaml` file.
-* [Android] **BREAKING CHANGE** All properties in the `AndroidNotificationDetails`, `DefaultStyleInformation` and `InboxStyleInformation` classes have been made `final`
+* [Android] **Breaking change** All properties in the `AndroidNotificationDetails`, `DefaultStyleInformation` and `InboxStyleInformation` classes have been made `final`
 * The `DefaultStyleInformation` class now implements the `StyleInformation` class instead of extending it
 * Where possible, classes in the plugins have been updated to provide `const` constructors
 * Updates to API docs and readme
@@ -139,7 +140,7 @@ Please note that there are a number of breaking changes in this release to impro
 
 # [1.3.0]
 
-* [iOS] **BREAKING CHANGE** Plugin will now throw a `PlatformException` if there was an error returned upon calling the native [`addNotificationRequest`](https://developer.apple.com/documentation/usernotifications/unusernotificationcenter/1649508-addnotificationrequest) method. Previously the error was logged on the native side the using [`NSLog`](https://developer.apple.com/documentation/foundation/1395275-nslog) function.
+* [iOS] **Breaking change** Plugin will now throw a `PlatformException` if there was an error returned upon calling the native [`addNotificationRequest`](https://developer.apple.com/documentation/usernotifications/unusernotificationcenter/1649508-addnotificationrequest) method. Previously the error was logged on the native side the using [`NSLog`](https://developer.apple.com/documentation/foundation/1395275-nslog) function.
 * [iOS] Added ability to associate notifications with attachments. Only applicable to iOS 10+ where the UserNotification APIs are used. Thanks to the PR from [Pavel Sipaylo](https://github.com/psipaylo)
 * Updated readme on using `firebase_messaging` together with `flutter_local_notifications` to let the community that `firebase_messaging` 6.0.13 can be used to resolve compatibility issues around callbacks when both plugins are used together
 
