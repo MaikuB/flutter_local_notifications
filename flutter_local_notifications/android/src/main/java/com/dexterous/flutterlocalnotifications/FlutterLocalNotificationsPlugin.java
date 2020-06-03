@@ -6,6 +6,8 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.KeyguardManager;
+import android.app.KeyguardManager.KeyguardLock;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +18,8 @@ import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.text.Html;
 import android.text.Spanned;
 
@@ -142,6 +146,23 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setPriority(notificationDetails.priority)
                 .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
                 .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
+
+        // check if phone is locked
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+        if (keyguardManager.isKeyguardLocked()) {
+
+            // set fullscreen notification
+            builder.setFullScreenIntent(pendingIntent, true);
+
+            // check if phone is awake
+            PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            if (!powerManager.isInteractive()) {
+
+                // wake it
+                PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "tuttut:notificationWakeLock");
+                wakeLock.acquire();
+            }
+        }
 
         setSmallIcon(context, notificationDetails, builder);
         if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
