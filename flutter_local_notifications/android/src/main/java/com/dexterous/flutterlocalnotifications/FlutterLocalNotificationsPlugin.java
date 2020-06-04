@@ -147,20 +147,24 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
                 .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
 
-        // check if phone is locked
-        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
-        if (keyguardManager.isKeyguardLocked()) {
+        // check if user want fullscreen notification
+        if (BooleanUtils.getValue(notificationDetails.fullscreen)) {
 
-            // set fullscreen notification
-            builder.setFullScreenIntent(pendingIntent, true);
+            // check if phone is locked
+            KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+            if (keyguardManager.isKeyguardLocked()) {
 
-            // check if phone is awake
-            PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            if (!powerManager.isInteractive()) {
+                // set fullscreen notification
+                builder.setFullScreenIntent(pendingIntent, true);
 
-                // wake it
-                PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "tuttut:notificationWakeLock");
-                wakeLock.acquire();
+                // check if phone is awake
+                PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                if (!powerManager.isInteractive()) {
+
+                    // wake it
+                    PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "tuttut:notificationWakeLock");
+                    wakeLock.acquire();
+                }
             }
         }
 

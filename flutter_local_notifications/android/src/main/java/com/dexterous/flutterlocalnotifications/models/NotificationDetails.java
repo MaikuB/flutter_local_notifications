@@ -104,6 +104,7 @@ public class NotificationDetails {
     private static final String SHOW_WHEN = "showWhen";
     private static final String WHEN = "when";
     private static final String ADDITIONAL_FLAGS = "additionalFlags";
+    private static final String FULLSCREEN = "fullscreen";
 
 
     public Integer id;
@@ -155,6 +156,7 @@ public class NotificationDetails {
     public int[] additionalFlags;
     public Boolean showWhen;
     public Long when;
+    public Boolean fullscreen;
 
 
 
@@ -216,6 +218,7 @@ public class NotificationDetails {
             notificationDetails.timeoutAfter = parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
             notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
             notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
+            notificationDetails.fullscreen = (Boolean) platformChannelSpecifics.get(FULLSCREEN);
         }
     }
 

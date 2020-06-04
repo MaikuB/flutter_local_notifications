@@ -51,6 +51,7 @@ class AndroidNotificationDetails {
     this.timeoutAfter,
     this.category,
     this.additionalFlags,
+    this.fullscreen = false
   });
 
   /// The icon that should be used when displaying the notification.
@@ -210,6 +211,9 @@ class AndroidNotificationDetails {
   /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
   final Int32List additionalFlags;
 
+  // Specifies if the notification should be fullscreen when device is locked
+  final bool fullscreen;
+
   /// Creates a [Map] object that describes the [AndroidNotificationDetails] object.
   ///
   /// Mainly for internal use to send the data over a platform channel.
@@ -253,7 +257,8 @@ class AndroidNotificationDetails {
       'visibility': visibility?.index,
       'timeoutAfter': timeoutAfter,
       'category': category,
-      'additionalFlags': additionalFlags
+      'additionalFlags': additionalFlags,
+      'fullscreen': fullscreen
     }
       ..addAll(_convertStyleInformationToMap())
       ..addAll(_convertSoundToMap())
