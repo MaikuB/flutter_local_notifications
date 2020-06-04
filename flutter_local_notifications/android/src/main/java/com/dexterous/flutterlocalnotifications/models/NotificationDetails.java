@@ -15,7 +15,6 @@ import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInfor
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 public class NotificationDetails {
@@ -106,6 +105,10 @@ public class NotificationDetails {
     private static final String ADDITIONAL_FLAGS = "additionalFlags";
     private static final String FULLSCREEN = "fullscreen";
 
+    private static final String SCHEDULED_DATE_TIME = "scheduledDateTime";
+    private static final String TIME_ZONE_NAME = "timeZoneName";
+    private static final String SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY = "scheduledNotificationRepeatFrequency";
+
 
     public Integer id;
     public String title;
@@ -155,6 +158,9 @@ public class NotificationDetails {
     public String category;
     public int[] additionalFlags;
     public Boolean showWhen;
+    public String scheduledDateTime;
+    public String timeZoneName;
+    public ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency;
     public Long when;
     public Boolean fullscreen;
 
@@ -169,6 +175,11 @@ public class NotificationDetails {
         notificationDetails.id = (Integer) arguments.get(ID);
         notificationDetails.title = (String) arguments.get(TITLE);
         notificationDetails.body = (String) arguments.get(BODY);
+        notificationDetails.scheduledDateTime = (String) arguments.get(SCHEDULED_DATE_TIME);
+        notificationDetails.timeZoneName = (String) arguments.get(TIME_ZONE_NAME);
+        if(arguments.containsKey(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)) {
+            notificationDetails.scheduledNotificationRepeatFrequency = ScheduledNotificationRepeatFrequency.values()[(Integer) arguments.get(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)];
+        }
         if (arguments.containsKey(MILLISECONDS_SINCE_EPOCH)) {
             notificationDetails.millisecondsSinceEpoch = (Long) arguments.get(MILLISECONDS_SINCE_EPOCH);
         }

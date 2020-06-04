@@ -15,7 +15,8 @@ void main() {
           AndroidInitializationSettings('app_icon');
       final initializationSettingsIOS = IOSInitializationSettings();
       final initializationSettings = InitializationSettings(
-          initializationSettingsAndroid, initializationSettingsIOS);
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
     });
 

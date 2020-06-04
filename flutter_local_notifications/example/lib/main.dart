@@ -10,6 +10,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -20,6 +22,9 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
 
 final BehaviorSubject<String> selectNotificationSubject =
     BehaviorSubject<String>();
+
+final MethodChannel platform =
+    MethodChannel('dexterx.dev/flutter_local_notifications_example');
 
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 
@@ -43,12 +48,13 @@ Future<void> main() async {
   // needed if you intend to initialize in the `main` function
   WidgetsFlutterBinding.ensureInitialized();
 
+  await _configureLocalTimeZone();
+
   notificationAppLaunchDetails =
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 
   var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-  // Note: permissions aren't requested here just to demonstrate that can be done later using the `requestPermissions()` method
-  // of the `IOSFlutterLocalNotificationsPlugin` class
+  // Note: permissions aren't requested here just to demonstrate that can be done later
   var initializationSettingsIOS = IOSInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
@@ -58,8 +64,14 @@ Future<void> main() async {
         didReceiveLocalNotificationSubject.add(ReceivedNotification(
             id: id, title: title, body: body, payload: payload));
       });
+  var initializationSettingsMacOS = MacOSInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false);
   var initializationSettings = InitializationSettings(
-      initializationSettingsAndroid, initializationSettingsIOS);
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+      macOS: initializationSettingsMacOS);
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String payload) async {
     if (payload != null) {
@@ -72,6 +84,12 @@ Future<void> main() async {
       home: HomePage(),
     ),
   );
+}
+
+Future<void> _configureLocalTimeZone() async {
+  tz.initializeTimeZones();
+  final String timeZoneName = await platform.invokeMethod('getTimeZoneName');
+  tz.setLocalLocation(tz.getLocation(timeZoneName));
 }
 
 class PaddedRaisedButton extends StatelessWidget {
@@ -98,20 +116,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final MethodChannel platform =
-      MethodChannel('crossingthestreams.io/resourceResolver');
   @override
   void initState() {
     super.initState();
-    _requestIOSPermissions();
+    _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
   }
 
-  void _requestIOSPermissions() {
+  void _requestPermissions() {
     flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin>()
         ?.requestPermissions(
           alert: true,
           badge: true,
@@ -236,34 +260,18 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
-                    buttonText:
-                        'Show plain notification with payload and update channel description [Android]',
+                    buttonText: 'Show notification with custom sound',
                     onPressed: () async {
-                      await _showNotificationWithUpdatedChannelDescription();
+                      await _showNotificationCustomSound();
                     },
                   ),
                   PaddedRaisedButton(
                     buttonText:
-                        'Show plain notification as public on every lockscreen [Android]',
+                        'Schedule notification to appear in 5 seconds based on local time zone',
                     onPressed: () async {
-                      await _showPublicNotification();
+                      await _zonedScheduleNotification();
                     },
                   ),
-                  PaddedRaisedButton(
-                    buttonText: 'Cancel notification',
-                    onPressed: () async {
-                      await _cancelNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Schedule notification to appear in 5 seconds, custom sound, red colour, large icon, red LED',
-                    onPressed: () async {
-                      await _scheduleNotification();
-                    },
-                  ),
-                  Text(
-                      'NOTE: red colour, large icon and red LED are Android-specific'),
                   PaddedRaisedButton(
                     buttonText: 'Repeat notification every minute',
                     onPressed: () async {
@@ -272,16 +280,16 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PaddedRaisedButton(
                     buttonText:
-                        'Repeat notification every day at approximately 10:00:00 am',
+                        'Schedule daily 10:00:00 am notification in your local time zone',
                     onPressed: () async {
-                      await _showDailyAtTime();
+                      await _scheduleDailyTenAMNotification();
                     },
                   ),
                   PaddedRaisedButton(
                     buttonText:
-                        'Repeat notification weekly on Monday at approximately 10:00:00 am',
+                        'Schedule weekly 10:00:00 am notification in your local time zone',
                     onPressed: () async {
-                      await _showWeeklyAtDayAndTime();
+                      await _scheduleWeeklyTenAMNotification();
                     },
                   ),
                   PaddedRaisedButton(
@@ -291,99 +299,15 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
-                    buttonText:
-                        'Show notification using Android Uri sound [Android]',
-                    onPressed: () async {
-                      await _showSoundUriNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show notification that times out after 3 seconds [Android]',
-                    onPressed: () async {
-                      await _showTimeoutNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show insistent notification [Android]',
-                    onPressed: () async {
-                      await _showInsistentNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show big picture notification [Android]',
-                    onPressed: () async {
-                      await _showBigPictureNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show big picture notification, hide large icon on expand [Android]',
-                    onPressed: () async {
-                      await _showBigPictureNotificationHideExpandedLargeIcon();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show media notification [Android]',
-                    onPressed: () async {
-                      await _showNotificationMediaStyle();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show big text notification [Android]',
-                    onPressed: () async {
-                      await _showBigTextNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show inbox notification [Android]',
-                    onPressed: () async {
-                      await _showInboxNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show messaging notification [Android]',
-                    onPressed: () async {
-                      await _showMessagingNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show grouped notifications [Android]',
-                    onPressed: () async {
-                      await _showGroupedNotifications();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show ongoing notification [Android]',
-                    onPressed: () async {
-                      await _showOngoingNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show notification with no badge, alert only once [Android]',
-                    onPressed: () async {
-                      await _showNotificationWithNoBadge();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show progress notification - updates every second [Android]',
-                    onPressed: () async {
-                      await _showProgressNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show indeterminate progress notification [Android]',
-                    onPressed: () async {
-                      await _showIndeterminateProgressNotification();
-                    },
-                  ),
-                  PaddedRaisedButton(
                     buttonText: 'Check pending notifications',
                     onPressed: () async {
                       await _checkPendingNotificationRequests();
+                    },
+                  ),
+                  PaddedRaisedButton(
+                    buttonText: 'Cancel notification',
+                    onPressed: () async {
+                      await _cancelNotification();
                     },
                   ),
                   PaddedRaisedButton(
@@ -392,43 +316,163 @@ class _HomePageState extends State<HomePage> {
                       await _cancelAllNotifications();
                     },
                   ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show notification with icon badge [iOS]',
-                    onPressed: () async {
-                      await _showNotificationWithIconBadge();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show notification without timestamp [Android]',
-                    onPressed: () async {
-                      await _showNotificationWithoutTimestamp();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText:
-                        'Show notification with custom timestamp [Android]',
-                    onPressed: () async {
-                      await _showNotificationWithCustomTimestamp();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Show notification with attachment [iOS]',
-                    onPressed: () async {
-                      await _showNotificationWithAttachment();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Create notification channel [Android]',
-                    onPressed: () async {
-                      await _createNotificationChannel();
-                    },
-                  ),
-                  PaddedRaisedButton(
-                    buttonText: 'Delete notification channel [Android]',
-                    onPressed: () async {
-                      await _deleteNotificationChannel();
-                    },
-                  ),
+                  if (Platform.isAndroid) ...[
+                    Text(
+                      'Android-specific examples',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show plain notification with payload and update channel description',
+                      onPressed: () async {
+                        await _showNotificationWithUpdatedChannelDescription();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show plain notification as public on every lockscreen',
+                      onPressed: () async {
+                        await _showPublicNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show notification with custom vibration pattern, LED and icon',
+                      onPressed: () async {
+                        await _showNotificationCustomVibrationIconLed();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show notification using Android Uri sound',
+                      onPressed: () async {
+                        await _showSoundUriNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show notification that times out after 3 seconds',
+                      onPressed: () async {
+                        await _showTimeoutNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show insistent notification',
+                      onPressed: () async {
+                        await _showInsistentNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show big picture notification',
+                      onPressed: () async {
+                        await _showBigPictureNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show big picture notification, hide large icon on expand',
+                      onPressed: () async {
+                        await _showBigPictureNotificationHideExpandedLargeIcon();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show media notification',
+                      onPressed: () async {
+                        await _showNotificationMediaStyle();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show big text notification',
+                      onPressed: () async {
+                        await _showBigTextNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show inbox notification',
+                      onPressed: () async {
+                        await _showInboxNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show messaging notification',
+                      onPressed: () async {
+                        await _showMessagingNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show grouped notifications',
+                      onPressed: () async {
+                        await _showGroupedNotifications();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show ongoing notification',
+                      onPressed: () async {
+                        await _showOngoingNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show notification with no badge, alert only once',
+                      onPressed: () async {
+                        await _showNotificationWithNoBadge();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Show progress notification - updates every second',
+                      onPressed: () async {
+                        await _showProgressNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show indeterminate progress notification',
+                      onPressed: () async {
+                        await _showIndeterminateProgressNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show notification without timestamp',
+                      onPressed: () async {
+                        await _showNotificationWithoutTimestamp();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show notification with custom timestamp',
+                      onPressed: () async {
+                        await _showNotificationWithCustomTimestamp();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Create notification channel',
+                      onPressed: () async {
+                        await _createNotificationChannel();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Delete notification channel',
+                      onPressed: () async {
+                        await _deleteNotificationChannel();
+                      },
+                    ),
+                  ],
+                  if (Platform.isIOS || Platform.isMacOS) ...[
+                    Text(
+                      'iOS and macOS-specific examples',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show notification with icon badge',
+                      onPressed: () async {
+                        await _showNotificationWithIconBadge();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show notification with attachment',
+                      onPressed: () async {
+                        await _showNotificationWithAttachment();
+                      },
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -441,10 +485,9 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+        importance: Importance.max, priority: Priority.high, ticker: 'ticker');
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');
@@ -453,10 +496,10 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotificationWithNoBody() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+        importance: Importance.max, priority: Priority.high, ticker: 'ticker');
     var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+      android: androidPlatformChannelSpecifics,
+    );
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', null, platformChannelSpecifics,
         payload: 'item x');
@@ -466,10 +509,29 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.cancel(0);
   }
 
-  /// Schedules a notification that specifies a different icon, sound and vibration pattern
-  Future<void> _scheduleNotification() async {
-    var scheduledNotificationDateTime =
-        DateTime.now().add(Duration(seconds: 5));
+  Future<void> _showNotificationCustomSound() async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your other channel id',
+      'your other channel name',
+      'your other channel description',
+      sound: RawResourceAndroidNotificationSound('slow_spring_board'),
+    );
+    var iOSPlatformChannelSpecifics =
+        IOSNotificationDetails(sound: 'slow_spring_board.aiff');
+    var macOSPlatformChannelSpecifics =
+        MacOSNotificationDetails(sound: 'slow_spring_board.aiff');
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics,
+        macOS: macOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0,
+        'custom sound notification title',
+        'custom sound notification body',
+        platformChannelSpecifics);
+  }
+
+  Future<void> _showNotificationCustomVibrationIconLed() async {
     var vibrationPattern = Int64List(4);
     vibrationPattern[0] = 0;
     vibrationPattern[1] = 1000;
@@ -477,11 +539,10 @@ class _HomePageState extends State<HomePage> {
     vibrationPattern[3] = 2000;
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your other channel id',
-        'your other channel name',
-        'your other channel description',
+        'other custom channel id',
+        'other custom channel name',
+        'other custom channel description',
         icon: 'secondary_icon',
-        sound: RawResourceAndroidNotificationSound('slow_spring_board'),
         largeIcon: DrawableResourceAndroidBitmap('sample_large_icon'),
         vibrationPattern: vibrationPattern,
         enableLights: true,
@@ -489,16 +550,28 @@ class _HomePageState extends State<HomePage> {
         ledColor: const Color.fromARGB(255, 255, 0, 0),
         ledOnMs: 1000,
         ledOffMs: 500);
-    var iOSPlatformChannelSpecifics =
-        IOSNotificationDetails(sound: 'slow_spring_board.aiff');
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.schedule(
+
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0,
+        'title of notification with custom vibration pattern, LED and icon',
+        'body of notification with custom vibration pattern, LED and icon',
+        platformChannelSpecifics);
+  }
+
+  Future<void> _zonedScheduleNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         'scheduled title',
         'scheduled body',
-        scheduledNotificationDateTime,
-        platformChannelSpecifics);
+        tz.TZDateTime.now(tz.local).add(Duration(seconds: 5)),
+        NotificationDetails(
+            android: AndroidNotificationDetails('your channel id',
+                'your channel name', 'your channel description')),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime);
   }
 
   Future<void> _showNotificationWithNoSound() async {
@@ -510,8 +583,12 @@ class _HomePageState extends State<HomePage> {
         styleInformation: DefaultStyleInformation(true, true));
     var iOSPlatformChannelSpecifics =
         IOSNotificationDetails(presentSound: false);
+    var macOSPlatformChannelSpecifics =
+        MacOSNotificationDetails(presentSound: false);
     var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics,
+        macOS: macOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(0, '<b>silent</b> title',
         '<b>silent</b> body', platformChannelSpecifics);
   }
@@ -526,10 +603,8 @@ class _HomePageState extends State<HomePage> {
         sound: x,
         playSound: true,
         styleInformation: DefaultStyleInformation(true, true));
-    var iOSPlatformChannelSpecifics =
-        IOSNotificationDetails(presentSound: false);
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'uri sound title', 'uri sound body', platformChannelSpecifics);
   }
@@ -541,10 +616,8 @@ class _HomePageState extends State<HomePage> {
         'silent channel description',
         timeoutAfter: 3000,
         styleInformation: DefaultStyleInformation(true, true));
-    var iOSPlatformChannelSpecifics =
-        IOSNotificationDetails(presentSound: false);
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(0, 'timeout notification',
         'Times out after 3 seconds', platformChannelSpecifics);
   }
@@ -554,13 +627,12 @@ class _HomePageState extends State<HomePage> {
     var insistentFlag = 4;
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         ticker: 'ticker',
         additionalFlags: Int32List.fromList([insistentFlag]));
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'insistent title', 'insistent body', platformChannelSpecifics,
         payload: 'item x');
@@ -593,7 +665,7 @@ class _HomePageState extends State<HomePage> {
         'big text channel description',
         styleInformation: bigPictureStyleInformation);
     var platformChannelSpecifics =
-        NotificationDetails(androidPlatformChannelSpecifics, null);
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'big text title', 'silent body', platformChannelSpecifics);
   }
@@ -617,7 +689,7 @@ class _HomePageState extends State<HomePage> {
         largeIcon: FilePathAndroidBitmap(largeIconPath),
         styleInformation: bigPictureStyleInformation);
     var platformChannelSpecifics =
-        NotificationDetails(androidPlatformChannelSpecifics, null);
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'big text title', 'silent body', platformChannelSpecifics);
   }
@@ -633,7 +705,7 @@ class _HomePageState extends State<HomePage> {
       styleInformation: MediaStyleInformation(),
     );
     var platformChannelSpecifics =
-        NotificationDetails(androidPlatformChannelSpecifics, null);
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'notification title', 'notification body', platformChannelSpecifics);
   }
@@ -652,7 +724,7 @@ class _HomePageState extends State<HomePage> {
         'big text channel description',
         styleInformation: bigTextStyleInformation);
     var platformChannelSpecifics =
-        NotificationDetails(androidPlatformChannelSpecifics, null);
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'big text title', 'silent body', platformChannelSpecifics);
   }
@@ -671,7 +743,7 @@ class _HomePageState extends State<HomePage> {
         'inbox channel id', 'inboxchannel name', 'inbox channel description',
         styleInformation: inboxStyleInformation);
     var platformChannelSpecifics =
-        NotificationDetails(androidPlatformChannelSpecifics, null);
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'inbox title', 'inbox body', platformChannelSpecifics);
   }
@@ -725,7 +797,7 @@ class _HomePageState extends State<HomePage> {
         category: 'msg',
         styleInformation: messagingStyle);
     var platformChannelSpecifics =
-        NotificationDetails(androidPlatformChannelSpecifics, null);
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'message title', 'message body', platformChannelSpecifics);
 
@@ -746,28 +818,29 @@ class _HomePageState extends State<HomePage> {
     // example based on https://developer.android.com/training/notify-user/group.html
     var firstNotificationAndroidSpecifics = AndroidNotificationDetails(
         groupChannelId, groupChannelName, groupChannelDescription,
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         groupKey: groupKey);
     var firstNotificationPlatformSpecifics =
-        NotificationDetails(firstNotificationAndroidSpecifics, null);
+        NotificationDetails(android: firstNotificationAndroidSpecifics);
     await flutterLocalNotificationsPlugin.show(1, 'Alex Faarborg',
         'You will not believe...', firstNotificationPlatformSpecifics);
     var secondNotificationAndroidSpecifics = AndroidNotificationDetails(
         groupChannelId, groupChannelName, groupChannelDescription,
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         groupKey: groupKey);
     var secondNotificationPlatformSpecifics =
-        NotificationDetails(secondNotificationAndroidSpecifics, null);
+        NotificationDetails(android: secondNotificationAndroidSpecifics);
     await flutterLocalNotificationsPlugin.show(
         2,
         'Jeff Chang',
         'Please join us to celebrate the...',
         secondNotificationPlatformSpecifics);
 
-    // create the summary notification to support older devices that pre-date Android 7.0 (API level 24).
-    // this is required is regardless of which versions of Android your application is going to support
+    // Create the summary notification to support older devices that pre-date Android 7.0 (API level 24).
+    // Recommended to create this regardless as the behaviour may vary as mentioned in
+    // https://developer.android.com/training/notify-user/group
     var lines = List<String>();
     lines.add('Alex Faarborg  Check this out');
     lines.add('Jeff Chang    Launch Party');
@@ -779,7 +852,7 @@ class _HomePageState extends State<HomePage> {
         groupKey: groupKey,
         setAsGroupSummary: true);
     var platformChannelSpecifics =
-        NotificationDetails(androidPlatformChannelSpecifics, null);
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         3, 'Attention', 'Two messages', platformChannelSpecifics);
   }
@@ -813,13 +886,12 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showOngoingNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         ongoing: true,
         autoCancel: false);
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(0, 'ongoing notification title',
         'ongoing notification body', platformChannelSpecifics);
   }
@@ -829,58 +901,70 @@ class _HomePageState extends State<HomePage> {
         'repeating channel id',
         'repeating channel name',
         'repeating description');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
-        'repeating body', RepeatInterval.EveryMinute, platformChannelSpecifics);
+        'repeating body', RepeatInterval.everyMinute, platformChannelSpecifics,
+        androidAllowWhileIdle: true);
   }
 
-  Future<void> _showDailyAtTime() async {
-    var time = Time(10, 0, 0);
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'repeatDailyAtTime channel id',
-        'repeatDailyAtTime channel name',
-        'repeatDailyAtTime description');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.showDailyAtTime(
+  Future<void> _scheduleDailyTenAMNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
-        'show daily title',
-        'Daily notification shown at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
-        time,
-        platformChannelSpecifics);
+        'daily scheduled notification title',
+        'daily scheduled notification body',
+        _nextInstanceOfTenAM(),
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+              'daily notification channel id',
+              'daily notification channel name',
+              'daily notification description'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        scheduledNotificationRepeatFrequency:
+            ScheduledNotificationRepeatFrequency.daily);
   }
 
-  Future<void> _showWeeklyAtDayAndTime() async {
-    var time = Time(10, 0, 0);
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'show weekly channel id',
-        'show weekly channel name',
-        'show weekly description');
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.showWeeklyAtDayAndTime(
+  Future<void> _scheduleWeeklyTenAMNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
-        'show weekly title',
-        'Weekly notification shown on Monday at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
-        Day.Monday,
-        time,
-        platformChannelSpecifics);
+        'weekly scheduled notification title',
+        'weekly scheduled notification body',
+        _nextInstanceOfTenAM(),
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+              'weekly notification channel id',
+              'weekly notification channel name',
+              'weekly notificationdescription'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        scheduledNotificationRepeatFrequency:
+            ScheduledNotificationRepeatFrequency.weekly);
+  }
+
+  tz.TZDateTime _nextInstanceOfTenAM() {
+    var now = tz.TZDateTime.now(tz.local);
+    var scheduledDate =
+        tz.TZDateTime(tz.local, now.year, now.month, now.day, 10);
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(Duration(days: 1));
+    }
+    return scheduledDate;
   }
 
   Future<void> _showNotificationWithNoBadge() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'no badge channel', 'no badge name', 'no badge description',
         channelShowBadge: false,
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         onlyAlertOnce: true);
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'no badge title', 'no badge body', platformChannelSpecifics,
         payload: 'item x');
@@ -895,15 +979,14 @@ class _HomePageState extends State<HomePage> {
             'progress channel',
             'progress channel description',
             channelShowBadge: false,
-            importance: Importance.Max,
-            priority: Priority.High,
+            importance: Importance.max,
+            priority: Priority.high,
             onlyAlertOnce: true,
             showProgress: true,
             maxProgress: maxProgress,
             progress: i);
-        var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-        var platformChannelSpecifics = NotificationDetails(
-            androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+        var platformChannelSpecifics =
+            NotificationDetails(android: androidPlatformChannelSpecifics);
         await flutterLocalNotificationsPlugin.show(
             0,
             'progress notification title',
@@ -920,14 +1003,13 @@ class _HomePageState extends State<HomePage> {
         'indeterminate progress channel',
         'indeterminate progress channel description',
         channelShowBadge: false,
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         onlyAlertOnce: true,
         showProgress: true,
         indeterminate: true);
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0,
         'indeterminate progress notification title',
@@ -941,12 +1023,11 @@ class _HomePageState extends State<HomePage> {
         'your channel id',
         'your channel name',
         'your updated channel description',
-        importance: Importance.Max,
-        priority: Priority.High,
-        channelAction: AndroidNotificationChannelAction.Update);
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+        importance: Importance.max,
+        priority: Priority.high,
+        channelAction: AndroidNotificationChannelAction.update);
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0,
         'updated notification channel',
@@ -958,24 +1039,23 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showPublicNotification() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max,
-        priority: Priority.High,
+        importance: Importance.max,
+        priority: Priority.high,
         ticker: 'ticker',
-        visibility: NotificationVisibility.Public);
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+        visibility: NotificationVisibility.public);
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(0, 'public notification title',
         'public notification body', platformChannelSpecifics,
         payload: 'item x');
   }
 
   Future<void> _showNotificationWithIconBadge() async {
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'icon badge channel', 'icon badge name', 'icon badge description');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails(badgeNumber: 1);
+    var macOSPlatformChannelSpecifics =
+        MacOSNotificationDetails(badgeNumber: 1);
     var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+        iOS: iOSPlatformChannelSpecifics, macOS: macOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'icon badge title', 'icon badge body', platformChannelSpecifics,
         payload: 'item x');
@@ -984,10 +1064,9 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotificationWithoutTimestamp() async {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.Max, priority: Priority.High, showWhen: false);
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+        importance: Importance.max, priority: Priority.high, showWhen: false);
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');
@@ -998,14 +1077,13 @@ class _HomePageState extends State<HomePage> {
       'your channel id',
       'your channel name',
       'your channel description',
-      importance: Importance.Max,
-      priority: Priority.High,
+      importance: Importance.max,
+      priority: Priority.high,
       showWhen: true,
       when: DateTime.now().millisecondsSinceEpoch - 120 * 1000,
     );
-    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-    var platformChannelSpecifics = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    var platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');
@@ -1016,15 +1094,10 @@ class _HomePageState extends State<HomePage> {
         'http://via.placeholder.com/600x200', 'bigPicture.jpg');
     var iOSPlatformChannelSpecifics = IOSNotificationDetails(
         attachments: [IOSNotificationAttachment(bigPicturePath)]);
-    var bigPictureAndroidStyle =
-        BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath));
-    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
-        importance: Importance.High,
-        priority: Priority.High,
-        styleInformation: bigPictureAndroidStyle);
+    var macOSPlatformChannelSpecifics = MacOSNotificationDetails(
+        attachments: [MacOSNotificationAttachment(bigPicturePath)]);
     var notificationDetails = NotificationDetails(
-        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+        iOS: iOSPlatformChannelSpecifics, macOS: macOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0,
         'notification with attachment title',
@@ -1083,10 +1156,6 @@ class _HomePageState extends State<HomePage> {
             ],
           );
         });
-  }
-
-  String _toTwoDigitString(int value) {
-    return value.toString().padLeft(2, '0');
   }
 }
 
