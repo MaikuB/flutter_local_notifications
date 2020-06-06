@@ -1,3 +1,9 @@
+# [1.4.4+1]
+
+* Added details that platform-specific implementations can be obtained to the _Caveats and limitations_ section
+* Added a note on restrictions imposed by the OS by Android OEMs that may be prevent scheduled notifications appearing
+* _Release configurations_ section of the readme renamed to _Release build configuration_
+
 # [1.4.4]
 
 * [iOS] Fixes to ensure that the native completion handlers were called appropriately. If you had some issues using this plugin combined with push notifications (e.g. via `firebase_messaging`) when the app was in the foreground then I would recommend updating to this version. Thanks to [Paweł Szot](https://github.com/szotp) for picking up the gap in the code in handling the native `willPresentNotification` call
