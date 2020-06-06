@@ -24,6 +24,11 @@
 * Bumped Android dependencies
 * Updated example app's Proguard rules file to match latest configuration required by GSON
 * Bumped lower bound of Dart SDK dependency to 2.6
+# [1.4.4+1]
+
+* Added details that platform-specific implementations can be obtained to the _Caveats and limitations_ section
+* Added a note on restrictions imposed by the OS by Android OEMs that may be prevent scheduled notifications appearing
+* _Release configurations_ section of the readme renamed to _Release build configuration_
 
 # [1.4.4]
 
