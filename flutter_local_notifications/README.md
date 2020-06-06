@@ -49,7 +49,7 @@ The cross-platform facing API exposed by the `FlutterLocalNotificationsPlugin` c
 ##### Compatibility with firebase_messaging
 Previously, there were issues that prevented this plugin working properly with the `firebase_messaging` plugin. This meant that callbacks from each plugin might not be invoked. Version 6.0.13 of `firebase_messaging` should resolve this issue so please bump your `firebase_messaging` dependency and follow the steps covered in `firebase_messaging`'s readme file.
 
-#### Scheduled Android notifications
+##### Scheduled Android notifications
 Some Android OEMs have their customised Android OS that place restrictions on having applications run in the background. Consequently, scheduled notifications may not work when the application is in the background on certain devices (e.g. by Xiaomi, Huawei). If you experience problems like this then this would be the reason why. In nothing can be done about this as it's a restriction imposed by the OS though some devices may have setting that lets *end users* control which applications run in the background. The steps for these can be vary and is up to the users of your application to do.
 
 ##### Recurring Android notifications
