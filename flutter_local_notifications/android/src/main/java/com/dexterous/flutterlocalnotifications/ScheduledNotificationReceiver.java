@@ -19,7 +19,6 @@ import java.lang.reflect.Type;
 
 public class ScheduledNotificationReceiver extends BroadcastReceiver {
 
-
     @Override
     public void onReceive(final Context context, Intent intent) {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
@@ -27,11 +26,10 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
         boolean repeat = intent.getBooleanExtra(FlutterLocalNotificationsPlugin.REPEAT, false);
 
         // TODO: remove this branching logic as it's legacy code to fix an issue where notifications weren't reporting the correct time
-        if(StringUtils.isNullOrEmpty(notificationDetailsJson)) {
+        if (StringUtils.isNullOrEmpty(notificationDetailsJson)) {
             Notification notification = intent.getParcelableExtra(FlutterLocalNotificationsPlugin.NOTIFICATION);
             notification.when = System.currentTimeMillis();
-            int notificationId = intent.getIntExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_ID,
-                    0);
+            int notificationId = intent.getIntExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_ID, 0);
             notificationManager.notify(notificationId, notification);
             if (repeat) {
                 return;
@@ -39,14 +37,21 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
             FlutterLocalNotificationsPlugin.removeNotificationFromCache(notificationId, context);
         } else {
             Gson gson = FlutterLocalNotificationsPlugin.buildGson();
-            Type type = new TypeToken<NotificationDetails>() {
-            }.getType();
-            NotificationDetails notificationDetails  = gson.fromJson(notificationDetailsJson, type);
-            FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
-            if (repeat) {
+            Type type = new TypeToken<NotificationDetails>() {}.getType();
+            try {
+                NotificationDetails notificationDetails = gson.fromJson(notificationDetailsJson, type);
+
+                // Notification may be an empty json object
+                if (notificationDetails != null) {
+                    FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
+                    if (repeat) {
+                        return;
+                    }
+                    FlutterLocalNotificationsPlugin.removeNotificationFromCache(notificationDetails.id, context);
+                }
+            } catch (JsonSyntaxException jsonException) {
                 return;
             }
-            FlutterLocalNotificationsPlugin.removeNotificationFromCache(notificationDetails.id, context);
         }
 
     }
