@@ -54,11 +54,11 @@ class MacOSNotificationDetails {
   /// Specify `null` to leave the current badge unchanged.
   final int badgeNumber;
 
-  /// Specifies the secondary description.
-  final String subtitle;
-
   /// Specifies the list of attachments included with the notification.
   ///
   /// This property is only applicable to macOS 10.14 or newer.
   final List<MacOSNotificationAttachment> attachments;
+
+  /// Specifies the secondary description.
+  final String subtitle;
 }

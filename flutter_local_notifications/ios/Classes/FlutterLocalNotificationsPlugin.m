@@ -46,6 +46,7 @@ NSString *const ON_NOTIFICATION_CALLBACK_DISPATCHER = @"onNotificationCallbackDi
 NSString *const PLATFORM_SPECIFICS = @"platformSpecifics";
 NSString *const ID = @"id";
 NSString *const TITLE = @"title";
+NSString *const SUBTITLE = @"subtitle";
 NSString *const BODY = @"body";
 NSString *const SOUND = @"sound";
 NSString *const ATTACHMENTS = @"attachments";
@@ -205,25 +206,25 @@ static FlutterError *getFlutterError(NSError *error) {
     }}
 
 - (void)initialize:(NSDictionary * _Nonnull)arguments result:(FlutterResult _Nonnull)result {
-    if(arguments[DEFAULT_PRESENT_ALERT] != [NSNull null]) {
+    if([self containsKey:DEFAULT_PRESENT_ALERT forDictionary:arguments]) {
         _displayAlert = [[arguments objectForKey:DEFAULT_PRESENT_ALERT] boolValue];
     }
-    if(arguments[DEFAULT_PRESENT_SOUND] != [NSNull null]) {
+    if([self containsKey:DEFAULT_PRESENT_SOUND forDictionary:arguments]) {
         _playSound = [[arguments objectForKey:DEFAULT_PRESENT_SOUND] boolValue];
     }
-    if(arguments[DEFAULT_PRESENT_BADGE] != [NSNull null]) {
+    if([self containsKey:DEFAULT_PRESENT_BADGE forDictionary:arguments]) {
         _updateBadge = [[arguments objectForKey:DEFAULT_PRESENT_BADGE] boolValue];
     }
     bool requestedSoundPermission = false;
     bool requestedAlertPermission = false;
     bool requestedBadgePermission = false;
-    if (arguments[REQUEST_SOUND_PERMISSION] != [NSNull null]) {
+    if([self containsKey:REQUEST_SOUND_PERMISSION forDictionary:arguments]) {
         requestedSoundPermission = [arguments[REQUEST_SOUND_PERMISSION] boolValue];
     }
-    if (arguments[REQUEST_ALERT_PERMISSION] != [NSNull null]) {
+    if([self containsKey:REQUEST_ALERT_PERMISSION forDictionary:arguments]) {
         requestedAlertPermission = [arguments[REQUEST_ALERT_PERMISSION] boolValue];
     }
-    if (arguments[REQUEST_BADGE_PERMISSION] != [NSNull null]) {
+    if([self containsKey:REQUEST_BADGE_PERMISSION forDictionary:arguments]) {
         requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
     }
     [self requestPermissionsImpl:requestedSoundPermission alertPermission:requestedAlertPermission badgePermission:requestedBadgePermission checkLaunchNotification:true result:result];
@@ -235,13 +236,13 @@ static FlutterError *getFlutterError(NSError *error) {
     bool soundPermission = false;
     bool alertPermission = false;
     bool badgePermission = false;
-    if (arguments[SOUND_PERMISSION] != [NSNull null]) {
+    if([self containsKey:SOUND_PERMISSION forDictionary:arguments]) {
         soundPermission = [arguments[SOUND_PERMISSION] boolValue];
     }
-    if (arguments[ALERT_PERMISSION] != [NSNull null]) {
+    if([self containsKey:ALERT_PERMISSION forDictionary:arguments]) {
         alertPermission = [arguments[ALERT_PERMISSION] boolValue];
     }
-    if (arguments[BADGE_PERMISSION] != [NSNull null]) {
+    if([self containsKey:BADGE_PERMISSION forDictionary:arguments]) {
         badgePermission = [arguments[BADGE_PERMISSION] boolValue];
     }
     [self requestPermissionsImpl:soundPermission alertPermission:alertPermission badgePermission:badgePermission checkLaunchNotification:false result:result];
@@ -293,12 +294,12 @@ static FlutterError *getFlutterError(NSError *error) {
 
 - (UILocalNotification *)buildStandardUILocalNotification:(NSDictionary *)arguments {
     UILocalNotification *notification = [[UILocalNotification alloc] init];
-    if(arguments[BODY] != [NSNull null] && arguments[BODY] != nil) {
+    if([self containsKey:BODY forDictionary:arguments]) {
         notification.alertBody = arguments[BODY];
     }
     
     NSString *title;
-    if(arguments[TITLE] != [NSNull null] && arguments[TITLE] != nil) {
+    if([self containsKey:TITLE forDictionary:arguments]) {
         title = arguments[TITLE];
         if(@available(iOS 8.2, *)) {
             notification.alertTitle = title;
@@ -311,21 +312,21 @@ static FlutterError *getFlutterError(NSError *error) {
     if(arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
         NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
         
-        if(platformSpecifics[PRESENT_ALERT] != [NSNull null] && platformSpecifics[PRESENT_ALERT] != nil) {
+        if([self containsKey:PRESENT_ALERT forDictionary:platformSpecifics]) {
             presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
         }
-        if(platformSpecifics[PRESENT_SOUND] != [NSNull null] && platformSpecifics[PRESENT_SOUND] != nil) {
+        if([self containsKey:PRESENT_SOUND forDictionary:platformSpecifics]) {
             presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
         }
-        if(platformSpecifics[PRESENT_BADGE] != [NSNull null] && platformSpecifics[PRESENT_BADGE] != nil) {
+        if([self containsKey:PRESENT_BADGE forDictionary:platformSpecifics]) {
             presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
         }
         
-        if(platformSpecifics[BADGE_NUMBER] != [NSNull null] && platformSpecifics[BADGE_NUMBER] != nil) {
+        if([self containsKey:BADGE_NUMBER forDictionary:platformSpecifics]) {
             notification.applicationIconBadgeNumber = [platformSpecifics[BADGE_NUMBER] integerValue];
         }
         
-        if(platformSpecifics[SOUND] != [NSNull null] && platformSpecifics[SOUND] != nil) {
+        if([self containsKey:SOUND forDictionary:platformSpecifics]) {
             notification.soundName = [platformSpecifics[SOUND] stringValue];
         }
     }
@@ -534,10 +535,10 @@ static FlutterError *getFlutterError(NSError *error) {
 
 - (UNMutableNotificationContent *) buildStandardNotificationContent:(NSDictionary *) arguments result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)){
     UNMutableNotificationContent* content = [[UNMutableNotificationContent alloc] init];
-    if(arguments[TITLE] != [NSNull null] && arguments[TITLE] != nil) {
+    if([self containsKey:TITLE forDictionary:arguments]) {
         content.title = arguments[TITLE];
     }
-    if(arguments[BODY] != [NSNull null] && arguments[BODY] != nil) {
+    if([self containsKey:BODY forDictionary:arguments]) {
         content.body = arguments[BODY];
     }
     bool presentAlert = _displayAlert;
@@ -545,19 +546,19 @@ static FlutterError *getFlutterError(NSError *error) {
     bool presentBadge = _updateBadge;
     if(arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
         NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
-        if(platformSpecifics[PRESENT_ALERT] != [NSNull null] && platformSpecifics[PRESENT_ALERT] != nil) {
+        if([self containsKey:PRESENT_ALERT forDictionary:platformSpecifics]) {
             presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
         }
-        if(platformSpecifics[PRESENT_SOUND] != [NSNull null] && platformSpecifics[PRESENT_SOUND] != nil) {
+        if([self containsKey:PRESENT_SOUND forDictionary:platformSpecifics]) {
             presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
         }
-        if(platformSpecifics[PRESENT_BADGE] != [NSNull null] && platformSpecifics[PRESENT_BADGE] != nil) {
+        if([self containsKey:PRESENT_BADGE forDictionary:platformSpecifics]) {
             presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
         }
-        if(platformSpecifics[BADGE_NUMBER] != [NSNull null]) {
+        if([self containsKey:BADGE_NUMBER forDictionary:platformSpecifics]) {
             content.badge = [platformSpecifics objectForKey:BADGE_NUMBER];
         }
-        if(platformSpecifics[ATTACHMENTS] != [NSNull null]) {
+        if([self containsKey:ATTACHMENTS forDictionary:platformSpecifics]) {
             NSArray<NSDictionary *> *attachments = platformSpecifics[ATTACHMENTS];
             if(attachments.count > 0) {
                 NSMutableArray<UNNotificationAttachment *> *notificationAttachments = [NSMutableArray arrayWithCapacity:attachments.count];
@@ -575,8 +576,11 @@ static FlutterError *getFlutterError(NSError *error) {
                 content.attachments = notificationAttachments;
             }
         }
-        if(platformSpecifics[SOUND] != [NSNull null] && platformSpecifics[SOUND] != nil) {
+        if([self containsKey:SOUND forDictionary:platformSpecifics]) {
             content.sound = [UNNotificationSound soundNamed:platformSpecifics[SOUND]];
+        }
+        if([self containsKey:SUBTITLE forDictionary:platformSpecifics]) {
+            content.subtitle = platformSpecifics[SUBTITLE];
         }
     }
     if(presentSound && content.sound == nil) {
@@ -670,6 +674,10 @@ static FlutterError *getFlutterError(NSError *error) {
     [_channel invokeMethod:@"selectNotification" arguments:payload];
 }
 
+- (BOOL)containsKey:(NSString *)key forDictionary:(NSDictionary *)dictionary{
+    return dictionary[key] != [NSNull null] && dictionary[key] != nil;
+}
+
 #pragma mark - UNUserNotificationCenterDelegate
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification :(UNNotification *)notification withCompletionHandler :(void (^)(UNNotificationPresentationOptions))completionHandler NS_AVAILABLE_IOS(10.0) {
     if(![self isAFlutterLocalNotification:notification.request.content.userInfo]) {
@@ -685,15 +693,12 @@ static FlutterError *getFlutterError(NSError *error) {
     if(presentAlert) {
         presentationOptions |= UNNotificationPresentationOptionAlert;
     }
-    
     if(presentSound){
         presentationOptions |= UNNotificationPresentationOptionSound;
     }
-    
     if(presentBadge) {
         presentationOptions |= UNNotificationPresentationOptionBadge;
     }
-    
     completionHandler(presentationOptions);
 }
 

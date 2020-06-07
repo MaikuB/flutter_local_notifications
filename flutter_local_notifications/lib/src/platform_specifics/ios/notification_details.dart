@@ -9,6 +9,7 @@ class IOSNotificationDetails {
     this.sound,
     this.badgeNumber,
     this.attachments,
+    this.subtitle,
   });
 
   /// Display an alert when the notification is triggered while app is
@@ -57,4 +58,9 @@ class IOSNotificationDetails {
   ///
   /// This property is only applicable to iOS 10 or newer.
   final List<IOSNotificationAttachment> attachments;
+
+  /// Specifies the secondary description.
+  ///
+  /// This property is only applicable to iOS 10 or newer.
+  final String subtitle;
 }

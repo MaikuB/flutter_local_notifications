@@ -461,6 +461,12 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     PaddedRaisedButton(
+                      buttonText: 'Show notification with subtitle',
+                      onPressed: () async {
+                        await _showNotificationWithSubtitle();
+                      },
+                    ),
+                    PaddedRaisedButton(
                       buttonText: 'Show notification with icon badge',
                       onPressed: () async {
                         await _showNotificationWithIconBadge();
@@ -1047,6 +1053,21 @@ class _HomePageState extends State<HomePage> {
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(0, 'public notification title',
         'public notification body', platformChannelSpecifics,
+        payload: 'item x');
+  }
+
+  Future<void> _showNotificationWithSubtitle() async {
+    var iOSPlatformChannelSpecifics =
+        IOSNotificationDetails(subtitle: 'the subtitle');
+    var macOSPlatformChannelSpecifics =
+        MacOSNotificationDetails(subtitle: 'the subtitle');
+    var platformChannelSpecifics = NotificationDetails(
+        iOS: iOSPlatformChannelSpecifics, macOS: macOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0,
+        'title of notification with a subtitle',
+        'body of notification with a subtitle',
+        platformChannelSpecifics,
         payload: 'item x');
   }
 

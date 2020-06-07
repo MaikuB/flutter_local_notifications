@@ -25,6 +25,7 @@ extension IOSNotificationDetailsMapper on IOSNotificationDetails {
         'presentAlert': presentAlert,
         'presentSound': presentSound,
         'presentBadge': presentBadge,
+        'subtitle': subtitle,
         'sound': sound,
         'badgeNumber': badgeNumber,
         'attachments': attachments

@@ -1726,6 +1726,7 @@ void main() {
               presentAlert: true,
               presentBadge: true,
               presentSound: true,
+              subtitle: 'a subtitle',
               sound: 'sound.mp3',
               badgeNumber: 1,
               attachments: <IOSNotificationAttachment>[
@@ -1747,6 +1748,7 @@ void main() {
               'presentAlert': true,
               'presentBadge': true,
               'presentSound': true,
+              'subtitle': 'a subtitle',
               'sound': 'sound.mp3',
               'badgeNumber': 1,
               'attachments': <Map<String, Object>>[
@@ -1806,6 +1808,7 @@ void main() {
               'presentAlert': true,
               'presentBadge': true,
               'presentSound': true,
+              'subtitle': null,
               'sound': 'sound.mp3',
               'badgeNumber': 1,
               'attachments': <Map<String, Object>>[

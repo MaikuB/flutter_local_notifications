@@ -2,6 +2,7 @@
 
 * Reverted removal of code done in 1.5.0-beta.2 relating notification timestamps as it could prevent notifications from appearing for users of the plugin prior to 0.3.4
 * Cleaned up native iOS code that is no longer needed
+* [iOS] Added ability to specify a subtitle for a notification via the `subtitle` property of the `IOSNotificationDetails` class. This property is only application to iOS versions 10 or newer.
 
 # [1.5.0-beta.1]
 
@@ -29,6 +30,7 @@
 * Bumped Android dependencies
 * Updated example app's Proguard rules file to match latest configuration required by GSON
 * Bumped lower bound of Dart SDK dependency to 2.6
+
 # [1.4.4+1]
 
 * Added details that platform-specific implementations can be obtained to the _Caveats and limitations_ section
