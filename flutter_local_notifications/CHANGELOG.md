@@ -1,9 +1,14 @@
+# [1.5.0-beta.2]
+
+* Reverted removal of code done in 1.5.0-beta.2 relating notification timestamps as it could prevent notifications from appearing for users of the plugin prior to 0.3.4
+* Cleaned up native iOS code that is no longer needed
+
 # [1.5.0-beta.1]
 
 * Added macOS implementation of the plugin
 * The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods has been marked as a deprecated due to problems with time zones,particularly when it comes to daylight savings.
 * Added the `zonedSchedule` method to the plugin that allows for scheduling notifications to occur on a specific date and time relative a specific time zone. This can be used to schedule daily and weekly notifications as well. The example app has been updated to demonstrate its usage. Note that to support time zone-based scheduling, the plugin now depends on the `timezone` package so that an instance of the `TZDateTime` class is required to the specify the time the notification should occur. This should work in most cases as it is IANA-based and native platforms have time zones that are IANA-based as well. To support time zone aware dates on older versions of Android (which use older Java APIs), the plugin depends on the [ThreeTen Android Backport library](https://github.com/JakeWharton/ThreeTenABP). Once Flutter's support for Android Studio 4.0 and Android Gradle plugin 4.0 has stabilised, the plugin will be updated to make use of [desugaring](https://developer.android.com/studio/releases/gradle-plugin#j8-library-desugaring) instead of relying on the ThreeTen Android Backport library.
-* [Android] As part of cleaning up the plugin, I'm removing th kludge I put in version 0.3.4 that I stated I would eventually remove. This was to fix the timestamps of notifications (relates to [this issue](https://github.com/MaikuB/flutter_local_notifications/issues/71)) scheduled prior to 0.3.4. This will make the plugin more easier to maintain
+* [Android] As part of cleaning up the plugin, I'm removing the kludge I put in version 0.3.4 that I stated I would eventually remove. This was to fix the timestamps of notifications (relates to [this issue](https://github.com/MaikuB/flutter_local_notifications/issues/71)) scheduled prior to 0.3.4. This will make the plugin more easier to maintain
 * [Android] Fixed an issue where the error message for an invalid source resource wasn't formatted correctly to include the name of the specified resource
 * [Android] Added `androidAllowWhileIdle` boolean argument to the `periodicallyShow` method. When set to true, this changes how recurring notifications are shown so that the Android `AlarmManager` API is used to schedule a notification with exact timing. When the notification appears, the next one is scheduled after that. This is get around the limitations where the `AlarmManager` APIs don't provide a way for work to be repeated with precising timing regardless of the power mode.
   The example app has been updated to include these changes so that it can be used as a reference as well
