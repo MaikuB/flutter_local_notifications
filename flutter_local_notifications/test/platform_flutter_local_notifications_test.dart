@@ -9,6 +9,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 void main() {
+  // TODO(maikub): add tests for `periodicallyShow` after https://github.com/dart-lang/sdk/issues/28985 is resolved
   TestWidgetsFlutterBinding.ensureInitialized();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
