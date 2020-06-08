@@ -2,7 +2,8 @@
 
 * Reverted removal of code done in 1.5.0-beta.2 relating notification timestamps as it could prevent notifications from appearing for users of the plugin prior to 0.3.4
 * Cleaned up native iOS code that is no longer needed
-* [iOS] Added ability to specify a subtitle for a notification via the `subtitle` property of the `IOSNotificationDetails` class. This property is only application to iOS versions 10 or newer.
+* [iOS] Added ability to specify a subtitle for a notification via the `subtitle` property of the `IOSNotificationDetails` class. This property is only application to iOS versions 10 or newer
+* Moved testing section of readme to the bottom of the readme and updated some of the wording
 
 # [1.5.0-beta.1]
 

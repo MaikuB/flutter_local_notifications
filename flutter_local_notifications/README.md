@@ -85,19 +85,6 @@ The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods that were
 * [Zhang Jing](https://github.com/byrdkm17) for adding 'ticker' support for Android notifications
 * ...and everyone else for their contributions. They are greatly appreciated
 
-## 📈 Testing
-
-As the plugin class is not static, it is possible to mock and verify its behaviour when writing tests as part of your application. 
-Check the source code for a sample test suite that has been kindly implemented (_test/flutter_local_notifications_test.dart_) that demonstrates how this can be done. 
-
-If you decide to use the plugin class directly as part of your tests, the methods will be mostly no-op and methods that return data will return default values. 
-
-Part of this is because the plugin detects if you're running on a supported plugin to determine which platform implementation of the plugin should be used. If it's neither Android or iOS, then it defaults to the aforementioned behaviour to reduce friction when writing tests. If this not desired then consider using mocks. 
-
-Note there is also a [named constructor](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/FlutterLocalNotificationsPlugin.private.html) that can be used to pass the platform for the plugin to resolve the desired platform-specific implementation.
-
-
-
 ## ⚙️ Android Setup
 
 #### Custom notification icons and sounds
@@ -524,3 +511,14 @@ if(!UserDefaults.standard.bool(forKey: "Notification")) {
     UserDefaults.standard.set(true, forKey: "Notification")
 }
 ```
+
+## 📈 Testing
+
+As the plugin class is not static, it is possible to mock and verify its behaviour when writing tests as part of your application. 
+Check the source code for a sample test suite that has been kindly implemented (_test/flutter_local_notifications_test.dart_) that demonstrates how this can be done. 
+
+If you decide to use the plugin class directly as part of your tests, the methods will be mostly no-op and methods that return data will return default values. 
+
+Part of this is because the plugin detects if you're running on a supported plugin to determine which platform implementation of the plugin should be used. If it's neither Android or iOS, then it defaults to the aforementioned behaviour to reduce friction when writing tests. If this not desired then consider using mocks. 
+
+If a platform-specific implementation of the plugin is required for your tests, a [named constructor](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/FlutterLocalNotificationsPlugin.private.html) is available that allows you to specify the platform required e.g. a [`FakePlatform`](https://api.flutter.dev/flutter/package-platform_platform/FakePlatform-class.html).
