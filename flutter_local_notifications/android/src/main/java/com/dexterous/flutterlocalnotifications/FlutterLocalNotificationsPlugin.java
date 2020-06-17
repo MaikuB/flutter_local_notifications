@@ -109,7 +109,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private MethodChannel channel;
     private Context applicationContext;
     private Activity mainActivity;
-    private boolean initialized;
+    private Intent launchIntent;
 
     public static void registerWith(Registrar registrar) {
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
@@ -777,6 +777,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private void setActivity(Activity flutterActivity) {
         this.mainActivity = flutterActivity;
+        launchIntent = mainActivity.getIntent();
     }
 
     private void onAttachedToEngine(Context context, BinaryMessenger binaryMessenger) {
@@ -798,6 +799,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     public void onAttachedToActivity(ActivityPluginBinding binding) {
         binding.addOnNewIntentListener(this);
         mainActivity = binding.getActivity();
+        launchIntent = mainActivity.getIntent();
     }
 
     @Override
@@ -926,10 +928,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private void getNotificationAppLaunchDetails(Result result) {
         Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
         String payload = null;
-        Boolean notificationLaunchedApp = !initialized && mainActivity != null && SELECT_NOTIFICATION.equals(mainActivity.getIntent().getAction());
+        Boolean notificationLaunchedApp = launchIntent != null && SELECT_NOTIFICATION.equals(launchIntent.getAction());
         notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
         if (notificationLaunchedApp) {
-            payload = mainActivity.getIntent().getStringExtra(PAYLOAD);
+            payload = launchIntent.getStringExtra(PAYLOAD);
         }
         notificationAppLaunchDetails.put(PAYLOAD, payload);
         result.success(notificationAppLaunchDetails);
@@ -949,7 +951,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (mainActivity != null) {
             sendNotificationPayloadMessage(mainActivity.getIntent());
         }
-        initialized = true;
         result.success(true);
     }
 
