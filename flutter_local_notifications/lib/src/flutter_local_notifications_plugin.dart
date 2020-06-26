@@ -299,6 +299,9 @@ class FlutterLocalNotificationsPlugin {
           androidAllowWhileIdle: androidAllowWhileIdle,
           scheduledNotificationRepeatFrequency:
               scheduledNotificationRepeatFrequency,
+          uiLocalNotificationDateInterpretation:
+              uiLocalNotificationDateInterpretation,
+          platform: _platform
         )
       ]);
 

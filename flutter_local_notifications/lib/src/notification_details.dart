@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:platform/platform.dart';
 import 'package:timezone/timezone.dart';
 
 import 'platform_specifics/android/method_channel_mappers.dart';
@@ -43,6 +44,7 @@ class NotificationData {
     this.scheduledNotificationRepeatFrequency,
     this.uiLocalNotificationDateInterpretation =
         UILocalNotificationDateInterpretation.absoluteTime,
+    this.platform = const LocalPlatform(),
   });
 
   final int id;
@@ -56,17 +58,18 @@ class NotificationData {
       scheduledNotificationRepeatFrequency;
   final UILocalNotificationDateInterpretation
       uiLocalNotificationDateInterpretation;
+  final Platform platform;
 
   Map<String, dynamic> get _platformSpecifics {
     Map<String, dynamic> _specs;
 
-    if (Platform.isAndroid) {
+    if (platform.isAndroid) {
       _specs = platformSpecifics?.android?.toMap();
     }
-    if (Platform.isIOS) {
+    if (platform.isIOS) {
       _specs = platformSpecifics?.iOS?.toMap();
     }
-    if (Platform.isMacOS) {
+    if (platform.isMacOS) {
       _specs = platformSpecifics?.macOS?.toMap();
     }
     return _specs ?? <String, dynamic>{};
@@ -81,11 +84,11 @@ class NotificationData {
       'payload': payload ?? '',
     }..addAll(scheduledDate.toMap());
 
-    if (Platform.isAndroid) {
-      _m['allowWhileIdle'] = androidAllowWhileIdle;
+    if (platform.isAndroid) {
+      _m['platformSpecifics']['allowWhileIdle'] = androidAllowWhileIdle;
     }
 
-    if (Platform.isIOS) {
+    if (platform.isIOS) {
       _m['uiLocalNotificationDateInterpretation'] =
           uiLocalNotificationDateInterpretation.index;
     }
