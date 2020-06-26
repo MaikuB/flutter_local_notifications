@@ -125,7 +125,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 if (scheduledNotification.timeZoneName == null) {
                     scheduleNotification(context, scheduledNotification, false);
                 } else {
-                    zonedScheduleNotification(context, scheduledNotification, false);
+                    zonedScheduleNotification(context, scheduledNotification);
                 }
             } else {
                 repeatNotification(context, scheduledNotification, false);
@@ -282,7 +282,15 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-    private static void zonedScheduleNotification(Context context, final NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
+    private static void scheduleNotificationsAndUpdateCache(Context context, final List<NotificationDetails> notificationDetails) {
+        for (NotificationDetails details : notificationDetails) {
+            zonedScheduleNotification(context, details);
+        }
+
+        saveNotifications(context, notificationDetails);
+    }
+
+    private static void zonedScheduleNotification(Context context, final NotificationDetails notificationDetails) {
         Gson gson = buildGson();
         String notificationDetailsJson = gson.toJson(notificationDetails);
         Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
@@ -294,9 +302,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
         } else {
             AlarmManagerCompat.setExact(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
-        }
-        if (updateScheduledNotificationsCache) {
-            saveScheduledNotification(context, notificationDetails);
         }
     }
 
@@ -380,15 +385,28 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static void saveScheduledNotification(Context context, NotificationDetails notificationDetails) {
+        List<NotificationDetails> notifications = new ArrayList();
+        notifications.add(notificationDetails);
+
+        saveNotifications(context, notifications);
+    }
+
+    private static void saveNotifications(Context context, List<NotificationDetails> notificationDetails) {
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         ArrayList<NotificationDetails> scheduledNotificationsToSave = new ArrayList<>();
+
+        List<Integer> ids = new ArrayList();
+        for (NotificationDetails d : notificationDetails) {
+            ids.add(d.id);
+        }
+
         for (NotificationDetails scheduledNotification : scheduledNotifications) {
-            if (scheduledNotification.id == notificationDetails.id) {
+            if (ids.contains(scheduledNotification.id)) {
                 continue;
             }
             scheduledNotificationsToSave.add(scheduledNotification);
         }
-        scheduledNotificationsToSave.add(notificationDetails);
+        scheduledNotificationsToSave.addAll(notificationDetails);
         saveScheduledNotifications(context, scheduledNotificationsToSave);
     }
 
@@ -746,7 +764,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             return;
         }
         notificationDetails.scheduledDateTime = nextFireDate;
-        zonedScheduleNotification(context, notificationDetails, true);
+
+        List<NotificationDetails> notifications = new ArrayList();
+        notifications.add(notificationDetails);
+        scheduleNotificationsAndUpdateCache(context, notifications);
     }
 
     static String getNextFireDate(NotificationDetails notificationDetails) {
@@ -908,10 +929,15 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private void zonedSchedule(MethodCall call, Result result) {
-        Map<String, Object> arguments = call.arguments();
-        NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
-        if (notificationDetails != null) {
-            zonedScheduleNotification(applicationContext, notificationDetails, true);
+        List<Map<String, Object>> arguments = call.arguments();
+
+        List<NotificationDetails> notificationDetails = new ArrayList();
+        for (Map<String, Object> m : arguments) {
+            notificationDetails.add(extractNotificationDetails(result, m));
+        }
+
+        if (notificationDetails != null && !notificationDetails.isEmpty()) {
+            scheduleNotificationsAndUpdateCache(applicationContext, notificationDetails);
             result.success(null);
         }
     }

@@ -246,6 +246,26 @@ class FlutterLocalNotificationsPlugin {
     }
   }
 
+  /// Schedules a list of notifications to be shown at the specified time with an optional payload that is passed through when a notification is tapped
+  /// The [androidAllowWhileIdle] parameter is Android-specific and determines if the notification should still be shown at the specified time
+  /// even when in a low-power idle mode.
+  Future<void> scheduleNotifications(
+      List<NotificationData> notifications) async {
+    if (_platform.isAndroid) {
+      await resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          .zonedSchedule(notifications);
+    } else if (_platform.isIOS) {
+      await resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.zonedSchedule(notifications);
+    } else if (_platform.isMacOS) {
+      await resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()
+          ?.zonedSchedule(notifications);
+    }
+  }
+
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
   ///
@@ -265,36 +285,20 @@ class FlutterLocalNotificationsPlugin {
     @required bool androidAllowWhileIdle,
     String payload,
     ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
-  }) async {
-    if (_platform.isAndroid) {
-      await resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          .zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails?.android,
-              payload: payload,
-              androidAllowWhileIdle: androidAllowWhileIdle,
-              scheduledNotificationRepeatFrequency:
-                  scheduledNotificationRepeatFrequency);
-    } else if (_platform.isIOS) {
-      await resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails?.iOS,
-              uiLocalNotificationDateInterpretation:
-                  uiLocalNotificationDateInterpretation,
-              payload: payload,
-              scheduledNotificationRepeatFrequency:
-                  scheduledNotificationRepeatFrequency);
-    } else if (_platform.isMacOS) {
-      await resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
-          ?.zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails?.macOS,
-              payload: payload,
-              scheduledNotificationRepeatFrequency:
-                  scheduledNotificationRepeatFrequency);
-    }
-  }
+  }) async =>
+      scheduleNotifications([
+        NotificationData(
+          id,
+          title,
+          body,
+          scheduledDate,
+          notificationDetails,
+          payload: payload,
+          androidAllowWhileIdle: androidAllowWhileIdle,
+          scheduledNotificationRepeatFrequency:
+              scheduledNotificationRepeatFrequency,
+        )
+      ]);
 
   /// Periodically show a notification using the specified interval.
   ///

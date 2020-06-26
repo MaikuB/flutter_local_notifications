@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
 
+import '../flutter_local_notifications.dart';
+import 'notification_details.dart';
 import 'helpers.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
@@ -112,38 +114,14 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
-  Future<void> zonedSchedule(
-    int id,
-    String title,
-    String body,
-    TZDateTime scheduledDate,
-    AndroidNotificationDetails notificationDetails, {
-    @required bool androidAllowWhileIdle,
-    String payload,
-    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
-  }) async {
-    validateId(id);
-    validateDateIsInTheFuture(scheduledDate);
-    ArgumentError.checkNotNull(androidAllowWhileIdle, 'androidAllowWhileIdle');
-    final Map<String, Object> serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? <String, Object>{};
-    serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
-    await _channel.invokeMethod(
-        'zonedSchedule',
-        <String, Object>{
-          'id': id,
-          'title': title,
-          'body': body,
-          'platformSpecifics': serializedPlatformSpecifics,
-          'payload': payload ?? ''
-        }
-          ..addAll(scheduledDate.toMap())
-          ..addAll(scheduledNotificationRepeatFrequency == null
-              ? <String, Object>{}
-              : <String, Object>{
-                  'scheduledNotificationRepeatFrequency':
-                      scheduledNotificationRepeatFrequency.index
-                }));
+  Future<void> zonedSchedule(List<NotificationData> notifications) async {
+    final data = notifications.map((n) {
+      validateId(n.id);
+      validateDateIsInTheFuture(n.scheduledDate);
+      return n.toMap();
+    }).toList();
+
+    await _channel.invokeMethod('zonedSchedule', data);
   }
 
   /// Shows a notification on a daily interval at the specified time.
@@ -349,42 +327,12 @@ class IOSFlutterLocalNotificationsPlugin
   /// except for when the time zone used in the [scheduledDate] matches the
   /// device's time zone and [uiLocalNotificationDateInterpretation] is set to
   /// [UILocalNotificationDateInterpretation.wallClockTime].
-  Future<void> zonedSchedule(
-    int id,
-    String title,
-    String body,
-    TZDateTime scheduledDate,
-    IOSNotificationDetails notificationDetails, {
-    @required
-        UILocalNotificationDateInterpretation
-            uiLocalNotificationDateInterpretation,
-    String payload,
-    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
-  }) async {
-    validateId(id);
-    validateDateIsInTheFuture(scheduledDate);
-    ArgumentError.checkNotNull(uiLocalNotificationDateInterpretation,
-        'uiLocalNotificationDateInterpretation');
-    final Map<String, Object> serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? <String, Object>{};
-    await _channel.invokeMethod(
-        'zonedSchedule',
-        <String, Object>{
-          'id': id,
-          'title': title,
-          'body': body,
-          'platformSpecifics': serializedPlatformSpecifics,
-          'payload': payload ?? '',
-          'uiLocalNotificationDateInterpretation':
-              uiLocalNotificationDateInterpretation.index,
-        }
-          ..addAll(scheduledDate.toMap())
-          ..addAll(scheduledNotificationRepeatFrequency == null
-              ? <String, Object>{}
-              : <String, Object>{
-                  'scheduledNotificationRepeatFrequency':
-                      scheduledNotificationRepeatFrequency.index
-                }));
+  Future<void> zonedSchedule(List<NotificationData> notifications) async {
+    for (final NotificationData data in notifications) {
+      validateId(data.id);
+      validateDateIsInTheFuture(data.scheduledDate);
+      await _channel.invokeMethod('zonedSchedule', data.toMap());
+    }
   }
 
   /// Shows a notification on a daily interval at the specified time.
@@ -542,35 +490,12 @@ class MacOSFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
-  Future<void> zonedSchedule(
-    int id,
-    String title,
-    String body,
-    TZDateTime scheduledDate,
-    MacOSNotificationDetails notificationDetails, {
-    String payload,
-    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
-  }) async {
-    validateId(id);
-    validateDateIsInTheFuture(scheduledDate);
-    final Map<String, Object> serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? <String, Object>{};
-    await _channel.invokeMethod(
-        'zonedSchedule',
-        <String, Object>{
-          'id': id,
-          'title': title,
-          'body': body,
-          'platformSpecifics': serializedPlatformSpecifics,
-          'payload': payload ?? '',
-        }
-          ..addAll(scheduledDate.toMap())
-          ..addAll(scheduledNotificationRepeatFrequency == null
-              ? <String, Object>{}
-              : <String, Object>{
-                  'scheduledNotificationRepeatFrequency':
-                      scheduledNotificationRepeatFrequency.index
-                }));
+  Future<void> zonedSchedule(List<NotificationData> notifications) async {
+    for (final NotificationData data in notifications) {
+      validateId(data.id);
+      validateDateIsInTheFuture(data.scheduledDate);
+      await _channel.invokeMethod('zonedSchedule', data.toMap());
+    }
   }
 
   @override
