@@ -1,13 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
-import 'package:timezone/timezone.dart';
 
 import '../flutter_local_notifications.dart';
-import 'notification_details.dart';
 import 'helpers.dart';
+import 'notification_details.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
 import 'platform_specifics/android/notification_channel.dart';
@@ -22,7 +20,6 @@ import 'platform_specifics/macos/notification_details.dart';
 import 'type_mappers.dart';
 import 'typedefs.dart';
 import 'types.dart';
-import 'tz_datetime_mapper.dart';
 
 const MethodChannel _channel =
     MethodChannel('dexterous.com/flutter/local_notifications');
@@ -115,7 +112,8 @@ class AndroidFlutterLocalNotificationsPlugin
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
   Future<void> zonedSchedule(List<NotificationData> notifications) async {
-    final data = notifications.map((n) {
+    final List<Map<String, dynamic>> data =
+        notifications.map((NotificationData n) {
       validateId(n.id);
       validateDateIsInTheFuture(n.scheduledDate);
       return n.toMap();

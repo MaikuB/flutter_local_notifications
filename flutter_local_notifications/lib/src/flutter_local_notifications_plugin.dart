@@ -246,8 +246,10 @@ class FlutterLocalNotificationsPlugin {
     }
   }
 
-  /// Schedules a list of notifications to be shown at the specified time with an optional payload that is passed through when a notification is tapped
-  /// The [androidAllowWhileIdle] parameter is Android-specific and determines if the notification should still be shown at the specified time
+  /// Schedules a list of notifications to be shown at the specified time with
+  /// an optional payload that is passed through when a notification is tapped
+  /// The [androidAllowWhileIdle] parameter is Android-specific and determines
+  /// if the notification should still be shown at the specified time
   /// even when in a low-power idle mode.
   Future<void> scheduleNotifications(
       List<NotificationData> notifications) async {
@@ -286,7 +288,7 @@ class FlutterLocalNotificationsPlugin {
     String payload,
     ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
   }) async =>
-      scheduleNotifications([
+      scheduleNotifications(<NotificationData>[
         NotificationData(
           id,
           title,
