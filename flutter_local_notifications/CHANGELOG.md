@@ -1,3 +1,7 @@
+# [1.5.0-beta.4]
+
+* [Android] Fix issue where the ThreeTen Android Backport library wasn't initialised
+
 # [1.5.0-beta.3]
 
 * [Android] Fixed issue [670] where `getNotificationAppLaunchDetails()` behaved inconsistently depending on if it was called before or after `initialize()`

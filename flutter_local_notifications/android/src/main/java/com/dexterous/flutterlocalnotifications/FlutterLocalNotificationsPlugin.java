@@ -44,6 +44,7 @@ import com.dexterous.flutterlocalnotifications.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -784,6 +785,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         this.applicationContext = context;
         this.channel = new MethodChannel(binaryMessenger, METHOD_CHANNEL);
         this.channel.setMethodCallHandler(this);
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+            AndroidThreeTen.init(context);
+        }
     }
 
     @Override
