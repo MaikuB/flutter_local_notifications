@@ -1,6 +1,7 @@
 # [1.5.0-beta.4]
 
 * [Android] Fix issue where the ThreeTen Android Backport library wasn't initialised
+* Bump e2e dev dependency
 
 # [1.5.0-beta.3]
 
