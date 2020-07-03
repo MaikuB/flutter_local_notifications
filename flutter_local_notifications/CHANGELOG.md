@@ -1,3 +1,7 @@
+# [1.5.0-beta.5]
+
+* [Android] Fix initialisation of ThreeTen Android Backport library when notifications are being rescheduled
+
 # [1.5.0-beta.4]
 
 * [Android] Fix issue where the ThreeTen Android Backport library wasn't initialised

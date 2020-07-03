@@ -120,6 +120,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     static void rescheduleNotifications(Context context) {
+        initAndroidThreeTen(context);
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         for (NotificationDetails scheduledNotification : scheduledNotifications) {
             if (scheduledNotification.repeatInterval == null) {
@@ -131,6 +132,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             } else {
                 repeatNotification(context, scheduledNotification, false);
             }
+        }
+    }
+
+    private static void initAndroidThreeTen(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            AndroidThreeTen.init(context);
         }
     }
 
@@ -747,6 +754,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             return;
         }
         notificationDetails.scheduledDateTime = nextFireDate;
+        initAndroidThreeTen(context);
         zonedScheduleNotification(context, notificationDetails, true);
     }
 
@@ -785,9 +793,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         this.applicationContext = context;
         this.channel = new MethodChannel(binaryMessenger, METHOD_CHANNEL);
         this.channel.setMethodCallHandler(this);
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
-            AndroidThreeTen.init(context);
-        }
     }
 
     @Override
@@ -947,6 +952,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (!isValidDrawableResource(applicationContext, defaultIcon, result, INVALID_ICON_ERROR_CODE)) {
             return;
         }
+
+        initAndroidThreeTen(applicationContext);
+
         SharedPreferences sharedPreferences = applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(DEFAULT_ICON, defaultIcon);
