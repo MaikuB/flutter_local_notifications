@@ -1,11 +1,12 @@
 # [1.5.0-beta.5]
 
 * [Android] Fix initialisation of ThreeTen Android Backport library when notifications are being rescheduled
+* Removed `e2e` dependency from merging in changes from 1.4.4+2 release
 
 # [1.5.0-beta.4]
 
 * [Android] Fix issue where the ThreeTen Android Backport library wasn't initialised
-* Bump e2e dev dependency
+* Bump `e2e` dev dependency
 
 # [1.5.0-beta.3]
 
@@ -44,6 +45,10 @@
 * Bumped Android dependencies
 * Updated example app's Proguard rules file to match latest configuration required by GSON
 * Bumped lower bound of Dart SDK dependency to 2.6
+# [1.4.4+2]
+
+* [Android] Updated readme and plugin to fix issue [689](https://github.com/MaikuB/flutter_local_notifications/issues/689) where plugin needs to ensure notifications stay scheduled after an application update
+* Removed `e2e` dependency
 
 # [1.4.4+1]
 
