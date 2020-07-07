@@ -9,7 +9,6 @@ public class ScheduledNotificationBootReceiver extends BroadcastReceiver
     @Override
     public void onReceive(final Context context, Intent intent) {
         String action = intent.getAction();
-        System.out.println("ScheduledNotificationBootReceiver is running");
         if (action != null) {
             if (action.equals(android.content.Intent.ACTION_BOOT_COMPLETED)
                     || action.equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
