@@ -9,9 +9,11 @@ public class ScheduledNotificationBootReceiver extends BroadcastReceiver
     @Override
     public void onReceive(final Context context, Intent intent) {
         String action = intent.getAction();
-        System.out.println("rebooted");
-        if (action != null && action.equals(android.content.Intent.ACTION_BOOT_COMPLETED)) {
-            FlutterLocalNotificationsPlugin.rescheduleNotifications(context);
+        if (action != null) {
+            if (action.equals(android.content.Intent.ACTION_BOOT_COMPLETED)
+                    || action.equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
+                FlutterLocalNotificationsPlugin.rescheduleNotifications(context);
+            }
         }
     }
 }

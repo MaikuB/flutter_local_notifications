@@ -115,12 +115,13 @@ If your application needs the ability to schedule notifications then you need to
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 ```
 
-The following is also needed to ensure scheduled notifications remain scheduled upon a reboot (this is handled by the plugin)
+The following is also needed to ensure notifications remain scheduled upon a reboot and after an application is updated
 
 ```xml
 <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
     <intent-filter>
-        <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+        <action android:name="android.intent.action.BOOT_COMPLETED"/>
+        <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
     </intent-filter>
 </receiver>
 ```
