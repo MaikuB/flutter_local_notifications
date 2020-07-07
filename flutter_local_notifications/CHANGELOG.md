@@ -1,3 +1,8 @@
+# [1.4.4+2]
+
+* [Android] Updated readme and plugin to fix an issue where plugin needs to ensure notifications stay scheduled after an application update
+* Removed `e2e` dependency
+
 # [1.4.4+1]
 
 * Added details that platform-specific implementations can be obtained to the _Caveats and limitations_ section
