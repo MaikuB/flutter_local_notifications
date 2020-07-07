@@ -1,6 +1,6 @@
 # [1.4.4+2]
 
-* [Android] Updated readme and plugin to fix an issue where plugin needs to ensure notifications stay scheduled after an application update
+* [Android] Updated readme and plugin to fix issue [689](https://github.com/MaikuB/flutter_local_notifications/issues/689) where plugin needs to ensure notifications stay scheduled after an application update
 * Removed `e2e` dependency
 
 # [1.4.4+1]
