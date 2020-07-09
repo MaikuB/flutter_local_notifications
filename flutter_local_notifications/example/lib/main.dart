@@ -456,7 +456,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedRaisedButton(
-                      buttonText: 'Get active notifications [Android]',
+                      buttonText: 'Get active notifications',
                       onPressed: () async {
                         await _getActiveNotifications();
                       },
