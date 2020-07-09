@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -452,6 +453,12 @@ class _HomePageState extends State<HomePage> {
                       buttonText: 'Delete notification channel',
                       onPressed: () async {
                         await _deleteNotificationChannel();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Get active notifications [Android]',
+                      onPressed: () async {
+                        await _getActiveNotifications();
                       },
                     ),
                   ],
@@ -1177,6 +1184,84 @@ class _HomePageState extends State<HomePage> {
             ],
           );
         });
+  }
+
+  Future<void> _getActiveNotifications() async {
+    Widget activeNotificationsDialogContent =
+        await _getActiveNotificationsDialogContent();
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: activeNotificationsDialogContent,
+            actions: [
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<Widget> _getActiveNotificationsDialogContent() async {
+    if (!Platform.isAndroid) {
+      return Text('"getActiveNotifications" is available only on Android');
+    }
+
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    if (!(androidInfo.version.sdkInt >= 23)) {
+      return Text(
+        '"getActiveNotifications" is available only for Android API Level 23 and above',
+      );
+    }
+
+    try {
+      List<ActiveNotification> activeNotifications =
+          await flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()
+              ?.getActiveNotifications();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Active Notifications',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Divider(color: Colors.black),
+          if (activeNotifications.isEmpty) Text('No active notification'),
+          if (activeNotifications.isNotEmpty)
+            ...activeNotifications
+                .map(
+                  (ActiveNotification aN) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'id: ${aN.id.toString()}\n'
+                        'channelId: "${aN.channelId}"\n'
+                        'title: "${aN.title}"\n'
+                        'body: "${aN.body}"',
+                      ),
+                      Divider(color: Colors.black),
+                    ],
+                  ),
+                )
+                .toList()
+        ],
+      );
+    } on PlatformException catch (error) {
+      return Text(
+        'Error calling "getActiveNotifications"\n'
+        'code: "${error.code}"\n'
+        'message: "${error.message}"',
+      );
+    }
   }
 }
 

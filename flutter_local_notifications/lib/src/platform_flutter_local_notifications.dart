@@ -10,6 +10,7 @@ import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
 import 'platform_specifics/android/notification_channel.dart';
 import 'platform_specifics/android/notification_details.dart';
+import 'platform_specifics/android/status_bar_notification.dart';
 import 'platform_specifics/ios/enums.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/method_channel_mappers.dart';
@@ -254,6 +255,19 @@ class AndroidFlutterLocalNotificationsPlugin
   /// Deletes the notification channel with the specified [channelId].
   Future<void> deleteNotificationChannel(String channelId) =>
       _channel.invokeMethod('deleteNotificationChannel', channelId);
+
+  Future<List<ActiveNotification>> getActiveNotifications() async {
+    final List<Map<dynamic, dynamic>> activeNotifications =
+        await _channel.invokeListMethod('getActiveNotifications');
+    return activeNotifications
+        .map((activeNotification) => ActiveNotification(
+              activeNotification['id'],
+              activeNotification['channelId'],
+              activeNotification['title'],
+              activeNotification['body'],
+            ))
+        .toList();
+  }
 
   Future<void> _handleMethod(MethodCall call) {
     switch (call.method) {
