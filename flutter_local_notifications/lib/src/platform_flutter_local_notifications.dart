@@ -260,13 +260,14 @@ class AndroidFlutterLocalNotificationsPlugin
     final List<Map<dynamic, dynamic>> activeNotifications =
         await _channel.invokeListMethod('getActiveNotifications');
     return activeNotifications
-        .map((activeNotification) => ActiveNotification(
-              activeNotification['id'],
-              activeNotification['channelId'],
-              activeNotification['title'],
-              activeNotification['body'],
+        // ignore: always_specify_types
+        ?.map((a) => ActiveNotification(
+              a['id'],
+              a['channelId'],
+              a['title'],
+              a['body'],
             ))
-        .toList();
+        ?.toList();
   }
 
   Future<void> _handleMethod(MethodCall call) {

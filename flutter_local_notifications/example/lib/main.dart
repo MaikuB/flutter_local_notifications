@@ -1237,29 +1237,26 @@ class _HomePageState extends State<HomePage> {
           Divider(color: Colors.black),
           if (activeNotifications.isEmpty) Text('No active notification'),
           if (activeNotifications.isNotEmpty)
-            ...activeNotifications
-                .map(
-                  (ActiveNotification aN) => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'id: ${aN.id.toString()}\n'
-                        'channelId: "${aN.channelId}"\n'
-                        'title: "${aN.title}"\n'
-                        'body: "${aN.body}"',
-                      ),
-                      Divider(color: Colors.black),
-                    ],
+            for (var activeNotification in activeNotifications)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'id: ${activeNotification.id}\n'
+                    'channelId: ${activeNotification.channelId}\n'
+                    'title: ${activeNotification.title}\n'
+                    'body: ${activeNotification.body}',
                   ),
-                )
-                .toList()
+                  Divider(color: Colors.black),
+                ],
+              ),
         ],
       );
     } on PlatformException catch (error) {
       return Text(
         'Error calling "getActiveNotifications"\n'
-        'code: "${error.code}"\n'
-        'message: "${error.message}"',
+        'code: ${error.code}\n'
+        'message: ${error.message}',
       );
     }
   }
