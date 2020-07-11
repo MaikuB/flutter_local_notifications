@@ -9,6 +9,7 @@ export 'src/initialization_settings.dart';
 export 'src/notification_details.dart';
 export 'src/platform_flutter_local_notifications.dart'
     hide MethodChannelFlutterLocalNotificationsPlugin;
+export 'src/platform_specifics/android/active_notification.dart';
 export 'src/platform_specifics/android/bitmap.dart';
 export 'src/platform_specifics/android/enums.dart'
     hide AndroidBitmapSource, AndroidIconSource, AndroidNotificationSoundSource;
@@ -19,7 +20,6 @@ export 'src/platform_specifics/android/notification_channel.dart';
 export 'src/platform_specifics/android/notification_details.dart';
 export 'src/platform_specifics/android/notification_sound.dart';
 export 'src/platform_specifics/android/person.dart';
-export 'src/platform_specifics/android/status_bar_notification.dart';
 export 'src/platform_specifics/android/styles/big_picture_style_information.dart';
 export 'src/platform_specifics/android/styles/big_text_style_information.dart';
 export 'src/platform_specifics/android/styles/default_style_information.dart';

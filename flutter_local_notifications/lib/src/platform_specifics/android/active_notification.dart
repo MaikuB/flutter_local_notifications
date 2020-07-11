@@ -6,17 +6,15 @@ class ActiveNotification {
     this.body,
   );
 
+  /// The notification's id.
   final int id;
-  final String channelId;
-  final String title;
-  final String body;
 
-  toString() {
-    return {
-      'id': id,
-      'channelId': channelId,
-      'title': title,
-      'body': body,
-    }.toString();
-  }
+  /// The notification channel's id - Returned only on Android 8.0+
+  final String channelId;
+
+  /// The notification's title.
+  final String title;
+
+  /// The notification's content.
+  final String body;
 }
