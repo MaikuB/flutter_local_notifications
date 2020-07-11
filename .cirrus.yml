@@ -1,5 +1,41 @@
 task:
+  name: Analyze code
+  alias: analyze
+  container:
+    image: cirrusci/flutter:stable
+  test_script: flutter analyze
+
+task:
+  name: Run platform interface tests
+  alias: platform_interface_tests
+  depends_on: analyze
+  container:
+    image: cirrusci/flutter:stable
+  test_script:
+    - cd flutter_local_notifications_platform_interface
+    - flutter test
+
+task:
+  name: Run plugin unit tests
+  alias: plugin_unit_tests
+  depends_on:
+    - analyze
+    - platform_interface_tests
+  container:
+    image: cirrusci/flutter:stable
+  pub_cache:
+    folder: ~/.pub-cache
+  test_script:
+    - cd flutter_local_notifications
+    - flutter test
+
+task:
   name: Build Android example app
+  alias: build_android_example
+  depends_on:
+    - analyze
+    - platform_interface_tests
+    - plugin_unit_tests
   container:
     image: cirrusci/flutter:stable
   pub_cache:
@@ -10,6 +46,11 @@ task:
 
 task:
   name: Build iOS example app
+  alias: build_ios_example
+  depends_on:
+    - analyze
+    - platform_interface_tests
+    - plugin_unit_tests
   osx_instance:
     image: catalina-flutter
   pub_cache:
@@ -19,25 +60,14 @@ task:
     - flutter build ios --no-codesign --debug
 
 task:
-  name: Run platform interface tests
-  container:
-    image: cirrusci/flutter:stable
-  test_script:
-    - cd flutter_local_notifications_platform_interface
-    - flutter test
-
-task:
-  name: Run plugin unit tests
-  container:
-    image: cirrusci/flutter:stable
-  pub_cache:
-    folder: ~/.pub-cache
-  test_script:
-    - cd flutter_local_notifications
-    - flutter test
-
-task:
   name: Run integration tests (Android)
+  alias: android_integration_tests
+  depends_on:
+    - analyze
+    - platform_interface_tests
+    - plugin_unit_tests
+    - build_android_example
+    - build_ios_example
   env:
     EMULATOR_API_LEVEL: 28
     ANDROID_ABI: "default;x86"
