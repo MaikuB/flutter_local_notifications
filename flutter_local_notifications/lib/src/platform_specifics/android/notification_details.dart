@@ -80,8 +80,8 @@ class AndroidNotificationDetails {
 
   /// Indicates if a sound should be played when the notification is displayed.
   ///
-  /// For Android 8.0 or newer, this is tied to the specified channel cannot be
-  /// changed after the channel has been created for the first time.
+  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
+  /// be changed after the channel has been created for the first time.
   final bool playSound;
 
   /// The sound to play for the notification.
@@ -90,28 +90,28 @@ class AndroidNotificationDetails {
   /// If [playSound] is set to true but this is not specified then the default
   /// sound is played.
   ///
-  /// For Android 8.0 or newer, this is tied to the specified channel cannot be
-  /// changed after the channel has been created for the first time.
+  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
+  /// be changed after the channel has been created for the first time.
   final AndroidNotificationSound sound;
 
   /// Indicates if vibration should be enabled when the notification is
   /// displayed.
   ///
-  /// For Android 8.0 or newer, this is tied to the specified channel cannot be
-  /// changed after the channel has been created for the first time.
+  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
+  /// be changed after the channel has been created for the first time.
   final bool enableVibration;
 
   /// Indicates if lights should be enabled when the notification is displayed.
   ///
-  /// For Android 8.0 or newer, this is tied to the specified channel cannot be
-  /// changed after the channel has been created for the first time.
+  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
+  /// be changed after the channel has been created for the first time.
   final bool enableLights;
 
   /// Configures the vibration pattern.
   ///
   /// Requires setting [enableVibration] to true for it to work.
-  /// For Android 8.0 or newer, this is tied to the specified channel cannot be
-  /// changed after the channel has been created for the first time.
+  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
+  /// be changed after the channel has been created for the first time.
   final Int64List vibrationPattern;
 
   /// Specifies the information of the rich notification style to apply to the
@@ -181,8 +181,8 @@ class AndroidNotificationDetails {
 
   /// Specifies the light color of the notification.
   ///
-  /// For Android 8.0 or newer, this is tied to the specified channel cannot be
-  /// changed after the channel has been created for the first time.
+  /// For Android 8.0 or newer, this is tied to the specified channel and cannot
+  /// be changed after the channel has been created for the first time.
   final Color ledColor;
 
   /// Specifies how long the light colour will remain on.
