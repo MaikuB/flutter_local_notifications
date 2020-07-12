@@ -1,9 +1,11 @@
 task:
-  name: Analyze code
+  name: Analyze platform interface code
   alias: analyze
   container:
     image: cirrusci/flutter:stable
-  analyze_script: flutter analyze --no-pub
+  analyze_script:
+    - cd flutter_local_notifications_platform_interface
+    - flutter analyze
 
 task:
   name: Run platform interface tests
