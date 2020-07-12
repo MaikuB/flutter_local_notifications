@@ -1,6 +1,6 @@
 # [1.5.0-beta.6]
 
-* [Android] Added the `getActiveNotifications()` method to the `AndroidFlutterLocalNotificationsPlugin` class thanks to the PR from [Vincent Kammerer](https://github.com/vkammerer). This can be used to query the active notifications in the status bar
+* [Android] Added the `getActiveNotifications()` method to the `AndroidFlutterLocalNotificationsPlugin` class thanks to the PR from [Vincent Kammerer](https://github.com/vkammerer). This can be used to query the active notifications
 * Updated and fixed wording in API docs
 
 # [1.5.0-beta.5]
