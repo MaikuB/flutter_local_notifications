@@ -33,7 +33,7 @@ class AndroidNotificationChannel {
 
   /// Indicates if a sound should be played when the notification is displayed.
   ///
-  /// Tied to the specified channel cannot be changed afterward the channel has
+  /// Tied to the specified channel cannot be changed after the channel has
   /// been created for the first time.
   final bool playSound;
 
@@ -42,32 +42,32 @@ class AndroidNotificationChannel {
   /// Requires setting [playSound] to true for it to work.
   /// If [playSound] is set to true but this is not specified then the default
   /// sound is played. Tied to the specified channel cannot be changed
-  /// afterward the channel has been created for the first time.
+  /// after the channel has been created for the first time.
   final AndroidNotificationSound sound;
 
   /// Indicates if vibration should be enabled when the notification is
   /// displayed.
   //
-  /// Tied to the specified channel cannot be changed afterward the channel has
+  /// Tied to the specified channel cannot be changed after the channel has
   /// been created for the first time.
   final bool enableVibration;
 
   /// Indicates if lights should be enabled when the notification is displayed.
   ///
-  /// Tied to the specified channel cannot be changed afterward the channel has
+  /// Tied to the specified channel cannot be changed after the channel has
   /// been created for the first time.
   final bool enableLights;
 
   /// Configures the vibration pattern.
   ///
   /// Requires setting [enableVibration] to true for it to work.
-  /// Tied to the specified channel cannot be changed afterward the channel has
+  /// Tied to the specified channel cannot be changed after the channel has
   /// been created for the first time.
   final Int64List vibrationPattern;
 
   /// Specifies the light color of the notification.
   ///
-  /// Tied to the specified channel cannot be changed afterward the channel has
+  /// Tied to the specified channel cannot be changed after the channel has
   /// been created for the first time.
   final Color ledColor;
 

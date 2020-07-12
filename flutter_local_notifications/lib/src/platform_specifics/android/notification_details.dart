@@ -55,17 +55,17 @@ class AndroidNotificationDetails {
 
   /// The channel's id.
   ///
-  /// Required for Android 8.0+.
+  /// Required for Android 8.0 or newer.
   final String channelId;
 
   /// The channel's name.
   ///
-  /// Required for Android 8.0+.
+  /// Required for Android 8.0 or newer.
   final String channelName;
 
   /// The channel's description.
   ///
-  /// Required for Android 8.0+.
+  /// Required for Android 8.0 or newer.
   final String channelDescription;
 
   /// Whether notifications posted to this channel can appear as application
@@ -80,8 +80,8 @@ class AndroidNotificationDetails {
 
   /// Indicates if a sound should be played when the notification is displayed.
   ///
-  /// For Android 8.0+, this is tied to the specified channel cannot be changed
-  /// afterward the channel has been created for the first time.
+  /// For Android 8.0 or newer, this is tied to the specified channel cannot be
+  /// changed after the channel has been created for the first time.
   final bool playSound;
 
   /// The sound to play for the notification.
@@ -90,28 +90,28 @@ class AndroidNotificationDetails {
   /// If [playSound] is set to true but this is not specified then the default
   /// sound is played.
   ///
-  /// For Android 8.0+, this is tied to the specified channel cannot be changed
-  /// afterward the channel has been created for the first time.
+  /// For Android 8.0 or newer, this is tied to the specified channel cannot be
+  /// changed after the channel has been created for the first time.
   final AndroidNotificationSound sound;
 
   /// Indicates if vibration should be enabled when the notification is
   /// displayed.
   ///
-  /// For Android 8.0+, this is tied to the specified channel cannot be changed
-  /// afterward the channel has been created for the first time.
+  /// For Android 8.0 or newer, this is tied to the specified channel cannot be
+  /// changed after the channel has been created for the first time.
   final bool enableVibration;
 
   /// Indicates if lights should be enabled when the notification is displayed.
   ///
-  /// For Android 8.0+, this is tied to the specified channel cannot be changed
-  /// afterward the channel has been created for the first time.
+  /// For Android 8.0 or newer, this is tied to the specified channel cannot be
+  /// changed after the channel has been created for the first time.
   final bool enableLights;
 
   /// Configures the vibration pattern.
   ///
   /// Requires setting [enableVibration] to true for it to work.
-  /// For Android 8.0+, this is tied to the specified channel cannot be changed
-  /// afterward the channel has been created for the first time.
+  /// For Android 8.0 or newer, this is tied to the specified channel cannot be
+  /// changed after the channel has been created for the first time.
   final Int64List vibrationPattern;
 
   /// Specifies the information of the rich notification style to apply to the
@@ -120,7 +120,7 @@ class AndroidNotificationDetails {
 
   /// Specifies the group that this notification belongs to.
   ///
-  /// For Android 7.0+ (API level 24)
+  /// For Android 7.0 or newer.
   final String groupKey;
 
   /// Specifies if this notification will function as the summary for grouped
@@ -181,8 +181,8 @@ class AndroidNotificationDetails {
 
   /// Specifies the light color of the notification.
   ///
-  /// For Android 8.0+, this is tied to the specified channel cannot be changed
-  /// afterward the channel has been created for the first time.
+  /// For Android 8.0 or newer, this is tied to the specified channel cannot be
+  /// changed after the channel has been created for the first time.
   final Color ledColor;
 
   /// Specifies how long the light colour will remain on.
@@ -204,11 +204,11 @@ class AndroidNotificationDetails {
   /// if it doesn't exist
   final AndroidNotificationChannelAction channelAction;
 
-  /// Defines the notification visibility on the lockscreen
+  /// Defines the notification visibility on the lockscreen.
   final NotificationVisibility visibility;
 
   /// The duration in milliseconds after which the notification will be
-  /// cancelled if it hasn't already
+  /// cancelled if it hasn't already.
   final int timeoutAfter;
 
   /// The notification category.
