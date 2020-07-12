@@ -3,7 +3,7 @@ task:
   alias: analyze
   container:
     image: cirrusci/flutter:stable
-  test_script: flutter analyze
+  analyze_script: flutter analyze --no-pub
 
 task:
   name: Run platform interface tests
