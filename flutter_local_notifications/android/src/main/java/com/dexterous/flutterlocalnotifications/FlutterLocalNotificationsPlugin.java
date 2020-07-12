@@ -16,6 +16,9 @@ import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
+import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
 
@@ -84,6 +87,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INITIALIZE_METHOD = "initialize";
     private static final String CREATE_NOTIFICATION_CHANNEL_METHOD = "createNotificationChannel";
     private static final String DELETE_NOTIFICATION_CHANNEL_METHOD = "deleteNotificationChannel";
+    private static final String GET_ACTIVE_NOTIFICATIONS_METHOD = "getActiveNotifications";
     private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
     private static final String SHOW_METHOD = "show";
     private static final String CANCEL_METHOD = "cancel";
@@ -101,6 +105,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INVALID_BIG_PICTURE_ERROR_CODE = "INVALID_BIG_PICTURE";
     private static final String INVALID_SOUND_ERROR_CODE = "INVALID_SOUND";
     private static final String INVALID_LED_DETAILS_ERROR_CODE = "INVALID_LED_DETAILS";
+    private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_CODE = "GET_ACTIVE_NOTIFICATIONS_ERROR_CODE";
+    private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE = "Android version must be at least 6.0 to use getActiveNotifications";
     private static final String INVALID_LED_DETAILS_ERROR_MESSAGE = "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of Android before Oreo";
     private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
@@ -871,6 +877,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case DELETE_NOTIFICATION_CHANNEL_METHOD:
                 deleteNotificationChannel(call, result);
                 break;
+            case GET_ACTIVE_NOTIFICATIONS_METHOD:
+                getActiveNotifications(result);
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -1079,6 +1088,33 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             String channelId = call.arguments();
             notificationManager.deleteNotificationChannel(channelId);
             result.success(null);
+        }
+    }
+
+    private void getActiveNotifications(Result result) {
+        if (VERSION.SDK_INT < VERSION_CODES.M) {
+            result.error(GET_ACTIVE_NOTIFICATIONS_ERROR_CODE, GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE, null);
+            return;
+        }
+        NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        try {
+            StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
+            List<Map<String, Object>> activeNotificationsPayload = new ArrayList<>();
+
+            for (StatusBarNotification activeNotification : activeNotifications) {
+                HashMap<String, Object> activeNotificationPayload = new HashMap<>();
+                activeNotificationPayload.put("id", activeNotification.getId());
+                Notification notification = activeNotification.getNotification();
+                if (VERSION.SDK_INT >= VERSION_CODES.O) {
+                    activeNotificationPayload.put("channelId", notification.getChannelId());
+                }
+                activeNotificationPayload.put("title", notification.extras.getString("android.title"));
+                activeNotificationPayload.put("body", notification.extras.getString("android.text"));
+                activeNotificationsPayload.add(activeNotificationPayload);
+            }
+            result.success(activeNotificationsPayload);
+        } catch (Throwable e) {
+            result.error(GET_ACTIVE_NOTIFICATIONS_ERROR_CODE, e.getMessage(), e.getStackTrace());
         }
     }
 }

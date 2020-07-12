@@ -1605,6 +1605,15 @@ void main() {
       ]);
     });
 
+    test('getActiveNotifications', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          .getActiveNotifications();
+      expect(log,
+          <Matcher>[isMethodCall('getActiveNotifications', arguments: null)]);
+    });
+
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
       expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);

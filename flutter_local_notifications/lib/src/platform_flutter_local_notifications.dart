@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications_platform_interface/flutter_local_not
 import 'package:timezone/timezone.dart';
 
 import 'helpers.dart';
+import 'platform_specifics/android/active_notification.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
 import 'platform_specifics/android/notification_channel.dart';
@@ -254,6 +255,20 @@ class AndroidFlutterLocalNotificationsPlugin
   /// Deletes the notification channel with the specified [channelId].
   Future<void> deleteNotificationChannel(String channelId) =>
       _channel.invokeMethod('deleteNotificationChannel', channelId);
+
+  Future<List<ActiveNotification>> getActiveNotifications() async {
+    final List<Map<dynamic, dynamic>> activeNotifications =
+        await _channel.invokeListMethod('getActiveNotifications');
+    return activeNotifications
+        // ignore: always_specify_types
+        ?.map((a) => ActiveNotification(
+              a['id'],
+              a['channelId'],
+              a['title'],
+              a['body'],
+            ))
+        ?.toList();
+  }
 
   Future<void> _handleMethod(MethodCall call) {
     switch (call.method) {
