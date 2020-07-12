@@ -1,6 +1,6 @@
 task:
-  name: Analyze platform interface code
-  alias: analyze
+  name: Analyze platform interface
+  alias: analyze_platform_interface
   container:
     image: cirrusci/flutter:stable
   analyze_script:
@@ -8,9 +8,21 @@ task:
     - flutter analyze
 
 task:
+  name: Analyze plugin
+  alias: analyze_plugin
+  container:
+    image: cirrusci/flutter:stable
+  analyze_script:
+    - cd flutter_local_notifications
+    - flutter analyze
+
+
+task:
   name: Run platform interface tests
   alias: platform_interface_tests
-  depends_on: analyze
+  depends_on:
+    - analyze_platform_interface
+    - analyze_plugin
   container:
     image: cirrusci/flutter:stable
   test_script:
@@ -21,7 +33,8 @@ task:
   name: Run plugin unit tests
   alias: plugin_unit_tests
   depends_on:
-    - analyze
+    - analyze_platform_interface
+    - analyze_plugin
     - platform_interface_tests
   container:
     image: cirrusci/flutter:stable
@@ -35,7 +48,8 @@ task:
   name: Build Android example app
   alias: build_android_example
   depends_on:
-    - analyze
+    - analyze_platform_interface
+    - analyze_plugin
     - platform_interface_tests
     - plugin_unit_tests
   container:
@@ -50,7 +64,8 @@ task:
   name: Build iOS example app
   alias: build_ios_example
   depends_on:
-    - analyze
+    - analyze_platform_interface
+    - analyze_plugin
     - platform_interface_tests
     - plugin_unit_tests
   osx_instance:
@@ -65,7 +80,8 @@ task:
   name: Run integration tests (Android)
   alias: android_integration_tests
   depends_on:
-    - analyze
+    - analyze_platform_interface
+    - analyze_plugin
     - platform_interface_tests
     - plugin_unit_tests
     - build_android_example
