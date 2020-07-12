@@ -1211,7 +1211,7 @@ class _HomePageState extends State<HomePage> {
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     if (!(androidInfo.version.sdkInt >= 23)) {
       return Text(
-        '"getActiveNotifications" is available only for Android 8.0 or newer',
+        '"getActiveNotifications" is available only for Android 6.0 or newer',
       );
     }
 
