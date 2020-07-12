@@ -40,7 +40,7 @@ class MethodChannelFlutterLocalNotificationsPlugin
 
   @override
   Future<NotificationAppLaunchDetails> getNotificationAppLaunchDetails() async {
-    final Map<dynamic, dynamic> result =
+    final Map<Object, Object> result =
         await _channel.invokeMethod('getNotificationAppLaunchDetails');
     return result != null
         ? NotificationAppLaunchDetails(result['notificationLaunchedApp'],
@@ -50,7 +50,7 @@ class MethodChannelFlutterLocalNotificationsPlugin
 
   @override
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() async {
-    final List<Map<dynamic, dynamic>> pendingNotifications =
+    final List<Map<Object, Object>> pendingNotifications =
         await _channel.invokeListMethod('pendingNotificationRequests');
     return pendingNotifications
         // ignore: always_specify_types
@@ -257,7 +257,7 @@ class AndroidFlutterLocalNotificationsPlugin
       _channel.invokeMethod('deleteNotificationChannel', channelId);
 
   Future<List<ActiveNotification>> getActiveNotifications() async {
-    final List<Map<dynamic, dynamic>> activeNotifications =
+    final List<Map<Object, Object>> activeNotifications =
         await _channel.invokeListMethod('getActiveNotifications');
     return activeNotifications
         // ignore: always_specify_types
