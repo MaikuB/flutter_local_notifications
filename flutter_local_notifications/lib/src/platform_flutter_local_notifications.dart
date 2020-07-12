@@ -256,6 +256,12 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<void> deleteNotificationChannel(String channelId) =>
       _channel.invokeMethod('deleteNotificationChannel', channelId);
 
+  /// Returns the list of active notifications shown by the application that
+  /// haven't been dismissed/removed.
+  ///
+  /// This method is only applicable to Android 6.0 or newer and will throw an
+  /// [PlatformException] when called on a device with an incompatible Android
+  /// version.
   Future<List<ActiveNotification>> getActiveNotifications() async {
     final List<Map<Object, Object>> activeNotifications =
         await _channel.invokeListMethod('getActiveNotifications');
