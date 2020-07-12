@@ -1207,15 +1207,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<Widget> _getActiveNotificationsDialogContent() async {
-    if (!Platform.isAndroid) {
-      return Text('"getActiveNotifications" is available only on Android');
-    }
-
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     if (!(androidInfo.version.sdkInt >= 23)) {
       return Text(
-        '"getActiveNotifications" is available only for Android API Level 23 and above',
+        '"getActiveNotifications" is available only for Android 6.0 or newer',
       );
     }
 
@@ -1235,7 +1231,7 @@ class _HomePageState extends State<HomePage> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           Divider(color: Colors.black),
-          if (activeNotifications.isEmpty) Text('No active notification'),
+          if (activeNotifications.isEmpty) Text('No active notifications'),
           if (activeNotifications.isNotEmpty)
             for (var activeNotification in activeNotifications)
               Column(

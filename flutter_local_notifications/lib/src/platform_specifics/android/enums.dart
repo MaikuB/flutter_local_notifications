@@ -36,7 +36,7 @@ enum AndroidNotificationChannelAction {
 
 /// The available importance levels for Android notifications.
 ///
-/// Required for Android 8.0+
+/// Required for Android 8.0 or newer.
 class Importance {
   const Importance(this.value);
 

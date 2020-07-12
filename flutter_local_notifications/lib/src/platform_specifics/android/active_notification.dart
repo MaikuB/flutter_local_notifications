@@ -11,7 +11,7 @@ class ActiveNotification {
 
   /// The notification channel's id.
   ///
-  /// Returned only on Android 8.0+.
+  /// Returned only on Android 8.0 or newer.
   final String channelId;
 
   /// The notification's title.

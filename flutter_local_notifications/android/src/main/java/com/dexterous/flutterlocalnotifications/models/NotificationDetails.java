@@ -1,7 +1,8 @@
 package com.dexterous.flutterlocalnotifications.models;
 
 import android.graphics.Color;
-import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 
 import com.dexterous.flutterlocalnotifications.BitmapSource;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
@@ -304,7 +305,7 @@ public class NotificationDetails {
     }
 
     private static void readChannelInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
             notificationDetails.channelId = (String) platformChannelSpecifics.get(CHANNEL_ID);
             notificationDetails.channelName = (String) platformChannelSpecifics.get(CHANNEL_NAME);
             notificationDetails.channelDescription = (String) platformChannelSpecifics.get(CHANNEL_DESCRIPTION);
