@@ -56,13 +56,16 @@ class MethodChannelFlutterLocalNotificationsPlugin
 class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback _onSelectNotification;
+  DismissNotificationCallback _onDismissNotification;
 
   /// Initializes the plugin. Call this method on application before using the plugin further.
   /// This should only be done once. When a notification created by this plugin was used to launch the app,
   /// calling `initialize` is what will trigger to the `onSelectNotification` callback to be fire.
   Future<bool> initialize(AndroidInitializationSettings initializationSettings,
-      {SelectNotificationCallback onSelectNotification}) async {
+      {SelectNotificationCallback onSelectNotification,
+        DismissNotificationCallback onDismissNotification}) async {
     _onSelectNotification = onSelectNotification;
+    _onDismissNotification = onDismissNotification;
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
         'initialize', initializationSettings.toMap());
@@ -179,6 +182,8 @@ class AndroidFlutterLocalNotificationsPlugin
     switch (call.method) {
       case 'selectNotification':
         return _onSelectNotification(call.arguments);
+      case 'dismissNotification':
+        return _onDismissNotification?.call(call.arguments);
       default:
         return Future.error('method not defined');
     }

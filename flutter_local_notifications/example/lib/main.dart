@@ -21,6 +21,9 @@ final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
 final BehaviorSubject<String> selectNotificationSubject =
     BehaviorSubject<String>();
 
+final BehaviorSubject<String> dismissNotificationSubject =
+    BehaviorSubject<String>();
+
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 
 class ReceivedNotification {
@@ -66,6 +69,11 @@ Future<void> main() async {
       debugPrint('notification payload: ' + payload);
     }
     selectNotificationSubject.add(payload);
+  }, onDismissNotification: (String payload) async {
+    if (payload != null) {
+      debugPrint('dismiss notification payload: ' + payload);
+    }
+    dismissNotificationSubject.add(payload);
   });
   runApp(
     MaterialApp(

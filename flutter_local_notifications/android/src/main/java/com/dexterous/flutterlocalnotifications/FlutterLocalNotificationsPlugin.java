@@ -74,6 +74,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String DRAWABLE = "drawable";
     private static final String DEFAULT_ICON = "defaultIcon";
     private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
+    private static final String DISMISS_NOTIFICATION = "DISMISS_NOTIFICATION";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
     private static final String CREATE_NOTIFICATION_CHANNEL_METHOD = "createNotificationChannel";
@@ -128,10 +129,20 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private static Notification createNotification(Context context, NotificationDetails notificationDetails) {
         setupNotificationChannel(context, NotificationChannelDetails.fromNotificationDetails(notificationDetails));
+
+        // delete intent (dismiss)
+        Intent deleteIntentRaw = new Intent(context, getMainActivityClass(context));
+        deleteIntentRaw.setAction(DISMISS_NOTIFICATION);
+        deleteIntentRaw.putExtra(PAYLOAD, notificationDetails.payload);
+        PendingIntent deleteIntent = PendingIntent.getActivity(context, notificationDetails.id, deleteIntentRaw, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // select intent (click)
         Intent intent = new Intent(context, getMainActivityClass(context));
         intent.setAction(SELECT_NOTIFICATION);
         intent.putExtra(PAYLOAD, notificationDetails.payload);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //
         DefaultStyleInformation defaultStyleInformation = (DefaultStyleInformation) notificationDetails.styleInformation;
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationDetails.channelId)
                 .setContentTitle(defaultStyleInformation.htmlFormatTitle ? fromHtml(notificationDetails.title) : notificationDetails.title)
@@ -139,6 +150,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setTicker(notificationDetails.ticker)
                 .setAutoCancel(BooleanUtils.getValue(notificationDetails.autoCancel))
                 .setContentIntent(pendingIntent)
+                .setDeleteIntent(deleteIntent)
                 .setPriority(notificationDetails.priority)
                 .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
                 .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
@@ -954,6 +966,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (SELECT_NOTIFICATION.equals(intent.getAction())) {
             String payload = intent.getStringExtra(PAYLOAD);
             channel.invokeMethod("selectNotification", payload);
+            return true;
+        }
+        if (DISMISS_NOTIFICATION.equals(intent.getAction()))
+        {
+            String payload = intent.getStringExtra(PAYLOAD);
+            channel.invokeMethod("dismissNotification", payload);
             return true;
         }
         return false;

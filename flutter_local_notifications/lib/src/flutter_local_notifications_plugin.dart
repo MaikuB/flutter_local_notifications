@@ -90,12 +90,14 @@ class FlutterLocalNotificationsPlugin {
   /// [IOSInitializationSettings.requestBadgePermission] and [IOSInitializationSettings.requestSoundPermission] values to false.
   /// [requestPermissions] can then be called to request permissions when needed.
   Future<bool> initialize(InitializationSettings initializationSettings,
-      {SelectNotificationCallback onSelectNotification}) async {
+      {SelectNotificationCallback onSelectNotification,
+        DismissNotificationCallback onDismissNotification}) async {
     if (_platform.isAndroid) {
       return await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings?.android,
-              onSelectNotification: onSelectNotification);
+              onSelectNotification: onSelectNotification,
+          onDismissNotification: onDismissNotification);
     } else if (_platform.isIOS) {
       return await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
