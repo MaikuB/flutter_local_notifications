@@ -7,7 +7,22 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   E2EWidgetsFlutterBinding.ensureInitialized();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-
+  group('initialize()', () {
+    setUpAll(() async {
+      flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    });
+    testWidgets('can initialise', (WidgetTester tester) async {
+      final initializationSettingsAndroid =
+          AndroidInitializationSettings('app_icon');
+      final initializationSettingsIOS = IOSInitializationSettings();
+      final initializationSettings = InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS);
+      final initialised = await flutterLocalNotificationsPlugin
+          .initialize(initializationSettings);
+      expect(initialised, isTrue);
+    });
+  });
   group('resolvePlatformSpecificImplementation()', () {
     setUpAll(() async {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();

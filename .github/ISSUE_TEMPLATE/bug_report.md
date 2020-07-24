@@ -1,29 +1,26 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Create a report about bug that you've come across
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-**IMPORTANT**
-If you are getting a build error on Android that mentions AndroidX incompatibilities, before reporting an issue, please make sure look at the error information carefully as there should be a URL that provides information on migrating your application to AndroidX.
-
-Also note that the plugin has an example application that should cover all of the available functionality. Please check the example application and see if the functionality works before logging an issue. You'll need to clone the repository to run it
+<!-- **IMPORTANT: before filing a bug report, please make sure you checked that you have done everything that is covered in the readme as there are steps that need to be followed to get the plugin working correctly on both platforms. You can make use of the example app as a reference to see how the plugin behaves  -->
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+<!-- A clear and concise description of what the bug is. -->
 
 **To Reproduce**
-If applicable, steps to reproduce the behavior:
+<!-- You must include steps to reproduce the problem -->
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
 **Expected behavior**
-If applicable, clear and concise description of what you expected to happen.
+<!-- If applicable, clear and concise description of what you expected to happen. -->
 
 **Sample code to reproduce the problem**
-Ideally, include a link to a repository that contains code that can reproduce the problem. Suggestion is to fork this repository to modify the example app. Note that without a sample, it'll be may be more difficult to reproduce the problem and/or investigate further
+<!-- Unless the bug is an obvious one, you must include a link to repository that contains a minimal app that can reproduce the problem. Otherwise, the bug will be closed as it's not sustainable to rely on guesswork. One way to do to provide a minimal app is to fork this repository and modify the example app so that the bug can be reproduced. -->

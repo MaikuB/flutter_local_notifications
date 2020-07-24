@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications_platform_interface/flutter_local_not
 import 'package:timezone/timezone.dart';
 
 import 'helpers.dart';
+import 'platform_specifics/android/active_notification.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
 import 'platform_specifics/android/notification_channel.dart';
@@ -39,7 +40,7 @@ class MethodChannelFlutterLocalNotificationsPlugin
 
   @override
   Future<NotificationAppLaunchDetails> getNotificationAppLaunchDetails() async {
-    final Map<dynamic, dynamic> result =
+    final Map<Object, Object> result =
         await _channel.invokeMethod('getNotificationAppLaunchDetails');
     return result != null
         ? NotificationAppLaunchDetails(result['notificationLaunchedApp'],
@@ -49,7 +50,7 @@ class MethodChannelFlutterLocalNotificationsPlugin
 
   @override
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() async {
-    final List<Map<dynamic, dynamic>> pendingNotifications =
+    final List<Map<Object, Object>> pendingNotifications =
         await _channel.invokeListMethod('pendingNotificationRequests');
     return pendingNotifications
         // ignore: always_specify_types
@@ -254,6 +255,26 @@ class AndroidFlutterLocalNotificationsPlugin
   /// Deletes the notification channel with the specified [channelId].
   Future<void> deleteNotificationChannel(String channelId) =>
       _channel.invokeMethod('deleteNotificationChannel', channelId);
+
+  /// Returns the list of active notifications shown by the application that
+  /// haven't been dismissed/removed.
+  ///
+  /// This method is only applicable to Android 6.0 or newer and will throw an
+  /// [PlatformException] when called on a device with an incompatible Android
+  /// version.
+  Future<List<ActiveNotification>> getActiveNotifications() async {
+    final List<Map<Object, Object>> activeNotifications =
+        await _channel.invokeListMethod('getActiveNotifications');
+    return activeNotifications
+        // ignore: always_specify_types
+        ?.map((a) => ActiveNotification(
+              a['id'],
+              a['channelId'],
+              a['title'],
+              a['body'],
+            ))
+        ?.toList();
+  }
 
   Future<void> _handleMethod(MethodCall call) {
     switch (call.method) {
