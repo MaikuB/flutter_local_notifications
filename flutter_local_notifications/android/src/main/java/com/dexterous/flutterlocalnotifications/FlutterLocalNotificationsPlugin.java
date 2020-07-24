@@ -16,9 +16,11 @@ import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.PowerManager;
 import android.text.Html;
 import android.text.Spanned;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
@@ -58,6 +60,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -164,6 +167,19 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
         if (notificationDetails.when != null) {
             builder.setWhen(notificationDetails.when);
+        }
+
+        if (notificationDetails.isFullScreen){
+            builder.setFullScreenIntent(pendingIntent, true);
+
+            // wake device
+            PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            if (!powerManager.isInteractive()) {
+
+                // wake it
+                PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK  | PowerManager.ACQUIRE_CAUSES_WAKEUP, "notificationWakeLock");
+                wakeLock.acquire(TimeUnit.MINUTES.toMillis(30));
+            }
         }
 
         setVisibility(notificationDetails, builder);

@@ -44,7 +44,8 @@ class AndroidNotificationDetails {
     this.visibility,
     this.timeoutAfter,
     this.category,
-    this.additionalFlags,
+    this.isFullScreen = false,
+    this.additionalFlags
   });
 
   /// The icon that should be used when displaying the notification.
@@ -215,6 +216,9 @@ class AndroidNotificationDetails {
   ///
   /// Refer to Android notification API documentation at https://developer.android.com/reference/androidx/core/app/NotificationCompat.html#constants_2 for the available categories
   final String category;
+
+  /// Specifies whether the notification should try to launch the intent as soon as it triggeres
+  final bool isFullScreen;
 
   /// Specifies the additional flags.
   ///
