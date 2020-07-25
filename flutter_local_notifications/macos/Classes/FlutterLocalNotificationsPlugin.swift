@@ -78,7 +78,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     
     @available(OSX 10.14, *)
     public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        var options:UNNotificationPresentationOptions = [];
+        var options:UNNotificationPresentationOptions = []
         let presentAlert = notification.request.content.userInfo[MethodCallArguments.presentAlert] as! Bool
         let presentSound = notification.request.content.userInfo[MethodCallArguments.presentSound] as! Bool
         let presentBadge = notification.request.content.userInfo[MethodCallArguments.presentBadge] as! Bool
@@ -277,10 +277,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         } else {
             let arguments = call.arguments as! Dictionary<String, AnyObject>
             let notification = buildNSUserNotification(fromArguments: arguments)
-            let scheduledDateTime = arguments[MethodCallArguments.scheduledDateTime] as! String;
-            let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String;
+            let scheduledDateTime = arguments[MethodCallArguments.scheduledDateTime] as! String
+            let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String
             let timeZone = TimeZone.init(identifier: timeZoneName)
-            let dateFormatter = DateFormatter.init();
+            let dateFormatter = DateFormatter.init()
             dateFormatter.dateFormat = DateFormatStrings.isoFormat
             let date = dateFormatter.date(from: scheduledDateTime)!
             notification.deliveryDate = date
@@ -391,10 +391,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     
     @available(OSX 10.14, *)
     func buildUserNotificationCalendarTrigger(fromArguments arguments:Dictionary<String, AnyObject>) -> UNCalendarNotificationTrigger {
-        let scheduledDateTime = arguments[MethodCallArguments.scheduledDateTime] as! String;
-        let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String;
+        let scheduledDateTime = arguments[MethodCallArguments.scheduledDateTime] as! String
+        let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String
         let timeZone = TimeZone.init(identifier: timeZoneName)
-        let dateFormatter = DateFormatter.init();
+        let dateFormatter = DateFormatter.init()
         dateFormatter.dateFormat = DateFormatStrings.isoFormat
         dateFormatter.timeZone = timeZone
         let date = dateFormatter.date(from: scheduledDateTime)!
@@ -444,7 +444,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         if(badgePermission) {
             options.insert(.badge)
         }
-        UNUserNotificationCenter.current().requestAuthorization(options: options) { (granted, error) in
+        UNUserNotificationCenter.current().requestAuthorization(options: options) { (granted, _) in
             result(granted)
         }
     }
