@@ -538,7 +538,6 @@ class _HomePageState extends State<HomePage> {
                     uiLocalNotificationDateInterpretation:
                     UILocalNotificationDateInterpretation.absoluteTime);
 
-
                 Navigator.pop(context);
               },
             )
