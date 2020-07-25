@@ -444,6 +444,12 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedRaisedButton(
+                      buttonText: 'Show full-screen notification',
+                      onPressed: () async {
+                        await _showFullScreenNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
                       buttonText: 'Create notification channel',
                       onPressed: () async {
                         await _createNotificationChannel();
@@ -499,11 +505,41 @@ class _HomePageState extends State<HomePage> {
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'your channel id', 'your channel name', 'your channel description',
         importance: Importance.max, priority: Priority.high, ticker: 'ticker');
-    var platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0, 'plain title', 'plain body', platformChannelSpecifics,
+    var platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');
+  }
+
+  Future<void> _showFullScreenNotification() async {
+    await showDialog(
+        context: context,
+        child: AlertDialog(
+          title: Text('Turn off your screen'),
+          content: Text('to see the full-screen intent in 3 seconds, press OK and TURN OFF your screen'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () async {
+                Navigator.pop(context);
+
+                await Future.delayed(Duration(seconds: 3));
+
+                var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+                    'your channel id', 'your channel name', 'your channel description',
+                    importance: Importance.max, priority: Priority.max, ticker: 'ticker', fullScreenIntent: true);
+                var platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+                await flutterLocalNotificationsPlugin.show(0, 'plain title', 'plain body', platformChannelSpecifics,
+                    payload: 'item x');
+              },
+            )
+          ],
+        ));
   }
 
   Future<void> _showNotificationWithNoBody() async {
@@ -513,8 +549,7 @@ class _HomePageState extends State<HomePage> {
     var platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
     );
-    await flutterLocalNotificationsPlugin.show(
-        0, 'plain title', null, platformChannelSpecifics,
+    await flutterLocalNotificationsPlugin.show(0, 'plain title', null, platformChannelSpecifics,
         payload: 'item x');
   }
 
