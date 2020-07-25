@@ -234,7 +234,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'visibility': visibility?.index,
         'timeoutAfter': timeoutAfter,
         'category': category,
-        'fullScreen': isFullScreen,
+        'fullScreen': fullScreenIntent,
         'additionalFlags': additionalFlags,
       }
         ..addAll(_convertStyleInformationToMap())

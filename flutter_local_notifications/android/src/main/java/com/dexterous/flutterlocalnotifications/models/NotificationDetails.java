@@ -162,7 +162,7 @@ public class NotificationDetails {
     public String timeZoneName;
     public ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency;
     public Long when;
-    public Boolean isFullScreen;
+    public Boolean fullScreenIntent;
 
 
 
@@ -229,7 +229,7 @@ public class NotificationDetails {
             notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
             notificationDetails.timeoutAfter = parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
             notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
-            notificationDetails.isFullScreen = (Boolean) platformChannelSpecifics.get((FULL_SCREEN));
+            notificationDetails.fullScreenIntent = (Boolean) platformChannelSpecifics.get((FULL_SCREEN));
             notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
         }
     }

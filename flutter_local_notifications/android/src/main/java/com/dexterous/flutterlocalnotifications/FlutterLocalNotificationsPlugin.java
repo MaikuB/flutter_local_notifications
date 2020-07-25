@@ -183,7 +183,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             builder.setWhen(notificationDetails.when);
         }
 
-        if (notificationDetails.isFullScreen){
+        if (notificationDetails.fullScreenIntent){
             builder.setFullScreenIntent(pendingIntent, true);
 
             // wake device
