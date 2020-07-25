@@ -554,7 +554,8 @@ class _HomePageState extends State<HomePage> {
     var platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
     );
-    await flutterLocalNotificationsPlugin.show(0, 'plain title', null, platformChannelSpecifics,
+    await flutterLocalNotificationsPlugin.show(
+        0, 'plain title', null, platformChannelSpecifics,
         payload: 'item x');
   }
 
