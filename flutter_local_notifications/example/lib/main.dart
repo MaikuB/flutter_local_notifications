@@ -515,7 +515,7 @@ class _HomePageState extends State<HomePage> {
         context: context,
         child: AlertDialog(
           title: Text('Turn off your screen'),
-          content: Text('to see the full-screen intent in 3 seconds, press OK and TURN OFF your screen'),
+          content: Text('to see the full-screen intent in 5 seconds, press OK and TURN OFF your screen'),
           actions: <Widget>[
             FlatButton(
               child: Text('Cancel'),
@@ -526,16 +526,21 @@ class _HomePageState extends State<HomePage> {
             FlatButton(
               child: Text('OK'),
               onPressed: () async {
+
+                await flutterLocalNotificationsPlugin.zonedSchedule(
+                    0,
+                    'scheduled title',
+                    'scheduled body',
+                    tz.TZDateTime.now(tz.local).add(Duration(seconds: 5)),
+                    NotificationDetails(
+                        android: AndroidNotificationDetails('your channel id',
+                            'your channel name', 'your channel description', fullScreenIntent: true)),
+                    androidAllowWhileIdle: true,
+                    uiLocalNotificationDateInterpretation:
+                    UILocalNotificationDateInterpretation.absoluteTime);
+
+
                 Navigator.pop(context);
-
-                await Future.delayed(Duration(seconds: 3));
-
-                var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-                    'your channel id', 'your channel name', 'your channel description',
-                    importance: Importance.max, priority: Priority.max, ticker: 'ticker', fullScreenIntent: true);
-                var platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-                await flutterLocalNotificationsPlugin.show(0, 'plain title', 'plain body', platformChannelSpecifics,
-                    payload: 'item x');
               },
             )
           ],
