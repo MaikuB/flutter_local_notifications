@@ -185,15 +185,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
         if (notificationDetails.fullScreenIntent){
             builder.setFullScreenIntent(pendingIntent, true);
-
-            // wake device
-            PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            if (!powerManager.isInteractive()) {
-
-                // wake it
-                PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK  | PowerManager.ACQUIRE_CAUSES_WAKEUP, "notificationWakeLock");
-                wakeLock.acquire(TimeUnit.MINUTES.toMillis(30));
-            }
         }
 
         setVisibility(notificationDetails, builder);

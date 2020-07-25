@@ -135,13 +135,19 @@ If the vibration pattern of an Android notification will be customised then add 
 
 #### Full-Screen Intent Notifications
 
-If your application needs the ability to schedule full-screen intent notifications, add the following  to the manifest (i.e. your application's `AndroidManifest.xml` file)
+If your application needs the ability to schedule full-screen intent notifications, add the following to the manifest (i.e. your application's `AndroidManifest.xml` file)
 
 ```xml
-<uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 ```
 
+You'll also need to add the next attributes to the activity you're opening, usually the class that extends FlutterActivity.
+These make sure the screen turns on and shows when the device is locked.
+```xml
+<activity
+    android:showWhenLocked="true"
+    android:turnScreenOn="true">
+```
 
 For reference, the example app's `AndroidManifest.xml` file can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/AndroidManifest.xml)
 
