@@ -526,7 +526,6 @@ class _HomePageState extends State<HomePage> {
             FlatButton(
               child: Text('OK'),
               onPressed: () async {
-
                 await flutterLocalNotificationsPlugin.zonedSchedule(
                     0,
                     'scheduled title',
