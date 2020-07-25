@@ -133,7 +133,7 @@ If the vibration pattern of an Android notification will be customised then add 
 ```
 
 
-#### Full-Screen Intent Notifications
+#### Fullscreen intent notifications
 
 If your application needs the ability to schedule full-screen intent notifications, add the following to the manifest (i.e. your application's `AndroidManifest.xml` file)
 
