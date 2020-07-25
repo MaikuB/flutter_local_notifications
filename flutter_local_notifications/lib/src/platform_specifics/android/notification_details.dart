@@ -218,6 +218,7 @@ class AndroidNotificationDetails {
   final String category;
 
   /// Specifies whether the notification should launch a full-screen intent as soon as it triggers.
+  /// 
   /// Note: The system UI may choose to display a heads-up notification, instead of launching your full-screen intent, while the user is using the device.
   final bool fullScreenIntent;
 
