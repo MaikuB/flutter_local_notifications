@@ -45,7 +45,7 @@ class AndroidNotificationDetails {
     this.timeoutAfter,
     this.category,
     this.fullScreenIntent = false,
-    this.additionalFlags
+    this.additionalFlags,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -219,7 +219,7 @@ class AndroidNotificationDetails {
 
   /// Specifies whether the notification should launch a full-screen intent as
   /// soon as it triggers.
-  /// 
+  ///
   /// Note: The system UI may choose to display a heads-up notification,
   /// instead of launching your full-screen intent, while the user is using the
   /// device.
