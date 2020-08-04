@@ -983,14 +983,14 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
             if (!notificationManager.areNotificationsEnabled()) {
-                result.success(false);
+                result.success(true);
                 return;
             }
 
             String channelId = call.arguments();
             NotificationChannel channel = notificationManager.getNotificationChannel(channelId);
-            boolean isOn = channel == null || channel.getImportance() != NotificationManager.IMPORTANCE_NONE;
-            result.success(isOn);
+            boolean isDisabled = channel != null && channel.getImportance() == NotificationManager.IMPORTANCE_NONE;
+            result.success(isDisabled);
         }
     }
 }
