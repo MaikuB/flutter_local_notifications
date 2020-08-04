@@ -78,6 +78,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INITIALIZE_METHOD = "initialize";
     private static final String CREATE_NOTIFICATION_CHANNEL_METHOD = "createNotificationChannel";
     private static final String DELETE_NOTIFICATION_CHANNEL_METHOD = "deleteNotificationChannel";
+    private static final String IS_CHANNEL_DISABLED_METHOD = "isChannelDisabled";
     private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
     private static final String SHOW_METHOD = "show";
     private static final String CANCEL_METHOD = "cancel";
@@ -775,6 +776,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case DELETE_NOTIFICATION_CHANNEL_METHOD:
                 deleteNotificationChannel(call, result);
                 break;
+            case IS_CHANNEL_DISABLED_METHOD:
+                isChannelDisabled(call, result);
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -972,6 +976,21 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 String channelId = call.arguments();
                 notificationManager.deleteNotificationChannel(channelId);
                 result.success(null);
+        }
+    }
+
+    private void isChannelDisabled(MethodCall call, Result result) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (!notificationManager.areNotificationsEnabled()) {
+                result.success(false);
+                return;
+            }
+
+            String channelId = call.arguments();
+            NotificationChannel channel = notificationManager.getNotificationChannel(channelId);
+            boolean isOn = channel == null || channel.getImportance() != NotificationManager.IMPORTANCE_NONE;
+            result.success(isOn);
         }
     }
 }

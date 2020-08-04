@@ -183,6 +183,13 @@ class AndroidFlutterLocalNotificationsPlugin
         return Future.error('method not defined');
     }
   }
+
+  /// Check if a channel is disabled or not.
+  ///
+  /// Only applies to Android 8.0+.
+  Future<bool> isChannelDisabled(String channelId) {
+    return _channel.invokeMethod('isChannelDisabled', channelId);
+  }
 }
 
 /// iOS implementation of the local notifications plugin.
