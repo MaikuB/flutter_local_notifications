@@ -81,7 +81,9 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 
 typedef NS_ENUM(NSInteger, ScheduledNotificationRepeatFrequency) {
     DailyFrequency,
-    WeeklyFrequency
+    WeeklyFrequency,
+    MonthlyFrequency,
+    YearlyFrequency
 };
 
 typedef NS_ENUM(NSInteger, UILocalNotificationDateInterpretation) {
@@ -384,6 +386,10 @@ static FlutterError *getFlutterError(NSError *error) {
                 notification.repeatInterval = NSCalendarUnitDay;
             } else  if([scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
                 notification.repeatInterval = NSCalendarUnitWeekOfYear;
+            } else  if([scheduledNotificationRepeatFrequency integerValue] == MonthlyFrequency) {
+                notification.repeatInterval = NSCalendarUnitMonth;
+            } else  if([scheduledNotificationRepeatFrequency integerValue] == YearlyFrequency) {
+                notification.repeatInterval = NSCalendarUnitYear;
             }
         }
         [[UIApplication sharedApplication] scheduleLocalNotification:notification];
@@ -610,7 +616,24 @@ static FlutterError *getFlutterError(NSError *error) {
             return [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:YES];
         }
         else if([scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
-            NSDateComponents *dateComponents    = [calendar components:( NSCalendarUnitWeekday |
+            NSDateComponents *dateComponents    = [calendar components:(
+                                                                        NSCalendarUnitWeekday |
+                                                                        NSCalendarUnitHour  |
+                                                                        NSCalendarUnitMinute|
+                                                                        NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
+            return [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:YES];
+        }
+        else if([scheduledNotificationRepeatFrequency integerValue] == MonthlyFrequency) {
+            NSDateComponents *dateComponents    = [calendar components:(
+                                                                        NSCalendarUnitDay |
+                                                                        NSCalendarUnitHour  |
+                                                                        NSCalendarUnitMinute|
+                                                                        NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
+            return [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:YES];
+        }
+        else if([scheduledNotificationRepeatFrequency integerValue] == YearlyFrequency) {
+            NSDateComponents *dateComponents    = [calendar components:(
+                                                                        NSCalendarUnitMonth |
                                                                         NSCalendarUnitHour  |
                                                                         NSCalendarUnitMinute|
                                                                         NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];

@@ -294,6 +294,20 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
+                    buttonText:
+                        'Schedule monthly 10:00:00 am notification in your local time zone',
+                    onPressed: () async {
+                      await _scheduleMonthlyTenAMNotification();
+                    },
+                  ),
+                  PaddedRaisedButton(
+                    buttonText:
+                        'Schedule yearly 10:00:00 am notification in your local time zone',
+                    onPressed: () async {
+                      await _scheduleYearlyTenAMNotification();
+                    },
+                  ),
+                  PaddedRaisedButton(
                     buttonText: 'Show notification with no sound',
                     onPressed: () async {
                       await _showNotificationWithNoSound();
@@ -957,6 +971,44 @@ class _HomePageState extends State<HomePage> {
             UILocalNotificationDateInterpretation.absoluteTime,
         scheduledNotificationRepeatFrequency:
             ScheduledNotificationRepeatFrequency.weekly);
+  }
+
+  Future<void> _scheduleMonthlyTenAMNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'monthly scheduled notification title',
+        'monthly scheduled notification body',
+        _nextInstanceOfTenAM(),
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+              'monthly notification channel id',
+              'monthly notification channel name',
+              'monthly notificationdescription'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        scheduledNotificationRepeatFrequency:
+            ScheduledNotificationRepeatFrequency.monthly);
+  }
+
+  Future<void> _scheduleYearlyTenAMNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'yearly scheduled notification title',
+        'yearly scheduled notification body',
+        _nextInstanceOfTenAM(),
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+              'yearly notification channel id',
+              'yearly notification channel name',
+              'yearly notificationdescription'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        scheduledNotificationRepeatFrequency:
+            ScheduledNotificationRepeatFrequency.yearly);
   }
 
   tz.TZDateTime _nextInstanceOfTenAM() {

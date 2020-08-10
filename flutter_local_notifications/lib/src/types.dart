@@ -46,4 +46,6 @@ class Time {
 enum ScheduledNotificationRepeatFrequency {
   daily,
   weekly,
+  monthly,
+  yearly,
 }
