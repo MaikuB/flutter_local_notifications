@@ -771,6 +771,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             } else if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Weekly) {
                 LocalDateTime localDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
                 return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+            } else if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Monthly) {
+                LocalDateTime localDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime).plusMonths(1);
+                return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+            } else if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Yearly) {
+                LocalDateTime localDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime).plusYears(1);
+                return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
             }
         } else {
             if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Daily) {
@@ -778,6 +784,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
             } else if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Weekly) {
                 org.threeten.bp.LocalDateTime localDateTime = org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
+                return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+            } else if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Monthly) {
+                org.threeten.bp.LocalDateTime localDateTime = org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).plusMonths(1);
+                return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+            } else if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Yearly) {
+                org.threeten.bp.LocalDateTime localDateTime = org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).plusYears(1);
                 return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
             }
         }
