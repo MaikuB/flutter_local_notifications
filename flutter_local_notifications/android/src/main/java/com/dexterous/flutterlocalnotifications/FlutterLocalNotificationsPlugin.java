@@ -832,7 +832,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private void getNotificationAppLaunchDetails(Result result) {
         Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
         String payload = null;
-        Boolean notificationLaunchedApp = !initialized && mainActivity != null && SELECT_NOTIFICATION.equals(mainActivity.getIntent().getAction());
+        Intent intent = mainActivity.getIntent();
+        Boolean notificationLaunchedApp = !initialized && mainActivity != null && SELECT_NOTIFICATION.equals(intent.getAction()) && !launchedActivityFromHistory(intent);
         notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
         if (notificationLaunchedApp) {
             payload = mainActivity.getIntent().getStringExtra(PAYLOAD);
@@ -852,12 +853,18 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         editor.putString(DEFAULT_ICON, defaultIcon);
         editor.commit();
 
-        if (mainActivity != null) {
-            sendNotificationPayloadMessage(mainActivity.getIntent());
+        Intent intent = mainActivity.getIntent();
+        if (mainActivity != null && !launchedActivityFromHistory(intent)) {
+            sendNotificationPayloadMessage(intent);
         }
         initialized = true;
         result.success(true);
     }
+
+    private static boolean launchedActivityFromHistory(Intent intent) {
+        return intent != null && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY)  == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY;
+    }
+
 
     /// Extracts the details of the notifications passed from the Flutter side and also validates that some of the details (especially resources) passed are valid
     private NotificationDetails extractNotificationDetails(Result result, Map<String, Object> arguments) {
