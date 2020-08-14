@@ -535,8 +535,12 @@ class _HomePageState extends State<HomePage> {
                     'scheduled body',
                     tz.TZDateTime.now(tz.local).add(Duration(seconds: 5)),
                     NotificationDetails(
-                        android: AndroidNotificationDetails('your channel id',
-                            'your channel name', 'your channel description',
+                        android: AndroidNotificationDetails(
+                            'full screen channel id',
+                            'full screen channel name',
+                            'full screen channel description',
+                            priority: Priority.high,
+                            importance: Importance.high,
                             fullScreenIntent: true)),
                     androidAllowWhileIdle: true,
                     uiLocalNotificationDateInterpretation:
