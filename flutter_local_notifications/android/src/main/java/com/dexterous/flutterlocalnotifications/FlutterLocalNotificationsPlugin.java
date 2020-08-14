@@ -170,7 +170,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         setTimeoutAfter(notificationDetails, builder);
         Notification notification = builder.build();
         if (notificationDetails.additionalFlags != null && notificationDetails.additionalFlags.length > 0) {
-            for(int additionalFlag:notificationDetails.additionalFlags) {
+            for (int additionalFlag : notificationDetails.additionalFlags) {
                 notification.flags |= additionalFlag;
             }
         }
@@ -862,7 +862,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static boolean launchedActivityFromHistory(Intent intent) {
-        return intent != null && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY)  == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY;
+        return intent != null && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY;
     }
 
 
@@ -975,10 +975,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private void deleteNotificationChannel(MethodCall call, Result result) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
-                String channelId = call.arguments();
-                notificationManager.deleteNotificationChannel(channelId);
-                result.success(null);
+            NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            String channelId = call.arguments();
+            notificationManager.deleteNotificationChannel(channelId);
+            result.success(null);
         }
     }
 }
