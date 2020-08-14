@@ -1,3 +1,7 @@
+# [1.4.4+3]
+
+* [Android] Fix issue [751](https://github.com/MaikuB/flutter_local_notifications/issues/751) where the `onSelectNotification` callback could be called again after the user has tapped on a notification, sent the application to the background and returned to the app via the Recents screen. This issue could have previously called `getNotificationAppLaunchDetails()` to mistakenly report that a notification launched the app when it's called again as part of the application being resumed
+
 # [1.4.4+2]
 
 * [Android] Updated readme and plugin to fix issue [689](https://github.com/MaikuB/flutter_local_notifications/issues/689) where plugin needs to ensure notifications stay scheduled after an application update
