@@ -108,7 +108,7 @@ public class NotificationDetails {
     private static final String SCHEDULED_DATE_TIME = "scheduledDateTime";
     private static final String TIME_ZONE_NAME = "timeZoneName";
     private static final String SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY = "scheduledNotificationRepeatFrequency";
-
+    private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
 
     public Integer id;
     public String title;
@@ -162,6 +162,7 @@ public class NotificationDetails {
     public String timeZoneName;
     public ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency;
     public Long when;
+    public Boolean fullScreenIntent;
 
 
 
@@ -196,6 +197,7 @@ public class NotificationDetails {
         if (arguments.containsKey(DAY)) {
             notificationDetails.day = (Integer) arguments.get(DAY);
         }
+        
         readPlatformSpecifics(arguments, notificationDetails);
         return notificationDetails;
     }
@@ -227,6 +229,7 @@ public class NotificationDetails {
             notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
             notificationDetails.timeoutAfter = parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
             notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
+            notificationDetails.fullScreenIntent = (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
             notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
         }
     }

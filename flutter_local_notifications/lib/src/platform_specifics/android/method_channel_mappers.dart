@@ -234,7 +234,8 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'visibility': visibility?.index,
         'timeoutAfter': timeoutAfter,
         'category': category,
-        'additionalFlags': additionalFlags
+        'fullScreenIntent': fullScreenIntent,
+        'additionalFlags': additionalFlags,
       }
         ..addAll(_convertStyleInformationToMap())
         ..addAll(_convertNotificationSoundToMap(sound))

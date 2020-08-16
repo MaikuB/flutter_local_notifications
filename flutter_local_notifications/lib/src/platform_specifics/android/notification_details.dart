@@ -44,6 +44,7 @@ class AndroidNotificationDetails {
     this.visibility,
     this.timeoutAfter,
     this.category,
+    this.fullScreenIntent = false,
     this.additionalFlags,
   });
 
@@ -215,6 +216,14 @@ class AndroidNotificationDetails {
   ///
   /// Refer to Android notification API documentation at https://developer.android.com/reference/androidx/core/app/NotificationCompat.html#constants_2 for the available categories
   final String category;
+
+  /// Specifies whether the notification should launch a full-screen intent as
+  /// soon as it triggers.
+  ///
+  /// Note: The system UI may choose to display a heads-up notification,
+  /// instead of launching your full-screen intent, while the user is using the
+  /// device.
+  final bool fullScreenIntent;
 
   /// Specifies the additional flags.
   ///

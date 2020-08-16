@@ -179,6 +179,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             builder.setWhen(notificationDetails.when);
         }
 
+        if (notificationDetails.fullScreenIntent){
+            builder.setFullScreenIntent(pendingIntent, true);
+        }
+
         setVisibility(notificationDetails, builder);
         applyGrouping(notificationDetails, builder);
         setSound(context, notificationDetails, builder);
@@ -190,7 +194,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         setTimeoutAfter(notificationDetails, builder);
         Notification notification = builder.build();
         if (notificationDetails.additionalFlags != null && notificationDetails.additionalFlags.length > 0) {
-            for(int additionalFlag:notificationDetails.additionalFlags) {
+            for (int additionalFlag : notificationDetails.additionalFlags) {
                 notification.flags |= additionalFlag;
             }
         }
@@ -957,7 +961,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private void getNotificationAppLaunchDetails(Result result) {
         Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
         String payload = null;
-        Boolean notificationLaunchedApp = launchIntent != null && SELECT_NOTIFICATION.equals(launchIntent.getAction());
+        Intent intent = mainActivity.getIntent();
+        Boolean notificationLaunchedApp = mainActivity != null && SELECT_NOTIFICATION.equals(intent.getAction()) && !launchedActivityFromHistory(intent);
         notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
         if (notificationLaunchedApp) {
             payload = launchIntent.getStringExtra(PAYLOAD);
@@ -980,11 +985,17 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         editor.putString(DEFAULT_ICON, defaultIcon);
         editor.commit();
 
-        if (mainActivity != null) {
-            sendNotificationPayloadMessage(mainActivity.getIntent());
+        Intent intent = mainActivity.getIntent();
+        if (mainActivity != null && !launchedActivityFromHistory(intent)) {
+            sendNotificationPayloadMessage(intent);
         }
         result.success(true);
     }
+
+    private static boolean launchedActivityFromHistory(Intent intent) {
+        return intent != null && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY;
+    }
+
 
     /// Extracts the details of the notifications passed from the Flutter side and also validates that some of the details (especially resources) passed are valid
     private NotificationDetails extractNotificationDetails(Result result, Map<String, Object> arguments) {
