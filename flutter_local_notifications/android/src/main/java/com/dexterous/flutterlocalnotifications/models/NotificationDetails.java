@@ -84,6 +84,7 @@ public class NotificationDetails {
     private static final String KEY = "key";
     private static final String NAME = "name";
     private static final String URI = "uri";
+    private static final String CIRCLE_ICON = "circleIcon";
     private static final String DATA_MIME_TYPE = "dataMimeType";
     private static final String DATA_URI = "dataUri";
     private static final String CHANNEL_ACTION = "channelAction";
@@ -343,7 +344,8 @@ public class NotificationDetails {
         String key = (String) person.get(KEY);
         String name = (String) person.get(NAME);
         String uri = (String) person.get(URI);
-        return new PersonDetails(bot, icon, iconSource, important, key, name, uri);
+        boolean circleIcon = (boolean) person.get(CIRCLE_ICON);
+        return new PersonDetails(bot, icon, iconSource, important, key, name, uri, circleIcon);
     }
 
     @SuppressWarnings("unchecked")

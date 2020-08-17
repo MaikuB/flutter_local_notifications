@@ -11,6 +11,7 @@ class Person {
     this.key,
     this.name,
     this.uri,
+    this.circleIcon = false
   });
 
   /// Whether or not this person represents a machine rather than a human.
@@ -30,6 +31,12 @@ class Person {
 
   /// Uri for this person.
   final String uri;
+  
+  /// Whether or not to show icon as a rounded circle.
+  ///
+  /// Always false when icon is not a [FlutterBitmapAssetAndroidIcon] or
+  /// a [BitmapFilePathAndroidIcon]. Defaults to false.
+  final bool circleIcon;
 
   /// Creates a [Map] object that describes the [Person] object.
   ///
@@ -40,7 +47,8 @@ class Person {
       'important': important,
       'key': key,
       'name': name,
-      'uri': uri
+      'uri': uri,
+      'circleIcon': (icon is FlutterBitmapAssetAndroidIcon || icon is BitmapFilePathAndroidIcon) ? circleIcon : false
     }..addAll(_convertIconToMap());
   }
 

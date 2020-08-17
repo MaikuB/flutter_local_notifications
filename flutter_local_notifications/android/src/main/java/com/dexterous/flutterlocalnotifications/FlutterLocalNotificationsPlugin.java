@@ -12,6 +12,11 @@ import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -357,14 +362,16 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return bitmap;
     }
 
-    private static IconCompat getIconFromSource(Context context, String iconPath, IconSource iconSource) {
+    private static IconCompat getIconFromSource(Context context, String iconPath, IconSource iconSource, boolean circleIcon) {
         IconCompat icon = null;
         switch (iconSource) {
             case DrawableResource:
                 icon = IconCompat.createWithResource(context, getDrawableResourceId(context, iconPath));
                 break;
             case BitmapFilePath:
-                icon = IconCompat.createWithBitmap(BitmapFactory.decodeFile(iconPath));
+                Bitmap bitmapIcon = BitmapFactory.decodeFile(iconPath);
+                if(circleIcon) bitmapIcon = getCircleBitmap(bitmapIcon);
+                icon = IconCompat.createWithBitmap(bitmapIcon);
                 break;
             case ContentUri:
                 icon = IconCompat.createWithContentUri(iconPath);
@@ -373,7 +380,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 try {
                     AssetFileDescriptor assetFileDescriptor = context.getAssets().openFd(FlutterMain.getLookupKeyForAsset(iconPath));
                     FileInputStream fileInputStream = assetFileDescriptor.createInputStream();
-                    icon = IconCompat.createWithBitmap(BitmapFactory.decodeStream(fileInputStream));
+                    bitmapIcon = BitmapFactory.decodeStream(fileInputStream);
+                    if(circleIcon) bitmapIcon = getCircleBitmap(bitmapIcon);
+                    icon = IconCompat.createWithBitmap(bitmapIcon);
                     fileInputStream.close();
                     assetFileDescriptor.close();
                 } catch (IOException e) {
@@ -384,6 +393,26 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 break;
         }
         return icon;
+    }
+
+    /**
+     * Creates a new Bitmap of the original by painting a circle shape on the canvas.
+     */
+    private static Bitmap getCircleBitmap(@NonNull Bitmap sourceBitmap) {
+        Bitmap output = Bitmap.createBitmap(sourceBitmap.getWidth(), sourceBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, sourceBitmap.getWidth(), sourceBitmap.getHeight());
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        canvas.drawCircle(sourceBitmap.getWidth() >> 1, sourceBitmap.getHeight() >> 1, sourceBitmap.getWidth() >> 1, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(sourceBitmap, rect, rect, paint);
+
+        sourceBitmap.recycle();
+
+        return output;
     }
 
     /**
@@ -591,7 +620,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         Person.Builder personBuilder = new Person.Builder();
         personBuilder.setBot(BooleanUtils.getValue(personDetails.bot));
         if (personDetails.icon != null && personDetails.iconBitmapSource != null) {
-            personBuilder.setIcon(getIconFromSource(context, personDetails.icon, personDetails.iconBitmapSource));
+            personBuilder.setIcon(getIconFromSource(context, personDetails.icon, personDetails.iconBitmapSource, personDetails.circleIcon));
         }
         personBuilder.setImportant(BooleanUtils.getValue(personDetails.important));
         if (personDetails.key != null) {
