@@ -1,6 +1,6 @@
 # [1.4.4+4]
 
-* [Android] Guard calls on getting the intent from the activity in case there isn't an activity that could potentially cause `initialize()` and `getNotificationAppLaunchDetails()` when called from the background
+* [Android] Fix issue [759](https://github.com/MaikuB/flutter_local_notifications/issues/759) by guarding calls on getting the intent from the activity in case there isn't an activity that could cause `initialize()` and `getNotificationAppLaunchDetails()` to fail when called from the background
 
 # [1.4.4+3]
 
