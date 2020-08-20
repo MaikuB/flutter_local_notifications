@@ -1,6 +1,6 @@
 # [1.4.4+4]
 
-* [Android] Guard calls on getting the intent from the activity in case there isn't an activity e.g. when plugin is called from background
+* [Android] Guard calls on getting the intent from the activity in case there isn't an activity that could potentially cause `initialize()` and `getNotificationAppLaunchDetails()`  when plugin is called from the background
 
 # [1.4.4+3]
 
