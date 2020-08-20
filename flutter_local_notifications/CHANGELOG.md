@@ -1,3 +1,7 @@
+# [1.5.0-beta.7]
+
+* [Android] Added support for full-screen notifications via the `fullScreenIntent` argument that has been added to the `AndroidNotificationDetails` class. Thanks to the PR from [Nadav Fima](https://github.com/nadavfima)
+
 # [1.5.0-beta.6]
 
 * [Android] Added the `getActiveNotifications()` method to the `AndroidFlutterLocalNotificationsPlugin` class thanks to the PR from [Vincent Kammerer](https://github.com/vkammerer). This can be used to query the active notifications and is only applicable to Android 6.0 or newer
