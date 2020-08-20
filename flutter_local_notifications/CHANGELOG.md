@@ -1,3 +1,7 @@
+# [1.4.4+4]
+
+* [Android] Fix issue [759](https://github.com/MaikuB/flutter_local_notifications/issues/759) by guarding code on getting the intent from the activity in case there isn't an activity that could cause `initialize()` and `getNotificationAppLaunchDetails()` to fail when called from the background
+
 # [1.4.4+3]
 
 * [Android] Fix issue [751](https://github.com/MaikuB/flutter_local_notifications/issues/751) where the `onSelectNotification` callback could be called again after the user has tapped on a notification, sent the application to the background and returned to the app via the Recents screen. This issue could have previously called `getNotificationAppLaunchDetails()` to mistakenly report that a notification launched the app when it's called again as part of the application being resumed
