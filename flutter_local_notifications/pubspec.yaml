@@ -6,7 +6,7 @@ homepage: https://github.com/MaikuB/flutter_local_notifications/tree/master/flut
 dependencies:
   flutter:
     sdk: flutter
-  platform: ^2.2.1
+  platform: ">=2.0.0 <4.0.0"
   flutter_local_notifications_platform_interface: ^2.0.0-beta.1
   timezone: ^0.5.6
 

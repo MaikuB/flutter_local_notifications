@@ -46,6 +46,7 @@ class AndroidNotificationDetails {
     this.category,
     this.fullScreenIntent = false,
     this.shortcutId,
+    this.startActivityClassName,
     this.additionalFlags,
   });
 
@@ -225,6 +226,9 @@ class AndroidNotificationDetails {
   /// instead of launching your full-screen intent, while the user is using the
   /// device.
   final bool fullScreenIntent;
+
+  /// The class name to start intent on lockscreen.
+  final String startActivityClassName;
 
   /// Specifies the id of a published, long-lived sharing that the notification
   /// will be linked to.

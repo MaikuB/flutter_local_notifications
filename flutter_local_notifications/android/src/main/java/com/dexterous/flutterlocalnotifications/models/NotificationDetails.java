@@ -110,6 +110,7 @@ public class NotificationDetails {
     private static final String SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY = "scheduledNotificationRepeatFrequency";
     private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
     private static final String SHORTCUT_ID = "shortcutId";
+    private static final String START_ACTIVITY_CLASS_NAME = "startActivityClassName";
 
     public Integer id;
     public String title;
@@ -165,6 +166,7 @@ public class NotificationDetails {
     public Long when;
     public Boolean fullScreenIntent;
     public String shortcutId;
+    public String startActivityClassName;
 
 
 
@@ -233,6 +235,7 @@ public class NotificationDetails {
             notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
             notificationDetails.fullScreenIntent = (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
             notificationDetails.shortcutId = (String) platformChannelSpecifics.get(SHORTCUT_ID);
+            notificationDetails.startActivityClassName = (String) platformChannelSpecifics.get(START_ACTIVITY_CLASS_NAME);
             notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
         }
     }

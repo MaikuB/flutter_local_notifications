@@ -134,6 +134,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
@@ -209,6 +210,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'additionalFlags': <int>[4, 32],
               'style': AndroidNotificationStyle.defaultStyle.index,
@@ -288,6 +290,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
@@ -370,6 +373,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
@@ -451,6 +455,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
@@ -531,6 +536,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
@@ -613,6 +619,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
@@ -710,6 +717,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
@@ -801,6 +809,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
@@ -898,6 +907,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
@@ -987,6 +997,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.inbox.index,
               'styleInformation': <String, Object>{
@@ -1080,6 +1091,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.inbox.index,
               'styleInformation': <String, Object>{
@@ -1164,6 +1176,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.media.index,
               'styleInformation': <String, Object>{
@@ -1245,6 +1258,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.media.index,
               'styleInformation': <String, Object>{
@@ -1333,6 +1347,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.messaging.index,
               'styleInformation': <String, Object>{
@@ -1450,6 +1465,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.messaging.index,
               'styleInformation': <String, Object>{
@@ -1556,6 +1572,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'startActivityClassName': null,
               'shortcutId': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{

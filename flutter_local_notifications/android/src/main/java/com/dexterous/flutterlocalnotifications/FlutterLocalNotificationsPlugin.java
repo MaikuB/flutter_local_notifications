@@ -2,6 +2,7 @@ package com.dexterous.flutterlocalnotifications;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -15,8 +16,10 @@ import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.PowerManager;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
@@ -148,7 +151,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private static Notification createNotification(Context context, NotificationDetails notificationDetails) {
         setupNotificationChannel(context, NotificationChannelDetails.fromNotificationDetails(notificationDetails));
-        Intent intent = new Intent(context, getMainActivityClass(context));
+        Intent intent = new Intent(context, getLaunchActivityClass(context, notificationDetails));
         intent.setAction(SELECT_NOTIFICATION);
         intent.putExtra(PAYLOAD, notificationDetails.payload);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -554,6 +557,17 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
+    private static Class getLaunchActivityClass(Context context, NotificationDetails notificationDetails) {
+        if (isKeyguardLocked(context) && notificationDetails.startActivityClassName != null) {
+            try {
+                return Class.forName(notificationDetails.startActivityClassName);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return getMainActivityClass(context);
+    }
+
     private static void setStyle(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
         switch (notificationDetails.style) {
             case BigPicture:
@@ -792,6 +806,20 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return null;
     }
 
+
+    static void startAlarmActivity(final Context context, NotificationDetails notificationDetails) {
+        Intent intent = new Intent(context, getLaunchActivityClass(context, notificationDetails));
+        intent.setAction(SELECT_NOTIFICATION);
+        intent.putExtra(PAYLOAD, notificationDetails.payload);
+        intent.addFlags(Intent.FLAG_FROM_BACKGROUND);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    static boolean isKeyguardLocked(Context context) {
+        KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+        return myKM.isKeyguardLocked();
+    }
 
     private static NotificationManagerCompat getNotificationManager(Context context) {
         return NotificationManagerCompat.from(context);

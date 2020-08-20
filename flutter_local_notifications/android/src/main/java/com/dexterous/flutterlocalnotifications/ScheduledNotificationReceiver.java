@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 
 /**
  * Created by michaelbui on 24/3/18.
@@ -49,8 +50,22 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
             } else {
                 FlutterLocalNotificationsPlugin.removeNotificationFromCache(context, notificationDetails.id);
             }
+            boolean locked = FlutterLocalNotificationsPlugin.isKeyguardLocked(context);
+            boolean firstAlarm = firstAlarm(notificationDetails);
+            boolean hasStartActivity = notificationDetails.startActivityClassName != null;
+            if ( hasStartActivity && (!locked || !firstAlarm )) {
+                FlutterLocalNotificationsPlugin.startAlarmActivity(context, notificationDetails);
+            }
         }
+    }
 
+    boolean firstAlarm(NotificationDetails notificationDetails) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            return LocalDateTime.parse(notificationDetails.scheduledDateTime).getSecond() == 0;
+        }
+        else {
+           return org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).getSecond() == 0;
+        }
     }
 
 }
