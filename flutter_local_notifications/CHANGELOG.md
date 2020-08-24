@@ -1,3 +1,7 @@
+# [1.5.0-beta.8]
+
+* [Android] Fix null pointer exception with trying to access intent when activity is null. Thanks to the PR from [Jonas Bornold](https://github.com/bornold)
+
 # [1.5.0-beta.7]
 
 * [Android] Added support for full-screen notifications via the `fullScreenIntent` argument that has been added to the `AndroidNotificationDetails` class. Thanks to the PR from [Nadav Fima](https://github.com/nadavfima)
