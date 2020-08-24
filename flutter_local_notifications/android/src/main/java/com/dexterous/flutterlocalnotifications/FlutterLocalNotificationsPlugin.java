@@ -795,7 +795,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private void setActivity(Activity flutterActivity) {
         this.mainActivity = flutterActivity;
-        launchIntent = mainActivity.getIntent();
+        if (mainActivity != null) {
+            launchIntent = mainActivity.getIntent();
+        }
     }
 
     private void onAttachedToEngine(Context context, BinaryMessenger binaryMessenger) {
