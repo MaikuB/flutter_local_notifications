@@ -170,7 +170,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         setTimeoutAfter(notificationDetails, builder);
         Notification notification = builder.build();
         if (notificationDetails.additionalFlags != null && notificationDetails.additionalFlags.length > 0) {
-            for(int additionalFlag:notificationDetails.additionalFlags) {
+            for (int additionalFlag : notificationDetails.additionalFlags) {
                 notification.flags |= additionalFlag;
             }
         }
@@ -835,7 +835,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private void getNotificationAppLaunchDetails(Result result) {
         Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
         String payload = null;
-        Boolean notificationLaunchedApp = !initialized && mainActivity != null && SELECT_NOTIFICATION.equals(mainActivity.getIntent().getAction());
+        Boolean notificationLaunchedApp = !initialized && mainActivity != null && SELECT_NOTIFICATION.equals(mainActivity.getIntent().getAction()) && !launchedActivityFromHistory(mainActivity.getIntent());
         notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
         if (notificationLaunchedApp) {
             payload = mainActivity.getIntent().getStringExtra(PAYLOAD);
@@ -855,12 +855,17 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         editor.putString(DEFAULT_ICON, defaultIcon);
         editor.commit();
 
-        if (mainActivity != null) {
+        if (mainActivity != null && !launchedActivityFromHistory(mainActivity.getIntent())) {
             sendNotificationPayloadMessage(mainActivity.getIntent());
         }
         initialized = true;
         result.success(true);
     }
+
+    private static boolean launchedActivityFromHistory(Intent intent) {
+        return intent != null && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY;
+    }
+
 
     /// Extracts the details of the notifications passed from the Flutter side and also validates that some of the details (especially resources) passed are valid
     private NotificationDetails extractNotificationDetails(Result result, Map<String, Object> arguments) {
@@ -971,10 +976,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private void deleteNotificationChannel(MethodCall call, Result result) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
-                String channelId = call.arguments();
-                notificationManager.deleteNotificationChannel(channelId);
-                result.success(null);
+            NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            String channelId = call.arguments();
+            notificationManager.deleteNotificationChannel(channelId);
+            result.success(null);
         }
     }
 }
