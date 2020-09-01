@@ -1,3 +1,7 @@
+# [1.4.4+5]
+
+* [Android] Fix issue [782](https://github.com/MaikuB/flutter_local_notifications/issues/782) by removing unused dependency to the platform lib which fixes the pub versioning error in Flutter 1.22.
+
 # [1.4.4+4]
 
 * [Android] Fix issue [759](https://github.com/MaikuB/flutter_local_notifications/issues/759) by guarding code on getting the intent from the activity in case there isn't an activity that could cause `initialize()` and `getNotificationAppLaunchDetails()` to fail when called from the background
