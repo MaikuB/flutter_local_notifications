@@ -1,3 +1,6 @@
+# [1.4.4+5]
+* Fix issue [782](https://github.com/MaikuB/flutter_local_notifications/issues/782) for Flutter 1.22 by removing direct dependency to `platform` and allowing it to be transitively included through the Flutter SDK.
+
 # [1.4.4+4]
 
 * [Android] Fix issue [759](https://github.com/MaikuB/flutter_local_notifications/issues/759) by guarding code on getting the intent from the activity in case there isn't an activity that could cause `initialize()` and `getNotificationAppLaunchDetails()` to fail when called from the background
