@@ -179,10 +179,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             builder.setWhen(notificationDetails.when);
         }
 
-        if (notificationDetails.fullScreenIntent != null){
-            if (notificationDetails.fullScreenIntent){
-                builder.setFullScreenIntent(pendingIntent, true);
-            }
+        if (BooleanUtils.getValue(notificationDetails.fullScreenIntent)) {
+            builder.setFullScreenIntent(pendingIntent, true);
         }
 
         setVisibility(notificationDetails, builder);
@@ -770,19 +768,19 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     static String getNextFireDate(NotificationDetails notificationDetails) {
-        if(VERSION.SDK_INT >= VERSION_CODES.O) {
-            if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Daily) {
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
+            if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Daily) {
                 LocalDateTime localDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime).plusDays(1);
                 return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
-            } else if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Weekly) {
+            } else if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Weekly) {
                 LocalDateTime localDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
                 return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
             }
         } else {
-            if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Daily) {
+            if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Daily) {
                 org.threeten.bp.LocalDateTime localDateTime = org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).plusDays(1);
                 return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
-            } else if(notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Weekly) {
+            } else if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Weekly) {
                 org.threeten.bp.LocalDateTime localDateTime = org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
                 return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
             }
