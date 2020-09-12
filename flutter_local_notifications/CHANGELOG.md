@@ -1,3 +1,7 @@
+# [1.5.0-beta.9]
+
+* [Android] Fix issues [780](https://github.com/MaikuB/flutter_local_notifications/issues/780) around a null pointer exception related to specifying a full screen intent. Thanks to the PR from [Sebastian Faust](https://github.com/Fasust)
+
 # [1.5.0-beta.8]
 
 * [Android] Fix null pointer exception with trying to access intent when activity is null. Thanks to the PR from [Jonas Bornold](https://github.com/bornold)
