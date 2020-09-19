@@ -5,7 +5,7 @@
 
 A cross platform plugin for displaying local notifications. 
 
-
+## Table of contents
 - **[📱 Supported platforms](#-supported-platforms)**
 - **[✨ Features](#-features)**
 - **[⚠ Caveats and limitations](#-caveats-and-limitations)**
