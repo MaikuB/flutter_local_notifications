@@ -5,6 +5,44 @@
 
 A cross platform plugin for displaying local notifications. 
 
+## Table of contents
+- **[📱 Supported platforms](#-supported-platforms)**
+- **[✨ Features](#-features)**
+- **[⚠ Caveats and limitations](#-caveats-and-limitations)**
+   - [Compatibility with firebase_messaging](#compatibility-with-firebase_messaging)
+   - [Scheduled Android notifications](#scheduled-android-notifications)
+   - [Recurring Android notifications](#recurring-android-notifications)
+   - [iOS pending notifications limit](#ios-pending-notifications-limit)
+   - [Scheduled notifications and daylight savings](#scheduled-notifications-and-daylight-savings)
+   - [Custom notification sounds](#custom-notification-sounds)
+   - [macOS differences](#macos-differences)
+- **[📷 Screenshots](#-screenshots)**
+- **[👏 Acknowledgements](#-acknowledgements)**
+- **[⚙️ Android Setup](#️-android-setup)**
+   - [Custom notification icons and sounds](#custom-notification-icons-and-sounds)
+   - [Scheduled notifications](#scheduled-notifications)
+   - [Fullscreen intent notifications](#fullscreen-intent-notifications)
+   - [Release build configuration](#release-build-configuration)
+- **[⚙️ iOS setup](#️-ios-setup)**
+   - [General setup](#general-setup)
+   - [Handling notifications whilst the app is in the foreground](#handling-notifications-whilst-the-app-is-in-the-foreground)
+- **[❓ Usage](#-usage)**
+   - [Example app](#example-app)
+   - [API reference](#api-reference)
+- **[Initialisation](#initialisation)**
+   - [[iOS (all supported versions) and macOS 10.14+] Requesting notification permissions](#ios-all-supported-versions-and-macos-1014-requesting-notification-permissions)
+   - [Displaying a notification](#displaying-a-notification)
+   - [Scheduling a notification](#scheduling-a-notification)
+   - [Periodically show a notification with a specified interval](#periodically-show-a-notification-with-a-specified-interval)
+   - [Retrieveing pending notification requests](#retrieveing-pending-notification-requests)
+   - [[Android only] Retrieving active notifications](#android-only-retrieving-active-notifications)
+   - [[Android only] Grouping notifications](#android-only-grouping-notifications)
+   - [Cancelling/deleting a notification](#cancellingdeleting-a-notification)
+   - [Cancelling/deleting all notifications](#cancellingdeleting-all-notifications)
+   - [Getting details on if the app was launched via a notification created by this plugin](#getting-details-on-if-the-app-was-launched-via-a-notification-created-by-this-plugin)
+   - [[iOS only] Periodic notifications showing up after reinstallation](#ios-only-periodic-notifications-showing-up-after-reinstallation)
+- **[📈 Testing](#-testing)**
+
 ## 📱 Supported platforms
 * **Android 4.1+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
 * **iOS 8.0+**. On iOS versions older than 10, the plugin will use the UILocalNotification APIs. The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on iOS 10 or newer.
