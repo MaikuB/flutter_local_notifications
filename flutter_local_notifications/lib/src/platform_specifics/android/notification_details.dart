@@ -45,6 +45,7 @@ class AndroidNotificationDetails {
     this.timeoutAfter,
     this.category,
     this.fullScreenIntent = false,
+    this.shortcutId,
     this.additionalFlags,
   });
 
@@ -224,6 +225,13 @@ class AndroidNotificationDetails {
   /// instead of launching your full-screen intent, while the user is using the
   /// device.
   final bool fullScreenIntent;
+
+  /// Specifies the id of a published, long-lived sharing that the notification
+  /// will be linked to.
+  ///
+  /// From Android 11, this affects if a messaging-style notification appears
+  /// in the conversation space.
+  final String shortcutId;
 
   /// Specifies the additional flags.
   ///

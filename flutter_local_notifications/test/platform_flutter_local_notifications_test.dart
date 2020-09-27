@@ -134,6 +134,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -208,6 +209,7 @@ void main() {
               'timeoutAfter': null,
               'category': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'additionalFlags': <int>[4, 32],
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
@@ -286,6 +288,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -367,6 +370,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -447,6 +451,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -526,6 +531,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -607,6 +613,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -703,6 +710,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -793,6 +801,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -889,6 +898,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -977,6 +987,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.inbox.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1069,6 +1080,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.inbox.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -1152,6 +1164,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.media.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1232,6 +1245,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.media.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -1319,6 +1333,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.messaging.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1435,6 +1450,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.messaging.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1540,6 +1556,7 @@ void main() {
               'category': null,
               'additionalFlags': null,
               'fullScreenIntent': false,
+              'shortcutId': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
