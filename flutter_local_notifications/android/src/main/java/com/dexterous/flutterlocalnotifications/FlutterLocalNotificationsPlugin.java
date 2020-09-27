@@ -183,6 +183,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             builder.setFullScreenIntent(pendingIntent, true);
         }
 
+        if (!StringUtils.isNullOrEmpty(notificationDetails.shortcutId)) {
+            builder.setShortcutId(notificationDetails.shortcutId);
+        }
+
         setVisibility(notificationDetails, builder);
         applyGrouping(notificationDetails, builder);
         setSound(context, notificationDetails, builder);

@@ -235,6 +235,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'timeoutAfter': timeoutAfter,
         'category': category,
         'fullScreenIntent': fullScreenIntent,
+        'shortcutId': shortcutId,
         'additionalFlags': additionalFlags,
       }
         ..addAll(_convertStyleInformationToMap())
