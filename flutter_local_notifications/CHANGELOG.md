@@ -1,3 +1,9 @@
+# [1.5.0-beta.10]
+
+* [Android] Bumped compile SDK to 30 (Android 11)
+* [Android] Added ability to specify shortcut id that can be used for conversations. See https://developer.android.com/guide/topics/ui/conversations for more info. Note the plugin doesn't provide the ability to publish shortcuts so developers will likely need to look into writing their own code to do so and save the shortcut id so that it can be linked to notifications
+* Readme now has a table of contents. Thanks to the PR from [Ascênio](https://github.com/Ascenio)
+
 # [1.5.0-beta.9]
 
 * [Android] Fix issue [780](https://github.com/MaikuB/flutter_local_notifications/issues/780) around a null pointer exception related to specifying a full screen intent. Thanks to the PR from [Sebastian Faust](https://github.com/Fasust)
