@@ -1,3 +1,7 @@
+# [1.4.4+5]
+
+* Updated the `platform` package version range constraint so that 3.x null safety releases could be used (currently used in Flutter 1.22 stable)
+
 # [1.4.4+4]
 
 * [Android] Fix issue [759](https://github.com/MaikuB/flutter_local_notifications/issues/759) by guarding code on getting the intent from the activity in case there isn't an activity that could cause `initialize()` and `getNotificationAppLaunchDetails()` to fail when called from the background
