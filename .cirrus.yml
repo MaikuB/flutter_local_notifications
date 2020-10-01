@@ -48,7 +48,6 @@ task:
     kvm: true
   pub_cache:
     folder: ~/.pub-cache
-  kvm_script: sudo chown cirrus:cirrus /dev/kvm
   install_images_script: sdkmanager "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
   create_device_script:
     echo no | avdmanager create avd --force -n test -k "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
