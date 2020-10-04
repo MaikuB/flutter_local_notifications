@@ -12,12 +12,15 @@ void main() {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     });
     testWidgets('can initialise', (WidgetTester tester) async {
-      final initializationSettingsAndroid =
+      const AndroidInitializationSettings initializationSettingsAndroid =
           AndroidInitializationSettings('app_icon');
-      final initializationSettingsIOS = IOSInitializationSettings();
-      final initializationSettings = InitializationSettings(
-          initializationSettingsAndroid, initializationSettingsIOS);
-      final initialised = await flutterLocalNotificationsPlugin
+      const IOSInitializationSettings initializationSettingsIOS =
+          IOSInitializationSettings();
+      const InitializationSettings initializationSettings =
+          InitializationSettings(
+              android: initializationSettingsAndroid,
+              iOS: initializationSettingsIOS);
+      final bool initialised = await flutterLocalNotificationsPlugin
           .initialize(initializationSettings);
       expect(initialised, isTrue);
     });
@@ -25,11 +28,14 @@ void main() {
   group('resolvePlatformSpecificImplementation()', () {
     setUpAll(() async {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-      final initializationSettingsAndroid =
+      const AndroidInitializationSettings initializationSettingsAndroid =
           AndroidInitializationSettings('app_icon');
-      final initializationSettingsIOS = IOSInitializationSettings();
-      final initializationSettings = InitializationSettings(
-          initializationSettingsAndroid, initializationSettingsIOS);
+      const IOSInitializationSettings initializationSettingsIOS =
+          IOSInitializationSettings();
+      const InitializationSettings initializationSettings =
+          InitializationSettings(
+              android: initializationSettingsAndroid,
+              iOS: initializationSettingsIOS);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
     });
 
@@ -58,8 +64,8 @@ void main() {
 
     if (Platform.isIOS) {
       testWidgets(
-          'Returns null trying to resolve Android plugin implementation when running on iOS',
-          (WidgetTester tester) async {
+          'Returns null trying to resolve Android plugin implementation when '
+          'running on iOS', (WidgetTester tester) async {
         expect(
             flutterLocalNotificationsPlugin
                 .resolvePlatformSpecificImplementation<
@@ -69,8 +75,8 @@ void main() {
     }
     if (Platform.isAndroid) {
       testWidgets(
-          'Returns null trying to resolve iOS plugin implementation when running on Android',
-          (WidgetTester tester) async {
+          'Returns null trying to resolve iOS plugin implementation when '
+          'running on Android', (WidgetTester tester) async {
         expect(
             flutterLocalNotificationsPlugin
                 .resolvePlatformSpecificImplementation<

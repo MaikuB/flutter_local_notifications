@@ -15,14 +15,4 @@ class IOSNotificationAttachment {
   ///
   /// When left empty, the iOS APIs will generate a unique identifier
   final String identifier;
-
-  /// Creates a [Map] object that describes the [IOSNotificationAttachment] object.
-  ///
-  /// Mainly for internal use to send the data over a platform channel.
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'identifier': identifier ?? '',
-      'filePath': filePath,
-    };
-  }
 }

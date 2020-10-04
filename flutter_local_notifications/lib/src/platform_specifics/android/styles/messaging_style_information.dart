@@ -1,8 +1,9 @@
-import 'default_style_information.dart';
-import '../person.dart';
 import '../message.dart';
+import '../person.dart';
+import 'default_style_information.dart';
 
-/// Used to pass the content for an Android notification displayed using the messaging style.
+/// Used to pass the content for an Android notification displayed using the
+/// messaging style.
 class MessagingStyleInformation extends DefaultStyleInformation {
   MessagingStyleInformation(
     this.person, {
@@ -11,9 +12,8 @@ class MessagingStyleInformation extends DefaultStyleInformation {
     this.messages,
     bool htmlFormatContent = false,
     bool htmlFormatTitle = false,
-  }) : super(htmlFormatContent, htmlFormatTitle) {
-    assert(this.person?.name != null, 'Must provide the details of the person');
-  }
+  })  : assert(person?.name != null, 'Must provide the details of the person'),
+        super(htmlFormatContent, htmlFormatTitle);
 
   /// The person displayed for any messages that are sent by the user.
   final Person person;
@@ -26,18 +26,4 @@ class MessagingStyleInformation extends DefaultStyleInformation {
 
   /// Messages to be displayed by this notification
   final List<Message> messages;
-
-  /// Creates a [Map] object that describes the [MessagingStyleInformation] object.
-  ///
-  /// Mainly for internal use to send the data over a platform channel.
-  @override
-  Map<String, dynamic> toMap() {
-    return super.toMap()
-      ..addAll(<String, dynamic>{
-        'person': person.toMap(),
-        'conversationTitle': conversationTitle,
-        'groupConversation': groupConversation,
-        'messages': messages?.map((m) => m.toMap())?.toList()
-      });
-  }
 }

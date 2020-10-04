@@ -4,7 +4,8 @@ abstract class AndroidIcon {
   String get icon;
 }
 
-/// Represents a drawable resource belonging to the Android application that should be used as an icon on Android.
+/// Represents a drawable resource belonging to the Android application that
+/// should be used as an icon on Android.
 class DrawableResourceAndroidIcon implements AndroidIcon {
   const DrawableResourceAndroidIcon(this._icon);
 
@@ -17,7 +18,8 @@ class DrawableResourceAndroidIcon implements AndroidIcon {
   String get icon => _icon;
 }
 
-/// Represents a file path to a bitmap that should be used for as an icon on Android.
+/// Represents a file path to a bitmap that should be used for as an icon on
+/// Android.
 class BitmapFilePathAndroidIcon implements AndroidIcon {
   const BitmapFilePathAndroidIcon(this._icon);
 
@@ -39,7 +41,8 @@ class ContentUriAndroidIcon implements AndroidIcon {
   String get icon => _icon;
 }
 
-/// Represents a bitmap asset belonging to the Flutter application that should be used for as an icon on Android.
+/// Represents a bitmap asset belonging to the Flutter application that should
+/// be used for as an icon on Android.
 class FlutterBitmapAssetAndroidIcon implements AndroidIcon {
   const FlutterBitmapAssetAndroidIcon(this._icon);
 
@@ -47,7 +50,8 @@ class FlutterBitmapAssetAndroidIcon implements AndroidIcon {
 
   /// Path to the Flutter asset that refers to the location of the icon.
   ///
-  /// For example, if the following asset is declared in the Flutter application's `pubspec.yaml` file
+  /// For example, if the following asset is declared in the Flutter
+  /// application's `pubspec.yaml` file
   ///
   /// ```
   /// assets:
