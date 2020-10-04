@@ -4,13 +4,13 @@
 Pod::Spec.new do |s|
   s.name             = 'flutter_local_notifications'
   s.version          = '0.0.1'
-  s.summary          = 'Flutter plugin for displaying local notifications.'
+  s.summary          = 'A new flutter plugin project.'
   s.description      = <<-DESC
-Flutter plugin for displaying local notifications.
+A new flutter plugin project.
                        DESC
-  s.homepage         = 'https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications'
-  s.license          = { :type => 'BSD', :file => '../LICENSE' }
-  s.author           = { 'Michael Bui' => 'michael@dexterx.dev' }
+  s.homepage         = 'http://example.com'
+  s.license          = { :file => '../LICENSE' }
+  s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'

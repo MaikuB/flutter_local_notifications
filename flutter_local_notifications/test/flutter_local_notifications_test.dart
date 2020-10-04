@@ -6,13 +6,12 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const int id = 0;
-  const String title = 'title';
-  const String body = 'body';
-  const String payload = 'payload';
+  const id = 0;
+  const title = 'title';
+  const body = 'body';
+  const payload = 'payload';
   TestWidgetsFlutterBinding.ensureInitialized();
-  final MockFlutterLocalNotificationsPlugin mock =
-      MockFlutterLocalNotificationsPlugin();
+  final mock = MockFlutterLocalNotificationsPlugin();
   FlutterLocalNotificationsPlatform.instance = mock;
 
   test('show', () async {
@@ -41,21 +40,18 @@ void main() {
   });
 
   test(
-      'Throws assertion error when creating an IOSNotificationAttachment with '
-      'no file path', () {
+      'Throws assertion error when creating an IOSNotificationAttachment with no file path',
+      () {
     expect(() => IOSNotificationAttachment(null), throwsAssertionError);
   });
 
   test('Creates IOSNotificationAttachment when file path is specified', () {
-    expect(
-        const IOSNotificationAttachment(''), isA<IOSNotificationAttachment>());
+    expect(IOSNotificationAttachment(''), isA<IOSNotificationAttachment>());
   });
 }
 
 class MockMethodChannel extends Mock implements MethodChannel {}
 
 class MockFlutterLocalNotificationsPlugin extends Mock
-    with
-        MockPlatformInterfaceMixin // ignore: prefer_mixin
-    implements
-        FlutterLocalNotificationsPlatform {}
+    with MockPlatformInterfaceMixin
+    implements FlutterLocalNotificationsPlatform {}

@@ -2,17 +2,17 @@
 class Day {
   const Day(this.value);
 
-  static const Day sunday = Day(1);
-  static const Day monday = Day(2);
-  static const Day tuesday = Day(3);
-  static const Day wednesday = Day(4);
-  static const Day thursday = Day(5);
-  static const Day friday = Day(6);
-  static const Day saturday = Day(7);
+  static const Sunday = Day(1);
+  static const Monday = Day(2);
+  static const Tuesday = Day(3);
+  static const Wednesday = Day(4);
+  static const Thursday = Day(5);
+  static const Friday = Day(6);
+  static const Saturday = Day(7);
 
   /// All the possible values for the [Day] enumeration.
   static List<Day> get values =>
-      <Day>[sunday, monday, tuesday, wednesday, thursday, friday, saturday];
+      [Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday];
 
   final int value;
 }
@@ -41,9 +41,15 @@ class Time {
   ///
   /// Accepted range is 0 to 59 inclusive.
   final int second;
-}
 
-enum ScheduledNotificationRepeatFrequency {
-  daily,
-  weekly,
+  /// Creates a [Map] object that describes the [Time] object.
+  ///
+  /// Mainly for internal use to send the data over a platform channel.
+  Map<String, int> toMap() {
+    return <String, int>{
+      'hour': hour,
+      'minute': minute,
+      'second': second,
+    };
+  }
 }

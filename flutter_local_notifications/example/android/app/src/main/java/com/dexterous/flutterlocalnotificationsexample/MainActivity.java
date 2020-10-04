@@ -5,8 +5,6 @@ import android.content.Context;
 import android.media.RingtoneManager;
 import android.os.Bundle;
 
-import java.util.TimeZone;
-
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
@@ -27,7 +25,7 @@ public class MainActivity extends FlutterActivity {
     @Override
     public void configureFlutterEngine(FlutterEngine flutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine);
-        new MethodChannel(flutterEngine.getDartExecutor(), "dexterx.dev/flutter_local_notifications_example").setMethodCallHandler(
+        new MethodChannel(flutterEngine.getDartExecutor(), "crossingthestreams.io/resourceResolver").setMethodCallHandler(
                 (call, result) -> {
                     if ("drawableToUri".equals(call.method)) {
                         int resourceId = MainActivity.this.getResources().getIdentifier((String) call.arguments, "drawable", MainActivity.this.getPackageName());
@@ -35,9 +33,6 @@ public class MainActivity extends FlutterActivity {
                     }
                     if("getAlarmUri".equals(call.method)) {
                         result.success(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString());
-                    }
-                    if("getTimeZoneName".equals(call.method)) {
-                        result.success(TimeZone.getDefault().getID());
                     }
                 });
     }
