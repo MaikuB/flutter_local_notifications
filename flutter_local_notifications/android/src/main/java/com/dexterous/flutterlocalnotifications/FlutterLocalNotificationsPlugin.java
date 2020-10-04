@@ -15,7 +15,9 @@ import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
+import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
 
@@ -32,6 +34,7 @@ import com.dexterous.flutterlocalnotifications.models.NotificationChannelAction;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
 import com.dexterous.flutterlocalnotifications.models.PersonDetails;
+import com.dexterous.flutterlocalnotifications.models.ScheduledNotificationRepeatFrequency;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
@@ -43,10 +46,15 @@ import com.dexterous.flutterlocalnotifications.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.jakewharton.threetenabp.AndroidThreeTen;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -78,11 +86,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INITIALIZE_METHOD = "initialize";
     private static final String CREATE_NOTIFICATION_CHANNEL_METHOD = "createNotificationChannel";
     private static final String DELETE_NOTIFICATION_CHANNEL_METHOD = "deleteNotificationChannel";
+    private static final String GET_ACTIVE_NOTIFICATIONS_METHOD = "getActiveNotifications";
     private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
     private static final String SHOW_METHOD = "show";
     private static final String CANCEL_METHOD = "cancel";
     private static final String CANCEL_ALL_METHOD = "cancelAll";
     private static final String SCHEDULE_METHOD = "schedule";
+    private static final String ZONED_SCHEDULE_METHOD = "zonedSchedule";
     private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
     private static final String SHOW_DAILY_AT_TIME_METHOD = "showDailyAtTime";
     private static final String SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = "showWeeklyAtDayAndTime";
@@ -94,19 +104,18 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INVALID_BIG_PICTURE_ERROR_CODE = "INVALID_BIG_PICTURE";
     private static final String INVALID_SOUND_ERROR_CODE = "INVALID_SOUND";
     private static final String INVALID_LED_DETAILS_ERROR_CODE = "INVALID_LED_DETAILS";
+    private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_CODE = "GET_ACTIVE_NOTIFICATIONS_ERROR_CODE";
+    private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE = "Android version must be 6.0 or newer to use getActiveNotifications";
     private static final String INVALID_LED_DETAILS_ERROR_MESSAGE = "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of Android before Oreo";
     private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
     private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a raw resource to your Android head project.";
-    static String NOTIFICATION_ID = "notification_id";
-    static String NOTIFICATION = "notification";
     static String NOTIFICATION_DETAILS = "notificationDetails";
-    static String REPEAT = "repeat";
     static Gson gson;
     private MethodChannel channel;
     private Context applicationContext;
     private Activity mainActivity;
-    private boolean initialized;
+    private Intent launchIntent;
 
     public static void registerWith(Registrar registrar) {
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
@@ -116,13 +125,24 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     static void rescheduleNotifications(Context context) {
+        initAndroidThreeTen(context);
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         for (NotificationDetails scheduledNotification : scheduledNotifications) {
             if (scheduledNotification.repeatInterval == null) {
-                scheduleNotification(context, scheduledNotification, false);
+                if (scheduledNotification.timeZoneName == null) {
+                    scheduleNotification(context, scheduledNotification, false);
+                } else {
+                    zonedScheduleNotification(context, scheduledNotification, false);
+                }
             } else {
                 repeatNotification(context, scheduledNotification, false);
             }
+        }
+    }
+
+    private static void initAndroidThreeTen(Context context) {
+        if (VERSION.SDK_INT < VERSION_CODES.O) {
+            AndroidThreeTen.init(context);
         }
     }
 
@@ -157,6 +177,14 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
         if (notificationDetails.when != null) {
             builder.setWhen(notificationDetails.when);
+        }
+
+        if (BooleanUtils.getValue(notificationDetails.fullScreenIntent)) {
+            builder.setFullScreenIntent(pendingIntent, true);
+        }
+
+        if (!StringUtils.isNullOrEmpty(notificationDetails.shortcutId)) {
+            builder.setShortcutId(notificationDetails.shortcutId);
         }
 
         setVisibility(notificationDetails, builder);
@@ -232,7 +260,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         editor.commit();
     }
 
-    static void removeNotificationFromCache(Integer notificationId, Context context) {
+    static void removeNotificationFromCache(Context context, Integer notificationId) {
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
             NotificationDetails notificationDetails = it.next();
@@ -249,7 +277,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (html == null) {
             return null;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (VERSION.SDK_INT >= VERSION_CODES.N) {
             return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
         } else {
             return Html.fromHtml(html);
@@ -275,15 +303,83 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-    private static void repeatNotification(Context context, NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
+    private static void zonedScheduleNotification(Context context, final NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
         Gson gson = buildGson();
         String notificationDetailsJson = gson.toJson(notificationDetails);
         Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
         notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
-        notificationIntent.putExtra(REPEAT, true);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         AlarmManager alarmManager = getAlarmManager(context);
+        long epochMilli = VERSION.SDK_INT >= VERSION_CODES.O ? ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), ZoneId.of(notificationDetails.timeZoneName)).toInstant().toEpochMilli() : org.threeten.bp.ZonedDateTime.of(org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime), org.threeten.bp.ZoneId.of(notificationDetails.timeZoneName)).toInstant().toEpochMilli();
+        if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
+            AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+        } else {
+            AlarmManagerCompat.setExact(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+        }
+        if (updateScheduledNotificationsCache) {
+            saveScheduledNotification(context, notificationDetails);
+        }
+    }
+
+    static void scheduleNextRepeatingNotification(Context context, NotificationDetails notificationDetails) {
+        long repeatInterval = calculateRepeatIntervalMilliseconds(notificationDetails);
+        long notificationTriggerTime = calculateNextNotificationTrigger(notificationDetails.calledAt, repeatInterval);
+        Gson gson = buildGson();
+        String notificationDetailsJson = gson.toJson(notificationDetails);
+        Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
+        notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = getAlarmManager(context);
+        AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, notificationTriggerTime, pendingIntent);
+        saveScheduledNotification(context, notificationDetails);
+    }
+
+    private static void repeatNotification(Context context, NotificationDetails notificationDetails, Boolean updateScheduledNotificationsCache) {
+        long repeatInterval = calculateRepeatIntervalMilliseconds(notificationDetails);
+
+        long notificationTriggerTime = notificationDetails.calledAt;
+        if (notificationDetails.repeatTime != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            calendar.set(Calendar.HOUR_OF_DAY, notificationDetails.repeatTime.hour);
+            calendar.set(Calendar.MINUTE, notificationDetails.repeatTime.minute);
+            calendar.set(Calendar.SECOND, notificationDetails.repeatTime.second);
+            if (notificationDetails.day != null) {
+                calendar.set(Calendar.DAY_OF_WEEK, notificationDetails.day);
+            }
+
+            notificationTriggerTime = calendar.getTimeInMillis();
+        }
+
+        notificationTriggerTime = calculateNextNotificationTrigger(notificationTriggerTime, repeatInterval);
+
+        Gson gson = buildGson();
+        String notificationDetailsJson = gson.toJson(notificationDetails);
+        Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
+        notificationIntent.putExtra(NOTIFICATION_DETAILS, notificationDetailsJson);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = getAlarmManager(context);
+
+        if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
+            AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, notificationTriggerTime, pendingIntent);
+        } else {
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, notificationTriggerTime, repeatInterval, pendingIntent);
+        }
+        if (updateScheduledNotificationsCache) {
+            saveScheduledNotification(context, notificationDetails);
+        }
+    }
+
+    private static long calculateNextNotificationTrigger(long notificationTriggerTime, long repeatInterval) {
+        // ensures that time is in the future
+        long currentTime = System.currentTimeMillis();
+        while (notificationTriggerTime < currentTime) {
+            notificationTriggerTime += repeatInterval;
+        }
+        return notificationTriggerTime;
+    }
+
+    private static long calculateRepeatIntervalMilliseconds(NotificationDetails notificationDetails) {
         long repeatInterval = 0;
         switch (notificationDetails.repeatInterval) {
             case EveryMinute:
@@ -301,32 +397,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             default:
                 break;
         }
-
-        long startTimeMilliseconds = notificationDetails.calledAt;
-        if (notificationDetails.repeatTime != null) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.HOUR_OF_DAY, notificationDetails.repeatTime.hour);
-            calendar.set(Calendar.MINUTE, notificationDetails.repeatTime.minute);
-            calendar.set(Calendar.SECOND, notificationDetails.repeatTime.second);
-            if (notificationDetails.day != null) {
-                calendar.set(Calendar.DAY_OF_WEEK, notificationDetails.day);
-            }
-
-            startTimeMilliseconds = calendar.getTimeInMillis();
-        }
-
-        // ensure that start time is in the future
-        long currentTime = System.currentTimeMillis();
-        while (startTimeMilliseconds < currentTime) {
-            startTimeMilliseconds += repeatInterval;
-        }
-
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, startTimeMilliseconds, repeatInterval, pendingIntent);
-
-        if (updateScheduledNotificationsCache) {
-            saveScheduledNotification(context, notificationDetails);
-        }
+        return repeatInterval;
     }
 
     private static void saveScheduledNotification(Context context, NotificationDetails notificationDetails) {
@@ -625,7 +696,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static void setupNotificationChannel(Context context, NotificationChannelDetails notificationChannelDetails) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel notificationChannel = notificationManager.getNotificationChannel(notificationChannelDetails.id);
             // only create/update the channel when needed/specified. Allow this happen to when channelAction may be null to support cases where notifications had been
@@ -690,12 +761,47 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         notificationManagerCompat.notify(notificationDetails.id, notification);
     }
 
+    static void zonedScheduleNextNotification(Context context, NotificationDetails notificationDetails) {
+        String nextFireDate = getNextFireDate(notificationDetails);
+        if (nextFireDate == null) {
+            return;
+        }
+        notificationDetails.scheduledDateTime = nextFireDate;
+        initAndroidThreeTen(context);
+        zonedScheduleNotification(context, notificationDetails, true);
+    }
+
+    static String getNextFireDate(NotificationDetails notificationDetails) {
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
+            if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Daily) {
+                LocalDateTime localDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime).plusDays(1);
+                return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+            } else if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Weekly) {
+                LocalDateTime localDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
+                return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+            }
+        } else {
+            if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Daily) {
+                org.threeten.bp.LocalDateTime localDateTime = org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).plusDays(1);
+                return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+            } else if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Weekly) {
+                org.threeten.bp.LocalDateTime localDateTime = org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
+                return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+            }
+        }
+        return null;
+    }
+
+
     private static NotificationManagerCompat getNotificationManager(Context context) {
         return NotificationManagerCompat.from(context);
     }
 
     private void setActivity(Activity flutterActivity) {
         this.mainActivity = flutterActivity;
+        if (mainActivity != null) {
+            launchIntent = mainActivity.getIntent();
+        }
     }
 
     private void onAttachedToEngine(Context context, BinaryMessenger binaryMessenger) {
@@ -717,6 +823,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     public void onAttachedToActivity(ActivityPluginBinding binding) {
         binding.addOnNewIntentListener(this);
         mainActivity = binding.getActivity();
+        launchIntent = mainActivity.getIntent();
     }
 
     @Override
@@ -754,6 +861,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 schedule(call, result);
                 break;
             }
+            case ZONED_SCHEDULE_METHOD: {
+                zonedSchedule(call, result);
+                break;
+            }
             case PERIODICALLY_SHOW_METHOD:
             case SHOW_DAILY_AT_TIME_METHOD:
             case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD: {
@@ -774,6 +885,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 break;
             case DELETE_NOTIFICATION_CHANNEL_METHOD:
                 deleteNotificationChannel(call, result);
+                break;
+            case GET_ACTIVE_NOTIFICATIONS_METHOD:
+                getActiveNotifications(result);
                 break;
             default:
                 result.notImplemented();
@@ -820,6 +934,15 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
+    private void zonedSchedule(MethodCall call, Result result) {
+        Map<String, Object> arguments = call.arguments();
+        NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
+        if (notificationDetails != null) {
+            zonedScheduleNotification(applicationContext, notificationDetails, true);
+            result.success(null);
+        }
+    }
+
     private void show(MethodCall call, Result result) {
         Map<String, Object> arguments = call.arguments();
         NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
@@ -832,10 +955,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private void getNotificationAppLaunchDetails(Result result) {
         Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
         String payload = null;
-        Boolean notificationLaunchedApp = !initialized && mainActivity != null && SELECT_NOTIFICATION.equals(mainActivity.getIntent().getAction()) && !launchedActivityFromHistory(mainActivity.getIntent());
+        Boolean notificationLaunchedApp = mainActivity != null && SELECT_NOTIFICATION.equals(mainActivity.getIntent().getAction()) && !launchedActivityFromHistory(mainActivity.getIntent());
         notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
         if (notificationLaunchedApp) {
-            payload = mainActivity.getIntent().getStringExtra(PAYLOAD);
+            payload = launchIntent.getStringExtra(PAYLOAD);
         }
         notificationAppLaunchDetails.put(PAYLOAD, payload);
         result.success(notificationAppLaunchDetails);
@@ -847,6 +970,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (!isValidDrawableResource(applicationContext, defaultIcon, result, INVALID_ICON_ERROR_CODE)) {
             return;
         }
+
+        initAndroidThreeTen(applicationContext);
+
         SharedPreferences sharedPreferences = applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(DEFAULT_ICON, defaultIcon);
@@ -855,7 +981,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (mainActivity != null && !launchedActivityFromHistory(mainActivity.getIntent())) {
             sendNotificationPayloadMessage(mainActivity.getIntent());
         }
-        initialized = true;
         result.success(true);
     }
 
@@ -890,7 +1015,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (!StringUtils.isNullOrEmpty(notificationDetails.sound) && (notificationDetails.soundSource == null || notificationDetails.soundSource == SoundSource.RawResource)) {
             int soundResourceId = applicationContext.getResources().getIdentifier(notificationDetails.sound, "raw", applicationContext.getPackageName());
             if (soundResourceId == 0) {
-                result.error(INVALID_SOUND_ERROR_CODE, INVALID_RAW_RESOURCE_ERROR_MESSAGE, null);
+                result.error(INVALID_SOUND_ERROR_CODE, String.format(INVALID_RAW_RESOURCE_ERROR_MESSAGE, notificationDetails.sound), null);
                 return true;
             }
         }
@@ -922,7 +1047,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         alarmManager.cancel(pendingIntent);
         NotificationManagerCompat notificationManager = getNotificationManager(applicationContext);
         notificationManager.cancel(id);
-        removeNotificationFromCache(id, applicationContext);
+        removeNotificationFromCache(applicationContext, id);
     }
 
     private void cancelAllNotifications(Result result) {
@@ -972,11 +1097,38 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private void deleteNotificationChannel(MethodCall call, Result result) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
             String channelId = call.arguments();
             notificationManager.deleteNotificationChannel(channelId);
             result.success(null);
+        }
+    }
+
+    private void getActiveNotifications(Result result) {
+        if (VERSION.SDK_INT < VERSION_CODES.M) {
+            result.error(GET_ACTIVE_NOTIFICATIONS_ERROR_CODE, GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE, null);
+            return;
+        }
+        NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        try {
+            StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
+            List<Map<String, Object>> activeNotificationsPayload = new ArrayList<>();
+
+            for (StatusBarNotification activeNotification : activeNotifications) {
+                HashMap<String, Object> activeNotificationPayload = new HashMap<>();
+                activeNotificationPayload.put("id", activeNotification.getId());
+                Notification notification = activeNotification.getNotification();
+                if (VERSION.SDK_INT >= VERSION_CODES.O) {
+                    activeNotificationPayload.put("channelId", notification.getChannelId());
+                }
+                activeNotificationPayload.put("title", notification.extras.getString("android.title"));
+                activeNotificationPayload.put("body", notification.extras.getString("android.text"));
+                activeNotificationsPayload.add(activeNotificationPayload);
+            }
+            result.success(activeNotificationsPayload);
+        } catch (Throwable e) {
+            result.error(GET_ACTIVE_NOTIFICATIONS_ERROR_CODE, e.getMessage(), e.getStackTrace());
         }
     }
 }
