@@ -1,4 +1,47 @@
+
+
+# [2.0.0]
+
+* Added macOS implementation of the plugin
+* The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods has been marked as a deprecated due to problems with time zones, particularly when it comes to daylight savings.
+* Added the `zonedSchedule` method to the plugin that allows for scheduling notifications to occur on a specific date and time relative a specific time zone. This can be used to schedule daily and weekly notifications as well. The example app has been updated to demonstrate its usage. Note that to support time zone-based scheduling, the plugin now depends on the `timezone` package so that an instance of the `TZDateTime` class is required to the specify the time the notification should occur. This should work in most cases as it is IANA-based and native platforms have time zones that are IANA-based as well. To support time zone aware dates on older versions of Android (which use older Java APIs), the plugin depends on the [ThreeTen Android Backport library](https://github.com/JakeWharton/ThreeTenABP). Once Flutter's support for Android Studio 4.0 and Android Gradle plugin 4.0 has stabilised, the plugin will be updated to make use of [desugaring](https://developer.android.com/studio/releases/gradle-plugin#j8-library-desugaring) instead of relying on the ThreeTen Android Backport library.
+* [Android] Fixed issue [670] where `getNotificationAppLaunchDetails()` behaved inconsistently depending on if it was called before or after `initialize()`
+* [Android] Added the `getActiveNotifications()` method to the `AndroidFlutterLocalNotificationsPlugin` class thanks to the PR from [Vincent Kammerer](https://github.com/vkammerer). This can be used to query the active notifications and is only applicable to Android 6.0 or newer
+* [Android] Fixed an issue where the error message for an invalid source resource wasn't formatted correctly to include the name of the specified resource
+* [Android] Added `androidAllowWhileIdle` boolean argument to the `periodicallyShow` method. When set to true, this changes how recurring notifications are shown so that the Android `AlarmManager` API is used to schedule a notification with exact timing. When the notification appears, the next one is scheduled after that. This is get around the limitations where the `AlarmManager` APIs don't provide a way for work to be repeated with precising timing regardless of the power mode.
+  The example app has been updated to include these changes so that it can be used as a reference as well
+* [Android] Added support for full-screen notifications via the `fullScreenIntent` argument that has been added to the `AndroidNotificationDetails` class. Thanks to the PR from [Nadav Fima](https://github.com/nadavfima)
+* [Android] Bumped compile SDK to 30 (Android 11)
+* [Android] Added ability to specify shortcut id that can be used for conversations. See https://developer.android.com/guide/topics/ui/conversations for more info. Note the plugin doesn't provide the ability to publish shortcuts so developers will likely need to look into writing their own code to do so and save the shortcut id so that it can be linked to notifications
+* [iOS] Updated the details in the plugin's podspec file
+* [iOS] Added ability to specify a subtitle for a notification via the `subtitle` property of the `IOSNotificationDetails` class. This property is only application to iOS versions 10 or newer
+* **Breaking change** The `InitializationSettings` and `NotificationDetails` classes no longer have positional parameters but now have named parameters called `android` and `iOS` for passing in data specific to Android and iOS. There `macOS` named parameter has also been added for passing data specific to macOS
+* **Breaking change** The `toMap` method that was used internally to transfer data over platform channels is no longer publicly accessible
+* **Breaking change** All enum values have been renamed to follow lower camel case convention. This affects the following enums
+  * `Day`
+  * `AndroidNotificationChannelAction`
+  * `Importance` (note: as `default` is a keyword, what use to be `Default` is now `defaultImportance`)
+  * `Priority` (note: as `default` is a keyword, what use to be `Default` is now `defaultPriority`)
+  * `GroupAlertBehavior`
+  * `NotificationVisibility`
+  * `RepeatInterval`
+* **Breaking change** assertions have been added to the `IOSInitializationSettings` constructor to prevent null values being passed in
+* Updated example app so that code for demonstrating functionality that is specific to a platform are only visible when running on the appropriate platform
+* Bumped Android dependencies
+* Updated example app's Proguard rules file to match latest configuration required by GSON
+* Bumped lower bound of Dart SDK dependency to 2.6
+* Updated and fixed wording in API docs
+* Readme now has a table of contents. Thanks to the PR from [Ascênio](https://github.com/Ascenio)
+
+This was incorrectly published in the 1.5.0 update
+
+# [1.5.0+1]
+
+* Revert the breaking 1.5.0 update as that should have been published with the major version incremented
+
 # [1.5.0]
+
+* **BAD** This was a breaking change that was published as a minor version update. This has been reverted by [1.5.0+1]
 
 * Added macOS implementation of the plugin
 * The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods has been marked as a deprecated due to problems with time zones, particularly when it comes to daylight savings.
