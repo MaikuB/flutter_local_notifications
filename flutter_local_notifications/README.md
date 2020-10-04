@@ -241,7 +241,8 @@ final IOSInitializationSettings initializationSettingsIOS =
     IOSInitializationSettings(
         onDidReceiveLocalNotification: onDidReceiveLocalNotification);
 final InitializationSettings initializationSettings = InitializationSettings(
-    initializationSettingsAndroid, initializationSettingsIOS);
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsIOS);
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: onSelectNotification);
 
