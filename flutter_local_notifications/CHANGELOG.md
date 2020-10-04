@@ -1,5 +1,3 @@
-
-
 # [2.0.0]
 
 * Added macOS implementation of the plugin
