@@ -1,8 +1,7 @@
 package com.dexterous.flutterlocalnotifications.models;
 
 import android.graphics.Color;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
+import android.os.Build;
 
 import com.dexterous.flutterlocalnotifications.BitmapSource;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
@@ -16,6 +15,7 @@ import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInfor
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 public class NotificationDetails {
@@ -105,11 +105,6 @@ public class NotificationDetails {
     private static final String WHEN = "when";
     private static final String ADDITIONAL_FLAGS = "additionalFlags";
 
-    private static final String SCHEDULED_DATE_TIME = "scheduledDateTime";
-    private static final String TIME_ZONE_NAME = "timeZoneName";
-    private static final String SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY = "scheduledNotificationRepeatFrequency";
-    private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
-    private static final String SHORTCUT_ID = "shortcutId";
 
     public Integer id;
     public String title;
@@ -159,12 +154,7 @@ public class NotificationDetails {
     public String category;
     public int[] additionalFlags;
     public Boolean showWhen;
-    public String scheduledDateTime;
-    public String timeZoneName;
-    public ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency;
     public Long when;
-    public Boolean fullScreenIntent;
-    public String shortcutId;
 
 
 
@@ -177,11 +167,6 @@ public class NotificationDetails {
         notificationDetails.id = (Integer) arguments.get(ID);
         notificationDetails.title = (String) arguments.get(TITLE);
         notificationDetails.body = (String) arguments.get(BODY);
-        notificationDetails.scheduledDateTime = (String) arguments.get(SCHEDULED_DATE_TIME);
-        notificationDetails.timeZoneName = (String) arguments.get(TIME_ZONE_NAME);
-        if(arguments.containsKey(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)) {
-            notificationDetails.scheduledNotificationRepeatFrequency = ScheduledNotificationRepeatFrequency.values()[(Integer) arguments.get(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)];
-        }
         if (arguments.containsKey(MILLISECONDS_SINCE_EPOCH)) {
             notificationDetails.millisecondsSinceEpoch = (Long) arguments.get(MILLISECONDS_SINCE_EPOCH);
         }
@@ -199,7 +184,6 @@ public class NotificationDetails {
         if (arguments.containsKey(DAY)) {
             notificationDetails.day = (Integer) arguments.get(DAY);
         }
-        
         readPlatformSpecifics(arguments, notificationDetails);
         return notificationDetails;
     }
@@ -231,8 +215,6 @@ public class NotificationDetails {
             notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
             notificationDetails.timeoutAfter = parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
             notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
-            notificationDetails.fullScreenIntent = (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
-            notificationDetails.shortcutId = (String) platformChannelSpecifics.get(SHORTCUT_ID);
             notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
         }
     }
@@ -311,7 +293,7 @@ public class NotificationDetails {
     }
 
     private static void readChannelInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
-        if (VERSION.SDK_INT >= VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationDetails.channelId = (String) platformChannelSpecifics.get(CHANNEL_ID);
             notificationDetails.channelName = (String) platformChannelSpecifics.get(CHANNEL_NAME);
             notificationDetails.channelDescription = (String) platformChannelSpecifics.get(CHANNEL_DESCRIPTION);

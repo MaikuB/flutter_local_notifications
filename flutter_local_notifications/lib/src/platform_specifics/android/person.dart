@@ -1,4 +1,6 @@
-import 'icon.dart';
+import 'package:flutter_local_notifications/src/platform_specifics/android/icon.dart';
+
+import 'enums.dart';
 
 /// Details of a person e.g. someone who sent a message.
 class Person {
@@ -28,4 +30,43 @@ class Person {
 
   /// Uri for this person.
   final String uri;
+
+  /// Creates a [Map] object that describes the [Person] object.
+  ///
+  /// Mainly for internal use to send the data over a platform channel.
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'bot': bot,
+      'important': important,
+      'key': key,
+      'name': name,
+      'uri': uri
+    }..addAll(_convertIconToMap());
+  }
+
+  Map<String, dynamic> _convertIconToMap() {
+    if (icon is DrawableResourceAndroidIcon) {
+      return <String, dynamic>{
+        'icon': icon.icon,
+        'iconSource': AndroidIconSource.DrawableResource.index,
+      };
+    } else if (icon is BitmapFilePathAndroidIcon) {
+      return <String, dynamic>{
+        'icon': icon.icon,
+        'iconSource': AndroidIconSource.BitmapFilePath.index,
+      };
+    } else if (icon is ContentUriAndroidIcon) {
+      return <String, dynamic>{
+        'icon': icon.icon,
+        'iconSource': AndroidIconSource.ContentUri.index,
+      };
+    } else if (icon is FlutterBitmapAssetAndroidIcon) {
+      return <String, dynamic>{
+        'icon': icon.icon,
+        'iconSource': AndroidIconSource.FlutterBitmapAsset.index,
+      };
+    } else {
+      return <String, dynamic>{};
+    }
+  }
 }

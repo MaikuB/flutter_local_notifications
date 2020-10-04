@@ -10,12 +10,7 @@ class IOSInitializationSettings {
     this.defaultPresentSound = true,
     this.defaultPresentBadge = true,
     this.onDidReceiveLocalNotification,
-  })  : assert(requestAlertPermission != null),
-        assert(requestSoundPermission != null),
-        assert(requestBadgePermission != null),
-        assert(defaultPresentAlert != null),
-        assert(defaultPresentBadge != null),
-        assert(defaultPresentSound != null);
+  });
 
   /// Request permission to display an alert.
   ///
@@ -32,34 +27,41 @@ class IOSInitializationSettings {
   /// Default value is true.
   final bool requestBadgePermission;
 
-  /// Configures the default setting on if an alert should be displayed when a
-  /// notification is triggered while app is in the foreground.
+  /// Configures the default setting on if an alert should be displayed when a notification is triggered while app is in the foreground.
   ///
   /// Default value is true.
-  ///
-  /// This property is only applicable to iOS 10 or newer.
+  /// Applicable to iOS 10 and above.
 
   final bool defaultPresentAlert;
 
-  /// Configures the default setting on if a sound should be played when a
-  /// notification is triggered while app is in the foreground by default.
+  /// Configures the default setting on if a sound should be played when a notification is triggered while app is in the foreground by default.
   ///
   /// Default value is true.
-  ///
-  /// This property is only applicable to iOS 10 or newer.
+  /// Applicable to iOS 10 and above.
   final bool defaultPresentSound;
 
-  /// Configures the default setting on if a badge value should be applied when
-  /// a notification is triggered while app is in the foreground by default.
+  /// Configures the default setting on if a badge value should be applied when a notification is triggered while app is in the foreground by default.
   ///
   /// Default value is true.
-  ///
-  /// This property is only applicable to iOS 10 or newer.
+  /// Applicable to iOS 10 and above.
   final bool defaultPresentBadge;
 
-  /// Callback for handling when a notification is triggered while the app is
-  /// in the foreground.
+  /// Callback for handling when a notification is triggered while the app is in the foreground.
   ///
-  /// This property is only applicable to iOS versions older than 10.
+  /// Applicable to iOS versions below 10.
   final DidReceiveLocalNotificationCallback onDidReceiveLocalNotification;
+
+  /// Creates a [Map] object that describes the [IOSInitializationSettings] object.
+  ///
+  /// Mainly for internal use to send the data over a platform channel.
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'requestAlertPermission': requestAlertPermission,
+      'requestSoundPermission': requestSoundPermission,
+      'requestBadgePermission': requestBadgePermission,
+      'defaultPresentAlert': defaultPresentAlert,
+      'defaultPresentSound': defaultPresentSound,
+      'defaultPresentBadge': defaultPresentBadge
+    };
+  }
 }
