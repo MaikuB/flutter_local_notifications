@@ -1,3 +1,7 @@
+# [2.0.0+1]
+
+* Fixed code snippet in readme around initialisation and configuring the `onDidReceiveLocalNotification` callback specific to iOS. Thanks to the PR from [Mike Truso](https://github.com/mftruso)
+
 # [2.0.0]
 
 * Added macOS implementation of the plugin
