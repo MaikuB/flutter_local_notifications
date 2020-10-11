@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/src/platform_specifics/android/enums.dart';
@@ -29,6 +30,9 @@ void main() {
               <Map<String, Object>>[]);
         } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
           return Future<Map<String, Object>>.value(<String, Object>{});
+        } else if (methodCall.method == 'getActiveNotifications') {
+          return Future<List<Map<String, Object>>>.value(
+              <Map<String, Object>>[]);
         }
         return Future<void>.value();
       });
@@ -1663,6 +1667,16 @@ void main() {
       expect(log, <Matcher>[
         isMethodCall('pendingNotificationRequests', arguments: null)
       ]);
+    });
+
+    test('getActiveNotifications', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          .getActiveNotifications();
+      expect(log,
+          <Matcher>[isMethodCall('getActiveNotifications', arguments: null)]);
     });
 
     test('getNotificationAppLaunchDetails', () async {
