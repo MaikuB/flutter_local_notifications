@@ -225,7 +225,7 @@ if #available(iOS 10.0, *) {
 ```
 
 #### Handling notifications whilst the app is in the foreground
-By design, iOS applications *do not* display notifications the app is in the foreground. 
+By design, iOS applications *do not* display notifications while the app is in the foreground. 
 
 For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. 
 
