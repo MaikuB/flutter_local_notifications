@@ -1,3 +1,7 @@
+# [2.0.1]
+
+* [Android] updated plugin and steps in the readme to ensure notifications remain scheduled after a HTC device restarts. Thanks to the PR from [Le Liam](https://github.com/nghenglim)
+
 # [2.0.0+1]
 
 * Fixed code snippet in readme around initialisation and configuring the `onDidReceiveLocalNotification` callback specific to iOS. Thanks to the PR from [Mike Truso](https://github.com/mftruso)
