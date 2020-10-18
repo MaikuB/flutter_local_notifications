@@ -465,6 +465,8 @@ The `uiLocalNotificationDateInterpretation` is required as on iOS versions older
 
 There is an optional `scheduledNotificationRepeatFrequency` parameter that can be used to schedule a notification to appear on a daily or weekly basis.
 
+If you are trying update your code to so it doesn't use the deprecated methods for showing daily or weekly notifications that occur on a specific day of the week then you'll need to perform calculations that would determine the next instance of a date that meets the conditions for your application. See the example application that shows one of the ways that can be done e.g. how schedule a weekly notification to occur on Monday 10:00AM.
+
 ### Periodically show a notification with a specified interval
 
 ```dart
