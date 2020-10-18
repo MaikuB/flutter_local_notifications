@@ -317,6 +317,14 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedRaisedButton(
+                      buttonText:
+                          'Schedule weekly Monday 10:00:00 am notification in '
+                          'your local time zone',
+                      onPressed: () async {
+                        await _scheduleWeeklyMondayTenAMNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
                       buttonText: 'Show notification with no sound',
                       onPressed: () async {
                         await _showNotificationWithNoSound();
@@ -1050,11 +1058,38 @@ class _HomePageState extends State<HomePage> {
             ScheduledNotificationRepeatFrequency.weekly);
   }
 
+  Future<void> _scheduleWeeklyMondayTenAMNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'weekly scheduled notification title',
+        'weekly scheduled notification body',
+        _nextInstanceOfMondayTenAM(),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'weekly notification channel id',
+              'weekly notification channel name',
+              'weekly notificationdescription'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        scheduledNotificationRepeatFrequency:
+            ScheduledNotificationRepeatFrequency.weekly);
+  }
+
   tz.TZDateTime _nextInstanceOfTenAM() {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate =
         tz.TZDateTime(tz.local, now.year, now.month, now.day, 10);
     if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+    return scheduledDate;
+  }
+
+  tz.TZDateTime _nextInstanceOfMondayTenAM() {
+    tz.TZDateTime scheduledDate = _nextInstanceOfTenAM();
+    while (scheduledDate.weekday != DateTime.monday) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
     return scheduledDate;

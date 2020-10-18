@@ -1,3 +1,7 @@
+# [2.0.1+1]
+
+* Updated example application to demonstrate how to use the schedule notifications to occur on particular weekday using `zonedSchedule` method
+
 # [2.0.1]
 
 * [Android] updated plugin and steps in the readme to ensure notifications remain scheduled after a HTC device restarts. Thanks to the PR from [Le Liam](https://github.com/nghenglim)
