@@ -1,6 +1,7 @@
 # [2.0.1+1]
 
 * Updated example application to demonstrate how to use the schedule notifications to occur on particular weekday using `zonedSchedule` method
+* Added a note on migrating away from the deprecated methods for scheduling daily/weekly notifications
 
 # [2.0.1]
 
