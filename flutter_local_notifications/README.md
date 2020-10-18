@@ -418,7 +418,7 @@ In this block of code, the details specific to the Android platform is specified
 
 ### Scheduling a notification
 
-Starting in version 1.5 of the plugin, scheduling notifications now requires developers to specify a date and time relative to a specific time zone. This is to solve issues with daylight savings that existed in the `schedule` method that is now deprecated. A new `zonedSchedule` method is provided that expects an instance `TZDateTime` class provided by the [`timezone`](https://pub.dev/packages/timezone) package. As the `flutter_local_notifications` plugin already depends on the `timezone` package, it's not necessary for developers to add the `timezone` package as a direct dependency. In other words, the `timezone` package will be a transitive dependency after you add the `flutter_local_notifications` plugin as a dependency in your application.
+Starting in version 2.0 of the plugin, scheduling notifications now requires developers to specify a date and time relative to a specific time zone. This is to solve issues with daylight savings that existed in the `schedule` method that is now deprecated. A new `zonedSchedule` method is provided that expects an instance `TZDateTime` class provided by the [`timezone`](https://pub.dev/packages/timezone) package. As the `flutter_local_notifications` plugin already depends on the `timezone` package, it's not necessary for developers to add the `timezone` package as a direct dependency. In other words, the `timezone` package will be a transitive dependency after you add the `flutter_local_notifications` plugin as a dependency in your application.
 
 Usage of the `timezone` package requires initialisation that is covered in the package's readme. For convenience the following are code snippets used by the example app.
 
@@ -465,7 +465,7 @@ The `uiLocalNotificationDateInterpretation` is required as on iOS versions older
 
 There is an optional `scheduledNotificationRepeatFrequency` parameter that can be used to schedule a notification to appear on a daily or weekly basis.
 
-If you are trying update your code to so it doesn't use the deprecated methods for showing daily or weekly notifications that occur on a specific day of the week then you'll need to perform calculations that would determine the next instance of a date that meets the conditions for your application. See the example application that shows one of the ways that can be done e.g. how schedule a weekly notification to occur on Monday 10:00AM.
+If you are trying to update your code so it doesn't use the deprecated methods for showing daily or weekly notifications that occur on a specific day of the week then you'll need to perform calculations that would determine the next instance of a date that meets the conditions for your application. See the example application that shows one of the ways that can be done e.g. how schedule a weekly notification to occur on Monday 10:00AM.
 
 ### Periodically show a notification with a specified interval
 
