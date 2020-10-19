@@ -1035,8 +1035,7 @@ class _HomePageState extends State<HomePage> {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        scheduledNotificationRepeatFrequency:
-            ScheduledNotificationRepeatFrequency.daily);
+        matchDateTimeComponents: DateTimeComponents.time);
   }
 
   Future<void> _scheduleWeeklyTenAMNotification() async {
@@ -1054,8 +1053,7 @@ class _HomePageState extends State<HomePage> {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        scheduledNotificationRepeatFrequency:
-            ScheduledNotificationRepeatFrequency.weekly);
+        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
   }
 
   Future<void> _scheduleWeeklyMondayTenAMNotification() async {
@@ -1073,8 +1071,7 @@ class _HomePageState extends State<HomePage> {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        scheduledNotificationRepeatFrequency:
-            ScheduledNotificationRepeatFrequency.weekly);
+        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
   }
 
   tz.TZDateTime _nextInstanceOfTenAM() {

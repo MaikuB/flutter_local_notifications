@@ -43,7 +43,7 @@ class Time {
   final int second;
 }
 
-enum ScheduledNotificationRepeatFrequency {
-  daily,
-  weekly,
+enum DateTimeComponents {
+  time,
+  dayOfWeekAndTime,
 }

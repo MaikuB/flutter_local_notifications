@@ -253,6 +253,21 @@ class FlutterLocalNotificationsPlugin {
   /// level (i.e. Android/iOS), the plugin needs to pass the time over the
   /// platform channel in yyyy-mm-dd hh:mm:ss format. Therefore, the precision
   /// is at the best to the second.
+  ///
+  /// If a value for [matchDateTimeComponents] argument is given, this tells
+  /// the plugin to schedule a recurring notification that matches the
+  /// specified date and time components. Specifying
+  /// [DateTimeComponents.time] would result in a daily notification at the
+  /// same time whilst [DateTimeComponents.dayOfWeekAndTime] would result
+  /// in a weekly notification that occurs on the same day of the week and time.
+  /// This is similar to how recurring notifications on iOS/macOS work using a
+  /// calendar trigger. Note that when a value is given, the [scheduledDate]
+  /// may not represent the first time the notification will be shown. An
+  /// example would be if the date and time is currently 2020-10-19 11:00
+  /// (i.e. 19th October 2020 11:00AM) and [scheduledDate] is 2020-10-21
+  /// 10:00 and the value of the [matchDateTimeComponents] is
+  /// [DateTimeComponents.time], then the next time a notification will
+  /// appear is 2020-10-20 10:00.
   Future<void> zonedSchedule(
     int id,
     String title,
@@ -264,7 +279,7 @@ class FlutterLocalNotificationsPlugin {
             uiLocalNotificationDateInterpretation,
     @required bool androidAllowWhileIdle,
     String payload,
-    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
+    DateTimeComponents matchDateTimeComponents,
   }) async {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
@@ -273,8 +288,7 @@ class FlutterLocalNotificationsPlugin {
               id, title, body, scheduledDate, notificationDetails?.android,
               payload: payload,
               androidAllowWhileIdle: androidAllowWhileIdle,
-              scheduledNotificationRepeatFrequency:
-                  scheduledNotificationRepeatFrequency);
+              matchDateComponents: matchDateTimeComponents);
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
@@ -283,16 +297,14 @@ class FlutterLocalNotificationsPlugin {
               uiLocalNotificationDateInterpretation:
                   uiLocalNotificationDateInterpretation,
               payload: payload,
-              scheduledNotificationRepeatFrequency:
-                  scheduledNotificationRepeatFrequency);
+              matchDateTimeComponents: matchDateTimeComponents);
     } else if (_platform.isMacOS) {
       await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
           ?.zonedSchedule(
               id, title, body, scheduledDate, notificationDetails?.macOS,
               payload: payload,
-              scheduledNotificationRepeatFrequency:
-                  scheduledNotificationRepeatFrequency);
+              matchDateTimeComponents: matchDateTimeComponents);
     }
   }
 
