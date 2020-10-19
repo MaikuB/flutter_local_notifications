@@ -599,10 +599,11 @@ static FlutterError *getFlutterError(NSError *error) {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 
     // Needed for some countries, when phone DateTime format is 12H
+    NSLocale *posix = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
 
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
     [dateFormatter setTimeZone:timezone];
-    [dateFormatter setLocale:"en_US_POSIX"];
+    [dateFormatter setLocale:posix];
 
     NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
 
