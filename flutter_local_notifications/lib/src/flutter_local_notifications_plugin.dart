@@ -254,6 +254,15 @@ class FlutterLocalNotificationsPlugin {
   /// platform channel in yyyy-mm-dd hh:mm:ss format. Therefore, the precision
   /// is at the best to the second.
   ///
+  /// The [androidAllowWhileIdle] parameter determines if the notification
+  /// should still be shown at the exact time even when the device is in a
+  /// low-power idle mode.
+  ///
+  /// The [uiLocalNotificationDateInterpretation] is for iOS versions older
+  /// than 10 as the APIs have limited support for time zones. With this
+  /// parameter, it is used to determine if the scheduled date should be
+  /// interpreted as absolute time or wall clock time.
+  ///
   /// If a value for [matchDateTimeComponents] parameter is given, this tells
   /// the plugin to schedule a recurring notification that matches the
   /// specified date and time components. Specifying
