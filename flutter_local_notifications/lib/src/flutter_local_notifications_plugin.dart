@@ -254,7 +254,7 @@ class FlutterLocalNotificationsPlugin {
   /// platform channel in yyyy-mm-dd hh:mm:ss format. Therefore, the precision
   /// is at the best to the second.
   ///
-  /// If a value for [matchDateTimeComponents] argument is given, this tells
+  /// If a value for [matchDateTimeComponents] parameter is given, this tells
   /// the plugin to schedule a recurring notification that matches the
   /// specified date and time components. Specifying
   /// [DateTimeComponents.time] would result in a daily notification at the
