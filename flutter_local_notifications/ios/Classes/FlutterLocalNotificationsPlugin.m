@@ -597,10 +597,18 @@ static FlutterError *getFlutterError(NSError *error) {
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+
+    // Needed for some countries, when phone DateTime format is 12H
+    NSLocale *posix = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
     [dateFormatter setTimeZone:timezone];
+    [dateFormatter setLocale:posix];
+
     NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
+
     calendar.timeZone = timezone;
+
     if(scheduledNotificationRepeatFrequency != nil) {
         if([scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
             NSDateComponents *dateComponents    = [calendar components:(

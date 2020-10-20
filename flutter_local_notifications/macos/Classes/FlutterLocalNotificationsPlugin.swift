@@ -395,6 +395,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String
         let timeZone = TimeZone.init(identifier: timeZoneName)
         let dateFormatter = DateFormatter.init()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = DateFormatStrings.isoFormat
         dateFormatter.timeZone = timeZone
         let date = dateFormatter.date(from: scheduledDateTime)!
