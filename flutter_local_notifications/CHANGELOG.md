@@ -1,6 +1,6 @@
 # [2.0.2]
 
-* [iOS][macOS] fixed issue [860](https://github.com/MaikuB/flutter_local_notifications/issues/860) where notifications may fail to be scheduled to an error parsing the specified date that could occur for some users depending on their locale and if they had turned on/off the setting for showing 24 hour time on their device. Thanks to the PR from [Eugene Alitz](https://github.com/psycura)
+* [iOS][macOS] fixed issue [860](https://github.com/MaikuB/flutter_local_notifications/issues/860) where notifications may fail to be scheduled to an error parsing the specified date that could occur for some users depending on their locale and if they had turned off the setting for showing 24 hour time on their device. Thanks to the PR from [Eugene Alitz](https://github.com/psycura)
 
 # [2.0.1+1]
 
