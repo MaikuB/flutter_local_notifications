@@ -27,6 +27,8 @@ task:
   upgrade_script:
     - flutter channel dev
     - flutter upgrade
+  setup_script:
+    - flutter config --enable-macos-desktop
   build_script:
     - cd flutter_local_notifications/example
     - flutter build macos
