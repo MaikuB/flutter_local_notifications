@@ -399,8 +399,8 @@ class FlutterLocalNotificationsPlugin {
   @Deprecated(
       'Deprecated due to problems with time zones. Use zonedSchedule instead '
       'by passing a date in the future with the same day of the week and time '
-      'as well as passing DateTimeComponents.matchTime as the value of the '
-      'matchDateTimeComponents parameter.')
+      'as well as passing DateTimeComponents.dayOfWeekAndTime as the value of '
+      'the matchDateTimeComponents parameter.')
   Future<void> showWeeklyAtDayAndTime(
     int id,
     String title,
