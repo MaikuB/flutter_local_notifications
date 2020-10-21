@@ -809,7 +809,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             ZonedDateTime scheduledDateTime = ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
             ZonedDateTime now = ZonedDateTime.now(zoneId);
             ZonedDateTime nextFireDate = ZonedDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), scheduledDateTime.getHour(), scheduledDateTime.getMinute(), scheduledDateTime.getSecond(), scheduledDateTime.getNano(), zoneId);
-            if (nextFireDate.isBefore(now)) {
+            while(nextFireDate.isBefore(now)) {
                 // adjust to be a date in the future that matches the time
                 nextFireDate = nextFireDate.plusDays(1);
             }
@@ -826,7 +826,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             org.threeten.bp.ZonedDateTime scheduledDateTime = org.threeten.bp.ZonedDateTime.of(org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
             org.threeten.bp.ZonedDateTime now = org.threeten.bp.ZonedDateTime.now(zoneId);
             org.threeten.bp.ZonedDateTime nextFireDate = org.threeten.bp.ZonedDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), scheduledDateTime.getHour(), scheduledDateTime.getMinute(), scheduledDateTime.getSecond(), scheduledDateTime.getNano(), zoneId);
-            if (nextFireDate.isBefore(now)) {
+            while (nextFireDate.isBefore(now)) {
                 // adjust to be a date in the future that matches the time
                 nextFireDate = nextFireDate.plusDays(1);
             }
