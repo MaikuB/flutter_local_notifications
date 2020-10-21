@@ -25,7 +25,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let body = "body"
         static let scheduledDateTime = "scheduledDateTime"
         static let timeZoneName = "timeZoneName"
-        static let scheduledNotificationRepeatFrequency = "scheduledNotificationRepeatFrequency"
+        static let matchDateTimeComponents = "matchDateTimeComponents"
         static let platformSpecifics = "platformSpecifics"
         static let badgeNumber = "badgeNumber"
         static let repeatInterval = "repeatInterval"
@@ -41,6 +41,11 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     enum ScheduledNotificationRepeatFrequency : Int {
         case daily
         case weekly
+    }
+    
+    enum DateTimeComponents : Int {
+        case time
+        case dayOfWeekAndTime
     }
     
     enum RepeatInterval: Int {
@@ -285,12 +290,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let date = dateFormatter.date(from: scheduledDateTime)!
             notification.deliveryDate = date
             notification.deliveryTimeZone = timeZone
-            if let rawRepeatFrequency = arguments[MethodCallArguments.scheduledNotificationRepeatFrequency] as? Int {
-                let repeatFrequency = ScheduledNotificationRepeatFrequency.init(rawValue: rawRepeatFrequency)!
-                switch repeatFrequency {
-                case .daily:
+            if let rawDateTimeComponents = arguments[MethodCallArguments.matchDateTimeComponents] as? Int {
+                let dateTimeComponents = DateTimeComponents.init(rawValue: rawDateTimeComponents)!
+                switch dateTimeComponents {
+                case .time:
                     notification.deliveryRepeatInterval = DateComponents.init(day: 1)
-                case .weekly:
+                case .dayOfWeekAndTime:
                     notification.deliveryRepeatInterval = DateComponents.init(weekOfYear: 1)
                 }
             }
@@ -401,13 +406,13 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         let date = dateFormatter.date(from: scheduledDateTime)!
         var calendar = Calendar.current
         calendar.timeZone = timeZone!
-        if let rawRepeatFrequency = arguments[MethodCallArguments.scheduledNotificationRepeatFrequency] as? Int {
-            let repeatFrequency = ScheduledNotificationRepeatFrequency.init(rawValue: rawRepeatFrequency)!
-            switch repeatFrequency {
-            case .daily:
+        if let rawDateTimeComponents = arguments[MethodCallArguments.matchDateTimeComponents] as? Int {
+            let dateTimeComponents = DateTimeComponents.init(rawValue: rawDateTimeComponents)!
+            switch dateTimeComponents {
+            case .time:
                 let dateComponents = calendar.dateComponents([.day, .hour, .minute, .second, .timeZone], from: date)
                 return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
-            case .weekly:
+            case .dayOfWeekAndTime:
                 let dateComponents = calendar.dateComponents([ .weekday,.hour, .minute, .second, .timeZone], from: date)
                 return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
             }

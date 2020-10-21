@@ -121,7 +121,7 @@ class AndroidFlutterLocalNotificationsPlugin
     AndroidNotificationDetails notificationDetails, {
     @required bool androidAllowWhileIdle,
     String payload,
-    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
+    DateTimeComponents matchDateComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate);
@@ -139,11 +139,10 @@ class AndroidFlutterLocalNotificationsPlugin
           'payload': payload ?? ''
         }
           ..addAll(scheduledDate.toMap())
-          ..addAll(scheduledNotificationRepeatFrequency == null
+          ..addAll(matchDateComponents == null
               ? <String, Object>{}
               : <String, Object>{
-                  'scheduledNotificationRepeatFrequency':
-                      scheduledNotificationRepeatFrequency.index
+                  'matchDateTimeComponents': matchDateComponents.index
                 }));
   }
 
@@ -380,7 +379,7 @@ class IOSFlutterLocalNotificationsPlugin
         UILocalNotificationDateInterpretation
             uiLocalNotificationDateInterpretation,
     String payload,
-    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
+    DateTimeComponents matchDateTimeComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate);
@@ -400,11 +399,10 @@ class IOSFlutterLocalNotificationsPlugin
               uiLocalNotificationDateInterpretation.index,
         }
           ..addAll(scheduledDate.toMap())
-          ..addAll(scheduledNotificationRepeatFrequency == null
+          ..addAll(matchDateTimeComponents == null
               ? <String, Object>{}
               : <String, Object>{
-                  'scheduledNotificationRepeatFrequency':
-                      scheduledNotificationRepeatFrequency.index
+                  'matchDateTimeComponents': matchDateTimeComponents.index
                 }));
   }
 
@@ -570,7 +568,7 @@ class MacOSFlutterLocalNotificationsPlugin
     TZDateTime scheduledDate,
     MacOSNotificationDetails notificationDetails, {
     String payload,
-    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
+    DateTimeComponents matchDateTimeComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate);
@@ -586,11 +584,10 @@ class MacOSFlutterLocalNotificationsPlugin
           'payload': payload ?? '',
         }
           ..addAll(scheduledDate.toMap())
-          ..addAll(scheduledNotificationRepeatFrequency == null
+          ..addAll(matchDateTimeComponents == null
               ? <String, Object>{}
               : <String, Object>{
-                  'scheduledNotificationRepeatFrequency':
-                      scheduledNotificationRepeatFrequency.index
+                  'matchDateTimeComponents': matchDateTimeComponents.index
                 }));
   }
 

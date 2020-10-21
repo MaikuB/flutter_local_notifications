@@ -28,6 +28,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
 import androidx.core.graphics.drawable.IconCompat;
 
+import com.dexterous.flutterlocalnotifications.models.DateTimeComponents;
 import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelAction;
@@ -771,6 +772,16 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         zonedScheduleNotification(context, notificationDetails, true);
     }
 
+    static void zonedScheduleNextNotificationMatchingDateComponents(Context context, NotificationDetails notificationDetails) {
+        String nextFireDate = getNextFireDateMatchingDateTimeComponents(notificationDetails);
+        if (nextFireDate == null) {
+            return;
+        }
+        notificationDetails.scheduledDateTime = nextFireDate;
+        initAndroidThreeTen(context);
+        zonedScheduleNotification(context, notificationDetails, true);
+    }
+
     static String getNextFireDate(NotificationDetails notificationDetails) {
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
             if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Daily) {
@@ -787,6 +798,45 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             } else if (notificationDetails.scheduledNotificationRepeatFrequency == ScheduledNotificationRepeatFrequency.Weekly) {
                 org.threeten.bp.LocalDateTime localDateTime = org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
                 return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+            }
+        }
+        return null;
+    }
+
+    static String getNextFireDateMatchingDateTimeComponents(NotificationDetails notificationDetails) {
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
+            ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
+            ZonedDateTime scheduledDateTime = ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
+            ZonedDateTime now = ZonedDateTime.now(zoneId);
+            ZonedDateTime nextFireDate = ZonedDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), scheduledDateTime.getHour(), scheduledDateTime.getMinute(), scheduledDateTime.getSecond(), scheduledDateTime.getNano(), zoneId);
+            while(nextFireDate.isBefore(now)) {
+                // adjust to be a date in the future that matches the time
+                nextFireDate = nextFireDate.plusDays(1);
+            }
+            if (notificationDetails.matchDateTimeComponents == DateTimeComponents.Time) {
+                return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+            } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DayOfWeekAndTime) {
+                while (nextFireDate.getDayOfWeek() != scheduledDateTime.getDayOfWeek()) {
+                    nextFireDate = nextFireDate.plusDays(1);
+                }
+                return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+            }
+        } else {
+            org.threeten.bp.ZoneId zoneId = org.threeten.bp.ZoneId.of(notificationDetails.timeZoneName);
+            org.threeten.bp.ZonedDateTime scheduledDateTime = org.threeten.bp.ZonedDateTime.of(org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
+            org.threeten.bp.ZonedDateTime now = org.threeten.bp.ZonedDateTime.now(zoneId);
+            org.threeten.bp.ZonedDateTime nextFireDate = org.threeten.bp.ZonedDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), scheduledDateTime.getHour(), scheduledDateTime.getMinute(), scheduledDateTime.getSecond(), scheduledDateTime.getNano(), zoneId);
+            while (nextFireDate.isBefore(now)) {
+                // adjust to be a date in the future that matches the time
+                nextFireDate = nextFireDate.plusDays(1);
+            }
+            if (notificationDetails.matchDateTimeComponents == DateTimeComponents.Time) {
+                return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+            } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DayOfWeekAndTime) {
+                while (nextFireDate.getDayOfWeek() != scheduledDateTime.getDayOfWeek()) {
+                    nextFireDate = nextFireDate.plusDays(1);
+                }
+                return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
             }
         }
         return null;
@@ -938,6 +988,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         Map<String, Object> arguments = call.arguments();
         NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
         if (notificationDetails != null) {
+            if(notificationDetails.matchDateTimeComponents != null) {
+                notificationDetails.scheduledDateTime = getNextFireDateMatchingDateTimeComponents(notificationDetails);
+            }
             zonedScheduleNotification(applicationContext, notificationDetails, true);
             result.success(null);
         }

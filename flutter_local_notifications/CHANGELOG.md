@@ -1,3 +1,7 @@
+# [3.0.0]
+
+* **Breaking change** The `scheduledNotificationRepeatFrequency` parameter of the `zonedSchedule` method has been removed. This has been replaced by `matchDateTimeComponents` parameter that can be used to schedule a recurring notification. This was done to better indicate that this is used to schedule recurring daily of weekly notifications based on the specified date components. This is more inline with how the calendar trigger works for notifications for iOS and macOS. Given a date (e.g. Monday 2020-10-19 10:00 AM), specifying to match on the time component of would result in a notification occurring daily at the same time (10:00 AM). Specifying to match on the day of the week and time allows for a weekly notification to occur (Monday 10:00 AM), The deprecation warnings for the `showDailyAtTime()` and `showWeeklyAtDayAndTime()` methods have been updated to give a brief description along the same lines.
+
 # [2.0.2]
 
 * [iOS][macOS] fixed issue [860](https://github.com/MaikuB/flutter_local_notifications/issues/860) where notifications may fail to be scheduled to an error parsing the specified date that could occur for some users depending on their locale and if they had turned off the setting for showing 24 hour time on their device. Thanks to the PR from [Eugene Alitz](https://github.com/psycura)

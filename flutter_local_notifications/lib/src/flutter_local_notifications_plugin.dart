@@ -219,8 +219,8 @@ class FlutterLocalNotificationsPlugin {
   /// The [androidAllowWhileIdle] parameter determines if the notification
   /// should still be shown at the exact time even when the device is in a
   /// low-power idle mode.
-  @Deprecated(
-      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
+  @Deprecated('Deprecated due to problems with time zones. Use zonedSchedule '
+      'instead.')
   Future<void> schedule(
     int id,
     String title,
@@ -253,6 +253,30 @@ class FlutterLocalNotificationsPlugin {
   /// level (i.e. Android/iOS), the plugin needs to pass the time over the
   /// platform channel in yyyy-mm-dd hh:mm:ss format. Therefore, the precision
   /// is at the best to the second.
+  ///
+  /// The [androidAllowWhileIdle] parameter determines if the notification
+  /// should still be shown at the exact time even when the device is in a
+  /// low-power idle mode.
+  ///
+  /// The [uiLocalNotificationDateInterpretation] is for iOS versions older
+  /// than 10 as the APIs have limited support for time zones. With this
+  /// parameter, it is used to determine if the scheduled date should be
+  /// interpreted as absolute time or wall clock time.
+  ///
+  /// If a value for [matchDateTimeComponents] parameter is given, this tells
+  /// the plugin to schedule a recurring notification that matches the
+  /// specified date and time components. Specifying
+  /// [DateTimeComponents.time] would result in a daily notification at the
+  /// same time whilst [DateTimeComponents.dayOfWeekAndTime] would result
+  /// in a weekly notification that occurs on the same day of the week and time.
+  /// This is similar to how recurring notifications on iOS/macOS work using a
+  /// calendar trigger. Note that when a value is given, the [scheduledDate]
+  /// may not represent the first time the notification will be shown. An
+  /// example would be if the date and time is currently 2020-10-19 11:00
+  /// (i.e. 19th October 2020 11:00AM) and [scheduledDate] is 2020-10-21
+  /// 10:00 and the value of the [matchDateTimeComponents] is
+  /// [DateTimeComponents.time], then the next time a notification will
+  /// appear is 2020-10-20 10:00.
   Future<void> zonedSchedule(
     int id,
     String title,
@@ -264,7 +288,7 @@ class FlutterLocalNotificationsPlugin {
             uiLocalNotificationDateInterpretation,
     @required bool androidAllowWhileIdle,
     String payload,
-    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
+    DateTimeComponents matchDateTimeComponents,
   }) async {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
@@ -273,8 +297,7 @@ class FlutterLocalNotificationsPlugin {
               id, title, body, scheduledDate, notificationDetails?.android,
               payload: payload,
               androidAllowWhileIdle: androidAllowWhileIdle,
-              scheduledNotificationRepeatFrequency:
-                  scheduledNotificationRepeatFrequency);
+              matchDateComponents: matchDateTimeComponents);
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
@@ -283,16 +306,14 @@ class FlutterLocalNotificationsPlugin {
               uiLocalNotificationDateInterpretation:
                   uiLocalNotificationDateInterpretation,
               payload: payload,
-              scheduledNotificationRepeatFrequency:
-                  scheduledNotificationRepeatFrequency);
+              matchDateTimeComponents: matchDateTimeComponents);
     } else if (_platform.isMacOS) {
       await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
           ?.zonedSchedule(
               id, title, body, scheduledDate, notificationDetails?.macOS,
               payload: payload,
-              scheduledNotificationRepeatFrequency:
-                  scheduledNotificationRepeatFrequency);
+              matchDateTimeComponents: matchDateTimeComponents);
     }
   }
 
@@ -345,7 +366,10 @@ class FlutterLocalNotificationsPlugin {
 
   /// Shows a notification on a daily interval at the specified time.
   @Deprecated(
-      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
+      'Deprecated due to problems with time zones. Use zonedSchedule instead '
+      'by passing a date in the future with the same time and pass '
+      'DateTimeComponents.matchTime as the value of the '
+      'matchDateTimeComponents parameter.')
   Future<void> showDailyAtTime(
     int id,
     String title,
@@ -373,7 +397,10 @@ class FlutterLocalNotificationsPlugin {
 
   /// Shows a notification on weekly interval at the specified day and time.
   @Deprecated(
-      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
+      'Deprecated due to problems with time zones. Use zonedSchedule instead '
+      'by passing a date in the future with the same day of the week and time '
+      'as well as passing DateTimeComponents.dayOfWeekAndTime as the value of '
+      'the matchDateTimeComponents parameter.')
   Future<void> showWeeklyAtDayAndTime(
     int id,
     String title,

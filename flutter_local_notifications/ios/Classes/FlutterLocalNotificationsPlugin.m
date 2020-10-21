@@ -64,7 +64,7 @@ NSString *const MINUTE = @"minute";
 NSString *const SECOND = @"second";
 NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTime";
 NSString *const TIME_ZONE_NAME = @"timeZoneName";
-NSString *const SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY = @"scheduledNotificationRepeatFrequency";
+NSString *const MATCH_DATE_TIME_COMPONENTS = @"matchDateTimeComponents";
 NSString *const UILOCALNOTIFICATION_DATE_INTERPRETATION = @"uiLocalNotificationDateInterpretation";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
@@ -79,9 +79,9 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     Weekly
 };
 
-typedef NS_ENUM(NSInteger, ScheduledNotificationRepeatFrequency) {
-    DailyFrequency,
-    WeeklyFrequency
+typedef NS_ENUM(NSInteger, DateTimeComponents) {
+    Time,
+    DayOfWeekAndTime
 };
 
 typedef NS_ENUM(NSInteger, UILocalNotificationDateInterpretation) {
@@ -364,7 +364,7 @@ static FlutterError *getFlutterError(NSError *error) {
         UILocalNotification * notification = [self buildStandardUILocalNotification:arguments];
         NSString *scheduledDateTime  = arguments[SCHEDULED_DATE_TIME];
         NSString *timeZoneName = arguments[TIME_ZONE_NAME];
-        NSNumber *scheduledNotificationRepeatFrequency = arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY];
+        NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
         NSNumber *uiLocalNotificationDateInterpretation = arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION];
         NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -379,10 +379,10 @@ static FlutterError *getFlutterError(NSError *error) {
                 notification.timeZone = timezone;
             }
         }
-        if (scheduledNotificationRepeatFrequency != nil) {
-            if([scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
+        if(matchDateComponents != nil) {
+            if([matchDateComponents integerValue] == Time) {
                 notification.repeatInterval = NSCalendarUnitDay;
-            } else  if([scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
+            } else if([matchDateComponents integerValue] == DayOfWeekAndTime) {
                 notification.repeatInterval = NSCalendarUnitWeekOfYear;
             }
         }
@@ -593,7 +593,8 @@ static FlutterError *getFlutterError(NSError *error) {
 - (UNCalendarNotificationTrigger *) buildUserNotificationCalendarTrigger:(id) arguments NS_AVAILABLE_IOS(10.0) {
     NSString *scheduledDateTime  = arguments[SCHEDULED_DATE_TIME];
     NSString *timeZoneName = arguments[TIME_ZONE_NAME];
-    NSNumber *scheduledNotificationRepeatFrequency = arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY];
+    
+    NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -608,16 +609,15 @@ static FlutterError *getFlutterError(NSError *error) {
     NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
 
     calendar.timeZone = timezone;
-
-    if(scheduledNotificationRepeatFrequency != nil) {
-        if([scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
+    if(matchDateComponents != nil) {
+        if([matchDateComponents integerValue] == Time) {
             NSDateComponents *dateComponents    = [calendar components:(
                                                                         NSCalendarUnitHour  |
                                                                         NSCalendarUnitMinute|
                                                                         NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
             return [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:YES];
-        }
-        else if([scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
+            
+        } else if([matchDateComponents integerValue] == DayOfWeekAndTime) {
             NSDateComponents *dateComponents    = [calendar components:( NSCalendarUnitWeekday |
                                                                         NSCalendarUnitHour  |
                                                                         NSCalendarUnitMinute|
