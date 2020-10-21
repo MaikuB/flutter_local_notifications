@@ -220,7 +220,7 @@ class FlutterLocalNotificationsPlugin {
   /// should still be shown at the exact time even when the device is in a
   /// low-power idle mode.
   @Deprecated(
-      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
+      'Deprecated due to problems with time zones. Use zonedSchedule() instead.')
   Future<void> schedule(
     int id,
     String title,
@@ -366,7 +366,8 @@ class FlutterLocalNotificationsPlugin {
 
   /// Shows a notification on a daily interval at the specified time.
   @Deprecated(
-      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
+      'Deprecated due to problems with time zones. Use zonedSchedule() instead '
+      'by passing a date in the future with the same time and pass DateTimeComponents.matchTime as the value of the matchDateTimeComponents parameter.')
   Future<void> showDailyAtTime(
     int id,
     String title,
@@ -394,7 +395,10 @@ class FlutterLocalNotificationsPlugin {
 
   /// Shows a notification on weekly interval at the specified day and time.
   @Deprecated(
-      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
+      'Deprecated due to problems with time zones. Use zonedSchedule() instead '
+      'by passing a date in the future with the same day of the week and time '
+      'as well as passing DateTimeComponents.matchTime as the value of the '
+      'matchDateTimeComponents parameter.')
   Future<void> showWeeklyAtDayAndTime(
     int id,
     String title,
