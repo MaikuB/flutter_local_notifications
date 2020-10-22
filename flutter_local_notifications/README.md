@@ -192,7 +192,7 @@ These make sure the screen turns on and shows when the device is locked.
 
 For reference, the example app's `AndroidManifest.xml` file can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/AndroidManifest.xml).
 
-Note that when a full-screen intent notification actually occurs (as opposed to a heads-up notification that the system may decide should occur), the `onSelectNotification` callback will fire and this when applications can execute logic to display the appropriate page.
+Note that when a full-screen intent notification actually occurs (as opposed to a heads-up notification that the system may decide should occur), the plugin will act as though the user has tapped on a notification so handle those the same way (e.g. `onSelectNotification` callback) to display the appropriate page for your application.
 
 
 #### Release build configuration
