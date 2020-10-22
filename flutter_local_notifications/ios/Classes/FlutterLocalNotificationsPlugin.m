@@ -657,7 +657,15 @@ static FlutterError *getFlutterError(NSError *error) {
 
 
 - (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge payload:(NSString *)payload {
-    NSDictionary *userDict =[NSDictionary dictionaryWithObjectsAndKeys:id, NOTIFICATION_ID, title, TITLE, [NSNumber numberWithBool:presentAlert], PRESENT_ALERT, [NSNumber numberWithBool:presentSound], PRESENT_SOUND, [NSNumber numberWithBool:presentBadge], PRESENT_BADGE, payload, PAYLOAD, nil];
+    NSMutableDictionary *userDict = [[NSMutableDictionary alloc] init];
+    userDict[NOTIFICATION_ID] = id;
+    if(title) {
+        userDict[TITLE] = title;
+    }
+    userDict[PRESENT_ALERT] = [NSNumber numberWithBool:presentAlert];
+    userDict[PRESENT_SOUND] = [NSNumber numberWithBool:presentSound];
+    userDict[PRESENT_BADGE] = [NSNumber numberWithBool:presentBadge];
+    userDict[PAYLOAD] = payload;
     return userDict;
 }
 
@@ -675,7 +683,7 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (BOOL)isAFlutterLocalNotification:(NSDictionary *)userInfo {
-    return userInfo != nil && userInfo[NOTIFICATION_ID] && userInfo[TITLE] && userInfo[PRESENT_ALERT] && userInfo[PRESENT_SOUND] && userInfo[PRESENT_BADGE] && userInfo[PAYLOAD];
+    return userInfo != nil && userInfo[NOTIFICATION_ID] && userInfo[PRESENT_ALERT] && userInfo[PRESENT_SOUND] && userInfo[PRESENT_BADGE] && userInfo[PAYLOAD];
 }
 
 - (void)handleSelectNotification:(NSString *)payload {
