@@ -1,7 +1,7 @@
 # [3.0.0+1]
 
 * [iOS] Fix issue [865](https://github.com/MaikuB/flutter_local_notifications/issues/865) where notifications with no title weren't behaving properly
-* Update API docs for `fullScreenIntent` to indicate that `onSelectNotification` callback is fired when a full-screen intent notification occurs that could be used to perform the relevant work, which is typically to display another page
+* Update API docs and readme around full-screen intent notifications to indicate that `onSelectNotification` callback is fired when a full-screen intent notification occurs that could be used to perform the relevant work, which is typically to display another page
 
 # [3.0.0]
 
