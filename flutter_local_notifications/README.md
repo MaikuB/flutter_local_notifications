@@ -80,6 +80,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Configure notification visibility on the lockscreen
 * [Android] Ability to create and delete notification channels
 * [Android] Retrieve the list of active notifications
+* [Android] Full-screen intent notifications
 * [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
 * [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
 
@@ -173,7 +174,7 @@ If the vibration pattern of an Android notification will be customised then add 
 ```
 
 
-#### Fullscreen intent notifications
+#### Full-screen intent notifications
 
 If your application needs the ability to schedule full-screen intent notifications, add the following to the manifest (i.e. your application's `AndroidManifest.xml` file)
 
@@ -189,7 +190,9 @@ These make sure the screen turns on and shows when the device is locked.
     android:turnScreenOn="true">
 ```
 
-For reference, the example app's `AndroidManifest.xml` file can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/AndroidManifest.xml)
+For reference, the example app's `AndroidManifest.xml` file can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/AndroidManifest.xml).
+
+Note that when a full-screen intent notification actually occurs (as opposed to a heads-up notification that the system may decide should occur), the plugin will act as though the user has tapped on a notification so handle those the same way (e.g. `onSelectNotification` callback) to display the appropriate page for your application.
 
 
 #### Release build configuration

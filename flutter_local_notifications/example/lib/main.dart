@@ -274,6 +274,14 @@ class _HomePageState extends State<HomePage> {
                     ),
                     PaddedRaisedButton(
                       buttonText:
+                          'Show plain notification that has no title with '
+                          'payload',
+                      onPressed: () async {
+                        await _showNotificationWithNoTitle();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
                           'Show plain notification that has no body with '
                           'payload',
                       onPressed: () async {
@@ -603,6 +611,21 @@ class _HomePageState extends State<HomePage> {
     );
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', null, platformChannelSpecifics,
+        payload: 'item x');
+  }
+
+  Future<void> _showNotificationWithNoTitle() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            'your channel id', 'your channel name', 'your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker');
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+    await flutterLocalNotificationsPlugin.show(
+        0, null, 'plain body', platformChannelSpecifics,
         payload: 'item x');
   }
 

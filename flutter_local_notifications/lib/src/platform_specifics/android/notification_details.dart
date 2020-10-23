@@ -223,7 +223,10 @@ class AndroidNotificationDetails {
   ///
   /// Note: The system UI may choose to display a heads-up notification,
   /// instead of launching your full-screen intent, while the user is using the
-  /// device.
+  /// device. When the full-screen intent occurs, the plugin will act as though
+  /// the user has tapped on a notification so handle it the same way
+  /// (e.g. via `onSelectNotification` callback) to display the appropriate
+  /// page for your application.
   final bool fullScreenIntent;
 
   /// Specifies the id of a published, long-lived sharing that the notification

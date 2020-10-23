@@ -1,3 +1,9 @@
+# [3.0.0+1]
+
+* [iOS] Fixed issue [865](https://github.com/MaikuB/flutter_local_notifications/issues/865) where notifications with no title weren't behaving properly
+* Updated API docs and readme around handling when full-screen intent notifications occur
+* Updated API docs around notification channel management
+
 # [3.0.0]
 
 * **Breaking change** The `scheduledNotificationRepeatFrequency` parameter of the `zonedSchedule` method has been removed. This has been replaced by `matchDateTimeComponents` parameter that can be used to schedule a recurring notification. This was done to better indicate that this is used to schedule recurring daily of weekly notifications based on the specified date components. This is more inline with how the calendar trigger works for notifications for iOS and macOS. Given a date (e.g. Monday 2020-10-19 10:00 AM), specifying to match on the time component of would result in a notification occurring daily at the same time (10:00 AM). Specifying to match on the day of the week and time allows for a weekly notification to occur (Monday 10:00 AM), The deprecation warnings for the `showDailyAtTime()` and `showWeeklyAtDayAndTime()` methods have been updated to give a brief description along the same lines.
