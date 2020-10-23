@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/src/platform_specifics/android/enums.dart';
@@ -29,6 +30,9 @@ void main() {
               <Map<String, Object>>[]);
         } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
           return Future<Map<String, Object>>.value(<String, Object>{});
+        } else if (methodCall.method == 'getActiveNotifications') {
+          return Future<List<Map<String, Object>>>.value(
+              <Map<String, Object>>[]);
         }
         return Future<void>.value();
       });
@@ -1480,90 +1484,268 @@ void main() {
           }));
     });
 
-    test('zonedSchedule', () async {
-      const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
-      const InitializationSettings initializationSettings =
-          InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-      tz.initializeTimeZones();
-      tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
-      final tz.TZDateTime scheduledDate =
-          tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
-      const AndroidNotificationDetails androidNotificationDetails =
-          AndroidNotificationDetails(
-              'channelId', 'channelName', 'channelDescription');
-
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-          1,
-          'notification title',
-          'notification body',
-          scheduledDate,
-          const NotificationDetails(android: androidNotificationDetails),
-          androidAllowWhileIdle: true,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime);
-      expect(
-          log.last,
-          isMethodCall('zonedSchedule', arguments: <String, Object>{
-            'id': 1,
-            'title': 'notification title',
-            'body': 'notification body',
-            'payload': '',
-            'timeZoneName': 'Australia/Sydney',
-            'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
-            'platformSpecifics': <String, Object>{
-              'allowWhileIdle': true,
-              'icon': null,
-              'channelId': 'channelId',
-              'channelName': 'channelName',
-              'channelDescription': 'channelDescription',
-              'channelShowBadge': true,
-              'channelAction':
-                  AndroidNotificationChannelAction.createIfNotExists.index,
-              'importance': Importance.defaultImportance.value,
-              'priority': Priority.defaultPriority.value,
-              'playSound': true,
-              'enableVibration': true,
-              'vibrationPattern': null,
-              'groupKey': null,
-              'setAsGroupSummary': null,
-              'groupAlertBehavior': GroupAlertBehavior.all.index,
-              'autoCancel': true,
-              'ongoing': null,
-              'colorAlpha': null,
-              'colorRed': null,
-              'colorGreen': null,
-              'colorBlue': null,
-              'onlyAlertOnce': null,
-              'showWhen': true,
-              'when': null,
-              'showProgress': false,
-              'maxProgress': 0,
-              'progress': 0,
-              'indeterminate': false,
-              'enableLights': false,
-              'ledColorAlpha': null,
-              'ledColorRed': null,
-              'ledColorGreen': null,
-              'ledColorBlue': null,
-              'ledOnMs': null,
-              'ledOffMs': null,
-              'ticker': null,
-              'visibility': null,
-              'timeoutAfter': null,
-              'category': null,
-              'additionalFlags': null,
-              'fullScreenIntent': false,
-              'shortcutId': null,
-              'style': AndroidNotificationStyle.defaultStyle.index,
-              'styleInformation': <String, Object>{
-                'htmlFormatContent': false,
-                'htmlFormatTitle': false,
+    group('zonedSchedule', () {
+      test('no repeat frequency', () async {
+        const AndroidInitializationSettings androidInitializationSettings =
+            AndroidInitializationSettings('app_icon');
+        const InitializationSettings initializationSettings =
+            InitializationSettings(android: androidInitializationSettings);
+        await flutterLocalNotificationsPlugin
+            .initialize(initializationSettings);
+        tz.initializeTimeZones();
+        tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
+        final tz.TZDateTime scheduledDate =
+            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
+        const AndroidNotificationDetails androidNotificationDetails =
+            AndroidNotificationDetails(
+                'channelId', 'channelName', 'channelDescription');
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+            1,
+            'notification title',
+            'notification body',
+            scheduledDate,
+            const NotificationDetails(android: androidNotificationDetails),
+            androidAllowWhileIdle: true,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime);
+        expect(
+            log.last,
+            isMethodCall('zonedSchedule', arguments: <String, Object>{
+              'id': 1,
+              'title': 'notification title',
+              'body': 'notification body',
+              'payload': '',
+              'timeZoneName': 'Australia/Sydney',
+              'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
+              'platformSpecifics': <String, Object>{
+                'allowWhileIdle': true,
+                'icon': null,
+                'channelId': 'channelId',
+                'channelName': 'channelName',
+                'channelDescription': 'channelDescription',
+                'channelShowBadge': true,
+                'channelAction':
+                    AndroidNotificationChannelAction.createIfNotExists.index,
+                'importance': Importance.defaultImportance.value,
+                'priority': Priority.defaultPriority.value,
+                'playSound': true,
+                'enableVibration': true,
+                'vibrationPattern': null,
+                'groupKey': null,
+                'setAsGroupSummary': null,
+                'groupAlertBehavior': GroupAlertBehavior.all.index,
+                'autoCancel': true,
+                'ongoing': null,
+                'colorAlpha': null,
+                'colorRed': null,
+                'colorGreen': null,
+                'colorBlue': null,
+                'onlyAlertOnce': null,
+                'showWhen': true,
+                'when': null,
+                'showProgress': false,
+                'maxProgress': 0,
+                'progress': 0,
+                'indeterminate': false,
+                'enableLights': false,
+                'ledColorAlpha': null,
+                'ledColorRed': null,
+                'ledColorGreen': null,
+                'ledColorBlue': null,
+                'ledOnMs': null,
+                'ledOffMs': null,
+                'ticker': null,
+                'visibility': null,
+                'timeoutAfter': null,
+                'category': null,
+                'additionalFlags': null,
+                'fullScreenIntent': false,
+                'shortcutId': null,
+                'style': AndroidNotificationStyle.defaultStyle.index,
+                'styleInformation': <String, Object>{
+                  'htmlFormatContent': false,
+                  'htmlFormatTitle': false,
+                },
               },
-            },
-          }));
+            }));
+      });
+
+      test('match time components', () async {
+        const AndroidInitializationSettings androidInitializationSettings =
+            AndroidInitializationSettings('app_icon');
+        const InitializationSettings initializationSettings =
+            InitializationSettings(android: androidInitializationSettings);
+        await flutterLocalNotificationsPlugin
+            .initialize(initializationSettings);
+
+        tz.initializeTimeZones();
+        tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
+        final tz.TZDateTime scheduledDate =
+            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
+        const AndroidNotificationDetails androidNotificationDetails =
+            AndroidNotificationDetails(
+                'channelId', 'channelName', 'channelDescription');
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+            1,
+            'notification title',
+            'notification body',
+            scheduledDate,
+            const NotificationDetails(android: androidNotificationDetails),
+            androidAllowWhileIdle: true,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            matchDateTimeComponents: DateTimeComponents.time);
+        expect(
+            log.last,
+            isMethodCall('zonedSchedule', arguments: <String, Object>{
+              'id': 1,
+              'title': 'notification title',
+              'body': 'notification body',
+              'payload': '',
+              'timeZoneName': 'Australia/Sydney',
+              'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
+              'matchDateTimeComponents': DateTimeComponents.time.index,
+              'platformSpecifics': <String, Object>{
+                'allowWhileIdle': true,
+                'icon': null,
+                'channelId': 'channelId',
+                'channelName': 'channelName',
+                'channelDescription': 'channelDescription',
+                'channelShowBadge': true,
+                'channelAction':
+                    AndroidNotificationChannelAction.createIfNotExists.index,
+                'importance': Importance.defaultImportance.value,
+                'priority': Priority.defaultPriority.value,
+                'playSound': true,
+                'enableVibration': true,
+                'vibrationPattern': null,
+                'groupKey': null,
+                'setAsGroupSummary': null,
+                'groupAlertBehavior': GroupAlertBehavior.all.index,
+                'autoCancel': true,
+                'ongoing': null,
+                'colorAlpha': null,
+                'colorRed': null,
+                'colorGreen': null,
+                'colorBlue': null,
+                'onlyAlertOnce': null,
+                'showWhen': true,
+                'when': null,
+                'showProgress': false,
+                'maxProgress': 0,
+                'progress': 0,
+                'indeterminate': false,
+                'enableLights': false,
+                'ledColorAlpha': null,
+                'ledColorRed': null,
+                'ledColorGreen': null,
+                'ledColorBlue': null,
+                'ledOnMs': null,
+                'ledOffMs': null,
+                'ticker': null,
+                'visibility': null,
+                'timeoutAfter': null,
+                'category': null,
+                'additionalFlags': null,
+                'fullScreenIntent': false,
+                'shortcutId': null,
+                'style': AndroidNotificationStyle.defaultStyle.index,
+                'styleInformation': <String, Object>{
+                  'htmlFormatContent': false,
+                  'htmlFormatTitle': false,
+                },
+              },
+            }));
+      });
+
+      test('match day of week and time components', () async {
+        const AndroidInitializationSettings androidInitializationSettings =
+            AndroidInitializationSettings('app_icon');
+        const InitializationSettings initializationSettings =
+            InitializationSettings(android: androidInitializationSettings);
+        await flutterLocalNotificationsPlugin
+            .initialize(initializationSettings);
+
+        tz.initializeTimeZones();
+        tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
+        final tz.TZDateTime scheduledDate =
+            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
+        const AndroidNotificationDetails androidNotificationDetails =
+            AndroidNotificationDetails(
+                'channelId', 'channelName', 'channelDescription');
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+            1,
+            'notification title',
+            'notification body',
+            scheduledDate,
+            const NotificationDetails(android: androidNotificationDetails),
+            androidAllowWhileIdle: true,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+        expect(
+            log.last,
+            isMethodCall('zonedSchedule', arguments: <String, Object>{
+              'id': 1,
+              'title': 'notification title',
+              'body': 'notification body',
+              'payload': '',
+              'timeZoneName': 'Australia/Sydney',
+              'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
+              'matchDateTimeComponents':
+                  DateTimeComponents.dayOfWeekAndTime.index,
+              'platformSpecifics': <String, Object>{
+                'allowWhileIdle': true,
+                'icon': null,
+                'channelId': 'channelId',
+                'channelName': 'channelName',
+                'channelDescription': 'channelDescription',
+                'channelShowBadge': true,
+                'channelAction':
+                    AndroidNotificationChannelAction.createIfNotExists.index,
+                'importance': Importance.defaultImportance.value,
+                'priority': Priority.defaultPriority.value,
+                'playSound': true,
+                'enableVibration': true,
+                'vibrationPattern': null,
+                'groupKey': null,
+                'setAsGroupSummary': null,
+                'groupAlertBehavior': GroupAlertBehavior.all.index,
+                'autoCancel': true,
+                'ongoing': null,
+                'colorAlpha': null,
+                'colorRed': null,
+                'colorGreen': null,
+                'colorBlue': null,
+                'onlyAlertOnce': null,
+                'showWhen': true,
+                'when': null,
+                'showProgress': false,
+                'maxProgress': 0,
+                'progress': 0,
+                'indeterminate': false,
+                'enableLights': false,
+                'ledColorAlpha': null,
+                'ledColorRed': null,
+                'ledColorGreen': null,
+                'ledColorBlue': null,
+                'ledOnMs': null,
+                'ledOffMs': null,
+                'ticker': null,
+                'visibility': null,
+                'timeoutAfter': null,
+                'category': null,
+                'additionalFlags': null,
+                'fullScreenIntent': false,
+                'shortcutId': null,
+                'style': AndroidNotificationStyle.defaultStyle.index,
+                'styleInformation': <String, Object>{
+                  'htmlFormatContent': false,
+                  'htmlFormatTitle': false,
+                },
+              },
+            }));
+      });
     });
 
     test('createNotificationChannel with default settings', () async {
@@ -1663,6 +1845,16 @@ void main() {
       expect(log, <Matcher>[
         isMethodCall('pendingNotificationRequests', arguments: null)
       ]);
+    });
+
+    test('getActiveNotifications', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          .getActiveNotifications();
+      expect(log,
+          <Matcher>[isMethodCall('getActiveNotifications', arguments: null)]);
     });
 
     test('getNotificationAppLaunchDetails', () async {
@@ -1805,66 +1997,195 @@ void main() {
           }));
     });
 
-    test('zonedSchedule', () async {
-      const IOSInitializationSettings iosInitializationSettings =
-          IOSInitializationSettings();
-      const InitializationSettings initializationSettings =
-          InitializationSettings(iOS: iosInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-      tz.initializeTimeZones();
-      tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
-      final tz.TZDateTime scheduledDate =
-          tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
-      const NotificationDetails notificationDetails = NotificationDetails(
-          iOS: IOSNotificationDetails(
-              presentAlert: true,
-              presentBadge: true,
-              presentSound: true,
-              sound: 'sound.mp3',
-              badgeNumber: 1,
-              attachments: <IOSNotificationAttachment>[
-            IOSNotificationAttachment('video.mp4',
-                identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
-          ]));
+    group('zonedSchedule', () {
+      test('no repeat frequency', () async {
+        const IOSInitializationSettings iosInitializationSettings =
+            IOSInitializationSettings();
+        const InitializationSettings initializationSettings =
+            InitializationSettings(iOS: iosInitializationSettings);
+        await flutterLocalNotificationsPlugin
+            .initialize(initializationSettings);
+        tz.initializeTimeZones();
+        tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
+        final tz.TZDateTime scheduledDate =
+            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
+        const NotificationDetails notificationDetails = NotificationDetails(
+            iOS: IOSNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+                sound: 'sound.mp3',
+                badgeNumber: 1,
+                attachments: <IOSNotificationAttachment>[
+              IOSNotificationAttachment('video.mp4',
+                  identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
+            ]));
 
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-          1,
-          'notification title',
-          'notification body',
-          scheduledDate,
-          notificationDetails,
-          androidAllowWhileIdle: true,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime);
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+            1,
+            'notification title',
+            'notification body',
+            scheduledDate,
+            notificationDetails,
+            androidAllowWhileIdle: true,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime);
 
-      expect(
-          log.last,
-          isMethodCall('zonedSchedule', arguments: <String, Object>{
-            'id': 1,
-            'title': 'notification title',
-            'body': 'notification body',
-            'payload': '',
-            'uiLocalNotificationDateInterpretation':
-                UILocalNotificationDateInterpretation.absoluteTime.index,
-            'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
-            'timeZoneName': 'Australia/Sydney',
-            'platformSpecifics': <String, Object>{
-              'presentAlert': true,
-              'presentBadge': true,
-              'presentSound': true,
-              'subtitle': null,
-              'sound': 'sound.mp3',
-              'badgeNumber': 1,
-              'attachments': <Map<String, Object>>[
-                <String, Object>{
-                  'filePath': 'video.mp4',
-                  'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
-                }
-              ],
-            },
-          }));
+        expect(
+            log.last,
+            isMethodCall('zonedSchedule', arguments: <String, Object>{
+              'id': 1,
+              'title': 'notification title',
+              'body': 'notification body',
+              'payload': '',
+              'uiLocalNotificationDateInterpretation':
+                  UILocalNotificationDateInterpretation.absoluteTime.index,
+              'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
+              'timeZoneName': 'Australia/Sydney',
+              'platformSpecifics': <String, Object>{
+                'presentAlert': true,
+                'presentBadge': true,
+                'presentSound': true,
+                'subtitle': null,
+                'sound': 'sound.mp3',
+                'badgeNumber': 1,
+                'attachments': <Map<String, Object>>[
+                  <String, Object>{
+                    'filePath': 'video.mp4',
+                    'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                  }
+                ],
+              },
+            }));
+      });
+
+      test('match time components', () async {
+        const IOSInitializationSettings iosInitializationSettings =
+            IOSInitializationSettings();
+        const InitializationSettings initializationSettings =
+            InitializationSettings(iOS: iosInitializationSettings);
+        await flutterLocalNotificationsPlugin
+            .initialize(initializationSettings);
+        tz.initializeTimeZones();
+        tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
+        final tz.TZDateTime scheduledDate =
+            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
+        const NotificationDetails notificationDetails = NotificationDetails(
+            iOS: IOSNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+                sound: 'sound.mp3',
+                badgeNumber: 1,
+                attachments: <IOSNotificationAttachment>[
+              IOSNotificationAttachment('video.mp4',
+                  identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
+            ]));
+
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+            1,
+            'notification title',
+            'notification body',
+            scheduledDate,
+            notificationDetails,
+            androidAllowWhileIdle: true,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            matchDateTimeComponents: DateTimeComponents.time);
+
+        expect(
+            log.last,
+            isMethodCall('zonedSchedule', arguments: <String, Object>{
+              'id': 1,
+              'title': 'notification title',
+              'body': 'notification body',
+              'payload': '',
+              'uiLocalNotificationDateInterpretation':
+                  UILocalNotificationDateInterpretation.absoluteTime.index,
+              'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
+              'timeZoneName': 'Australia/Sydney',
+              'matchDateTimeComponents': DateTimeComponents.time.index,
+              'platformSpecifics': <String, Object>{
+                'presentAlert': true,
+                'presentBadge': true,
+                'presentSound': true,
+                'subtitle': null,
+                'sound': 'sound.mp3',
+                'badgeNumber': 1,
+                'attachments': <Map<String, Object>>[
+                  <String, Object>{
+                    'filePath': 'video.mp4',
+                    'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                  }
+                ],
+              },
+            }));
+      });
+
+      test('match day of week and time components', () async {
+        const IOSInitializationSettings iosInitializationSettings =
+            IOSInitializationSettings();
+        const InitializationSettings initializationSettings =
+            InitializationSettings(iOS: iosInitializationSettings);
+        await flutterLocalNotificationsPlugin
+            .initialize(initializationSettings);
+        tz.initializeTimeZones();
+        tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
+        final tz.TZDateTime scheduledDate =
+            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
+        const NotificationDetails notificationDetails = NotificationDetails(
+            iOS: IOSNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+                sound: 'sound.mp3',
+                badgeNumber: 1,
+                attachments: <IOSNotificationAttachment>[
+              IOSNotificationAttachment('video.mp4',
+                  identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
+            ]));
+
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+            1,
+            'notification title',
+            'notification body',
+            scheduledDate,
+            notificationDetails,
+            androidAllowWhileIdle: true,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+
+        expect(
+            log.last,
+            isMethodCall('zonedSchedule', arguments: <String, Object>{
+              'id': 1,
+              'title': 'notification title',
+              'body': 'notification body',
+              'payload': '',
+              'uiLocalNotificationDateInterpretation':
+                  UILocalNotificationDateInterpretation.absoluteTime.index,
+              'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
+              'timeZoneName': 'Australia/Sydney',
+              'matchDateTimeComponents':
+                  DateTimeComponents.dayOfWeekAndTime.index,
+              'platformSpecifics': <String, Object>{
+                'presentAlert': true,
+                'presentBadge': true,
+                'presentSound': true,
+                'subtitle': null,
+                'sound': 'sound.mp3',
+                'badgeNumber': 1,
+                'attachments': <Map<String, Object>>[
+                  <String, Object>{
+                    'filePath': 'video.mp4',
+                    'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                  }
+                ],
+              },
+            }));
+      });
     });
-
     test('requestPermissions with default settings', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -2048,62 +2369,188 @@ void main() {
           }));
     });
 
-    test('zonedSchedule', () async {
-      const MacOSInitializationSettings macOSInitializationSettings =
-          MacOSInitializationSettings();
-      const InitializationSettings initializationSettings =
-          InitializationSettings(macOS: macOSInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-      tz.initializeTimeZones();
-      tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
-      final tz.TZDateTime scheduledDate =
-          tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
-      const NotificationDetails notificationDetails = NotificationDetails(
-          macOS: MacOSNotificationDetails(
-              presentAlert: true,
-              presentBadge: true,
-              presentSound: true,
-              sound: 'sound.mp3',
-              badgeNumber: 1,
-              attachments: <MacOSNotificationAttachment>[
-            MacOSNotificationAttachment('video.mp4',
-                identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
-          ]));
+    group('zonedSchedule', () {
+      test('no repeat frequency', () async {
+        const MacOSInitializationSettings macOSInitializationSettings =
+            MacOSInitializationSettings();
+        const InitializationSettings initializationSettings =
+            InitializationSettings(macOS: macOSInitializationSettings);
+        await flutterLocalNotificationsPlugin
+            .initialize(initializationSettings);
+        tz.initializeTimeZones();
+        tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
+        final tz.TZDateTime scheduledDate =
+            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
+        const NotificationDetails notificationDetails = NotificationDetails(
+            macOS: MacOSNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+                sound: 'sound.mp3',
+                badgeNumber: 1,
+                attachments: <MacOSNotificationAttachment>[
+              MacOSNotificationAttachment('video.mp4',
+                  identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
+            ]));
 
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-          1,
-          'notification title',
-          'notification body',
-          scheduledDate,
-          notificationDetails,
-          androidAllowWhileIdle: true,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime);
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+            1,
+            'notification title',
+            'notification body',
+            scheduledDate,
+            notificationDetails,
+            androidAllowWhileIdle: true,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime);
 
-      expect(
-          log.last,
-          isMethodCall('zonedSchedule', arguments: <String, Object>{
-            'id': 1,
-            'title': 'notification title',
-            'body': 'notification body',
-            'payload': '',
-            'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
-            'timeZoneName': 'Australia/Sydney',
-            'platformSpecifics': <String, Object>{
-              'subtitle': null,
-              'presentAlert': true,
-              'presentBadge': true,
-              'presentSound': true,
-              'sound': 'sound.mp3',
-              'badgeNumber': 1,
-              'attachments': <Map<String, Object>>[
-                <String, Object>{
-                  'filePath': 'video.mp4',
-                  'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
-                }
-              ],
-            },
-          }));
+        expect(
+            log.last,
+            isMethodCall('zonedSchedule', arguments: <String, Object>{
+              'id': 1,
+              'title': 'notification title',
+              'body': 'notification body',
+              'payload': '',
+              'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
+              'timeZoneName': 'Australia/Sydney',
+              'platformSpecifics': <String, Object>{
+                'subtitle': null,
+                'presentAlert': true,
+                'presentBadge': true,
+                'presentSound': true,
+                'sound': 'sound.mp3',
+                'badgeNumber': 1,
+                'attachments': <Map<String, Object>>[
+                  <String, Object>{
+                    'filePath': 'video.mp4',
+                    'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                  }
+                ],
+              },
+            }));
+      });
+
+      test('match time components', () async {
+        const MacOSInitializationSettings macOSInitializationSettings =
+            MacOSInitializationSettings();
+        const InitializationSettings initializationSettings =
+            InitializationSettings(macOS: macOSInitializationSettings);
+        await flutterLocalNotificationsPlugin
+            .initialize(initializationSettings);
+        tz.initializeTimeZones();
+        tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
+        final tz.TZDateTime scheduledDate =
+            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
+        const NotificationDetails notificationDetails = NotificationDetails(
+            macOS: MacOSNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+                sound: 'sound.mp3',
+                badgeNumber: 1,
+                attachments: <MacOSNotificationAttachment>[
+              MacOSNotificationAttachment('video.mp4',
+                  identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
+            ]));
+
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+            1,
+            'notification title',
+            'notification body',
+            scheduledDate,
+            notificationDetails,
+            androidAllowWhileIdle: true,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            matchDateTimeComponents: DateTimeComponents.time);
+
+        expect(
+            log.last,
+            isMethodCall('zonedSchedule', arguments: <String, Object>{
+              'id': 1,
+              'title': 'notification title',
+              'body': 'notification body',
+              'payload': '',
+              'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
+              'timeZoneName': 'Australia/Sydney',
+              'matchDateTimeComponents': DateTimeComponents.time.index,
+              'platformSpecifics': <String, Object>{
+                'subtitle': null,
+                'presentAlert': true,
+                'presentBadge': true,
+                'presentSound': true,
+                'sound': 'sound.mp3',
+                'badgeNumber': 1,
+                'attachments': <Map<String, Object>>[
+                  <String, Object>{
+                    'filePath': 'video.mp4',
+                    'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                  }
+                ],
+              },
+            }));
+      });
+
+      test('weekly repeat frequency', () async {
+        const MacOSInitializationSettings macOSInitializationSettings =
+            MacOSInitializationSettings();
+        const InitializationSettings initializationSettings =
+            InitializationSettings(macOS: macOSInitializationSettings);
+        await flutterLocalNotificationsPlugin
+            .initialize(initializationSettings);
+        tz.initializeTimeZones();
+        tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
+        final tz.TZDateTime scheduledDate =
+            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
+        const NotificationDetails notificationDetails = NotificationDetails(
+            macOS: MacOSNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+                sound: 'sound.mp3',
+                badgeNumber: 1,
+                attachments: <MacOSNotificationAttachment>[
+              MacOSNotificationAttachment('video.mp4',
+                  identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
+            ]));
+
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+            1,
+            'notification title',
+            'notification body',
+            scheduledDate,
+            notificationDetails,
+            androidAllowWhileIdle: true,
+            uiLocalNotificationDateInterpretation:
+                UILocalNotificationDateInterpretation.absoluteTime,
+            matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+
+        expect(
+            log.last,
+            isMethodCall('zonedSchedule', arguments: <String, Object>{
+              'id': 1,
+              'title': 'notification title',
+              'body': 'notification body',
+              'payload': '',
+              'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
+              'timeZoneName': 'Australia/Sydney',
+              'matchDateTimeComponents':
+                  DateTimeComponents.dayOfWeekAndTime.index,
+              'platformSpecifics': <String, Object>{
+                'subtitle': null,
+                'presentAlert': true,
+                'presentBadge': true,
+                'presentSound': true,
+                'sound': 'sound.mp3',
+                'badgeNumber': 1,
+                'attachments': <Map<String, Object>>[
+                  <String, Object>{
+                    'filePath': 'video.mp4',
+                    'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                  }
+                ],
+              },
+            }));
+      });
     });
 
     test('requestPermissions with default settings', () async {
