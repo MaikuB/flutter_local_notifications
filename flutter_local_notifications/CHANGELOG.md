@@ -1,7 +1,8 @@
 # [3.0.0+1]
 
-* [iOS] Fix issue [865](https://github.com/MaikuB/flutter_local_notifications/issues/865) where notifications with no title weren't behaving properly
-* Update API docs and readme around handling when full-screen intent notifications occur
+* [iOS] Fixed issue [865](https://github.com/MaikuB/flutter_local_notifications/issues/865) where notifications with no title weren't behaving properly
+* Updated API docs and readme around handling when full-screen intent notifications occur
+* Updated API docs around notification channel management
 
 # [3.0.0]
 
