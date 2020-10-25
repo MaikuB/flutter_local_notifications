@@ -1182,11 +1182,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private void deleteNotificationChannel(MethodCall call, Result result) {
-        if (VERSION.SDK_INT >= VERSION_CODES.O) {
-            NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
-            String channelId = call.arguments();
-            notificationManager.deleteNotificationChannel(channelId);
-        }
+        NotificationManagerCompat notificationManagerCompat = getNotificationManager(applicationContext);
+        String channelId = call.arguments();
+        notificationManagerCompat.deleteNotificationChannel(channelId);
         result.success(null);
     }
 
