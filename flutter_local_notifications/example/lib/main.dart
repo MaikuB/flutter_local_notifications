@@ -493,6 +493,18 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedRaisedButton(
+                        buttonText: 'Create grouped notification channels',
+                        onPressed: () async {
+                          await _createNotificationChannelGroup();
+                        },
+                      ),
+                      PaddedRaisedButton(
+                        buttonText: 'Delete notification channel group',
+                        onPressed: () async {
+                          await _deleteNotificationChannelGroup();
+                        },
+                      ),
+                      PaddedRaisedButton(
                         buttonText: 'Create notification channel',
                         onPressed: () async {
                           await _createNotificationChannel();
@@ -1286,6 +1298,76 @@ class _HomePageState extends State<HomePage> {
         'notification with attachment title',
         'notification with attachment body',
         notificationDetails);
+  }
+
+  Future<void> _createNotificationChannelGroup() async {
+    const String channelGroupId = 'your channel group id';
+    // create the group first
+    const AndroidNotificationChannelGroup androidNotificationChannelGroup =
+        AndroidNotificationChannelGroup(
+            channelGroupId, 'your channel group name',
+            description: 'your channel group description');
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        .createNotificationChannelGroup(androidNotificationChannelGroup);
+
+    // create channels associated with the group
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        .createNotificationChannel(const AndroidNotificationChannel(
+            'grouped channel id 1',
+            'grouped channel name 1',
+            'grouped channel description 1',
+            groupId: channelGroupId));
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        .createNotificationChannel(const AndroidNotificationChannel(
+            'grouped channel id 2',
+            'grouped channel name 2',
+            'grouped channel description 2',
+            groupId: channelGroupId));
+
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              content: Text('Channel group with name '
+                  '${androidNotificationChannelGroup.name} created'),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ));
+  }
+
+  Future<void> _deleteNotificationChannelGroup() async {
+    const String channelGroupId = 'your channel group id';
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.deleteNotificationChannelGroup(channelGroupId);
+
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: const Text('Channel group with id $channelGroupId deleted'),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _createNotificationChannel() async {

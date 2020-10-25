@@ -1748,6 +1748,40 @@ void main() {
       });
     });
 
+    group('createNotificationChannelGroup', () {
+      test('without description', () async {
+        await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            .createNotificationChannelGroup(
+                const AndroidNotificationChannelGroup('groupId', 'groupName'));
+        expect(log, <Matcher>[
+          isMethodCall('createNotificationChannelGroup',
+              arguments: <String, Object>{
+                'id': 'groupId',
+                'name': 'groupName',
+                'description': null,
+              })
+        ]);
+      });
+      test('with description', () async {
+        await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            .createNotificationChannelGroup(
+                const AndroidNotificationChannelGroup('groupId', 'groupName',
+                    description: 'groupDescription'));
+        expect(log, <Matcher>[
+          isMethodCall('createNotificationChannelGroup',
+              arguments: <String, Object>{
+                'id': 'groupId',
+                'name': 'groupName',
+                'description': 'groupDescription',
+              })
+        ]);
+      });
+    });
+
     test('createNotificationChannel with default settings', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -1759,6 +1793,7 @@ void main() {
           'id': 'channelId',
           'name': 'channelName',
           'description': 'channelDescription',
+          'groupId': null,
           'showBadge': true,
           'importance': Importance.defaultImportance.value,
           'playSound': true,
@@ -1783,6 +1818,7 @@ void main() {
             'channelId',
             'channelName',
             'channelDescription',
+            groupId: 'channelGroupId',
             showBadge: false,
             importance: Importance.max,
             playSound: false,
@@ -1795,6 +1831,7 @@ void main() {
           'id': 'channelId',
           'name': 'channelName',
           'description': 'channelDescription',
+          'groupId': 'channelGroupId',
           'showBadge': false,
           'importance': Importance.max.value,
           'playSound': false,
