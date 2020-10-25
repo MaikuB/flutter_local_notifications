@@ -10,6 +10,7 @@ public class NotificationChannelDetails {
     private static final String ID = "id";
     private static final String NAME = "name";
     private static final String DESCRIPTION = "description";
+    private static final String GROUP_ID = "groupId";
     private static final String SHOW_BADGE = "showBadge";
     private static final String IMPORTANCE = "importance";
     private static final String PLAY_SOUND = "playSound";
@@ -27,6 +28,7 @@ public class NotificationChannelDetails {
     public String id;
     public String name;
     public String description;
+    public String groupId;
     public Boolean showBadge;
     public Integer importance;
     public Boolean playSound;
@@ -44,6 +46,7 @@ public class NotificationChannelDetails {
         notificationChannel.id = (String) arguments.get(ID);
         notificationChannel.name = (String) arguments.get(NAME);
         notificationChannel.description = (String) arguments.get(DESCRIPTION);
+        notificationChannel.groupId = (String) arguments.get(GROUP_ID);
         notificationChannel.importance = (Integer) arguments.get(IMPORTANCE);
         notificationChannel.showBadge = (Boolean) arguments.get(SHOW_BADGE);
         notificationChannel.channelAction = NotificationChannelAction.values()[(Integer) arguments.get(CHANNEL_ACTION)];

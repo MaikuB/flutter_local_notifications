@@ -10,6 +10,7 @@ import 'platform_specifics/android/active_notification.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
 import 'platform_specifics/android/notification_channel.dart';
+import 'platform_specifics/android/notification_channel_group.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/ios/enums.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
@@ -242,6 +243,21 @@ class AndroidFlutterLocalNotificationsPlugin
       'payload': payload ?? '',
     });
   }
+
+  /// Creates a notification channel group.
+  ///
+  /// This method is only applicable to Android versions 8.0 or newer.
+  Future<void> createNotificationChannelGroup(
+          AndroidNotificationChannelGroup notificationChannelGroup) =>
+      _channel.invokeMethod(
+          'createNotificationChannelGroup', notificationChannelGroup.toMap());
+
+  /// Deletes the notification channel group with the specified [groupId]
+  /// as well as all of the channels belonging to the group.
+  ///
+  /// This method is only applicable to Android versions 8.0 or newer.
+  Future<void> deleteNotificationChannelGroup(String groupId) =>
+      _channel.invokeMethod('deleteNotificationChannelGroup', groupId);
 
   /// Creates a notification channel.
   ///

@@ -4,11 +4,13 @@ import 'dart:ui';
 import 'enums.dart';
 import 'notification_sound.dart';
 
+/// Settings for Android notification channels.
 class AndroidNotificationChannel {
   const AndroidNotificationChannel(
     this.id,
     this.name,
     this.description, {
+    this.groupId,
     this.importance = Importance.defaultImportance,
     this.playSound = true,
     this.sound,
@@ -27,6 +29,9 @@ class AndroidNotificationChannel {
 
   /// The channel's description.
   final String description;
+
+  /// The id of the group that the channel belongs to.
+  final String groupId;
 
   /// The importance of the notification.
   final Importance importance;

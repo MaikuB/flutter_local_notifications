@@ -4,6 +4,7 @@ import 'icon.dart';
 import 'initialization_settings.dart';
 import 'message.dart';
 import 'notification_channel.dart';
+import 'notification_channel_group.dart';
 import 'notification_details.dart';
 import 'notification_sound.dart';
 import 'person.dart';
@@ -29,11 +30,21 @@ extension MessageMapper on Message {
       };
 }
 
+extension AndroidNotificationChannelGroupMapper
+    on AndroidNotificationChannelGroup {
+  Map<String, Object> toMap() => <String, Object>{
+        'id': id,
+        'name': name,
+        'description': description,
+      };
+}
+
 extension AndroidNotificationChannelMapper on AndroidNotificationChannel {
   Map<String, Object> toMap() => <String, Object>{
         'id': id,
         'name': name,
         'description': description,
+        'groupId': groupId,
         'showBadge': showBadge,
         'importance': importance.value,
         'playSound': playSound,
