@@ -244,8 +244,7 @@ class AndroidFlutterLocalNotificationsPlugin
     });
   }
 
-  /// Deletes the notification channel group with the specified [channelId]
-  /// as well as all of the channels belonging to the group.
+  /// Creates a notification channel group.
   ///
   /// This method is only applicable to Android versions 8.0 or newer.
   Future<void> createNotificationChannelGroup(
@@ -253,6 +252,10 @@ class AndroidFlutterLocalNotificationsPlugin
       _channel.invokeMethod(
           'createNotificationChannelGroup', notificationChannelGroup.toMap());
 
+  /// Deletes the notification channel group with the specified [groupId]
+  /// as well as all of the channels belonging to the group.
+  ///
+  /// This method is only applicable to Android versions 8.0 or newer.
   Future<void> deleteNotificationChannelGroup(String groupId) =>
       _channel.invokeMethod('deleteNotificationChannelGroup', groupId);
 
