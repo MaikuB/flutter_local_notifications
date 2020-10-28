@@ -59,7 +59,7 @@ A cross platform plugin for displaying local notifications.
 * Retrieve a list of pending notification requests that have been scheduled to be shown in the future
 * Cancelling/removing notification by id or all of them
 * Specify a custom notification sound
-* Ability to handle when a user has tapped on a notification, when the app is the foreground, background or terminated
+* Ability to handle when a user has tapped on a notification, when the app is in the foreground, background or is terminated
 * Determine if an app was launched due to tapping on a notification
 * [Android] Configuring the importance level
 * [Android] Configuring the priority
@@ -67,7 +67,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Configure the default icon for all notifications
 * [Android] Configure the icon for each notification (overrides the default when specified)
 * [Android] Configure the large icon for each notification. The icon can be a drawable or a file on the device
-* [Android] Formatting notification content via ([HTML markup](https://developer.android.com/guide/topics/resources/string-resource.html#StylingWithHTML))
+* [Android] Formatting notification content via [HTML markup](https://developer.android.com/guide/topics/resources/string-resource.html#StylingWithHTML)
 * [Android] Support for the following notification styles
     * Big picture
     * Big text
