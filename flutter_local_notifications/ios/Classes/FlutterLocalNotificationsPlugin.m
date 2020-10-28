@@ -14,6 +14,7 @@
 }
 
 NSString *const INITIALIZE_METHOD = @"initialize";
+NSString *const SET_BADGE_NUMBER_METHOD = @"setBadgeNumber";
 NSString *const SHOW_METHOD = @"show";
 NSString *const SCHEDULE_METHOD = @"schedule";
 NSString *const ZONED_SCHEDULE_METHOD = @"zonedSchedule";
@@ -66,6 +67,7 @@ NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTime";
 NSString *const TIME_ZONE_NAME = @"timeZoneName";
 NSString *const MATCH_DATE_TIME_COMPONENTS = @"matchDateTimeComponents";
 NSString *const UILOCALNOTIFICATION_DATE_INTERPRETATION = @"uiLocalNotificationDateInterpretation";
+NSString *const VALUE = @"value";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
@@ -120,6 +122,8 @@ static FlutterError *getFlutterError(NSError *error) {
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if([INITIALIZE_METHOD isEqualToString:call.method]) {
         [self initialize:call.arguments result:result];
+    } else if([SET_BADGE_NUMBER_METHOD isEqualToString:call.method]) {
+        [self setBadgeNumber:call.arguments result:result];
     } else if([SHOW_METHOD isEqualToString:call.method]) {
         [self show:call.arguments result:result];
     } else if([ZONED_SCHEDULE_METHOD isEqualToString:call.method]) {
@@ -230,6 +234,16 @@ static FlutterError *getFlutterError(NSError *error) {
     [self requestPermissionsImpl:requestedSoundPermission alertPermission:requestedAlertPermission badgePermission:requestedBadgePermission checkLaunchNotification:true result:result];
     
     _initialized = true;
+}
+
+- (void)setBadgeNumber:(NSDictionary * _Nonnull)arguments result:(FlutterResult _Nonnull)result {
+    int value = 0;
+    if([self containsKey:VALUE forDictionary:arguments]) {
+        value = [arguments[VALUE] intValue];
+    }
+    
+    [UIApplication sharedApplication].applicationIconBadgeNumber = value;
+    result(nil);
 }
 
 - (void)requestPermissions:(NSDictionary * _Nonnull)arguments result:(FlutterResult _Nonnull)result {

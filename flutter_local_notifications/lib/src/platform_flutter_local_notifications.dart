@@ -351,6 +351,12 @@ class IOSFlutterLocalNotificationsPlugin
         'badge': badge,
       });
 
+  /// Sets badge number.
+  Future<void> setBadgeNumber(int value) =>
+      _channel.invokeMethod<bool>('setBadgeNumber', <String, int>{
+        'value': value,
+      });
+
   /// Schedules a notification to be shown at the specified date and time with
   /// an optional payload that is passed through when a notification is tapped.
   @Deprecated(
