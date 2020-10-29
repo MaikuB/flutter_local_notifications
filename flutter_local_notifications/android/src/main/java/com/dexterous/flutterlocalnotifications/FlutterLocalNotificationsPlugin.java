@@ -34,6 +34,7 @@ import com.dexterous.flutterlocalnotifications.isolate.IsolatePreferences;
 import com.dexterous.flutterlocalnotifications.models.DateTimeComponents;
 import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
+import com.dexterous.flutterlocalnotifications.models.NotificationAction;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelAction;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelGroupDetails;
@@ -84,13 +85,14 @@ import io.flutter.view.FlutterMain;
  */
 public class FlutterLocalNotificationsPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
     private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
-    private static final String CALLBACK_HANDLE = "callback_handle";
     private static final String DISPATCHER_HANDLE = "dispatcher_handle";
+    private static final String CALLBACK_HANDLE = "callback_handle";
     private static final String DRAWABLE = "drawable";
     private static final String DEFAULT_ICON = "defaultIcon";
     private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
+    private static final String GET_CALLBACK_HANDLE_METHOD = "getCallbackHandle";
     private static final String CREATE_NOTIFICATION_CHANNEL_GROUP_METHOD = "createNotificationChannelGroup";
     private static final String DELETE_NOTIFICATION_CHANNEL_GROUP_METHOD = "deleteNotificationChannelGroup";
     private static final String CREATE_NOTIFICATION_CHANNEL_METHOD = "createNotificationChannel";
@@ -172,8 +174,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
                 .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
 
-				builder.addAction(new Action(null, "Woof Woof", PendingIntent.getBroadcast(context, 999,
-						new Intent(context, ActionBroadcastReceiver.class).putExtra("id", "hello_woof"), 0)));
+        if(notificationDetails.actions != null) {
+        	int requestCode = 999;
+					for (NotificationAction action : notificationDetails.actions) {
+						builder.addAction(new Action(null, action.title, PendingIntent.getBroadcast(context, requestCode ++,
+								new Intent(context, ActionBroadcastReceiver.class).setAction(ActionBroadcastReceiver.ACTION_TAPPED).putExtra("id", action.id), 0)));
+					}
+				}
 
         setSmallIcon(context, notificationDetails, builder);
         if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
@@ -911,6 +918,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 initialize(call, result);
                 break;
             }
+            case GET_CALLBACK_HANDLE_METHOD: {
+                getCallbackHandle(result);
+                break;
+            }
             case GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD: {
                 getNotificationAppLaunchDetails(result);
                 break;
@@ -1060,6 +1071,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
         result.success(true);
     }
+
+	private void getCallbackHandle( Result result) {
+    	final Long handle = IsolatePreferences.getCallbackHandle(applicationContext);
+    	result.success(handle);
+	}
 
 		private static boolean launchedActivityFromHistory(Intent intent) {
         return intent != null && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY;

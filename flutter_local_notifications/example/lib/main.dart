@@ -42,8 +42,8 @@ class ReceivedNotification {
   final String payload;
 }
 
-void backgroundCallback(String id) {
-  print('callback received!');
+void notificationTapBackground(String id) {
+  print('notification action tapped: $id');
 }
 
 /// IMPORTANT: running the following code on its own won't work as there is
@@ -92,7 +92,7 @@ Future<void> main() async {
       }
       selectNotificationSubject.add(payload);
     },
-    backgroundHandler: backgroundCallback,
+    backgroundHandler: notificationTapBackground,
   );
   runApp(
     MaterialApp(
@@ -277,6 +277,12 @@ class _HomePageState extends State<HomePage> {
                       buttonText: 'Show plain notification with payload',
                       onPressed: () async {
                         await _showNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show plain notification with actions',
+                      onPressed: () async {
+                        await _showNotificationWithActions();
                       },
                     ),
                     PaddedRaisedButton(
@@ -569,6 +575,28 @@ class _HomePageState extends State<HomePage> {
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker');
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
+  }
+
+  Future<void> _showNotificationWithActions() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      'your channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction('id_1', 'Action 1'),
+        AndroidNotificationAction('id_2', 'Action 2'),
+        AndroidNotificationAction('id_3', 'Action 3'),
+      ],
+    );
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(

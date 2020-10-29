@@ -249,6 +249,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'shortcutId': shortcutId,
         'additionalFlags': additionalFlags,
       }
+        ..addAll(_convertActionsToMap(actions))
         ..addAll(_convertStyleInformationToMap())
         ..addAll(_convertNotificationSoundToMap(sound))
         ..addAll(_convertLargeIconToMap());
@@ -312,5 +313,18 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
     } else {
       return <String, Object>{};
     }
+  }
+
+  Map<String, Object> _convertActionsToMap(
+      List<AndroidNotificationAction> actions) {
+    if (actions == null) {
+      return <String, Object>{};
+    }
+    return <String, dynamic>{
+      'actions': actions
+          .map((AndroidNotificationAction e) =>
+              <String, dynamic>{'id': e.id, 'title': e.title})
+          .toList(),
+    };
   }
 }
