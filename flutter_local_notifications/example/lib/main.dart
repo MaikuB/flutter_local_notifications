@@ -42,6 +42,10 @@ class ReceivedNotification {
   final String payload;
 }
 
+void backgroundCallback(String id) {
+  print('callback received!');
+}
+
 /// IMPORTANT: running the following code on its own won't work as there is
 /// setup required for each platform head project.
 ///
@@ -80,13 +84,16 @@ Future<void> main() async {
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
       macOS: initializationSettingsMacOS);
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: (String payload) async {
-    if (payload != null) {
-      debugPrint('notification payload: $payload');
-    }
-    selectNotificationSubject.add(payload);
-  });
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onSelectNotification: (String payload) async {
+      if (payload != null) {
+        debugPrint('notification payload: $payload');
+      }
+      selectNotificationSubject.add(payload);
+    },
+    backgroundHandler: backgroundCallback,
+  );
   runApp(
     MaterialApp(
       home: HomePage(

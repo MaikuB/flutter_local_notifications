@@ -115,12 +115,14 @@ class FlutterLocalNotificationsPlugin {
   Future<bool> initialize(
     InitializationSettings initializationSettings, {
     SelectNotificationCallback onSelectNotification,
+    NotifcationActionCallback backgroundHandler,
   }) async {
     if (_platform.isAndroid) {
       return resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings?.android,
-              onSelectNotification: onSelectNotification);
+              onSelectNotification: onSelectNotification,
+              backgroundHandler: backgroundHandler);
     } else if (_platform.isIOS) {
       return await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()

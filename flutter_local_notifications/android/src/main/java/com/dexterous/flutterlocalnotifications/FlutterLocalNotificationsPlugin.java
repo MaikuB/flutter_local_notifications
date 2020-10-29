@@ -25,10 +25,12 @@ import android.text.Spanned;
 import androidx.annotation.NonNull;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationCompat.Action;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
 import androidx.core.graphics.drawable.IconCompat;
 
+import com.dexterous.flutterlocalnotifications.isolate.IsolatePreferences;
 import com.dexterous.flutterlocalnotifications.models.DateTimeComponents;
 import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
@@ -82,6 +84,8 @@ import io.flutter.view.FlutterMain;
  */
 public class FlutterLocalNotificationsPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
     private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
+    private static final String CALLBACK_HANDLE = "callback_handle";
+    private static final String DISPATCHER_HANDLE = "dispatcher_handle";
     private static final String DRAWABLE = "drawable";
     private static final String DEFAULT_ICON = "defaultIcon";
     private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
@@ -167,6 +171,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setPriority(notificationDetails.priority)
                 .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
                 .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
+
+				builder.addAction(new Action(null, "Woof Woof", PendingIntent.getBroadcast(context, 999,
+						new Intent(context, ActionBroadcastReceiver.class).putExtra("id", "hello_woof"), 0)));
 
         setSmallIcon(context, notificationDetails, builder);
         if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
@@ -1035,7 +1042,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             return;
         }
 
-        initAndroidThreeTen(applicationContext);
+				Long dispatcherHandle = call.argument(DISPATCHER_HANDLE);
+				Long callbackHandle = call.argument(CALLBACK_HANDLE);
+				if (dispatcherHandle != null && callbackHandle != null) {
+						IsolatePreferences.saveCallbackKeys(applicationContext, dispatcherHandle, callbackHandle);
+				}
+
+				initAndroidThreeTen(applicationContext);
 
         SharedPreferences sharedPreferences = applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -1048,7 +1061,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         result.success(true);
     }
 
-    private static boolean launchedActivityFromHistory(Intent intent) {
+		private static boolean launchedActivityFromHistory(Intent intent) {
         return intent != null && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY;
     }
 

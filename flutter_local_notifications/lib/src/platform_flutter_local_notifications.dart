@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/src/callback_dispatcher.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
 
@@ -72,14 +74,32 @@ class AndroidFlutterLocalNotificationsPlugin
   /// This should only be done once. When a notification created by this plugin
   /// was used to launch the app, calling `initialize` is what will trigger to
   /// the `onSelectNotification` callback to be fire.
+  ///
+  /// [backgroundHandler] specifies a callback handler which receives
   Future<bool> initialize(
     AndroidInitializationSettings initializationSettings, {
     SelectNotificationCallback onSelectNotification,
+    NotifcationActionCallback backgroundHandler,
   }) async {
     _onSelectNotification = onSelectNotification;
     _channel.setMethodCallHandler(_handleMethod);
-    return await _channel.invokeMethod(
-        'initialize', initializationSettings.toMap());
+
+    final Map<String, Object> map = initializationSettings.toMap();
+
+    if (backgroundHandler != null) {
+      final CallbackHandle callback =
+          PluginUtilities.getCallbackHandle(backgroundHandler);
+      assert(callback != null, '''
+          The backgroundHandler needs to be either a static function or a top 
+          level function to be accessible as a Flutter entry point.''');
+
+      final CallbackHandle dispatcher =
+          PluginUtilities.getCallbackHandle(callbackDispatcher);
+
+      map['dispatcher_handle'] = dispatcher.toRawHandle();
+      map['callback_handle'] = callback.toRawHandle();
+    }
+    return await _channel.invokeMethod('initialize', map);
   }
 
   /// Schedules a notification to be shown at the specified date and time.
