@@ -768,22 +768,22 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     static void zonedScheduleNextNotification(Context context, NotificationDetails notificationDetails) {
+        initAndroidThreeTen(context);
         String nextFireDate = getNextFireDate(notificationDetails);
         if (nextFireDate == null) {
             return;
         }
         notificationDetails.scheduledDateTime = nextFireDate;
-        initAndroidThreeTen(context);
         zonedScheduleNotification(context, notificationDetails, true);
     }
 
     static void zonedScheduleNextNotificationMatchingDateComponents(Context context, NotificationDetails notificationDetails) {
+        initAndroidThreeTen(context);
         String nextFireDate = getNextFireDateMatchingDateTimeComponents(notificationDetails);
         if (nextFireDate == null) {
             return;
         }
         notificationDetails.scheduledDateTime = nextFireDate;
-        initAndroidThreeTen(context);
         zonedScheduleNotification(context, notificationDetails, true);
     }
 
@@ -1157,20 +1157,22 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
             Map<String, Object> arguments = call.arguments();
             NotificationChannelGroupDetails notificationChannelGroupDetails = NotificationChannelGroupDetails.from(arguments);
-            NotificationManagerCompat notificationManagerCompat = getNotificationManager(applicationContext);
+            NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannelGroup notificationChannelGroup = new NotificationChannelGroup(notificationChannelGroupDetails.id, notificationChannelGroupDetails.name);
             if (VERSION.SDK_INT >= VERSION_CODES.P) {
                 notificationChannelGroup.setDescription(notificationChannelGroupDetails.description);
             }
-            notificationManagerCompat.createNotificationChannelGroup(notificationChannelGroup);
+            notificationManager.createNotificationChannelGroup(notificationChannelGroup);
         }
         result.success(null);
     }
 
     private void deleteNotificationChannelGroup(MethodCall call, Result result) {
-        NotificationManagerCompat notificationManagerCompat = getNotificationManager(applicationContext);
-        String groupId = call.arguments();
-        notificationManagerCompat.deleteNotificationChannelGroup(groupId);
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            String groupId = call.arguments();
+            notificationManager.deleteNotificationChannelGroup(groupId);
+        }
         result.success(null);
     }
 

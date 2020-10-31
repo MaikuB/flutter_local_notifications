@@ -1,3 +1,9 @@
+# [3.0.1+1]
+
+* Updated API docs for the `UriAndroidNotificationSound` class to further clarify that developers may need to write code that makes use of platform channels
+* [Android] fix issue [881](https://github.com/MaikuB/flutter_local_notifications/issues/881) where recurring notifications may fail to schedule the next occurrence on older Android versions as the ThreeTen Android Backport library hadn't been initialised yet
+* [Android] switched implementation of `createNotificationChannelGroup` and `deleteNotificationChannelGroup` methods to use the `NotificationManager` APIs instead of the `NotificationManagerCompat` APIs. If you had issues with 3.0.1 then this should fix the issue (e.g. as reported in issue [871](https://github.com/MaikuB/flutter_local_notifications/issues/871)) as the the APIs that were previously being called would've required apps to use more recent versions of the AndroidX libraries
+
 # [3.0.1]
 
 * [Android] Added the `createNotificationChannelGroup` and `deleteNotificationChannelGroup` methods to the `AndroidFluttterLocalNotificationsPlugin` class that can be used to create and delete notification channel groups. The optional `groupId` parameter has been added to the `AndroidNotificationChannel` class that can be used to associated notification channels to a particular group. Example app has been updated to include code snippets for this.

@@ -22,7 +22,8 @@ class RawResourceAndroidNotificationSound implements AndroidNotificationSound {
 /// notification sound.
 ///
 /// One way of obtaining such URIs is to use the native Android RingtoneManager
-/// APIs, which may require developers to write their own to access the API.
+/// APIs, which may require developers to write their own code that makes use
+/// of platform channels.
 class UriAndroidNotificationSound implements AndroidNotificationSound {
   const UriAndroidNotificationSound(this._sound);
 
