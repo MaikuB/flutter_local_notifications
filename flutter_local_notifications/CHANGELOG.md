@@ -1,3 +1,7 @@
+# [3.0.1+2]
+
+* [Android] additional fix for issue [871](https://github.com/MaikuB/flutter_local_notifications/issues/871) by switching the implementation of `deleteNotificationChannel` to use the `NotificationManager` APIs instead of the `NotificationManagerCompat` APIs
+
 # [3.0.1+1]
 
 * Updated API docs for the `UriAndroidNotificationSound` class to further clarify that developers may need to write code that makes use of platform channels
