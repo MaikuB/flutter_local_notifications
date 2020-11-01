@@ -7,10 +7,15 @@ import 'notification_sound.dart';
 import 'styles/style_information.dart';
 
 class AndroidNotificationAction {
-  const AndroidNotificationAction(this.id, this.title);
+  const AndroidNotificationAction(
+    this.id,
+    this.title, {
+    this.icon,
+  });
 
   final String id;
   final String title;
+  final AndroidBitmap icon;
 }
 
 /// Contains notification details specific to Android.

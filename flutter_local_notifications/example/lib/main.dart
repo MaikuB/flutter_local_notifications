@@ -620,9 +620,21 @@ class _HomePageState extends State<HomePage> {
       priority: Priority.high,
       ticker: 'ticker',
       actions: <AndroidNotificationAction>[
-        AndroidNotificationAction('id_1', 'Action 1'),
-        AndroidNotificationAction('id_2', 'Action 2'),
-        AndroidNotificationAction('id_3', 'Action 3'),
+        AndroidNotificationAction(
+          'id_1',
+          'Action 1',
+          icon: DrawableResourceAndroidBitmap('food'),
+        ),
+        AndroidNotificationAction(
+          'id_2',
+          'Action 2',
+          icon: DrawableResourceAndroidBitmap('food'),
+        ),
+        AndroidNotificationAction(
+          'id_3',
+          'Action 3',
+          icon: DrawableResourceAndroidBitmap('food'),
+        ),
       ],
     );
 

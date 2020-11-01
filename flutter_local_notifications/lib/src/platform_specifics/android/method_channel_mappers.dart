@@ -317,14 +317,33 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
 
   Map<String, Object> _convertActionsToMap(
       List<AndroidNotificationAction> actions) {
+    Map<String, Object> _convertActionIconToMap(AndroidBitmap icon) {
+      if (icon is DrawableResourceAndroidBitmap) {
+        return <String, Object>{
+          'icon': icon.bitmap,
+          'iconBitmapSource': AndroidBitmapSource.drawable.index,
+        };
+      } else if (icon is FilePathAndroidBitmap) {
+        return <String, Object>{
+          'icon': icon.bitmap,
+          'iconBitmapSource': AndroidBitmapSource.filePath.index,
+        };
+      } else {
+        return <String, Object>{};
+      }
+    }
+
     if (actions == null) {
       return <String, Object>{};
     }
     return <String, dynamic>{
-      'actions': actions
-          .map((AndroidNotificationAction e) =>
-              <String, dynamic>{'id': e.id, 'title': e.title})
-          .toList(),
+      'actions': actions.map((AndroidNotificationAction e) {
+        return <String, dynamic>{
+          'id': e.id,
+          'title': e.title,
+          ..._convertActionIconToMap(e.icon)
+        };
+      }).toList(),
     };
   }
 }

@@ -22,6 +22,7 @@ import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
 
+import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
@@ -177,8 +178,18 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if(notificationDetails.actions != null) {
         	int requestCode = 999;
 					for (NotificationAction action : notificationDetails.actions) {
-						builder.addAction(new Action(null, action.title, PendingIntent.getBroadcast(context, requestCode ++,
-								new Intent(context, ActionBroadcastReceiver.class).setAction(ActionBroadcastReceiver.ACTION_TAPPED).putExtra("id", action.id), 0)));
+						IconCompat icon = null;
+						if (!TextUtils.isEmpty(action.icon)) {
+							icon = getIconFromSource(context, action.icon, action.iconSource);
+						}
+
+						Intent actionIntent = new Intent(context, ActionBroadcastReceiver.class)
+								.setAction(ActionBroadcastReceiver.ACTION_TAPPED).putExtra("id", action.id);
+						PendingIntent actionPendingIntent = PendingIntent.getBroadcast(context, requestCode++, actionIntent, 0);
+						builder.addAction(new Action.Builder(icon, action.title, actionPendingIntent)
+								// space for additional configuration like semantic actions etc.
+								.build()
+						);
 					}
 				}
 
