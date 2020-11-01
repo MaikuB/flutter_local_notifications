@@ -67,14 +67,42 @@ Future<void> main() async {
   /// done later
   final IOSInitializationSettings initializationSettingsIOS =
       IOSInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false,
-          onDidReceiveLocalNotification:
-              (int id, String title, String body, String payload) async {
-            didReceiveLocalNotificationSubject.add(ReceivedNotification(
-                id: id, title: title, body: body, payload: payload));
-          });
+    requestAlertPermission: false,
+    requestBadgePermission: false,
+    requestSoundPermission: false,
+    onDidReceiveLocalNotification:
+        (int id, String title, String body, String payload) async {
+      didReceiveLocalNotificationSubject.add(
+        ReceivedNotification(
+            id: id, title: title, body: body, payload: payload),
+      );
+    },
+    notificationCategories: [
+      const IOSNotificationCategory(
+        'demoCategory',
+        <IOSNotificationAction>[
+          IOSNotificationAction('id_1', 'Action 1'),
+          IOSNotificationAction(
+            'id_2',
+            'Action 2',
+            options: <IOSNotificationActionOption>{
+              IOSNotificationActionOption.destructive,
+            },
+          ),
+          IOSNotificationAction(
+            'id_3',
+            'Action 3',
+            options: <IOSNotificationActionOption>{
+              IOSNotificationActionOption.foreground,
+            },
+          ),
+        ],
+        options: <IOSNotificationCategoryOption>{
+          IOSNotificationCategoryOption.hiddenPreviewShowTitle,
+        },
+      )
+    ],
+  );
   const MacOSInitializationSettings initializationSettingsMacOS =
       MacOSInitializationSettings(
           requestAlertPermission: false,
@@ -597,8 +625,16 @@ class _HomePageState extends State<HomePage> {
         AndroidNotificationAction('id_3', 'Action 3'),
       ],
     );
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    const IOSNotificationDetails iosNotificationDetails =
+        IOSNotificationDetails(
+      categoryIdentifier: 'demoCategory',
+    );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iosNotificationDetails,
+    );
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');

@@ -1,12 +1,21 @@
 #include "AppDelegate.h"
 #include "GeneratedPluginRegistrant.h"
 #import <Flutter/Flutter.h>
+#import <Flutter/FlutterPlugin.h>
 #import <flutter_local_notifications/FlutterLocalNotificationsPlugin.h>
+
+void registerPlugins(NSObject<FlutterPluginRegistry>* registry) {
+    [GeneratedPluginRegistrant registerWithRegistry:registry];
+}
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     [GeneratedPluginRegistrant registerWithRegistry:self];
+    
+    // This is required to make any communication available in the action isolate.
+    [FlutterLocalNotificationsPlugin setPluginRegistrantCallback:registerPlugins];
+    
     // cancel old notifications that were scheduled to be periodically shown upon a reinstallation of the app
     if(![[NSUserDefaults standardUserDefaults]objectForKey:@"Notification"]){
         [[UIApplication sharedApplication] cancelAllLocalNotifications];
