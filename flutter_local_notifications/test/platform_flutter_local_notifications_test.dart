@@ -1941,10 +1941,74 @@ void main() {
           'defaultPresentAlert': true,
           'defaultPresentSound': true,
           'defaultPresentBadge': true,
+          'notificationCategories': <String>[],
         })
       ]);
     });
 
+    test('initialize with notification categories', () async {
+      const IOSInitializationSettings iosInitializationSettings =
+          IOSInitializationSettings(
+        notificationCategories: <IOSNotificationCategory>[
+          IOSNotificationCategory(
+            'category1',
+            <IOSNotificationAction>[
+              IOSNotificationAction(
+                'action1',
+                'Action 1',
+                options: <IOSNotificationActionOption>{
+                  IOSNotificationActionOption.destructive,
+                },
+              ),
+            ],
+            options: <IOSNotificationCategoryOption>{
+              IOSNotificationCategoryOption.allowAnnouncement,
+            },
+          ),
+          IOSNotificationCategory(
+            'category2',
+            <IOSNotificationAction>[
+              IOSNotificationAction('action2', 'Action 2'),
+              IOSNotificationAction('action3', 'Action 3'),
+            ],
+          )
+        ],
+      );
+      const InitializationSettings initializationSettings =
+          InitializationSettings(iOS: iosInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      expect(log, <Matcher>[
+        isMethodCall('initialize', arguments: <String, Object>{
+          'requestAlertPermission': true,
+          'requestSoundPermission': true,
+          'requestBadgePermission': true,
+          'defaultPresentAlert': true,
+          'defaultPresentSound': true,
+          'defaultPresentBadge': true,
+          'notificationCategories': <Map<String, dynamic>>[
+            {
+              'identifier': 'category1',
+              'actions': [
+                {
+                  'identifier': 'action1',
+                  'title': 'Action 1',
+                  'options': [2],
+                }
+              ],
+              'options': [5],
+            },
+            {
+              'identifier': 'category2',
+              'actions': [
+                {'identifier': 'action2', 'title': 'Action 2', 'options': []},
+                {'identifier': 'action3', 'title': 'Action 3', 'options': []},
+              ],
+              'options': [],
+            }
+          ],
+        })
+      ]);
+    });
     test('initialize with all settings off', () async {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings(
@@ -1965,6 +2029,7 @@ void main() {
           'defaultPresentAlert': false,
           'defaultPresentSound': false,
           'defaultPresentBadge': false,
+          'notificationCategories': <String>[],
         })
       ]);
     });
@@ -1995,17 +2060,20 @@ void main() {
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const NotificationDetails notificationDetails = NotificationDetails(
-          iOS: IOSNotificationDetails(
-              presentAlert: true,
-              presentBadge: true,
-              presentSound: true,
-              subtitle: 'a subtitle',
-              sound: 'sound.mp3',
-              badgeNumber: 1,
-              attachments: <IOSNotificationAttachment>[
+        iOS: IOSNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+          subtitle: 'a subtitle',
+          sound: 'sound.mp3',
+          badgeNumber: 1,
+          attachments: <IOSNotificationAttachment>[
             IOSNotificationAttachment('video.mp4',
                 identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373'),
-          ]));
+          ],
+          categoryIdentifier: 'category1',
+        ),
+      );
 
       await flutterLocalNotificationsPlugin.show(
           1, 'notification title', 'notification body', notificationDetails);
@@ -2030,6 +2098,7 @@ void main() {
                   'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                 }
               ],
+              'categoryIdentifier': 'category1',
             },
           }));
     });
@@ -2092,6 +2161,7 @@ void main() {
                     'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                   }
                 ],
+                'categoryIdentifier': null,
               },
             }));
       });
@@ -2155,6 +2225,7 @@ void main() {
                     'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                   }
                 ],
+                'categoryIdentifier': null,
               },
             }));
       });
@@ -2219,6 +2290,7 @@ void main() {
                     'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                   }
                 ],
+                'categoryIdentifier': null,
               },
             }));
       });
