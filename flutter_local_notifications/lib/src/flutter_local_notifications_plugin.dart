@@ -45,6 +45,9 @@ class FlutterLocalNotificationsPlugin {
     } else if (platform.isIOS) {
       FlutterLocalNotificationsPlatform.instance =
           IOSFlutterLocalNotificationsPlugin();
+    } else if (platform.isLinux) {
+      FlutterLocalNotificationsPlatform.instance =
+          LinuxFlutterLocalNotificationsPlugin();
     } else if (platform.isMacOS) {
       FlutterLocalNotificationsPlatform.instance =
           MacOSFlutterLocalNotificationsPlugin();
@@ -80,6 +83,11 @@ class FlutterLocalNotificationsPlugin {
         T == IOSFlutterLocalNotificationsPlugin &&
         FlutterLocalNotificationsPlatform.instance
             is IOSFlutterLocalNotificationsPlugin) {
+      return FlutterLocalNotificationsPlatform.instance;
+    } else if (_platform.isLinux &&
+        T == LinuxFlutterLocalNotificationsPlugin &&
+        FlutterLocalNotificationsPlatform.instance
+            is LinuxFlutterLocalNotificationsPlugin) {
       return FlutterLocalNotificationsPlatform.instance;
     } else if (_platform.isMacOS &&
         T == MacOSFlutterLocalNotificationsPlugin &&
@@ -126,6 +134,11 @@ class FlutterLocalNotificationsPlugin {
               IOSFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings?.iOS,
               onSelectNotification: onSelectNotification);
+    } else if (_platform.isLinux) {
+      return await resolvePlatformSpecificImplementation<
+              LinuxFlutterLocalNotificationsPlugin>()
+          ?.initialize(initializationSettings?.linux,
+              onSelectNotification: onSelectNotification);
     } else if (_platform.isMacOS) {
       return await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
@@ -156,6 +169,8 @@ class FlutterLocalNotificationsPlugin {
       return await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.getNotificationAppLaunchDetails();
+    } else if (_platform.isLinux) {
+      return null;
     } else if (_platform.isMacOS) {
       return await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
@@ -187,6 +202,12 @@ class FlutterLocalNotificationsPlugin {
               IOSFlutterLocalNotificationsPlugin>()
           ?.show(id, title, body,
               notificationDetails: notificationDetails?.iOS, payload: payload);
+    } else if (_platform.isLinux) {
+      await resolvePlatformSpecificImplementation<
+              LinuxFlutterLocalNotificationsPlugin>()
+          ?.show(id, title, body,
+              notificationDetails: notificationDetails?.linux,
+              payload: payload);
     } else if (_platform.isMacOS) {
       await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()

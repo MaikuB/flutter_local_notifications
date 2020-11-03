@@ -28,7 +28,8 @@ flutter:
         pluginClass: FlutterLocalNotificationsPlugin
       macos:
         pluginClass: FlutterLocalNotificationsPlugin
-
+      linux:
+        pluginClass: FlutterLocalNotificationsPlugin
 
 environment:
   sdk: ">=2.6.0 <3.0.0"

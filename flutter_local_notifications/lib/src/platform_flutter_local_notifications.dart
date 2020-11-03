@@ -19,6 +19,9 @@ import 'platform_specifics/ios/notification_details.dart';
 import 'platform_specifics/macos/initialization_settings.dart';
 import 'platform_specifics/macos/method_channel_mappers.dart';
 import 'platform_specifics/macos/notification_details.dart';
+import 'platform_specifics/linux/initialization_settings.dart';
+import 'platform_specifics/linux/method_channel_mappers.dart';
+import 'platform_specifics/linux/notification_details.dart';
 import 'type_mappers.dart';
 import 'typedefs.dart';
 import 'types.dart';
@@ -655,6 +658,70 @@ class MacOSFlutterLocalNotificationsPlugin
     switch (call.method) {
       case 'selectNotification':
         return _onSelectNotification(call.arguments);
+      default:
+        return Future<void>.error('Method not defined');
+    }
+  }
+}
+
+class LinuxFlutterLocalNotificationsPlugin
+    extends MethodChannelFlutterLocalNotificationsPlugin {
+  SelectNotificationCallback _onSelectNotification;
+  Map<int, Map<String, LinuxNotificationButtonHandler>> _notificationButtonHandlerMap;
+
+  Future<bool> initialize(
+    LinuxInitializationSettings initializationSettings, {
+    SelectNotificationCallback onSelectNotification,
+  }) async {
+    _onSelectNotification = onSelectNotification;
+    _notificationButtonHandlerMap = Map();
+    _channel.setMethodCallHandler(_handleMethod);
+    return await _channel.invokeMethod(
+        'initialize', initializationSettings?.toMap());
+  }
+
+  @override
+  Future<void> show(
+    int id,
+    String title,
+    String body, {
+    LinuxNotificationDetails notificationDetails,
+    String payload,
+  }) {
+    validateId(id);
+    if (notificationDetails != null) {
+      _notificationButtonHandlerMap[id] = Map.fromIterable(
+        notificationDetails.buttons,
+        key: (button) => button.buttonId,
+        value: (button) => button.handler,
+      );
+    }
+    return _channel.invokeMethod('show', <String, Object> {
+      'id': id,
+      'title': title,
+      'body': body,
+      'payload': payload ?? '',
+      'platformSpecifics': notificationDetails?.toMap(),
+    });
+  }
+
+  Future<void> _handleMethod(MethodCall call) {
+    switch (call.method) {
+      case 'selectNotification':
+        final args = call.arguments as Map;
+        _notificationButtonHandlerMap.remove(args['id']);
+        _onSelectNotification(args['payload']);
+        break;
+      case 'selectNotificationButton':
+        final args = call.arguments as Map;
+        final id = args['id'] as int;
+        final buttonId = args['buttonId'] as String;
+        final buttonHandlerMap = _notificationButtonHandlerMap.remove(id);
+        final handler = buttonHandlerMap[buttonId];
+        if (handler != null) {
+          handler(id, buttonId);
+        }
+        break;
       default:
         return Future<void>.error('Method not defined');
     }
