@@ -16,6 +16,7 @@ A cross platform plugin for displaying local notifications.
    - [Scheduled notifications and daylight savings](#scheduled-notifications-and-daylight-savings)
    - [Custom notification sounds](#custom-notification-sounds)
    - [macOS differences](#macos-differences)
+   - [Linux limitations](#Linux-limitations)
 - **[📷 Screenshots](#-screenshots)**
 - **[👏 Acknowledgements](#-acknowledgements)**
 - **[⚙️ Android Setup](#️-android-setup)**
@@ -47,6 +48,7 @@ A cross platform plugin for displaying local notifications.
 * **Android 4.1+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
 * **iOS 8.0+**. On iOS versions older than 10, the plugin will use the UILocalNotification APIs. The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on iOS 10 or newer.
 * **macOS 10.11+**. On macOS versions older than 10.14, the plugin will use the [NSUserNotification APIs](https://developer.apple.com/documentation/foundation/nsusernotification). The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on macOS 10.14 or newer.
+* **Linux with gnome 2.40+**. Uses the [GNotification APIs](https://developer.gnome.org/gio/stable/GNotification.html), which supported on gnome 2.40+
 
 ## ✨ Features
 
@@ -110,6 +112,10 @@ The notification APIs used on iOS versions older than 10 (aka the `UILocalNotifi
 Due to limitations currently within the macOS Flutter engine, `getNotificationAppLaunchDetails` will return null on macOS versions older than 10.14. These limitations will mean that conflicts may occur when using this plugin with other notification plugins (e.g. for push notifications).
 
 The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods that were implemented before macOS support was added and have been marked as deprecated aren't implemented on macOS.
+
+##### Linux limitations
+
+Gnome shell will only show notifications from applications which registered in [desktop files](https://developer.gnome.org/integration-guide/stable/desktop-files.html), if no desktop file which base name matches the application id was found, your notification will not be showed. For more information, see [this](https://developer.gnome.org/GNotification/#Preliminaries).
 
 ## 📷 Screenshots
 
