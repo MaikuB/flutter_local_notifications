@@ -728,6 +728,32 @@ class LinuxFlutterLocalNotificationsPlugin
     });
   }
 
+  Future<void> zonedSchedule(
+    int id,
+    String title,
+    String body,
+    TZDateTime scheduledDate,
+    LinuxNotificationDetails notificationDetails, {
+    String payload,
+    DateTimeComponents matchDateTimeComponents,
+  }) async {
+    validateId(id);
+    validateDateIsInTheFuture(scheduledDate);
+    final serializedPlatformSpecifics = notificationDetails?.toMap();
+    await _channel.invokeMethod(
+        'show',
+        <String, Object>{
+          'id': id,
+          'title': title,
+          'body': body,
+          'platformSpecifics': serializedPlatformSpecifics,
+          'payload': payload ?? '',
+          if (matchDateTimeComponents != null)
+            'matchDateTimeComponents': matchDateTimeComponents.index
+        }
+          ..addAll(scheduledDate.toMap()));
+  }
+
   Future<void> cancel(int id) {
     validateId(id);
     if (_notificationButtonHandlerMap.remove(id) != null) {

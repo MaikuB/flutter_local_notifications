@@ -34,9 +34,57 @@ namespace {
     RepeatInterval::Weekly
   };
 
+  enum class DateTimeComponents {
+    Time,
+    DayOfWeekAndTime,
+  };
+
+  template <typename T>
+  using TypeIdentity = T;
+
+  enum class ModType {
+    Normal,
+    NoZero,
+  };
+
+  template <ModType UsingModType = ModType::Normal, typename NumT>
+  constexpr NumT Mod(NumT a, TypeIdentity<NumT> b) {
+    using std::abs;
+    b = abs(b);
+    const auto result = a % b;
+    if (std::conditional_t<UsingModType == ModType::NoZero, std::less_equal<>, std::less<>>{}(result, 0)) {
+      return result + b;
+    }
+    return result;
+  }
+
+  GDateTime* GetNextNotifyTime(GDateTime* now, GDateTime* value, DateTimeComponents component) {
+    const auto usingTimeZone = g_date_time_get_timezone(now);
+    const auto nowTimeStamp = g_date_time_to_unix(now);
+    const auto valueTimeStamp = g_date_time_to_unix(value);
+    auto diff = valueTimeStamp - nowTimeStamp;
+    switch (component)
+    {
+    default:
+      assert(!"Invalid component");
+      [[fallthrough]];
+    case DateTimeComponents::Time:
+      diff = Mod(diff, static_cast<gint64>(RepeatInterval::Daily));
+      break;
+    case DateTimeComponents::DayOfWeekAndTime:
+      diff = Mod(diff, static_cast<gint64>(RepeatInterval::Weekly));
+      break;
+    }
+    g_autoptr(GDateTime) utcResult = g_date_time_new_from_unix_utc(nowTimeStamp + diff);
+    return g_date_time_to_timezone(utcResult, usingTimeZone);
+  }
+
   template <typename T>
   class SimpleGPtr {
   public:
+    SimpleGPtr() : m_Ptr{} {
+    }
+
     SimpleGPtr(T* ptr) : m_Ptr{ ptr } {
     }
 
@@ -80,7 +128,7 @@ namespace {
         return nullptr;
       }
       const auto iconFilePath = fl_value_get_string(icon);
-      g_autoptr(GFile) iconFile = g_file_new_for_commandline_arg(iconFilePath);
+      const SimpleGPtr iconFile = g_file_new_for_commandline_arg(iconFilePath);
       return g_file_icon_new(iconFile);
     }
     case IconSource::Bytes:
@@ -90,7 +138,7 @@ namespace {
       }
       const auto size = fl_value_get_length(icon);
       const auto data = fl_value_get_uint8_list(icon);
-      g_autoptr(GBytes) bytes = g_bytes_new_static(data, size);
+      const SimpleGPtr bytes = g_bytes_new_static(data, size);
       return g_bytes_icon_new(bytes);
     }
     case IconSource::Theme:
@@ -193,14 +241,14 @@ struct _FlutterLocalNotificationsPlugin {
       {
         NotificationActionName,
         [](GSimpleAction* action, GVariant* param, gpointer opaque) {
-          g_autoptr(GVariant) id = g_variant_get_child_value(param, 0);
+          const SimpleGPtr id = g_variant_get_child_value(param, 0);
           const auto idValue = g_variant_get_int64(id);
-          g_autoptr(GVariant) payload = g_variant_get_child_value(param, 1);
+          const SimpleGPtr payload = g_variant_get_child_value(param, 1);
           const auto payloadValue = g_variant_get_string(payload, nullptr);
 
           const auto plugin = static_cast<FlutterLocalNotificationsPlugin*>(opaque);
 
-          g_autoptr(FlValue) arg = fl_value_new_map();
+          const SimpleGPtr arg = fl_value_new_map();
           fl_value_set_string_take(arg, "id", fl_value_new_int(idValue));
           fl_value_set_string_take(arg, "payload", fl_value_new_string(payloadValue));
           fl_method_channel_invoke_method(plugin->channel, "selectNotification", arg, nullptr, nullptr, nullptr);
@@ -210,14 +258,14 @@ struct _FlutterLocalNotificationsPlugin {
       {
         NotificationButtonActionName,
         [](GSimpleAction* action, GVariant* param, gpointer opaque) {
-          g_autoptr(GVariant) id = g_variant_get_child_value(param, 0);
+          const SimpleGPtr id = g_variant_get_child_value(param, 0);
           const auto idValue = g_variant_get_int64(id);
-          g_autoptr(GVariant) buttonId = g_variant_get_child_value(param, 1);
+          const SimpleGPtr buttonId = g_variant_get_child_value(param, 1);
           const auto buttonIdValue = g_variant_get_string(buttonId, nullptr);
 
           const auto plugin = static_cast<FlutterLocalNotificationsPlugin*>(opaque);
 
-          g_autoptr(FlValue) arg = fl_value_new_map();
+          const SimpleGPtr arg = fl_value_new_map();
           fl_value_set_string_take(arg, "id", fl_value_new_int(idValue));
           fl_value_set_string_take(arg, "buttonId", fl_value_new_string(buttonIdValue));
           fl_method_channel_invoke_method(plugin->channel, "selectNotificationButton", arg, nullptr, nullptr, nullptr);
@@ -239,12 +287,18 @@ struct _FlutterLocalNotificationsPlugin {
     OptionalArg(title, FL_VALUE_TYPE_STRING);
     auto body = fl_value_lookup_string(args, "body");
     OptionalArg(body, FL_VALUE_TYPE_STRING);
-    auto repeatInterval = fl_value_lookup_string(args, "repeatInterval");
-    OptionalArg(repeatInterval, FL_VALUE_TYPE_INT);
     const auto payload = fl_value_lookup_string(args, "payload");
     RequireArg(payload, FL_VALUE_TYPE_STRING);
     auto platformSpecifics = fl_value_lookup_string(args, "platformSpecifics");
     OptionalArg(platformSpecifics, FL_VALUE_TYPE_MAP);
+
+    // for periodicallyShow
+    auto repeatInterval = fl_value_lookup_string(args, "repeatInterval");
+    OptionalArg(repeatInterval, FL_VALUE_TYPE_INT);
+
+    // for zonedSchedule
+    auto timeZoneName = fl_value_lookup_string(args, "timeZoneName");
+    OptionalArg(timeZoneName, FL_VALUE_TYPE_STRING);
 
     const auto idValue = fl_value_get_int(id);
     const auto titleValue = title ? fl_value_get_string(title) : "";
@@ -293,7 +347,6 @@ struct _FlutterLocalNotificationsPlugin {
     if (repeatInterval) {
       const auto repeatIntervalIndex = fl_value_get_int(repeatInterval);
       if (repeatIntervalIndex < 0 || repeatIntervalIndex >= std::size(RepeatIntervalMap)) {
-        g_object_unref(notification);
         return FL_METHOD_RESPONSE(fl_method_error_response_new("show_error", "repeatInterval is not in valid range", nullptr));
       }
       const auto repeatIntervalValue = RepeatIntervalMap[repeatIntervalIndex];
@@ -306,6 +359,56 @@ struct _FlutterLocalNotificationsPlugin {
         delete static_cast<decltype(data)>(p);
       });
       periodic_notification_map->emplace(idValue, taskId);
+    } else if (timeZoneName) {
+      const auto scheduledDateTime = fl_value_lookup_string(args, "scheduledDateTime");
+      RequireArg(scheduledDateTime, FL_VALUE_TYPE_STRING);
+      auto matchDateTimeComponents = fl_value_lookup_string(args, "matchDateTimeComponents");
+      OptionalArg(matchDateTimeComponents, FL_VALUE_TYPE_INT);
+
+      const auto timeZoneNameValue = fl_value_get_string(timeZoneName);
+      const auto scheduledDateTimeValue = fl_value_get_string(scheduledDateTime);
+      g_autoptr(GTimeZone) timeZone = g_time_zone_new(timeZoneNameValue);
+      g_autoptr(GDateTime) realScheduledDateTime = g_date_time_new_from_iso8601(scheduledDateTimeValue, timeZone);
+      assert(realScheduledDateTime);
+
+      const auto now = g_date_time_new_now(timeZone);
+
+      if (matchDateTimeComponents) {
+        const auto matchDateTimeComponentsValue = static_cast<DateTimeComponents>(fl_value_get_int(matchDateTimeComponents));
+        const auto nextNotifyTime = GetNextNotifyTime(now, realScheduledDateTime, matchDateTimeComponentsValue);
+        const auto initialDiff = g_date_time_to_unix(nextNotifyTime) - g_date_time_to_unix(now);
+        const auto data = new std::tuple{ G_APPLICATION(app), std::move(notification), std::move(notificationIdString),
+          static_cast<guint>(matchDateTimeComponentsValue == DateTimeComponents::Time ? RepeatInterval::Daily : RepeatInterval::Weekly),
+          idValue, this };
+        const auto taskId = g_timeout_add_seconds(initialDiff, [](gpointer p) -> gboolean {
+          const auto& [app, notification, notificationIdString, repeatInterval, id, plugin] = *static_cast<decltype(data)>(p);
+          g_application_send_notification(app, notificationIdString.data(), notification);
+          // delays may accumulate here
+          const auto taskId = g_timeout_add_seconds_full(G_PRIORITY_DEFAULT, repeatInterval, [](gpointer p) -> gboolean {
+            [[maybe_unused]] const auto& [app, notification, notificationIdString, unused, unused2, unused3] = *static_cast<decltype(data)>(p);
+            g_application_send_notification(app, notificationIdString.data(), notification);
+            return TRUE;
+          }, p, [](gpointer p) {
+            delete static_cast<decltype(data)>(p);
+          });
+          // possible race condition?
+          plugin->periodic_notification_map->insert_or_assign(id, taskId);
+          return FALSE;
+        }, static_cast<gpointer>(data));
+        periodic_notification_map->emplace(idValue, taskId);
+      } else {
+        const auto diff = g_date_time_to_unix(realScheduledDateTime) - g_date_time_to_unix(now);
+        // this should be guaranteed by flutter side
+        assert(diff > 0);
+        const auto data = new std::tuple{ G_APPLICATION(app), std::move(notification), std::move(notificationIdString) };
+        g_timeout_add_seconds_full(G_PRIORITY_DEFAULT, diff, [](gpointer p) -> gboolean {
+          const auto& [app, notification, notificationIdString] = *static_cast<decltype(data)>(p);
+          g_application_send_notification(app, notificationIdString.data(), notification);
+          return FALSE;
+        }, static_cast<gpointer>(data), [](gpointer p) {
+          delete static_cast<decltype(data)>(p);
+        });
+      }
     } else {
       g_application_send_notification(G_APPLICATION(app), notificationIdString.data(), notification);
     }

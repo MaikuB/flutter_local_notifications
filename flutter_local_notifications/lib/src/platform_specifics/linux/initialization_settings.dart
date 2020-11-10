@@ -1,7 +1,9 @@
 import 'icon.dart';
 
+/// Plugin initialization settings for Linux.
 class LinuxInitializationSettings {
-  final LinuxIcon defaultIcon;
-
   const LinuxInitializationSettings({this.defaultIcon});
+
+  /// Specifies the default icon for notifications.
+  final LinuxIcon defaultIcon;
 }

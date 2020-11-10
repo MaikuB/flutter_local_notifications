@@ -328,6 +328,13 @@ class FlutterLocalNotificationsPlugin {
                   uiLocalNotificationDateInterpretation,
               payload: payload,
               matchDateTimeComponents: matchDateTimeComponents);
+    } else if (_platform.isLinux) {
+      await resolvePlatformSpecificImplementation<
+              LinuxFlutterLocalNotificationsPlugin>()
+          ?.zonedSchedule(
+              id, title, body, scheduledDate, notificationDetails?.linux,
+              payload: payload,
+              matchDateTimeComponents: matchDateTimeComponents);
     } else if (_platform.isMacOS) {
       await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
@@ -373,6 +380,12 @@ class FlutterLocalNotificationsPlugin {
               IOSFlutterLocalNotificationsPlugin>()
           ?.periodicallyShow(id, title, body, repeatInterval,
               notificationDetails: notificationDetails?.iOS, payload: payload);
+    } else if (_platform.isLinux) {
+      await resolvePlatformSpecificImplementation<
+              LinuxFlutterLocalNotificationsPlugin>()
+          ?.periodicallyShow(id, title, body, repeatInterval,
+              notificationDetails: notificationDetails?.linux,
+              payload: payload);
     } else if (_platform.isMacOS) {
       await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
