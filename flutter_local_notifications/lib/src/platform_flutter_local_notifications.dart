@@ -668,6 +668,7 @@ class LinuxFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback _onSelectNotification;
   Map<int, Map<String, LinuxNotificationButtonHandler>> _notificationButtonHandlerMap;
+  Map<int, Map<String, LinuxNotificationButtonHandler>> _periodicalNotificationButtonHandlerMap;
 
   Future<bool> initialize(
     LinuxInitializationSettings initializationSettings, {
@@ -675,12 +676,12 @@ class LinuxFlutterLocalNotificationsPlugin
   }) async {
     _onSelectNotification = onSelectNotification;
     _notificationButtonHandlerMap = Map();
+    _periodicalNotificationButtonHandlerMap = Map();
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
         'initialize', initializationSettings?.toMap());
   }
 
-  @override
   Future<void> show(
     int id,
     String title,
@@ -689,13 +690,11 @@ class LinuxFlutterLocalNotificationsPlugin
     String payload,
   }) {
     validateId(id);
-    if (notificationDetails != null) {
-      _notificationButtonHandlerMap[id] = Map.fromIterable(
-        notificationDetails.buttons,
-        key: (button) => button.buttonId,
-        value: (button) => button.handler,
-      );
-    }
+    _notificationButtonHandlerMap[id] = notificationDetails != null ? Map.fromIterable(
+      notificationDetails.buttons,
+      key: (button) => button.buttonId,
+      value: (button) => button.handler,
+    ) : null;
     return _channel.invokeMethod('show', <String, Object> {
       'id': id,
       'title': title,
@@ -703,6 +702,52 @@ class LinuxFlutterLocalNotificationsPlugin
       'payload': payload ?? '',
       'platformSpecifics': notificationDetails?.toMap(),
     });
+  }
+
+  Future<void> periodicallyShow(
+    int id,
+    String title,
+    String body,
+    RepeatInterval repeatInterval, {
+    LinuxNotificationDetails notificationDetails,
+    String payload,
+  }) {
+    validateId(id);
+    _periodicalNotificationButtonHandlerMap[id] = notificationDetails != null ? Map.fromIterable(
+      notificationDetails.buttons,
+      key: (button) => button.buttonId,
+      value: (button) => button.handler,
+    ) : null;
+    return _channel.invokeMethod('show', <String, Object> {
+      'id': id,
+      'title': title,
+      'body': body,
+      'repeatInterval': repeatInterval.index,
+      'payload': payload ?? '',
+      'platformSpecifics': notificationDetails?.toMap(),
+    });
+  }
+
+  Future<void> cancel(int id) {
+    validateId(id);
+    if (_notificationButtonHandlerMap.remove(id) != null) {
+      return _channel.invokeMethod('cancel', id);
+    } else if (_periodicalNotificationButtonHandlerMap.remove(id) != null) {
+      return _channel.invokeMethod('cancelPeriodicNotification', id);
+    } else {
+      throw ArgumentError.value(id, "id", "id is invalid");
+    }
+  }
+
+  Future<void> cancelAll() async {
+    for (final id in _notificationButtonHandlerMap.keys) {
+      await _channel.invokeMethod('cancel', id);
+    }
+    for (final id in _periodicalNotificationButtonHandlerMap.keys) {
+      await _channel.invokeMethod('cancelPeriodicNotification', id);
+    }
+    _notificationButtonHandlerMap.clear();
+    _periodicalNotificationButtonHandlerMap.clear();
   }
 
   Future<void> _handleMethod(MethodCall call) {
@@ -716,7 +761,8 @@ class LinuxFlutterLocalNotificationsPlugin
         final args = call.arguments as Map;
         final id = args['id'] as int;
         final buttonId = args['buttonId'] as String;
-        final buttonHandlerMap = _notificationButtonHandlerMap.remove(id);
+        final buttonHandlerMap = _notificationButtonHandlerMap.remove(id) ?? _periodicalNotificationButtonHandlerMap[id];
+        assert(buttonHandlerMap != null, "Handler map is corrupted");
         final handler = buttonHandlerMap[buttonId];
         if (handler != null) {
           handler(id, buttonId);

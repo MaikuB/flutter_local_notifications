@@ -6,6 +6,8 @@
 #include <string_view>
 #include <string>
 #include <cassert>
+#include <unordered_map>
+#include <utility>
 
 #define FLUTTER_LOCAL_NOTIFICATIONS_PLUGIN(obj) \
   (G_TYPE_CHECK_INSTANCE_CAST((obj), flutter_local_notifications_plugin_get_type(), \
@@ -16,6 +18,52 @@ namespace {
     File,
     Bytes,
     Theme,
+  };
+
+  enum class RepeatInterval {
+    EveryMinute = 60,
+    Hourly = EveryMinute * 60,
+    Daily = Hourly * 24,
+    Weekly = Daily * 7,
+  };
+
+  inline constexpr RepeatInterval RepeatIntervalMap[] = {
+    RepeatInterval::EveryMinute,
+    RepeatInterval::Hourly,
+    RepeatInterval::Daily,
+    RepeatInterval::Weekly
+  };
+
+  template <typename T>
+  class SimpleGPtr {
+  public:
+    SimpleGPtr(T* ptr) : m_Ptr{ ptr } {
+    }
+
+    SimpleGPtr(SimpleGPtr&& other) noexcept : m_Ptr{ std::exchange(other.m_Ptr, nullptr) } {
+    }
+
+    SimpleGPtr& operator=(SimpleGPtr&& other) noexcept {
+      SimpleGPtr{ std::move(other) }.swap(*this);
+      return *this;
+    }
+
+    ~SimpleGPtr() {
+      if (m_Ptr) {
+        g_object_unref(m_Ptr);
+      }
+    }
+
+    operator T*() const {
+      return m_Ptr;
+    }
+
+    void swap(SimpleGPtr& other) noexcept {
+      std::swap(m_Ptr, other.m_Ptr);
+    }
+
+  private:
+    T* m_Ptr;
   };
 
   GIcon* CreateIconFromFlValue(FlValue* v) {
@@ -70,8 +118,16 @@ namespace {
     return FL_METHOD_RESPONSE(fl_method_error_response_new(methodName.data(), requiredArgName.data(), detail));
   }
 
-  bool CheckArgument(FlValue* arg, FlValueType requiredType) {
-    return arg && fl_value_get_type(arg) == requiredType;
+  FlMethodResponse* OptionalArgument(const char* funcName, const char* argName, FlValue*& arg, FlValueType requiredType) {
+    if (arg) {
+      const auto type = fl_value_get_type(arg);
+      if (type == FL_VALUE_TYPE_NULL) {
+        arg = nullptr;
+        return nullptr;
+      }
+      return type == requiredType ? nullptr : RequiredArgumentTypeError(funcName, argName);
+    }
+    return nullptr;
   }
 
   FlMethodResponse* RequireArgument(const char* funcName, const char* argName, FlValue* arg, FlValueType requiredType) {
@@ -92,6 +148,7 @@ namespace {
 }
 
 #define RequireArg(arg, requiredType) if (const auto resp = ::RequireArgument(__func__, #arg, arg, requiredType)) { return resp; }
+#define OptionalArg(arg, requiredType) if (const auto resp = ::OptionalArgument(__func__, #arg, arg, requiredType)) { return resp; }
 
 struct _FlutterLocalNotificationsPlugin {
   GObject parent_instance;
@@ -100,6 +157,9 @@ struct _FlutterLocalNotificationsPlugin {
   FlMethodChannel* channel;
 
   GIcon* default_icon;
+
+  // Key: notification id, Value: task id
+  std::unordered_map<int64_t, int>* periodic_notification_map;
 
   GtkWidget* getTopLevel() const {
     const auto view = GTK_WIDGET(fl_plugin_registrar_get_view(registrar));
@@ -175,18 +235,23 @@ struct _FlutterLocalNotificationsPlugin {
 
     const auto id = fl_value_lookup_string(args, "id");
     RequireArg(id, FL_VALUE_TYPE_INT);
-    const auto title = fl_value_lookup_string(args, "title");
-    const auto body = fl_value_lookup_string(args, "body");
+    auto title = fl_value_lookup_string(args, "title");
+    OptionalArg(title, FL_VALUE_TYPE_STRING);
+    auto body = fl_value_lookup_string(args, "body");
+    OptionalArg(body, FL_VALUE_TYPE_STRING);
+    auto repeatInterval = fl_value_lookup_string(args, "repeatInterval");
+    OptionalArg(repeatInterval, FL_VALUE_TYPE_INT);
     const auto payload = fl_value_lookup_string(args, "payload");
     RequireArg(payload, FL_VALUE_TYPE_STRING);
-    const auto platformSpecifics = fl_value_lookup_string(args, "platformSpecifics");
+    auto platformSpecifics = fl_value_lookup_string(args, "platformSpecifics");
+    OptionalArg(platformSpecifics, FL_VALUE_TYPE_MAP);
 
     const auto idValue = fl_value_get_int(id);
-    const auto titleValue = CheckArgument(title, FL_VALUE_TYPE_STRING) ? fl_value_get_string(title) : "";
-    const auto bodyValue = CheckArgument(body, FL_VALUE_TYPE_STRING) ? fl_value_get_string(body) : nullptr;
+    const auto titleValue = title ? fl_value_get_string(title) : "";
+    const auto bodyValue = body ? fl_value_get_string(body) : nullptr;
     const auto payloadValue = fl_value_get_string(payload);
 
-    g_autoptr(GNotification) notification = g_notification_new(titleValue);
+    SimpleGPtr notification = g_notification_new(titleValue);
     if (bodyValue) {
       g_notification_set_body(notification, bodyValue);
     }
@@ -194,7 +259,7 @@ struct _FlutterLocalNotificationsPlugin {
 
     const auto app = getApplication();
 
-    if (platformSpecifics && fl_value_get_type(platformSpecifics) == FL_VALUE_TYPE_MAP) {
+    if (platformSpecifics) {
       const auto icon = fl_value_lookup_string(platformSpecifics, "icon");
       g_autoptr(GIcon) usingIcon = icon && fl_value_get_type(icon) == FL_VALUE_TYPE_MAP ? CreateIconFromFlValue(icon) : nullptr;
       if (!usingIcon) {
@@ -224,7 +289,52 @@ struct _FlutterLocalNotificationsPlugin {
       }
     }
 
-    g_application_send_notification(G_APPLICATION(app), ("flutter_local_notifications#" + std::to_string(idValue)).data(), notification);
+    auto notificationIdString = "flutter_local_notifications#" + std::to_string(idValue);
+    if (repeatInterval) {
+      const auto repeatIntervalIndex = fl_value_get_int(repeatInterval);
+      if (repeatIntervalIndex < 0 || repeatIntervalIndex >= std::size(RepeatIntervalMap)) {
+        g_object_unref(notification);
+        return FL_METHOD_RESPONSE(fl_method_error_response_new("show_error", "repeatInterval is not in valid range", nullptr));
+      }
+      const auto repeatIntervalValue = RepeatIntervalMap[repeatIntervalIndex];
+      const auto data = new std::tuple{ G_APPLICATION(app), std::move(notification), std::move(notificationIdString) };
+      const auto taskId = g_timeout_add_seconds_full(G_PRIORITY_DEFAULT, static_cast<guint>(repeatIntervalValue), [](gpointer p) -> gboolean {
+        const auto& [app, notification, notificationIdString] = *static_cast<decltype(data)>(p);
+        g_application_send_notification(app, notificationIdString.data(), notification);
+        return TRUE;
+      }, static_cast<gpointer>(data), [](gpointer p) {
+        delete static_cast<decltype(data)>(p);
+      });
+      periodic_notification_map->emplace(idValue, taskId);
+    } else {
+      g_application_send_notification(G_APPLICATION(app), notificationIdString.data(), notification);
+    }
+    return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  }
+
+  FlMethodResponse* cancel(FlMethodCall* call) {
+    const auto args = fl_method_call_get_args(call);
+    RequireArg(args, FL_VALUE_TYPE_INT);
+    const auto id = fl_value_get_int(args);
+
+    const auto app = getApplication();
+    g_application_withdraw_notification(G_APPLICATION(app), ("flutter_local_notifications#" + std::to_string(id)).data());
+    return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  }
+
+  FlMethodResponse* cancelPeriodicNotification(FlMethodCall* call) {
+    const auto args = fl_method_call_get_args(call);
+    RequireArg(args, FL_VALUE_TYPE_INT);
+    const auto id = fl_value_get_int(args);
+
+    const auto app = getApplication();
+    const auto iter = periodic_notification_map->find(id);
+    if (iter == periodic_notification_map->end()) {
+      return FL_METHOD_RESPONSE(fl_method_error_response_new("cancelPeriodicNotification_error", "id does not refer to a valid periodic notification", nullptr));
+    }
+    g_source_remove(iter->second);
+    g_application_withdraw_notification(G_APPLICATION(app), ("flutter_local_notifications#" + std::to_string(id)).data());
+    periodic_notification_map->erase(iter);
     return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
   }
 };
@@ -238,6 +348,7 @@ static void flutter_local_notifications_plugin_dispose(GObject* object) {
   }
   g_object_unref(plugin->channel);
   g_object_unref(plugin->registrar);
+  delete plugin->periodic_notification_map;
 
   G_OBJECT_CLASS(flutter_local_notifications_plugin_parent_class)->dispose(object);
 }
@@ -250,6 +361,7 @@ static void flutter_local_notifications_plugin_init(FlutterLocalNotificationsPlu
   self->registrar = nullptr;
   self->channel = nullptr;
   self->default_icon = nullptr;
+  self->periodic_notification_map = new std::unordered_map<int64_t, int>();
 }
 
 namespace {
@@ -263,6 +375,10 @@ namespace {
       response = self->initialize(call);
     } else if (method == "show") {
       response = self->show(call);
+    } else if (method == "cancel") {
+      response = self->cancel(call);
+    } else if (method == "cancelPeriodicNotification") {
+      response = self->cancelPeriodicNotification(call);
     } else {
       response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
     }
