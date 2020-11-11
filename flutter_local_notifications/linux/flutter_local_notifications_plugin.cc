@@ -128,7 +128,7 @@ namespace {
         return nullptr;
       }
       const auto iconFilePath = fl_value_get_string(icon);
-      const SimpleGPtr iconFile = g_file_new_for_commandline_arg(iconFilePath);
+      g_autoptr(GFile) iconFile = g_file_new_for_commandline_arg(iconFilePath);
       return g_file_icon_new(iconFile);
     }
     case IconSource::Bytes:
@@ -138,7 +138,7 @@ namespace {
       }
       const auto size = fl_value_get_length(icon);
       const auto data = fl_value_get_uint8_list(icon);
-      const SimpleGPtr bytes = g_bytes_new_static(data, size);
+      g_autoptr(GBytes) bytes = g_bytes_new_static(data, size);
       return g_bytes_icon_new(bytes);
     }
     case IconSource::Theme:

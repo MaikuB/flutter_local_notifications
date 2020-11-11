@@ -562,8 +562,12 @@ class _HomePageState extends State<HomePage> {
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker');
+    final ByteData iconData = await rootBundle.load('icons/coworker.png');
     final LinuxNotificationDetails linuxPlatformChannelSpecifics =
         LinuxNotificationDetails(
+          icon: BytesLinuxIcon(
+            iconData.buffer.asUint8List()
+          ),
           buttons: <LinuxNotificationButton>{
             LinuxNotificationButton(
               label: 'label',

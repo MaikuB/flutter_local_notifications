@@ -6,7 +6,7 @@ extension LinuxIconMapper on LinuxIcon {
   Map<String, Object> toMap() {
     return <String, Object> {
       "icon": content,
-      "iconSource": source,
+      "iconSource": source.index,
     };
   }
 }
