@@ -188,11 +188,14 @@ namespace {
     return nullptr;
   }
 
-  inline constexpr const char NotificationActionName[] = "flutter-local-notifications-action";
-  inline constexpr const char NotificationButtonActionName[] = "flutter-local-notifications-button-action";
+#define NOTIFICATION_ACTION_NAME "flutter-local-notifications-action"
+#define NOTIFICATION_BUTTON_ACTION_NAME "flutter-local-notifications-button-action"
 
-  inline constexpr const char NotificationActionBindingName[] = "app.flutter-local-notifications-action";
-  inline constexpr const char NotificationButtonActionBindingName[] = "app.fflutter-local-notifications-button-action";
+  inline constexpr const char NotificationActionName[] = NOTIFICATION_ACTION_NAME;
+  inline constexpr const char NotificationButtonActionName[] = NOTIFICATION_BUTTON_ACTION_NAME;
+
+  inline constexpr const char NotificationActionBindingName[] = "app." NOTIFICATION_ACTION_NAME;
+  inline constexpr const char NotificationButtonActionBindingName[] = "app." NOTIFICATION_BUTTON_ACTION_NAME;
 }
 
 #define RequireArg(arg, requiredType) if (const auto resp = ::RequireArgument(__func__, #arg, arg, requiredType)) { return resp; }
@@ -241,14 +244,14 @@ struct _FlutterLocalNotificationsPlugin {
       {
         NotificationActionName,
         [](GSimpleAction* action, GVariant* param, gpointer opaque) {
-          const SimpleGPtr id = g_variant_get_child_value(param, 0);
+          g_autoptr(GVariant) id = g_variant_get_child_value(param, 0);
           const auto idValue = g_variant_get_int64(id);
-          const SimpleGPtr payload = g_variant_get_child_value(param, 1);
+          g_autoptr(GVariant) payload = g_variant_get_child_value(param, 1);
           const auto payloadValue = g_variant_get_string(payload, nullptr);
 
           const auto plugin = static_cast<FlutterLocalNotificationsPlugin*>(opaque);
 
-          const SimpleGPtr arg = fl_value_new_map();
+          g_autoptr(FlValue) arg = fl_value_new_map();
           fl_value_set_string_take(arg, "id", fl_value_new_int(idValue));
           fl_value_set_string_take(arg, "payload", fl_value_new_string(payloadValue));
           fl_method_channel_invoke_method(plugin->channel, "selectNotification", arg, nullptr, nullptr, nullptr);
@@ -258,14 +261,14 @@ struct _FlutterLocalNotificationsPlugin {
       {
         NotificationButtonActionName,
         [](GSimpleAction* action, GVariant* param, gpointer opaque) {
-          const SimpleGPtr id = g_variant_get_child_value(param, 0);
+          g_autoptr(GVariant) id = g_variant_get_child_value(param, 0);
           const auto idValue = g_variant_get_int64(id);
-          const SimpleGPtr buttonId = g_variant_get_child_value(param, 1);
+          g_autoptr(GVariant) buttonId = g_variant_get_child_value(param, 1);
           const auto buttonIdValue = g_variant_get_string(buttonId, nullptr);
 
           const auto plugin = static_cast<FlutterLocalNotificationsPlugin*>(opaque);
 
-          const SimpleGPtr arg = fl_value_new_map();
+          g_autoptr(FlValue) arg = fl_value_new_map();
           fl_value_set_string_take(arg, "id", fl_value_new_int(idValue));
           fl_value_set_string_take(arg, "buttonId", fl_value_new_string(buttonIdValue));
           fl_method_channel_invoke_method(plugin->channel, "selectNotificationButton", arg, nullptr, nullptr, nullptr);
@@ -316,7 +319,7 @@ struct _FlutterLocalNotificationsPlugin {
     if (platformSpecifics) {
       const auto icon = fl_value_lookup_string(platformSpecifics, "icon");
       g_autoptr(GIcon) usingIcon = icon && fl_value_get_type(icon) == FL_VALUE_TYPE_MAP ? CreateIconFromFlValue(icon) : nullptr;
-      if (!usingIcon) {
+      if (!usingIcon && default_icon) {
         g_object_ref(default_icon);
         usingIcon = default_icon;
       }

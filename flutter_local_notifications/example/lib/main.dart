@@ -562,8 +562,30 @@ class _HomePageState extends State<HomePage> {
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker');
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    final LinuxNotificationDetails linuxPlatformChannelSpecifics =
+        LinuxNotificationDetails(
+          buttons: <LinuxNotificationButton>{
+            LinuxNotificationButton(
+              label: 'label',
+              buttonId: 'id',
+              handler: (int id, String buttonId) {
+                debugPrint(
+                  'You pressed button "$buttonId" from notification#$id');
+              }),
+            LinuxNotificationButton(
+              label: 'label2',
+              buttonId: 'id2',
+              handler: (int id, String buttonId) {
+                debugPrint(
+                  'You pressed button "$buttonId" from notification#$id');
+              }),
+          },
+        );
+    final NotificationDetails platformChannelSpecifics =
+        NotificationDetails(
+          android: androidPlatformChannelSpecifics,
+          linux: linuxPlatformChannelSpecifics,
+        );
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');
