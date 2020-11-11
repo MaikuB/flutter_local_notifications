@@ -2,7 +2,6 @@
 
 #include <flutter_linux/flutter_linux.h>
 #include <gtk/gtk.h>
-#include <sys/utsname.h>
 #include <string_view>
 #include <string>
 #include <cassert>
@@ -153,14 +152,15 @@ namespace {
     return nullptr;
   }
 
+#define APP_ACTION_PREFIX "app."
 #define NOTIFICATION_ACTION_NAME "flutter-local-notifications-action"
 #define NOTIFICATION_BUTTON_ACTION_NAME "flutter-local-notifications-button-action"
 
   inline constexpr const char NotificationActionName[] = NOTIFICATION_ACTION_NAME;
   inline constexpr const char NotificationButtonActionName[] = NOTIFICATION_BUTTON_ACTION_NAME;
 
-  inline constexpr const char NotificationActionBindingName[] = "app." NOTIFICATION_ACTION_NAME;
-  inline constexpr const char NotificationButtonActionBindingName[] = "app." NOTIFICATION_BUTTON_ACTION_NAME;
+  inline constexpr const char NotificationActionBindingName[] = APP_ACTION_PREFIX NOTIFICATION_ACTION_NAME;
+  inline constexpr const char NotificationButtonActionBindingName[] = APP_ACTION_PREFIX NOTIFICATION_BUTTON_ACTION_NAME;
 }
 
 #define RequireArg(arg, requiredType) if (const auto resp = ::RequireArgument(__func__, #arg, arg, requiredType)) { return resp; }
