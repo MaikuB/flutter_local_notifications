@@ -79,41 +79,6 @@ namespace {
     return g_date_time_to_timezone(utcResult, usingTimeZone);
   }
 
-  template <typename T>
-  class SimpleGPtr {
-  public:
-    SimpleGPtr() : m_Ptr{} {
-    }
-
-    SimpleGPtr(T* ptr) : m_Ptr{ ptr } {
-    }
-
-    SimpleGPtr(SimpleGPtr&& other) noexcept : m_Ptr{ std::exchange(other.m_Ptr, nullptr) } {
-    }
-
-    SimpleGPtr& operator=(SimpleGPtr&& other) noexcept {
-      SimpleGPtr{ std::move(other) }.swap(*this);
-      return *this;
-    }
-
-    ~SimpleGPtr() {
-      if (m_Ptr) {
-        g_object_unref(m_Ptr);
-      }
-    }
-
-    operator T*() const {
-      return m_Ptr;
-    }
-
-    void swap(SimpleGPtr& other) noexcept {
-      std::swap(m_Ptr, other.m_Ptr);
-    }
-
-  private:
-    T* m_Ptr;
-  };
-
   GIcon* CreateIconFromFlValue(FlValue* v) {
     const auto icon = fl_value_lookup_string(v, "icon");
     const auto source = fl_value_lookup_string(v, "iconSource");
@@ -308,7 +273,7 @@ struct _FlutterLocalNotificationsPlugin {
     const auto bodyValue = body ? fl_value_get_string(body) : nullptr;
     const auto payloadValue = fl_value_get_string(payload);
 
-    SimpleGPtr notification = g_notification_new(titleValue);
+    g_autoptr(GNotification) notification = g_notification_new(titleValue);
     if (bodyValue) {
       g_notification_set_body(notification, bodyValue);
     }
@@ -353,13 +318,15 @@ struct _FlutterLocalNotificationsPlugin {
         return FL_METHOD_RESPONSE(fl_method_error_response_new("show_error", "repeatInterval is not in valid range", nullptr));
       }
       const auto repeatIntervalValue = RepeatIntervalMap[repeatIntervalIndex];
-      const auto data = new std::tuple{ G_APPLICATION(app), std::move(notification), std::move(notificationIdString) };
+      const auto data = new std::tuple{ G_APPLICATION(app), std::exchange(notification, nullptr), std::move(notificationIdString) };
       const auto taskId = g_timeout_add_seconds_full(G_PRIORITY_DEFAULT, static_cast<guint>(repeatIntervalValue), [](gpointer p) -> gboolean {
         const auto& [app, notification, notificationIdString] = *static_cast<decltype(data)>(p);
         g_application_send_notification(app, notificationIdString.data(), notification);
         return TRUE;
       }, static_cast<gpointer>(data), [](gpointer p) {
-        delete static_cast<decltype(data)>(p);
+        const auto ptr = static_cast<decltype(data)>(p);
+        g_object_unref(std::get<GNotification*>(*ptr));
+        delete ptr;
       });
       periodic_notification_map->emplace(idValue, taskId);
     } else if (timeZoneName) {
@@ -380,7 +347,7 @@ struct _FlutterLocalNotificationsPlugin {
         const auto matchDateTimeComponentsValue = static_cast<DateTimeComponents>(fl_value_get_int(matchDateTimeComponents));
         const auto nextNotifyTime = GetNextNotifyTime(now, realScheduledDateTime, matchDateTimeComponentsValue);
         const auto initialDiff = g_date_time_to_unix(nextNotifyTime) - g_date_time_to_unix(now);
-        const auto data = new std::tuple{ G_APPLICATION(app), std::move(notification), std::move(notificationIdString),
+        const auto data = new std::tuple{ G_APPLICATION(app), std::exchange(notification, nullptr), std::move(notificationIdString),
           static_cast<guint>(matchDateTimeComponentsValue == DateTimeComponents::Time ? RepeatInterval::Daily : RepeatInterval::Weekly),
           idValue, this };
         const auto taskId = g_timeout_add_seconds(initialDiff, [](gpointer p) -> gboolean {
@@ -392,7 +359,9 @@ struct _FlutterLocalNotificationsPlugin {
             g_application_send_notification(app, notificationIdString.data(), notification);
             return TRUE;
           }, p, [](gpointer p) {
-            delete static_cast<decltype(data)>(p);
+            const auto ptr = static_cast<decltype(data)>(p);
+            g_object_unref(std::get<GNotification*>(*ptr));
+            delete ptr;
           });
           // possible race condition?
           plugin->periodic_notification_map->insert_or_assign(id, taskId);
@@ -409,7 +378,9 @@ struct _FlutterLocalNotificationsPlugin {
           g_application_send_notification(app, notificationIdString.data(), notification);
           return FALSE;
         }, static_cast<gpointer>(data), [](gpointer p) {
-          delete static_cast<decltype(data)>(p);
+          const auto ptr = static_cast<decltype(data)>(p);
+          g_object_unref(std::get<GNotification*>(*ptr));
+          delete ptr;
         });
       }
     } else {
