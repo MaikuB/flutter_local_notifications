@@ -115,7 +115,9 @@ The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods that were
 
 ##### Linux limitations
 
-Gnome shell will only show notifications from applications which registered in [desktop files](https://developer.gnome.org/integration-guide/stable/desktop-files.html), if no desktop file which base name matches the application id was found, your notification will not be showed. For more information, see [this](https://developer.gnome.org/GNotification/#Preliminaries).
+Gnome-shell will only show notifications from applications registered in [desktop files](https://developer.gnome.org/integration-guide/stable/desktop-files.html), if no desktop file which base name matches the application id was found, your notification will not be shown. For more information, see [this](https://developer.gnome.org/GNotification/#Preliminaries).
+
+To respond to notification after the program is terminated, your program should be registered as DBus activatable(see [DBusApplicationLaunching](https://wiki.gnome.org/HowDoI/DBusApplicationLaunching) for more information), and register action before activating the application. It is hard to do so in a plugin because plugins are instantiating during window activation, so `getNotificationAppLaunchDetails` cannot be implemented without altering the user's main program.
 
 ## 📷 Screenshots
 
