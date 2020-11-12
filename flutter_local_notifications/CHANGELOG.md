@@ -1,3 +1,8 @@
+# [3.0.1+3]
+
+* [Android] Fixed issue [898](https://github.com/MaikuB/flutter_local_notifications/issues/898) around duplicate pending notifications
+* Updated example app to more clearly indicate which button will demonstrate an Android notification with a different coloured icon and LED
+
 # [3.0.1+2]
 
 * [Android] additional fix for issue [871](https://github.com/MaikuB/flutter_local_notifications/issues/871) by switching the implementation of `deleteNotificationChannel` to use the `NotificationManager` APIs instead of the `NotificationManagerCompat` APIs
