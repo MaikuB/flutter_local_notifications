@@ -64,6 +64,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -316,10 +317,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, notificationDetails.id, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = getAlarmManager(context);
         long epochMilli = VERSION.SDK_INT >= VERSION_CODES.O ? ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), ZoneId.of(notificationDetails.timeZoneName)).toInstant().toEpochMilli() : org.threeten.bp.ZonedDateTime.of(org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime), org.threeten.bp.ZoneId.of(notificationDetails.timeZoneName)).toInstant().toEpochMilli();
-        if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
-            AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
-        } else {
-            AlarmManagerCompat.setExact(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+        if(epochMilli > System.currentTimeMillis()) {
+            if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
+                AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+            } else {
+                AlarmManagerCompat.setExact(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+            }
         }
         if (updateScheduledNotificationsCache) {
             saveScheduledNotification(context, notificationDetails);
@@ -409,7 +412,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         ArrayList<NotificationDetails> scheduledNotificationsToSave = new ArrayList<>();
         for (NotificationDetails scheduledNotification : scheduledNotifications) {
-            if (scheduledNotification.id == notificationDetails.id) {
+            if (Objects.equals(scheduledNotification.id, notificationDetails.id)) {
                 continue;
             }
             scheduledNotificationsToSave.add(scheduledNotification);

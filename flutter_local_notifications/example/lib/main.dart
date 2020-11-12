@@ -380,7 +380,7 @@ class _HomePageState extends State<HomePage> {
                       PaddedRaisedButton(
                         buttonText:
                             'Show notification with custom vibration pattern, '
-                            'LED and icon',
+                            'red LED and red icon',
                         onPressed: () async {
                           await _showNotificationCustomVibrationIconLed();
                         },
