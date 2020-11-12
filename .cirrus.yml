@@ -41,7 +41,7 @@ task:
     folder: ~/.pub-cache
   setup_script:
     - apt update
-    - apt install cmake ninja-build clang -y
+    - apt install cmake ninja-build clang pkg-config libgtk-3-dev -y
     - flutter config --enable-linux-desktop
   build_script:
     - cd flutter_local_notifications/example
