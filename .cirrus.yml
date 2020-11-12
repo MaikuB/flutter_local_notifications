@@ -40,6 +40,8 @@ task:
   pub_cache:
     folder: ~/.pub-cache
   setup_script:
+    - apt update
+    - apt install cmake -y
     - flutter config --enable-linux-desktop
   build_script:
     - cd flutter_local_notifications/example
