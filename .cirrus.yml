@@ -34,6 +34,18 @@ task:
     - flutter build macos
 
 task:
+  name: Build Linux example app
+  container:
+    image: cirrusci/flutter:dev
+  pub_cache:
+    folder: ~/.pub-cache
+  setup_script:
+    - flutter config --enable-linux-desktop
+  build_script:
+    - cd flutter_local_notifications/example
+    - flutter build linux
+
+task:
   name: Run platform interface tests
   container:
     image: cirrusci/flutter:stable

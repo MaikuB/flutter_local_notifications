@@ -10,8 +10,8 @@ abstract class LinuxIcon {
 }
 
 /// Represents an icon from image file path or uri
-class LinuxFileIcon implements LinuxIcon {
-  const LinuxFileIcon(this.path);
+class FileLinuxIcon implements LinuxIcon {
+  const FileLinuxIcon(this.path);
 
   final String path;
 
@@ -25,8 +25,8 @@ class LinuxFileIcon implements LinuxIcon {
 /// Represents an icon from binary data
 /// The binary data should be in an image file format which supported by glib, 
 /// such as common formats like jpg and png
-class BytesLinuxIcon implements LinuxIcon {
-  const BytesLinuxIcon(this.data);
+class ByteDataLinuxIcon implements LinuxIcon {
+  const ByteDataLinuxIcon(this.data);
 
   final Uint8List data;
 
