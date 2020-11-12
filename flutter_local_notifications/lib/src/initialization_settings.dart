@@ -18,6 +18,7 @@ class InitializationSettings {
   /// Settings for iOS.
   final IOSInitializationSettings iOS;
 
+  /// Settings for Linux.
   final LinuxInitializationSettings linux;
 
   /// Settings for iOS.

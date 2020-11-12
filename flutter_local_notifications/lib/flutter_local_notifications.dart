@@ -35,7 +35,6 @@ export 'src/platform_specifics/ios/notification_details.dart';
 export 'src/platform_specifics/linux/enums.dart';
 export 'src/platform_specifics/linux/icon.dart';
 export 'src/platform_specifics/linux/initialization_settings.dart';
-export 'src/platform_specifics/linux/method_channel_mappers.dart';
 export 'src/platform_specifics/linux/notification_details.dart';
 export 'src/platform_specifics/macos/initialization_settings.dart';
 export 'src/platform_specifics/macos/notification_attachment.dart';

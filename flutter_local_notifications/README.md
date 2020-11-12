@@ -48,7 +48,7 @@ A cross platform plugin for displaying local notifications.
 * **Android 4.1+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
 * **iOS 8.0+**. On iOS versions older than 10, the plugin will use the UILocalNotification APIs. The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on iOS 10 or newer.
 * **macOS 10.11+**. On macOS versions older than 10.14, the plugin will use the [NSUserNotification APIs](https://developer.apple.com/documentation/foundation/nsusernotification). The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on macOS 10.14 or newer.
-* **Linux with gnome 2.40+**. Uses the [GNotification APIs](https://developer.gnome.org/gio/stable/GNotification.html), which supported on gnome 2.40+
+* **Linux with glib 2.58+**. Uses the [GNotification APIs](https://developer.gnome.org/gio/stable/GNotification.html), which supported on glib 2.40+, some time zone api requires version 2.58+.
 
 ## ✨ Features
 

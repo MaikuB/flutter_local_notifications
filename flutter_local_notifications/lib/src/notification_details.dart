@@ -18,6 +18,7 @@ class NotificationDetails {
   /// Notification details for iOS.
   final IOSNotificationDetails iOS;
 
+  /// Notification details for Linux.
   final LinuxNotificationDetails linux;
 
   /// Notification details for macOS.

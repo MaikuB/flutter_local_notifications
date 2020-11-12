@@ -23,7 +23,8 @@ class LinuxFileIcon implements LinuxIcon {
 }
 
 /// Represents an icon from binary data
-/// The binary data should be in an image file format which supported by glib, such as common formats like jpg and png
+/// The binary data should be in an image file format which supported by glib, 
+/// such as common formats like jpg and png
 class BytesLinuxIcon implements LinuxIcon {
   const BytesLinuxIcon(this.data);
 

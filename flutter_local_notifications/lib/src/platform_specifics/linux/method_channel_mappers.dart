@@ -5,8 +5,8 @@ import 'notification_details.dart';
 extension LinuxIconMapper on LinuxIcon {
   Map<String, Object> toMap() {
     return <String, Object> {
-      "icon": content,
-      "iconSource": source.index,
+      'icon': content,
+      'iconSource': source.index,
     };
   }
 }
@@ -14,25 +14,24 @@ extension LinuxIconMapper on LinuxIcon {
 extension LinuxInitializationSettingsMapper on LinuxInitializationSettings {
   Map<String, Object> toMap() {
     return <String, Object> {
-      "defaultIcon": defaultIcon?.toMap(),
+      'defaultIcon': defaultIcon?.toMap(),
     };
   }
 }
 
 extension LinuxNotificationButtonSetMapper on Set<LinuxNotificationButton> {
-  List<Map<String, String>> serializeToList() {
-    return map((e) => <String, String>{
-      "buttonLabel": e.label,
-      "buttonId": e.buttonId,
+  List<Map<String, String>> serializeToList() =>
+    map((LinuxNotificationButton e) => <String, String>{
+      'buttonLabel': e.label,
+      'buttonId': e.buttonId,
     }).toList(growable: false);
-  }
 }
 
 extension LinuxNotificationDetailsMapper on LinuxNotificationDetails {
   Map<String, Object> toMap() {
     return <String, Object> {
-      "icon": icon?.toMap(),
-      "buttons": buttons?.serializeToList(),
+      'icon': icon?.toMap(),
+      'buttons': buttons?.serializeToList(),
     };
   }
 }
