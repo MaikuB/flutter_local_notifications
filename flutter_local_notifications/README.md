@@ -140,50 +140,9 @@ When specifying the large icon bitmap or big picture bitmap (associated with the
 
 ⚠️ For Android 8.0+, sounds and vibrations are associated with notification channels and can only be configured when they are first created. Showing/scheduling a notification will create a channel with the specified id if it doesn't exist already. If another notification specifies the same channel id but tries to specify another sound or vibration pattern then nothing occurs.
 
-#### Scheduled notifications
-
-If your application needs the ability to schedule notifications then you need to request permissions to be notified when the phone has been booted as scheduled notifications uses the `AlarmManager` API to determine when notifications should be displayed. However, they are cleared when a phone has been turned off. Requesting permission requires adding the following to the manifest (i.e. your application's `AndroidManifest.xml` file)
-
-```xml
-<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-```
-
-The following is also needed to ensure notifications remain scheduled upon a reboot and after an application is updated
-
-```xml
-<receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
-    <intent-filter>
-        <action android:name="android.intent.action.BOOT_COMPLETED"/>
-        <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
-        <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-        <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-    </intent-filter>
-</receiver>
-```
-
-Developers will also need to add the following so that plugin can handle displaying scheduled notifications
-
-```xml
-<receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
-```
-
-If the vibration pattern of an Android notification will be customised then add the following
-
-```xml
-<uses-permission android:name="android.permission.VIBRATE" />
-```
-
-
 #### Full-screen intent notifications
 
-If your application needs the ability to schedule full-screen intent notifications, add the following to the manifest (i.e. your application's `AndroidManifest.xml` file)
-
-```xml
-<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-```
-
-You'll also need to add the next attributes to the activity you're opening, usually the class that extends FlutterActivity.
-These make sure the screen turns on and shows when the device is locked.
+If your application needs the ability to schedule full-screen intent notifications, add the following attributes to the activity you're opening. For a Flutter application that is typically only ony activity extends from `FlutterActivity`. These attributes ensure the screen turns on and shows when the device is locked.
 ```xml
 <activity
     android:showWhenLocked="true"

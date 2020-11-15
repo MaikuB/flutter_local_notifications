@@ -1,3 +1,8 @@
+
+# [3.0.1+4]
+
+* [Android] made changes so that the plugin will now register the receivers and permissions needed. This reduces the amount of setup needed as developers will no longer need to update their AndroidManifest.xml to do so
+
 # [3.0.1+3]
 
 * [Android] Fixed issue [898](https://github.com/MaikuB/flutter_local_notifications/issues/898) around duplicate pending notifications
