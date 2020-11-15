@@ -1,7 +1,10 @@
 package com.dexterous.flutterlocalnotifications.models.styles;
 
+import androidx.annotation.Keep;
+
 import com.dexterous.flutterlocalnotifications.BitmapSource;
 
+@Keep
 public class BigPictureStyleInformation extends DefaultStyleInformation {
     public String contentTitle;
     public Boolean htmlFormatContentTitle;

@@ -1,5 +1,8 @@
 package com.dexterous.flutterlocalnotifications.models.styles;
 
+import androidx.annotation.Keep;
+
+@Keep
 public class BigTextStyleInformation extends DefaultStyleInformation {
     public String bigText;
     public Boolean htmlFormatBigText;
