@@ -4,6 +4,7 @@ import 'default_style_information.dart';
 /// Used to pass the content for an Android notification displayed using the
 /// big picture style.
 class BigPictureStyleInformation extends DefaultStyleInformation {
+  /// Constructs an instance of [BigPictureStyleInformation].
   const BigPictureStyleInformation(
     this.bigPicture, {
     this.contentTitle,

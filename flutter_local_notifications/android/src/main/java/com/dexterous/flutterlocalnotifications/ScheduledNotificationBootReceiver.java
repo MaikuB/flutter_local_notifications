@@ -4,6 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.annotation.Keep;
+
+@Keep
+
 public class ScheduledNotificationBootReceiver extends BroadcastReceiver
 {
     @Override

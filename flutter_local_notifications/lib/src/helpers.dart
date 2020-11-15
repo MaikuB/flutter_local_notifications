@@ -10,6 +10,8 @@ void validateId(int id) {
   }
 }
 
+/// Helper method for validating a date/time value represents a
+/// future point in time.
 void validateDateIsInTheFuture(TZDateTime scheduledDate) {
   if (scheduledDate.isBefore(DateTime.now())) {
     throw ArgumentError.value(

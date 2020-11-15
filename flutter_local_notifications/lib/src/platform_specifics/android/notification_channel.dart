@@ -6,6 +6,7 @@ import 'notification_sound.dart';
 
 /// Settings for Android notification channels.
 class AndroidNotificationChannel {
+  /// Constructs an instance of [AndroidNotificationChannel].
   const AndroidNotificationChannel(
     this.id,
     this.name,

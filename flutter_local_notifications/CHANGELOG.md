@@ -1,3 +1,11 @@
+
+# [3.0.1+4]
+
+* [Android] made changes so that the plugin will now register the receivers and permissions needed. This reduces the amount of setup needed as developers will no longer need to update their AndroidManifest.xml to do so. The section of the readme on the Android setup for scheduled notifications has been removed as a result
+* [Android] fixed an issue where notifications may not appear after rebooting
+* [Android] made changes so that the plugin itself specifies which classes should be kept when minified. This means developers should no longer need to add a rule for this plugin in their application's Proguard rules file. Note that rules for GSON will still be needed. The release build configuration section related to the Android setup has been updated to reflect this change
+* Updated API docs
+
 # [3.0.1+3]
 
 * [Android] Fixed issue [898](https://github.com/MaikuB/flutter_local_notifications/issues/898) around duplicate pending notifications

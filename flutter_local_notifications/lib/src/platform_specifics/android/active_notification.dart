@@ -1,4 +1,7 @@
+/// Contains details on active Android notification that is currently displayed
+/// within the status bar.
 class ActiveNotification {
+  /// Constructs an instance of [ActiveNotification].
   const ActiveNotification(
     this.id,
     this.channelId,
