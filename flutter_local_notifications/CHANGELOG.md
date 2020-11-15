@@ -4,6 +4,7 @@
 * [Android] made changes so that the plugin will now register the receivers and permissions needed. This reduces the amount of setup needed as developers will no longer need to update their AndroidManifest.xml to do so
 * [Android] fixed an issue where notifications may not appear after rebooting
 * [Android] made changes so that the plugin itself specifies which classes should be kept when minified. This means developers should no longer need to add a rule for this plugin in their application's Proguard rules file. Note that rules for GSON will still be needed
+* Updated API docs
 
 # [3.0.1+3]
 
