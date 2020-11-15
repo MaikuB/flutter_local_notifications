@@ -3,6 +3,7 @@ import 'default_style_information.dart';
 /// Used to pass the content for an Android notification displayed using the
 /// inbox style.
 class InboxStyleInformation extends DefaultStyleInformation {
+  /// Constructs an instance of [InboxStyleInformation].
   const InboxStyleInformation(
     this.lines, {
     this.htmlFormatLines = false,

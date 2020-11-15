@@ -15,7 +15,7 @@ import 'styles/inbox_style_information.dart';
 import 'styles/media_style_information.dart';
 import 'styles/messaging_style_information.dart';
 
-// ignore_for_file: avoid_as
+// ignore_for_file: avoid_as, public_member_api_docs
 extension AndroidInitializationSettingsMapper on AndroidInitializationSettings {
   Map<String, Object> toMap() => <String, Object>{'defaultIcon': defaultIcon};
 }

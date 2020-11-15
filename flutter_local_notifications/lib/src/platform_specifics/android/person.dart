@@ -2,6 +2,7 @@ import 'icon.dart';
 
 /// Details of a person e.g. someone who sent a message.
 class Person {
+  /// Constructs an instance of [Person].
   const Person({
     this.bot,
     this.icon,

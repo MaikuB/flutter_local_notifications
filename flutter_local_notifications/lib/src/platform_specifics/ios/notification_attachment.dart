@@ -1,5 +1,6 @@
 /// Represents an attachment for an iOS notification.
 class IOSNotificationAttachment {
+  /// Constructs an instance of [IOSNotificationAttachment].
   const IOSNotificationAttachment(
     this.filePath, {
     this.identifier,
