@@ -114,7 +114,7 @@ The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods that were
 
 | Android | iOS | macOS |
 | ------------- | ------------- | ------------- |
-| <img height="480" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/android_notification.png"> |  <img height="414" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/ios_notification.png"> | <img height="480" src="https://github.com/MaikuB/flutter_local_notifications/raw/general_improvements/images/macos_notification.png"> |
+| <img height="480" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/android_notification.png"> |  <img height="414" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/ios_notification.png"> | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/general_improvements/images/macos_notification.png"> |
 
 ## 👏 Acknowledgements
 
