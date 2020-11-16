@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.annotation.Keep;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
  * Created by michaelbui on 24/3/18.
  */
 
+@Keep
 public class ScheduledNotificationReceiver extends BroadcastReceiver {
 
 
@@ -45,6 +47,8 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
             FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
             if (notificationDetails.scheduledNotificationRepeatFrequency != null) {
                 FlutterLocalNotificationsPlugin.zonedScheduleNextNotification(context, notificationDetails);
+            } else if (notificationDetails.matchDateTimeComponents != null) {
+                FlutterLocalNotificationsPlugin.zonedScheduleNextNotificationMatchingDateComponents(context, notificationDetails);
             } else if (notificationDetails.repeatInterval != null) {
                 FlutterLocalNotificationsPlugin.scheduleNextRepeatingNotification(context, notificationDetails);
             } else {

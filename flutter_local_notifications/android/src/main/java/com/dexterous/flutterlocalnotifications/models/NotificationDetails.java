@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 
+import androidx.annotation.Keep;
+
 import com.dexterous.flutterlocalnotifications.BitmapSource;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.RepeatInterval;
@@ -18,6 +20,7 @@ import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 import java.util.ArrayList;
 import java.util.Map;
 
+@Keep
 public class NotificationDetails {
     private static final String ID = "id";
     private static final String TITLE = "title";
@@ -108,9 +111,12 @@ public class NotificationDetails {
     private static final String SCHEDULED_DATE_TIME = "scheduledDateTime";
     private static final String TIME_ZONE_NAME = "timeZoneName";
     private static final String SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY = "scheduledNotificationRepeatFrequency";
+    private static final String MATCH_DATE_TIME_COMPONENTS = "matchDateTimeComponents";
+
     private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
     private static final String SHORTCUT_ID = "shortcutId";
     private static final String START_ACTIVITY_CLASS_NAME = "startActivityClassName";
+
 
     public Integer id;
     public String title;
@@ -163,6 +169,7 @@ public class NotificationDetails {
     public String scheduledDateTime;
     public String timeZoneName;
     public ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency;
+    public DateTimeComponents matchDateTimeComponents;
     public Long when;
     public Boolean fullScreenIntent;
     public String shortcutId;
@@ -183,6 +190,9 @@ public class NotificationDetails {
         notificationDetails.timeZoneName = (String) arguments.get(TIME_ZONE_NAME);
         if(arguments.containsKey(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)) {
             notificationDetails.scheduledNotificationRepeatFrequency = ScheduledNotificationRepeatFrequency.values()[(Integer) arguments.get(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)];
+        }
+        if(arguments.containsKey(MATCH_DATE_TIME_COMPONENTS)) {
+            notificationDetails.matchDateTimeComponents = DateTimeComponents.values()[(Integer) arguments.get(MATCH_DATE_TIME_COMPONENTS)];
         }
         if (arguments.containsKey(MILLISECONDS_SINCE_EPOCH)) {
             notificationDetails.millisecondsSinceEpoch = (Long) arguments.get(MILLISECONDS_SINCE_EPOCH);

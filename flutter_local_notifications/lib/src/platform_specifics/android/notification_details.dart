@@ -8,6 +8,7 @@ import 'styles/style_information.dart';
 
 /// Contains notification details specific to Android.
 class AndroidNotificationDetails {
+  /// Constructs an instance of [AndroidNotificationDetails].
   const AndroidNotificationDetails(
     this.channelId,
     this.channelName,
@@ -224,7 +225,10 @@ class AndroidNotificationDetails {
   ///
   /// Note: The system UI may choose to display a heads-up notification,
   /// instead of launching your full-screen intent, while the user is using the
-  /// device.
+  /// device. When the full-screen intent occurs, the plugin will act as though
+  /// the user has tapped on a notification so handle it the same way
+  /// (e.g. via `onSelectNotification` callback) to display the appropriate
+  /// page for your application.
   final bool fullScreenIntent;
 
   /// The class name to start intent on lockscreen.

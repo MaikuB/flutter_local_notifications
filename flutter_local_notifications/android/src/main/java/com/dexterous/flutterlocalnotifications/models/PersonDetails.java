@@ -1,5 +1,8 @@
 package com.dexterous.flutterlocalnotifications.models;
 
+import androidx.annotation.Keep;
+
+@Keep
 public class PersonDetails {
     public Boolean bot;
     public String icon;

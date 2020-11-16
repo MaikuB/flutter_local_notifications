@@ -17,6 +17,7 @@ export 'src/platform_specifics/android/icon.dart' hide AndroidIcon;
 export 'src/platform_specifics/android/initialization_settings.dart';
 export 'src/platform_specifics/android/message.dart';
 export 'src/platform_specifics/android/notification_channel.dart';
+export 'src/platform_specifics/android/notification_channel_group.dart';
 export 'src/platform_specifics/android/notification_details.dart';
 export 'src/platform_specifics/android/notification_sound.dart';
 export 'src/platform_specifics/android/person.dart';

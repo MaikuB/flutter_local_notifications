@@ -2,6 +2,7 @@ import 'notification_attachment.dart';
 
 /// Configures notification details specific to macOS.
 class MacOSNotificationDetails {
+  /// Constructs an instance of [MacOSNotificationDetails].
   const MacOSNotificationDetails({
     this.presentAlert,
     this.presentBadge,

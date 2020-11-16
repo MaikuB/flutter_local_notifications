@@ -274,6 +274,14 @@ class _HomePageState extends State<HomePage> {
                     ),
                     PaddedRaisedButton(
                       buttonText:
+                          'Show plain notification that has no title with '
+                          'payload',
+                      onPressed: () async {
+                        await _showNotificationWithNoTitle();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
                           'Show plain notification that has no body with '
                           'payload',
                       onPressed: () async {
@@ -314,6 +322,14 @@ class _HomePageState extends State<HomePage> {
                           'local time zone',
                       onPressed: () async {
                         await _scheduleWeeklyTenAMNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Schedule weekly Monday 10:00:00 am notification in '
+                          'your local time zone',
+                      onPressed: () async {
+                        await _scheduleWeeklyMondayTenAMNotification();
                       },
                     ),
                     PaddedRaisedButton(
@@ -364,7 +380,7 @@ class _HomePageState extends State<HomePage> {
                       PaddedRaisedButton(
                         buttonText:
                             'Show notification with custom vibration pattern, '
-                            'LED and icon',
+                            'red LED and red icon',
                         onPressed: () async {
                           await _showNotificationCustomVibrationIconLed();
                         },
@@ -474,6 +490,18 @@ class _HomePageState extends State<HomePage> {
                         buttonText: 'Show full-screen notification',
                         onPressed: () async {
                           await _showFullScreenNotification();
+                        },
+                      ),
+                      PaddedRaisedButton(
+                        buttonText: 'Create grouped notification channels',
+                        onPressed: () async {
+                          await _createNotificationChannelGroup();
+                        },
+                      ),
+                      PaddedRaisedButton(
+                        buttonText: 'Delete notification channel group',
+                        onPressed: () async {
+                          await _deleteNotificationChannelGroup();
                         },
                       ),
                       PaddedRaisedButton(
@@ -595,6 +623,21 @@ class _HomePageState extends State<HomePage> {
     );
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', null, platformChannelSpecifics,
+        payload: 'item x');
+  }
+
+  Future<void> _showNotificationWithNoTitle() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            'your channel id', 'your channel name', 'your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker');
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+    await flutterLocalNotificationsPlugin.show(
+        0, null, 'plain body', platformChannelSpecifics,
         payload: 'item x');
   }
 
@@ -1027,8 +1070,7 @@ class _HomePageState extends State<HomePage> {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        scheduledNotificationRepeatFrequency:
-            ScheduledNotificationRepeatFrequency.daily);
+        matchDateTimeComponents: DateTimeComponents.time);
   }
 
   Future<void> _scheduleWeeklyTenAMNotification() async {
@@ -1046,8 +1088,25 @@ class _HomePageState extends State<HomePage> {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        scheduledNotificationRepeatFrequency:
-            ScheduledNotificationRepeatFrequency.weekly);
+        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+  }
+
+  Future<void> _scheduleWeeklyMondayTenAMNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'weekly scheduled notification title',
+        'weekly scheduled notification body',
+        _nextInstanceOfMondayTenAM(),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'weekly notification channel id',
+              'weekly notification channel name',
+              'weekly notificationdescription'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
   }
 
   tz.TZDateTime _nextInstanceOfTenAM() {
@@ -1055,6 +1114,14 @@ class _HomePageState extends State<HomePage> {
     tz.TZDateTime scheduledDate =
         tz.TZDateTime(tz.local, now.year, now.month, now.day, 10);
     if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+    return scheduledDate;
+  }
+
+  tz.TZDateTime _nextInstanceOfMondayTenAM() {
+    tz.TZDateTime scheduledDate = _nextInstanceOfTenAM();
+    while (scheduledDate.weekday != DateTime.monday) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
     return scheduledDate;
@@ -1231,6 +1298,76 @@ class _HomePageState extends State<HomePage> {
         'notification with attachment title',
         'notification with attachment body',
         notificationDetails);
+  }
+
+  Future<void> _createNotificationChannelGroup() async {
+    const String channelGroupId = 'your channel group id';
+    // create the group first
+    const AndroidNotificationChannelGroup androidNotificationChannelGroup =
+        AndroidNotificationChannelGroup(
+            channelGroupId, 'your channel group name',
+            description: 'your channel group description');
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        .createNotificationChannelGroup(androidNotificationChannelGroup);
+
+    // create channels associated with the group
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        .createNotificationChannel(const AndroidNotificationChannel(
+            'grouped channel id 1',
+            'grouped channel name 1',
+            'grouped channel description 1',
+            groupId: channelGroupId));
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        .createNotificationChannel(const AndroidNotificationChannel(
+            'grouped channel id 2',
+            'grouped channel name 2',
+            'grouped channel description 2',
+            groupId: channelGroupId));
+
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              content: Text('Channel group with name '
+                  '${androidNotificationChannelGroup.name} created'),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ));
+  }
+
+  Future<void> _deleteNotificationChannelGroup() async {
+    const String channelGroupId = 'your channel group id';
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.deleteNotificationChannelGroup(channelGroupId);
+
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: const Text('Channel group with id $channelGroupId deleted'),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _createNotificationChannel() async {

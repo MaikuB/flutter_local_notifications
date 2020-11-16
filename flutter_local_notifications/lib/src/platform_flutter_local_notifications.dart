@@ -10,6 +10,7 @@ import 'platform_specifics/android/active_notification.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
 import 'platform_specifics/android/notification_channel.dart';
+import 'platform_specifics/android/notification_channel_group.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/ios/enums.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
@@ -121,7 +122,7 @@ class AndroidFlutterLocalNotificationsPlugin
     AndroidNotificationDetails notificationDetails, {
     @required bool androidAllowWhileIdle,
     String payload,
-    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
+    DateTimeComponents matchDateComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate);
@@ -139,11 +140,10 @@ class AndroidFlutterLocalNotificationsPlugin
           'payload': payload ?? ''
         }
           ..addAll(scheduledDate.toMap())
-          ..addAll(scheduledNotificationRepeatFrequency == null
+          ..addAll(matchDateComponents == null
               ? <String, Object>{}
               : <String, Object>{
-                  'scheduledNotificationRepeatFrequency':
-                      scheduledNotificationRepeatFrequency.index
+                  'matchDateTimeComponents': matchDateComponents.index
                 }));
   }
 
@@ -244,15 +244,32 @@ class AndroidFlutterLocalNotificationsPlugin
     });
   }
 
+  /// Creates a notification channel group.
+  ///
+  /// This method is only applicable to Android versions 8.0 or newer.
+  Future<void> createNotificationChannelGroup(
+          AndroidNotificationChannelGroup notificationChannelGroup) =>
+      _channel.invokeMethod(
+          'createNotificationChannelGroup', notificationChannelGroup.toMap());
+
+  /// Deletes the notification channel group with the specified [groupId]
+  /// as well as all of the channels belonging to the group.
+  ///
+  /// This method is only applicable to Android versions 8.0 or newer.
+  Future<void> deleteNotificationChannelGroup(String groupId) =>
+      _channel.invokeMethod('deleteNotificationChannelGroup', groupId);
+
   /// Creates a notification channel.
   ///
-  /// This property is only applicable to Android versions 8.0 or newer.
+  /// This method is only applicable to Android versions 8.0 or newer.
   Future<void> createNotificationChannel(
           AndroidNotificationChannel notificationChannel) =>
       _channel.invokeMethod(
           'createNotificationChannel', notificationChannel.toMap());
 
   /// Deletes the notification channel with the specified [channelId].
+  ///
+  /// This method is only applicable to Android versions 8.0 or newer.
   Future<void> deleteNotificationChannel(String channelId) =>
       _channel.invokeMethod('deleteNotificationChannel', channelId);
 
@@ -380,7 +397,7 @@ class IOSFlutterLocalNotificationsPlugin
         UILocalNotificationDateInterpretation
             uiLocalNotificationDateInterpretation,
     String payload,
-    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
+    DateTimeComponents matchDateTimeComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate);
@@ -400,11 +417,10 @@ class IOSFlutterLocalNotificationsPlugin
               uiLocalNotificationDateInterpretation.index,
         }
           ..addAll(scheduledDate.toMap())
-          ..addAll(scheduledNotificationRepeatFrequency == null
+          ..addAll(matchDateTimeComponents == null
               ? <String, Object>{}
               : <String, Object>{
-                  'scheduledNotificationRepeatFrequency':
-                      scheduledNotificationRepeatFrequency.index
+                  'matchDateTimeComponents': matchDateTimeComponents.index
                 }));
   }
 
@@ -570,7 +586,7 @@ class MacOSFlutterLocalNotificationsPlugin
     TZDateTime scheduledDate,
     MacOSNotificationDetails notificationDetails, {
     String payload,
-    ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency,
+    DateTimeComponents matchDateTimeComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate);
@@ -586,11 +602,10 @@ class MacOSFlutterLocalNotificationsPlugin
           'payload': payload ?? '',
         }
           ..addAll(scheduledDate.toMap())
-          ..addAll(scheduledNotificationRepeatFrequency == null
+          ..addAll(matchDateTimeComponents == null
               ? <String, Object>{}
               : <String, Object>{
-                  'scheduledNotificationRepeatFrequency':
-                      scheduledNotificationRepeatFrequency.index
+                  'matchDateTimeComponents': matchDateTimeComponents.index
                 }));
   }
 

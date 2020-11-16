@@ -2,6 +2,7 @@ import 'notification_attachment.dart';
 
 /// Configures notification details specific to iOS.
 class IOSNotificationDetails {
+  /// Constructs an instance of [IOSNotificationDetails].
   const IOSNotificationDetails({
     this.presentAlert,
     this.presentBadge,

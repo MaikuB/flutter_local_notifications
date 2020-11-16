@@ -32,6 +32,8 @@ package com.dexterous.flutterlocalnotifications;
  * limitations under the License.
  */
 
+import androidx.annotation.Keep;
+
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -137,6 +139,7 @@ import com.google.gson.stream.JsonWriter;
  *       .registerSubtype(Diamond.class);
  * }</pre>
  */
+@Keep
 public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
     private final Class<?> baseType;
     private final String typeFieldName;

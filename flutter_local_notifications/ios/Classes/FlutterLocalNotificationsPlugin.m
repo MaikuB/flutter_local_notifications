@@ -64,7 +64,7 @@ NSString *const MINUTE = @"minute";
 NSString *const SECOND = @"second";
 NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTime";
 NSString *const TIME_ZONE_NAME = @"timeZoneName";
-NSString *const SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY = @"scheduledNotificationRepeatFrequency";
+NSString *const MATCH_DATE_TIME_COMPONENTS = @"matchDateTimeComponents";
 NSString *const UILOCALNOTIFICATION_DATE_INTERPRETATION = @"uiLocalNotificationDateInterpretation";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
@@ -79,9 +79,9 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     Weekly
 };
 
-typedef NS_ENUM(NSInteger, ScheduledNotificationRepeatFrequency) {
-    DailyFrequency,
-    WeeklyFrequency
+typedef NS_ENUM(NSInteger, DateTimeComponents) {
+    Time,
+    DayOfWeekAndTime
 };
 
 typedef NS_ENUM(NSInteger, UILocalNotificationDateInterpretation) {
@@ -364,7 +364,7 @@ static FlutterError *getFlutterError(NSError *error) {
         UILocalNotification * notification = [self buildStandardUILocalNotification:arguments];
         NSString *scheduledDateTime  = arguments[SCHEDULED_DATE_TIME];
         NSString *timeZoneName = arguments[TIME_ZONE_NAME];
-        NSNumber *scheduledNotificationRepeatFrequency = arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY];
+        NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
         NSNumber *uiLocalNotificationDateInterpretation = arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION];
         NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -379,10 +379,10 @@ static FlutterError *getFlutterError(NSError *error) {
                 notification.timeZone = timezone;
             }
         }
-        if (scheduledNotificationRepeatFrequency != nil) {
-            if([scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
+        if(matchDateComponents != nil) {
+            if([matchDateComponents integerValue] == Time) {
                 notification.repeatInterval = NSCalendarUnitDay;
-            } else  if([scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
+            } else if([matchDateComponents integerValue] == DayOfWeekAndTime) {
                 notification.repeatInterval = NSCalendarUnitWeekOfYear;
             }
         }
@@ -593,23 +593,31 @@ static FlutterError *getFlutterError(NSError *error) {
 - (UNCalendarNotificationTrigger *) buildUserNotificationCalendarTrigger:(id) arguments NS_AVAILABLE_IOS(10.0) {
     NSString *scheduledDateTime  = arguments[SCHEDULED_DATE_TIME];
     NSString *timeZoneName = arguments[TIME_ZONE_NAME];
-    NSNumber *scheduledNotificationRepeatFrequency = arguments[SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY];
+    
+    NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+
+    // Needed for some countries, when phone DateTime format is 12H
+    NSLocale *posix = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
     [dateFormatter setTimeZone:timezone];
+    [dateFormatter setLocale:posix];
+
     NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
+
     calendar.timeZone = timezone;
-    if(scheduledNotificationRepeatFrequency != nil) {
-        if([scheduledNotificationRepeatFrequency integerValue] == DailyFrequency) {
+    if(matchDateComponents != nil) {
+        if([matchDateComponents integerValue] == Time) {
             NSDateComponents *dateComponents    = [calendar components:(
                                                                         NSCalendarUnitHour  |
                                                                         NSCalendarUnitMinute|
                                                                         NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
             return [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:YES];
-        }
-        else if([scheduledNotificationRepeatFrequency integerValue] == WeeklyFrequency) {
+            
+        } else if([matchDateComponents integerValue] == DayOfWeekAndTime) {
             NSDateComponents *dateComponents    = [calendar components:( NSCalendarUnitWeekday |
                                                                         NSCalendarUnitHour  |
                                                                         NSCalendarUnitMinute|
@@ -649,7 +657,15 @@ static FlutterError *getFlutterError(NSError *error) {
 
 
 - (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge payload:(NSString *)payload {
-    NSDictionary *userDict =[NSDictionary dictionaryWithObjectsAndKeys:id, NOTIFICATION_ID, title, TITLE, [NSNumber numberWithBool:presentAlert], PRESENT_ALERT, [NSNumber numberWithBool:presentSound], PRESENT_SOUND, [NSNumber numberWithBool:presentBadge], PRESENT_BADGE, payload, PAYLOAD, nil];
+    NSMutableDictionary *userDict = [[NSMutableDictionary alloc] init];
+    userDict[NOTIFICATION_ID] = id;
+    if(title) {
+        userDict[TITLE] = title;
+    }
+    userDict[PRESENT_ALERT] = [NSNumber numberWithBool:presentAlert];
+    userDict[PRESENT_SOUND] = [NSNumber numberWithBool:presentSound];
+    userDict[PRESENT_BADGE] = [NSNumber numberWithBool:presentBadge];
+    userDict[PAYLOAD] = payload;
     return userDict;
 }
 
@@ -667,7 +683,7 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (BOOL)isAFlutterLocalNotification:(NSDictionary *)userInfo {
-    return userInfo != nil && userInfo[NOTIFICATION_ID] && userInfo[TITLE] && userInfo[PRESENT_ALERT] && userInfo[PRESENT_SOUND] && userInfo[PRESENT_BADGE] && userInfo[PAYLOAD];
+    return userInfo != nil && userInfo[NOTIFICATION_ID] && userInfo[PRESENT_ALERT] && userInfo[PRESENT_SOUND] && userInfo[PRESENT_BADGE] && userInfo[PAYLOAD];
 }
 
 - (void)handleSelectNotification:(NSString *)payload {

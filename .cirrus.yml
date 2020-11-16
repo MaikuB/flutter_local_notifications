@@ -19,6 +19,21 @@ task:
     - flutter build ios --no-codesign --debug
 
 task:
+  name: Build macOS example app
+  osx_instance:
+    image: catalina-flutter
+  pub_cache:
+    folder: ~/.pub-cache
+  upgrade_script:
+    - flutter channel dev
+    - flutter upgrade
+  setup_script:
+    - flutter config --enable-macos-desktop
+  build_script:
+    - cd flutter_local_notifications/example
+    - flutter build macos
+
+task:
   name: Run platform interface tests
   container:
     image: cirrusci/flutter:stable
