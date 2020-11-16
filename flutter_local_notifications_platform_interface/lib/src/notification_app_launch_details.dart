@@ -1,4 +1,6 @@
+/// Contains details on the notification that launched the application.
 class NotificationAppLaunchDetails {
+  /// Constructs an instance of [NotificationAppLaunchDetails].
   const NotificationAppLaunchDetails(
       this.didNotificationLaunchApp, this.payload);
 

@@ -8,6 +8,7 @@ import 'styles/style_information.dart';
 
 /// Contains notification details specific to Android.
 class AndroidNotificationDetails {
+  /// Constructs an instance of [AndroidNotificationDetails].
   const AndroidNotificationDetails(
     this.channelId,
     this.channelName,

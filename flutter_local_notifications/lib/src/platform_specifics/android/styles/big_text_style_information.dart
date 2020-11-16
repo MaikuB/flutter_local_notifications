@@ -3,6 +3,7 @@ import 'default_style_information.dart';
 /// Used to pass the content for an Android notification displayed using the
 /// big text style.
 class BigTextStyleInformation extends DefaultStyleInformation {
+  /// Constructs an instance of [BigTextStyleInformation].
   const BigTextStyleInformation(
     this.bigText, {
     this.htmlFormatBigText = false,

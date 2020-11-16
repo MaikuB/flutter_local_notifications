@@ -1,7 +1,10 @@
 package com.dexterous.flutterlocalnotifications.models;
 
+import androidx.annotation.Keep;
+
 import java.util.Map;
 
+@Keep
 public class NotificationChannelGroupDetails {
     private static final String ID = "id";
     private static final String NAME = "name";

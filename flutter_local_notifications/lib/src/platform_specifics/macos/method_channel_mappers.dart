@@ -2,6 +2,7 @@ import 'initialization_settings.dart';
 import 'notification_attachment.dart';
 import 'notification_details.dart';
 
+// ignore_for_file: public_member_api_docs
 extension MacOSInitializationSettingsMapper on MacOSInitializationSettings {
   Map<String, Object> toMap() => <String, Object>{
         'requestAlertPermission': requestAlertPermission,

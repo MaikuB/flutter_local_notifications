@@ -1,5 +1,6 @@
 /// Represents an attachment for an macOS notification.
 class MacOSNotificationAttachment {
+  /// Constructs an instance of [MacOSNotificationAttachment].
   const MacOSNotificationAttachment(
     this.filePath, {
     this.identifier,

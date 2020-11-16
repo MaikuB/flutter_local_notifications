@@ -2,6 +2,7 @@ import 'person.dart';
 
 /// Represents a message used in Android messaging style notifications.
 class Message {
+  /// Constructs an instance of [Message].
   const Message(
     this.text,
     this.timestamp,

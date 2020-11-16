@@ -2,6 +2,7 @@ import 'style_information.dart';
 
 /// The default Android notification style.
 class DefaultStyleInformation implements StyleInformation {
+  /// Constructs an instance of [DefaultStyleInformation].
   const DefaultStyleInformation(
     this.htmlFormatContent,
     this.htmlFormatTitle,

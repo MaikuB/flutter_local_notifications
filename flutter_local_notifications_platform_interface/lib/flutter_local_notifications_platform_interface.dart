@@ -6,13 +6,17 @@ import 'src/types.dart';
 export 'src/notification_app_launch_details.dart';
 export 'src/types.dart';
 
+/// The interface that all implementations of flutter_local_notifications must
+/// implement.
 abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
+  /// Constructs an instance of [FlutterLocalNotificationsPlatform].
   FlutterLocalNotificationsPlatform() : super(token: _token);
 
   static FlutterLocalNotificationsPlatform _instance;
 
   static final Object _token = Object();
 
+  /// The default instance of [FlutterLocalNotificationsPlatform] to use.
   static FlutterLocalNotificationsPlatform get instance => _instance;
 
   /// Platform-specific plugins should set this with their own platform-specific
