@@ -664,6 +664,7 @@ class MacOSFlutterLocalNotificationsPlugin
   }
 }
 
+/// Linux implementation of the local notifications plugin.
 class LinuxFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback _onSelectNotification;
@@ -674,6 +675,12 @@ class LinuxFlutterLocalNotificationsPlugin
     _periodicNotificationButtonHandlerMap =
       <int, Map<String, LinuxNotificationButtonHandler>>{};
 
+  /// Initializes the plugin.
+  ///
+  /// Call this method on application before using the plugin further.
+  /// This should only be done once. When a notification created by this plugin
+  /// was used to launch the app, calling `initialize` is what will trigger to
+  /// the `onSelectNotification` callback to be fire.
   Future<bool> initialize(
     LinuxInitializationSettings initializationSettings, {
     SelectNotificationCallback onSelectNotification,
@@ -732,6 +739,8 @@ class LinuxFlutterLocalNotificationsPlugin
     });
   }
 
+  /// Schedules a notification to be shown at the specified date and time
+  /// relative to a specific time zone.
   Future<void> zonedSchedule(
     int id,
     String title,

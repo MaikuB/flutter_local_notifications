@@ -2,21 +2,19 @@ import 'icon.dart';
 import 'initialization_settings.dart';
 import 'notification_details.dart';
 
+// ignore_for_file: public_member_api_docs
+
 extension LinuxIconMapper on LinuxIcon {
-  Map<String, Object> toMap() {
-    return <String, Object> {
+  Map<String, Object> toMap() => <String, Object> {
       'icon': content,
       'iconSource': source.index,
     };
-  }
 }
 
 extension LinuxInitializationSettingsMapper on LinuxInitializationSettings {
-  Map<String, Object> toMap() {
-    return <String, Object> {
+  Map<String, Object> toMap() => <String, Object> {
       'defaultIcon': defaultIcon?.toMap(),
     };
-  }
 }
 
 extension LinuxNotificationButtonSetMapper on Set<LinuxNotificationButton> {
