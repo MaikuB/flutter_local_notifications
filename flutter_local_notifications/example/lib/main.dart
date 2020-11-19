@@ -565,31 +565,22 @@ class _HomePageState extends State<HomePage> {
     final ByteData iconData = await rootBundle.load('icons/coworker.png');
     final LinuxNotificationDetails linuxPlatformChannelSpecifics =
         LinuxNotificationDetails(
-          icon: ByteDataLinuxIcon(
-            iconData.buffer.asUint8List()
-          ),
-          buttons: <LinuxNotificationButton>{
-            LinuxNotificationButton(
-              label: 'label',
-              buttonId: 'id',
-              handler: (int id, String buttonId) {
-                debugPrint(
-                  'You pressed button "$buttonId" from notification#$id');
-              }),
-            LinuxNotificationButton(
-              label: 'label2',
-              buttonId: 'id2',
-              handler: (int id, String buttonId) {
-                debugPrint(
-                  'You pressed button "$buttonId" from notification#$id');
-              }),
-          },
-        );
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(
-          android: androidPlatformChannelSpecifics,
-          linux: linuxPlatformChannelSpecifics,
-        );
+      icon: ByteDataLinuxIcon(iconData.buffer.asUint8List()),
+      buttons: <LinuxNotificationButton>{
+        const LinuxNotificationButton(
+          label: 'label',
+          payload: 'button1',
+        ),
+        const LinuxNotificationButton(
+          label: 'label2',
+          payload: 'button2',
+        ),
+      },
+    );
+    final NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      linux: linuxPlatformChannelSpecifics,
+    );
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');

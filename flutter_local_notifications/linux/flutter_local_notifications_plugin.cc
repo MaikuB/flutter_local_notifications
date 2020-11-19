@@ -6,8 +6,10 @@
 #include <string>
 #include <cassert>
 #include <unordered_map>
+#include <vector>
 #include <utility>
 #include <optional>
+#include <variant>
 
 #define FLUTTER_LOCAL_NOTIFICATIONS_PLUGIN(obj) \
   (G_TYPE_CHECK_INSTANCE_CAST((obj), flutter_local_notifications_plugin_get_type(), \
@@ -155,13 +157,10 @@ namespace {
 
 #define APP_ACTION_PREFIX "app."
 #define NOTIFICATION_ACTION_NAME "flutter-local-notifications-action"
-#define NOTIFICATION_BUTTON_ACTION_NAME "flutter-local-notifications-button-action"
 
   inline constexpr const char NotificationActionName[] = NOTIFICATION_ACTION_NAME;
-  inline constexpr const char NotificationButtonActionName[] = NOTIFICATION_BUTTON_ACTION_NAME;
 
   inline constexpr const char NotificationActionBindingName[] = APP_ACTION_PREFIX NOTIFICATION_ACTION_NAME;
-  inline constexpr const char NotificationButtonActionBindingName[] = APP_ACTION_PREFIX NOTIFICATION_BUTTON_ACTION_NAME;
 }
 
 #define RequireArg(arg, requiredType) if (const auto resp = ::RequireArgument(__func__, #arg, arg, requiredType)) { return resp; }
@@ -175,6 +174,8 @@ struct _FlutterLocalNotificationsPlugin {
 
   GIcon* default_icon;
 
+  std::vector<int64_t>* notifications;
+
   // Key: notification id, Value: task id
   std::unordered_map<int64_t, int>* periodic_notification_map;
 
@@ -186,10 +187,6 @@ struct _FlutterLocalNotificationsPlugin {
 
   GtkApplication* getApplication() const {
     return gtk_window_get_application(GTK_WINDOW(getTopLevel()));
-  }
-
-  [[maybe_unused]] std::string getApplicationId() const {
-    return g_application_get_application_id(G_APPLICATION(getApplication()));
   }
 
   FlMethodResponse* initialize(FlMethodCall* call) {
@@ -217,23 +214,6 @@ struct _FlutterLocalNotificationsPlugin {
           fl_value_set_string_take(arg, "id", fl_value_new_int(idValue));
           fl_value_set_string_take(arg, "payload", fl_value_new_string(payloadValue));
           fl_method_channel_invoke_method(plugin->channel, "selectNotification", arg, nullptr, nullptr, nullptr);
-        },
-        "(xs)"
-      },
-      {
-        NotificationButtonActionName,
-        [](GSimpleAction* action, GVariant* param, gpointer opaque) {
-          g_autoptr(GVariant) id = g_variant_get_child_value(param, 0);
-          const auto idValue = g_variant_get_int64(id);
-          g_autoptr(GVariant) buttonId = g_variant_get_child_value(param, 1);
-          const auto buttonIdValue = g_variant_get_string(buttonId, nullptr);
-
-          const auto plugin = static_cast<FlutterLocalNotificationsPlugin*>(opaque);
-
-          g_autoptr(FlValue) arg = fl_value_new_map();
-          fl_value_set_string_take(arg, "id", fl_value_new_int(idValue));
-          fl_value_set_string_take(arg, "buttonId", fl_value_new_string(buttonIdValue));
-          fl_method_channel_invoke_method(plugin->channel, "selectNotificationButton", arg, nullptr, nullptr, nullptr);
         },
         "(xs)"
       }
@@ -268,9 +248,9 @@ struct _FlutterLocalNotificationsPlugin {
           assert(button && fl_value_get_type(button) == FL_VALUE_TYPE_MAP);
 
           const auto label = fl_value_get_string(fl_value_lookup_string(button, "buttonLabel"));
-          const auto buttonId = fl_value_get_string(fl_value_lookup_string(button, "buttonId"));
+          const auto buttonPayload = fl_value_get_string(fl_value_lookup_string(button, "payload"));
 
-          g_notification_add_button_with_target(notification, label, NotificationButtonActionBindingName, "(xs)", id, buttonId);
+          g_notification_add_button_with_target(notification, label, NotificationActionBindingName, "(xs)", id, buttonPayload);
         }
       }
     } else {
@@ -281,7 +261,7 @@ struct _FlutterLocalNotificationsPlugin {
     return notification;
   }
 
-  void periodicallyShow(GApplication* app, std::int64_t id, GNotification*& notification, std::string&& notificationId, RepeatInterval repeatInterval) {
+  void doPeriodicallyShow(GApplication* app, std::int64_t id, GNotification*& notification, std::string&& notificationId, RepeatInterval repeatInterval) {
     const auto data = new std::tuple{ app, std::exchange(notification, nullptr), std::move(notificationId) };
     const auto taskId = g_timeout_add_seconds_full(G_PRIORITY_DEFAULT, static_cast<guint>(repeatInterval), [](gpointer p) -> gboolean {
       const auto& [app, notification, notificationIdString] = *static_cast<decltype(data)>(p);
@@ -295,7 +275,7 @@ struct _FlutterLocalNotificationsPlugin {
     periodic_notification_map->emplace(id, taskId);
   }
 
-  void zonedSchedule(GApplication* app, std::int64_t id, GNotification*& notification, std::string&& notificationId, GDateTime* now, GDateTime* scheduledDateTime, std::optional<DateTimeComponents> matchDateTimeComponents) {
+  void doZonedSchedule(GApplication* app, std::int64_t id, GNotification*& notification, std::string&& notificationId, GDateTime* now, GDateTime* scheduledDateTime, std::optional<DateTimeComponents> matchDateTimeComponents) {
     if (matchDateTimeComponents) {
       const auto matchDateTimeComponentsValue = *matchDateTimeComponents;
       const auto nextNotifyTime = GetNextNotifyTime(now, scheduledDateTime, matchDateTimeComponentsValue);
@@ -340,10 +320,15 @@ struct _FlutterLocalNotificationsPlugin {
     }
   }
 
-  FlMethodResponse* show(FlMethodCall* call) {
-    const auto args = fl_method_call_get_args(call);
-    RequireArg(args, FL_VALUE_TYPE_MAP);
+  struct CommonArguments {
+    std::int64_t id;
+    const char* title;
+    const char* body;
+    const char* payload;
+    FlValue* platformSpecifics;
+  };
 
+  std::variant<FlMethodResponse*, CommonArguments> getCommonArguments(FlValue* args) {
     const auto id = fl_value_lookup_string(args, "id");
     RequireArg(id, FL_VALUE_TYPE_INT);
     auto title = fl_value_lookup_string(args, "title");
@@ -355,49 +340,94 @@ struct _FlutterLocalNotificationsPlugin {
     auto platformSpecifics = fl_value_lookup_string(args, "platformSpecifics");
     OptionalArg(platformSpecifics, FL_VALUE_TYPE_MAP);
 
-    // for periodicallyShow
-    auto repeatInterval = fl_value_lookup_string(args, "repeatInterval");
-    OptionalArg(repeatInterval, FL_VALUE_TYPE_INT);
-
-    // for zonedSchedule
-    auto timeZoneName = fl_value_lookup_string(args, "timeZoneName");
-    OptionalArg(timeZoneName, FL_VALUE_TYPE_STRING);
-
     const auto idValue = fl_value_get_int(id);
     const auto titleValue = title ? fl_value_get_string(title) : "";
     const auto bodyValue = body ? fl_value_get_string(body) : nullptr;
     const auto payloadValue = fl_value_get_string(payload);
 
-    g_autoptr(GNotification) notification = buildNotification(idValue, titleValue, bodyValue, payloadValue, platformSpecifics);
+    return CommonArguments{ idValue, titleValue, bodyValue, payloadValue, platformSpecifics };
+  }
 
-    auto notificationIdString = "flutter_local_notifications#" + std::to_string(idValue);
-    const auto app = G_APPLICATION(getApplication());
-    if (repeatInterval) {
-      const auto repeatIntervalIndex = fl_value_get_int(repeatInterval);
-      if (repeatIntervalIndex < 0 || repeatIntervalIndex >= std::size(RepeatIntervalMap)) {
-        return FL_METHOD_RESPONSE(fl_method_error_response_new("show_error", "repeatInterval is not in valid range", nullptr));
-      }
-      const auto repeatIntervalValue = RepeatIntervalMap[repeatIntervalIndex];
-      periodicallyShow(app, idValue, notification, std::move(notificationIdString), repeatIntervalValue);
-    } else if (timeZoneName) {
-      const auto scheduledDateTime = fl_value_lookup_string(args, "scheduledDateTime");
-      RequireArg(scheduledDateTime, FL_VALUE_TYPE_STRING);
-      auto matchDateTimeComponents = fl_value_lookup_string(args, "matchDateTimeComponents");
-      OptionalArg(matchDateTimeComponents, FL_VALUE_TYPE_INT);
+  FlMethodResponse* show(FlMethodCall* call) {
+    const auto args = fl_method_call_get_args(call);
+    RequireArg(args, FL_VALUE_TYPE_MAP);
 
-      const auto timeZoneNameValue = fl_value_get_string(timeZoneName);
-      const auto scheduledDateTimeValue = fl_value_get_string(scheduledDateTime);
-      g_autoptr(GTimeZone) timeZone = g_time_zone_new(timeZoneNameValue);
-      g_autoptr(GDateTime) realScheduledDateTime = g_date_time_new_from_iso8601(scheduledDateTimeValue, timeZone);
-      assert(realScheduledDateTime);
-
-      g_autoptr(GDateTime) now = g_date_time_new_now(timeZone);
-
-      zonedSchedule(app, idValue, notification, std::move(notificationIdString), now, realScheduledDateTime,
-        matchDateTimeComponents ? std::optional{ static_cast<DateTimeComponents>(fl_value_get_int(matchDateTimeComponents)) } : std::nullopt);
-    } else {
-      g_application_send_notification(G_APPLICATION(app), notificationIdString.data(), notification);
+    const auto commonArgs = getCommonArguments(args);
+    if (const auto resp = std::get_if<FlMethodResponse*>(&commonArgs)) {
+      return *resp;
     }
+    const auto [id, title, body, payload, platformSpecifics] = std::get<1>(commonArgs);
+
+    g_autoptr(GNotification) notification = buildNotification(id, title, body, payload, platformSpecifics);
+
+    auto notificationIdString = "flutter_local_notifications#" + std::to_string(id);
+    const auto app = G_APPLICATION(getApplication());
+  
+    g_application_send_notification(G_APPLICATION(app), notificationIdString.data(), notification);
+    notifications->emplace_back(id);
+    return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  }
+
+  FlMethodResponse* periodicallyShow(FlMethodCall* call) {
+    const auto args = fl_method_call_get_args(call);
+    RequireArg(args, FL_VALUE_TYPE_MAP);
+
+    const auto commonArgs = getCommonArguments(args);
+    if (const auto resp = std::get_if<FlMethodResponse*>(&commonArgs)) {
+      return *resp;
+    }
+    const auto [id, title, body, payload, platformSpecifics] = std::get<1>(commonArgs);
+
+    auto repeatInterval = fl_value_lookup_string(args, "repeatInterval");
+    RequireArg(repeatInterval, FL_VALUE_TYPE_INT);
+    const auto repeatIntervalIndex = fl_value_get_int(repeatInterval);
+    if (repeatIntervalIndex < 0 || repeatIntervalIndex >= std::size(RepeatIntervalMap)) {
+      return FL_METHOD_RESPONSE(fl_method_error_response_new("show_error", "repeatInterval is not in valid range", nullptr));
+    }
+    const auto repeatIntervalValue = RepeatIntervalMap[repeatIntervalIndex];
+
+    g_autoptr(GNotification) notification = buildNotification(id, title, body, payload, platformSpecifics);
+
+    auto notificationIdString = "flutter_local_notifications#" + std::to_string(id);
+    const auto app = G_APPLICATION(getApplication());
+
+    doPeriodicallyShow(app, id, notification, std::move(notificationIdString), repeatIntervalValue);
+    return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  }
+
+  FlMethodResponse* zonedSchedule(FlMethodCall* call) {
+    const auto args = fl_method_call_get_args(call);
+    RequireArg(args, FL_VALUE_TYPE_MAP);
+
+    const auto commonArgs = getCommonArguments(args);
+    if (const auto resp = std::get_if<FlMethodResponse*>(&commonArgs)) {
+      return *resp;
+    }
+    const auto [id, title, body, payload, platformSpecifics] = std::get<1>(commonArgs);
+
+    auto timeZoneName = fl_value_lookup_string(args, "timeZoneName");
+    RequireArg(timeZoneName, FL_VALUE_TYPE_STRING);
+
+    const auto scheduledDateTime = fl_value_lookup_string(args, "scheduledDateTime");
+    RequireArg(scheduledDateTime, FL_VALUE_TYPE_STRING);
+    auto matchDateTimeComponents = fl_value_lookup_string(args, "matchDateTimeComponents");
+    OptionalArg(matchDateTimeComponents, FL_VALUE_TYPE_INT);
+
+    const auto timeZoneNameValue = fl_value_get_string(timeZoneName);
+    const auto scheduledDateTimeValue = fl_value_get_string(scheduledDateTime);
+    g_autoptr(GTimeZone) timeZone = g_time_zone_new(timeZoneNameValue);
+    g_autoptr(GDateTime) realScheduledDateTime = g_date_time_new_from_iso8601(scheduledDateTimeValue, timeZone);
+    assert(realScheduledDateTime);
+
+    g_autoptr(GDateTime) now = g_date_time_new_now(timeZone);
+
+    g_autoptr(GNotification) notification = buildNotification(id, title, body, payload, platformSpecifics);
+
+    auto notificationIdString = "flutter_local_notifications#" + std::to_string(id);
+    const auto app = G_APPLICATION(getApplication());
+
+    doZonedSchedule(app, id, notification, std::move(notificationIdString), now, realScheduledDateTime,
+      matchDateTimeComponents ? std::optional{ static_cast<DateTimeComponents>(fl_value_get_int(matchDateTimeComponents)) } : std::nullopt);
     return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
   }
 
@@ -407,23 +437,26 @@ struct _FlutterLocalNotificationsPlugin {
     const auto id = fl_value_get_int(args);
 
     const auto app = getApplication();
+    const auto iter = periodic_notification_map->find(id);
+    if (iter != periodic_notification_map->end()) {
+      g_source_remove(iter->second);
+      periodic_notification_map->erase(iter);
+    }
     g_application_withdraw_notification(G_APPLICATION(app), ("flutter_local_notifications#" + std::to_string(id)).data());
     return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
   }
 
-  FlMethodResponse* cancelPeriodicNotification(FlMethodCall* call) {
-    const auto args = fl_method_call_get_args(call);
-    RequireArg(args, FL_VALUE_TYPE_INT);
-    const auto id = fl_value_get_int(args);
-
+  FlMethodResponse* cancelAll() {
     const auto app = getApplication();
-    const auto iter = periodic_notification_map->find(id);
-    if (iter == periodic_notification_map->end()) {
-      return FL_METHOD_RESPONSE(fl_method_error_response_new("cancelPeriodicNotification_error", "id does not refer to a valid periodic notification", nullptr));
+    for (const auto id : *notifications) {
+      g_application_withdraw_notification(G_APPLICATION(app), ("flutter_local_notifications#" + std::to_string(id)).data());
     }
-    g_source_remove(iter->second);
-    g_application_withdraw_notification(G_APPLICATION(app), ("flutter_local_notifications#" + std::to_string(id)).data());
-    periodic_notification_map->erase(iter);
+    notifications->clear();
+    for (const auto [id, taskId] : *periodic_notification_map) {
+      g_source_remove(taskId);
+      g_application_withdraw_notification(G_APPLICATION(app), ("flutter_local_notifications#" + std::to_string(id)).data());
+    }
+    periodic_notification_map->clear();
     return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
   }
 };
@@ -437,6 +470,7 @@ static void flutter_local_notifications_plugin_dispose(GObject* object) {
   }
   g_object_unref(plugin->channel);
   g_object_unref(plugin->registrar);
+  delete plugin->notifications;
   delete plugin->periodic_notification_map;
 
   G_OBJECT_CLASS(flutter_local_notifications_plugin_parent_class)->dispose(object);
@@ -450,6 +484,7 @@ static void flutter_local_notifications_plugin_init(FlutterLocalNotificationsPlu
   self->registrar = nullptr;
   self->channel = nullptr;
   self->default_icon = nullptr;
+  self->notifications = new std::vector<int64_t>();
   self->periodic_notification_map = new std::unordered_map<int64_t, int>();
 }
 
@@ -464,10 +499,14 @@ namespace {
       response = self->initialize(call);
     } else if (method == "show") {
       response = self->show(call);
+    } else if (method == "periodicallyShow") {
+      response = self->periodicallyShow(call);
+    } else if (method == "zonedSchedule") {
+      response = self->zonedSchedule(call);
     } else if (method == "cancel") {
       response = self->cancel(call);
-    } else if (method == "cancelPeriodicNotification") {
-      response = self->cancelPeriodicNotification(call);
+    } else if (method == "cancelAll") {
+      response = self->cancelAll();
     } else {
       response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
     }

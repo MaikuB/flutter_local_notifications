@@ -7,6 +7,7 @@ import 'enums.dart';
 abstract class LinuxIcon {
   /// Implementation-defined icon content.
   Object get content;
+
   /// Defines the semantic of content.
   LinuxIconSource get source;
 }
@@ -27,7 +28,7 @@ class FileLinuxIcon implements LinuxIcon {
 }
 
 /// Represents an icon from binary data.
-/// The binary data should be in an image file format which supported by glib, 
+/// The binary data should be in an image file format which supported by glib,
 /// such as common formats like jpg and png.
 class ByteDataLinuxIcon implements LinuxIcon {
   /// Construct an instance of [ByteDataLinuxIcon].

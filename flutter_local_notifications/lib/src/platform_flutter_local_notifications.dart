@@ -668,12 +668,6 @@ class MacOSFlutterLocalNotificationsPlugin
 class LinuxFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback _onSelectNotification;
-  final Map<int, Map<String, LinuxNotificationButtonHandler>>
-    _notificationButtonHandlerMap =
-      <int, Map<String, LinuxNotificationButtonHandler>>{};
-  final Map<int, Map<String, LinuxNotificationButtonHandler>>
-    _periodicNotificationButtonHandlerMap =
-      <int, Map<String, LinuxNotificationButtonHandler>>{};
 
   /// Initializes the plugin.
   ///
@@ -700,12 +694,7 @@ class LinuxFlutterLocalNotificationsPlugin
     String payload,
   }) {
     validateId(id);
-    _notificationButtonHandlerMap[id] = notificationDetails != null
-    ? <String, LinuxNotificationButtonHandler> {
-      for (final LinuxNotificationButton button in notificationDetails.buttons)
-        button.buttonId : button.handler,
-    } : null;
-    return _channel.invokeMethod('show', <String, Object> {
+    return _channel.invokeMethod('show', <String, Object>{
       'id': id,
       'title': title,
       'body': body,
@@ -724,12 +713,7 @@ class LinuxFlutterLocalNotificationsPlugin
     String payload,
   }) {
     validateId(id);
-    _periodicNotificationButtonHandlerMap[id] = notificationDetails != null
-    ? <String, LinuxNotificationButtonHandler> {
-      for (final LinuxNotificationButton button in notificationDetails.buttons)
-        button.buttonId : button.handler,
-    } : null;
-    return _channel.invokeMethod('show', <String, Object> {
+    return _channel.invokeMethod('periodicallyShow', <String, Object>{
       'id': id,
       'title': title,
       'body': body,
@@ -752,15 +736,10 @@ class LinuxFlutterLocalNotificationsPlugin
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate);
-    _periodicNotificationButtonHandlerMap[id] = notificationDetails != null
-    ? <String, LinuxNotificationButtonHandler> {
-      for (final LinuxNotificationButton button in notificationDetails.buttons)
-        button.buttonId : button.handler,
-    } : null;
-    final Map<String, Object> serializedPlatformSpecifics
-      = notificationDetails?.toMap();
+    final Map<String, Object> serializedPlatformSpecifics =
+        notificationDetails?.toMap();
     await _channel.invokeMethod(
-        'show',
+        'zonedSchedule',
         <String, Object>{
           'id': id,
           'title': title,
@@ -769,54 +748,23 @@ class LinuxFlutterLocalNotificationsPlugin
           'payload': payload ?? '',
           if (matchDateTimeComponents != null)
             'matchDateTimeComponents': matchDateTimeComponents.index
-        }
-          ..addAll(scheduledDate.toMap()));
+        }..addAll(scheduledDate.toMap()));
   }
 
   @override
   Future<void> cancel(int id) {
     validateId(id);
-    if (_notificationButtonHandlerMap.remove(id) != null) {
-      return _channel.invokeMethod('cancel', id);
-    } else if (_periodicNotificationButtonHandlerMap.remove(id) != null) {
-      return _channel.invokeMethod('cancelPeriodicNotification', id);
-    } else {
-      throw ArgumentError.value(id, 'id', 'id is invalid');
-    }
+    return _channel.invokeMethod('cancel', id);
   }
 
   @override
-  Future<void> cancelAll() async {
-    for (final int id in _notificationButtonHandlerMap.keys) {
-      await _channel.invokeMethod('cancel', id);
-    }
-    for (final int id in _periodicNotificationButtonHandlerMap.keys) {
-      await _channel.invokeMethod('cancelPeriodicNotification', id);
-    }
-    _notificationButtonHandlerMap.clear();
-    _periodicNotificationButtonHandlerMap.clear();
-  }
+  Future<void> cancelAll() => _channel.invokeMethod('cancelAll');
 
   Future<void> _handleMethod(MethodCall call) {
     switch (call.method) {
       case 'selectNotification':
         final Map<dynamic, dynamic> args = call.arguments;
-        _notificationButtonHandlerMap.remove(args['id']);
         _onSelectNotification(args['payload']);
-        break;
-      case 'selectNotificationButton':
-        final Map<dynamic, dynamic> args = call.arguments;
-        final int id = args['id'];
-        final String buttonId = args['buttonId'];
-        final Map<String, LinuxNotificationButtonHandler> buttonHandlerMap
-          = _notificationButtonHandlerMap.remove(id)
-            ?? _periodicNotificationButtonHandlerMap[id];
-        assert(buttonHandlerMap != null, 'Handler map is corrupted');
-        final LinuxNotificationButtonHandler handler =
-          buttonHandlerMap[buttonId];
-        if (handler != null) {
-          handler(id, buttonId);
-        }
         break;
       default:
         return Future<void>.error('Method not defined');
