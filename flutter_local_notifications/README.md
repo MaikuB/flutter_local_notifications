@@ -20,8 +20,8 @@ A cross platform plugin for displaying local notifications.
 - **[👏 Acknowledgements](#-acknowledgements)**
 - **[⚙️ Android Setup](#️-android-setup)**
    - [Custom notification icons and sounds](#custom-notification-icons-and-sounds)
-   - [Scheduled notifications](#scheduled-notifications)
-   - [Fullscreen intent notifications](#fullscreen-intent-notifications)
+   - [Scheduled notifications](#scheduling-a-notification)
+   - [Fullscreen intent notifications](#full-screen-intent-notifications)
    - [Release build configuration](#release-build-configuration)
 - **[⚙️ iOS setup](#️-ios-setup)**
    - [General setup](#general-setup)
