@@ -2,6 +2,7 @@
 
 * Fixed links in table of contents in the readme. Thanks to the PR from [Dihak](https://github.com/dihak)
 * Added a note in the readme to indicate changes were done in version 3.0.1+4 to reduce the setup to ensure readers have updated their application to use the latest version of the plugin
+* Added a note around setting the application badge with a link to a plugin that supports this functionality
 
 # [3.0.1+4]
 
