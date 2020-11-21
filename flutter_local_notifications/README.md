@@ -14,6 +14,7 @@ A cross platform plugin for displaying local notifications.
    - [Recurring Android notifications](#recurring-android-notifications)
    - [iOS pending notifications limit](#ios-pending-notifications-limit)
    - [Scheduled notifications and daylight savings](#scheduled-notifications-and-daylight-savings)
+   - [Updating application badge](#updating-application-badge)
    - [Custom notification sounds](#custom-notification-sounds)
    - [macOS differences](#macos-differences)
 - **[📷 Screenshots](#-screenshots)**
@@ -100,6 +101,10 @@ There is a limit imposed by iOS where it will only keep 64 notifications that wi
 
 ##### Scheduled notifications and daylight savings
 The notification APIs used on iOS versions older than 10 (aka the `UILocalNotification` APIs) have limited supported for time zones.
+
+#### Updating application badge
+
+This plugin doesn't provide APIs for directly setting the badge count for your application. If you need this for your application, there are other plugins available, such as the [`flutter_app_badger`](https://pub.dev/packages/flutter_app_badger) plugin.
 
 ##### Custom notification sounds
 [iOS and macOS restrictions](https://developer.apple.com/documentation/usernotifications/unnotificationsound?language=objc) apply (e.g. supported file formats).
