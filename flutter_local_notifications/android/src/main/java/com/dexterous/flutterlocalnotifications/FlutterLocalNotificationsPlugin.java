@@ -7,9 +7,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +24,7 @@ import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.TextUtils;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -553,11 +557,18 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private static Class getMainActivityClass(Context context) {
         String packageName = context.getPackageName();
-        Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-        String className = launchIntent.getComponent().getClassName();
+        PackageManager packageManager = context.getPackageManager();
+        Intent launchIntent = packageManager.getLaunchIntentForPackage(packageName);
+        ComponentName launchIntentComponentName = launchIntent.getComponent();
+
         try {
+            ActivityInfo appInfo = packageManager.getActivityInfo(launchIntentComponentName, PackageManager.GET_META_DATA);
+            String className = appInfo.name;
+            if (!TextUtils.isEmpty(appInfo.targetActivity)) {
+                className = appInfo.targetActivity;
+            }
             return Class.forName(className);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | PackageManager.NameNotFoundException e) {
             e.printStackTrace();
             return null;
         }
