@@ -160,7 +160,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private static Notification createNotification(Context context, NotificationDetails notificationDetails) {
         setupNotificationChannel(context, NotificationChannelDetails.fromNotificationDetails(notificationDetails));
-        Intent intent = new Intent(context, getMainActivityClass(context));
+        Intent intent = getLaunchIntent(context);
         intent.setAction(SELECT_NOTIFICATION);
         intent.putExtra(PAYLOAD, notificationDetails.payload);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -555,23 +555,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         builder.setTimeoutAfter(notificationDetails.timeoutAfter);
     }
 
-    private static Class getMainActivityClass(Context context) {
+    private static Intent getLaunchIntent(Context context) {
         String packageName = context.getPackageName();
         PackageManager packageManager = context.getPackageManager();
-        Intent launchIntent = packageManager.getLaunchIntentForPackage(packageName);
-        ComponentName launchIntentComponentName = launchIntent.getComponent();
-
-        try {
-            ActivityInfo appInfo = packageManager.getActivityInfo(launchIntentComponentName, PackageManager.GET_META_DATA);
-            String className = appInfo.name;
-            if (!TextUtils.isEmpty(appInfo.targetActivity)) {
-                className = appInfo.targetActivity;
-            }
-            return Class.forName(className);
-        } catch (ClassNotFoundException | PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return packageManager.getLaunchIntentForPackage(packageName);
     }
 
     private static void setStyle(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
