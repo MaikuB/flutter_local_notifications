@@ -786,9 +786,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showBigPictureNotification() async {
     final String largeIconPath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/48x48', 'largeIcon');
+        'https://via.placeholder.com/48x48', 'largeIcon');
     final String bigPicturePath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/400x800', 'bigPicture');
+        'https://via.placeholder.com/400x800', 'bigPicture');
     final BigPictureStyleInformation bigPictureStyleInformation =
         BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath),
             largeIcon: FilePathAndroidBitmap(largeIconPath),
@@ -808,9 +808,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showBigPictureNotificationHiddenLargeIcon() async {
     final String largeIconPath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/48x48', 'largeIcon');
+        'https://via.placeholder.com/48x48', 'largeIcon');
     final String bigPicturePath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/400x800', 'bigPicture');
+        'https://via.placeholder.com/400x800', 'bigPicture');
     final BigPictureStyleInformation bigPictureStyleInformation =
         BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath),
             hideExpandedLargeIcon: true,
@@ -831,7 +831,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationMediaStyle() async {
     final String largeIconPath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/128x128/00FF00/000000', 'largeIcon');
+        'https://via.placeholder.com/128x128/00FF00/000000', 'largeIcon');
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
       'media channel id',
@@ -908,7 +908,7 @@ class _HomePageState extends State<HomePage> {
     );
     // download the icon that would be use for the lunch bot person
     final String largeIconPath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/48x48', 'largeIcon');
+        'https://via.placeholder.com/48x48', 'largeIcon');
     // this person object will use an icon that was downloaded
     final Person lunchBot = Person(
       name: 'Lunch bot',
@@ -1282,7 +1282,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationWithAttachment() async {
     final String bigPicturePath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/600x200', 'bigPicture.jpg');
+        'https://via.placeholder.com/600x200', 'bigPicture.jpg');
     final IOSNotificationDetails iOSPlatformChannelSpecifics =
         IOSNotificationDetails(attachments: <IOSNotificationAttachment>[
       IOSNotificationAttachment(bigPicturePath)
