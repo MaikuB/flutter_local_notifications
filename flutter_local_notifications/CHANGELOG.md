@@ -1,3 +1,8 @@
+# [3.0.1+6]
+
+* [Android] change how the intent that associated with the notification is determined so that the plugin. This is to allow the plugin to work with applications that use activity aliases as per issue [92](https://github.com/MaikuB/flutter_local_notifications/issues/912). Thanks the PR from  [crazecoder](https://github.com/crazecoder)
+* Fixed issue [924](https://github.com/MaikuB/flutter_local_notifications/issues/924), where example app will now use https URLs for downloading placeholder images. These images were used when displaying some of the notifications. Thanks to the PR from [Fareez](https://github.com/iqfareez)
+
 # [3.0.1+5]
 
 * Fixed links in table of contents in the readme. Thanks to the PR from [Dihak](https://github.com/dihak)
