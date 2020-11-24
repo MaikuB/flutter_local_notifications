@@ -7,9 +7,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +24,7 @@ import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.TextUtils;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -156,7 +160,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private static Notification createNotification(Context context, NotificationDetails notificationDetails) {
         setupNotificationChannel(context, NotificationChannelDetails.fromNotificationDetails(notificationDetails));
-        Intent intent = new Intent(context, getMainActivityClass(context));
+        Intent intent = getLaunchIntent(context);
         intent.setAction(SELECT_NOTIFICATION);
         intent.putExtra(PAYLOAD, notificationDetails.payload);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -551,16 +555,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         builder.setTimeoutAfter(notificationDetails.timeoutAfter);
     }
 
-    private static Class getMainActivityClass(Context context) {
+    private static Intent getLaunchIntent(Context context) {
         String packageName = context.getPackageName();
-        Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-        String className = launchIntent.getComponent().getClassName();
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
+        PackageManager packageManager = context.getPackageManager();
+        return packageManager.getLaunchIntentForPackage(packageName);
     }
 
     private static void setStyle(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
