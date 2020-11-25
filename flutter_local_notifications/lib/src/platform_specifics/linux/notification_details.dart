@@ -6,9 +6,7 @@ import 'icon.dart';
 @immutable
 class LinuxNotificationButton {
   /// Construct an instance of [LinuxNotificationButton].
-  const LinuxNotificationButton(
-      {@required this.label,
-      @required this.payload});
+  const LinuxNotificationButton({@required this.label, @required this.payload});
 
   /// Label of this button.
   final String label;

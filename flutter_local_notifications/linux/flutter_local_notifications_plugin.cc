@@ -196,6 +196,12 @@ struct _FlutterLocalNotificationsPlugin {
       if (defaultIconValue && fl_value_get_type(defaultIconValue) == FL_VALUE_TYPE_MAP) {
         default_icon = CreateIconFromFlValue(defaultIconValue);
       }
+      const auto knownShowingNotifications = fl_value_lookup_string(args, "knownShowingNotifications");
+      if (knownShowingNotifications && fl_value_get_type(knownShowingNotifications) == FL_VALUE_TYPE_INT64_LIST) {
+        const auto size = fl_value_get_length(knownShowingNotifications);
+        const auto knownShowingNotificationsValue = fl_value_get_int64_list(knownShowingNotifications);
+        notifications->assign(knownShowingNotificationsValue, knownShowingNotificationsValue + size);
+      }
     }
 
     const auto app = getApplication();
@@ -451,13 +457,16 @@ struct _FlutterLocalNotificationsPlugin {
     for (const auto id : *notifications) {
       g_application_withdraw_notification(G_APPLICATION(app), ("flutter_local_notifications#" + std::to_string(id)).data());
     }
+    auto cancelledNotifications = *notifications;
     notifications->clear();
     for (const auto [id, taskId] : *periodic_notification_map) {
       g_source_remove(taskId);
       g_application_withdraw_notification(G_APPLICATION(app), ("flutter_local_notifications#" + std::to_string(id)).data());
+      cancelledNotifications.emplace_back(id);
     }
     periodic_notification_map->clear();
-    return FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+    g_autoptr(FlValue) returnedValue = fl_value_new_int64_list(cancelledNotifications.data(), cancelledNotifications.size());
+    return FL_METHOD_RESPONSE(fl_method_success_response_new(returnedValue));
   }
 };
 

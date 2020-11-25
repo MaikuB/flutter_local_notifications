@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'icon.dart';
 import 'initialization_settings.dart';
 import 'notification_details.dart';
@@ -14,6 +16,8 @@ extension LinuxIconMapper on LinuxIcon {
 extension LinuxInitializationSettingsMapper on LinuxInitializationSettings {
   Map<String, Object> toMap() => <String, Object>{
         'defaultIcon': defaultIcon?.toMap(),
+        'knownShowingNotifications':
+            Int64List.fromList(knownShowingNotifications?.toList()),
       };
 }
 

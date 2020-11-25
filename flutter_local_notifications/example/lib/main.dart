@@ -13,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:shared_preferences/shared_preferences.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -40,6 +41,35 @@ class ReceivedNotification {
   final String title;
   final String body;
   final String payload;
+}
+
+class NotificationIdPersister extends LinuxNotificationNotifier {
+  @override
+  void onNewNotificationCreated(int notificationId) {
+    SharedPreferences.getInstance().then((SharedPreferences value) async {
+      List<String> persistedNotifications;
+      if (value.containsKey('persistedNotifications')) {
+        persistedNotifications = value.getStringList('persistedNotifications');
+      } else {
+        persistedNotifications = <String>[];
+      }
+      await value.setStringList('persistedNotifications',
+          persistedNotifications..add(notificationId.toString()));
+    });
+  }
+
+  @override
+  void onNotificationDestroyed(int notificationId) {
+    SharedPreferences.getInstance().then((SharedPreferences value) async {
+      if (!value.containsKey('persistedNotifications')) {
+        return;
+      }
+      final List<String> persistedNotifications =
+          value.getStringList('persistedNotifications');
+      await value.setStringList('persistedNotifications',
+          persistedNotifications..remove(notificationId.toString()));
+    });
+  }
 }
 
 /// IMPORTANT: running the following code on its own won't work as there is
@@ -71,6 +101,23 @@ Future<void> main() async {
             didReceiveLocalNotificationSubject.add(ReceivedNotification(
                 id: id, title: title, body: body, payload: payload));
           });
+
+  Set<int> knownShowingNotifications;
+  if (Platform.isLinux) {
+    final SharedPreferences pref = await SharedPreferences.getInstance();
+    if (pref.containsKey('persistedNotifications')) {
+      knownShowingNotifications = pref
+          .getStringList('persistedNotifications')
+          .map((String e) => int.parse(e))
+          .toSet();
+      debugPrint('knownShowingNotifications: $knownShowingNotifications');
+    }
+  }
+  final LinuxInitializationSettings initializationSettingsLinux =
+      LinuxInitializationSettings(
+    notificationNotifier: NotificationIdPersister(),
+    knownShowingNotifications: knownShowingNotifications,
+  );
   const MacOSInitializationSettings initializationSettingsMacOS =
       MacOSInitializationSettings(
           requestAlertPermission: false,
@@ -79,6 +126,7 @@ Future<void> main() async {
   final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
+      linux: initializationSettingsLinux,
       macOS: initializationSettingsMacOS);
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String payload) async {

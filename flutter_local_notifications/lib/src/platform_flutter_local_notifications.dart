@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -668,6 +669,7 @@ class MacOSFlutterLocalNotificationsPlugin
 class LinuxFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback _onSelectNotification;
+  LinuxNotificationNotifier _notificationNotifier;
 
   /// Initializes the plugin.
   ///
@@ -680,6 +682,7 @@ class LinuxFlutterLocalNotificationsPlugin
     SelectNotificationCallback onSelectNotification,
   }) async {
     _onSelectNotification = onSelectNotification;
+    _notificationNotifier = initializationSettings.notificationNotifier;
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
         'initialize', initializationSettings?.toMap());
@@ -692,15 +695,16 @@ class LinuxFlutterLocalNotificationsPlugin
     String body, {
     LinuxNotificationDetails notificationDetails,
     String payload,
-  }) {
+  }) async {
     validateId(id);
-    return _channel.invokeMethod('show', <String, Object>{
+    await _channel.invokeMethod('show', <String, Object>{
       'id': id,
       'title': title,
       'body': body,
       'payload': payload ?? '',
       'platformSpecifics': notificationDetails?.toMap(),
     });
+    _notificationNotifier?.onNewNotificationCreated(id);
   }
 
   @override
@@ -711,9 +715,9 @@ class LinuxFlutterLocalNotificationsPlugin
     RepeatInterval repeatInterval, {
     LinuxNotificationDetails notificationDetails,
     String payload,
-  }) {
+  }) async {
     validateId(id);
-    return _channel.invokeMethod('periodicallyShow', <String, Object>{
+    await _channel.invokeMethod('periodicallyShow', <String, Object>{
       'id': id,
       'title': title,
       'body': body,
@@ -721,6 +725,7 @@ class LinuxFlutterLocalNotificationsPlugin
       'payload': payload ?? '',
       'platformSpecifics': notificationDetails?.toMap(),
     });
+    _notificationNotifier?.onNewNotificationCreated(id);
   }
 
   /// Schedules a notification to be shown at the specified date and time
@@ -749,16 +754,25 @@ class LinuxFlutterLocalNotificationsPlugin
           if (matchDateTimeComponents != null)
             'matchDateTimeComponents': matchDateTimeComponents.index
         }..addAll(scheduledDate.toMap()));
+    _notificationNotifier?.onNewNotificationCreated(id);
   }
 
   @override
-  Future<void> cancel(int id) {
+  Future<void> cancel(int id) async {
     validateId(id);
-    return _channel.invokeMethod('cancel', id);
+    await _channel.invokeMethod('cancel', id);
+    _notificationNotifier?.onNotificationDestroyed(id);
   }
 
   @override
-  Future<void> cancelAll() => _channel.invokeMethod('cancelAll');
+  Future<void> cancelAll() async {
+    final Int64List removedNotifications =
+        await _channel.invokeMethod('cancelAll');
+    if (_notificationNotifier != null) {
+      removedNotifications
+          .forEach(_notificationNotifier.onNotificationDestroyed);
+    }
+  }
 
   Future<void> _handleMethod(MethodCall call) {
     switch (call.method) {
