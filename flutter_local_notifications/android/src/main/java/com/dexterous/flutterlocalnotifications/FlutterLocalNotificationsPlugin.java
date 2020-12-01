@@ -710,8 +710,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             // created on older versions of the plugin where channel management options weren't available back then
             if ((notificationChannel == null && (notificationChannelDetails.channelAction == null || notificationChannelDetails.channelAction == NotificationChannelAction.CreateIfNotExists)) || (notificationChannel != null && notificationChannelDetails.channelAction == NotificationChannelAction.Update)) {
                 int importance = notificationChannelDetails.importance != null ? notificationChannelDetails.importance : NotificationManager.IMPORTANCE_LOW;
+                String description = Objects.toString(notificationChannelDetails.description, "");
                 notificationChannel = new NotificationChannel(notificationChannelDetails.id, notificationChannelDetails.name, importance);
-                notificationChannel.setDescription(notificationChannelDetails.description);
+                notificationChannel.setDescription(description);
                 notificationChannel.setGroup(notificationChannelDetails.groupId);
                 if (notificationChannelDetails.playSound) {
                     AudioAttributes audioAttributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build();
