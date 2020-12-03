@@ -1,5 +1,8 @@
 package com.dexterous.flutterlocalnotifications.models;
 
+import androidx.annotation.Keep;
+
+@Keep
 public class MessageDetails {
     public String text;
     public Long timestamp;

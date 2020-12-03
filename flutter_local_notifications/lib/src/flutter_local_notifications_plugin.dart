@@ -23,6 +23,7 @@ import 'types.dart';
 /// type of the plugin to get the underlying platform-specific implementation
 /// if access to platform-specific APIs are needed.
 class FlutterLocalNotificationsPlugin {
+  /// Factory for create an instance of [FlutterLocalNotificationsPlugin].
   factory FlutterLocalNotificationsPlugin() => _instance;
 
   /// Used internally for creating the appropriate platform-specific

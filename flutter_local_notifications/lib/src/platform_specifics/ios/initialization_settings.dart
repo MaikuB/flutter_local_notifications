@@ -40,6 +40,7 @@ class IOSNotificationCategory {
 
 /// Plugin initialization settings for iOS.
 class IOSInitializationSettings {
+  /// Constructs an instance of [IOSInitializationSettings].
   const IOSInitializationSettings({
     this.requestAlertPermission = true,
     this.requestSoundPermission = true,

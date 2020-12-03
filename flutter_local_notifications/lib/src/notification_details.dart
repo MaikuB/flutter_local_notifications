@@ -4,6 +4,7 @@ import 'platform_specifics/macos/notification_details.dart';
 
 /// Contains notification details specific to each platform.
 class NotificationDetails {
+  /// Constructs an instance of [NotificationDetails].
   const NotificationDetails({
     this.android,
     this.iOS,

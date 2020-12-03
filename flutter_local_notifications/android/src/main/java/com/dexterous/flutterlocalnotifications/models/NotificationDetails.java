@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 
+import androidx.annotation.Keep;
+
 import com.dexterous.flutterlocalnotifications.BitmapSource;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.RepeatInterval;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Keep
 public class NotificationDetails {
     private static final String ID = "id";
     private static final String TITLE = "title";

@@ -1,7 +1,10 @@
 package com.dexterous.flutterlocalnotifications.models;
 
+import androidx.annotation.Keep;
+
 import java.util.Map;
 
+@Keep
 public class Time {
     private static final String HOUR = "hour";
     private static final String MINUTE = "minute";

@@ -1,5 +1,6 @@
 /// Plugin initialization settings for macOS.
 class MacOSInitializationSettings {
+  /// Constructs an instance of [MacOSInitializationSettings]
   const MacOSInitializationSettings({
     this.requestAlertPermission = true,
     this.requestSoundPermission = true,

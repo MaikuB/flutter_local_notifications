@@ -7,9 +7,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,8 +24,8 @@ import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
-
 import android.text.TextUtils;
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
@@ -68,6 +71,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -84,6 +88,7 @@ import io.flutter.view.FlutterMain;
 /**
  * FlutterLocalNotificationsPlugin
  */
+@Keep
 public class FlutterLocalNotificationsPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
     private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
     private static final String DISPATCHER_HANDLE = "dispatcher_handle";
@@ -160,7 +165,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
     private static Notification createNotification(Context context, NotificationDetails notificationDetails) {
         setupNotificationChannel(context, NotificationChannelDetails.fromNotificationDetails(notificationDetails));
-        Intent intent = new Intent(context, getMainActivityClass(context));
+        Intent intent = getLaunchIntent(context);
         intent.setAction(SELECT_NOTIFICATION);
         intent.putExtra(PAYLOAD, notificationDetails.payload);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -346,6 +351,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         } else {
             AlarmManagerCompat.setExact(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
         }
+
         if (updateScheduledNotificationsCache) {
             saveScheduledNotification(context, notificationDetails);
         }
@@ -434,7 +440,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
         ArrayList<NotificationDetails> scheduledNotificationsToSave = new ArrayList<>();
         for (NotificationDetails scheduledNotification : scheduledNotifications) {
-            if (scheduledNotification.id == notificationDetails.id) {
+            if (Objects.equals(scheduledNotification.id, notificationDetails.id)) {
                 continue;
             }
             scheduledNotificationsToSave.add(scheduledNotification);
@@ -572,16 +578,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         builder.setTimeoutAfter(notificationDetails.timeoutAfter);
     }
 
-    private static Class getMainActivityClass(Context context) {
+    private static Intent getLaunchIntent(Context context) {
         String packageName = context.getPackageName();
-        Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-        String className = launchIntent.getComponent().getClassName();
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
+        PackageManager packageManager = context.getPackageManager();
+        return packageManager.getLaunchIntentForPackage(packageName);
     }
 
     private static void setStyle(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
@@ -793,22 +793,22 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     static void zonedScheduleNextNotification(Context context, NotificationDetails notificationDetails) {
+        initAndroidThreeTen(context);
         String nextFireDate = getNextFireDate(notificationDetails);
         if (nextFireDate == null) {
             return;
         }
         notificationDetails.scheduledDateTime = nextFireDate;
-        initAndroidThreeTen(context);
         zonedScheduleNotification(context, notificationDetails, true);
     }
 
     static void zonedScheduleNextNotificationMatchingDateComponents(Context context, NotificationDetails notificationDetails) {
+        initAndroidThreeTen(context);
         String nextFireDate = getNextFireDateMatchingDateTimeComponents(notificationDetails);
         if (nextFireDate == null) {
             return;
         }
         notificationDetails.scheduledDateTime = nextFireDate;
-        initAndroidThreeTen(context);
         zonedScheduleNotification(context, notificationDetails, true);
     }
 
@@ -1197,20 +1197,22 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
             Map<String, Object> arguments = call.arguments();
             NotificationChannelGroupDetails notificationChannelGroupDetails = NotificationChannelGroupDetails.from(arguments);
-            NotificationManagerCompat notificationManagerCompat = getNotificationManager(applicationContext);
+            NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannelGroup notificationChannelGroup = new NotificationChannelGroup(notificationChannelGroupDetails.id, notificationChannelGroupDetails.name);
             if (VERSION.SDK_INT >= VERSION_CODES.P) {
                 notificationChannelGroup.setDescription(notificationChannelGroupDetails.description);
             }
-            notificationManagerCompat.createNotificationChannelGroup(notificationChannelGroup);
+            notificationManager.createNotificationChannelGroup(notificationChannelGroup);
         }
         result.success(null);
     }
 
     private void deleteNotificationChannelGroup(MethodCall call, Result result) {
-        NotificationManagerCompat notificationManagerCompat = getNotificationManager(applicationContext);
-        String groupId = call.arguments();
-        notificationManagerCompat.deleteNotificationChannelGroup(groupId);
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            String groupId = call.arguments();
+            notificationManager.deleteNotificationChannelGroup(groupId);
+        }
         result.success(null);
     }
 
@@ -1222,9 +1224,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private void deleteNotificationChannel(MethodCall call, Result result) {
-        NotificationManagerCompat notificationManagerCompat = getNotificationManager(applicationContext);
-        String channelId = call.arguments();
-        notificationManagerCompat.deleteNotificationChannel(channelId);
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            String channelId = call.arguments();
+            notificationManager.deleteNotificationChannel(channelId);
+        }
         result.success(null);
     }
 
