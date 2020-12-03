@@ -1,3 +1,7 @@
+# [3.0.1+7]
+
+* [Android] fixed issue [935](https://github.com/MaikuB/flutter_local_notifications/issues/935) where scheduling a notification on Android devices running Android versions older than 4.4 (API 19) could cause a crash from using an API that isn't available
+
 # [3.0.1+6]
 
 * [Android] change how the intent that associated with the notification is determined so that the plugin. This is to allow the plugin to work with applications that use activity aliases as per issue [92](https://github.com/MaikuB/flutter_local_notifications/issues/912). Thanks the PR from  [crazecoder](https://github.com/crazecoder)
