@@ -487,6 +487,12 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedRaisedButton(
+                        buttonText: 'Show notification with chronometer',
+                        onPressed: () async {
+                          await _showNotificationWithChronometer();
+                        },
+                      ),
+                      PaddedRaisedButton(
                         buttonText: 'Show full-screen notification',
                         onPressed: () async {
                           await _showFullScreenNotification();
@@ -1275,6 +1281,24 @@ class _HomePageState extends State<HomePage> {
     );
     final NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
+  }
+
+  Future<void> _showNotificationWithChronometer() async {
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      'your channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      when: DateTime.now().millisecondsSinceEpoch - 120 * 1000,
+      usesChronometer: true,
+    );
+    final NotificationDetails platformChannelSpecifics =
+    NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');
