@@ -187,6 +187,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             builder.setWhen(notificationDetails.when);
         }
 
+        if (notificationDetails.usesChronometer != null) {
+            builder.setUsesChronometer(notificationDetails.usesChronometer);
+        }
+
         if (BooleanUtils.getValue(notificationDetails.fullScreenIntent)) {
             builder.setFullScreenIntent(pendingIntent, true);
         }
