@@ -2,6 +2,7 @@
 
 * [Android] added support for showing the notification timestamp as a stopwatch instead via the `usesChronometer` argument added to the constructor of the `AndroidNotificationDetails` class. Thanks to the PR from [andymstone](https://github.com/andymstone)
 * Updated readme to add more clarity on the compatibility with `firebase_messaging` plugin and iOS setup sections
+* Updated changelog entry for 2.0.0 around support for full-screen intents to clarify that the `fullScreenIntent` was added to the constructor of the `AndroidNotificationDetails` class.
 
 # [3.0.1+7]
 
