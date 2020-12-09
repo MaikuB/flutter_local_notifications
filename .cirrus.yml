@@ -25,7 +25,7 @@ task:
   pub_cache:
     folder: ~/.pub-cache
   upgrade_script:
-    - flutter channel dev
+    - flutter channel master
     - flutter upgrade
   setup_script:
     - flutter config --enable-macos-desktop

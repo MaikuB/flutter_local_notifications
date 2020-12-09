@@ -121,6 +121,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -198,6 +199,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -277,6 +279,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': timestamp,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -304,6 +307,86 @@ void main() {
             },
           }));
     });
+
+    test(
+      'show with default Android-specific details with a chronometer',
+          () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+      AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+      InitializationSettings(android: androidInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      final int timestamp = DateTime.now().millisecondsSinceEpoch;
+
+      final AndroidNotificationDetails androidNotificationDetails =
+      AndroidNotificationDetails(
+          'channelId', 'channelName', 'channelDescription',
+          when: timestamp,
+          usesChronometer: true);
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(android: androidNotificationDetails));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, Object>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, Object>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+              AndroidNotificationChannelAction.createIfNotExists.index,
+              'importance': Importance.defaultImportance.value,
+              'priority': Priority.defaultPriority.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': null,
+              'groupAlertBehavior': GroupAlertBehavior.all.index,
+              'autoCancel': true,
+              'ongoing': null,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': null,
+              'showWhen': true,
+              'when': timestamp,
+              'usesChronometer': true,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'additionalFlags': null,
+              'fullScreenIntent': false,
+              'shortcutId': null,
+              'style': AndroidNotificationStyle.defaultStyle.index,
+              'styleInformation': <String, Object>{
+                'htmlFormatContent': false,
+                'htmlFormatTitle': false,
+              },
+            },
+          }));
+      });
 
     test(
         'show with default Android-specific details and custom sound from raw '
@@ -360,6 +443,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -442,6 +526,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -523,6 +608,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -606,6 +692,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -704,6 +791,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -796,6 +884,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -894,6 +983,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -984,6 +1074,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1078,6 +1169,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1163,6 +1255,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1245,6 +1338,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1334,6 +1428,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1452,6 +1547,7 @@ void main() {
               'onlyAlertOnce': null,
               'showWhen': true,
               'when': null,
+              'usesChronometer': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1559,6 +1655,7 @@ void main() {
                 'onlyAlertOnce': null,
                 'showWhen': true,
                 'when': null,
+                'usesChronometer': false,
                 'showProgress': false,
                 'maxProgress': 0,
                 'progress': 0,
@@ -1647,6 +1744,7 @@ void main() {
                 'onlyAlertOnce': null,
                 'showWhen': true,
                 'when': null,
+                'usesChronometer': false,
                 'showProgress': false,
                 'maxProgress': 0,
                 'progress': 0,
@@ -1736,6 +1834,7 @@ void main() {
                 'onlyAlertOnce': null,
                 'showWhen': true,
                 'when': null,
+                'usesChronometer': false,
                 'showProgress': false,
                 'maxProgress': 0,
                 'progress': 0,

@@ -487,6 +487,12 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedRaisedButton(
+                        buttonText: 'Show notification with chronometer',
+                        onPressed: () async {
+                          await _showNotificationWithChronometer();
+                        },
+                      ),
+                      PaddedRaisedButton(
                         buttonText: 'Show full-screen notification',
                         onPressed: () async {
                           await _showFullScreenNotification();
@@ -786,9 +792,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showBigPictureNotification() async {
     final String largeIconPath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/48x48', 'largeIcon');
+        'https://via.placeholder.com/48x48', 'largeIcon');
     final String bigPicturePath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/400x800', 'bigPicture');
+        'https://via.placeholder.com/400x800', 'bigPicture');
     final BigPictureStyleInformation bigPictureStyleInformation =
         BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath),
             largeIcon: FilePathAndroidBitmap(largeIconPath),
@@ -808,9 +814,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showBigPictureNotificationHiddenLargeIcon() async {
     final String largeIconPath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/48x48', 'largeIcon');
+        'https://via.placeholder.com/48x48', 'largeIcon');
     final String bigPicturePath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/400x800', 'bigPicture');
+        'https://via.placeholder.com/400x800', 'bigPicture');
     final BigPictureStyleInformation bigPictureStyleInformation =
         BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath),
             hideExpandedLargeIcon: true,
@@ -831,7 +837,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationMediaStyle() async {
     final String largeIconPath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/128x128/00FF00/000000', 'largeIcon');
+        'https://via.placeholder.com/128x128/00FF00/000000', 'largeIcon');
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
       'media channel id',
@@ -908,7 +914,7 @@ class _HomePageState extends State<HomePage> {
     );
     // download the icon that would be use for the lunch bot person
     final String largeIconPath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/48x48', 'largeIcon');
+        'https://via.placeholder.com/48x48', 'largeIcon');
     // this person object will use an icon that was downloaded
     final Person lunchBot = Person(
       name: 'Lunch bot',
@@ -1280,9 +1286,27 @@ class _HomePageState extends State<HomePage> {
         payload: 'item x');
   }
 
+  Future<void> _showNotificationWithChronometer() async {
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      'your channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      when: DateTime.now().millisecondsSinceEpoch - 120 * 1000,
+      usesChronometer: true,
+    );
+    final NotificationDetails platformChannelSpecifics =
+    NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
+  }
+
   Future<void> _showNotificationWithAttachment() async {
     final String bigPicturePath = await _downloadAndSaveFile(
-        'http://via.placeholder.com/600x200', 'bigPicture.jpg');
+        'https://via.placeholder.com/600x200', 'bigPicture.jpg');
     final IOSNotificationDetails iOSPlatformChannelSpecifics =
         IOSNotificationDetails(attachments: <IOSNotificationAttachment>[
       IOSNotificationAttachment(bigPicturePath)
