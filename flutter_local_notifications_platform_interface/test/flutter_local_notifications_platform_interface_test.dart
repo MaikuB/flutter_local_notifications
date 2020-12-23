@@ -19,9 +19,10 @@ void main() {
   group('$FlutterLocalNotificationsPlatform', () {
     test('Cannot be implemented with `implements`', () {
       expect(() {
+        // TODO(maikub): fix this test
         FlutterLocalNotificationsPlatform.instance =
             ImplementsFlutterLocalNotificationsPlatform();
-      }, throwsA(isInstanceOf<AssertionError>()));
+      }, throwsAssertionError);
     });
 
     test('Can be mocked with `implements`', () {

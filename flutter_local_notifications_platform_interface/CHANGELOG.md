@@ -1,3 +1,7 @@
+## [3.0.0-nullsafety.1]
+
+* Migrated to null safety
+
 ## [2.0.0+1]
 
 * Added more API docs
