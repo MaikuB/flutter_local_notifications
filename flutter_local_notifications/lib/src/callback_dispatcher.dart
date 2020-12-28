@@ -14,15 +14,16 @@ void callbackDispatcher() {
       MethodChannel('dexterous.com/flutter/local_notifications');
 
   channel.invokeMethod<int>('getCallbackHandle').then((handle) {
-    final Function callback = PluginUtilities.getCallbackFromHandle(
-        CallbackHandle.fromRawHandle(handle));
+    final NotificationActionCallback callback =
+        PluginUtilities.getCallbackFromHandle(
+            CallbackHandle.fromRawHandle(handle));
 
     backgroundChannel
         .receiveBroadcastStream()
         .map<Map<dynamic, dynamic>>((event) => event)
         .map<Map<String, dynamic>>((event) => Map.castFrom(event))
         .listen((event) {
-      callback(event['id']);
+      callback(event['id'], event['input']);
     });
   });
 }

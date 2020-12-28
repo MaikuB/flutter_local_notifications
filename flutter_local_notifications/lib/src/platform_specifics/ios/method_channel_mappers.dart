@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'initialization_settings.dart';
 import 'notification_attachment.dart';
 import 'notification_details.dart';
@@ -10,7 +12,10 @@ extension IOSNotificationActionMapper on IOSNotificationAction {
         'title': title,
         'options': options
             .map((e) => e.index + 1) // ignore: always_specify_types
-            .toList()
+            .toList(),
+        'type': describeEnum(type),
+        'buttonTitle': buttonTitle,
+        'placeholder': placeholder,
       };
 }
 

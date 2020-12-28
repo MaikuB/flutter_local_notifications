@@ -3,7 +3,9 @@ package com.dexterous.flutterlocalnotifications;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import androidx.annotation.Nullable;
+import androidx.core.app.RemoteInput;
 import com.dexterous.flutterlocalnotifications.isolate.IsolatePreferences;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.dart.DartExecutor;
@@ -32,6 +34,13 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
 
 		final Map<String, Object> action = new HashMap<>();
 		action.put("id", id);
+
+		Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
+		if (remoteInput != null) {
+			action.put("input", remoteInput.getString("FlutterLocalNotificationsPluginInputResult"));
+		} else {
+			action.put("input", "");
+		}
 
 		if (actionEventSink == null) {
 			actionEventSink = new ActionEventSink();

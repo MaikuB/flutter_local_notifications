@@ -259,11 +259,26 @@ static FlutterError *getFlutterError(NSError *error) {
                 
                 NSArray* actions = category[@"actions"];
                 for (NSDictionary *action in actions) {
-                    [newActions addObject:[UNNotificationAction actionWithIdentifier:action[@"identifier"]
-                                                                               title:action[@"title"]
-                                                                             options:[self parseNotificationActionOptions:action[@"options"]]]];
+                    NSString *type = action[@"type"];
+                    NSString *identifier = action[@"identifier"];
+                    NSString *title = action[@"title"];
+                    UNNotificationActionOptions options = [self parseNotificationActionOptions:action[@"options"]];
+                    
+                    if ([type isEqualToString:@"plain"]) {
+                        [newActions addObject:[UNNotificationAction actionWithIdentifier:identifier
+                                                                                   title:title
+                                                                                 options:options]];
+                    } else if ([type isEqualToString:@"text"]) {
+                        NSString *buttonTitle = action[@"buttonTitle"];
+                        NSString *placeholder = action[@"placeholder"];
+                        [newActions addObject:[UNTextInputNotificationAction actionWithIdentifier:identifier
+                                                                                            title:title
+                                                                                          options:options
+                                                                             textInputButtonTitle:buttonTitle
+                                                                             textInputPlaceholder:placeholder]];
+                    }
                 }
-                
+              
                 UNNotificationCategory *newCategory = [UNNotificationCategory categoryWithIdentifier:category[@"identifier"]
                                                                                              actions:newActions
                                                                                    intentIdentifiers:@[]
@@ -879,8 +894,14 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
             actionEventSink = [[ActionEventSink alloc] init];
         }
         
+        NSString *text = @"";
+        if ([response respondsToSelector:@selector(userText)]) {
+            text = [(UNTextInputNotificationResponse*) response userText];
+        }
+        
         [actionEventSink addItem:@{
-            @"id": response.actionIdentifier
+            @"id": response.actionIdentifier,
+            @"input": text,
         }];
         
         

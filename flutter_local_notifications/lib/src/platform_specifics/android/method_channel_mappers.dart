@@ -338,13 +338,28 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
       return <String, Object>{};
     }
     return <String, dynamic>{
-      'actions': actions.map((AndroidNotificationAction e) {
-        return <String, dynamic>{
-          'id': e.id,
-          'title': e.title,
-          ..._convertActionIconToMap(e.icon)
-        };
-      }).toList(),
+      'actions': actions
+          .map(
+            (AndroidNotificationAction e) => <String, dynamic>{
+              'id': e.id,
+              'title': e.title,
+              ..._convertActionIconToMap(e.icon),
+              'inputs': e.inputs
+                  .map((AndroidNotificationActionInput input) =>
+                      _convertInputToMap(input))
+                  .toList()
+            },
+          )
+          .toList(),
     };
   }
+
+  Map<String, dynamic> _convertInputToMap(
+          AndroidNotificationActionInput input) =>
+      <String, dynamic>{
+        'choices': input.choices,
+        'allowFreeFormInput': input.allowFreeFormInput,
+        'label': input.label,
+        'allowedMimeType': input.allowedMimeTypes.toList(),
+      };
 }

@@ -1,4 +1,11 @@
+import 'package:flutter/foundation.dart';
+
 import '../../typedefs.dart';
+
+enum IOSNotificationActionType {
+  plain,
+  text,
+}
 
 enum IOSNotificationActionOption {
   authenticationRequired,
@@ -7,15 +14,51 @@ enum IOSNotificationActionOption {
 }
 
 class IOSNotificationAction {
-  const IOSNotificationAction(
+  factory IOSNotificationAction.plain(
+    String identifier,
+    String title, {
+    Set<IOSNotificationActionOption> options =
+        const <IOSNotificationActionOption>{},
+  }) =>
+      IOSNotificationAction._(
+        IOSNotificationActionType.plain,
+        identifier,
+        title,
+        options: options,
+      );
+
+  factory IOSNotificationAction.text(
+    String identifier,
+    String title, {
+    @required String buttonTitle,
+    String placeholder,
+    Set<IOSNotificationActionOption> options =
+        const <IOSNotificationActionOption>{},
+  }) =>
+      IOSNotificationAction._(
+        IOSNotificationActionType.text,
+        identifier,
+        title,
+        buttonTitle: buttonTitle,
+        placeholder: placeholder,
+        options: options,
+      );
+
+  const IOSNotificationAction._(
+    this.type,
     this.identifier,
     this.title, {
     this.options = const <IOSNotificationActionOption>{},
+    this.buttonTitle = '',
+    this.placeholder = '',
   });
 
+  final IOSNotificationActionType type;
   final String identifier;
   final String title;
   final Set<IOSNotificationActionOption> options;
+  final String buttonTitle;
+  final String placeholder;
 }
 
 enum IOSNotificationCategoryOption {

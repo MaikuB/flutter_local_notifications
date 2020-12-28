@@ -42,8 +42,11 @@ class ReceivedNotification {
   final String payload;
 }
 
-void notificationTapBackground(String id) {
+void notificationTapBackground(String id, String input) {
   print('notification action tapped: $id');
+  if (input != null) {
+    print('notification action tapped with input: $input');
+  }
 }
 
 /// IMPORTANT: running the following code on its own won't work as there is
@@ -78,18 +81,32 @@ Future<void> main() async {
       );
     },
     notificationCategories: [
-      const IOSNotificationCategory(
-        'demoCategory',
+      IOSNotificationCategory(
+        'textCategory',
         <IOSNotificationAction>[
-          IOSNotificationAction('id_1', 'Action 1'),
-          IOSNotificationAction(
+          IOSNotificationAction.text(
+            'text_1',
+            'Action 1',
+            buttonTitle: 'Send',
+            placeholder: 'Placeholder',
+            options: const <IOSNotificationActionOption>{
+              IOSNotificationActionOption.foreground,
+            },
+          ),
+        ],
+      ),
+      IOSNotificationCategory(
+        'plainCategory',
+        <IOSNotificationAction>[
+          IOSNotificationAction.plain('id_1', 'Action 1'),
+          IOSNotificationAction.plain(
             'id_2',
             'Action 2',
             options: <IOSNotificationActionOption>{
               IOSNotificationActionOption.destructive,
             },
           ),
-          IOSNotificationAction(
+          IOSNotificationAction.plain(
             'id_3',
             'Action 3',
             options: <IOSNotificationActionOption>{
@@ -308,12 +325,6 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedRaisedButton(
-                      buttonText: 'Show plain notification with actions',
-                      onPressed: () async {
-                        await _showNotificationWithActions();
-                      },
-                    ),
-                    PaddedRaisedButton(
                       buttonText:
                           'Show plain notification that has no title with '
                           'payload',
@@ -397,6 +408,30 @@ class _HomePageState extends State<HomePage> {
                         await _cancelAllNotifications();
                       },
                     ),
+                    const Divider(),
+                    const Text(
+                      'Notifications with actions',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show notification with plain actions',
+                      onPressed: () async {
+                        await _showNotificationWithActions();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show notification with text actions',
+                      onPressed: () async {
+                        await _showNotificationWithTextAction();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText: 'Show notification with text choice',
+                      onPressed: () async {
+                        await _showNotificationWithTextChoice();
+                      },
+                    ),
+                    const Divider(),
                     if (Platform.isAndroid) ...<Widget>[
                       const Text(
                         'Android-specific examples',
@@ -646,7 +681,82 @@ class _HomePageState extends State<HomePage> {
 
     const IOSNotificationDetails iosNotificationDetails =
         IOSNotificationDetails(
-      categoryIdentifier: 'demoCategory',
+      categoryIdentifier: 'plainCategory',
+    );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iosNotificationDetails,
+    );
+    await flutterLocalNotificationsPlugin.show(
+        0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
+  }
+
+  Future<void> _showNotificationWithTextAction() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      'your channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction(
+          'text_id_1',
+          'Action 1',
+          icon: DrawableResourceAndroidBitmap('food'),
+          inputs: [
+            AndroidNotificationActionInput(
+              label: 'Enter a message',
+            ),
+          ],
+        ),
+      ],
+    );
+
+    const IOSNotificationDetails iosNotificationDetails =
+        IOSNotificationDetails(
+      categoryIdentifier: 'textCategory',
+    );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iosNotificationDetails,
+    );
+    await flutterLocalNotificationsPlugin.show(
+        0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
+  }
+
+  Future<void> _showNotificationWithTextChoice() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      'your channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+      actions: <AndroidNotificationAction>[
+        AndroidNotificationAction(
+          'text_id_2',
+          'Action 2',
+          icon: DrawableResourceAndroidBitmap('food'),
+          inputs: [
+            AndroidNotificationActionInput(
+              choices: ['ABC', 'DEF'],
+              allowFreeFormInput: false,
+            ),
+          ],
+        ),
+      ],
+    );
+
+    const IOSNotificationDetails iosNotificationDetails =
+        IOSNotificationDetails(
+      categoryIdentifier: 'textCategory',
     );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
@@ -1371,7 +1481,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationWithChronometer() async {
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails(
+        AndroidNotificationDetails(
       'your channel id',
       'your channel name',
       'your channel description',
@@ -1381,7 +1491,7 @@ class _HomePageState extends State<HomePage> {
       usesChronometer: true,
     );
     final NotificationDetails platformChannelSpecifics =
-    NotificationDetails(android: androidPlatformChannelSpecifics);
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');

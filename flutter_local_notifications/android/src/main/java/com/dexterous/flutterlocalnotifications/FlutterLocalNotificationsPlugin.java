@@ -28,8 +28,10 @@ import androidx.annotation.NonNull;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.Action;
+import androidx.core.app.NotificationCompat.Action.Builder;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
+import androidx.core.app.RemoteInput;
 import androidx.core.graphics.drawable.IconCompat;
 
 import com.dexterous.flutterlocalnotifications.isolate.IsolatePreferences;
@@ -37,6 +39,7 @@ import com.dexterous.flutterlocalnotifications.models.DateTimeComponents;
 import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationAction;
+import com.dexterous.flutterlocalnotifications.models.NotificationAction.NotificationActionInput;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelAction;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationChannelGroupDetails;
@@ -56,6 +59,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
+import io.flutter.embedding.engine.loader.FlutterLoader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -177,7 +181,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
                 .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
 
-        if(notificationDetails.actions != null) {
+        if (notificationDetails.actions != null) {
         	int requestCode = 999;
 					for (NotificationAction action : notificationDetails.actions) {
 						IconCompat icon = null;
@@ -188,10 +192,26 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 						Intent actionIntent = new Intent(context, ActionBroadcastReceiver.class)
 								.setAction(ActionBroadcastReceiver.ACTION_TAPPED).putExtra("id", action.id);
 						PendingIntent actionPendingIntent = PendingIntent.getBroadcast(context, requestCode++, actionIntent, 0);
-						builder.addAction(new Action.Builder(icon, action.title, actionPendingIntent)
-								// space for additional configuration like semantic actions etc.
-								.build()
-						);
+						Builder actionBuilder = new Builder(icon, action.title, actionPendingIntent);
+
+						for (NotificationActionInput input : action.inputs) {
+							RemoteInput.Builder remoteInput = new RemoteInput.Builder("FlutterLocalNotificationsPluginInputResult")
+									.setLabel(input.label);
+							if(input.allowFreeFormInput != null) {
+								remoteInput.setAllowFreeFormInput(input.allowFreeFormInput);
+							}
+
+							if(input.allowedMimeTypes != null) {
+								for (String mimeType : input.allowedMimeTypes) {
+									remoteInput.setAllowDataType(mimeType, true);
+								}
+							}
+							if (input.choices != null) {
+								remoteInput.setChoices(input.choices.toArray(new CharSequence[]{}));
+							}
+							actionBuilder.addRemoteInput(remoteInput.build());
+						}
+						builder.addAction(actionBuilder.build());
 					}
 				}
 

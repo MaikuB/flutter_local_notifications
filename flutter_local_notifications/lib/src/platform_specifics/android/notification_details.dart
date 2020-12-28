@@ -6,16 +6,33 @@ import 'enums.dart';
 import 'notification_sound.dart';
 import 'styles/style_information.dart';
 
+// Mirrors the `RemoteInput` functionality available in NotificationCompat.
+class AndroidNotificationActionInput {
+  const AndroidNotificationActionInput({
+    this.choices = const [],
+    this.allowFreeFormInput = true,
+    this.label,
+    this.allowedMimeTypes = const {},
+  });
+
+  final List<String> choices;
+  final bool allowFreeFormInput;
+  final String label;
+  final Set<String> allowedMimeTypes;
+}
+
 class AndroidNotificationAction {
   const AndroidNotificationAction(
     this.id,
     this.title, {
     this.icon,
+    this.inputs = const [],
   });
 
   final String id;
   final String title;
   final AndroidBitmap icon;
+  final List<AndroidNotificationActionInput> inputs;
 }
 
 /// Contains notification details specific to Android.
