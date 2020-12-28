@@ -305,21 +305,19 @@ void main() {
           }));
     });
 
-    test(
-      'show with default Android-specific details with a chronometer',
-          () async {
+    test('show with default Android-specific details with a chronometer',
+        () async {
       const AndroidInitializationSettings androidInitializationSettings =
-      AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-      InitializationSettings(android: androidInitializationSettings);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       final int timestamp = DateTime.now().millisecondsSinceEpoch;
 
       final AndroidNotificationDetails androidNotificationDetails =
-      AndroidNotificationDetails(
-          'channelId', 'channelName', 'channelDescription',
-          when: timestamp,
-          usesChronometer: true);
+          AndroidNotificationDetails(
+              'channelId', 'channelName', 'channelDescription',
+              when: timestamp, usesChronometer: true);
       await flutterLocalNotificationsPlugin.show(
           1,
           'notification title',
@@ -339,7 +337,7 @@ void main() {
               'channelDescription': 'channelDescription',
               'channelShowBadge': true,
               'channelAction':
-              AndroidNotificationChannelAction.createIfNotExists.index,
+                  AndroidNotificationChannelAction.createIfNotExists.index,
               'importance': Importance.defaultImportance.value,
               'priority': Priority.defaultPriority.value,
               'playSound': true,
@@ -383,7 +381,7 @@ void main() {
               },
             },
           }));
-      });
+    });
 
     test(
         'show with default Android-specific details and custom sound from raw '
@@ -2046,13 +2044,13 @@ void main() {
     });
 
     test('initialize with notification categories', () async {
-      const IOSInitializationSettings iosInitializationSettings =
+      IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings(
         notificationCategories: <IOSNotificationCategory>[
           IOSNotificationCategory(
             'category1',
             <IOSNotificationAction>[
-              IOSNotificationAction(
+              IOSNotificationAction.plain(
                 'action1',
                 'Action 1',
                 options: <IOSNotificationActionOption>{
@@ -2067,13 +2065,13 @@ void main() {
           IOSNotificationCategory(
             'category2',
             <IOSNotificationAction>[
-              IOSNotificationAction('action2', 'Action 2'),
-              IOSNotificationAction('action3', 'Action 3'),
+              IOSNotificationAction.plain('action2', 'Action 2'),
+              IOSNotificationAction.plain('action3', 'Action 3'),
             ],
           )
         ],
       );
-      const InitializationSettings initializationSettings =
+      final InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       expect(log, <Matcher>[

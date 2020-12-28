@@ -665,16 +665,12 @@ class _HomePageState extends State<HomePage> {
           'id_1',
           'Action 1',
           icon: DrawableResourceAndroidBitmap('food'),
+          contextual: true,
         ),
         AndroidNotificationAction(
           'id_2',
           'Action 2',
-          icon: DrawableResourceAndroidBitmap('food'),
-        ),
-        AndroidNotificationAction(
-          'id_3',
-          'Action 3',
-          icon: DrawableResourceAndroidBitmap('food'),
+          icon: DrawableResourceAndroidBitmap('secondary_icon'),
         ),
       ],
     );
@@ -750,6 +746,7 @@ class _HomePageState extends State<HomePage> {
               allowFreeFormInput: false,
             ),
           ],
+          contextual: true,
         ),
       ],
     );

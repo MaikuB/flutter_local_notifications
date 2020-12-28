@@ -344,6 +344,9 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
               'id': e.id,
               'title': e.title,
               ..._convertActionIconToMap(e.icon),
+              'contextual': e.contextual,
+              'showsUserInterface': e.showsUserInterface,
+              'allowGeneratedReplies': e.allowGeneratedReplies,
               'inputs': e.inputs
                   .map((AndroidNotificationActionInput input) =>
                       _convertInputToMap(input))

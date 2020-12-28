@@ -26,12 +26,18 @@ class AndroidNotificationAction {
     this.id,
     this.title, {
     this.icon,
+    this.contextual,
+    this.showsUserInterface,
+    this.allowGeneratedReplies,
     this.inputs = const [],
   });
 
   final String id;
   final String title;
   final AndroidBitmap icon;
+  final bool contextual;
+  final bool showsUserInterface;
+  final bool allowGeneratedReplies;
   final List<AndroidNotificationActionInput> inputs;
 }
 

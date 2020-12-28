@@ -31,6 +31,9 @@ public class NotificationAction {
 	public String id;
 	public String title;
 	public String icon;
+	public Boolean contextual;
+	public Boolean showsUserInterface;
+	public Boolean allowGeneratedReplies;
 	public IconSource iconSource;
 	public List<NotificationActionInput> inputs;
 
@@ -39,6 +42,9 @@ public class NotificationAction {
 		action.id = (String) arguments.get(ID);
 		action.title = (String) arguments.get(TITLE);
 		action.icon = (String) arguments.get(ICON);
+		action.contextual = (Boolean) arguments.get("contextual");
+		action.showsUserInterface = (Boolean) arguments.get("showsUserInterface");
+		action.allowGeneratedReplies = (Boolean) arguments.get("allowGeneratedReplies");
 		Integer iconSourceIndex = (Integer) arguments.get(ICON_SOURCE);
 		if (iconSourceIndex != null) {
 			action.iconSource = IconSource.values()[iconSourceIndex];

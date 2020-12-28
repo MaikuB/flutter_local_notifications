@@ -194,6 +194,17 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 						PendingIntent actionPendingIntent = PendingIntent.getBroadcast(context, requestCode++, actionIntent, 0);
 						Builder actionBuilder = new Builder(icon, action.title, actionPendingIntent);
 
+
+						if (action.contextual != null) {
+							actionBuilder.setContextual(action.contextual);
+						}
+						if (action.showsUserInterface != null) {
+							actionBuilder.setShowsUserInterface(action.showsUserInterface);
+						}
+						if (action.allowGeneratedReplies != null) {
+							actionBuilder.setAllowGeneratedReplies(action.allowGeneratedReplies);
+						}
+
 						for (NotificationActionInput input : action.inputs) {
 							RemoteInput.Builder remoteInput = new RemoteInput.Builder("FlutterLocalNotificationsPluginInputResult")
 									.setLabel(input.label);
