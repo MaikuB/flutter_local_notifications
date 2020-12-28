@@ -1,3 +1,9 @@
+# [3.0.2]
+
+* [Android] added support for showing the notification timestamp as a stopwatch instead via the `usesChronometer` argument added to the constructor of the `AndroidNotificationDetails` class. Thanks to the PR from [andymstone](https://github.com/andymstone)
+* Updated readme to add more clarity on the compatibility with `firebase_messaging` plugin and iOS setup sections
+* Updated changelog entry for the 2.0.0 release around support for full-screen intents to clarify that the `fullScreenIntent` was added to the constructor of the `AndroidNotificationDetails` class.
+
 # [3.0.1+7]
 
 * [Android] fixed issue [935](https://github.com/MaikuB/flutter_local_notifications/issues/935) where scheduling a notification on Android devices running Android versions older than 4.4 (API 19) could cause a crash from using an API that isn't available
@@ -77,7 +83,7 @@
 * [Android] Fixed an issue where the error message for an invalid source resource wasn't formatted correctly to include the name of the specified resource
 * [Android] Added `androidAllowWhileIdle` boolean argument to the `periodicallyShow` method. When set to true, this changes how recurring notifications are shown so that the Android `AlarmManager` API is used to schedule a notification with exact timing. When the notification appears, the next one is scheduled after that. This is get around the limitations where the `AlarmManager` APIs don't provide a way for work to be repeated with precising timing regardless of the power mode.
   The example app has been updated to include these changes so that it can be used as a reference as well
-* [Android] Added support for full-screen notifications via the `fullScreenIntent` argument that has been added to the `AndroidNotificationDetails` class. Thanks to the PR from [Nadav Fima](https://github.com/nadavfima)
+* [Android] Added support for full-screen notifications via the `fullScreenIntent` argument that has been added to the constructor of the `AndroidNotificationDetails` class. Thanks to the PR from [Nadav Fima](https://github.com/nadavfima)
 * [Android] Bumped compile SDK to 30 (Android 11)
 * [Android] Added ability to specify shortcut id that can be used for conversations. See https://developer.android.com/guide/topics/ui/conversations for more info. Note the plugin doesn't provide the ability to publish shortcuts so developers will likely need to look into writing their own code to do so and save the shortcut id so that it can be linked to notifications
 * [iOS] Updated the details in the plugin's podspec file

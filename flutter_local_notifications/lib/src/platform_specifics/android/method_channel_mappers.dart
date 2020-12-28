@@ -230,6 +230,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'onlyAlertOnce': onlyAlertOnce,
         'showWhen': showWhen,
         'when': when,
+        'usesChronometer': usesChronometer,
         'showProgress': showProgress,
         'maxProgress': maxProgress,
         'progress': progress,
