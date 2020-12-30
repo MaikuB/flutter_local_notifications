@@ -255,7 +255,7 @@ If you encounter any issues please refer to the API docs and the sample code in 
 
 ### Notification Actions
 
-Notifications can now contain actions. These actions may be selected by the user when a App is sleeping or temrinated and will wake up your app. However, it may not wake up the user-visible part of your App; but only the part of it which runs in the background. 
+Notifications can now contain actions. These actions may be selected by the user when a App is sleeping or terminated and will wake up your app. However, it may not wake up the user-visible part of your App; but only the part of it which runs in the background. 
 
 This plugin contains handlers for iOS & Android to handle these cases and will allow you to specify a Dart entry point (a function).
 
@@ -333,6 +333,8 @@ void notificationTapBackground(String id) {
 
 The passed `id` parameter is the same specified in `NotificationAction`. Remember this function runs in a separate isolate! You will need to use a different mechanism to communicate with the main App.
 
+Accessing plugins will work; however in particular on Android there is **no** access to the `Activity` context which means some plugins (like `url_launcher`) will require additional flags to start the main `Activity` again.
+
 Specify this function as a parameter in the `initialize` method of this plugin:
 
 ``` dart
@@ -374,8 +376,6 @@ Future<void> _showNotificationWithActions() async {
 ```
 
 Each notification will have a internal ID & an public Action title.
-
-
 
 ### Example app
 The `example` directory has a sample application that demonstrates the features of this plugin.
