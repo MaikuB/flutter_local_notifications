@@ -1,19 +1,28 @@
 import 'package:flutter/foundation.dart';
 
 import '../../typedefs.dart';
+import 'enums.dart';
 
-enum IOSNotificationActionType {
+/// Describes the notification action type.
+///
+/// This type is used internally.
+enum _IOSNotificationActionType {
+  /// Corresponds to the `UNNotificationAction` type defined at
+  /// https://developer.apple.com/documentation/usernotifications/unnotificationaction
   plain,
+
+  /// Corresponds to the `UNTextInputNotificationAction` type defined at
+  /// https://developer.apple.com/documentation/usernotifications/untextinputnotificationaction
   text,
 }
 
-enum IOSNotificationActionOption {
-  authenticationRequired,
-  destructive,
-  foreground,
-}
-
+/// Describes the notification action itself.
+///
+/// See the official docs at
+/// https://developer.apple.com/documentation/usernotifications/unnotificationaction
+/// for more details.
 class IOSNotificationAction {
+  /// Creates a `UNNotificationAction` for simple actions
   factory IOSNotificationAction.plain(
     String identifier,
     String title, {
@@ -21,12 +30,13 @@ class IOSNotificationAction {
         const <IOSNotificationActionOption>{},
   }) =>
       IOSNotificationAction._(
-        IOSNotificationActionType.plain,
+        _IOSNotificationActionType.plain,
         identifier,
         title,
         options: options,
       );
 
+  /// Creates a `UNTextInputNotificationAction` to collect user defined input.
   factory IOSNotificationAction.text(
     String identifier,
     String title, {
@@ -36,7 +46,7 @@ class IOSNotificationAction {
         const <IOSNotificationActionOption>{},
   }) =>
       IOSNotificationAction._(
-        IOSNotificationActionType.text,
+        _IOSNotificationActionType.text,
         identifier,
         title,
         buttonTitle: buttonTitle,
@@ -49,35 +59,53 @@ class IOSNotificationAction {
     this.identifier,
     this.title, {
     this.options = const <IOSNotificationActionOption>{},
-    this.buttonTitle = '',
-    this.placeholder = '',
+    this.buttonTitle,
+    this.placeholder,
   });
 
-  final IOSNotificationActionType type;
+  /// Notification Action type.
+  final _IOSNotificationActionType type;
+
+  /// The unique string that your app uses to identify the action.
   final String identifier;
+
+  /// The localized string to use as the title of the action.
   final String title;
+
+  /// The behaviors associated with the action.
+  ///
+  /// See [IOSNotificationActionOption] for available options.
   final Set<IOSNotificationActionOption> options;
+
+  /// The localized title of the text input button that is displayed to the
+  /// user.
   final String buttonTitle;
+
+  /// The localized placeholder text to display in the text input field.
   final String placeholder;
 }
 
-enum IOSNotificationCategoryOption {
-  customDismissAction,
-  allowInCarPlay,
-  hiddenPreviewShowTitle,
-  hiddenPreviewShowSubtitle,
-  allowAnnouncement,
-}
-
+/// Corresponds to the `UNNotificationCategory` type which is used to configure
+/// notification categories and accompanying options.
+///
+/// See the official docs at
+/// https://developer.apple.com/documentation/usernotifications/unnotificationcategory
+/// for more details.
 class IOSNotificationCategory {
+  /// Constructs a instance of [IOSNotificationCategory].
   const IOSNotificationCategory(
-    this.identifier,
-    this.actions, {
+    this.identifier, {
+    this.actions = const <IOSNotificationAction>[],
     this.options = const <IOSNotificationCategoryOption>{},
   });
 
+  /// The unique string assigned to the category.
   final String identifier;
+
+  /// The actions to display when a notification of this type is presented.
   final List<IOSNotificationAction> actions;
+
+  /// Options for how to handle notifications of this type.
   final Set<IOSNotificationCategoryOption> options;
 }
 
@@ -146,6 +174,9 @@ class IOSInitializationSettings {
   /// This property is only applicable to iOS versions older than 10.
   final DidReceiveLocalNotificationCallback onDidReceiveLocalNotification;
 
-  /// Configure the
+  /// Configure the notification categories ([IOSNotificationCategory])
+  /// available. This allows for fine-tuning of preview display.
+  ///
+  /// Notification actions are configured in each [IOSNotificationCategory].
   final List<IOSNotificationCategory> notificationCategories;
 }

@@ -2044,12 +2044,12 @@ void main() {
     });
 
     test('initialize with notification categories', () async {
-      IOSInitializationSettings iosInitializationSettings =
+      final IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings(
         notificationCategories: <IOSNotificationCategory>[
           IOSNotificationCategory(
             'category1',
-            <IOSNotificationAction>[
+            actions: <IOSNotificationAction>[
               IOSNotificationAction.plain(
                 'action1',
                 'Action 1',
@@ -2064,9 +2064,20 @@ void main() {
           ),
           IOSNotificationCategory(
             'category2',
-            <IOSNotificationAction>[
+            actions: <IOSNotificationAction>[
               IOSNotificationAction.plain('action2', 'Action 2'),
               IOSNotificationAction.plain('action3', 'Action 3'),
+            ],
+          ),
+          IOSNotificationCategory(
+            'category3',
+            actions: <IOSNotificationAction>[
+              IOSNotificationAction.text(
+                'action4',
+                'Action 4',
+                buttonTitle: 'Send',
+                placeholder: 'Placeholder',
+              ),
             ],
           )
         ],
@@ -2083,24 +2094,49 @@ void main() {
           'defaultPresentSound': true,
           'defaultPresentBadge': true,
           'notificationCategories': <Map<String, dynamic>>[
-            {
+            <String, dynamic>{
               'identifier': 'category1',
-              'actions': [
-                {
+              'actions': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'type': 'plain',
                   'identifier': 'action1',
                   'title': 'Action 1',
-                  'options': [2],
+                  'options': <int>[2],
                 }
               ],
-              'options': [5],
+              'options': <int>[5],
             },
-            {
+            <String, dynamic>{
               'identifier': 'category2',
-              'actions': [
-                {'identifier': 'action2', 'title': 'Action 2', 'options': []},
-                {'identifier': 'action3', 'title': 'Action 3', 'options': []},
+              'actions': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'type': 'plain',
+                  'identifier': 'action2',
+                  'title': 'Action 2',
+                  'options': <int>[],
+                },
+                <String, dynamic>{
+                  'type': 'plain',
+                  'identifier': 'action3',
+                  'title': 'Action 3',
+                  'options': <int>[],
+                },
               ],
-              'options': [],
+              'options': <int>[],
+            },
+            <String, dynamic>{
+              'identifier': 'category3',
+              'actions': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'type': 'text',
+                  'identifier': 'action4',
+                  'title': 'Action 4',
+                  'options': <int>[],
+                  'buttonTitle': 'Send',
+                  'placeholder': 'Placeholder',
+                },
+              ],
+              'options': <int>[],
             }
           ],
         })

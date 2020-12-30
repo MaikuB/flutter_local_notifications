@@ -66,5 +66,9 @@ class IOSNotificationDetails {
   /// This property is only applicable to iOS 10 or newer.
   final String subtitle;
 
+  /// The identifier of the app-defined category object.
+  ///
+  /// This must refer to a [IOSNotificationCategory] identifier configured via
+  /// [InitializationSettings].
   final String categoryIdentifier;
 }

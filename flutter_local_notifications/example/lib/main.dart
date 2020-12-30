@@ -43,8 +43,10 @@ class ReceivedNotification {
 }
 
 void notificationTapBackground(String id, String input) {
+  // ignore: avoid_print
   print('notification action tapped: $id');
   if (input != null) {
+    // ignore: avoid_print
     print('notification action tapped with input: $input');
   }
 }
@@ -80,10 +82,10 @@ Future<void> main() async {
             id: id, title: title, body: body, payload: payload),
       );
     },
-    notificationCategories: [
+    notificationCategories: <IOSNotificationCategory>[
       IOSNotificationCategory(
         'textCategory',
-        <IOSNotificationAction>[
+        actions: <IOSNotificationAction>[
           IOSNotificationAction.text(
             'text_1',
             'Action 1',
@@ -97,7 +99,7 @@ Future<void> main() async {
       ),
       IOSNotificationCategory(
         'plainCategory',
-        <IOSNotificationAction>[
+        actions: <IOSNotificationAction>[
           IOSNotificationAction.plain('id_1', 'Action 1'),
           IOSNotificationAction.plain(
             'id_2',
@@ -703,7 +705,7 @@ class _HomePageState extends State<HomePage> {
           'text_id_1',
           'Action 1',
           icon: DrawableResourceAndroidBitmap('food'),
-          inputs: [
+          inputs: <AndroidNotificationActionInput>[
             AndroidNotificationActionInput(
               label: 'Enter a message',
             ),
@@ -740,9 +742,9 @@ class _HomePageState extends State<HomePage> {
           'text_id_2',
           'Action 2',
           icon: DrawableResourceAndroidBitmap('food'),
-          inputs: [
+          inputs: <AndroidNotificationActionInput>[
             AndroidNotificationActionInput(
-              choices: ['ABC', 'DEF'],
+              choices: <String>['ABC', 'DEF'],
               allowFreeFormInput: false,
             ),
           ],

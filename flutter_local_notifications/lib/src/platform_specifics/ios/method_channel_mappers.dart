@@ -14,8 +14,8 @@ extension IOSNotificationActionMapper on IOSNotificationAction {
             .map((e) => e.index + 1) // ignore: always_specify_types
             .toList(),
         'type': describeEnum(type),
-        'buttonTitle': buttonTitle,
-        'placeholder': placeholder,
+        if (buttonTitle != null) 'buttonTitle': buttonTitle,
+        if (placeholder != null) 'placeholder': placeholder,
       };
 }
 

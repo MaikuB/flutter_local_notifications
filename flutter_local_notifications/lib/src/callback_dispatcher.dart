@@ -2,7 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+import '../flutter_local_notifications.dart';
+
+// ignore_for_file: public_member_api_docs
 
 void callbackDispatcher() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,8 +24,9 @@ void callbackDispatcher() {
     backgroundChannel
         .receiveBroadcastStream()
         .map<Map<dynamic, dynamic>>((event) => event)
-        .map<Map<String, dynamic>>((event) => Map.castFrom(event))
-        .listen((event) {
+        .map<Map<String, dynamic>>(
+            (Map<dynamic, dynamic> event) => Map.castFrom(event))
+        .listen((Map<String, dynamic> event) {
       callback(event['id'], event['input']);
     });
   });
