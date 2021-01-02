@@ -27,7 +27,7 @@ void callbackDispatcher() {
         .map<Map<String, dynamic>>(
             (Map<dynamic, dynamic> event) => Map.castFrom(event))
         .listen((Map<String, dynamic> event) {
-      callback(event['id'], event['input']);
+      callback(event['id'], event['input'], event['payload']);
     });
   });
 }

@@ -1,7 +1,8 @@
 import 'dart:async';
 
 /// Callback function when a notification is received.
-typedef NotificationActionCallback = Function(String, String);
+typedef NotificationActionCallback = Function(
+    String id, String input, String payload);
 
 /// Signature of callback passed to [initialize] that is triggered when user
 /// taps on a notification.

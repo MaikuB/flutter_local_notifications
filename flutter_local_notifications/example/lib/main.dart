@@ -42,10 +42,10 @@ class ReceivedNotification {
   final String payload;
 }
 
-void notificationTapBackground(String id, String input) {
+void notificationTapBackground(String id, String input, String payload) {
   // ignore: avoid_print
-  print('notification action tapped: $id');
-  if (input != null) {
+  print('notification action tapped: $id with payload: $payload');
+  if (input.isNotEmpty) {
     // ignore: avoid_print
     print('notification action tapped with input: $input');
   }

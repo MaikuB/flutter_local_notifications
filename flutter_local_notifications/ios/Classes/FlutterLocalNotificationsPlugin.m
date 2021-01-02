@@ -902,6 +902,7 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
         [actionEventSink addItem:@{
             @"id": response.actionIdentifier,
             @"input": text,
+            @"payload": response.notification.request.content.userInfo[@"payload"],
         }];
         
         

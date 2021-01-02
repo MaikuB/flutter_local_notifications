@@ -19,6 +19,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
@@ -190,10 +191,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 						}
 
 						Intent actionIntent = new Intent(context, ActionBroadcastReceiver.class)
-								.setAction(ActionBroadcastReceiver.ACTION_TAPPED).putExtra("id", action.id);
+								.setAction(ActionBroadcastReceiver.ACTION_TAPPED)
+								.putExtra("id", action.id)
+								.putExtra(PAYLOAD, notificationDetails.payload);
 						PendingIntent actionPendingIntent = PendingIntent.getBroadcast(context, requestCode++, actionIntent, 0);
 						Builder actionBuilder = new Builder(icon, action.title, actionPendingIntent);
-
 
 						if (action.contextual != null) {
 							actionBuilder.setContextual(action.contextual);

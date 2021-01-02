@@ -4,7 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationCompat.Action;
 import androidx.core.app.RemoteInput;
 import com.dexterous.flutterlocalnotifications.isolate.IsolatePreferences;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -34,6 +37,8 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
 
 		final Map<String, Object> action = new HashMap<>();
 		action.put("id", id);
+
+		action.put("payload", intent.hasExtra("payload") ? intent.getStringExtra("payload") : "");
 
 		Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
 		if (remoteInput != null) {
