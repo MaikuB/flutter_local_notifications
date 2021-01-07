@@ -1,3 +1,4 @@
+import 'package:flutter_local_notifications/src/types.dart';
 import 'package:timezone/timezone.dart';
 
 /// Helper method for validating notification IDs.
@@ -10,9 +11,15 @@ void validateId(int id) {
   }
 }
 
-/// Helper method for validating a date/time value represents a
-/// future point in time.
-void validateDateIsInTheFuture(TZDateTime scheduledDate) {
+/// Helper method for validating a date/time value represents a future point in
+/// time where `matchDateTimeComponents` is null.
+void validateDateIsInTheFuture(
+  TZDateTime scheduledDate,
+  DateTimeComponents matchDateComponents,
+) {
+  if (matchDateComponents != null) {
+    return;
+  }
   if (scheduledDate.isBefore(DateTime.now())) {
     throw ArgumentError.value(
         scheduledDate, 'scheduledDate', 'Must be a date in the future');
