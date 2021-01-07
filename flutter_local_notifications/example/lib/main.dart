@@ -318,6 +318,14 @@ class _HomePageState extends State<HomePage> {
                     ),
                     PaddedRaisedButton(
                       buttonText:
+                          'Schedule daily in 5 seconds last year notification '
+                          'in your local time zone',
+                      onPressed: () async {
+                        await _scheduleDailyInFiveSecondsLastYearNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
                           'Schedule weekly 10:00:00 am notification in your '
                           'local time zone',
                       onPressed: () async {
@@ -1079,6 +1087,25 @@ class _HomePageState extends State<HomePage> {
         matchDateTimeComponents: DateTimeComponents.time);
   }
 
+  /// To test we don't validate past dates when using `matchDateTimeComponents`
+  Future<void> _scheduleDailyInFiveSecondsLastYearNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'daily scheduled notification title',
+        'daily scheduled notification body',
+        _nextInstanceOfInFiveSecondsLastYear(),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'daily notification channel id',
+              'daily notification channel name',
+              'daily notification description'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time);
+  }
+
   Future<void> _scheduleWeeklyTenAMNotification() async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
@@ -1123,6 +1150,19 @@ class _HomePageState extends State<HomePage> {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
     return scheduledDate;
+  }
+
+  tz.TZDateTime _nextInstanceOfInFiveSecondsLastYear() {
+    final now = tz.TZDateTime.now(tz.local);
+    return tz.TZDateTime(
+      tz.local,
+      now.year - 1,
+      now.month,
+      now.day,
+      now.hour,
+      now.minute,
+      now.second + 5,
+    );
   }
 
   tz.TZDateTime _nextInstanceOfMondayTenAM() {
@@ -1288,7 +1328,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationWithChronometer() async {
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails(
+        AndroidNotificationDetails(
       'your channel id',
       'your channel name',
       'your channel description',
@@ -1298,7 +1338,7 @@ class _HomePageState extends State<HomePage> {
       usesChronometer: true,
     );
     final NotificationDetails platformChannelSpecifics =
-    NotificationDetails(android: androidPlatformChannelSpecifics);
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');
