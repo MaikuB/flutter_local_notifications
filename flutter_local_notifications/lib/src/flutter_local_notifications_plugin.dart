@@ -294,7 +294,7 @@ class FlutterLocalNotificationsPlugin {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
-          .zonedSchedule(
+          .zonedScheduleAndroid(
               id, title, body, scheduledDate, notificationDetails?.android,
               payload: payload,
               androidAllowWhileIdle: androidAllowWhileIdle,
@@ -302,7 +302,7 @@ class FlutterLocalNotificationsPlugin {
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
-          ?.zonedSchedule(
+          ?.zonedScheduleIOS(
               id, title, body, scheduledDate, notificationDetails?.iOS,
               uiLocalNotificationDateInterpretation:
                   uiLocalNotificationDateInterpretation,
@@ -311,7 +311,7 @@ class FlutterLocalNotificationsPlugin {
     } else if (_platform.isMacOS) {
       await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
-          ?.zonedSchedule(
+          ?.zonedScheduleMacOS(
               id, title, body, scheduledDate, notificationDetails?.macOS,
               payload: payload,
               matchDateTimeComponents: matchDateTimeComponents);

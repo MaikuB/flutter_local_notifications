@@ -114,7 +114,7 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
-  Future<void> zonedSchedule(
+  Future<void> zonedScheduleAndroid(
     int id,
     String title,
     String body,
@@ -387,7 +387,7 @@ class IOSFlutterLocalNotificationsPlugin
   /// except for when the time zone used in the [scheduledDate] matches the
   /// device's time zone and [uiLocalNotificationDateInterpretation] is set to
   /// [UILocalNotificationDateInterpretation.wallClockTime].
-  Future<void> zonedSchedule(
+  Future<void> zonedScheduleIOS(
     int id,
     String title,
     String body,
@@ -579,7 +579,7 @@ class MacOSFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
-  Future<void> zonedSchedule(
+  Future<void> zonedScheduleMacOS(
     int id,
     String title,
     String body,
