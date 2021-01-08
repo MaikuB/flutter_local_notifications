@@ -2332,6 +2332,7 @@ void main() {
           'sound': null,
           'badge': null,
           'alert': null,
+          'provisional': null,
         })
       ]);
     });
@@ -2339,12 +2340,18 @@ void main() {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
-          .requestPermissions(sound: true, badge: true, alert: true);
+          .requestPermissions(
+            sound: true,
+            badge: true,
+            alert: true,
+            provisional: true,
+          );
       expect(log, <Matcher>[
         isMethodCall('requestPermissions', arguments: <String, Object>{
           'sound': true,
           'badge': true,
           'alert': true,
+          'provisional': true,
         })
       ]);
     });
