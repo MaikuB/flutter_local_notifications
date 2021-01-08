@@ -262,10 +262,10 @@ class AndroidNotificationDetails {
   /// only provide the account name here if more than one email account has
   /// been added.
   ///
-  /// As of Build.VERSION_CODES.N this information is displayed in the
-  /// notification header area. On Android versions before Build.VERSION_CODES.N
-  /// this will be shown in the third line of text in the platform notification
-  /// template. You should not be using setProgress(int, int, boolean) at the
-  /// same time on those versions; they occupy the same place.
+  /// As of Android 7.0 this information is displayed in the notification header
+  /// area. On Android versions before 7.0 this will be shown in the third line
+  /// of text in the platform notification template. You should not be using
+  /// setProgress(int, int, boolean) at the same time on those versions; they
+  /// occupy the same place.
   final String subText;
 }
