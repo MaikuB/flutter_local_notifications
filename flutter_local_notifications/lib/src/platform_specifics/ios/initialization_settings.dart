@@ -7,6 +7,7 @@ class IOSInitializationSettings {
     this.requestAlertPermission = true,
     this.requestSoundPermission = true,
     this.requestBadgePermission = true,
+    this.requestProvisionalPermission = false,
     this.defaultPresentAlert = true,
     this.defaultPresentSound = true,
     this.defaultPresentBadge = true,
@@ -14,6 +15,7 @@ class IOSInitializationSettings {
   })  : assert(requestAlertPermission != null),
         assert(requestSoundPermission != null),
         assert(requestBadgePermission != null),
+        assert(requestProvisionalPermission != null),
         assert(defaultPresentAlert != null),
         assert(defaultPresentBadge != null),
         assert(defaultPresentSound != null);
@@ -32,6 +34,11 @@ class IOSInitializationSettings {
   ///
   /// Default value is true.
   final bool requestBadgePermission;
+
+  /// Request provisional permission, available since iOS 12.0.
+  ///
+  /// Default value is false.
+  final bool requestProvisionalPermission;
 
   /// Configures the default setting on if an alert should be displayed when a
   /// notification is triggered while app is in the foreground.

@@ -344,11 +344,13 @@ class IOSFlutterLocalNotificationsPlugin
     bool sound,
     bool alert,
     bool badge,
+    bool provisional,
   }) =>
       _channel.invokeMethod<bool>('requestPermissions', <String, bool>{
         'sound': sound,
         'alert': alert,
         'badge': badge,
+        'provisional': provisional,
       });
 
   /// Schedules a notification to be shown at the specified date and time with
