@@ -253,14 +253,14 @@ class AndroidNotificationDetails {
   /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
   final Int32List additionalFlags;
 
-  /// This provides some additional information that is displayed in the
-  /// notification. No guarantees are given where exactly it is displayed.
+  /// Provides some additional information that is displayed in the
+  /// notification.
   ///
-  /// This information should only be provided if it provides an essential
-  /// benefit to the understanding of the notification. The more text you
-  /// provide the less readable it becomes. For example, an email client should
-  /// only provide the account name here if more than one email account has
-  /// been added.
+  /// No guarantees are given where exactly it is displayed. This information
+  /// should only be provided if it provides an essential  benefit to the
+  /// understanding of the notification. The more text you provide the less
+  /// readable it becomes. For example, an email client should only provide the
+  /// account name here if more than one email account has been added.
   ///
   /// As of Android 7.0 this information is displayed in the notification header
   /// area. On Android versions before 7.0 this will be shown in the third line
