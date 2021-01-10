@@ -49,6 +49,7 @@ class AndroidNotificationDetails {
     this.fullScreenIntent = false,
     this.shortcutId,
     this.additionalFlags,
+    this.subText,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -251,4 +252,20 @@ class AndroidNotificationDetails {
   /// For a list of a values, refer to the documented constants prefixed with "FLAG_" (without the quotes) at https://developer.android.com/reference/android/app/Notification.html#constants_1.
   /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
   final Int32List additionalFlags;
+
+  /// Provides some additional information that is displayed in the
+  /// notification.
+  ///
+  /// No guarantees are given where exactly it is displayed. This information
+  /// should only be provided if it provides an essential  benefit to the
+  /// understanding of the notification. The more text you provide the less
+  /// readable it becomes. For example, an email client should only provide the
+  /// account name here if more than one email account has been added.
+  ///
+  /// As of Android 7.0 this information is displayed in the notification header
+  /// area. On Android versions before 7.0 this will be shown in the third line
+  /// of text in the platform notification template. You should not be using
+  /// setProgress(int, int, boolean) at the same time on those versions; they
+  /// occupy the same place.
+  final String subText;
 }

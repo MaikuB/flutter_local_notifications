@@ -1,3 +1,7 @@
+# [3.0.3]
+
+* [Android] added support for showing subtext in the notification. Thanks to the PR from [sidlatau](https://github.com/sidlatau)
+
 # [3.0.2]
 
 * [Android] added support for showing the notification timestamp as a stopwatch instead via the `usesChronometer` argument added to the constructor of the `AndroidNotificationDetails` class. Thanks to the PR from [andymstone](https://github.com/andymstone)

@@ -199,6 +199,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             builder.setShortcutId(notificationDetails.shortcutId);
         }
 
+        if (!StringUtils.isNullOrEmpty(notificationDetails.subText)) {
+            builder.setSubText(notificationDetails.subText);
+        }
+
         setVisibility(notificationDetails, builder);
         applyGrouping(notificationDetails, builder);
         setSound(context, notificationDetails, builder);

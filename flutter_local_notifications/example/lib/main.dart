@@ -487,6 +487,12 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedRaisedButton(
+                        buttonText: 'Show notification with custom sub-text',
+                        onPressed: () async {
+                          await _showNotificationWithCustomSubText();
+                        },
+                      ),
+                      PaddedRaisedButton(
                         buttonText: 'Show notification with chronometer',
                         onPressed: () async {
                           await _showNotificationWithChronometer();
@@ -1286,9 +1292,27 @@ class _HomePageState extends State<HomePage> {
         payload: 'item x');
   }
 
+  Future<void> _showNotificationWithCustomSubText() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      'your channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false,
+      subText: 'custom subtext',
+    );
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
+  }
+
   Future<void> _showNotificationWithChronometer() async {
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails(
+        AndroidNotificationDetails(
       'your channel id',
       'your channel name',
       'your channel description',
@@ -1298,7 +1322,7 @@ class _HomePageState extends State<HomePage> {
       usesChronometer: true,
     );
     final NotificationDetails platformChannelSpecifics =
-    NotificationDetails(android: androidPlatformChannelSpecifics);
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
         payload: 'item x');
