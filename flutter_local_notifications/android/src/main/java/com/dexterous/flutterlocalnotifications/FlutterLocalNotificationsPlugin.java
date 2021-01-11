@@ -770,7 +770,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     static void showNotification(Context context, NotificationDetails notificationDetails) {
         Notification notification = createNotification(context, notificationDetails);
         NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
-        notificationManagerCompat.notify(notificationDetails.id, notification);
+
+        if (notificationDetails.tag != null) {
+            notificationManagerCompat.notify(notificationDetails.tag, notificationDetails.id, notification);
+        } else {
+            notificationManagerCompat.notify(notificationDetails.id, notification);
+        }
     }
 
     static void zonedScheduleNextNotification(Context context, NotificationDetails notificationDetails) {

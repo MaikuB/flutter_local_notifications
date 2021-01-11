@@ -50,6 +50,7 @@ class AndroidNotificationDetails {
     this.shortcutId,
     this.additionalFlags,
     this.subText,
+    this.tag,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -268,4 +269,6 @@ class AndroidNotificationDetails {
   /// setProgress(int, int, boolean) at the same time on those versions; they
   /// occupy the same place.
   final String subText;
+
+  final String tag;
 }
