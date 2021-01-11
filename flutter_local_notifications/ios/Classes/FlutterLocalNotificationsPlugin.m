@@ -52,6 +52,7 @@ NSString *const SOUND = @"sound";
 NSString *const ATTACHMENTS = @"attachments";
 NSString *const ATTACHMENT_IDENTIFIER = @"identifier";
 NSString *const ATTACHMENT_FILE_PATH = @"filePath";
+NSString *const THREAD_IDENTIFIER = @"threadIdentifier";
 NSString *const PRESENT_ALERT = @"presentAlert";
 NSString *const PRESENT_SOUND = @"presentSound";
 NSString *const PRESENT_BADGE = @"presentBadge";
@@ -557,6 +558,9 @@ static FlutterError *getFlutterError(NSError *error) {
         }
         if([self containsKey:BADGE_NUMBER forDictionary:platformSpecifics]) {
             content.badge = [platformSpecifics objectForKey:BADGE_NUMBER];
+        }
+        if([self containsKey:THREAD_IDENTIFIER forDictionary:platformSpecifics]) {
+            content.threadIdentifier = platformSpecifics[THREAD_IDENTIFIER];
         }
         if([self containsKey:ATTACHMENTS forDictionary:platformSpecifics]) {
             NSArray<NSDictionary *> *attachments = platformSpecifics[ATTACHMENTS];

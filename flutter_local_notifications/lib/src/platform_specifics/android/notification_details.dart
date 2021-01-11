@@ -270,5 +270,9 @@ class AndroidNotificationDetails {
   /// occupy the same place.
   final String subText;
 
+  /// The notification tag.
+  ///
+  /// Showing notification with the same (tag, id) pair as a currently visible
+  /// notification will replace the old notification with the new one.
   final String tag;
 }
