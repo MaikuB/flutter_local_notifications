@@ -141,6 +141,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -218,6 +219,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'additionalFlags': <int>[4, 32],
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
@@ -299,6 +301,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -308,21 +311,19 @@ void main() {
           }));
     });
 
-    test(
-      'show with default Android-specific details with a chronometer',
-          () async {
+    test('show with default Android-specific details with a chronometer',
+        () async {
       const AndroidInitializationSettings androidInitializationSettings =
-      AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-      InitializationSettings(android: androidInitializationSettings);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       final int timestamp = DateTime.now().millisecondsSinceEpoch;
 
       final AndroidNotificationDetails androidNotificationDetails =
-      AndroidNotificationDetails(
-          'channelId', 'channelName', 'channelDescription',
-          when: timestamp,
-          usesChronometer: true);
+          AndroidNotificationDetails(
+              'channelId', 'channelName', 'channelDescription',
+              when: timestamp, usesChronometer: true);
       await flutterLocalNotificationsPlugin.show(
           1,
           'notification title',
@@ -342,7 +343,7 @@ void main() {
               'channelDescription': 'channelDescription',
               'channelShowBadge': true,
               'channelAction':
-              AndroidNotificationChannelAction.createIfNotExists.index,
+                  AndroidNotificationChannelAction.createIfNotExists.index,
               'importance': Importance.defaultImportance.value,
               'priority': Priority.defaultPriority.value,
               'playSound': true,
@@ -379,6 +380,7 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -386,7 +388,7 @@ void main() {
               },
             },
           }));
-      });
+    });
 
     test(
         'show with default Android-specific details and custom sound from raw '
@@ -463,6 +465,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -546,6 +549,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -628,6 +632,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -712,6 +717,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -811,6 +817,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -904,6 +911,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1003,6 +1011,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -1094,6 +1103,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.inbox.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1189,6 +1199,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.inbox.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -1275,6 +1286,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.media.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1358,6 +1370,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.media.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -1448,6 +1461,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.messaging.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1567,6 +1581,7 @@ void main() {
               'fullScreenIntent': false,
               'startActivityClassName': null,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.messaging.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1674,6 +1689,7 @@ void main() {
                 'additionalFlags': null,
                 'fullScreenIntent': false,
                 'shortcutId': null,
+                'subText': null,
                 'style': AndroidNotificationStyle.defaultStyle.index,
                 'styleInformation': <String, Object>{
                   'htmlFormatContent': false,
@@ -1763,6 +1779,7 @@ void main() {
                 'additionalFlags': null,
                 'fullScreenIntent': false,
                 'shortcutId': null,
+                'subText': null,
                 'style': AndroidNotificationStyle.defaultStyle.index,
                 'styleInformation': <String, Object>{
                   'htmlFormatContent': false,
@@ -1853,6 +1870,7 @@ void main() {
                 'additionalFlags': null,
                 'fullScreenIntent': false,
                 'shortcutId': null,
+                'subText': null,
                 'style': AndroidNotificationStyle.defaultStyle.index,
                 'styleInformation': <String, Object>{
                   'htmlFormatContent': false,

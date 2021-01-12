@@ -117,6 +117,7 @@ public class NotificationDetails {
     private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
     private static final String SHORTCUT_ID = "shortcutId";
     private static final String START_ACTIVITY_CLASS_NAME = "startActivityClassName";
+    private static final String SUB_TEXT = "subText";
 
 
     public Integer id;
@@ -176,6 +177,7 @@ public class NotificationDetails {
     public Boolean fullScreenIntent;
     public String shortcutId;
     public String startActivityClassName;
+    public String subText;
 
 
 
@@ -250,6 +252,7 @@ public class NotificationDetails {
             notificationDetails.shortcutId = (String) platformChannelSpecifics.get(SHORTCUT_ID);
             notificationDetails.startActivityClassName = (String) platformChannelSpecifics.get(START_ACTIVITY_CLASS_NAME);
             notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
+            notificationDetails.subText = (String) platformChannelSpecifics.get(SUB_TEXT);
         }
     }
 
