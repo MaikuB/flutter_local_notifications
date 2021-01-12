@@ -468,7 +468,7 @@ final List<ActiveNotification> activeNotifications =
 ### [Android only] Grouping notifications
 
 This is a "translation" of the sample available at https://developer.android.com/training/notify-user/group.html
-For iOS, you could just display the summary notification (not shown in the example) as otherwise the following code would show three notifications 
+For iOS, you can specify `threadIdentifier` in `iOSNotificationDetails`. You could also display the summary notification (not shown in the example) as otherwise the following code would show three notifications.
 
 ```dart
 const String groupKey = 'com.android.example.WORK_EMAIL';
