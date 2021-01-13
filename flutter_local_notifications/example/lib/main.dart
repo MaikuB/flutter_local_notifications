@@ -1159,7 +1159,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   tz.TZDateTime _nextInstanceOfInFiveSecondsLastYear() {
-    final now = tz.TZDateTime.now(tz.local);
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     return tz.TZDateTime(
       tz.local,
       now.year - 1,
