@@ -318,10 +318,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                     PaddedRaisedButton(
                       buttonText:
-                          'Schedule daily in 5 seconds last year notification '
-                          'in your local time zone',
+                          'Schedule daily 10:00:00 am notification in your '
+                          'local time zone given last year',
                       onPressed: () async {
-                        await _scheduleDailyInFiveSecondsLastYearNotification();
+                        await _scheduleDailyTenAMLastYearNotification();
                       },
                     ),
                     PaddedRaisedButton(
@@ -1094,12 +1094,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// To test we don't validate past dates when using `matchDateTimeComponents`
-  Future<void> _scheduleDailyInFiveSecondsLastYearNotification() async {
+  Future<void> _scheduleDailyTenAMLastYearNotification() async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         'daily scheduled notification title',
         'daily scheduled notification body',
-        _nextInstanceOfInFiveSecondsLastYear(),
+        _nextInstanceOfTenAMLastYear(),
         const NotificationDetails(
           android: AndroidNotificationDetails(
               'daily notification channel id',
@@ -1158,17 +1158,9 @@ class _HomePageState extends State<HomePage> {
     return scheduledDate;
   }
 
-  tz.TZDateTime _nextInstanceOfInFiveSecondsLastYear() {
+  tz.TZDateTime _nextInstanceOfTenAMLastYear() {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    return tz.TZDateTime(
-      tz.local,
-      now.year - 1,
-      now.month,
-      now.day,
-      now.hour,
-      now.minute,
-      now.second + 5,
-    );
+    return tz.TZDateTime(tz.local, now.year - 1, now.month, now.day, 10);
   }
 
   tz.TZDateTime _nextInstanceOfMondayTenAM() {
