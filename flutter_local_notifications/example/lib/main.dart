@@ -319,7 +319,7 @@ class _HomePageState extends State<HomePage> {
                     PaddedRaisedButton(
                       buttonText:
                           'Schedule daily 10:00:00 am notification in your '
-                          'local time zone given last year',
+                          "local time zone using last year's date",
                       onPressed: () async {
                         await _scheduleDailyTenAMLastYearNotification();
                       },
