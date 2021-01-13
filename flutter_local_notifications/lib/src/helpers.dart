@@ -16,9 +16,9 @@ void validateId(int id) {
 /// time where `matchDateTimeComponents` is null.
 void validateDateIsInTheFuture(
   TZDateTime scheduledDate,
-  DateTimeComponents matchDateComponents,
+  DateTimeComponents matchDateTimeComponents,
 ) {
-  if (matchDateComponents != null) {
+  if (matchDateTimeComponents != null) {
     return;
   }
   if (scheduledDate.isBefore(DateTime.now())) {
