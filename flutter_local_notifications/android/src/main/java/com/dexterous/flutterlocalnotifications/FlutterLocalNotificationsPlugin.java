@@ -273,7 +273,22 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         SharedPreferences sharedPreferences = context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(SCHEDULED_NOTIFICATIONS, json);
-        editor.commit();
+        tryCommittingInBackground(editor, 3);
+    }
+
+    private static void tryCommittingInBackground(final SharedPreferences.Editor editor, final int tries) {
+        if(tries == 0) {
+            return;
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final boolean isCommitted = editor.commit();
+                if(!isCommitted) {
+                    tryCommittingInBackground(editor, tries - 1);
+                }
+            }
+        }).start();
     }
 
     static void removeNotificationFromCache(Context context, Integer notificationId) {
@@ -1046,7 +1061,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         SharedPreferences sharedPreferences = applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(DEFAULT_ICON, defaultIcon);
-        editor.commit();
+        tryCommittingInBackground(editor, 3);
 
         if (mainActivity != null && !launchedActivityFromHistory(mainActivity.getIntent())) {
             sendNotificationPayloadMessage(mainActivity.getIntent());
