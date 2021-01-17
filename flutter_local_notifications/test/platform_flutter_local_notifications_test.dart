@@ -2006,7 +2006,22 @@ void main() {
 
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
-      expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);
+      expect(log, <Matcher>[
+        isMethodCall('cancel', arguments: <String, Object>{
+          'id': 1,
+          'tag': null,
+        })
+      ]);
+    });
+
+    test('cancel with tag', () async {
+      await flutterLocalNotificationsPlugin.cancel(1, tag: 'tag');
+      expect(log, <Matcher>[
+        isMethodCall('cancel', arguments: <String, Object>{
+          'id': 1,
+          'tag': 'tag',
+        })
+      ]);
     });
 
     test('cancelAll', () async {
