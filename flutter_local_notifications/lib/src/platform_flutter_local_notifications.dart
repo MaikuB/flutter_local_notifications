@@ -244,6 +244,16 @@ class AndroidFlutterLocalNotificationsPlugin
     });
   }
 
+  @override
+  Future<void> cancel(int id, {String tag}) async {
+    validateId(id);
+
+    return _channel.invokeMethod('cancel', <String, Object>{
+      'id': id,
+      'tag': tag,
+    });
+  }
+
   /// Creates a notification channel group.
   ///
   /// This method is only applicable to Android versions 8.0 or newer.

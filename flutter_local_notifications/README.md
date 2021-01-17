@@ -35,7 +35,7 @@ A cross platform plugin for displaying local notifications.
    - [Displaying a notification](#displaying-a-notification)
    - [Scheduling a notification](#scheduling-a-notification)
    - [Periodically show a notification with a specified interval](#periodically-show-a-notification-with-a-specified-interval)
-   - [Retrieveing pending notification requests](#retrieveing-pending-notification-requests)
+   - [Retrieving pending notification requests](#retrieving-pending-notification-requests)
    - [[Android only] Retrieving active notifications](#android-only-retrieving-active-notifications)
    - [Grouping notifications](#grouping-notifications)
    - [Cancelling/deleting a notification](#cancellingdeleting-a-notification)

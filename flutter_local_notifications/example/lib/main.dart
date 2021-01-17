@@ -455,6 +455,12 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedRaisedButton(
+                        buttonText: 'Cancel notification with tag',
+                        onPressed: () async {
+                          await _cancelNotificationWithTag();
+                        },
+                      ),
+                      PaddedRaisedButton(
                         buttonText: 'Show ongoing notification',
                         onPressed: () async {
                           await _showOngoingNotification();
@@ -667,6 +673,10 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _cancelNotification() async {
     await flutterLocalNotificationsPlugin.cancel(0);
+  }
+
+  Future<void> _cancelNotificationWithTag() async {
+    await flutterLocalNotificationsPlugin.cancel(0, tag: 'tag');
   }
 
   Future<void> _showNotificationCustomSound() async {
