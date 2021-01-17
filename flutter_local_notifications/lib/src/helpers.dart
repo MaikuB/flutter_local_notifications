@@ -1,5 +1,7 @@
 import 'package:timezone/timezone.dart';
 
+import 'types.dart';
+
 /// Helper method for validating notification IDs.
 /// Ensures IDs are valid 32-bit integers.
 void validateId(int id) {
@@ -10,9 +12,15 @@ void validateId(int id) {
   }
 }
 
-/// Helper method for validating a date/time value represents a
-/// future point in time.
-void validateDateIsInTheFuture(TZDateTime scheduledDate) {
+/// Helper method for validating a date/time value represents a future point in
+/// time where `matchDateTimeComponents` is null.
+void validateDateIsInTheFuture(
+  TZDateTime scheduledDate,
+  DateTimeComponents matchDateTimeComponents,
+) {
+  if (matchDateTimeComponents != null) {
+    return;
+  }
   if (scheduledDate.isBefore(DateTime.now())) {
     throw ArgumentError.value(
         scheduledDate, 'scheduledDate', 'Must be a date in the future');

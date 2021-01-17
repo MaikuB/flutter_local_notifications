@@ -298,7 +298,7 @@ class FlutterLocalNotificationsPlugin {
               id, title, body, scheduledDate, notificationDetails?.android,
               payload: payload,
               androidAllowWhileIdle: androidAllowWhileIdle,
-              matchDateComponents: matchDateTimeComponents);
+              matchDateTimeComponents: matchDateTimeComponents);
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()

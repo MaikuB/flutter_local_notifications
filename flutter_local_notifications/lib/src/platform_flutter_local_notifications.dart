@@ -122,10 +122,10 @@ class AndroidFlutterLocalNotificationsPlugin
     AndroidNotificationDetails notificationDetails, {
     @required bool androidAllowWhileIdle,
     String payload,
-    DateTimeComponents matchDateComponents,
+    DateTimeComponents matchDateTimeComponents,
   }) async {
     validateId(id);
-    validateDateIsInTheFuture(scheduledDate);
+    validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
     ArgumentError.checkNotNull(androidAllowWhileIdle, 'androidAllowWhileIdle');
     final Map<String, Object> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
@@ -140,10 +140,10 @@ class AndroidFlutterLocalNotificationsPlugin
           'payload': payload ?? ''
         }
           ..addAll(scheduledDate.toMap())
-          ..addAll(matchDateComponents == null
+          ..addAll(matchDateTimeComponents == null
               ? <String, Object>{}
               : <String, Object>{
-                  'matchDateTimeComponents': matchDateComponents.index
+                  'matchDateTimeComponents': matchDateTimeComponents.index
                 }));
   }
 
@@ -400,7 +400,7 @@ class IOSFlutterLocalNotificationsPlugin
     DateTimeComponents matchDateTimeComponents,
   }) async {
     validateId(id);
-    validateDateIsInTheFuture(scheduledDate);
+    validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
     ArgumentError.checkNotNull(uiLocalNotificationDateInterpretation,
         'uiLocalNotificationDateInterpretation');
     final Map<String, Object> serializedPlatformSpecifics =
@@ -589,7 +589,7 @@ class MacOSFlutterLocalNotificationsPlugin
     DateTimeComponents matchDateTimeComponents,
   }) async {
     validateId(id);
-    validateDateIsInTheFuture(scheduledDate);
+    validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
     final Map<String, Object> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
     await _channel.invokeMethod(
