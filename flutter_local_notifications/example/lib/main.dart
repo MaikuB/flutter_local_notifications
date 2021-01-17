@@ -591,44 +591,45 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showFullScreenNotification() async {
     await showDialog(
-        context: context,
-        child: AlertDialog(
-          title: const Text('Turn off your screen'),
-          content: const Text(
-              'to see the full-screen intent in 5 seconds, press OK and TURN '
-              'OFF your screen'),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Cancel'),
-            ),
-            FlatButton(
-              onPressed: () async {
-                await flutterLocalNotificationsPlugin.zonedSchedule(
-                    0,
-                    'scheduled title',
-                    'scheduled body',
-                    tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
-                    const NotificationDetails(
-                        android: AndroidNotificationDetails(
-                            'full screen channel id',
-                            'full screen channel name',
-                            'full screen channel description',
-                            priority: Priority.high,
-                            importance: Importance.high,
-                            fullScreenIntent: true)),
-                    androidAllowWhileIdle: true,
-                    uiLocalNotificationDateInterpretation:
-                        UILocalNotificationDateInterpretation.absoluteTime);
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Turn off your screen'),
+        content: const Text(
+            'to see the full-screen intent in 5 seconds, press OK and TURN '
+            'OFF your screen'),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          FlatButton(
+            onPressed: () async {
+              await flutterLocalNotificationsPlugin.zonedSchedule(
+                  0,
+                  'scheduled title',
+                  'scheduled body',
+                  tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+                  const NotificationDetails(
+                      android: AndroidNotificationDetails(
+                          'full screen channel id',
+                          'full screen channel name',
+                          'full screen channel description',
+                          priority: Priority.high,
+                          importance: Importance.high,
+                          fullScreenIntent: true)),
+                  androidAllowWhileIdle: true,
+                  uiLocalNotificationDateInterpretation:
+                      UILocalNotificationDateInterpretation.absoluteTime);
 
-                Navigator.pop(context);
-              },
-              child: const Text('OK'),
-            )
-          ],
-        ));
+              Navigator.pop(context);
+            },
+            child: const Text('OK'),
+          )
+        ],
+      ),
+    );
   }
 
   Future<void> _showNotificationWithNoBody() async {
