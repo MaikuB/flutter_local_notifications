@@ -35,9 +35,9 @@ A cross platform plugin for displaying local notifications.
    - [Displaying a notification](#displaying-a-notification)
    - [Scheduling a notification](#scheduling-a-notification)
    - [Periodically show a notification with a specified interval](#periodically-show-a-notification-with-a-specified-interval)
-   - [Retrieveing pending notification requests](#retrieveing-pending-notification-requests)
+   - [Retrieving pending notification requests](#retrieving-pending-notification-requests)
    - [[Android only] Retrieving active notifications](#android-only-retrieving-active-notifications)
-   - [[Android only] Grouping notifications](#android-only-grouping-notifications)
+   - [Grouping notifications](#grouping-notifications)
    - [Cancelling/deleting a notification](#cancellingdeleting-a-notification)
    - [Cancelling/deleting all notifications](#cancellingdeleting-all-notifications)
    - [Getting details on if the app was launched via a notification created by this plugin](#getting-details-on-if-the-app-was-launched-via-a-notification-created-by-this-plugin)
@@ -448,7 +448,7 @@ await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
     androidAllowWhileIdle: true);
 ```
 
-### Retrieveing pending notification requests
+### Retrieving pending notification requests
 
 ```dart
 final List<PendingNotificationRequest> pendingNotificationRequests =
@@ -465,10 +465,20 @@ final List<ActiveNotification> activeNotifications =
         ?.getActiveNotifications();
 ```
 
-### [Android only] Grouping notifications
+### Grouping notifications
+
+#### iOS
+
+For iOS, you can specify `threadIdentifier` in `IOSNotificationDetails`. Notifications with the same `threadIdentifier` will get grouped together automatically.
+
+```dart
+const IOSNotificationDetails iOSPlatformChannelSpecifics =
+    IOSNotificationDetails(threadIdentifier: 'thread_id');
+```
+
+#### Android
 
 This is a "translation" of the sample available at https://developer.android.com/training/notify-user/group.html
-For iOS, you could just display the summary notification (not shown in the example) as otherwise the following code would show three notifications 
 
 ```dart
 const String groupKey = 'com.android.example.WORK_EMAIL';

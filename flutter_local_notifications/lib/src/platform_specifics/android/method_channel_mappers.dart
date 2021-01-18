@@ -250,6 +250,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'shortcutId': shortcutId,
         'additionalFlags': additionalFlags,
         'subText': subText,
+        'tag': tag,
       }
         ..addAll(_convertStyleInformationToMap())
         ..addAll(_convertNotificationSoundToMap(sound))

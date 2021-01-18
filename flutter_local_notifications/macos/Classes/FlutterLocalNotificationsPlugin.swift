@@ -32,6 +32,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let attachments = "attachments"
         static let identifier = "identifier"
         static let filePath = "filePath"
+        static let threadIdentifier = "threadIdentifier"
     }
     
     struct DateFormatStrings {
@@ -371,6 +372,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             }
             if !(platformSpecifics[MethodCallArguments.presentBadge] is NSNull) && platformSpecifics[MethodCallArguments.presentBadge] != nil {
                 presentBadge = platformSpecifics[MethodCallArguments.presentBadge] as! Bool
+            }
+            if let threadIdentifier = platformSpecifics[MethodCallArguments.threadIdentifier] as? String {
+                content.threadIdentifier = threadIdentifier
             }
             if let attachments = platformSpecifics[MethodCallArguments.attachments] as? [Dictionary<String, AnyObject>] {
                 content.attachments = []
