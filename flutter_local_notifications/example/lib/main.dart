@@ -534,6 +534,12 @@ class _HomePageState extends State<HomePage> {
                           await _getActiveNotifications();
                         },
                       ),
+                      PaddedRaisedButton(
+                        buttonText: 'Show notification channels',
+                        onPressed: () async {
+                          await _getNotificationChannels();
+                        },
+                      ),
                     ],
                     if (Platform.isIOS || Platform.isMacOS) ...<Widget>[
                       const Text(
@@ -1535,6 +1541,73 @@ class _HomePageState extends State<HomePage> {
     } on PlatformException catch (error) {
       return Text(
         'Error calling "getActiveNotifications"\n'
+        'code: ${error.code}\n'
+        'message: ${error.message}',
+      );
+    }
+  }
+
+  Future<void> _getNotificationChannels() async {
+    final Widget notificationChannelsDialogContent =
+        await _getNotificationChannelsDialogContent();
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: notificationChannelsDialogContent,
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<Widget> _getNotificationChannelsDialogContent() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    if (!(androidInfo.version.sdkInt >= 26)) {
+      return const Text(
+        '"getActiveNotifications" is available only for Android 8.0 or newer',
+      );
+    }
+
+    try {
+      final List<AndroidNotificationChannelOutputInfo> channels =
+          await flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()
+              ?.getNotificationChannels();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          const Text(
+            'Active Notifications',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const Divider(color: Colors.black),
+          if (channels.isEmpty) const Text('No notification channels'),
+          if (channels.isNotEmpty)
+            for (AndroidNotificationChannelOutputInfo channel in channels)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text('id: ${channel.id}\n'
+                      'channelId: ${channel.name}\n'
+                      'title: ${channel.importance}\n'),
+                  const Divider(color: Colors.black),
+                ],
+              ),
+        ],
+      );
+    } on PlatformException catch (error) {
+      return Text(
+        'Error calling "getNotificationChannels"\n'
         'code: ${error.code}\n'
         'message: ${error.message}',
       );
