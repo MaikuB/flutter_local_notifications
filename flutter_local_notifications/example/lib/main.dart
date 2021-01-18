@@ -449,9 +449,9 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedRaisedButton(
-                        buttonText: 'Show notifications with tag',
+                        buttonText: 'Show notification with tag',
                         onPressed: () async {
-                          await _showNotificationsWithTag();
+                          await _showNotificationWithTag();
                         },
                       ),
                       PaddedRaisedButton(
@@ -1039,7 +1039,7 @@ class _HomePageState extends State<HomePage> {
         3, 'Attention', 'Two messages', platformChannelSpecifics);
   }
 
-  Future<void> _showNotificationsWithTag() async {
+  Future<void> _showNotificationWithTag() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
             'your channel id', 'your channel name', 'your channel description',
@@ -1049,12 +1049,6 @@ class _HomePageState extends State<HomePage> {
     );
     await flutterLocalNotificationsPlugin.show(
         0, 'first notification', null, platformChannelSpecifics);
-
-    await Future<void>.delayed(
-      const Duration(seconds: 10),
-      () => flutterLocalNotificationsPlugin.show(
-          0, 'second notification', null, platformChannelSpecifics),
-    );
   }
 
   Future<void> _checkPendingNotificationRequests() async {
