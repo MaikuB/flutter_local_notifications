@@ -244,6 +244,14 @@ class AndroidFlutterLocalNotificationsPlugin
     });
   }
 
+  /// Cancel/remove the notification with the specified id.
+  ///
+  /// This applies to notifications that have been scheduled and those that
+  /// have already been presented.
+  ///
+  /// The `tag` parameter specifies the Android tag. If it is provided,
+  /// then the notification that matches both the id and the tag will
+  /// be canceled. `tag` has no effect on other platforms.
   @override
   Future<void> cancel(int id, {String tag}) async {
     validateId(id);
