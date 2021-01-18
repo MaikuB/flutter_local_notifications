@@ -95,6 +95,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String CREATE_NOTIFICATION_CHANNEL_METHOD = "createNotificationChannel";
     private static final String DELETE_NOTIFICATION_CHANNEL_METHOD = "deleteNotificationChannel";
     private static final String GET_ACTIVE_NOTIFICATIONS_METHOD = "getActiveNotifications";
+    private static final String GET_NOTIFICATION_CHANNELS_METHOD = "getNotificationChannels";
     private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
     private static final String SHOW_METHOD = "show";
     private static final String CANCEL_METHOD = "cancel";
@@ -114,6 +115,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String INVALID_LED_DETAILS_ERROR_CODE = "INVALID_LED_DETAILS";
     private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_CODE = "GET_ACTIVE_NOTIFICATIONS_ERROR_CODE";
     private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE = "Android version must be 6.0 or newer to use getActiveNotifications";
+    private static final String GET_NOTIFICATION_CHANNELS_ERROR_CODE = "GET_NOTIFICATION_CHANNELS_ERROR_CODE";
+    private static final String GET_NOTIFICATION_CHANNELS_ERROR_MESSAGE = "Android version must be 8.0 or newer to use getActiveNotifications";
     private static final String INVALID_LED_DETAILS_ERROR_MESSAGE = "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of Android before Oreo";
     private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
@@ -956,6 +959,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case GET_ACTIVE_NOTIFICATIONS_METHOD:
                 getActiveNotifications(result);
                 break;
+            case GET_NOTIFICATION_CHANNELS_METHOD:
+                getNotificationChannels(result);
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -1222,6 +1228,28 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             result.success(activeNotificationsPayload);
         } catch (Throwable e) {
             result.error(GET_ACTIVE_NOTIFICATIONS_ERROR_CODE, e.getMessage(), e.getStackTrace());
+        }
+    }
+    private void getNotificationChannels(Result result) {
+        if (VERSION.SDK_INT < VERSION_CODES.O) {
+            result.error(GET_NOTIFICATION_CHANNELS_ERROR_CODE, GET_NOTIFICATION_CHANNELS_ERROR_MESSAGE, null);
+            return;
+        }
+        try {
+            NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            List<NotificationChannel>  channels = notificationManager.getNotificationChannels();
+            List<Map<String, Object>> channelsPayload = new ArrayList<>();
+
+            for (NotificationChannel channel : channels) {
+                HashMap<String, Object> channelPayload = new HashMap<>();
+                channelPayload.put("id", channel.getId());
+                channelPayload.put("name", channel.getName());
+                channelPayload.put("importance", channel.getImportance());
+                channelsPayload.add(channelPayload);
+            }
+            result.success(channelsPayload);
+        } catch (Throwable e) {
+            result.error(GET_NOTIFICATION_CHANNELS_ERROR_CODE, e.getMessage(), e.getStackTrace());
         }
     }
 }
