@@ -6,7 +6,8 @@
 * [Android] notification data is now saved to shared preferences in a background thread to minimise jank. Thanks to the PR from [davidlepilote](https://github.com/davidlepilote)
 * [Android] the `tag` property has been added to the `AndroidNotificationDetails` class. This allows notifications on Android to be uniquely identifier through the use of the value of the `tag` and the `id` passed to the method for show/schedule the notification
 * [Android] the optional `tag` argument has been added to the `cancel` method for the `FlutterLocalNotificationsPlugin` and `AndroidFlutterLocalNotificationsPlugin` classes. This can be used to cancel notifications where the `tag` has been specified
-* [iOS][macOS] the `threadIdentifier` property has been added to the `IOSNotificationDetails` and `MacOSNotificationDetails` classes. This can be used to group notifications on iOS 10.0 or newer, and macOS 10.14 or newer.
+* [iOS][macOS] the `threadIdentifier` property has been added to the `IOSNotificationDetails` and `MacOSNotificationDetails` classes. This can be used to group notifications on iOS 10.0 or newer, and macOS 10.14 or newer. Thanks to the PR from [Marcin Chudy](https://github.com/mchudy) for adding this and the `tag` property for Android notifications
+* The Android and iOS example applications have been recreated in Kotlin and Swift respectively
 
 # [3.0.3]
 
