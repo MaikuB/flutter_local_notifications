@@ -282,7 +282,7 @@ await flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: selectNotification);
 ```
 
-Initialisation should only be done **once**, and this can be done is in the `main` function of your application. Alternatively, this can be done within the first page shown in your app. Developers can refer to the example app that has code for the initialising within the `main` function. The code above has been simplified for explaining the concepts. Here we have specified the default icon to use for notifications on Android (refer to the *Android setup* section) and designated the function (`selectNotification`) that should fire when a notification has been tapped on via the `onSelectNotification` callback. Specifying this callback is entirely optional but here it will trigger navigation to another page and display the payload associated with the notification.
+Initialisation can be done is in the `main` function of your application or can be done within the first page shown in your app. Developers can refer to the example app that has code for the initialising within the `main` function. The code above has been simplified for explaining the concepts. Here we have specified the default icon to use for notifications on Android (refer to the *Android setup* section) and designated the function (`selectNotification`) that should fire when a notification has been tapped on via the `onSelectNotification` callback. Specifying this callback is entirely optional but here it will trigger navigation to another page and display the payload associated with the notification.
 
 ```dart
 Future selectNotification(String payload) async {
@@ -302,9 +302,7 @@ The `IOSInitializationSettings` and `MacOSInitializationSettings` provides defau
 
 On iOS and macOS, initialisation may show a prompt to requires users to give the application permission to display notifications (note: permissions don't need to be requested on Android). Depending on when this happens, this may not be the ideal user experience for your application. If so, please refer to the next section on how to work around this.
 
-
-
-⚠ If the app has been launched by tapping on a notification created by this plugin, calling `initialize` is what will trigger the `onSelectNotification` to trigger to handle the notification that the user tapped on. An alternative to handling the "launch notification" is to call the `getNotificationAppLaunchDetails` method that is available in the plugin. This could be used, for example, to change the home route of the app for deep-linking. Calling `initialize` will still cause the `onSelectNotification` callback to fire for the launch notification. It will be up to developers to ensure that they don't process the same notification twice (e.g. by storing and comparing the notification id).
+*Note*: from version 4.0 of the plugin, calling `initialize` will now trigger the `onSelectNotification` callback when the application was started by tapping on a notification to trigger. Use the `getNotificationAppLaunchDetails` method that is available in the plugin if you need to handle a notification triggering the launch for an app e.g. change the home route of the app for deep-linking.
 
 ### [iOS (all supported versions) and macOS 10.14+] Requesting notification permissions
 

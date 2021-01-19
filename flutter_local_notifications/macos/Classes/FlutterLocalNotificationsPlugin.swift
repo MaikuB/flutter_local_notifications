@@ -156,9 +156,6 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let requestedSoundPermission = arguments[MethodCallArguments.requestSoundPermission] as! Bool
             let requestedBadgePermission = arguments[MethodCallArguments.requestBadgePermission] as! Bool
             requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, result: result)
-            if(launchingAppFromNotification) {
-                handleSelectNotification(payload: launchPayload)
-            }
             initialized = true
         }
         else {
