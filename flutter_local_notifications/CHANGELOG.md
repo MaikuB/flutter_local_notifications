@@ -1,3 +1,8 @@
+# [4.0.0-dev.2]
+
+* Bumped Flutter dependencies
+* Example app cleanup including updating Proguard rules as specifying the rules for Flutter were no longer needed
+
 # [4.0.0-dev.1]
 
 * **Breaking change** calling `initialize` will no longer trigger the `onSelectNotification` if a notification was tapped on prior to calling `initialize`. This was done as the `getNotificationAppLaunchDetails` method already provided a way to handle when an application was launched by a notification. Furthermore, calling `initialize` multiple times (e.g. on different pages) would have previously caused the `onSelectNotification` callback multiples times as well. This potentially results in the same notification being processed again
