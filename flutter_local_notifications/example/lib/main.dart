@@ -57,10 +57,10 @@ Future<void> main() async {
 
   final NotificationAppLaunchDetails notificationAppLaunchDetails =
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-  String initialRoute = HomePage.route;
+  String initialRoute = HomePage.routeName;
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
     selectedNotificationPayload = notificationAppLaunchDetails.payload;
-    initialRoute = SecondPage.route;
+    initialRoute = SecondPage.routeName;
   }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
@@ -99,8 +99,8 @@ Future<void> main() async {
     MaterialApp(
       initialRoute: initialRoute,
       routes: <String, WidgetBuilder>{
-        HomePage.route: (_) => HomePage(notificationAppLaunchDetails),
-        SecondPage.route: (_) => SecondPage(selectedNotificationPayload)
+        HomePage.routeName: (_) => HomePage(notificationAppLaunchDetails),
+        SecondPage.routeName: (_) => SecondPage(selectedNotificationPayload)
       },
     ),
   );
@@ -138,7 +138,7 @@ class HomePage extends StatefulWidget {
     Key key,
   }) : super(key: key);
 
-  static const String route = '/';
+  static const String routeName = '/';
 
   final NotificationAppLaunchDetails notificationAppLaunchDetails;
 
@@ -1657,7 +1657,7 @@ class SecondPage extends StatefulWidget {
     Key key,
   }) : super(key: key);
 
-  static const String route = '/secondPage';
+  static const String routeName = '/secondPage';
 
   final String payload;
 
