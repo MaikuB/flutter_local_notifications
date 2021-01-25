@@ -170,6 +170,7 @@ class FlutterLocalNotificationsPlugin {
 
   /// Show a notification with an optional payload that will be passed back to
   /// the app when a notification is tapped.
+  /// Set the ID of the notification with [id] - re-using an ID will replace the existing notification with the same ID.
   Future<void> show(
     int id,
     String title,
