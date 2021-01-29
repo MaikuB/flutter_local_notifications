@@ -29,6 +29,7 @@ extension MacOSNotificationDetailsMapper on MacOSNotificationDetails {
         'subtitle': subtitle,
         'sound': sound,
         'badgeNumber': badgeNumber,
+        'threadIdentifier': threadIdentifier,
         'attachments': attachments
             ?.map((a) => a.toMap()) // ignore: always_specify_types
             ?.toList()

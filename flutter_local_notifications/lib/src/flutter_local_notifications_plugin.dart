@@ -95,9 +95,6 @@ class FlutterLocalNotificationsPlugin {
   /// Initializes the plugin.
   ///
   /// Call this method on application before using the plugin further.
-  /// This should only be done once. When a notification created by this plugin
-  /// was used to launch the app, calling `initialize` is what will trigger
-  /// to the `onSelectNotification` callback to be fire.
   ///
   /// Will return a [bool] value to indicate if initialization succeeded.
   /// On iOS this is dependent on if permissions have been granted to show
@@ -203,8 +200,18 @@ class FlutterLocalNotificationsPlugin {
   ///
   /// This applies to notifications that have been scheduled and those that
   /// have already been presented.
-  Future<void> cancel(int id) async {
-    await FlutterLocalNotificationsPlatform.instance?.cancel(id);
+  ///
+  /// The `tag` parameter specifies the Android tag. If it is provided,
+  /// then the notification that matches both the id and the tag will
+  /// be canceled. `tag` has no effect on other platforms.
+  Future<void> cancel(int id, {String tag}) async {
+    if (_platform.isAndroid) {
+      await resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.cancel(id, tag: tag);
+    } else {
+      await FlutterLocalNotificationsPlatform.instance?.cancel(id);
+    }
   }
 
   /// Cancels/removes all notifications.
@@ -298,7 +305,7 @@ class FlutterLocalNotificationsPlugin {
               id, title, body, scheduledDate, notificationDetails?.android,
               payload: payload,
               androidAllowWhileIdle: androidAllowWhileIdle,
-              matchDateComponents: matchDateTimeComponents);
+              matchDateTimeComponents: matchDateTimeComponents);
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()

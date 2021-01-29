@@ -140,11 +140,13 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -216,12 +218,14 @@ void main() {
               'category': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'additionalFlags': <int>[4, 32],
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -296,30 +300,30 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
 
-    test(
-      'show with default Android-specific details with a chronometer',
-          () async {
+    test('show with default Android-specific details with a chronometer',
+        () async {
       const AndroidInitializationSettings androidInitializationSettings =
-      AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-      InitializationSettings(android: androidInitializationSettings);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       final int timestamp = DateTime.now().millisecondsSinceEpoch;
 
       final AndroidNotificationDetails androidNotificationDetails =
-      AndroidNotificationDetails(
-          'channelId', 'channelName', 'channelDescription',
-          when: timestamp,
-          usesChronometer: true);
+          AndroidNotificationDetails(
+              'channelId', 'channelName', 'channelDescription',
+              when: timestamp, usesChronometer: true);
       await flutterLocalNotificationsPlugin.show(
           1,
           'notification title',
@@ -339,7 +343,7 @@ void main() {
               'channelDescription': 'channelDescription',
               'channelShowBadge': true,
               'channelAction':
-              AndroidNotificationChannelAction.createIfNotExists.index,
+                  AndroidNotificationChannelAction.createIfNotExists.index,
               'importance': Importance.defaultImportance.value,
               'priority': Priority.defaultPriority.value,
               'playSound': true,
@@ -376,14 +380,16 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
-      });
+    });
 
     test(
         'show with default Android-specific details and custom sound from raw '
@@ -459,11 +465,13 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -541,11 +549,13 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -622,11 +632,13 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
                 'htmlFormatTitle': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -705,6 +717,7 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -717,6 +730,7 @@ void main() {
                 'htmlFormatSummaryText': false,
                 'hideExpandedLargeIcon': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -803,6 +817,7 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -817,6 +832,7 @@ void main() {
                 'htmlFormatSummaryText': true,
                 'hideExpandedLargeIcon': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -895,6 +911,7 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -907,6 +924,7 @@ void main() {
                 'htmlFormatSummaryText': false,
                 'hideExpandedLargeIcon': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -993,6 +1011,7 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -1007,6 +1026,7 @@ void main() {
                 'htmlFormatSummaryText': true,
                 'hideExpandedLargeIcon': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -1083,6 +1103,7 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.inbox.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1094,6 +1115,7 @@ void main() {
                 'htmlFormatSummaryText': false,
                 'htmlFormatLines': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -1177,6 +1199,7 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.inbox.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -1188,6 +1211,7 @@ void main() {
                 'htmlFormatSummaryText': true,
                 'htmlFormatLines': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -1262,11 +1286,13 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.media.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -1344,11 +1370,13 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.media.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
                 'htmlFormatTitle': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -1433,6 +1461,7 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.messaging.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1456,6 +1485,7 @@ void main() {
                   }
                 ],
               },
+              'tag': null,
             },
           }));
     });
@@ -1551,6 +1581,7 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.messaging.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1576,6 +1607,7 @@ void main() {
                   }
                 ],
               },
+              'tag': null,
             },
           }));
     });
@@ -1658,11 +1690,13 @@ void main() {
                 'additionalFlags': null,
                 'fullScreenIntent': false,
                 'shortcutId': null,
+                'subText': null,
                 'style': AndroidNotificationStyle.defaultStyle.index,
                 'styleInformation': <String, Object>{
                   'htmlFormatContent': false,
                   'htmlFormatTitle': false,
                 },
+                'tag': null,
               },
             }));
       });
@@ -1747,11 +1781,13 @@ void main() {
                 'additionalFlags': null,
                 'fullScreenIntent': false,
                 'shortcutId': null,
+                'subText': null,
                 'style': AndroidNotificationStyle.defaultStyle.index,
                 'styleInformation': <String, Object>{
                   'htmlFormatContent': false,
                   'htmlFormatTitle': false,
                 },
+                'tag': null,
               },
             }));
       });
@@ -1837,11 +1873,13 @@ void main() {
                 'additionalFlags': null,
                 'fullScreenIntent': false,
                 'shortcutId': null,
+                'subText': null,
                 'style': AndroidNotificationStyle.defaultStyle.index,
                 'styleInformation': <String, Object>{
                   'htmlFormatContent': false,
                   'htmlFormatTitle': false,
                 },
+                'tag': null,
               },
             }));
       });
@@ -1968,7 +2006,22 @@ void main() {
 
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
-      expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);
+      expect(log, <Matcher>[
+        isMethodCall('cancel', arguments: <String, Object>{
+          'id': 1,
+          'tag': null,
+        })
+      ]);
+    });
+
+    test('cancel with tag', () async {
+      await flutterLocalNotificationsPlugin.cancel(1, tag: 'tag');
+      expect(log, <Matcher>[
+        isMethodCall('cancel', arguments: <String, Object>{
+          'id': 1,
+          'tag': 'tag',
+        })
+      ]);
     });
 
     test('cancelAll', () async {
@@ -2123,6 +2176,7 @@ void main() {
               'subtitle': 'a subtitle',
               'sound': 'sound.mp3',
               'badgeNumber': 1,
+              'threadIdentifier': null,
               'attachments': <Map<String, Object>>[
                 <String, Object>{
                   'filePath': 'video.mp4',
@@ -2185,6 +2239,7 @@ void main() {
                 'subtitle': null,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2248,6 +2303,7 @@ void main() {
                 'subtitle': null,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2312,6 +2368,7 @@ void main() {
                 'subtitle': null,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2473,6 +2530,7 @@ void main() {
               presentSound: true,
               sound: 'sound.mp3',
               badgeNumber: 1,
+              threadIdentifier: 'thread',
               attachments: <MacOSNotificationAttachment>[
             MacOSNotificationAttachment('video.mp4',
                 identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373'),
@@ -2495,6 +2553,7 @@ void main() {
               'presentSound': true,
               'sound': 'sound.mp3',
               'badgeNumber': 1,
+              'threadIdentifier': 'thread',
               'attachments': <Map<String, Object>>[
                 <String, Object>{
                   'filePath': 'video.mp4',
@@ -2555,6 +2614,7 @@ void main() {
                 'presentSound': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2616,6 +2676,7 @@ void main() {
                 'presentSound': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2678,6 +2739,7 @@ void main() {
                 'presentSound': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
