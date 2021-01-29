@@ -42,6 +42,8 @@ class ReceivedNotification {
   final String payload;
 }
 
+String selectedNotificationPayload;
+
 /// IMPORTANT: running the following code on its own won't work as there is
 /// setup required for each platform head project.
 ///
@@ -55,6 +57,11 @@ Future<void> main() async {
 
   final NotificationAppLaunchDetails notificationAppLaunchDetails =
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  String initialRoute = HomePage.routeName;
+  if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
+    selectedNotificationPayload = notificationAppLaunchDetails.payload;
+    initialRoute = SecondPage.routeName;
+  }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('app_icon');
@@ -85,13 +92,16 @@ Future<void> main() async {
     if (payload != null) {
       debugPrint('notification payload: $payload');
     }
+    selectedNotificationPayload = payload;
     selectNotificationSubject.add(payload);
   });
   runApp(
     MaterialApp(
-      home: HomePage(
-        notificationAppLaunchDetails,
-      ),
+      initialRoute: initialRoute,
+      routes: <String, WidgetBuilder>{
+        HomePage.routeName: (_) => HomePage(notificationAppLaunchDetails),
+        SecondPage.routeName: (_) => SecondPage(selectedNotificationPayload)
+      },
     ),
   );
 }
@@ -128,7 +138,10 @@ class HomePage extends StatefulWidget {
     Key key,
   }) : super(key: key);
 
+  static const String routeName = '/';
+
   final NotificationAppLaunchDetails notificationAppLaunchDetails;
+
   bool get didNotificationLaunchApp =>
       notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
 
@@ -185,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                   context,
                   MaterialPageRoute<void>(
                     builder: (BuildContext context) =>
-                        SecondScreen(receivedNotification.payload),
+                        SecondPage(receivedNotification.payload),
                   ),
                 );
               },
@@ -199,11 +212,7 @@ class _HomePageState extends State<HomePage> {
 
   void _configureSelectNotificationSubject() {
     selectNotificationSubject.stream.listen((String payload) async {
-      await Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-            builder: (BuildContext context) => SecondScreen(payload)),
-      );
+      await Navigator.pushNamed(context, '/secondPage');
     });
   }
 
@@ -1642,19 +1651,21 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class SecondScreen extends StatefulWidget {
-  const SecondScreen(
+class SecondPage extends StatefulWidget {
+  const SecondPage(
     this.payload, {
     Key key,
   }) : super(key: key);
 
+  static const String routeName = '/secondPage';
+
   final String payload;
 
   @override
-  State<StatefulWidget> createState() => SecondScreenState();
+  State<StatefulWidget> createState() => SecondPageState();
 }
 
-class SecondScreenState extends State<SecondScreen> {
+class SecondPageState extends State<SecondPage> {
   String _payload;
   @override
   void initState() {

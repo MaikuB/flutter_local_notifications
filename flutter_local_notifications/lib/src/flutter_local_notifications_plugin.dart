@@ -95,9 +95,6 @@ class FlutterLocalNotificationsPlugin {
   /// Initializes the plugin.
   ///
   /// Call this method on application before using the plugin further.
-  /// This should only be done once. When a notification created by this plugin
-  /// was used to launch the app, calling `initialize` is what will trigger
-  /// to the `onSelectNotification` callback to be fire.
   ///
   /// Will return a [bool] value to indicate if initialization succeeded.
   /// On iOS this is dependent on if permissions have been granted to show

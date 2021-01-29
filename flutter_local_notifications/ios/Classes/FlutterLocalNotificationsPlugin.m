@@ -228,7 +228,7 @@ static FlutterError *getFlutterError(NSError *error) {
     if([self containsKey:REQUEST_BADGE_PERMISSION forDictionary:arguments]) {
         requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
     }
-    [self requestPermissionsImpl:requestedSoundPermission alertPermission:requestedAlertPermission badgePermission:requestedBadgePermission checkLaunchNotification:true result:result];
+    [self requestPermissionsImpl:requestedSoundPermission alertPermission:requestedAlertPermission badgePermission:requestedBadgePermission  result:result];
     
     _initialized = true;
 }
@@ -246,13 +246,13 @@ static FlutterError *getFlutterError(NSError *error) {
     if([self containsKey:BADGE_PERMISSION forDictionary:arguments]) {
         badgePermission = [arguments[BADGE_PERMISSION] boolValue];
     }
-    [self requestPermissionsImpl:soundPermission alertPermission:alertPermission badgePermission:badgePermission checkLaunchNotification:false result:result];
+    [self requestPermissionsImpl:soundPermission alertPermission:alertPermission badgePermission:badgePermission result:result];
 }
 
 - (void)requestPermissionsImpl:(bool)soundPermission
                alertPermission:(bool)alertPermission
                badgePermission:(bool)badgePermission
-       checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Nonnull)result{
+                        result:(FlutterResult _Nonnull)result{
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         
@@ -267,9 +267,6 @@ static FlutterError *getFlutterError(NSError *error) {
             authorizationOptions += UNAuthorizationOptionBadge;
         }
         [center requestAuthorizationWithOptions:(authorizationOptions) completionHandler:^(BOOL granted, NSError * _Nullable error) {
-            if(checkLaunchNotification && self->_launchPayload != nil) {
-                [self handleSelectNotification:self->_launchPayload];
-            }
             result(@(granted));
         }];
     } else {
@@ -285,10 +282,6 @@ static FlutterError *getFlutterError(NSError *error) {
         }
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:notificationTypes categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-        if(checkLaunchNotification && _launchNotification != nil && [self isAFlutterLocalNotification:_launchNotification.userInfo]) {
-            NSString *payload = _launchNotification.userInfo[PAYLOAD];
-            [self handleSelectNotification:payload];
-        }
         result(@YES);
     }
 }
@@ -602,16 +595,16 @@ static FlutterError *getFlutterError(NSError *error) {
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-
+    
     // Needed for some countries, when phone DateTime format is 12H
     NSLocale *posix = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
-
+    
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
     [dateFormatter setTimeZone:timezone];
     [dateFormatter setLocale:posix];
-
+    
     NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
-
+    
     calendar.timeZone = timezone;
     if(matchDateComponents != nil) {
         if([matchDateComponents integerValue] == Time) {

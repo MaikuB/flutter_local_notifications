@@ -1071,10 +1071,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(DEFAULT_ICON, defaultIcon);
         tryCommittingInBackground(editor, 3);
-
-        if (mainActivity != null && !launchedActivityFromHistory(mainActivity.getIntent())) {
-            sendNotificationPayloadMessage(mainActivity.getIntent());
-        }
         result.success(true);
     }
 
