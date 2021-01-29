@@ -1,9 +1,4 @@
-# [4.0.0-dev.2]
-
-* Bumped Flutter dependencies
-* Example app cleanup including updating Proguard rules as specifying the rules for Flutter were no longer needed
-
-# [4.0.0-dev.1]
+# [4.0.0]
 
 * **Breaking change** calling `initialize` will no longer trigger the `onSelectNotification` if a notification was tapped on prior to calling `initialize`. This was done as the `getNotificationAppLaunchDetails` method already provided a way to handle when an application was launched by a notification. Furthermore, calling `initialize` multiple times (e.g. on different pages) would have previously caused the `onSelectNotification` callback multiples times as well. This potentially results in the same notification being processed again
 * **Breaking change** the `matchDateComponents` parameter has been renamed to `matchDateTimeComponents`
@@ -14,6 +9,8 @@
 * [iOS][macOS] the `threadIdentifier` property has been added to the `IOSNotificationDetails` and `MacOSNotificationDetails` classes. This can be used to group notifications on iOS 10.0 or newer, and macOS 10.14 or newer. Thanks to the PR from [Marcin Chudy](https://github.com/mchudy) for adding this and the `tag` property for Android notifications
 * The Android and iOS example applications have been recreated in Kotlin and Swift respectively
 * Updated example application's dev dependency on the deprecated `e2e` for integration tests to use `integration_test` instead
+* Bumped Flutter dependencies
+* Example app cleanup including updating Proguard rules as specifying the rules for Flutter were no longer needed
 
 # [3.0.3]
 
