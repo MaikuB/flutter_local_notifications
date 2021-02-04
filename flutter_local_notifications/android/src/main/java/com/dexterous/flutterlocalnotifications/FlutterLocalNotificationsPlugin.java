@@ -116,7 +116,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_CODE = "GET_ACTIVE_NOTIFICATIONS_ERROR_CODE";
     private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE = "Android version must be 6.0 or newer to use getActiveNotifications";
     private static final String GET_NOTIFICATION_CHANNELS_ERROR_CODE = "GET_NOTIFICATION_CHANNELS_ERROR_CODE";
-    private static final String GET_NOTIFICATION_CHANNELS_ERROR_MESSAGE = "Android version must be 8.0 or newer to use getActiveNotifications";
     private static final String INVALID_LED_DETAILS_ERROR_MESSAGE = "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of Android before Oreo";
     private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
@@ -1231,22 +1230,26 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
     private void getNotificationChannels(Result result) {
-        if (VERSION.SDK_INT < VERSION_CODES.O) {
-            result.error(GET_NOTIFICATION_CHANNELS_ERROR_CODE, GET_NOTIFICATION_CHANNELS_ERROR_MESSAGE, null);
-            return;
-        }
         try {
-            NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
-            List<NotificationChannel>  channels = notificationManager.getNotificationChannels();
+            NotificationManagerCompat notificationManagerCompat = getNotificationManager(applicationContext);
+            List<NotificationChannel>  channels = notificationManagerCompat.getNotificationChannels();
             List<Map<String, Object>> channelsPayload = new ArrayList<>();
-
-            for (NotificationChannel channel : channels) {
-                HashMap<String, Object> channelPayload = new HashMap<>();
-                channelPayload.put("id", channel.getId());
-                channelPayload.put("name", channel.getName());
-                channelPayload.put("importance", channel.getImportance());
-                channelsPayload.add(channelPayload);
-            }
+               if (VERSION.SDK_INT >= VERSION_CODES.O) {
+                   for(NotificationChannel channel :channels) {
+                       HashMap<String, Object> channelPayload = new HashMap<>();
+                       channelPayload.put("id", channel.getId());
+                       channelPayload.put("name", channel.getName());
+                       channelPayload.put("description", channel.getDescription());
+                       channelPayload.put("groupId", channel.getGroup());
+                       channelPayload.put("showBadge", channel.canShowBadge());
+                       channelPayload.put("importance", channel.getImportance());
+                       channelPayload.put("sound", channel.getSound() != null ? channel.getSound().toString() : null);
+                       channelPayload.put("vibrationPattern", channel.getVibrationPattern());
+                       channelPayload.put("enableLights", channel.getLightColor());
+                       channelPayload.put("ledColor", channel.getLightColor());
+                       channelsPayload.add(channelPayload);
+                   }
+               }
             result.success(channelsPayload);
         } catch (Throwable e) {
             result.error(GET_NOTIFICATION_CHANNELS_ERROR_CODE, e.getMessage(), e.getStackTrace());
