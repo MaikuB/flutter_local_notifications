@@ -2,18 +2,19 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
 
-import '../flutter_local_notifications.dart';
 import 'helpers.dart';
 import 'platform_specifics/android/active_notification.dart';
+import 'platform_specifics/android/enums.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
 import 'platform_specifics/android/notification_channel.dart';
 import 'platform_specifics/android/notification_channel_group.dart';
-import 'platform_specifics/android/notification_channel_output.dart';
 import 'platform_specifics/android/notification_details.dart';
+import 'platform_specifics/android/notification_sound.dart';
 import 'platform_specifics/ios/enums.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/method_channel_mappers.dart';
@@ -295,17 +296,25 @@ class AndroidFlutterLocalNotificationsPlugin
         ?.toList();
   }
 
-  Future<List<AndroidNotificationChannelOutputInfo>>
-      getNotificationChannels() async {
+  /// Returns the list of all notification channels
+  ///
+  /// This method for android less than 6.0 version will return an empty list
+  Future<List<AndroidNotificationChannel>> getNotificationChannels() async {
     final List<Map<Object, Object>> notifications =
         await _channel.invokeListMethod('getNotificationChannels');
 
     return notifications
         // ignore: always_specify_types
-        ?.map((a) => AndroidNotificationChannelOutputInfo(
+        ?.map((a) => AndroidNotificationChannel(
               a['id'],
               a['name'],
-              Importance(a['importance']),
+              a['description'],
+              groupId: a['groupId'],
+              showBadge: a['showBadge'],
+              importance: Importance(a['importance']),
+              sound: RawResourceAndroidNotificationSound(a['sound']),
+              vibrationPattern: a['vibrationPattern'],
+              ledColor: Color(a['ledColor']),
             ))
         ?.toList();
   }
