@@ -1,7 +1,7 @@
 task:
   name: Build Android example app
   container:
-    image: cirrusci/flutter:stable
+    image: cirrusci/flutter:beta
   pub_cache:
     folder: ~/.pub-cache
   build_script:
@@ -36,7 +36,7 @@ task:
 task:
   name: Run platform interface tests
   container:
-    image: cirrusci/flutter:stable
+    image: cirrusci/flutter:beta
   test_script:
     - cd flutter_local_notifications_platform_interface
     - flutter test
@@ -44,7 +44,7 @@ task:
 task:
   name: Run plugin unit tests
   container:
-    image: cirrusci/flutter:stable
+    image: cirrusci/flutter:beta
   pub_cache:
     folder: ~/.pub-cache
   test_script:
@@ -57,7 +57,7 @@ task:
     EMULATOR_API_LEVEL: 28
     ANDROID_ABI: "default;x86"
   container:
-    image: cirrusci/flutter:stable
+    image: cirrusci/flutter:beta
     cpu: 4
     memory: 10G
     kvm: true
