@@ -61,6 +61,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -281,14 +282,14 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private static void tryCommittingInBackground(final SharedPreferences.Editor editor, final int tries) {
-        if(tries == 0) {
+        if (tries == 0) {
             return;
         }
         new Thread(new Runnable() {
             @Override
             public void run() {
                 final boolean isCommitted = editor.commit();
-                if(!isCommitted) {
+                if (!isCommitted) {
                     tryCommittingInBackground(editor, tries - 1);
                 }
             }
@@ -882,6 +883,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return NotificationManagerCompat.from(context);
     }
 
+    private static boolean launchedActivityFromHistory(Intent intent) {
+        return intent != null && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY;
+    }
+
     private void setActivity(Activity flutterActivity) {
         this.mainActivity = flutterActivity;
         if (mainActivity != null) {
@@ -1079,11 +1084,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         result.success(true);
     }
 
-    private static boolean launchedActivityFromHistory(Intent intent) {
-        return intent != null && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY;
-    }
-
-
     /// Extracts the details of the notifications passed from the Flutter side and also validates that some of the details (especially resources) passed are valid
     private NotificationDetails extractNotificationDetails(Result result, Map<String, Object> arguments) {
         NotificationDetails notificationDetails = NotificationDetails.from(arguments);
@@ -1253,30 +1253,55 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             result.error(GET_ACTIVE_NOTIFICATIONS_ERROR_CODE, e.getMessage(), e.getStackTrace());
         }
     }
+
     private void getNotificationChannels(Result result) {
         try {
             NotificationManagerCompat notificationManagerCompat = getNotificationManager(applicationContext);
-            List<NotificationChannel>  channels = notificationManagerCompat.getNotificationChannels();
+            List<NotificationChannel> channels = notificationManagerCompat.getNotificationChannels();
             List<Map<String, Object>> channelsPayload = new ArrayList<>();
-               if (VERSION.SDK_INT >= VERSION_CODES.O) {
-                   for(NotificationChannel channel :channels) {
-                       HashMap<String, Object> channelPayload = new HashMap<>();
-                       channelPayload.put("id", channel.getId());
-                       channelPayload.put("name", channel.getName());
-                       channelPayload.put("description", channel.getDescription());
-                       channelPayload.put("groupId", channel.getGroup());
-                       channelPayload.put("showBadge", channel.canShowBadge());
-                       channelPayload.put("importance", channel.getImportance());
-                       channelPayload.put("sound", channel.getSound() != null ? channel.getSound().toString() : null);
-                       channelPayload.put("vibrationPattern", channel.getVibrationPattern());
-                       channelPayload.put("enableLights", channel.getLightColor());
-                       channelPayload.put("ledColor", channel.getLightColor());
-                       channelsPayload.add(channelPayload);
-                   }
-               }
+            for (NotificationChannel channel : channels) {
+                HashMap<String, Object> channelPayload = getMappedNotificationChannel(channel);
+                channelsPayload.add(channelPayload);
+            }
             result.success(channelsPayload);
         } catch (Throwable e) {
             result.error(GET_NOTIFICATION_CHANNELS_ERROR_CODE, e.getMessage(), e.getStackTrace());
         }
+    }
+
+    private HashMap<String, Object> getMappedNotificationChannel(NotificationChannel channel) {
+        HashMap<String, Object> channelPayload = new HashMap<>();
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
+            channelPayload.put("id", channel.getId());
+            channelPayload.put("name", channel.getName());
+            channelPayload.put("description", channel.getDescription());
+            channelPayload.put("groupId", channel.getGroup());
+            channelPayload.put("showBadge", channel.canShowBadge());
+            channelPayload.put("importance", channel.getImportance());
+            Uri soundUri = channel.getSound();
+            if (soundUri == null) {
+                channelPayload.put("sound", null);
+                channelPayload.put("playSound", false);
+            } else {
+                channelPayload.put("playSound", true);
+                List<SoundSource> soundSources = Arrays.asList(SoundSource.values());
+                if (soundUri.getScheme().equals("android.resource")) {
+                    String[] splitUri = soundUri.toString().split("/");
+                    String resourceName = applicationContext.getResources().getResourceEntryName(Integer.parseInt(splitUri[splitUri.length - 1]));
+                    if (resourceName != null) {
+                        channelPayload.put("soundSource", soundSources.indexOf(SoundSource.RawResource));
+                        channelPayload.put("sound", resourceName);
+                    }
+                } else {
+                    channelPayload.put("soundSource", soundSources.indexOf(SoundSource.Uri));
+                    channelPayload.put("sound", soundUri.toString());
+                }
+            }
+            channelPayload.put("enableVibration", channel.shouldVibrate());
+            channelPayload.put("vibrationPattern", channel.getVibrationPattern());
+            channelPayload.put("enableLights", channel.shouldShowLights());
+            channelPayload.put("ledColor", channel.getLightColor());
+        }
+        return channelPayload;
     }
 }

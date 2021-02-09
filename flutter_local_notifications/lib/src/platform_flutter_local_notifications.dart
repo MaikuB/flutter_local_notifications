@@ -314,14 +314,14 @@ class AndroidFlutterLocalNotificationsPlugin
         ?.toList();
   }
 
-  /// Returns the list of all notification channels
+  /// Returns the list of all notification channels.
   ///
-  /// This method for android less than 6.0 version will return an empty list
+  /// This method will return an empty list on Android versions older than 6.0.
   Future<List<AndroidNotificationChannel>> getNotificationChannels() async {
-    final List<Map<Object, Object>> notifications =
+    final List<Map<Object, Object>> notificationChannels =
         await _channel.invokeListMethod('getNotificationChannels');
 
-    return notifications
+    return notificationChannels
         // ignore: always_specify_types
         ?.map((a) => AndroidNotificationChannel(
               a['id'],
@@ -330,11 +330,29 @@ class AndroidFlutterLocalNotificationsPlugin
               groupId: a['groupId'],
               showBadge: a['showBadge'],
               importance: Importance(a['importance']),
-              sound: RawResourceAndroidNotificationSound(a['sound']),
+              playSound: a['playSound'],
+              sound: _getNotificationChannelSound(a),
+              enableLights: a['enableLights'],
+              enableVibration: a['enableVibration'],
               vibrationPattern: a['vibrationPattern'],
               ledColor: Color(a['ledColor']),
             ))
         ?.toList();
+  }
+
+  AndroidNotificationSound _getNotificationChannelSound(
+      Map<Object, Object> channelMap) {
+    final int soundSourceIndex = channelMap['soundSource'];
+    AndroidNotificationSound sound;
+    if (soundSourceIndex != null) {
+      if (soundSourceIndex ==
+          AndroidNotificationSoundSource.rawResource.index) {
+        sound = RawResourceAndroidNotificationSound(channelMap['sound']);
+      } else if (soundSourceIndex == AndroidNotificationSoundSource.uri.index) {
+        sound = UriAndroidNotificationSound(channelMap['sound']);
+      }
+    }
+    return sound;
   }
 
   Future<void> _handleMethod(MethodCall call) {
