@@ -42,6 +42,8 @@ class ReceivedNotification {
   final String payload;
 }
 
+String selectedNotificationPayload;
+
 /// IMPORTANT: running the following code on its own won't work as there is
 /// setup required for each platform head project.
 ///
@@ -55,6 +57,11 @@ Future<void> main() async {
 
   final NotificationAppLaunchDetails notificationAppLaunchDetails =
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  String initialRoute = HomePage.routeName;
+  if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
+    selectedNotificationPayload = notificationAppLaunchDetails.payload;
+    initialRoute = SecondPage.routeName;
+  }
 
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('app_icon');
@@ -85,13 +92,16 @@ Future<void> main() async {
     if (payload != null) {
       debugPrint('notification payload: $payload');
     }
+    selectedNotificationPayload = payload;
     selectNotificationSubject.add(payload);
   });
   runApp(
     MaterialApp(
-      home: HomePage(
-        notificationAppLaunchDetails,
-      ),
+      initialRoute: initialRoute,
+      routes: <String, WidgetBuilder>{
+        HomePage.routeName: (_) => HomePage(notificationAppLaunchDetails),
+        SecondPage.routeName: (_) => SecondPage(selectedNotificationPayload)
+      },
     ),
   );
 }
@@ -128,7 +138,10 @@ class HomePage extends StatefulWidget {
     Key key,
   }) : super(key: key);
 
+  static const String routeName = '/';
+
   final NotificationAppLaunchDetails notificationAppLaunchDetails;
+
   bool get didNotificationLaunchApp =>
       notificationAppLaunchDetails?.didNotificationLaunchApp ?? false;
 
@@ -185,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                   context,
                   MaterialPageRoute<void>(
                     builder: (BuildContext context) =>
-                        SecondScreen(receivedNotification.payload),
+                        SecondPage(receivedNotification.payload),
                   ),
                 );
               },
@@ -199,11 +212,7 @@ class _HomePageState extends State<HomePage> {
 
   void _configureSelectNotificationSubject() {
     selectNotificationSubject.stream.listen((String payload) async {
-      await Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-            builder: (BuildContext context) => SecondScreen(payload)),
-      );
+      await Navigator.pushNamed(context, '/secondPage');
     });
   }
 
@@ -314,6 +323,14 @@ class _HomePageState extends State<HomePage> {
                           'local time zone',
                       onPressed: () async {
                         await _scheduleDailyTenAMNotification();
+                      },
+                    ),
+                    PaddedRaisedButton(
+                      buttonText:
+                          'Schedule daily 10:00:00 am notification in your '
+                          "local time zone using last year's date",
+                      onPressed: () async {
+                        await _scheduleDailyTenAMLastYearNotification();
                       },
                     ),
                     PaddedRaisedButton(
@@ -449,6 +466,18 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedRaisedButton(
+                        buttonText: 'Show notification with tag',
+                        onPressed: () async {
+                          await _showNotificationWithTag();
+                        },
+                      ),
+                      PaddedRaisedButton(
+                        buttonText: 'Cancel notification with tag',
+                        onPressed: () async {
+                          await _cancelNotificationWithTag();
+                        },
+                      ),
+                      PaddedRaisedButton(
                         buttonText: 'Show ongoing notification',
                         onPressed: () async {
                           await _showOngoingNotification();
@@ -564,6 +593,12 @@ class _HomePageState extends State<HomePage> {
                           await _showNotificationWithAttachment();
                         },
                       ),
+                      PaddedRaisedButton(
+                        buttonText: 'Show notifications with thread identifier',
+                        onPressed: () async {
+                          await _showNotificationsWithThreadIdentifier();
+                        },
+                      ),
                     ],
                   ],
                 ),
@@ -589,44 +624,45 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showFullScreenNotification() async {
     await showDialog(
-        context: context,
-        child: AlertDialog(
-          title: const Text('Turn off your screen'),
-          content: const Text(
-              'to see the full-screen intent in 5 seconds, press OK and TURN '
-              'OFF your screen'),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Cancel'),
-            ),
-            FlatButton(
-              onPressed: () async {
-                await flutterLocalNotificationsPlugin.zonedSchedule(
-                    0,
-                    'scheduled title',
-                    'scheduled body',
-                    tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
-                    const NotificationDetails(
-                        android: AndroidNotificationDetails(
-                            'full screen channel id',
-                            'full screen channel name',
-                            'full screen channel description',
-                            priority: Priority.high,
-                            importance: Importance.high,
-                            fullScreenIntent: true)),
-                    androidAllowWhileIdle: true,
-                    uiLocalNotificationDateInterpretation:
-                        UILocalNotificationDateInterpretation.absoluteTime);
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Turn off your screen'),
+        content: const Text(
+            'to see the full-screen intent in 5 seconds, press OK and TURN '
+            'OFF your screen'),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+          FlatButton(
+            onPressed: () async {
+              await flutterLocalNotificationsPlugin.zonedSchedule(
+                  0,
+                  'scheduled title',
+                  'scheduled body',
+                  tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+                  const NotificationDetails(
+                      android: AndroidNotificationDetails(
+                          'full screen channel id',
+                          'full screen channel name',
+                          'full screen channel description',
+                          priority: Priority.high,
+                          importance: Importance.high,
+                          fullScreenIntent: true)),
+                  androidAllowWhileIdle: true,
+                  uiLocalNotificationDateInterpretation:
+                      UILocalNotificationDateInterpretation.absoluteTime);
 
-                Navigator.pop(context);
-              },
-              child: const Text('OK'),
-            )
-          ],
-        ));
+              Navigator.pop(context);
+            },
+            child: const Text('OK'),
+          )
+        ],
+      ),
+    );
   }
 
   Future<void> _showNotificationWithNoBody() async {
@@ -661,6 +697,10 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _cancelNotification() async {
     await flutterLocalNotificationsPlugin.cancel(0);
+  }
+
+  Future<void> _cancelNotificationWithTag() async {
+    await flutterLocalNotificationsPlugin.cancel(0, tag: 'tag');
   }
 
   Future<void> _showNotificationCustomSound() async {
@@ -1023,6 +1063,18 @@ class _HomePageState extends State<HomePage> {
         3, 'Attention', 'Two messages', platformChannelSpecifics);
   }
 
+  Future<void> _showNotificationWithTag() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            'your channel id', 'your channel name', 'your channel description',
+            importance: Importance.max, priority: Priority.high, tag: 'tag');
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+    await flutterLocalNotificationsPlugin.show(
+        0, 'first notification', null, platformChannelSpecifics);
+  }
+
   Future<void> _checkPendingNotificationRequests() async {
     final List<PendingNotificationRequest> pendingNotificationRequests =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
@@ -1091,6 +1143,25 @@ class _HomePageState extends State<HomePage> {
         matchDateTimeComponents: DateTimeComponents.time);
   }
 
+  /// To test we don't validate past dates when using `matchDateTimeComponents`
+  Future<void> _scheduleDailyTenAMLastYearNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'daily scheduled notification title',
+        'daily scheduled notification body',
+        _nextInstanceOfTenAMLastYear(),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'daily notification channel id',
+              'daily notification channel name',
+              'daily notification description'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time);
+  }
+
   Future<void> _scheduleWeeklyTenAMNotification() async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
@@ -1135,6 +1206,11 @@ class _HomePageState extends State<HomePage> {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
     return scheduledDate;
+  }
+
+  tz.TZDateTime _nextInstanceOfTenAMLastYear() {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    return tz.TZDateTime(tz.local, now.year - 1, now.month, now.day, 10);
   }
 
   tz.TZDateTime _nextInstanceOfMondayTenAM() {
@@ -1265,6 +1341,39 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.show(
         0, 'icon badge title', 'icon badge body', platformChannelSpecifics,
         payload: 'item x');
+  }
+
+  Future<void> _showNotificationsWithThreadIdentifier() async {
+    NotificationDetails buildNotificationDetailsForThread(
+      String threadIdentifier,
+    ) {
+      final IOSNotificationDetails iOSPlatformChannelSpecifics =
+          IOSNotificationDetails(threadIdentifier: threadIdentifier);
+      final MacOSNotificationDetails macOSPlatformChannelSpecifics =
+          MacOSNotificationDetails(threadIdentifier: threadIdentifier);
+      return NotificationDetails(
+          iOS: iOSPlatformChannelSpecifics,
+          macOS: macOSPlatformChannelSpecifics);
+    }
+
+    final NotificationDetails thread1PlatformChannelSpecifics =
+        buildNotificationDetailsForThread('thread1');
+    final NotificationDetails thread2PlatformChannelSpecifics =
+        buildNotificationDetailsForThread('thread2');
+
+    await flutterLocalNotificationsPlugin.show(
+        0, 'thread 1', 'first notification', thread1PlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        1, 'thread 1', 'second notification', thread1PlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        2, 'thread 1', 'third notification', thread1PlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+        3, 'thread 2', 'first notification', thread2PlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        4, 'thread 2', 'second notification', thread2PlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        5, 'thread 2', 'third notification', thread2PlatformChannelSpecifics);
   }
 
   Future<void> _showNotificationWithoutTimestamp() async {
@@ -1616,19 +1725,21 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class SecondScreen extends StatefulWidget {
-  const SecondScreen(
+class SecondPage extends StatefulWidget {
+  const SecondPage(
     this.payload, {
     Key key,
   }) : super(key: key);
 
+  static const String routeName = '/secondPage';
+
   final String payload;
 
   @override
-  State<StatefulWidget> createState() => SecondScreenState();
+  State<StatefulWidget> createState() => SecondPageState();
 }
 
-class SecondScreenState extends State<SecondScreen> {
+class SecondPageState extends State<SecondPage> {
   String _payload;
   @override
   void initState() {

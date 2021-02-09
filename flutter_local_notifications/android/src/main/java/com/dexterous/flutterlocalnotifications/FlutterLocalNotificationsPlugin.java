@@ -120,6 +120,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
     private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a drawable resource to your Android head project.";
     private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE = "The resource %s could not be found. Please make sure it has been added as a raw resource to your Android head project.";
+    private static final String CANCEL_ID = "id";
+    private static final String CANCEL_TAG = "tag";
     static String NOTIFICATION_DETAILS = "notificationDetails";
     static Gson gson;
     private MethodChannel channel;
@@ -275,7 +277,22 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         SharedPreferences sharedPreferences = context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(SCHEDULED_NOTIFICATIONS, json);
-        editor.commit();
+        tryCommittingInBackground(editor, 3);
+    }
+
+    private static void tryCommittingInBackground(final SharedPreferences.Editor editor, final int tries) {
+        if(tries == 0) {
+            return;
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final boolean isCommitted = editor.commit();
+                if(!isCommitted) {
+                    tryCommittingInBackground(editor, tries - 1);
+                }
+            }
+        }).start();
     }
 
     static void removeNotificationFromCache(Context context, Integer notificationId) {
@@ -772,7 +789,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     static void showNotification(Context context, NotificationDetails notificationDetails) {
         Notification notification = createNotification(context, notificationDetails);
         NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
-        notificationManagerCompat.notify(notificationDetails.id, notification);
+
+        if (notificationDetails.tag != null) {
+            notificationManagerCompat.notify(notificationDetails.tag, notificationDetails.id, notification);
+        } else {
+            notificationManagerCompat.notify(notificationDetails.id, notification);
+        }
     }
 
     static void zonedScheduleNextNotification(Context context, NotificationDetails notificationDetails) {
@@ -983,8 +1005,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     private void cancel(MethodCall call, Result result) {
-        Integer id = call.arguments();
-        cancelNotification(id);
+        Map<String, Object> arguments = call.arguments();
+        Integer id = (Integer) arguments.get(CANCEL_ID);
+        String tag = (String) arguments.get(CANCEL_TAG);
+        cancelNotification(id, tag);
         result.success(null);
     }
 
@@ -1051,11 +1075,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         SharedPreferences sharedPreferences = applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(DEFAULT_ICON, defaultIcon);
-        editor.commit();
-
-        if (mainActivity != null && !launchedActivityFromHistory(mainActivity.getIntent())) {
-            sendNotificationPayloadMessage(mainActivity.getIntent());
-        }
+        tryCommittingInBackground(editor, 3);
         result.success(true);
     }
 
@@ -1115,13 +1135,17 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return !StringUtils.isNullOrEmpty(icon) && !isValidDrawableResource(applicationContext, icon, result, INVALID_ICON_ERROR_CODE);
     }
 
-    private void cancelNotification(Integer id) {
+    private void cancelNotification(Integer id, String tag) {
         Intent intent = new Intent(applicationContext, ScheduledNotificationReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(applicationContext, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = getAlarmManager(applicationContext);
         alarmManager.cancel(pendingIntent);
         NotificationManagerCompat notificationManager = getNotificationManager(applicationContext);
-        notificationManager.cancel(id);
+        if (tag == null) {
+            notificationManager.cancel(id);
+        } else {
+            notificationManager.cancel(tag, id);
+        }
         removeNotificationFromCache(applicationContext, id);
     }
 

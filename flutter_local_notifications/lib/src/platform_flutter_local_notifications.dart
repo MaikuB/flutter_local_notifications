@@ -125,10 +125,10 @@ class AndroidFlutterLocalNotificationsPlugin
     AndroidNotificationDetails notificationDetails, {
     @required bool androidAllowWhileIdle,
     String payload,
-    DateTimeComponents matchDateComponents,
+    DateTimeComponents matchDateTimeComponents,
   }) async {
     validateId(id);
-    validateDateIsInTheFuture(scheduledDate);
+    validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
     ArgumentError.checkNotNull(androidAllowWhileIdle, 'androidAllowWhileIdle');
     final Map<String, Object> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
@@ -143,10 +143,10 @@ class AndroidFlutterLocalNotificationsPlugin
           'payload': payload ?? ''
         }
           ..addAll(scheduledDate.toMap())
-          ..addAll(matchDateComponents == null
+          ..addAll(matchDateTimeComponents == null
               ? <String, Object>{}
               : <String, Object>{
-                  'matchDateTimeComponents': matchDateComponents.index
+                  'matchDateTimeComponents': matchDateTimeComponents.index
                 }));
   }
 
@@ -244,6 +244,24 @@ class AndroidFlutterLocalNotificationsPlugin
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? '',
+    });
+  }
+
+  /// Cancel/remove the notification with the specified id.
+  ///
+  /// This applies to notifications that have been scheduled and those that
+  /// have already been presented.
+  ///
+  /// The `tag` parameter specifies the Android tag. If it is provided,
+  /// then the notification that matches both the id and the tag will
+  /// be canceled. `tag` has no effect on other platforms.
+  @override
+  Future<void> cancel(int id, {String tag}) async {
+    validateId(id);
+
+    return _channel.invokeMethod('cancel', <String, Object>{
+      'id': id,
+      'tag': tag,
     });
   }
 
@@ -426,7 +444,7 @@ class IOSFlutterLocalNotificationsPlugin
     DateTimeComponents matchDateTimeComponents,
   }) async {
     validateId(id);
-    validateDateIsInTheFuture(scheduledDate);
+    validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
     ArgumentError.checkNotNull(uiLocalNotificationDateInterpretation,
         'uiLocalNotificationDateInterpretation');
     final Map<String, Object> serializedPlatformSpecifics =
@@ -615,7 +633,7 @@ class MacOSFlutterLocalNotificationsPlugin
     DateTimeComponents matchDateTimeComponents,
   }) async {
     validateId(id);
-    validateDateIsInTheFuture(scheduledDate);
+    validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
     final Map<String, Object> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
     await _channel.invokeMethod(

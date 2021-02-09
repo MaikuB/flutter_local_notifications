@@ -146,6 +146,7 @@ void main() {
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -224,6 +225,7 @@ void main() {
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -304,6 +306,7 @@ void main() {
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -383,6 +386,7 @@ void main() {
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -467,6 +471,7 @@ void main() {
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -550,6 +555,7 @@ void main() {
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -632,6 +638,7 @@ void main() {
                 'htmlFormatContent': true,
                 'htmlFormatTitle': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -723,6 +730,7 @@ void main() {
                 'htmlFormatSummaryText': false,
                 'hideExpandedLargeIcon': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -824,6 +832,7 @@ void main() {
                 'htmlFormatSummaryText': true,
                 'hideExpandedLargeIcon': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -915,6 +924,7 @@ void main() {
                 'htmlFormatSummaryText': false,
                 'hideExpandedLargeIcon': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -1016,6 +1026,7 @@ void main() {
                 'htmlFormatSummaryText': true,
                 'hideExpandedLargeIcon': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -1104,6 +1115,7 @@ void main() {
                 'htmlFormatSummaryText': false,
                 'htmlFormatLines': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -1199,6 +1211,7 @@ void main() {
                 'htmlFormatSummaryText': true,
                 'htmlFormatLines': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -1279,6 +1292,7 @@ void main() {
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -1362,6 +1376,7 @@ void main() {
                 'htmlFormatContent': true,
                 'htmlFormatTitle': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -1470,6 +1485,7 @@ void main() {
                   }
                 ],
               },
+              'tag': null,
             },
           }));
     });
@@ -1591,6 +1607,7 @@ void main() {
                   }
                 ],
               },
+              'tag': null,
             },
           }));
     });
@@ -1679,6 +1696,7 @@ void main() {
                   'htmlFormatContent': false,
                   'htmlFormatTitle': false,
                 },
+                'tag': null,
               },
             }));
       });
@@ -1769,6 +1787,7 @@ void main() {
                   'htmlFormatContent': false,
                   'htmlFormatTitle': false,
                 },
+                'tag': null,
               },
             }));
       });
@@ -1860,6 +1879,7 @@ void main() {
                   'htmlFormatContent': false,
                   'htmlFormatTitle': false,
                 },
+                'tag': null,
               },
             }));
       });
@@ -1986,7 +2006,22 @@ void main() {
 
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
-      expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);
+      expect(log, <Matcher>[
+        isMethodCall('cancel', arguments: <String, Object>{
+          'id': 1,
+          'tag': null,
+        })
+      ]);
+    });
+
+    test('cancel with tag', () async {
+      await flutterLocalNotificationsPlugin.cancel(1, tag: 'tag');
+      expect(log, <Matcher>[
+        isMethodCall('cancel', arguments: <String, Object>{
+          'id': 1,
+          'tag': 'tag',
+        })
+      ]);
     });
 
     test('cancelAll', () async {
@@ -2141,6 +2176,7 @@ void main() {
               'subtitle': 'a subtitle',
               'sound': 'sound.mp3',
               'badgeNumber': 1,
+              'threadIdentifier': null,
               'attachments': <Map<String, Object>>[
                 <String, Object>{
                   'filePath': 'video.mp4',
@@ -2203,6 +2239,7 @@ void main() {
                 'subtitle': null,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2266,6 +2303,7 @@ void main() {
                 'subtitle': null,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2330,6 +2368,7 @@ void main() {
                 'subtitle': null,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2491,6 +2530,7 @@ void main() {
               presentSound: true,
               sound: 'sound.mp3',
               badgeNumber: 1,
+              threadIdentifier: 'thread',
               attachments: <MacOSNotificationAttachment>[
             MacOSNotificationAttachment('video.mp4',
                 identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373'),
@@ -2513,6 +2553,7 @@ void main() {
               'presentSound': true,
               'sound': 'sound.mp3',
               'badgeNumber': 1,
+              'threadIdentifier': 'thread',
               'attachments': <Map<String, Object>>[
                 <String, Object>{
                   'filePath': 'video.mp4',
@@ -2573,6 +2614,7 @@ void main() {
                 'presentSound': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2634,6 +2676,7 @@ void main() {
                 'presentSound': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2696,6 +2739,7 @@ void main() {
                 'presentSound': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',

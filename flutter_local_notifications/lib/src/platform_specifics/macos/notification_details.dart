@@ -11,6 +11,7 @@ class MacOSNotificationDetails {
     this.badgeNumber,
     this.attachments,
     this.subtitle,
+    this.threadIdentifier,
   });
 
   /// Display an alert when the notification is triggered while app is
@@ -62,4 +63,10 @@ class MacOSNotificationDetails {
 
   /// Specifies the secondary description.
   final String subtitle;
+
+  /// Specifies the thread identifier that can be used to group
+  /// notifications together.
+  ///
+  /// This property is only applicable to macOS 10.14 or newer.
+  final String threadIdentifier;
 }
