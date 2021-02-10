@@ -2,16 +2,19 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
 
 import 'helpers.dart';
 import 'platform_specifics/android/active_notification.dart';
+import 'platform_specifics/android/enums.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
 import 'platform_specifics/android/notification_channel.dart';
 import 'platform_specifics/android/notification_channel_group.dart';
 import 'platform_specifics/android/notification_details.dart';
+import 'platform_specifics/android/notification_sound.dart';
 import 'platform_specifics/ios/enums.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/method_channel_mappers.dart';
@@ -309,6 +312,47 @@ class AndroidFlutterLocalNotificationsPlugin
               a['body'],
             ))
         ?.toList();
+  }
+
+  /// Returns the list of all notification channels.
+  ///
+  /// This method will return an empty list on Android versions older than 6.0.
+  Future<List<AndroidNotificationChannel>> getNotificationChannels() async {
+    final List<Map<Object, Object>> notificationChannels =
+        await _channel.invokeListMethod('getNotificationChannels');
+
+    return notificationChannels
+        // ignore: always_specify_types
+        ?.map((a) => AndroidNotificationChannel(
+              a['id'],
+              a['name'],
+              a['description'],
+              groupId: a['groupId'],
+              showBadge: a['showBadge'],
+              importance: Importance(a['importance']),
+              playSound: a['playSound'],
+              sound: _getNotificationChannelSound(a),
+              enableLights: a['enableLights'],
+              enableVibration: a['enableVibration'],
+              vibrationPattern: a['vibrationPattern'],
+              ledColor: Color(a['ledColor']),
+            ))
+        ?.toList();
+  }
+
+  AndroidNotificationSound _getNotificationChannelSound(
+      Map<Object, Object> channelMap) {
+    final int soundSourceIndex = channelMap['soundSource'];
+    AndroidNotificationSound sound;
+    if (soundSourceIndex != null) {
+      if (soundSourceIndex ==
+          AndroidNotificationSoundSource.rawResource.index) {
+        sound = RawResourceAndroidNotificationSound(channelMap['sound']);
+      } else if (soundSourceIndex == AndroidNotificationSoundSource.uri.index) {
+        sound = UriAndroidNotificationSound(channelMap['sound']);
+      }
+    }
+    return sound;
   }
 
   Future<void> _handleMethod(MethodCall call) {
