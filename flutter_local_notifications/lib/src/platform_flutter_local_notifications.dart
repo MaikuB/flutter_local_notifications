@@ -316,7 +316,8 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Returns the list of all notification channels.
   ///
-  /// This method will return an empty list on Android versions older than 6.0.
+  /// This method is only applicable on Android 8.0 or newer. On older versions,
+  /// it will return an empty list.
   Future<List<AndroidNotificationChannel>> getNotificationChannels() async {
     final List<Map<Object, Object>> notificationChannels =
         await _channel.invokeListMethod('getNotificationChannels');
