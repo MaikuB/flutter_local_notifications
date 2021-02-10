@@ -1,6 +1,6 @@
 # [4.0.1]
 
-* Added the `getNotificationChannels` method to the `AndroidFlutterLocalNotificationsPlugin` class. Thanks to the PR from [Shapovalova Vera](https://github.com/VAShapovalova)
+* [Android] added the `getNotificationChannels` method to the `AndroidFlutterLocalNotificationsPlugin` class. This can be used to a get list of all the notification channels on devices with Android 8.0 or newer. Thanks to the PR from [Shapovalova Vera](https://github.com/VAShapovalova)
 
 # [4.0.0]
 
