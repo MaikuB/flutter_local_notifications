@@ -1,3 +1,7 @@
+# [4.0.1]
+
+* Added the `getNotificationChannels` method to the `AndroidFlutterLocalNotificationsPlugin` class. Thanks to the PR from [Shapovalova Vera](https://github.com/VAShapovalova)
+
 # [4.0.0]
 
 * **Breaking change** calling `initialize` will no longer trigger the `onSelectNotification` if a notification was tapped on prior to calling `initialize`. This was done as the `getNotificationAppLaunchDetails` method already provided a way to handle when an application was launched by a notification. Furthermore, calling `initialize` multiple times (e.g. on different pages) would have previously caused the `onSelectNotification` callback multiples times as well. This potentially results in the same notification being processed again

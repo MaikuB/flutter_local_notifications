@@ -558,15 +558,15 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedRaisedButton(
-                        buttonText: 'Get active notifications',
-                        onPressed: () async {
-                          await _getActiveNotifications();
-                        },
-                      ),
-                      PaddedRaisedButton(
                         buttonText: 'Get notification channels',
                         onPressed: () async {
                           await _getNotificationChannels();
+                        },
+                      ),
+                      PaddedRaisedButton(
+                        buttonText: 'Get active notifications',
+                        onPressed: () async {
+                          await _getActiveNotifications();
                         },
                       ),
                     ],
