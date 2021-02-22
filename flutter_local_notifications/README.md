@@ -302,7 +302,7 @@ The `IOSInitializationSettings` and `MacOSInitializationSettings` provides defau
 
 On iOS and macOS, initialisation may show a prompt to requires users to give the application permission to display notifications (note: permissions don't need to be requested on Android). Depending on when this happens, this may not be the ideal user experience for your application. If so, please refer to the next section on how to work around this.
 
-*Note*: from version 4.0 of the plugin, calling `initialize` will now trigger the `onSelectNotification` callback when the application was started by tapping on a notification to trigger. Use the `getNotificationAppLaunchDetails` method that is available in the plugin if you need to handle a notification triggering the launch for an app e.g. change the home route of the app for deep-linking.
+*Note*: from version 4.0 of the plugin, calling `initialize` will not trigger the `onSelectNotification` callback when the application was started by tapping on a notification to trigger. Use the `getNotificationAppLaunchDetails` method that is available in the plugin if you need to handle a notification triggering the launch for an app e.g. change the home route of the app for deep-linking.
 
 ### [iOS (all supported versions) and macOS 10.14+] Requesting notification permissions
 

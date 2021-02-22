@@ -1,3 +1,7 @@
+# [4.0.1+1]
+
+* Fixed typo in readme around the note relating to version 4.0 of the plugin where `onSelectNotification` will not be triggered when an app is launched by tapping on a notification.
+
 # [4.0.1]
 
 * [Android] added the `getNotificationChannels` method to the `AndroidFlutterLocalNotificationsPlugin` class. This can be used to a get list of all the notification channels on devices with Android 8.0 or newer. Thanks to the PR from [Shapovalova Vera](https://github.com/VAShapovalova)
