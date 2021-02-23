@@ -385,6 +385,7 @@ class IOSFlutterLocalNotificationsPlugin
   /// to do this when the application runs for the first time. However, if your
   /// applicationn needs to do this at a later point in time, set the
   /// [IOSInitializationSettings.requestAlertPermission],
+  /// [IOSInitializationSettings.requestCriticalAlertPermission],
   /// [IOSInitializationSettings.requestBadgePermission] and
   /// [IOSInitializationSettings.requestSoundPermission] values to false.
   /// [requestPermissions] can then be called to request permissions when
@@ -613,6 +614,7 @@ class MacOSFlutterLocalNotificationsPlugin
   /// to do this when the application runs for the first time. However, if your
   /// applicationn needs to do this at a later point in time, set the
   /// [MacOSInitializationSettings.requestAlertPermission],
+  /// [MacOSInitializationSettings.requestCriticalAlertPermission],
   /// [MacOSInitializationSettings.requestBadgePermission] and
   /// [MacOSInitializationSettings.requestSoundPermission] values to false.
   /// [requestPermissions] can then be called to request permissions when

@@ -5,6 +5,7 @@ class IOSInitializationSettings {
   /// Constructs an instance of [IOSInitializationSettings].
   const IOSInitializationSettings({
     this.requestAlertPermission = true,
+    this.requestCriticalAlertPermission = false,
     this.requestSoundPermission = true,
     this.requestBadgePermission = true,
     this.defaultPresentAlert = true,
@@ -12,6 +13,7 @@ class IOSInitializationSettings {
     this.defaultPresentBadge = true,
     this.onDidReceiveLocalNotification,
   })  : assert(requestAlertPermission != null),
+        assert(requestCriticalAlertPermission != null),
         assert(requestSoundPermission != null),
         assert(requestBadgePermission != null),
         assert(defaultPresentAlert != null),
@@ -21,6 +23,11 @@ class IOSInitializationSettings {
   /// Request permission to display an alert.
   ///
   /// Default value is true.
+  final bool requestAlertPermission;
+
+  /// Default value is false.
+  ///
+  /// This property is only applicable to iOS 12 or newer.
   final bool requestAlertPermission;
 
   /// Request permission to play a sound.

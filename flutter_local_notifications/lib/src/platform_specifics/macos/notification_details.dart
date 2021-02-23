@@ -5,6 +5,7 @@ class MacOSNotificationDetails {
   /// Constructs an instance of [MacOSNotificationDetails].
   const MacOSNotificationDetails({
     this.presentAlert,
+    this.presentCriticalAlert,
     this.presentBadge,
     this.presentSound,
     this.sound,
@@ -22,6 +23,12 @@ class MacOSNotificationDetails {
   ///
   /// This property is only applicable to macOS 10.14 or newer.
   final bool presentAlert;
+
+  /// When this is set to `null`, it will use the default setting given
+  /// to [MacOSInitializationSettings.defaultPresentCriticalAlert].
+  ///
+  /// This property is only applicable to macOS 12.0 or newer.
+  final bool presentCrticalAlert;
 
   /// Play a sound when the notification is triggered while app is in
   /// the foreground.

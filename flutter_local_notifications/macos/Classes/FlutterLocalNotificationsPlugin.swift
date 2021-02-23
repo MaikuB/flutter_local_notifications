@@ -6,16 +6,20 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     
     struct MethodCallArguments {
         static let presentAlert = "presentAlert"
+        static let presentCriticalAlert = "presentCriticalAlert"
         static let presentSound = "presentSound"
         static let presentBadge = "presentBadge"
         static let payload = "payload"
         static let defaultPresentAlert = "defaultPresentAlert"
+        static let defaultPresentCritialAlert = "defaultPresentCriticalAlert"
         static let defaultPresentSound = "defaultPresentSound"
         static let defaultPresentBadge = "defaultPresentBadge"
         static let requestAlertPermission = "requestAlertPermission"
+        static let requestCritialAlertPermission = "requestCritialAlertPermission"
         static let requestSoundPermission = "requestSoundPermission"
         static let requestBadgePermission = "requestBadgePermission"
         static let alert = "alert"
+        static let criticalAlert = "criticalAlert"
         static let sound = "sound"
         static let badge = "badge"
         static let notificationLaunchedApp = "notificationLaunchedApp"
@@ -59,6 +63,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     var channel: FlutterMethodChannel
     var initialized = false
     var defaultPresentAlert = false
+    var defaultPresentCriticalAlert = false
     var defaultPresentSound = false
     var defaultPresentBadge = false
     var launchPayload: String?
@@ -86,10 +91,16 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         var options:UNNotificationPresentationOptions = []
         let presentAlert = notification.request.content.userInfo[MethodCallArguments.presentAlert] as! Bool
+        let presentCriticalAlert = notification.request.content.userInfo[MethodCallArguments.presentCriticalAler] as! Bool
         let presentSound = notification.request.content.userInfo[MethodCallArguments.presentSound] as! Bool
         let presentBadge = notification.request.content.userInfo[MethodCallArguments.presentBadge] as! Bool
         if presentAlert {
             options.insert(.alert)
+        }
+        if #available(OSX 12.0 *) {
+            if presentCriticalAlert {
+                options.insert(.criticalAlert)
+            }
         }
         if presentSound {
             options.insert(.sound)
@@ -149,13 +160,14 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     func initialize(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         let arguments = call.arguments as! Dictionary<String, AnyObject>
         defaultPresentAlert = arguments[MethodCallArguments.defaultPresentAlert] as! Bool
+        defaultPresentCriticalAlert = arguments[MethodCallArguments.defaultPresentCriticalAlert] as! Bool
         defaultPresentSound = arguments[MethodCallArguments.defaultPresentSound] as! Bool
         defaultPresentBadge = arguments[MethodCallArguments.defaultPresentBadge] as! Bool
         if #available(OSX 10.14, *) {
             let requestedAlertPermission = arguments[MethodCallArguments.requestAlertPermission] as! Bool
             let requestedSoundPermission = arguments[MethodCallArguments.requestSoundPermission] as! Bool
             let requestedBadgePermission = arguments[MethodCallArguments.requestBadgePermission] as! Bool
-            requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, result: result)
+            requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, criticalAlertPermission: requestCriticalAlertPermission, badgePermission: requestedBadgePermission, result: result)
             initialized = true
         }
         else {
@@ -168,9 +180,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         if #available(OSX 10.14, *) {
             let arguments = call.arguments as! Dictionary<String, AnyObject>
             let requestedAlertPermission = arguments[MethodCallArguments.alert] as! Bool
+            let requestedCriticalAlertPermission = arguments[MethodCallArguments.criticalAlert] as! Bool
             let requestedSoundPermission = arguments[MethodCallArguments.sound] as! Bool
             let requestedBadgePermission = arguments[MethodCallArguments.badge] as! Bool
-            requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, result: result)
+            requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, criticalAlertPermission: requestCriticalAlertPermission, badgePermission: requestedBadgePermission, result: result)
         } else {
             result(nil)
         }
@@ -354,6 +367,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         var presentSound = defaultPresentSound
         var presentBadge = defaultPresentBadge
         var presentAlert = defaultPresentAlert
+        var presentCriticalAlert = defaultPresentCriticalAlert
         if let platformSpecifics = arguments[MethodCallArguments.platformSpecifics] as? Dictionary<String, AnyObject> {
             if let sound = platformSpecifics[MethodCallArguments.sound] as? String {
                 content.sound = UNNotificationSound.init(named: UNNotificationSoundName.init(sound))
@@ -366,6 +380,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             }
             if !(platformSpecifics[MethodCallArguments.presentAlert] is NSNull) && platformSpecifics[MethodCallArguments.presentAlert] != nil {
                 presentAlert = platformSpecifics[MethodCallArguments.presentAlert] as! Bool
+            }
+            if !(platformSpecifics[MethodCallArguments.presentCriticalAlert] is NSNull) && platformSpecifics[MethodCallArguments.presentCriticalAlert] != nil {
+                presentCriticalAlert = platformSpecifics[MethodCallArguments.presentCriticalAlert] as! Bool
             }
             if !(platformSpecifics[MethodCallArguments.presentBadge] is NSNull) && platformSpecifics[MethodCallArguments.presentBadge] != nil {
                 presentBadge = platformSpecifics[MethodCallArguments.presentBadge] as! Bool
@@ -383,7 +400,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 }
             }
         }
-        content.userInfo = [MethodCallArguments.payload: arguments[MethodCallArguments.payload] as Any, MethodCallArguments.presentSound: presentSound, MethodCallArguments.presentBadge: presentBadge, MethodCallArguments.presentAlert: presentAlert]
+        content.userInfo = [MethodCallArguments.payload: arguments[MethodCallArguments.payload] as Any, MethodCallArguments.presentSound: presentSound, MethodCallArguments.presentBadge: presentBadge, MethodCallArguments.presentAlert: presentAlert, MethodCallArguments.presentCriticalAlert: presentCriticalAlert]
         if presentSound && content.sound == nil {
             content.sound = UNNotificationSound.default
         }
@@ -440,13 +457,18 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
     
     @available(OSX 10.14, *)
-    func requestPermissionsImpl(soundPermission: Bool, alertPermission: Bool, badgePermission: Bool, result: @escaping FlutterResult) {
+    func requestPermissionsImpl(soundPermission: Bool, alertPermission: Bool, criticalAlertPermission: Bool, badgePermission: Bool, result: @escaping FlutterResult) {
         var options: UNAuthorizationOptions = []
         if(soundPermission) {
             options.insert(.sound)
         }
         if(alertPermission) {
             options.insert(.alert)
+        }
+        if #available(OSX 12.0 *) {
+            if(criticalAlertPermission) {
+                options.insert(.criticalAlert)
+            }
         }
         if(badgePermission) {
             options.insert(.badge)

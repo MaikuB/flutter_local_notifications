@@ -34,11 +34,14 @@ NSString *const DAY = @"day";
 
 NSString *const REQUEST_SOUND_PERMISSION = @"requestSoundPermission";
 NSString *const REQUEST_ALERT_PERMISSION = @"requestAlertPermission";
+NSString *const REQUEST_CRITICALALERT_PERMISSION = @"requestCriticalAlertPermission";
 NSString *const REQUEST_BADGE_PERMISSION = @"requestBadgePermission";
 NSString *const SOUND_PERMISSION = @"sound";
 NSString *const ALERT_PERMISSION = @"alert";
+NSString *const CRITICALALERT_PERMISSION = @"criticalAlert";
 NSString *const BADGE_PERMISSION = @"badge";
 NSString *const DEFAULT_PRESENT_ALERT = @"defaultPresentAlert";
+NSString *const DEFAULT_PRESENT_CRITICALALERT = @"defaultPresentCriticalAlert";
 NSString *const DEFAULT_PRESENT_SOUND = @"defaultPresentSound";
 NSString *const DEFAULT_PRESENT_BADGE = @"defaultPresentBadge";
 NSString *const CALLBACK_DISPATCHER = @"callbackDispatcher";
@@ -54,6 +57,7 @@ NSString *const ATTACHMENT_IDENTIFIER = @"identifier";
 NSString *const ATTACHMENT_FILE_PATH = @"filePath";
 NSString *const THREAD_IDENTIFIER = @"threadIdentifier";
 NSString *const PRESENT_ALERT = @"presentAlert";
+NSString *const PRESENT_CRITICALALERT = @"presentCriticalAlert";
 NSString *const PRESENT_SOUND = @"presentSound";
 NSString *const PRESENT_BADGE = @"presentBadge";
 NSString *const BADGE_NUMBER = @"badgeNumber";
@@ -210,6 +214,9 @@ static FlutterError *getFlutterError(NSError *error) {
     if([self containsKey:DEFAULT_PRESENT_ALERT forDictionary:arguments]) {
         _displayAlert = [[arguments objectForKey:DEFAULT_PRESENT_ALERT] boolValue];
     }
+    if([self containsKey:DEFAULT_PRESENT_CRITICALALERT forDictionary:arguments]) {
+        _displayCriticalAlert = [[arguments objectForKey:DEFAULT_PRESENT_CRITICALALERT] boolValue];
+    }
     if([self containsKey:DEFAULT_PRESENT_SOUND forDictionary:arguments]) {
         _playSound = [[arguments objectForKey:DEFAULT_PRESENT_SOUND] boolValue];
     }
@@ -218,6 +225,7 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     bool requestedSoundPermission = false;
     bool requestedAlertPermission = false;
+    bool requestedCriticalAlertPermission = false;
     bool requestedBadgePermission = false;
     if([self containsKey:REQUEST_SOUND_PERMISSION forDictionary:arguments]) {
         requestedSoundPermission = [arguments[REQUEST_SOUND_PERMISSION] boolValue];
@@ -225,10 +233,13 @@ static FlutterError *getFlutterError(NSError *error) {
     if([self containsKey:REQUEST_ALERT_PERMISSION forDictionary:arguments]) {
         requestedAlertPermission = [arguments[REQUEST_ALERT_PERMISSION] boolValue];
     }
+    if([self containsKey:REQUEST_CRTITICALALERT_PERMISSION forDictionary:arguments]) {
+        requestedCriticalAlertPermission = [arguments[REQUEST_CRTITICALALERT_PERMISSION] boolValue];
+    }
     if([self containsKey:REQUEST_BADGE_PERMISSION forDictionary:arguments]) {
         requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
     }
-    [self requestPermissionsImpl:requestedSoundPermission alertPermission:requestedAlertPermission badgePermission:requestedBadgePermission  result:result];
+    [self requestPermissionsImpl:requestedSoundPermission alertPermission:requestedAlertPermission criticalAlertPermission:requestedCriticalAlertPermission badgePermission:requestedBadgePermission  result:result];
     
     _initialized = true;
 }
@@ -236,6 +247,7 @@ static FlutterError *getFlutterError(NSError *error) {
 - (void)requestPermissions:(NSDictionary * _Nonnull)arguments result:(FlutterResult _Nonnull)result {
     bool soundPermission = false;
     bool alertPermission = false;
+    bool criticalAlertPermission = false;
     bool badgePermission = false;
     if([self containsKey:SOUND_PERMISSION forDictionary:arguments]) {
         soundPermission = [arguments[SOUND_PERMISSION] boolValue];
@@ -243,14 +255,18 @@ static FlutterError *getFlutterError(NSError *error) {
     if([self containsKey:ALERT_PERMISSION forDictionary:arguments]) {
         alertPermission = [arguments[ALERT_PERMISSION] boolValue];
     }
+    if([self containsKey:CRTITICALALERT_PERMISSION forDictionary:arguments]) {
+        criticalAlertPermission = [arguments[CRITICALALERT_PERMISSION] boolValue];
+    }
     if([self containsKey:BADGE_PERMISSION forDictionary:arguments]) {
         badgePermission = [arguments[BADGE_PERMISSION] boolValue];
     }
-    [self requestPermissionsImpl:soundPermission alertPermission:alertPermission badgePermission:badgePermission result:result];
+    [self requestPermissionsImpl:soundPermission alertPermission:alertPermission criticalAlertPermission:criticalAlertPermission badgePermission:badgePermission result:result];
 }
 
 - (void)requestPermissionsImpl:(bool)soundPermission
                alertPermission:(bool)alertPermission
+               crticalAlertPermission:(bool)criticalAlertPermission
                badgePermission:(bool)badgePermission
                         result:(FlutterResult _Nonnull)result{
     if(@available(iOS 10.0, *)) {
@@ -262,6 +278,11 @@ static FlutterError *getFlutterError(NSError *error) {
         }
         if (alertPermission) {
             authorizationOptions += UNAuthorizationOptionAlert;
+        }
+        if(@available(iOS 12.0, *)) {
+            if (criticalAlertPermission) {
+                authorizationOptions += UNAuthorizationOptionCriticalAlert;
+            }
         }
         if (badgePermission) {
             authorizationOptions += UNAuthorizationOptionBadge;
@@ -301,6 +322,7 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     
     bool presentAlert = _displayAlert;
+    bool presentCriticalAlert = _displayCriticalAlert;
     bool presentSound = _playSound;
     bool presentBadge = _updateBadge;
     if(arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
@@ -308,6 +330,9 @@ static FlutterError *getFlutterError(NSError *error) {
         
         if([self containsKey:PRESENT_ALERT forDictionary:platformSpecifics]) {
             presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
+        }
+        if([self containsKey:PRESENT_CRITICALALERT forDictionary:platformSpecifics]) {
+            presentCriticalAlert = [[platformSpecifics objectForKey:PRESENT_CRITICALALERT] boolValue];
         }
         if([self containsKey:PRESENT_SOUND forDictionary:platformSpecifics]) {
             presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
@@ -329,7 +354,7 @@ static FlutterError *getFlutterError(NSError *error) {
         notification.soundName = UILocalNotificationDefaultSoundName;
     }
     
-    notification.userInfo = [self buildUserDict:arguments[ID] title:title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge payload:arguments[PAYLOAD]];
+    notification.userInfo = [self buildUserDict:arguments[ID] title:title presentAlert:presentAlert presentCriticalAlert:presentCriticalAlert presentSound:presentSound presentBadge:presentBadge payload:arguments[PAYLOAD]];
     return notification;
 }
 
@@ -536,12 +561,16 @@ static FlutterError *getFlutterError(NSError *error) {
         content.body = arguments[BODY];
     }
     bool presentAlert = _displayAlert;
+    bool presentCriticalAlert = _displayCriticalAlert;
     bool presentSound = _playSound;
     bool presentBadge = _updateBadge;
     if(arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
         NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
         if([self containsKey:PRESENT_ALERT forDictionary:platformSpecifics]) {
             presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
+        }
+        if([self containsKey:PRESENT_CRITICALALERT forDictionary:platformSpecifics]) {
+            presentCriticalAlert = [[platformSpecifics objectForKey:PRESENT_CRITICALALERT] boolValue];
         }
         if([self containsKey:PRESENT_SOUND forDictionary:platformSpecifics]) {
             presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
@@ -583,7 +612,7 @@ static FlutterError *getFlutterError(NSError *error) {
     if(presentSound && content.sound == nil) {
         content.sound = UNNotificationSound.defaultSound;
     }
-    content.userInfo = [self buildUserDict:arguments[ID] title:content.title presentAlert:presentAlert presentSound:presentSound presentBadge:presentBadge payload:arguments[PAYLOAD]];
+    content.userInfo = [self buildUserDict:arguments[ID] title:content.title presentAlert:presentAlert presentCriticalAlert:presentCriticalAlert presentSound:presentSound presentBadge:presentBadge payload:arguments[PAYLOAD]];
     return content;
 }
 
@@ -653,13 +682,14 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 
-- (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge payload:(NSString *)payload {
+- (NSDictionary*)buildUserDict:(NSNumber *)id title:(NSString *)title presentAlert:(bool)presentAlert presentCriticalAlert:(bool)presentCriticalAlert presentSound:(bool)presentSound presentBadge:(bool)presentBadge payload:(NSString *)payload {
     NSMutableDictionary *userDict = [[NSMutableDictionary alloc] init];
     userDict[NOTIFICATION_ID] = id;
     if(title) {
         userDict[TITLE] = title;
     }
     userDict[PRESENT_ALERT] = [NSNumber numberWithBool:presentAlert];
+    userDict[PRESENT_CRITICALALERT] = [NSNumber numberWithBool:presentCriticalAlert];
     userDict[PRESENT_SOUND] = [NSNumber numberWithBool:presentSound];
     userDict[PRESENT_BADGE] = [NSNumber numberWithBool:presentBadge];
     userDict[PAYLOAD] = payload;
@@ -698,9 +728,11 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     UNNotificationPresentationOptions presentationOptions = 0;
     NSNumber *presentAlertValue = (NSNumber*)notification.request.content.userInfo[PRESENT_ALERT];
+    NSNumber *presentCriticalAlertValue = (NSNumber*)notification.request.content.userInfo[PRESENT_CRITICALALERT];
     NSNumber *presentSoundValue = (NSNumber*)notification.request.content.userInfo[PRESENT_SOUND];
     NSNumber *presentBadgeValue = (NSNumber*)notification.request.content.userInfo[PRESENT_BADGE];
     bool presentAlert = [presentAlertValue boolValue];
+    bool presentCriticalAlert = [presentCriticalAlertValue boolValue];
     bool presentSound = [presentSoundValue boolValue];
     bool presentBadge = [presentBadgeValue boolValue];
     if(presentAlert) {

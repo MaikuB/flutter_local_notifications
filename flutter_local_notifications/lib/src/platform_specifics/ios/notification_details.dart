@@ -5,6 +5,7 @@ class IOSNotificationDetails {
   /// Constructs an instance of [IOSNotificationDetails].
   const IOSNotificationDetails({
     this.presentAlert,
+    this.presentCriticalAlert,
     this.presentBadge,
     this.presentSound,
     this.sound,
@@ -22,6 +23,12 @@ class IOSNotificationDetails {
   ///
   /// This property is only applicable to iOS 10 or newer.
   final bool presentAlert;
+
+  /// When this is set to `null`, it will use the default setting given
+  /// to [IOSInitializationSettings.defaultPresentCriticalAlert].
+  ///
+  /// This property is only applicable to iOS 12 or newer.
+  final bool presentCriticalAlert;
 
   /// Play a sound when the notification is triggered while app is in
   /// the foreground.

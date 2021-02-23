@@ -6,6 +6,7 @@ import 'notification_details.dart';
 extension IOSInitializationSettingsMapper on IOSInitializationSettings {
   Map<String, Object> toMap() => <String, Object>{
         'requestAlertPermission': requestAlertPermission,
+        'requestCriticalAlertPermission': requestCriticalAlertPermission,
         'requestSoundPermission': requestSoundPermission,
         'requestBadgePermission': requestBadgePermission,
         'defaultPresentAlert': defaultPresentAlert,
@@ -24,6 +25,7 @@ extension IOSNotificationAttachmentMapper on IOSNotificationAttachment {
 extension IOSNotificationDetailsMapper on IOSNotificationDetails {
   Map<String, Object> toMap() => <String, Object>{
         'presentAlert': presentAlert,
+        'presentCriticalAlert': presentCriticalAlert,
         'presentSound': presentSound,
         'presentBadge': presentBadge,
         'subtitle': subtitle,
