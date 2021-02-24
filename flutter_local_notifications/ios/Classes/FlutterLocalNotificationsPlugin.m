@@ -3,6 +3,7 @@
 @implementation FlutterLocalNotificationsPlugin{
     FlutterMethodChannel* _channel;
     bool _displayAlert;
+    bool _displayCriticalAlert;
     bool _playSound;
     bool _updateBadge;
     bool _initialized;
