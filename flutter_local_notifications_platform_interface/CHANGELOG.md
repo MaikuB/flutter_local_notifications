@@ -1,3 +1,7 @@
+## [3.0.0-nullsafety.2]
+
+* Fix `PendingNotificationRequest` class so that `title`, `body` and `payload` are nullable
+
 ## [3.0.0-nullsafety.1]
 
 * Updated constraints for `plugin_platform_interface` dependency
