@@ -14,6 +14,9 @@ task:
     image: catalina-flutter
   pub_cache:
     folder: ~/.pub-cache
+  upgrade_script:
+    - flutter channel beta
+    - flutter upgrade
   build_script:
     - cd flutter_local_notifications/example
     - flutter build ios --no-codesign --debug
