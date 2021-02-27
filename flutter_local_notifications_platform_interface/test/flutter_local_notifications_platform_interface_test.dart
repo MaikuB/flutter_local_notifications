@@ -19,7 +19,6 @@ void main() {
   group('$FlutterLocalNotificationsPlatform', () {
     test('Cannot be implemented with `implements`', () {
       expect(() {
-        // TODO(maikub): fix this test
         FlutterLocalNotificationsPlatform.instance =
             ImplementsFlutterLocalNotificationsPlatform();
       }, throwsAssertionError);
