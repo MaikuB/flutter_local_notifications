@@ -1,3 +1,7 @@
+## [3.0.0-nullsafety.1]
+
+* Updated constraints for `plugin_platform_interface` dependency
+
 ## [3.0.0-nullsafety.0]
 
 * Migrated to null safety
