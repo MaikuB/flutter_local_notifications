@@ -558,6 +558,12 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedRaisedButton(
+                        buttonText: 'Get notification channels',
+                        onPressed: () async {
+                          await _getNotificationChannels();
+                        },
+                      ),
+                      PaddedRaisedButton(
                         buttonText: 'Get active notifications',
                         onPressed: () async {
                           await _getActiveNotifications();
@@ -570,7 +576,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       PaddedRaisedButton(
-                        buttonText: 'Show notification with subtitle',
+                        buttonText: 'x notification with subtitle',
                         onPressed: () async {
                           await _showNotificationWithSubtitle();
                         },
@@ -1644,6 +1650,75 @@ class _HomePageState extends State<HomePage> {
     } on PlatformException catch (error) {
       return Text(
         'Error calling "getActiveNotifications"\n'
+        'code: ${error.code}\n'
+        'message: ${error.message}',
+      );
+    }
+  }
+
+  Future<void> _getNotificationChannels() async {
+    final Widget notificationChannelsDialogContent =
+        await _getNotificationChannelsDialogContent();
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: notificationChannelsDialogContent,
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<Widget> _getNotificationChannelsDialogContent() async {
+    try {
+      final List<AndroidNotificationChannel> channels =
+          await flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()
+              ?.getNotificationChannels();
+
+      return Container(
+        width: double.maxFinite,
+        child: ListView(
+          children: <Widget>[
+            const Text(
+              'Notifications Channels',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const Divider(color: Colors.black),
+            if (channels?.isEmpty) const Text('No notification channels'),
+            if (channels.isNotEmpty)
+              for (AndroidNotificationChannel channel in channels)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text('id: ${channel.id}\n'
+                        'name: ${channel.name}\n'
+                        'description: ${channel.description}\n'
+                        'groupId: ${channel.groupId}\n'
+                        'importance: ${channel.importance.value}\n'
+                        'playSound: ${channel.playSound}\n'
+                        'sound: ${channel.sound?.sound}\n'
+                        'enableVibration: ${channel.enableVibration}\n'
+                        'vibrationPattern: ${channel.vibrationPattern}\n'
+                        'showBadge: ${channel.showBadge}\n'
+                        'enableLights: ${channel.enableLights}\n'
+                        'ledColor: ${channel.ledColor}\n'),
+                    const Divider(color: Colors.black),
+                  ],
+                ),
+          ],
+        ),
+      );
+    } on PlatformException catch (error) {
+      return Text(
+        'Error calling "getNotificationChannels"\n'
         'code: ${error.code}\n'
         'message: ${error.message}',
       );

@@ -1,3 +1,11 @@
+# [4.0.1+1]
+
+* Fixed typo in readme around the note relating to version 4.0 of the plugin where `onSelectNotification` will not be triggered when an app is launched by tapping on a notification.
+
+# [4.0.1]
+
+* [Android] added the `getNotificationChannels` method to the `AndroidFlutterLocalNotificationsPlugin` class. This can be used to a get list of all the notification channels on devices with Android 8.0 or newer. Thanks to the PR from [Shapovalova Vera](https://github.com/VAShapovalova)
+
 # [4.0.0]
 
 * **Breaking change** calling `initialize` will no longer trigger the `onSelectNotification` if a notification was tapped on prior to calling `initialize`. This was done as the `getNotificationAppLaunchDetails` method already provided a way to handle when an application was launched by a notification. Furthermore, calling `initialize` multiple times (e.g. on different pages) would have previously caused the `onSelectNotification` callback multiples times as well. This potentially results in the same notification being processed again
