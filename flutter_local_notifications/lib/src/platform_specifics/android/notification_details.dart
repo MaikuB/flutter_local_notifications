@@ -22,13 +22,13 @@ class AndroidNotificationDetails {
     this.enableVibration = true,
     this.vibrationPattern,
     this.groupKey,
-    this.setAsGroupSummary,
+    this.setAsGroupSummary = false,
     this.groupAlertBehavior = GroupAlertBehavior.all,
     this.autoCancel = true,
-    this.ongoing,
+    this.ongoing = false,
     this.color,
     this.largeIcon,
-    this.onlyAlertOnce,
+    this.onlyAlertOnce = false,
     this.showWhen = true,
     this.when,
     this.usesChronometer = false,
@@ -57,7 +57,7 @@ class AndroidNotificationDetails {
   ///
   /// When this is set to `null`, the default icon given to
   /// [AndroidInitializationSettings.defaultIcon] will be used.
-  final String icon;
+  final String? icon;
 
   /// The channel's id.
   ///
@@ -98,7 +98,7 @@ class AndroidNotificationDetails {
   ///
   /// For Android 8.0 or newer, this is tied to the specified channel and cannot
   /// be changed after the channel has been created for the first time.
-  final AndroidNotificationSound sound;
+  final AndroidNotificationSound? sound;
 
   /// Indicates if vibration should be enabled when the notification is
   /// displayed.
@@ -118,16 +118,16 @@ class AndroidNotificationDetails {
   /// Requires setting [enableVibration] to true for it to work.
   /// For Android 8.0 or newer, this is tied to the specified channel and cannot
   /// be changed after the channel has been created for the first time.
-  final Int64List vibrationPattern;
+  final Int64List? vibrationPattern;
 
   /// Specifies the information of the rich notification style to apply to the
   /// notification.
-  final StyleInformation styleInformation;
+  final StyleInformation? styleInformation;
 
   /// Specifies the group that this notification belongs to.
   ///
   /// For Android 7.0 or newer.
-  final String groupKey;
+  final String? groupKey;
 
   /// Specifies if this notification will function as the summary for grouped
   /// notifications.
@@ -147,10 +147,10 @@ class AndroidNotificationDetails {
   final bool ongoing;
 
   /// Specifies the color.
-  final Color color;
+  final Color? color;
 
   /// Specifics the large icon to use.
-  final AndroidBitmap largeIcon;
+  final AndroidBitmap? largeIcon;
 
   /// Specifies if you would only like the sound, vibrate and ticker to be
   /// played if the notification is not already showing.
@@ -171,7 +171,7 @@ class AndroidNotificationDetails {
   /// "Unix epoch" 1970-01-01T00:00:00Z (UTC). If it's not specified but a
   /// timestamp should be shown (i.e. [showWhen] is set to `true`),
   /// then Android will default to showing when the notification occurred.
-  final int when;
+  final int? when;
 
   /// Show [when] as a stopwatch.
   ///
@@ -196,20 +196,20 @@ class AndroidNotificationDetails {
   ///
   /// For Android 8.0 or newer, this is tied to the specified channel and cannot
   /// be changed after the channel has been created for the first time.
-  final Color ledColor;
+  final Color? ledColor;
 
   /// Specifies how long the light colour will remain on.
   ///
   /// This property is only applicable to Android versions older than 8.0.
-  final int ledOnMs;
+  final int? ledOnMs;
 
   /// Specifies how long the light colour will remain off.
   ///
   /// This property is only applicable to Android versions older than 8.0.
-  final int ledOffMs;
+  final int? ledOffMs;
 
   /// Specifies the "ticker" text which is sent to accessibility services.
-  final String ticker;
+  final String? ticker;
 
   /// The action to take for managing notification channels.
   ///
@@ -218,16 +218,16 @@ class AndroidNotificationDetails {
   final AndroidNotificationChannelAction channelAction;
 
   /// Defines the notification visibility on the lockscreen.
-  final NotificationVisibility visibility;
+  final NotificationVisibility? visibility;
 
   /// The duration in milliseconds after which the notification will be
   /// cancelled if it hasn't already.
-  final int timeoutAfter;
+  final int? timeoutAfter;
 
   /// The notification category.
   ///
   /// Refer to Android notification API documentation at https://developer.android.com/reference/androidx/core/app/NotificationCompat.html#constants_2 for the available categories
-  final String category;
+  final String? category;
 
   /// Specifies whether the notification should launch a full-screen intent as
   /// soon as it triggers.
@@ -245,14 +245,14 @@ class AndroidNotificationDetails {
   ///
   /// From Android 11, this affects if a messaging-style notification appears
   /// in the conversation space.
-  final String shortcutId;
+  final String? shortcutId;
 
   /// Specifies the additional flags.
   ///
   /// These flags will get added to the native Android notification's flags field: https://developer.android.com/reference/android/app/Notification#flags
   /// For a list of a values, refer to the documented constants prefixed with "FLAG_" (without the quotes) at https://developer.android.com/reference/android/app/Notification.html#constants_1.
   /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
-  final Int32List additionalFlags;
+  final Int32List? additionalFlags;
 
   /// Provides some additional information that is displayed in the
   /// notification.
@@ -268,11 +268,11 @@ class AndroidNotificationDetails {
   /// of text in the platform notification template. You should not be using
   /// setProgress(int, int, boolean) at the same time on those versions; they
   /// occupy the same place.
-  final String subText;
+  final String? subText;
 
   /// The notification tag.
   ///
   /// Showing notification with the same (tag, id) pair as a currently visible
   /// notification will replace the old notification with the new one.
-  final String tag;
+  final String? tag;
 }

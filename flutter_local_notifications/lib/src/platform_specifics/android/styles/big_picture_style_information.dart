@@ -18,11 +18,11 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
   }) : super(htmlFormatContent, htmlFormatTitle);
 
   /// Overrides ContentTitle in the big form of the template.
-  final String contentTitle;
+  final String? contentTitle;
 
   /// Set the first line of text after the detail section in the big form of
   /// the template.
-  final String summaryText;
+  final String? summaryText;
 
   /// Specifies if the overridden ContentTitle should have formatting applied
   /// through HTML markup.
@@ -34,7 +34,7 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
 
   /// The bitmap that will override the large icon when the big notification is
   ///  shown.
-  final AndroidBitmap largeIcon;
+  final AndroidBitmap? largeIcon;
 
   /// The bitmap to be used as the payload for the BigPicture notification.
   final AndroidBitmap bigPicture;

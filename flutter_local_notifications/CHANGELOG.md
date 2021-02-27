@@ -1,3 +1,6 @@
+# [5.0.0]
+
+* **Breaking change** migrated to null safety. Some arguments that were formerly null (e.g. some boolean values) are now non-nullable with a default value that should retain the old behaviour
 # [4.0.1+1]
 
 * Fixed typo in readme around the note relating to version 4.0 of the plugin where `onSelectNotification` will not be triggered when an app is launched by tapping on a notification.

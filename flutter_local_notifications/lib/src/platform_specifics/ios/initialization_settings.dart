@@ -11,12 +11,7 @@ class IOSInitializationSettings {
     this.defaultPresentSound = true,
     this.defaultPresentBadge = true,
     this.onDidReceiveLocalNotification,
-  })  : assert(requestAlertPermission != null),
-        assert(requestSoundPermission != null),
-        assert(requestBadgePermission != null),
-        assert(defaultPresentAlert != null),
-        assert(defaultPresentBadge != null),
-        assert(defaultPresentSound != null);
+  });
 
   /// Request permission to display an alert.
   ///
@@ -62,5 +57,5 @@ class IOSInitializationSettings {
   /// in the foreground.
   ///
   /// This property is only applicable to iOS versions older than 10.
-  final DidReceiveLocalNotificationCallback onDidReceiveLocalNotification;
+  final DidReceiveLocalNotificationCallback? onDidReceiveLocalNotification;
 }

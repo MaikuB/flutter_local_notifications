@@ -12,11 +12,11 @@ class InitializationSettings {
   });
 
   /// Settings for Android.
-  final AndroidInitializationSettings android;
+  final AndroidInitializationSettings? android;
 
   /// Settings for iOS.
-  final IOSInitializationSettings iOS;
+  final IOSInitializationSettings? iOS;
 
   /// Settings for iOS.
-  final MacOSInitializationSettings macOS;
+  final MacOSInitializationSettings? macOS;
 }

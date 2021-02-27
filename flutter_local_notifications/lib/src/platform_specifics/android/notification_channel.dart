@@ -32,7 +32,7 @@ class AndroidNotificationChannel {
   final String description;
 
   /// The id of the group that the channel belongs to.
-  final String groupId;
+  final String? groupId;
 
   /// The importance of the notification.
   final Importance importance;
@@ -49,7 +49,7 @@ class AndroidNotificationChannel {
   /// If [playSound] is set to true but this is not specified then the default
   /// sound is played. Tied to the specified channel and cannot be changed
   /// after the channel has been created for the first time.
-  final AndroidNotificationSound sound;
+  final AndroidNotificationSound? sound;
 
   /// Indicates if vibration should be enabled when the notification is
   /// displayed.
@@ -69,13 +69,13 @@ class AndroidNotificationChannel {
   /// Requires setting [enableVibration] to true for it to work.
   /// Tied to the specified channel and cannot be changed after the channel has
   /// been created for the first time.
-  final Int64List vibrationPattern;
+  final Int64List? vibrationPattern;
 
   /// Specifies the light color of the notification.
   ///
   /// Tied to the specified channel and cannot be changed after the channel has
   /// been created for the first time.
-  final Color ledColor;
+  final Color? ledColor;
 
   /// Whether notifications posted to this channel can appear as application
   /// icon badges in a Launcher

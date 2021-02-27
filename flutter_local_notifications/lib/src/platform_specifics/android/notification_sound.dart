@@ -12,11 +12,11 @@ class RawResourceAndroidNotificationSound implements AndroidNotificationSound {
   /// Constructs an instance of [RawResourceAndroidNotificationSound].
   const RawResourceAndroidNotificationSound(this._sound);
 
-  final String _sound;
+  final String? _sound;
 
   /// The name of the raw resource for the notification sound.
   @override
-  String get sound => _sound;
+  String get sound => _sound!;
 }
 
 /// Represents a URI on the Android device that should be used for the
