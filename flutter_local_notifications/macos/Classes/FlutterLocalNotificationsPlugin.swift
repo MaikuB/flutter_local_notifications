@@ -441,6 +441,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     
     @available(OSX 10.14, *)
     func requestPermissionsImpl(soundPermission: Bool, alertPermission: Bool, badgePermission: Bool, result: @escaping FlutterResult) {
+        if(!soundPermission && !alertPermission && !badgePermission) {
+            result(false)
+            return
+        }
         var options: UNAuthorizationOptions = []
         if(soundPermission) {
             options.insert(.sound)
