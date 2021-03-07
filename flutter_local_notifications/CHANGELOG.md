@@ -1,3 +1,7 @@
+# [4.0.1+2]
+
+* [iOS/macOS] fixed issue where not requesting any permissions (i.e. all the boolean flags were set to false) would still cause a permissions prompt to appear. Thanks to the PR from [Andrey Parvatkin](https://github.com/badver)
+
 # [4.0.1+1]
 
 * Fixed typo in readme around the note relating to version 4.0 of the plugin where `onSelectNotification` will not be triggered when an app is launched by tapping on a notification.
