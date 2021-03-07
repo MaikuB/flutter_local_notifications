@@ -1,3 +1,8 @@
+# [5.0.0-nullsafety.1]
+
+* Updated `flutter_local_notifications_platform_interface` version requirement
+* Includes changes from 4.0.1+2
+
 # [5.0.0-nullsafety.0]
 
 * **Breaking change** migrated to null safety. Some arguments that were formerly null (e.g. some boolean values) are now non-nullable with a default value that should retain the old behaviour
