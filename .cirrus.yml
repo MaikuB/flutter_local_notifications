@@ -11,7 +11,7 @@ task:
 task:
   name: Build iOS example app
   osx_instance:
-    image: catalina-flutter
+    image: big-sur-xcode-12.4
   pub_cache:
     folder: ~/.pub-cache
   build_script:
@@ -21,7 +21,7 @@ task:
 task:
   name: Build macOS example app
   osx_instance:
-    image: catalina-flutter
+    image: big-sur-xcode-12.4
   pub_cache:
     folder: ~/.pub-cache
   setup_script:
