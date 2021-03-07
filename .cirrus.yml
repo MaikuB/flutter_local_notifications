@@ -14,6 +14,9 @@ task:
     image: big-sur-xcode-12.4
   pub_cache:
     folder: ~/.pub-cache
+  upgrade_script:
+    - flutter channel stable
+    - flutter upgrade
   build_script:
     - cd flutter_local_notifications/example
     - flutter build ios --no-codesign --debug
@@ -24,6 +27,9 @@ task:
     image: big-sur-xcode-12.4
   pub_cache:
     folder: ~/.pub-cache
+  upgrade_script:
+    - flutter channel stable
+    - flutter upgrade
   setup_script:
     - flutter config --enable-macos-desktop
   build_script:
