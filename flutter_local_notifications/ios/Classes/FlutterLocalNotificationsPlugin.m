@@ -253,6 +253,10 @@ static FlutterError *getFlutterError(NSError *error) {
                alertPermission:(bool)alertPermission
                badgePermission:(bool)badgePermission
                         result:(FlutterResult _Nonnull)result{
+    if(!soundPermission && !alertPermission && !badgePermission) {
+        result(@NO);
+        return;
+    }
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         
