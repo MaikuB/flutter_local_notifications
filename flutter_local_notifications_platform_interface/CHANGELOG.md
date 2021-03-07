@@ -1,3 +1,7 @@
+## [3.0.0-nullsafety.4]
+
+* Revert change on `mockito` version requirement to point to last null safety prerelease (5.0.0-nullsafety.7) as 5.0.0 causes conflicts with `flutter_driver`
+
 ## [3.0.0-nullsafety.3]
 
 * Updated `plugin_platform_interface` version requirement
