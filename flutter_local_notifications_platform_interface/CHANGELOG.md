@@ -1,6 +1,11 @@
+## [3.0.0-nullsafety.3]
+
+* Updated `plugin_platform_interface` version requirement
+* Updated `mockito` version requirement
+
 ## [3.0.0-nullsafety.2]
 
-* Fix `PendingNotificationRequest` class so that `title`, `body` and `payload` are nullable
+* Fixed `PendingNotificationRequest` class so that `title`, `body` and `payload` are nullable
 
 ## [3.0.0-nullsafety.1]
 
