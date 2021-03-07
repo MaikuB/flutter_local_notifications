@@ -1,7 +1,7 @@
 task:
   name: Build Android example app
   container:
-    image: cirrusci/flutter:beta
+    image: cirrusci/flutter:stable
   pub_cache:
     folder: ~/.pub-cache
   build_script:
@@ -14,9 +14,6 @@ task:
     image: catalina-flutter
   pub_cache:
     folder: ~/.pub-cache
-  upgrade_script:
-    - flutter channel beta
-    - flutter upgrade
   build_script:
     - cd flutter_local_notifications/example
     - flutter build ios --no-codesign --debug
@@ -27,9 +24,6 @@ task:
     image: catalina-flutter
   pub_cache:
     folder: ~/.pub-cache
-  upgrade_script:
-    - flutter channel dev
-    - flutter upgrade
   setup_script:
     - flutter config --enable-macos-desktop
   build_script:
@@ -39,7 +33,7 @@ task:
 task:
   name: Run platform interface tests
   container:
-    image: cirrusci/flutter:beta
+    image: cirrusci/flutter:stable
   test_script:
     - cd flutter_local_notifications_platform_interface
     - flutter test
@@ -47,7 +41,7 @@ task:
 task:
   name: Run plugin unit tests
   container:
-    image: cirrusci/flutter:beta
+    image: cirrusci/flutter:stable
   pub_cache:
     folder: ~/.pub-cache
   test_script:
@@ -60,7 +54,7 @@ task:
     EMULATOR_API_LEVEL: 28
     ANDROID_ABI: "default;x86"
   container:
-    image: cirrusci/flutter:beta
+    image: cirrusci/flutter:stable
     cpu: 4
     memory: 10G
     kvm: true
