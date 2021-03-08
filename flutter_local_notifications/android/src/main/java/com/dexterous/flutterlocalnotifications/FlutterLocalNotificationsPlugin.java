@@ -125,12 +125,18 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private Activity mainActivity;
     private Intent launchIntent;
 
+    public interface NotificationShownListener {
+        void onShown(Context context, NotificationDetails details);
+    }
+
     public static void registerWith(Registrar registrar) {
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
         plugin.setActivity(registrar.activity());
         registrar.addNewIntentListener(plugin);
         plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
     }
+
+    public static NotificationShownListener onNotificationShown;
 
     static void rescheduleNotifications(Context context) {
         initAndroidThreeTen(context);
