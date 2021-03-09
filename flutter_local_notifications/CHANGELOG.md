@@ -1,3 +1,38 @@
+# [5.0.0-nullsafety.1]
+
+* Updated `flutter_local_notifications_platform_interface` version requirement
+* Includes changes from 4.0.1+2
+
+# [5.0.0-nullsafety.0]
+
+* **Breaking change** migrated to null safety. Some arguments that were formerly null (e.g. some boolean values) are now non-nullable with a default value that should retain the old behaviour
+
+# [4.0.1+2]
+
+* [iOS/macOS] fixed issue where not requesting any permissions (i.e. all the boolean flags were set to false) would still cause a permissions prompt to appear. Thanks to the PR from [Andrey Parvatkin](https://github.com/badver)
+
+# [4.0.1+1]
+
+* Fixed typo in readme around the note relating to version 4.0 of the plugin where `onSelectNotification` will not be triggered when an app is launched by tapping on a notification.
+
+# [4.0.1]
+
+* [Android] added the `getNotificationChannels` method to the `AndroidFlutterLocalNotificationsPlugin` class. This can be used to a get list of all the notification channels on devices with Android 8.0 or newer. Thanks to the PR from [Shapovalova Vera](https://github.com/VAShapovalova)
+
+# [4.0.0]
+
+* **Breaking change** calling `initialize` will no longer trigger the `onSelectNotification` if a notification was tapped on prior to calling `initialize`. This was done as the `getNotificationAppLaunchDetails` method already provided a way to handle when an application was launched by a notification. Furthermore, calling `initialize` multiple times (e.g. on different pages) would have previously caused the `onSelectNotification` callback multiples times as well. This potentially results in the same notification being processed again
+* **Breaking change** the `matchDateComponents` parameter has been renamed to `matchDateTimeComponents`
+* Dates in the past can now be used with `zonedSchedule` when a value for the `matchDateTimeComponents` parameter has been specified to create recurring notifications. Thanks to the PR from [Erlend](https://github.com/erf) for implementing this and the previous change
+* [Android] notification data is now saved to shared preferences in a background thread to minimise jank. Thanks to the PR from [davidlepilote](https://github.com/davidlepilote)
+* [Android] the `tag` property has been added to the `AndroidNotificationDetails` class. This allows notifications on Android to be uniquely identifier through the use of the value of the `tag` and the `id` passed to the method for show/schedule the notification
+* [Android] the optional `tag` argument has been added to the `cancel` method for the `FlutterLocalNotificationsPlugin` and `AndroidFlutterLocalNotificationsPlugin` classes. This can be used to cancel notifications where the `tag` has been specified
+* [iOS][macOS] the `threadIdentifier` property has been added to the `IOSNotificationDetails` and `MacOSNotificationDetails` classes. This can be used to group notifications on iOS 10.0 or newer, and macOS 10.14 or newer. Thanks to the PR from [Marcin Chudy](https://github.com/mchudy) for adding this and the `tag` property for Android notifications
+* The Android and iOS example applications have been recreated in Kotlin and Swift respectively
+* Updated example application's dev dependency on the deprecated `e2e` for integration tests to use `integration_test` instead
+* Bumped Flutter dependencies
+* Example app cleanup including updating Proguard rules as specifying the rules for Flutter were no longer needed
+
 # [3.0.3]
 
 * [Android] added support for showing subtext in the notification. Thanks to the PR from [sidlatau](https://github.com/sidlatau)
