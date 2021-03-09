@@ -551,7 +551,7 @@ await flutterLocalNotificationsPlugin.cancelAll();
 
 ```dart
 final NotificationAppLaunchDetails notificationAppLaunchDetails =
-    await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+    await FlutterLocalNotificationsPlugin().getNotificationAppLaunchDetails();
 ```
 
 ### [iOS only] Periodic notifications showing up after reinstallation
