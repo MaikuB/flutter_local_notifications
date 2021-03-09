@@ -82,7 +82,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 
 typedef NS_ENUM(NSInteger, DateTimeComponents) {
     Time,
-    DayOfWeekAndTime
+    DayOfWeekAndTime,
+    DayOfMonthAndTime,
 };
 
 typedef NS_ENUM(NSInteger, UILocalNotificationDateInterpretation) {
@@ -381,6 +382,8 @@ static FlutterError *getFlutterError(NSError *error) {
             if([matchDateComponents integerValue] == Time) {
                 notification.repeatInterval = NSCalendarUnitDay;
             } else if([matchDateComponents integerValue] == DayOfWeekAndTime) {
+                notification.repeatInterval = NSCalendarUnitWeekOfYear;
+            } else if([matchDateComponents integerValue] == DayOfMonthAndTime) {
                 notification.repeatInterval = NSCalendarUnitWeekOfYear;
             }
         }

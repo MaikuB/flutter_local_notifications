@@ -1,3 +1,7 @@
+# [4.0.1+3]
+
+* [android/iOS] DateTimeComponents dayOfMonthAndTime added.
+
 # [4.0.1+2]
 
 * [iOS/macOS] fixed issue where not requesting any permissions (i.e. all the boolean flags were set to false) would still cause a permissions prompt to appear. Thanks to the PR from [Andrey Parvatkin](https://github.com/badver)
