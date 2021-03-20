@@ -16,7 +16,7 @@ void validateId(int id) {
 /// time where `matchDateTimeComponents` is null.
 void validateDateIsInTheFuture(
   TZDateTime scheduledDate,
-  DateTimeComponents matchDateTimeComponents,
+  DateTimeComponents? matchDateTimeComponents,
 ) {
   if (matchDateTimeComponents != null) {
     return;

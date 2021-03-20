@@ -23,11 +23,11 @@ class PendingNotificationRequest {
   final int id;
 
   /// The notification's title.
-  final String title;
+  final String? title;
 
   /// The notification's body.
-  final String body;
+  final String? body;
 
   /// The notification's payload.
-  final String payload;
+  final String? payload;
 }

@@ -8,5 +8,5 @@ class NotificationAppLaunchDetails {
   final bool didNotificationLaunchApp;
 
   /// The payload of the notification that launched the app
-  final String payload;
+  final String? payload;
 }

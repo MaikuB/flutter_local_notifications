@@ -7,19 +7,20 @@ dependencies:
     sdk: flutter
   flutter_local_notifications:
     path: ../
-  cupertino_icons: ^0.1.3
-  device_info: ^0.4.2+4
-  http: ^0.12.0+4
-  path_provider: ^1.6.7
-  rxdart: ^0.24.0
-  shared_preferences: ^0.5.7
+  cupertino_icons: ^1.0.2
+  device_info: ^2.0.0
+  http: ^0.13.0
+  path_provider: ^2.0.0
+  rxdart: ^0.26.0-nullsafety.1
+  shared_preferences: ^2.0.1
 
 dev_dependencies:
   flutter_driver:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  integration_test: ^1.0.1
+  integration_test:
+    sdk: flutter
 
 flutter:
   uses-material-design: true
@@ -27,5 +28,5 @@ flutter:
     - icons/
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
-  flutter: ">=1.12.13+hotfix.5"
+  sdk: ">=2.12.0-0 <3.0.0"
+  flutter: ">=1.26.0-0" # allows for using integration_test from SDK
