@@ -308,6 +308,132 @@ void main() {
           }));
     });
 
+    test('show with modified copied Android-specific details', () async {
+      const AndroidInitializationSettings androidInitializationSettings = AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings = InitializationSettings(android: androidInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails('channelId', 'channelName', 'channelDescription');
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          NotificationDetails(
+              android: androidNotificationDetails.copyWith(
+                channelId: 'otherChannelId',
+                channelName: 'otherChannelName',
+                channelDescription: 'otherChannelDescription',
+                icon: 'otherIcon',
+                channelShowBadge: false,
+                channelAction: AndroidNotificationChannelAction.update,
+                importance: Importance.min,
+                priority: Priority.min,
+                playSound: false,
+                enableVibration: false,
+                vibrationPattern: Int64List.fromList([0, 1, 0]),
+                groupKey: 'otherGroupKey',
+                setAsGroupSummary: true,
+                groupAlertBehavior: GroupAlertBehavior.children,
+                autoCancel: false,
+                ongoing: true,
+                color: const Color(0xFFFFFFFF),
+                onlyAlertOnce: true,
+                showWhen: false,
+                when: 1,
+                usesChronometer: true,
+                showProgress: true,
+                maxProgress: 1,
+                progress: 1,
+                indeterminate: true,
+                enableLights: true,
+                ledColor: const Color(0x00FFFFFF),
+                ledOnMs: 1,
+                ledOffMs: 2,
+                ticker: 'otherTicker',
+                visibility: NotificationVisibility.private,
+                timeoutAfter: 3,
+                category: 'otherCategory',
+                additionalFlags: Int32List.fromList([3, 4, 5]),
+                fullScreenIntent: true,
+                shortcutId: 'otherSHortCutId',
+                subText: 'otherSubtext',
+                styleInformation: const BigTextStyleInformation('otherBigText',
+                    contentTitle: 'otherTitle',
+                    htmlFormatBigText: true,
+                    htmlFormatContent: true,
+                    htmlFormatContentTitle: true,
+                    htmlFormatSummaryText: true,
+                    htmlFormatTitle: true,
+                    summaryText: 'otherSummary'),
+                tag: 'otherTag',
+              )));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, Object>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, Object?>{
+              'icon': 'otherIcon',
+              'channelId': 'otherChannelId',
+              'channelName': 'otherChannelName',
+              'channelDescription': 'otherChannelDescription',
+              'channelShowBadge': false,
+              'channelAction': AndroidNotificationChannelAction.update.index,
+              'importance': Importance.min.value,
+              'priority': Priority.min.value,
+              'playSound': false,
+              'enableVibration': false,
+              'vibrationPattern': [0, 1, 0],
+              'groupKey': 'otherGroupKey',
+              'setAsGroupSummary': true,
+              'groupAlertBehavior': GroupAlertBehavior.children.index,
+              'autoCancel': false,
+              'ongoing': true,
+              'colorAlpha': 255,
+              'colorRed': 255,
+              'colorGreen': 255,
+              'colorBlue': 255,
+              'onlyAlertOnce': true,
+              'showWhen': false,
+              'when': 1,
+              'usesChronometer': true,
+              'showProgress': true,
+              'maxProgress': 1,
+              'progress': 1,
+              'indeterminate': true,
+              'enableLights': true,
+              'ledColorAlpha': 0,
+              'ledColorRed': 255,
+              'ledColorGreen': 255,
+              'ledColorBlue': 255,
+              'ledOnMs': 1,
+              'ledOffMs': 2,
+              'ticker': 'otherTicker',
+              'visibility': NotificationVisibility.private.index,
+              'timeoutAfter': 3,
+              'category': 'otherCategory',
+              'additionalFlags': [3, 4, 5],
+              'fullScreenIntent': true,
+              'shortcutId': 'otherSHortCutId',
+              'subText': 'otherSubtext',
+              'style': AndroidNotificationStyle.bigText.index,
+              'styleInformation': <String, Object>{
+                'htmlFormatContent': true,
+                'htmlFormatTitle': true,
+                'bigText': 'otherBigText',
+                'htmlFormatBigText': true,
+                'contentTitle': 'otherTitle',
+                'htmlFormatContentTitle': true,
+                'summaryText': 'otherSummary',
+                'htmlFormatSummaryText': true,
+              },
+              'tag': 'otherTag',
+            },
+          }));
+    });
+
     test('show with default Android-specific details with a chronometer',
         () async {
       const AndroidInitializationSettings androidInitializationSettings =
@@ -2182,6 +2308,59 @@ void main() {
           }));
     });
 
+    test('show with modified copied iOS-specific details', () async {
+      const IOSInitializationSettings iosInitializationSettings = IOSInitializationSettings();
+      const InitializationSettings initializationSettings = InitializationSettings(iOS: iosInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      NotificationDetails notificationDetails = NotificationDetails(
+          iOS: IOSNotificationDetails(
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
+              subtitle: 'a subtitle',
+              sound: 'sound.mp3',
+              badgeNumber: 1,
+              attachments: <IOSNotificationAttachment>[
+                IOSNotificationAttachment('video.mp4', identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373'),
+              ]).copyWith(
+              presentAlert: false,
+              presentBadge: false,
+              presentSound: false,
+              subtitle: 'another subttitle',
+              sound: 'otherSound.mp3',
+              badgeNumber: 2,
+              attachments: <IOSNotificationAttachment>[
+                IOSNotificationAttachment('otherVideo.mp4', identifier: 'otherIdentifier'),
+              ],
+              threadIdentifier: 'otherThreadIdentifier'));
+
+      await flutterLocalNotificationsPlugin.show(1, 'notification title', 'notification body', notificationDetails);
+
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, Object>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, Object?>{
+              'presentAlert': false,
+              'presentBadge': false,
+              'presentSound': false,
+              'subtitle': 'another subttitle',
+              'sound': 'otherSound.mp3',
+              'badgeNumber': 2,
+              'threadIdentifier': 'otherThreadIdentifier',
+              'attachments': <Map<String, Object>>[
+                <String, Object>{
+                  'filePath': 'otherVideo.mp4',
+                  'identifier': 'otherIdentifier',
+                }
+              ],
+            },
+          }));
+    });
+
     group('zonedSchedule', () {
       test('no repeat frequency', () async {
         const IOSInitializationSettings iosInitializationSettings =
@@ -2551,6 +2730,61 @@ void main() {
                 <String, Object>{
                   'filePath': 'video.mp4',
                   'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                }
+              ],
+            },
+          }));
+    });
+
+    test('show with modified copied macOS-specific details', () async {
+      const MacOSInitializationSettings macOSInitializationSettings = MacOSInitializationSettings();
+      const InitializationSettings initializationSettings = InitializationSettings(macOS: macOSInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      NotificationDetails notificationDetails = NotificationDetails(
+          macOS: MacOSNotificationDetails(
+            subtitle: 'a subtitle',
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+            sound: 'sound.mp3',
+            badgeNumber: 1,
+            threadIdentifier: 'thread',
+            attachments: <MacOSNotificationAttachment>[
+              MacOSNotificationAttachment('video.mp4', identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373'),
+            ],
+          ).copyWith(
+              subtitle: 'another subtitle',
+              presentAlert: false,
+              presentBadge: false,
+              presentSound: false,
+              sound: 'otherSound.mp3',
+              badgeNumber: 2,
+              threadIdentifier: 'otherThread',
+              attachments: <MacOSNotificationAttachment>[
+                MacOSNotificationAttachment('otherVideo.mp4', identifier: 'otherIDentifier'),
+              ]));
+
+      await flutterLocalNotificationsPlugin.show(1, 'notification title', 'notification body', notificationDetails);
+
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, Object>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, Object>{
+              'subtitle': 'another subtitle',
+              'presentAlert': false,
+              'presentBadge': false,
+              'presentSound': false,
+              'sound': 'otherSound.mp3',
+              'badgeNumber': 2,
+              'threadIdentifier': 'otherThread',
+              'attachments': <Map<String, Object>>[
+                <String, Object>{
+                  'filePath': 'otherVideo.mp4',
+                  'identifier': 'otherIDentifier',
                 }
               ],
             },
