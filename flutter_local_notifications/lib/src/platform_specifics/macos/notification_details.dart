@@ -14,6 +14,27 @@ class MacOSNotificationDetails {
     this.threadIdentifier,
   });
 
+  MacOSNotificationDetails copyWith({
+    bool? presentAlert,
+    bool? presentBadge,
+    bool? presentSound,
+    String? sound,
+    int? badgeNumber,
+    List<MacOSNotificationAttachment>? attachments,
+    String? subtitle,
+    String? threadIdentifier,
+  }) =>
+      MacOSNotificationDetails(
+        presentAlert: presentAlert ?? this.presentAlert,
+        presentBadge: presentBadge ?? this.presentBadge,
+        presentSound: presentSound ?? this.presentSound,
+        sound: sound ?? this.sound,
+        badgeNumber: badgeNumber ?? this.badgeNumber,
+        attachments: attachments ?? this.attachments,
+        subtitle: subtitle ?? this.subtitle,
+        threadIdentifier: threadIdentifier ?? this.threadIdentifier,
+      );
+
   /// Display an alert when the notification is triggered while app is
   /// in the foreground.
   ///
