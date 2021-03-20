@@ -53,6 +53,7 @@ class AndroidNotificationDetails {
     this.tag,
   });
 
+  //// return a copy of this instance with the provided overridden parameters
   AndroidNotificationDetails copyWith({
     String? channelId,
     String? channelName,

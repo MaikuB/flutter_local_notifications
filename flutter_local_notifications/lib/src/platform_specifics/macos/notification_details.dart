@@ -14,6 +14,7 @@ class MacOSNotificationDetails {
     this.threadIdentifier,
   });
 
+  //// return a copy of this instance with the provided overridden parameters
   MacOSNotificationDetails copyWith({
     bool? presentAlert,
     bool? presentBadge,
