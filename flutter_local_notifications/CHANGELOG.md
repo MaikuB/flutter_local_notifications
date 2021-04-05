@@ -2,6 +2,7 @@
 
 * Add link to explanation of the `onDidReceiveLocalNotification` callback to the initialisation section of the readme
 * Updated testing section to clarify behaviour on platforms that aren't supported
+* Updated `timezone` dependency
 
 # [5.0.0]
 
