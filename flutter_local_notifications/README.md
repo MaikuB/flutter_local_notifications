@@ -302,6 +302,9 @@ The `IOSInitializationSettings` and `MacOSInitializationSettings` provides defau
 
 On iOS and macOS, initialisation may show a prompt to requires users to give the application permission to display notifications (note: permissions don't need to be requested on Android). Depending on when this happens, this may not be the ideal user experience for your application. If so, please refer to the next section on how to work around this.
 
+For an explanation of the `onDidReceiveLocalNotification` callback associated with the `IOSInitializationSettings` class, please read  [this](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications#handling-notifications-whilst-the-app-is-in-the-foreground).
+
+
 *Note*: from version 4.0 of the plugin, calling `initialize` will not trigger the `onSelectNotification` callback when the application was started by tapping on a notification to trigger. Use the `getNotificationAppLaunchDetails` method that is available in the plugin if you need to handle a notification triggering the launch for an app e.g. change the home route of the app for deep-linking.
 
 ### [iOS (all supported versions) and macOS 10.14+] Requesting notification permissions
@@ -584,6 +587,6 @@ Check the source code for a sample test suite that has been kindly implemented (
 
 If you decide to use the plugin class directly as part of your tests, the methods will be mostly no-op and methods that return data will return default values. 
 
-Part of this is because the plugin detects if you're running on a supported plugin to determine which platform implementation of the plugin should be used. If it's neither Android or iOS, then it defaults to the aforementioned behaviour to reduce friction when writing tests. If this not desired then consider using mocks. 
+Part of this is because the plugin detects if you're running on a supported plugin to determine which platform implementation of the plugin should be used. If the platform isn't supported, it will default to the aforementioned behaviour to reduce friction when writing tests. If this not desired then consider using mocks. 
 
 If a platform-specific implementation of the plugin is required for your tests, a [named constructor](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/FlutterLocalNotificationsPlugin.private.html) is available that allows you to specify the platform required e.g. a [`FakePlatform`](https://api.flutter.dev/flutter/package-platform_platform/FakePlatform-class.html).
