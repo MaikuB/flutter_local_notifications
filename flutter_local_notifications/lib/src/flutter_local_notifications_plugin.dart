@@ -6,7 +6,7 @@ import 'package:flutter_local_notifications_platform_interface/flutter_local_not
 import 'package:platform/platform.dart';
 import 'package:timezone/timezone.dart';
 
-import '../flutter_local_notifications.dart';
+import 'platform_specifics/ios/enums.dart';
 import 'initialization_settings.dart';
 import 'notification_details.dart';
 import 'platform_flutter_local_notifications.dart';

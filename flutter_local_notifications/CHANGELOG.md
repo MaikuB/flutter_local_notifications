@@ -1,9 +1,10 @@
-# [5.0.0-nullsafety.1]
+# [5.0.0+1]
 
-* Updated `flutter_local_notifications_platform_interface` version requirement
-* Includes changes from 4.0.1+2
+* Add link to explanation of the `onDidReceiveLocalNotification` callback to the initialisation section of the readme
+* Updated testing section to clarify behaviour on platforms that aren't supported
+* Updated `timezone` dependency
 
-# [5.0.0-nullsafety.0]
+# [5.0.0]
 
 * **Breaking change** migrated to null safety. Some arguments that were formerly null (e.g. some boolean values) are now non-nullable with a default value that should retain the old behaviour
 
