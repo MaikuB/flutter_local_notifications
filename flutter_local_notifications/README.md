@@ -152,7 +152,7 @@ When specifying the large icon bitmap or big picture bitmap (associated with the
 
 #### Full-screen intent notifications
 
-If your application needs the ability to schedule full-screen intent notifications, add the following attributes to the activity you're opening. For a Flutter application that is typically only ony activity extends from `FlutterActivity`. These attributes ensure the screen turns on and shows when the device is locked.
+If your application needs the ability to schedule full-screen intent notifications, add the following attributes to the activity you're opening. For a Flutter application that is typically only one activity extends from `FlutterActivity`. These attributes ensure the screen turns on and shows when the device is locked.
 ```xml
 <activity
     android:showWhenLocked="true"
