@@ -1,3 +1,8 @@
+# [5.0.0+3]
+
+* Updated readme on how to get the local timezone
+* Added link to location of example app to the readme
+
 # [5.0.0+2]
 
 * Updated example app to use the [flutter_native_timezone](https://pub.dev/packages/flutter_native_timezone) plugin to get the timezone
