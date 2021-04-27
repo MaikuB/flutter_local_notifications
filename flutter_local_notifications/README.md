@@ -152,7 +152,8 @@ When specifying the large icon bitmap or big picture bitmap (associated with the
 
 #### Full-screen intent notifications
 
-If your application needs the ability to schedule full-screen intent notifications, add the following attributes to the activity you're opening. For a Flutter application that is typically only one activity extends from `FlutterActivity`. These attributes ensure the screen turns on and shows when the device is locked.
+If your application needs the ability to schedule full-screen intent notifications, add the following attributes to the activity you're opening. For a Flutter application, there is typically only one activity extends from `FlutterActivity`. These attributes ensure the screen turns on and shows when the device is locked.
+
 ```xml
 <activity
     android:showWhenLocked="true"
@@ -383,7 +384,9 @@ await flutterLocalNotificationsPlugin.show(
     payload: 'item x');
 ```
 
-In this block of code, the details specific to the Android platform is specified. This includes the channel details that is required for Android 8.0+. Whilst not shown, it's possible to specify details for iOS and macOS as well using the optional `iOS` and `macOS` named parameters if needed. The payload has been specified ('item x'), that will passed back through your application when the user has tapped on a notification. Note that for Android devices that notifications will only in appear in the tray and won't appear as a toast aka heads-up notification unless things like the priority/importance has been set appropriately. Refer to the Android docs (https://developer.android.com/guide/topics/ui/notifiers/notifications.html#Heads-up) for additional information. Note that the "ticker" text is passed here though it is optional and specific to Android. This allows for text to be shown in the status bar on older versions of Android when the notification is shown.
+Here, the first argument is the id of notification and is common to all methods that would result in a notification being shown. This is typically set a unique value per notification as using the same id multiple times would result in a notification being updated/overwritten.
+
+The details specific to the Android platform are also specified. This includes the channel details that is required for Android 8.0+. Whilst not shown, it's possible to specify details for iOS and macOS as well using the optional `iOS` and `macOS` named parameters if needed. The payload has been specified ('item x'), that will passed back through your application when the user has tapped on a notification. Note that for Android devices that notifications will only in appear in the tray and won't appear as a toast aka heads-up notification unless things like the priority/importance has been set appropriately. Refer to the Android docs (https://developer.android.com/guide/topics/ui/notifiers/notifications.html#Heads-up) for additional information. Rhe "ticker" text is passed here is optional and specific to Android. This allows for text to be shown in the status bar on older versions of Android when the notification is shown.
 
 ### Scheduling a notification
 

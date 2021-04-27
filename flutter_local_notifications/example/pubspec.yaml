@@ -9,6 +9,7 @@ dependencies:
     path: ../
   cupertino_icons: ^1.0.2
   device_info: ^2.0.0
+  flutter_native_timezone: ^1.0.10
   http: ^0.13.0
   path_provider: ^2.0.0
   rxdart: ^0.26.0-nullsafety.1
