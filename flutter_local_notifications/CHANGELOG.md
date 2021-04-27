@@ -1,3 +1,8 @@
+# [5.0.0+2]
+
+* Updated example app to use the [flutter_native_timezone](https://pub.dev/packages/flutter_native_timezone) plugin to get the timezone
+* Updated readme to mention effect of using same notification id
+
 # [5.0.0+1]
 
 * Add link to explanation of the `onDidReceiveLocalNotification` callback to the initialisation section of the readme

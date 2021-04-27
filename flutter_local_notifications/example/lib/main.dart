@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
@@ -108,8 +109,7 @@ Future<void> main() async {
 
 Future<void> _configureLocalTimeZone() async {
   tz.initializeTimeZones();
-  final String? timeZoneName =
-      await platform.invokeMethod<String>('getTimeZoneName');
+  final String? timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZoneName!));
 }
 

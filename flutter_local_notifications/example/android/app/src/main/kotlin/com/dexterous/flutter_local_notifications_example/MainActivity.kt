@@ -20,9 +20,6 @@ class MainActivity: FlutterActivity() {
             if ("getAlarmUri" == call.method) {
                 result.success(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString())
             }
-            if ("getTimeZoneName" == call.method) {
-                result.success(TimeZone.getDefault().id)
-            }
         }
     }
 
