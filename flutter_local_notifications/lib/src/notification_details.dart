@@ -4,6 +4,7 @@ import 'platform_specifics/macos/notification_details.dart';
 
 /// Contains notification details specific to each platform.
 class NotificationDetails {
+  /// Constructs an instance of [NotificationDetails].
   const NotificationDetails({
     this.android,
     this.iOS,
@@ -11,11 +12,11 @@ class NotificationDetails {
   });
 
   /// Notification details for Android.
-  final AndroidNotificationDetails android;
+  final AndroidNotificationDetails? android;
 
   /// Notification details for iOS.
-  final IOSNotificationDetails iOS;
+  final IOSNotificationDetails? iOS;
 
   /// Notification details for macOS.
-  final MacOSNotificationDetails macOS;
+  final MacOSNotificationDetails? macOS;
 }

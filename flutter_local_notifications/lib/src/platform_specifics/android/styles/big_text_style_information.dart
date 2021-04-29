@@ -3,6 +3,7 @@ import 'default_style_information.dart';
 /// Used to pass the content for an Android notification displayed using the
 /// big text style.
 class BigTextStyleInformation extends DefaultStyleInformation {
+  /// Constructs an instance of [BigTextStyleInformation].
   const BigTextStyleInformation(
     this.bigText, {
     this.htmlFormatBigText = false,
@@ -19,11 +20,11 @@ class BigTextStyleInformation extends DefaultStyleInformation {
   final String bigText;
 
   /// Overrides ContentTitle in the big form of the template.
-  final String contentTitle;
+  final String? contentTitle;
 
   /// Set the first line of text after the detail section in the big form of
   /// the template.
-  final String summaryText;
+  final String? summaryText;
 
   /// Specifies if formatting should be applied to the longer text through
   /// HTML markup.

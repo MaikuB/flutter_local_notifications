@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.annotation.Keep;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
@@ -18,6 +19,7 @@ import java.lang.reflect.Type;
  * Created by michaelbui on 24/3/18.
  */
 
+@Keep
 public class ScheduledNotificationReceiver extends BroadcastReceiver {
 
 
