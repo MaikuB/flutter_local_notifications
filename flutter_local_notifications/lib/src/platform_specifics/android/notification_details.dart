@@ -47,6 +47,7 @@ class AndroidNotificationDetails {
     this.fullScreenIntent = false,
     this.shortcutId,
     this.additionalFlags,
+    this.useCustomNotification = false,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -242,4 +243,9 @@ class AndroidNotificationDetails {
   /// For a list of a values, refer to the documented constants prefixed with "FLAG_" (without the quotes) at https://developer.android.com/reference/android/app/Notification.html#constants_1.
   /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
   final Int32List additionalFlags;
+
+  /// Specifies whether the notification should use a custom view.2
+  ///
+  /// For custom notification need to specify the [color], title and text
+  final bool useCustomNotification;
 }

@@ -186,7 +186,6 @@ public class NotificationDetails {
         notificationDetails.body = (String) arguments.get(BODY);
         notificationDetails.scheduledDateTime = (String) arguments.get(SCHEDULED_DATE_TIME);
         notificationDetails.timeZoneName = (String) arguments.get(TIME_ZONE_NAME);
-        notificationDetails.useCustomNotification = (Boolean) arguments.get(USE_CUSTOM_NOTIFICATION);
         if(arguments.containsKey(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)) {
             notificationDetails.scheduledNotificationRepeatFrequency = ScheduledNotificationRepeatFrequency.values()[(Integer) arguments.get(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)];
         }
@@ -245,6 +244,7 @@ public class NotificationDetails {
             notificationDetails.fullScreenIntent = (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
             notificationDetails.shortcutId = (String) platformChannelSpecifics.get(SHORTCUT_ID);
             notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
+            notificationDetails.useCustomNotification = (Boolean) platformChannelSpecifics.get(USE_CUSTOM_NOTIFICATION);
         }
     }
 

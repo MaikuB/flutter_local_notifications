@@ -3,7 +3,8 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="64dp"
-    android:background="#1EA0E9"
+    android:background="@drawable/layout_bg"
+
     android:orientation="horizontal">
 
 
