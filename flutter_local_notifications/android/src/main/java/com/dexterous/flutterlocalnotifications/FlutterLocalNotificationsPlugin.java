@@ -21,6 +21,7 @@ import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
+import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.AlarmManagerCompat;
@@ -190,6 +191,23 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
         if (!StringUtils.isNullOrEmpty(notificationDetails.shortcutId)) {
             builder.setShortcutId(notificationDetails.shortcutId);
+        }
+
+        if (notificationDetails.useCustomNotification != null && notificationDetails.useCustomNotification)
+        {
+
+            RemoteViews contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.custom_push);
+            contentViewSmall.setTextViewText(R.id.title, notificationDetails.title);
+            contentViewSmall.setTextViewText(R.id.text, notificationDetails.body);
+
+            if (notificationDetails.color != null) {
+                contentViewSmall.setInt(R.id.root, "setBackgroundColor",notificationDetails.color.intValue());
+            }
+
+            if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
+                contentViewSmall.setImageViewBitmap(R.id.image, getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
+            }
+            builder.setCustomContentView(contentViewSmall);
         }
 
         setVisibility(notificationDetails, builder);

@@ -113,6 +113,8 @@ public class NotificationDetails {
     private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
     private static final String SHORTCUT_ID = "shortcutId";
 
+    private static final String USE_CUSTOM_NOTIFICATION = "useCustomNotification";
+
 
     public Integer id;
     public String title;
@@ -169,6 +171,7 @@ public class NotificationDetails {
     public Long when;
     public Boolean fullScreenIntent;
     public String shortcutId;
+    public Boolean useCustomNotification;
 
 
 
@@ -183,6 +186,7 @@ public class NotificationDetails {
         notificationDetails.body = (String) arguments.get(BODY);
         notificationDetails.scheduledDateTime = (String) arguments.get(SCHEDULED_DATE_TIME);
         notificationDetails.timeZoneName = (String) arguments.get(TIME_ZONE_NAME);
+        notificationDetails.useCustomNotification = (Boolean) arguments.get(USE_CUSTOM_NOTIFICATION);
         if(arguments.containsKey(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)) {
             notificationDetails.scheduledNotificationRepeatFrequency = ScheduledNotificationRepeatFrequency.values()[(Integer) arguments.get(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)];
         }

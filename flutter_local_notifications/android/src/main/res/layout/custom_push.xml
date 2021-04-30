@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:background="#1EA0E9"
+    android:orientation="horizontal">
+
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="8dp" />
+
+    <RelativeLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textSize="14dp"
+        android:textColor="@android:color/white"
+        android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
+        android:layout_marginLeft="8dp" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:layout_marginTop="32dp"
+        android:textSize="18dp"
+        android:textColor="@android:color/white"
+        android:textAppearance="@style/TextAppearance.Compat.Notification.Info"
+        android:layout_marginLeft="8dp" />
+
+
+</RelativeLayout >
+</LinearLayout>
