@@ -41,6 +41,7 @@ public class NotificationDetails {
     private static final String SOUND_SOURCE = "soundSource";
     private static final String ENABLE_VIBRATION = "enableVibration";
     private static final String VIBRATION_PATTERN = "vibrationPattern";
+    private static final String TAG = "tag";
     private static final String GROUP_KEY = "groupKey";
     private static final String SET_AS_GROUP_SUMMARY = "setAsGroupSummary";
     private static final String GROUP_ALERT_BEHAVIOR = "groupAlertBehavior";
@@ -116,6 +117,7 @@ public class NotificationDetails {
 
     private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
     private static final String SHORTCUT_ID = "shortcutId";
+    private static final String SUB_TEXT = "subText";
 
 
     public Integer id;
@@ -174,6 +176,8 @@ public class NotificationDetails {
     public Long when;
     public Boolean fullScreenIntent;
     public String shortcutId;
+    public String subText;
+    public String tag;
 
 
 
@@ -247,6 +251,8 @@ public class NotificationDetails {
             notificationDetails.fullScreenIntent = (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
             notificationDetails.shortcutId = (String) platformChannelSpecifics.get(SHORTCUT_ID);
             notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
+            notificationDetails.subText = (String) platformChannelSpecifics.get(SUB_TEXT);
+            notificationDetails.tag = (String) platformChannelSpecifics.get(TAG);
         }
     }
 

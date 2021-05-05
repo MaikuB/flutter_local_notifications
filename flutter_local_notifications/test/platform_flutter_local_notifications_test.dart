@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -12,7 +13,7 @@ import 'package:timezone/timezone.dart' as tz;
 void main() {
   // TODO(maikub): add tests for `periodicallyShow` after https://github.com/dart-lang/sdk/issues/28985 is resolved
   TestWidgetsFlutterBinding.ensureInitialized();
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   group('Android', () {
     const MethodChannel channel =
@@ -26,15 +27,12 @@ void main() {
       channel.setMockMethodCallHandler((methodCall) async {
         log.add(methodCall);
         if (methodCall.method == 'pendingNotificationRequests') {
-          return Future<List<Map<String, Object>>>.value(
-              <Map<String, Object>>[]);
+          return <Map<String, Object?>>[];
         } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
-          return Future<Map<String, Object>>.value(<String, Object>{});
+          return null;
         } else if (methodCall.method == 'getActiveNotifications') {
-          return Future<List<Map<String, Object>>>.value(
-              <Map<String, Object>>[]);
+          return <Map<String, Object?>>[];
         }
-        return Future<void>.value();
       });
     });
 
@@ -65,7 +63,7 @@ void main() {
           1, 'notification title', 'notification body', null);
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, Object>{
+          isMethodCall('show', arguments: <String, Object?>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
@@ -96,7 +94,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -110,15 +108,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -140,11 +138,13 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -173,7 +173,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -187,15 +187,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -216,12 +216,14 @@ void main() {
               'category': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'additionalFlags': <int>[4, 32],
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -252,7 +254,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -266,15 +268,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': timestamp,
               'usesChronometer': false,
@@ -296,30 +298,30 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
 
-    test(
-      'show with default Android-specific details with a chronometer',
-          () async {
+    test('show with default Android-specific details with a chronometer',
+        () async {
       const AndroidInitializationSettings androidInitializationSettings =
-      AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
-      InitializationSettings(android: androidInitializationSettings);
+          InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       final int timestamp = DateTime.now().millisecondsSinceEpoch;
 
       final AndroidNotificationDetails androidNotificationDetails =
-      AndroidNotificationDetails(
-          'channelId', 'channelName', 'channelDescription',
-          when: timestamp,
-          usesChronometer: true);
+          AndroidNotificationDetails(
+              'channelId', 'channelName', 'channelDescription',
+              when: timestamp, usesChronometer: true);
       await flutterLocalNotificationsPlugin.show(
           1,
           'notification title',
@@ -332,29 +334,29 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
               'channelDescription': 'channelDescription',
               'channelShowBadge': true,
               'channelAction':
-              AndroidNotificationChannelAction.createIfNotExists.index,
+                  AndroidNotificationChannelAction.createIfNotExists.index,
               'importance': Importance.defaultImportance.value,
               'priority': Priority.defaultPriority.value,
               'playSound': true,
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': timestamp,
               'usesChronometer': true,
@@ -376,14 +378,16 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
-      });
+    });
 
     test(
         'show with default Android-specific details and custom sound from raw '
@@ -413,7 +417,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -429,15 +433,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -459,11 +463,13 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -495,7 +501,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -511,15 +517,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -541,11 +547,13 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -578,7 +586,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -592,15 +600,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -622,11 +630,13 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.defaultStyle.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
                 'htmlFormatTitle': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -661,7 +671,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -675,15 +685,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -705,8 +715,9 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.bigPicture.index,
-              'styleInformation': <String, Object>{
+              'styleInformation': <String, Object?>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
                 'bigPicture': 'bigPictureDrawable',
@@ -717,6 +728,7 @@ void main() {
                 'htmlFormatSummaryText': false,
                 'hideExpandedLargeIcon': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -759,7 +771,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -773,15 +785,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -803,6 +815,7 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -817,6 +830,7 @@ void main() {
                 'htmlFormatSummaryText': true,
                 'hideExpandedLargeIcon': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -851,7 +865,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -865,15 +879,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -895,8 +909,9 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.bigPicture.index,
-              'styleInformation': <String, Object>{
+              'styleInformation': <String, Object?>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
                 'bigPicture': 'bigPictureFilePath',
@@ -907,6 +922,7 @@ void main() {
                 'htmlFormatSummaryText': false,
                 'hideExpandedLargeIcon': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -949,7 +965,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -963,15 +979,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -993,6 +1009,7 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.bigPicture.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -1007,6 +1024,7 @@ void main() {
                 'htmlFormatSummaryText': true,
                 'hideExpandedLargeIcon': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -1039,7 +1057,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -1053,15 +1071,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -1083,8 +1101,9 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.inbox.index,
-              'styleInformation': <String, Object>{
+              'styleInformation': <String, Object?>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
                 'lines': <String>['line1'],
@@ -1094,6 +1113,7 @@ void main() {
                 'htmlFormatSummaryText': false,
                 'htmlFormatLines': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -1133,7 +1153,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -1147,15 +1167,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -1177,6 +1197,7 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.inbox.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
@@ -1188,6 +1209,7 @@ void main() {
                 'htmlFormatSummaryText': true,
                 'htmlFormatLines': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -1218,7 +1240,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -1232,15 +1254,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -1262,11 +1284,13 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.media.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
               },
+              'tag': null,
             },
           }));
     });
@@ -1300,7 +1324,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -1314,15 +1338,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -1344,11 +1368,13 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.media.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': true,
                 'htmlFormatTitle': true,
               },
+              'tag': null,
             },
           }));
     });
@@ -1389,7 +1415,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -1403,15 +1429,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -1433,21 +1459,22 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.messaging.index,
-              'styleInformation': <String, Object>{
+              'styleInformation': <String, Object?>{
                 'htmlFormatContent': false,
                 'htmlFormatTitle': false,
-                'person': <String, Object>{
-                  'bot': null,
-                  'important': null,
+                'person': <String, Object?>{
+                  'bot': false,
+                  'important': false,
                   'key': null,
                   'name': 'name',
                   'uri': null,
                 },
                 'conversationTitle': null,
                 'groupConversation': null,
-                'messages': <Map<String, Object>>[
-                  <String, Object>{
+                'messages': <Map<String, Object?>>[
+                  <String, Object?>{
                     'text': 'message 1',
                     'timestamp': messageDateTime.millisecondsSinceEpoch,
                     'person': null,
@@ -1456,6 +1483,7 @@ void main() {
                   }
                 ],
               },
+              'tag': null,
             },
           }));
     });
@@ -1507,7 +1535,7 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'icon': null,
               'channelId': 'channelId',
               'channelName': 'channelName',
@@ -1521,15 +1549,15 @@ void main() {
               'enableVibration': true,
               'vibrationPattern': null,
               'groupKey': null,
-              'setAsGroupSummary': null,
+              'setAsGroupSummary': false,
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
-              'ongoing': null,
+              'ongoing': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
               'colorBlue': null,
-              'onlyAlertOnce': null,
+              'onlyAlertOnce': false,
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
@@ -1551,6 +1579,7 @@ void main() {
               'additionalFlags': null,
               'fullScreenIntent': false,
               'shortcutId': null,
+              'subText': null,
               'style': AndroidNotificationStyle.messaging.index,
               'styleInformation': <String, Object>{
                 'htmlFormatContent': false,
@@ -1566,8 +1595,8 @@ void main() {
                 },
                 'conversationTitle': 'conversationTitle',
                 'groupConversation': true,
-                'messages': <Map<String, Object>>[
-                  <String, Object>{
+                'messages': <Map<String, Object?>>[
+                  <String, Object?>{
                     'text': 'message 1',
                     'timestamp': messageDateTime.millisecondsSinceEpoch,
                     'person': null,
@@ -1576,6 +1605,7 @@ void main() {
                   }
                 ],
               },
+              'tag': null,
             },
           }));
     });
@@ -1613,7 +1643,7 @@ void main() {
               'payload': '',
               'timeZoneName': 'Australia/Sydney',
               'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
-              'platformSpecifics': <String, Object>{
+              'platformSpecifics': <String, Object?>{
                 'allowWhileIdle': true,
                 'icon': null,
                 'channelId': 'channelId',
@@ -1628,15 +1658,15 @@ void main() {
                 'enableVibration': true,
                 'vibrationPattern': null,
                 'groupKey': null,
-                'setAsGroupSummary': null,
+                'setAsGroupSummary': false,
                 'groupAlertBehavior': GroupAlertBehavior.all.index,
                 'autoCancel': true,
-                'ongoing': null,
+                'ongoing': false,
                 'colorAlpha': null,
                 'colorRed': null,
                 'colorGreen': null,
                 'colorBlue': null,
-                'onlyAlertOnce': null,
+                'onlyAlertOnce': false,
                 'showWhen': true,
                 'when': null,
                 'usesChronometer': false,
@@ -1658,11 +1688,13 @@ void main() {
                 'additionalFlags': null,
                 'fullScreenIntent': false,
                 'shortcutId': null,
+                'subText': null,
                 'style': AndroidNotificationStyle.defaultStyle.index,
                 'styleInformation': <String, Object>{
                   'htmlFormatContent': false,
                   'htmlFormatTitle': false,
                 },
+                'tag': null,
               },
             }));
       });
@@ -1702,7 +1734,7 @@ void main() {
               'timeZoneName': 'Australia/Sydney',
               'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
               'matchDateTimeComponents': DateTimeComponents.time.index,
-              'platformSpecifics': <String, Object>{
+              'platformSpecifics': <String, Object?>{
                 'allowWhileIdle': true,
                 'icon': null,
                 'channelId': 'channelId',
@@ -1717,15 +1749,15 @@ void main() {
                 'enableVibration': true,
                 'vibrationPattern': null,
                 'groupKey': null,
-                'setAsGroupSummary': null,
+                'setAsGroupSummary': false,
                 'groupAlertBehavior': GroupAlertBehavior.all.index,
                 'autoCancel': true,
-                'ongoing': null,
+                'ongoing': false,
                 'colorAlpha': null,
                 'colorRed': null,
                 'colorGreen': null,
                 'colorBlue': null,
-                'onlyAlertOnce': null,
+                'onlyAlertOnce': false,
                 'showWhen': true,
                 'when': null,
                 'usesChronometer': false,
@@ -1747,11 +1779,13 @@ void main() {
                 'additionalFlags': null,
                 'fullScreenIntent': false,
                 'shortcutId': null,
+                'subText': null,
                 'style': AndroidNotificationStyle.defaultStyle.index,
                 'styleInformation': <String, Object>{
                   'htmlFormatContent': false,
                   'htmlFormatTitle': false,
                 },
+                'tag': null,
               },
             }));
       });
@@ -1792,7 +1826,7 @@ void main() {
               'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
               'matchDateTimeComponents':
                   DateTimeComponents.dayOfWeekAndTime.index,
-              'platformSpecifics': <String, Object>{
+              'platformSpecifics': <String, Object?>{
                 'allowWhileIdle': true,
                 'icon': null,
                 'channelId': 'channelId',
@@ -1807,15 +1841,15 @@ void main() {
                 'enableVibration': true,
                 'vibrationPattern': null,
                 'groupKey': null,
-                'setAsGroupSummary': null,
+                'setAsGroupSummary': false,
                 'groupAlertBehavior': GroupAlertBehavior.all.index,
                 'autoCancel': true,
-                'ongoing': null,
+                'ongoing': false,
                 'colorAlpha': null,
                 'colorRed': null,
                 'colorGreen': null,
                 'colorBlue': null,
-                'onlyAlertOnce': null,
+                'onlyAlertOnce': false,
                 'showWhen': true,
                 'when': null,
                 'usesChronometer': false,
@@ -1837,11 +1871,13 @@ void main() {
                 'additionalFlags': null,
                 'fullScreenIntent': false,
                 'shortcutId': null,
+                'subText': null,
                 'style': AndroidNotificationStyle.defaultStyle.index,
                 'styleInformation': <String, Object>{
                   'htmlFormatContent': false,
                   'htmlFormatTitle': false,
                 },
+                'tag': null,
               },
             }));
       });
@@ -1851,12 +1887,12 @@ void main() {
       test('without description', () async {
         await flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin>()
+                AndroidFlutterLocalNotificationsPlugin>()!
             .createNotificationChannelGroup(
                 const AndroidNotificationChannelGroup('groupId', 'groupName'));
         expect(log, <Matcher>[
           isMethodCall('createNotificationChannelGroup',
-              arguments: <String, Object>{
+              arguments: <String, Object?>{
                 'id': 'groupId',
                 'name': 'groupName',
                 'description': null,
@@ -1866,7 +1902,7 @@ void main() {
       test('with description', () async {
         await flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin>()
+                AndroidFlutterLocalNotificationsPlugin>()!
             .createNotificationChannelGroup(
                 const AndroidNotificationChannelGroup('groupId', 'groupName',
                     description: 'groupDescription'));
@@ -1884,11 +1920,11 @@ void main() {
     test('createNotificationChannel with default settings', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+              AndroidFlutterLocalNotificationsPlugin>()!
           .createNotificationChannel(const AndroidNotificationChannel(
               'channelId', 'channelName', 'channelDescription'));
       expect(log, <Matcher>[
-        isMethodCall('createNotificationChannel', arguments: <String, Object>{
+        isMethodCall('createNotificationChannel', arguments: <String, Object?>{
           'id': 'channelId',
           'name': 'channelName',
           'description': 'channelDescription',
@@ -1904,7 +1940,7 @@ void main() {
           'ledColorGreen': null,
           'ledColorBlue': null,
           'channelAction':
-              AndroidNotificationChannelAction.createIfNotExists?.index,
+              AndroidNotificationChannelAction.createIfNotExists.index,
         })
       ]);
     });
@@ -1912,7 +1948,7 @@ void main() {
     test('createNotificationChannel with non-default settings', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+              AndroidFlutterLocalNotificationsPlugin>()!
           .createNotificationChannel(const AndroidNotificationChannel(
             'channelId',
             'channelName',
@@ -1926,7 +1962,7 @@ void main() {
             ledColor: Color.fromARGB(255, 255, 0, 0),
           ));
       expect(log, <Matcher>[
-        isMethodCall('createNotificationChannel', arguments: <String, Object>{
+        isMethodCall('createNotificationChannel', arguments: <String, Object?>{
           'id': 'channelId',
           'name': 'channelName',
           'description': 'channelDescription',
@@ -1942,7 +1978,7 @@ void main() {
           'ledColorGreen': 0,
           'ledColorBlue': 0,
           'channelAction':
-              AndroidNotificationChannelAction.createIfNotExists?.index,
+              AndroidNotificationChannelAction.createIfNotExists.index,
         })
       ]);
     });
@@ -1950,7 +1986,7 @@ void main() {
     test('deleteNotificationChannel', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+              AndroidFlutterLocalNotificationsPlugin>()!
           .deleteNotificationChannel('channelId');
       expect(log, <Matcher>[
         isMethodCall('deleteNotificationChannel', arguments: 'channelId')
@@ -1960,7 +1996,7 @@ void main() {
     test('getActiveNotifications', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+              AndroidFlutterLocalNotificationsPlugin>()!
           .getActiveNotifications();
       expect(log,
           <Matcher>[isMethodCall('getActiveNotifications', arguments: null)]);
@@ -1968,7 +2004,22 @@ void main() {
 
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
-      expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);
+      expect(log, <Matcher>[
+        isMethodCall('cancel', arguments: <String, Object?>{
+          'id': 1,
+          'tag': null,
+        })
+      ]);
+    });
+
+    test('cancel with tag', () async {
+      await flutterLocalNotificationsPlugin.cancel(1, tag: 'tag');
+      expect(log, <Matcher>[
+        isMethodCall('cancel', arguments: <String, Object>{
+          'id': 1,
+          'tag': 'tag',
+        })
+      ]);
     });
 
     test('cancelAll', () async {
@@ -1987,7 +2038,7 @@ void main() {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+              AndroidFlutterLocalNotificationsPlugin>()!
           .getActiveNotifications();
       expect(log,
           <Matcher>[isMethodCall('getActiveNotifications', arguments: null)]);
@@ -2010,15 +2061,13 @@ void main() {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin.private(
           FakePlatform(operatingSystem: 'ios'));
       // ignore: always_specify_types
-      channel.setMockMethodCallHandler((methodCall) {
+      channel.setMockMethodCallHandler((methodCall) async {
         log.add(methodCall);
         if (methodCall.method == 'pendingNotificationRequests') {
-          return Future<List<Map<String, Object>>>.value(
-              <Map<String, Object>>[]);
+          return <Map<String, Object>?>[];
         } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
-          return Future<Map<String, Object>>.value(<String, Object>{});
+          return null;
         }
-        return Future<void>.value();
       });
     });
 
@@ -2078,7 +2127,7 @@ void main() {
           1, 'notification title', 'notification body', null);
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, Object>{
+          isMethodCall('show', arguments: <String, Object?>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
@@ -2116,13 +2165,14 @@ void main() {
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
-            'platformSpecifics': <String, Object>{
+            'platformSpecifics': <String, Object?>{
               'presentAlert': true,
               'presentBadge': true,
               'presentSound': true,
               'subtitle': 'a subtitle',
               'sound': 'sound.mp3',
               'badgeNumber': 1,
+              'threadIdentifier': null,
               'attachments': <Map<String, Object>>[
                 <String, Object>{
                   'filePath': 'video.mp4',
@@ -2178,13 +2228,14 @@ void main() {
                   UILocalNotificationDateInterpretation.absoluteTime.index,
               'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
               'timeZoneName': 'Australia/Sydney',
-              'platformSpecifics': <String, Object>{
+              'platformSpecifics': <String, Object?>{
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
                 'subtitle': null,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2241,13 +2292,14 @@ void main() {
               'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
               'timeZoneName': 'Australia/Sydney',
               'matchDateTimeComponents': DateTimeComponents.time.index,
-              'platformSpecifics': <String, Object>{
+              'platformSpecifics': <String, Object?>{
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
                 'subtitle': null,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2305,13 +2357,14 @@ void main() {
               'timeZoneName': 'Australia/Sydney',
               'matchDateTimeComponents':
                   DateTimeComponents.dayOfWeekAndTime.index,
-              'platformSpecifics': <String, Object>{
+              'platformSpecifics': <String, Object?>{
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
                 'subtitle': null,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2325,21 +2378,21 @@ void main() {
     test('requestPermissions with default settings', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
+              IOSFlutterLocalNotificationsPlugin>()!
           .requestPermissions();
       expect(log, <Matcher>[
-        isMethodCall('requestPermissions', arguments: <String, Object>{
-          'sound': null,
-          'badge': null,
-          'alert': null,
-          'provisional': null,
+        isMethodCall('requestPermissions', arguments: <String, Object?>{
+          'sound': false,
+          'badge': false,
+          'alert': false,
+          'provisional': false,
         })
       ]);
     });
     test('requestPermissions with all settings requested', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
+              IOSFlutterLocalNotificationsPlugin>()!
           .requestPermissions(
             sound: true,
             badge: true,
@@ -2389,15 +2442,13 @@ void main() {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin.private(
           FakePlatform(operatingSystem: 'macos'));
       // ignore: always_specify_types
-      channel.setMockMethodCallHandler((methodCall) {
+      channel.setMockMethodCallHandler((methodCall) async {
         log.add(methodCall);
         if (methodCall.method == 'pendingNotificationRequests') {
-          return Future<List<Map<String, Object>>>.value(
-              <Map<String, Object>>[]);
+          return <Map<String, Object>?>[];
         } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
-          return Future<Map<String, Object>>.value(<String, Object>{});
+          return null;
         }
-        return Future<void>.value();
       });
     });
 
@@ -2457,7 +2508,7 @@ void main() {
           1, 'notification title', 'notification body', null);
       expect(
           log.last,
-          isMethodCall('show', arguments: <String, Object>{
+          isMethodCall('show', arguments: <String, Object?>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
@@ -2480,6 +2531,7 @@ void main() {
               presentSound: true,
               sound: 'sound.mp3',
               badgeNumber: 1,
+              threadIdentifier: 'thread',
               attachments: <MacOSNotificationAttachment>[
             MacOSNotificationAttachment('video.mp4',
                 identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373'),
@@ -2502,6 +2554,7 @@ void main() {
               'presentSound': true,
               'sound': 'sound.mp3',
               'badgeNumber': 1,
+              'threadIdentifier': 'thread',
               'attachments': <Map<String, Object>>[
                 <String, Object>{
                   'filePath': 'video.mp4',
@@ -2555,13 +2608,14 @@ void main() {
               'payload': '',
               'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
               'timeZoneName': 'Australia/Sydney',
-              'platformSpecifics': <String, Object>{
+              'platformSpecifics': <String, Object?>{
                 'subtitle': null,
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2616,13 +2670,14 @@ void main() {
               'scheduledDateTime': _convertDateToISO8601String(scheduledDate),
               'timeZoneName': 'Australia/Sydney',
               'matchDateTimeComponents': DateTimeComponents.time.index,
-              'platformSpecifics': <String, Object>{
+              'platformSpecifics': <String, Object?>{
                 'subtitle': null,
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2678,13 +2733,14 @@ void main() {
               'timeZoneName': 'Australia/Sydney',
               'matchDateTimeComponents':
                   DateTimeComponents.dayOfWeekAndTime.index,
-              'platformSpecifics': <String, Object>{
+              'platformSpecifics': <String, Object?>{
                 'subtitle': null,
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -2699,10 +2755,10 @@ void main() {
     test('requestPermissions with default settings', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
+              MacOSFlutterLocalNotificationsPlugin>()!
           .requestPermissions();
       expect(log, <Matcher>[
-        isMethodCall('requestPermissions', arguments: <String, Object>{
+        isMethodCall('requestPermissions', arguments: <String, Object?>{
           'sound': null,
           'badge': null,
           'alert': null,
@@ -2712,7 +2768,7 @@ void main() {
     test('requestPermissions with all settings requested', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
+              MacOSFlutterLocalNotificationsPlugin>()!
           .requestPermissions(sound: true, badge: true, alert: true);
       expect(log, <Matcher>[
         isMethodCall('requestPermissions', arguments: <String, Object>{

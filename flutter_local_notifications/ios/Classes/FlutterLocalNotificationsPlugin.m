@@ -54,6 +54,7 @@ NSString *const SOUND = @"sound";
 NSString *const ATTACHMENTS = @"attachments";
 NSString *const ATTACHMENT_IDENTIFIER = @"identifier";
 NSString *const ATTACHMENT_FILE_PATH = @"filePath";
+NSString *const THREAD_IDENTIFIER = @"threadIdentifier";
 NSString *const PRESENT_ALERT = @"presentAlert";
 NSString *const PRESENT_SOUND = @"presentSound";
 NSString *const PRESENT_BADGE = @"presentBadge";
@@ -231,13 +232,12 @@ static FlutterError *getFlutterError(NSError *error) {
         requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
     }
     if([self containsKey:REQUEST_PROVISIONAL_PERMISSION forDictionary:arguments]) {
-        requestedProvisionalPermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
+        requestedProvisionalPermission = [arguments[REQUEST_PROVISIONAL_PERMISSION] boolValue];
     }
     [self requestPermissionsImpl:requestedSoundPermission
                  alertPermission:requestedAlertPermission
                  badgePermission:requestedBadgePermission
            provisionalPermission:requestedProvisionalPermission
-         checkLaunchNotification:true
                           result:result];
     
     _initialized = true;
@@ -263,16 +263,19 @@ static FlutterError *getFlutterError(NSError *error) {
     [self requestPermissionsImpl:soundPermission
                  alertPermission:alertPermission
                  badgePermission:badgePermission
-     provisionalPermission:provisionalPermission
-         checkLaunchNotification:false
+           provisionalPermission:provisionalPermission
                           result:result];
 }
 
 - (void)requestPermissionsImpl:(bool)soundPermission
                alertPermission:(bool)alertPermission
                badgePermission:(bool)badgePermission
-               provisionalPermission:(bool)provisionalPermission
-       checkLaunchNotification:(bool)checkLaunchNotification result:(FlutterResult _Nonnull)result{
+         provisionalPermission:(bool)provisionalPermission
+                        result:(FlutterResult _Nonnull)result{
+    if(!soundPermission && !alertPermission && !badgePermission) {
+        result(@NO);
+        return;
+    }
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
         
@@ -286,13 +289,10 @@ static FlutterError *getFlutterError(NSError *error) {
         if (badgePermission) {
             authorizationOptions += UNAuthorizationOptionBadge;
         }
-        if (@available(iOS 12.0, *)) {
+        if (@available(iOS 12.0, *) && provisionalPermission) {
             authorizationOptions += UNAuthorizationOptionProvisional;
         }
         [center requestAuthorizationWithOptions:(authorizationOptions) completionHandler:^(BOOL granted, NSError * _Nullable error) {
-            if(checkLaunchNotification && self->_launchPayload != nil) {
-                [self handleSelectNotification:self->_launchPayload];
-            }
             result(@(granted));
         }];
     } else {
@@ -308,10 +308,6 @@ static FlutterError *getFlutterError(NSError *error) {
         }
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:notificationTypes categories:nil];
         [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-        if(checkLaunchNotification && _launchNotification != nil && [self isAFlutterLocalNotification:_launchNotification.userInfo]) {
-            NSString *payload = _launchNotification.userInfo[PAYLOAD];
-            [self handleSelectNotification:payload];
-        }
         result(@YES);
     }
 }
@@ -581,6 +577,9 @@ static FlutterError *getFlutterError(NSError *error) {
         }
         if([self containsKey:BADGE_NUMBER forDictionary:platformSpecifics]) {
             content.badge = [platformSpecifics objectForKey:BADGE_NUMBER];
+        }
+        if([self containsKey:THREAD_IDENTIFIER forDictionary:platformSpecifics]) {
+            content.threadIdentifier = platformSpecifics[THREAD_IDENTIFIER];
         }
         if([self containsKey:ATTACHMENTS forDictionary:platformSpecifics]) {
             NSArray<NSDictionary *> *attachments = platformSpecifics[ATTACHMENTS];

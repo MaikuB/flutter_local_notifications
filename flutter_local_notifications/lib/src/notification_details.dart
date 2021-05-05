@@ -12,11 +12,11 @@ class NotificationDetails {
   });
 
   /// Notification details for Android.
-  final AndroidNotificationDetails android;
+  final AndroidNotificationDetails? android;
 
   /// Notification details for iOS.
-  final IOSNotificationDetails iOS;
+  final IOSNotificationDetails? iOS;
 
   /// Notification details for macOS.
-  final MacOSNotificationDetails macOS;
+  final MacOSNotificationDetails? macOS;
 }

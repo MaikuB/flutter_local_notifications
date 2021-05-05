@@ -12,7 +12,7 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   /// Constructs an instance of [FlutterLocalNotificationsPlatform].
   FlutterLocalNotificationsPlatform() : super(token: _token);
 
-  static FlutterLocalNotificationsPlatform _instance;
+  static late FlutterLocalNotificationsPlatform _instance;
 
   static final Object _token = Object();
 
@@ -28,14 +28,16 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   }
 
   /// Returns info on if a notification had been used to launch the application.
-  Future<NotificationAppLaunchDetails> getNotificationAppLaunchDetails() async {
+  Future<NotificationAppLaunchDetails?>
+      getNotificationAppLaunchDetails() async {
     throw UnimplementedError(
         'getNotificationAppLaunchDetails() has not been implemented');
   }
 
   /// Show a notification with an optional payload that will be passed back to
   /// the app when a notification is tapped on.
-  Future<void> show(int id, String title, String body, {String payload}) async {
+  Future<void> show(int id, String? title, String? body,
+      {String? payload}) async {
     throw UnimplementedError('show() has not been implemented');
   }
 
@@ -44,7 +46,7 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   /// notification will be an hour after the method has been called and then
   /// every hour after that.
   Future<void> periodicallyShow(
-      int id, String title, String body, RepeatInterval repeatInterval) {
+      int id, String? title, String? body, RepeatInterval repeatInterval) {
     throw UnimplementedError('periodicallyShow() has not been implemented');
   }
 

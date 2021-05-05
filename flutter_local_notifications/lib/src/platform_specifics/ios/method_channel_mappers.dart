@@ -22,15 +22,16 @@ extension IOSNotificationAttachmentMapper on IOSNotificationAttachment {
 }
 
 extension IOSNotificationDetailsMapper on IOSNotificationDetails {
-  Map<String, Object> toMap() => <String, Object>{
+  Map<String, Object?> toMap() => <String, Object?>{
         'presentAlert': presentAlert,
         'presentSound': presentSound,
         'presentBadge': presentBadge,
         'subtitle': subtitle,
         'sound': sound,
         'badgeNumber': badgeNumber,
+        'threadIdentifier': threadIdentifier,
         'attachments': attachments
             ?.map((a) => a.toMap()) // ignore: always_specify_types
-            ?.toList()
+            .toList()
       };
 }

@@ -16,5 +16,5 @@ class AndroidNotificationChannelGroup {
   /// The description of this group.
   ///
   /// Only applicable to Android 9.0 or newer.
-  final String description;
+  final String? description;
 }

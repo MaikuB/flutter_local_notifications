@@ -1,12 +1,11 @@
-package com.dexterous.flutterlocalnotifications;
+package com.dexterous.flutter_local_notifications_example;
 
 import androidx.test.rule.ActivityTestRule;
-
-import com.dexterous.flutterlocalnotificationsexample.MainActivity;
-
-import dev.flutter.plugins.e2e.FlutterTestRunner;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
+
+import dev.flutter.plugins.integration_test.FlutterTestRunner;
+
 
 @RunWith(FlutterTestRunner.class)
 public class MainActivityTest {

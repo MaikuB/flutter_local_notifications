@@ -95,7 +95,7 @@ class Importance {
       <Importance>[unspecified, none, min, low, defaultImportance, high, max];
 
   /// The integer representation.
-  final int value;
+  final int? value;
 }
 
 /// Priority for notifications on Android 7.1 and lower.
