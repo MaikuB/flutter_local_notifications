@@ -10,7 +10,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.Resources;
+import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
@@ -21,6 +24,7 @@ import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -194,34 +198,41 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             builder.setShortcutId(notificationDetails.shortcutId);
         }
 
-        if (notificationDetails.useCustomNotification != null && notificationDetails.useCustomNotification)
+        if (!StringUtils.isNullOrEmpty(notificationDetails.customNotificationPackageName))
         {
-
-            RemoteViews contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.custom_push);
+            String packageName = notificationDetails.customNotificationPackageName;
+            PackageManager manager = context.getPackageManager();
+            Resources resources = null;
+            try {
+                resources = manager.getResourcesForApplication(packageName);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            int layoutId = resources.getIdentifier("custom_push", "layout", packageName);
+            int titleId = resources.getIdentifier("push_title", "id", packageName);
+            int textId = resources.getIdentifier("push_text", "id", packageName);
+            int imageId = resources.getIdentifier("push_image", "id", packageName);
+            RemoteViews contentViewSmall = new RemoteViews(packageName, layoutId);
 
             if (!StringUtils.isNullOrEmpty(notificationDetails.title)) {
-                contentViewSmall.setTextViewText(R.id.title, notificationDetails.title);
+                contentViewSmall.setTextViewText(titleId, notificationDetails.title);
             }
             else {
-                contentViewSmall.setViewVisibility(R.id.title, View.GONE);
+                contentViewSmall.setViewVisibility(titleId, View.GONE);
             }
 
             if (!StringUtils.isNullOrEmpty(notificationDetails.body)) {
-                contentViewSmall.setTextViewText(R.id.text, notificationDetails.body);
+                contentViewSmall.setTextViewText(textId, notificationDetails.body);
             }
             else {
-                contentViewSmall.setViewVisibility(R.id.text, View.GONE);
-            }
-
-            if (notificationDetails.color != null) {
-                contentViewSmall.setInt(R.id.root, "setBackgroundColor",notificationDetails.color.intValue());
+                contentViewSmall.setViewVisibility(textId, View.GONE);
             }
 
             if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
-                contentViewSmall.setImageViewBitmap(R.id.image, getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
+                contentViewSmall.setImageViewBitmap(imageId, getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
             }
             else {
-                contentViewSmall.setViewVisibility(R.id.image, View.GONE);
+                contentViewSmall.setViewVisibility(imageId, View.GONE);
             }
             builder.setCustomContentView(contentViewSmall);
         }
