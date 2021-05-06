@@ -113,7 +113,7 @@ public class NotificationDetails {
     private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
     private static final String SHORTCUT_ID = "shortcutId";
 
-    private static final String CUSTOM_NOTIFICATION_PACKAGE_NAME = "customNotificationPackageName";
+    private static final String CUSTOM_LAYOUT_NAME = "customLayoutName";
 
 
     public Integer id;
@@ -171,7 +171,7 @@ public class NotificationDetails {
     public Long when;
     public Boolean fullScreenIntent;
     public String shortcutId;
-    public String customNotificationPackageName;
+    public String customLayoutName;
 
 
 
@@ -244,7 +244,7 @@ public class NotificationDetails {
             notificationDetails.fullScreenIntent = (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
             notificationDetails.shortcutId = (String) platformChannelSpecifics.get(SHORTCUT_ID);
             notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
-            notificationDetails.customNotificationPackageName = (String) platformChannelSpecifics.get(CUSTOM_NOTIFICATION_PACKAGE_NAME);
+            notificationDetails.customLayoutName = (String) platformChannelSpecifics.get(CUSTOM_LAYOUT_NAME);
         }
     }
 

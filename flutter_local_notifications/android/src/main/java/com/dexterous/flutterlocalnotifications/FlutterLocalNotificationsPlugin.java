@@ -13,7 +13,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
@@ -24,7 +23,6 @@ import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -90,6 +88,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
     private static final String DRAWABLE = "drawable";
     private static final String DEFAULT_ICON = "defaultIcon";
+    private static final String PACKAGE_NAME = "packageName";
     private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
@@ -198,43 +197,49 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             builder.setShortcutId(notificationDetails.shortcutId);
         }
 
-        if (!StringUtils.isNullOrEmpty(notificationDetails.customNotificationPackageName))
-        {
-            String packageName = notificationDetails.customNotificationPackageName;
-            PackageManager manager = context.getPackageManager();
-            Resources resources = null;
-            try {
-                resources = manager.getResourcesForApplication(packageName);
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
-            int layoutId = resources.getIdentifier("custom_push", "layout", packageName);
-            int titleId = resources.getIdentifier("push_title", "id", packageName);
-            int textId = resources.getIdentifier("push_text", "id", packageName);
-            int imageId = resources.getIdentifier("push_image", "id", packageName);
-            RemoteViews contentViewSmall = new RemoteViews(packageName, layoutId);
+        if (!StringUtils.isNullOrEmpty(notificationDetails.customLayoutName)) {
 
-            if (!StringUtils.isNullOrEmpty(notificationDetails.title)) {
-                contentViewSmall.setTextViewText(titleId, notificationDetails.title);
-            }
-            else {
-                contentViewSmall.setViewVisibility(titleId, View.GONE);
+            SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+            String packageName = sharedPreferences.getString(PACKAGE_NAME, null);
+
+            if (!StringUtils.isNullOrEmpty(packageName))
+            {
+                try {
+                    String customLayoutName = notificationDetails.customLayoutName;
+                    PackageManager manager = context.getPackageManager();
+                    Resources resources = null;
+                    resources = manager.getResourcesForApplication(packageName);
+
+                    int layoutId = resources.getIdentifier(customLayoutName, "layout", packageName);
+                    int titleId = resources.getIdentifier("push_title", "id", packageName);
+                    int textId = resources.getIdentifier("push_text", "id", packageName);
+                    int imageId = resources.getIdentifier("push_image", "id", packageName);
+                    RemoteViews contentViewSmall = new RemoteViews(packageName, layoutId);
+
+                    if (!StringUtils.isNullOrEmpty(notificationDetails.title)) {
+                        contentViewSmall.setTextViewText(titleId, notificationDetails.title);
+                    } else {
+                        contentViewSmall.setViewVisibility(titleId, View.GONE);
+                    }
+
+                    if (!StringUtils.isNullOrEmpty(notificationDetails.body)) {
+                        contentViewSmall.setTextViewText(textId, notificationDetails.body);
+                    } else {
+                        contentViewSmall.setViewVisibility(textId, View.GONE);
+                    }
+
+                    if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
+                        contentViewSmall.setImageViewBitmap(imageId, getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
+                    } else {
+                        contentViewSmall.setViewVisibility(imageId, View.GONE);
+                    }
+                    builder.setCustomContentView(contentViewSmall);
+
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
 
-            if (!StringUtils.isNullOrEmpty(notificationDetails.body)) {
-                contentViewSmall.setTextViewText(textId, notificationDetails.body);
-            }
-            else {
-                contentViewSmall.setViewVisibility(textId, View.GONE);
-            }
-
-            if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
-                contentViewSmall.setImageViewBitmap(imageId, getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
-            }
-            else {
-                contentViewSmall.setViewVisibility(imageId, View.GONE);
-            }
-            builder.setCustomContentView(contentViewSmall);
         }
 
         setVisibility(notificationDetails, builder);
@@ -1076,6 +1081,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private void initialize(MethodCall call, Result result) {
         Map<String, Object> arguments = call.arguments();
         String defaultIcon = (String) arguments.get(DEFAULT_ICON);
+        String packageName = (String) arguments.get(PACKAGE_NAME);
         if (!isValidDrawableResource(applicationContext, defaultIcon, result, INVALID_ICON_ERROR_CODE)) {
             return;
         }
@@ -1085,6 +1091,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         SharedPreferences sharedPreferences = applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(DEFAULT_ICON, defaultIcon);
+
+        if (!StringUtils.isNullOrEmpty(packageName)) {
+            editor.putString(PACKAGE_NAME, packageName);
+        }
+
         editor.commit();
 
         if (mainActivity != null && !launchedActivityFromHistory(mainActivity.getIntent())) {
