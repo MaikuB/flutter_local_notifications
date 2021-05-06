@@ -21,6 +21,7 @@ import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
@@ -197,8 +198,20 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         {
 
             RemoteViews contentViewSmall = new RemoteViews(context.getPackageName(), R.layout.custom_push);
-            contentViewSmall.setTextViewText(R.id.title, notificationDetails.title);
-            contentViewSmall.setTextViewText(R.id.text, notificationDetails.body);
+
+            if (!StringUtils.isNullOrEmpty(notificationDetails.title)) {
+                contentViewSmall.setTextViewText(R.id.title, notificationDetails.title);
+            }
+            else {
+                contentViewSmall.setViewVisibility(R.id.title, View.GONE);
+            }
+
+            if (!StringUtils.isNullOrEmpty(notificationDetails.body)) {
+                contentViewSmall.setTextViewText(R.id.text, notificationDetails.body);
+            }
+            else {
+                contentViewSmall.setViewVisibility(R.id.text, View.GONE);
+            }
 
             if (notificationDetails.color != null) {
                 contentViewSmall.setInt(R.id.root, "setBackgroundColor",notificationDetails.color.intValue());
@@ -206,6 +219,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
             if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
                 contentViewSmall.setImageViewBitmap(R.id.image, getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
+            }
+            else {
+                contentViewSmall.setViewVisibility(R.id.image, View.GONE);
             }
             builder.setCustomContentView(contentViewSmall);
         }

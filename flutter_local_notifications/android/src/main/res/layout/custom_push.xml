@@ -4,46 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="64dp"
     android:background="@drawable/layout_bg"
-
     android:orientation="horizontal">
-
 
     <ImageView
         android:id="@+id/image"
         android:layout_width="48dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_height="48dp"
-        android:layout_marginLeft="8dp" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp" />
 
-    <RelativeLayout
-        android:id="@+id/layout"
+
+    <GridLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:orientation="horizontal">
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:textSize="14dp"
-        android:textColor="@android:color/white"
-        android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
-        android:layout_marginLeft="8dp" />
+        android:layout_gravity="center|left"
+        android:layout_marginLeft="8dp"
+        android:columnCount="1">
 
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="7dp"
-        android:layout_marginTop="32dp"
-        android:textSize="18dp"
-        android:textColor="@android:color/white"
-        android:textAppearance="@style/TextAppearance.Compat.Notification.Info"
-        android:layout_marginLeft="8dp" />
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
+            android:textColor="@android:color/white"
+            android:textSize="14dp" />
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Compat.Notification.Info"
+            android:textColor="@android:color/white"
+            android:textSize="18dp" />
+
+    </GridLayout>
 
 
-</RelativeLayout >
 </LinearLayout>
