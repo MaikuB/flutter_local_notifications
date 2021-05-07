@@ -88,7 +88,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
     private static final String DRAWABLE = "drawable";
     private static final String DEFAULT_ICON = "defaultIcon";
-    private static final String PACKAGE_NAME = "packageName";
     private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
@@ -199,8 +198,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
         if (!StringUtils.isNullOrEmpty(notificationDetails.customLayoutName)) {
 
-            SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-            String packageName = sharedPreferences.getString(PACKAGE_NAME, null);
+            String packageName = context.getPackageName();
 
             if (!StringUtils.isNullOrEmpty(packageName))
             {
@@ -1081,7 +1079,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private void initialize(MethodCall call, Result result) {
         Map<String, Object> arguments = call.arguments();
         String defaultIcon = (String) arguments.get(DEFAULT_ICON);
-        String packageName = (String) arguments.get(PACKAGE_NAME);
         if (!isValidDrawableResource(applicationContext, defaultIcon, result, INVALID_ICON_ERROR_CODE)) {
             return;
         }
@@ -1091,11 +1088,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         SharedPreferences sharedPreferences = applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(DEFAULT_ICON, defaultIcon);
-
-        if (!StringUtils.isNullOrEmpty(packageName)) {
-            editor.putString(PACKAGE_NAME, packageName);
-        }
-
         editor.commit();
 
         if (mainActivity != null && !launchedActivityFromHistory(mainActivity.getIntent())) {

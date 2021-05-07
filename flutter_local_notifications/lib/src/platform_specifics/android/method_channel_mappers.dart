@@ -17,8 +17,7 @@ import 'styles/messaging_style_information.dart';
 
 // ignore_for_file: avoid_as
 extension AndroidInitializationSettingsMapper on AndroidInitializationSettings {
-  Map<String, Object> toMap() =>
-      <String, Object>{'defaultIcon': defaultIcon, 'packageName': packageName};
+  Map<String, Object> toMap() => <String, Object>{'defaultIcon': defaultIcon};
 }
 
 extension MessageMapper on Message {

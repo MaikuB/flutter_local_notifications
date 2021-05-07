@@ -1,10 +1,7 @@
 /// Plugin initialization settings for Android.
 class AndroidInitializationSettings {
-  const AndroidInitializationSettings(this.defaultIcon, {this.packageName});
+  const AndroidInitializationSettings(this.defaultIcon);
 
   /// Specifies the default icon for notifications.
   final String defaultIcon;
-
-  /// Specifies the package name for application.
-  final String packageName;
 }
