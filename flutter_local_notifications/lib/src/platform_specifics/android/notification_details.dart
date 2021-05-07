@@ -47,6 +47,7 @@ class AndroidNotificationDetails {
     this.fullScreenIntent = false,
     this.shortcutId,
     this.additionalFlags,
+    this.customLayoutName,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -242,4 +243,13 @@ class AndroidNotificationDetails {
   /// For a list of a values, refer to the documented constants prefixed with "FLAG_" (without the quotes) at https://developer.android.com/reference/android/app/Notification.html#constants_1.
   /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
   final Int32List additionalFlags;
+
+  /// Specifies the custom notification layout.
+  ///
+  /// Use when to need a custom notification layout.
+  /// The layout located in the `android/app/main/res/layout` directory of the android application.
+  /// The widget id containing the title must be named `push_title`.
+  /// The widget id containing the text must be named `push_text`.
+  /// The widget id containing the image must be named `push_image`.
+  final String customLayoutName;
 }

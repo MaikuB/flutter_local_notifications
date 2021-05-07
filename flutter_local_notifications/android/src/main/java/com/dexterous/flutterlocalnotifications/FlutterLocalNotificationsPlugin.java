@@ -10,7 +10,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
@@ -21,6 +23,8 @@ import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
+import android.view.View;
+import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.AlarmManagerCompat;
@@ -190,6 +194,50 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
         if (!StringUtils.isNullOrEmpty(notificationDetails.shortcutId)) {
             builder.setShortcutId(notificationDetails.shortcutId);
+        }
+
+        if (!StringUtils.isNullOrEmpty(notificationDetails.customLayoutName)) {
+
+            String packageName = context.getPackageName();
+
+            if (!StringUtils.isNullOrEmpty(packageName))
+            {
+                try {
+                    String customLayoutName = notificationDetails.customLayoutName;
+                    PackageManager manager = context.getPackageManager();
+                    Resources resources = null;
+                    resources = manager.getResourcesForApplication(packageName);
+
+                    int layoutId = resources.getIdentifier(customLayoutName, "layout", packageName);
+                    int titleId = resources.getIdentifier("push_title", "id", packageName);
+                    int textId = resources.getIdentifier("push_text", "id", packageName);
+                    int imageId = resources.getIdentifier("push_image", "id", packageName);
+                    RemoteViews contentViewSmall = new RemoteViews(packageName, layoutId);
+
+                    if (!StringUtils.isNullOrEmpty(notificationDetails.title)) {
+                        contentViewSmall.setTextViewText(titleId, notificationDetails.title);
+                    } else {
+                        contentViewSmall.setViewVisibility(titleId, View.GONE);
+                    }
+
+                    if (!StringUtils.isNullOrEmpty(notificationDetails.body)) {
+                        contentViewSmall.setTextViewText(textId, notificationDetails.body);
+                    } else {
+                        contentViewSmall.setViewVisibility(textId, View.GONE);
+                    }
+
+                    if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
+                        contentViewSmall.setImageViewBitmap(imageId, getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
+                    } else {
+                        contentViewSmall.setViewVisibility(imageId, View.GONE);
+                    }
+                    builder.setCustomContentView(contentViewSmall);
+
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
 
         setVisibility(notificationDetails, builder);
