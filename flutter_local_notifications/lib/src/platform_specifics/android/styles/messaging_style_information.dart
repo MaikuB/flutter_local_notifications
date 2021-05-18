@@ -5,6 +5,7 @@ import 'default_style_information.dart';
 /// Used to pass the content for an Android notification displayed using the
 /// messaging style.
 class MessagingStyleInformation extends DefaultStyleInformation {
+  /// Constructs an instance of [MessagingStyleInformation].
   MessagingStyleInformation(
     this.person, {
     this.conversationTitle,
@@ -12,18 +13,17 @@ class MessagingStyleInformation extends DefaultStyleInformation {
     this.messages,
     bool htmlFormatContent = false,
     bool htmlFormatTitle = false,
-  })  : assert(person?.name != null, 'Must provide the details of the person'),
-        super(htmlFormatContent, htmlFormatTitle);
+  }) : super(htmlFormatContent, htmlFormatTitle);
 
   /// The person displayed for any messages that are sent by the user.
   final Person person;
 
   /// The title to be displayed on this conversation.
-  final String conversationTitle;
+  final String? conversationTitle;
 
   /// Whether this conversation notification represents a group.
-  final bool groupConversation;
+  final bool? groupConversation;
 
   /// Messages to be displayed by this notification
-  final List<Message> messages;
+  final List<Message>? messages;
 }

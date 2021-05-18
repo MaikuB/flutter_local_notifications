@@ -4,6 +4,7 @@ import 'platform_specifics/macos/initialization_settings.dart';
 
 /// Settings for initializing the plugin for each platform.
 class InitializationSettings {
+  /// Constructs an instance of [InitializationSettings].
   const InitializationSettings({
     this.android,
     this.iOS,
@@ -11,11 +12,11 @@ class InitializationSettings {
   });
 
   /// Settings for Android.
-  final AndroidInitializationSettings android;
+  final AndroidInitializationSettings? android;
 
   /// Settings for iOS.
-  final IOSInitializationSettings iOS;
+  final IOSInitializationSettings? iOS;
 
   /// Settings for iOS.
-  final MacOSInitializationSettings macOS;
+  final MacOSInitializationSettings? macOS;
 }

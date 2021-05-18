@@ -11,9 +11,12 @@ task:
 task:
   name: Build iOS example app
   osx_instance:
-    image: catalina-flutter
+    image: big-sur-xcode-12.4
   pub_cache:
     folder: ~/.pub-cache
+  upgrade_script:
+    - flutter channel stable
+    - flutter upgrade
   build_script:
     - cd flutter_local_notifications/example
     - flutter build ios --no-codesign --debug
@@ -21,11 +24,11 @@ task:
 task:
   name: Build macOS example app
   osx_instance:
-    image: catalina-flutter
+    image: big-sur-xcode-12.4
   pub_cache:
     folder: ~/.pub-cache
   upgrade_script:
-    - flutter channel dev
+    - flutter channel stable
     - flutter upgrade
   setup_script:
     - flutter config --enable-macos-desktop
@@ -73,4 +76,4 @@ task:
   test_script:
     - cd flutter_local_notifications
     - cd example
-    - flutter drive --driver=test_driver/flutter_local_notifications_e2e_test.dart test_driver/flutter_local_notifications_e2e.dart
+    - flutter drive --driver=test_driver/integration_test.dart --target=integration_test/flutter_local_notifications_test.dart

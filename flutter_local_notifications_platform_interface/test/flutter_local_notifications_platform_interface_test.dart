@@ -21,7 +21,7 @@ void main() {
       expect(() {
         FlutterLocalNotificationsPlatform.instance =
             ImplementsFlutterLocalNotificationsPlatform();
-      }, throwsA(isInstanceOf<AssertionError>()));
+      }, throwsAssertionError);
     });
 
     test('Can be mocked with `implements`', () {

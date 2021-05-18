@@ -1,9 +1,10 @@
 /// Represents an attachment for an macOS notification.
 class MacOSNotificationAttachment {
+  /// Constructs an instance of [MacOSNotificationAttachment].
   const MacOSNotificationAttachment(
     this.filePath, {
     this.identifier,
-  }) : assert(filePath != null);
+  });
 
   /// The local file path to the attachment.
   ///
@@ -14,5 +15,5 @@ class MacOSNotificationAttachment {
   /// The unique identifier for the attachment.
   ///
   /// When left empty, the macOS APIs will generate a unique identifier
-  final String identifier;
+  final String? identifier;
 }

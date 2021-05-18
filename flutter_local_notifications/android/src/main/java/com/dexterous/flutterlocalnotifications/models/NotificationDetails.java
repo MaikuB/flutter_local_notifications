@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 
+import androidx.annotation.Keep;
+
 import com.dexterous.flutterlocalnotifications.BitmapSource;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.RepeatInterval;
@@ -18,6 +20,7 @@ import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 import java.util.ArrayList;
 import java.util.Map;
 
+@Keep
 public class NotificationDetails {
     private static final String ID = "id";
     private static final String TITLE = "title";
@@ -38,6 +41,7 @@ public class NotificationDetails {
     private static final String SOUND_SOURCE = "soundSource";
     private static final String ENABLE_VIBRATION = "enableVibration";
     private static final String VIBRATION_PATTERN = "vibrationPattern";
+    private static final String TAG = "tag";
     private static final String GROUP_KEY = "groupKey";
     private static final String SET_AS_GROUP_SUMMARY = "setAsGroupSummary";
     private static final String GROUP_ALERT_BEHAVIOR = "groupAlertBehavior";
@@ -103,6 +107,7 @@ public class NotificationDetails {
     private static final String TIMEOUT_AFTER = "timeoutAfter";
     private static final String SHOW_WHEN = "showWhen";
     private static final String WHEN = "when";
+    private static final String USES_CHRONOMETER = "usesChronometer";
     private static final String ADDITIONAL_FLAGS = "additionalFlags";
 
     private static final String SCHEDULED_DATE_TIME = "scheduledDateTime";
@@ -112,6 +117,7 @@ public class NotificationDetails {
 
     private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
     private static final String SHORTCUT_ID = "shortcutId";
+    private static final String SUB_TEXT = "subText";
 
     private static final String CUSTOM_LAYOUT_NAME = "customLayoutName";
 
@@ -164,6 +170,7 @@ public class NotificationDetails {
     public String category;
     public int[] additionalFlags;
     public Boolean showWhen;
+    public Boolean usesChronometer;
     public String scheduledDateTime;
     public String timeZoneName;
     public ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency;
@@ -172,6 +179,8 @@ public class NotificationDetails {
     public Boolean fullScreenIntent;
     public String shortcutId;
     public String customLayoutName;
+    public String subText;
+    public String tag;
 
 
 
@@ -231,6 +240,7 @@ public class NotificationDetails {
             notificationDetails.onlyAlertOnce = (Boolean) platformChannelSpecifics.get(ONLY_ALERT_ONCE);
             notificationDetails.showWhen = (Boolean) platformChannelSpecifics.get(SHOW_WHEN);
             notificationDetails.when = parseLong(platformChannelSpecifics.get(WHEN));
+            notificationDetails.usesChronometer = (Boolean) platformChannelSpecifics.get(USES_CHRONOMETER);
             readProgressInformation(notificationDetails, platformChannelSpecifics);
             readColor(notificationDetails, platformChannelSpecifics);
             readChannelInformation(notificationDetails, platformChannelSpecifics);
@@ -245,6 +255,8 @@ public class NotificationDetails {
             notificationDetails.shortcutId = (String) platformChannelSpecifics.get(SHORTCUT_ID);
             notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
             notificationDetails.customLayoutName = (String) platformChannelSpecifics.get(CUSTOM_LAYOUT_NAME);
+            notificationDetails.subText = (String) platformChannelSpecifics.get(SUB_TEXT);
+            notificationDetails.tag = (String) platformChannelSpecifics.get(TAG);
         }
     }
 
