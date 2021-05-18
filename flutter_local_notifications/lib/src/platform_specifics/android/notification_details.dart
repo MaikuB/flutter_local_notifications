@@ -262,7 +262,7 @@ class AndroidNotificationDetails {
   /// The widget id containing the title must be named `push_title`.
   /// The widget id containing the text must be named `push_text`.
   /// The widget id containing the image must be named `push_image`.
-  final String customLayoutName;
+  final String? customLayoutName;
 
   /// Provides some additional information that is displayed in the
   /// notification.
