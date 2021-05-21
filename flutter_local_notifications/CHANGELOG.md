@@ -1,3 +1,7 @@
+# [6.0.0-dev.1]
+
+* Made changes required to support Android 12
+
 # [5.0.0+4]
 
 * Fixed example app to re-add attributes to the Android app's `AndroidManifest.xml` to allow full-screen intent notifications to work
