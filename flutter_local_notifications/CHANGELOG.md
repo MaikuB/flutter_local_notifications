@@ -1,6 +1,6 @@
 # [6.0.0]
 
-* Updated Flutter SDK constraint. To err on the safe side, this is why there's a major version bump for this release
+* Updated Flutter SDK constraint. To err on the safe side, this is why there's a major version bump for this release as the minimum version supported is 2.2
 * Updated Dart SDK constraint
 * Bumped mockito dependency
 * Addressed deprecation warnings that were appearing for Android builds
