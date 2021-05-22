@@ -4,6 +4,7 @@
 * Updated Dart SDK constraint
 * Bumped mockito dependency
 * Addressed deprecation warnings that were appearing for Android builds
+* Updated API docs around the `tag` property associated with the `AndroidNotificationDetails` class
 
 # [5.0.0+4]
 
