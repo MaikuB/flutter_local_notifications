@@ -2,6 +2,7 @@
 
 * Bumped Flutter constraint
 * Bumped mockito dependency
+* Updated Dart SDK constraint
 
 ## [3.0.0]
 
