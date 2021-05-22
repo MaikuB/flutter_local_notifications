@@ -1,6 +1,13 @@
-# [6.0.0-dev.1]
+# [7.0.0-dev.1]
 
 * Made changes required to support Android 12
+# [6.0.0]
+
+* Updated Flutter SDK constraint. To err on the safe side, this is why there's a major version bump for this release as the minimum version supported is 2.2
+* Updated Dart SDK constraint
+* Bumped mockito dependency
+* Addressed deprecation warnings that were appearing for Android builds
+* Updated API docs around the `tag` property associated with the `AndroidNotificationDetails` class
 
 # [5.0.0+4]
 

@@ -1,11 +1,11 @@
 name: flutter_local_notifications_platform_interface
 description: A common platform interface for the flutter_local_notifications plugin.
-version: 3.0.0
+version: 4.0.0
 homepage: https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications_platform_interface
 
 environment:
-  sdk: '>=2.12.0-0 <3.0.0'
-  flutter: ">=1.10.0"
+  sdk: '>=2.12.0 <3.0.0'
+  flutter: ">=2.2.0"
 
 dependencies:
   flutter:
@@ -15,8 +15,4 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  # TODO(mbui): Update to stable 5.0.0 release when dependency conflict
-  # with flutter_driver has been resolved:
-  # Because mockito >=5.0.0 depends on analyzer ^1.0.0 which depends on crypto ^3.0.0 
-  # every version of flutter_driver from sdk depends on crypto 2.1.5.
-  mockito: ^5.0.0-nullsafety.7
+  mockito: ^5.0.8

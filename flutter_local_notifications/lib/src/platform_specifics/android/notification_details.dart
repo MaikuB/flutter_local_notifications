@@ -273,6 +273,11 @@ class AndroidNotificationDetails {
   /// The notification tag.
   ///
   /// Showing notification with the same (tag, id) pair as a currently visible
-  /// notification will replace the old notification with the new one.
+  /// notification will replace the old notification with the new one, provided
+  /// the old notification was one that was not one that was scheduled. In other
+  /// words, the (tag, id) pair is only applicable for notifications that were
+  /// requested to be shown immediately. This is because the Android
+  /// AlarmManager APIs used for scheduling notifications only allow for using
+  /// the id to uniquely identify alarms.
   final String? tag;
 }
