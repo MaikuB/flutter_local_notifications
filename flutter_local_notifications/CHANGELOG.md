@@ -1,5 +1,8 @@
-# [5.0.0+5]
+# [6.0.0]
 
+* Updated Flutter SDK constraint. To err on the safe side, this is why there's a major version bump for this release
+* Updated Dart SDK constraint
+* Bumped mockito dependency
 * Addressed deprecation warnings that were appearing for Android builds
 
 # [5.0.0+4]
