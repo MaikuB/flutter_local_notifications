@@ -1,3 +1,9 @@
+## [4.0.0]
+
+* Updated Flutter SDK constraint
+* Updated Dart SDK constraint
+* Bumped mockito dependency
+
 ## [3.0.0]
 
 * Migrated to null safety
