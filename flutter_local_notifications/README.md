@@ -11,7 +11,6 @@ A cross platform plugin for displaying local notifications.
 - **[⚠ Caveats and limitations](#-caveats-and-limitations)**
    - [Compatibility with firebase_messaging](#compatibility-with-firebase_messaging)
    - [Scheduled Android notifications](#scheduled-android-notifications)
-   - [Recurring Android notifications](#recurring-android-notifications)
    - [iOS pending notifications limit](#ios-pending-notifications-limit)
    - [Scheduled notifications and daylight savings](#scheduled-notifications-and-daylight-savings)
    - [Updating application badge](#updating-application-badge)
