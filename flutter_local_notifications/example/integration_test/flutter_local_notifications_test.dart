@@ -46,9 +46,8 @@ void main() {
           (WidgetTester tester) async {
         expect(
             flutterLocalNotificationsPlugin
-                .resolvePlatformSpecificImplementation<
-                    IOSFlutterLocalNotificationsPlugin>(),
-            isA<IOSFlutterLocalNotificationsPlugin>());
+                .resolvePlatformSpecificImplementation(),
+            isA());
       });
     }
 
@@ -81,8 +80,7 @@ void main() {
           'running on Android', (WidgetTester tester) async {
         expect(
             flutterLocalNotificationsPlugin
-                .resolvePlatformSpecificImplementation<
-                    IOSFlutterLocalNotificationsPlugin>(),
+                .resolvePlatformSpecificImplementation(),
             isNull);
       });
     }

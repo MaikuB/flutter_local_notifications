@@ -11,6 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.0
+  platform: ^3.0.0
+  timezone: ^0.7.0
 
 dev_dependencies:
   flutter_test:

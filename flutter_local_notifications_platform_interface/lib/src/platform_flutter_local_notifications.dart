@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
+import 'package:platform/platform.dart';
 import 'package:timezone/timezone.dart';
 
 import 'helpers.dart';
@@ -32,6 +33,12 @@ const MethodChannel _channel =
 /// An implementation of a local notifications platform using method channels.
 class MethodChannelFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
+
+//  final Platform _platform;
+//
+//  MethodChannelFlutterLocalNotificationsPlugin.private(Platform platform)
+//      : _platform = platform {}
+
   @override
   Future<void> cancel(int id) {
     validateId(id);
@@ -76,14 +83,15 @@ class AndroidFlutterLocalNotificationsPlugin
   /// This should only be done once. When a notification created by this plugin
   /// was used to launch the app, calling `initialize` is what will trigger to
   /// the `onSelectNotification` callback to be fire.
+  @override
   Future<bool?> initialize(
-    AndroidInitializationSettings initializationSettings, {
+    InitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
   }) async {
     _onSelectNotification = onSelectNotification;
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
-        'initialize', initializationSettings.toMap());
+        'initialize', initializationSettings.android?.toMap());
   }
 
   /// Schedules a notification to be shown at the specified date and time.
@@ -98,13 +106,13 @@ class AndroidFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     DateTime scheduledDate,
-    AndroidNotificationDetails? notificationDetails, {
+    NotificationDetails? notificationDetails, {
     String? payload,
     bool androidAllowWhileIdle = false,
   }) async {
     validateId(id);
     final Map<String, Object?> serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? <String, Object>{};
+        notificationDetails?.android?.toMap() ?? <String, Object>{};
     serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
     await _channel.invokeMethod('schedule', <String, Object?>{
       'id': id,
@@ -123,16 +131,18 @@ class AndroidFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     TZDateTime scheduledDate,
-    AndroidNotificationDetails? notificationDetails, {
-    required bool androidAllowWhileIdle,
-    String? payload,
-    DateTimeComponents? matchDateTimeComponents,
+    NotificationDetails? notificationDetails, {
+        required bool androidAllowWhileIdle,
+        required UILocalNotificationDateInterpretation
+        uiLocalNotificationDateInterpretation,
+        String? payload,
+        DateTimeComponents? matchDateTimeComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
     ArgumentError.checkNotNull(androidAllowWhileIdle, 'androidAllowWhileIdle');
     final Map<String, Object?> serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? <String, Object>{};
+        notificationDetails?.android?.toMap() ?? <String, Object>{};
     serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
     await _channel.invokeMethod(
         'zonedSchedule',
@@ -207,7 +217,7 @@ class AndroidFlutterLocalNotificationsPlugin
     int id,
     String? title,
     String? body, {
-    AndroidNotificationDetails? notificationDetails,
+    NotificationDetails? notificationDetails,
     String? payload,
   }) {
     validateId(id);
@@ -218,7 +228,7 @@ class AndroidFlutterLocalNotificationsPlugin
         'title': title,
         'body': body,
         'payload': payload ?? '',
-        'platformSpecifics': notificationDetails?.toMap(),
+        'platformSpecifics': notificationDetails?.android?.toMap(),
       },
     );
   }
@@ -391,15 +401,15 @@ class IOSFlutterLocalNotificationsPlugin
   /// [requestPermissions] can then be called to request permissions when
   /// needed.
   Future<bool?> initialize(
-    IOSInitializationSettings initializationSettings, {
+    InitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
   }) async {
     _onSelectNotification = onSelectNotification;
     _onDidReceiveLocalNotification =
-        initializationSettings.onDidReceiveLocalNotification;
+        initializationSettings.iOS!.onDidReceiveLocalNotification;
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
-        'initialize', initializationSettings.toMap());
+        'initialize', initializationSettings.iOS?.toMap());
   }
 
   /// Requests the specified permission(s) from user and returns current
@@ -424,8 +434,9 @@ class IOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     DateTime scheduledDate,
-    IOSNotificationDetails? notificationDetails, {
+    NotificationDetails? notificationDetails, {
     String? payload,
+    bool androidAllowWhileIdle = false,
   }) async {
     validateId(id);
     await _channel.invokeMethod('schedule', <String, Object?>{
@@ -433,7 +444,7 @@ class IOSFlutterLocalNotificationsPlugin
       'title': title,
       'body': body,
       'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
-      'platformSpecifics': notificationDetails?.toMap(),
+      'platformSpecifics': notificationDetails?.iOS?.toMap(),
       'payload': payload ?? ''
     });
   }
@@ -451,23 +462,25 @@ class IOSFlutterLocalNotificationsPlugin
   /// except for when the time zone used in the [scheduledDate] matches the
   /// device's time zone and [uiLocalNotificationDateInterpretation] is set to
   /// [UILocalNotificationDateInterpretation.wallClockTime].
+  @override
   Future<void> zonedSchedule(
     int id,
     String? title,
     String? body,
     TZDateTime scheduledDate,
-    IOSNotificationDetails? notificationDetails, {
-    required UILocalNotificationDateInterpretation
+    NotificationDetails? notificationDetails, {
+        required bool androidAllowWhileIdle,
+        required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
-    String? payload,
-    DateTimeComponents? matchDateTimeComponents,
+        String? payload,
+        DateTimeComponents? matchDateTimeComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
     ArgumentError.checkNotNull(uiLocalNotificationDateInterpretation,
         'uiLocalNotificationDateInterpretation');
     final Map<String, Object?> serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? <String, Object>{};
+        notificationDetails?.iOS?.toMap() ?? <String, Object>{};
     await _channel.invokeMethod(
         'zonedSchedule',
         <String, Object?>{
@@ -542,7 +555,7 @@ class IOSFlutterLocalNotificationsPlugin
     int id,
     String? title,
     String? body, {
-    IOSNotificationDetails? notificationDetails,
+    NotificationDetails? notificationDetails,
     String? payload,
   }) {
     validateId(id);
@@ -553,7 +566,7 @@ class IOSFlutterLocalNotificationsPlugin
         'title': title,
         'body': body,
         'payload': payload ?? '',
-        'platformSpecifics': notificationDetails?.toMap(),
+        'platformSpecifics': notificationDetails?.iOS?.toMap(),
       },
     );
   }
@@ -618,13 +631,13 @@ class MacOSFlutterLocalNotificationsPlugin
   /// [requestPermissions] can then be called to request permissions when
   /// needed.
   Future<bool?> initialize(
-    MacOSInitializationSettings initializationSettings, {
+    InitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
   }) async {
     _onSelectNotification = onSelectNotification;
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
-        'initialize', initializationSettings.toMap());
+        'initialize', initializationSettings.macOS?.toMap());
   }
 
   /// Requests the specified permission(s) from user and returns current
@@ -647,14 +660,17 @@ class MacOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     TZDateTime scheduledDate,
-    MacOSNotificationDetails? notificationDetails, {
-    String? payload,
-    DateTimeComponents? matchDateTimeComponents,
+    NotificationDetails? notificationDetails, {
+        required bool androidAllowWhileIdle,
+        required UILocalNotificationDateInterpretation
+        uiLocalNotificationDateInterpretation,
+        String? payload,
+        DateTimeComponents? matchDateTimeComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
     final Map<String, Object?> serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? <String, Object>{};
+        notificationDetails?.macOS?.toMap() ?? <String, Object>{};
     await _channel.invokeMethod(
         'zonedSchedule',
         <String, Object?>{
@@ -677,7 +693,7 @@ class MacOSFlutterLocalNotificationsPlugin
     int id,
     String? title,
     String? body, {
-    MacOSNotificationDetails? notificationDetails,
+    NotificationDetails? notificationDetails,
     String? payload,
   }) {
     validateId(id);
@@ -688,7 +704,7 @@ class MacOSFlutterLocalNotificationsPlugin
         'title': title,
         'body': body,
         'payload': payload ?? '',
-        'platformSpecifics': notificationDetails?.toMap(),
+        'platformSpecifics': notificationDetails?.macOS?.toMap(),
       },
     );
   }
