@@ -18,6 +18,8 @@ import 'platform_specifics/ios/enums.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/method_channel_mappers.dart';
 import 'platform_specifics/ios/notification_details.dart';
+import 'platform_specifics/linux/method_channel_mappers.dart';
+import 'platform_specifics/linux/notification_details.dart';
 import 'platform_specifics/macos/initialization_settings.dart';
 import 'platform_specifics/macos/method_channel_mappers.dart';
 import 'platform_specifics/macos/notification_details.dart';
@@ -712,6 +714,56 @@ class MacOSFlutterLocalNotificationsPlugin
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
+  }
+
+  Future<void> _handleMethod(MethodCall call) {
+    switch (call.method) {
+      case 'selectNotification':
+        return _onSelectNotification!(call.arguments);
+      default:
+        return Future<void>.error('Method not defined');
+    }
+  }
+}
+
+/// Linux implementation of the local notifications plugin.
+class LinuxFlutterLocalNotificationsPlugin
+    extends MethodChannelFlutterLocalNotificationsPlugin {
+  SelectNotificationCallback? _onSelectNotification;
+
+  /// Initializes the plugin.
+  ///
+  /// Call this method on application before using the plugin further.
+  /// This should only be done once. When a notification created by this plugin
+  /// was used to launch the app, calling `initialize` is what will trigger to
+  /// the `onSelectNotification` callback to be fire.
+  Future<bool?> initialize({
+    SelectNotificationCallback? onSelectNotification,
+  }) async {
+    _onSelectNotification = onSelectNotification;
+    _channel.setMethodCallHandler(_handleMethod);
+    return await _channel.invokeMethod('initialize');
+  }
+
+  @override
+  Future<void> show(
+    int id,
+    String? title,
+    String? body, {
+    LinuxNotificationDetails? notificationDetails,
+    String? payload,
+  }) {
+    validateId(id);
+    return _channel.invokeMethod(
+      'show',
+      <String, Object?>{
+        'id': id,
+        'title': title,
+        'body': body,
+        'payload': payload ?? '',
+        'platformSpecifics': notificationDetails?.toMap(),
+      },
+    );
   }
 
   Future<void> _handleMethod(MethodCall call) {
