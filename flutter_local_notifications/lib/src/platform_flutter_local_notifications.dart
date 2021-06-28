@@ -18,7 +18,7 @@ import 'platform_specifics/ios/enums.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/method_channel_mappers.dart';
 import 'platform_specifics/ios/notification_details.dart';
-import 'platform_specifics/linux/method_channel_mappers.dart';
+import 'platform_specifics/linux/initialization_settings.dart';
 import 'platform_specifics/linux/notification_details.dart';
 import 'platform_specifics/macos/initialization_settings.dart';
 import 'platform_specifics/macos/method_channel_mappers.dart';
@@ -728,7 +728,7 @@ class MacOSFlutterLocalNotificationsPlugin
 
 /// Linux implementation of the local notifications plugin.
 class LinuxFlutterLocalNotificationsPlugin
-    extends MethodChannelFlutterLocalNotificationsPlugin {
+    extends FlutterLocalNotificationsPlatform {
   SelectNotificationCallback? _onSelectNotification;
 
   /// Initializes the plugin.
@@ -737,12 +737,13 @@ class LinuxFlutterLocalNotificationsPlugin
   /// This should only be done once. When a notification created by this plugin
   /// was used to launch the app, calling `initialize` is what will trigger to
   /// the `onSelectNotification` callback to be fire.
-  Future<bool?> initialize({
+  Future<bool?> initialize(
+    LinuxInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
   }) async {
     _onSelectNotification = onSelectNotification;
-    _channel.setMethodCallHandler(_handleMethod);
-    return await _channel.invokeMethod('initialize');
+    // TODO: implement initialize
+    throw UnimplementedError();
   }
 
   @override
@@ -754,24 +755,20 @@ class LinuxFlutterLocalNotificationsPlugin
     String? payload,
   }) {
     validateId(id);
-    return _channel.invokeMethod(
-      'show',
-      <String, Object?>{
-        'id': id,
-        'title': title,
-        'body': body,
-        'payload': payload ?? '',
-        'platformSpecifics': notificationDetails?.toMap(),
-      },
-    );
+    // TODO: implement show
+    throw UnimplementedError();
   }
 
-  Future<void> _handleMethod(MethodCall call) {
-    switch (call.method) {
-      case 'selectNotification':
-        return _onSelectNotification!(call.arguments);
-      default:
-        return Future<void>.error('Method not defined');
-    }
+  @override
+  Future<void> cancel(int id) {
+    validateId(id);
+    // TODO: implement cancel
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> cancelAll() {
+    // TODO: implement cancelAll
+    throw UnimplementedError();
   }
 }

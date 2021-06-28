@@ -1,27 +1,33 @@
+import 'categories.dart';
 import 'enums.dart';
-import 'notification_timeout.dart';
+import 'icon.dart';
+import 'sound.dart';
+import 'timeout.dart';
 
 /// Configures notification details specific to Linux.
 class LinuxNotificationDetails {
   /// Constructs an instance of [LinuxNotificationDetails].
   const LinuxNotificationDetails({
-    this.iconPath,
+    this.icon,
+    this.sound,
     this.category,
-    this.urgency = LinuxNotificationUrgency.unspecified,
+    this.urgency,
     this.timeout = const LinuxNotificationTimeout.systemDefault(),
   });
 
-  /// Specifies the icon for notification.
-  /// The icon path is a relative path inside the Flutter Assets directory
-  final String? iconPath;
+  /// Specifies the notification icon.
+  final LinuxNotificationIcon? icon;
+
+  /// Specifies the notification sound.
+  final LinuxNotificationSound? sound;
 
   /// Specifies the category for notification.
   /// This can be used by the notification server to filter or
   /// display the data in a certain way.
-  final String? category;
+  final LinuxNotificationCategory? category;
 
   /// Sets the urgency level for notification.
-  final LinuxNotificationUrgency urgency;
+  final LinuxNotificationUrgency? urgency;
 
   /// Sets the timeout for notification.
   /// To set the default time, pass [LinuxNotificationTimeout.systemDefault()]
