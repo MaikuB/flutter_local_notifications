@@ -56,8 +56,10 @@ Future<void> main() async {
 
   await _configureLocalTimeZone();
 
-  final NotificationAppLaunchDetails? notificationAppLaunchDetails =
-      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  final NotificationAppLaunchDetails? notificationAppLaunchDetails = Platform
+          .isLinux
+      ? null
+      : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   String initialRoute = HomePage.routeName;
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
     selectedNotificationPayload = notificationAppLaunchDetails!.payload;
@@ -77,17 +79,22 @@ Future<void> main() async {
           onDidReceiveLocalNotification:
               (int id, String? title, String? body, String? payload) async {
             didReceiveLocalNotificationSubject.add(ReceivedNotification(
-                id: id, title: title, body: body, payload: payload));
+                id: id, title: title, body: body, payload: payload),);
           });
   const MacOSInitializationSettings initializationSettingsMacOS =
       MacOSInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false);
+    requestAlertPermission: false,
+    requestBadgePermission: false,
+    requestSoundPermission: false,
+  );
+  const LinuxInitializationSettings initializationSettingsLinux =
+      LinuxInitializationSettings();
   final InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-      macOS: initializationSettingsMacOS);
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsIOS,
+    macOS: initializationSettingsMacOS,
+    linux: initializationSettingsLinux,
+  );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String? payload) async {
     if (payload != null) {
@@ -108,6 +115,9 @@ Future<void> main() async {
 }
 
 Future<void> _configureLocalTimeZone() async {
+  if (Platform.isLinux) {
+    return;
+  }
   tz.initializeTimeZones();
   final String? timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZoneName!));

@@ -18,8 +18,6 @@ import 'platform_specifics/ios/enums.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/method_channel_mappers.dart';
 import 'platform_specifics/ios/notification_details.dart';
-import 'platform_specifics/linux/initialization_settings.dart';
-import 'platform_specifics/linux/notification_details.dart';
 import 'platform_specifics/macos/initialization_settings.dart';
 import 'platform_specifics/macos/method_channel_mappers.dart';
 import 'platform_specifics/macos/notification_details.dart';
@@ -723,52 +721,5 @@ class MacOSFlutterLocalNotificationsPlugin
       default:
         return Future<void>.error('Method not defined');
     }
-  }
-}
-
-/// Linux implementation of the local notifications plugin.
-class LinuxFlutterLocalNotificationsPlugin
-    extends FlutterLocalNotificationsPlatform {
-  SelectNotificationCallback? _onSelectNotification;
-
-  /// Initializes the plugin.
-  ///
-  /// Call this method on application before using the plugin further.
-  /// This should only be done once. When a notification created by this plugin
-  /// was used to launch the app, calling `initialize` is what will trigger to
-  /// the `onSelectNotification` callback to be fire.
-  Future<bool?> initialize(
-    LinuxInitializationSettings initializationSettings, {
-    SelectNotificationCallback? onSelectNotification,
-  }) async {
-    _onSelectNotification = onSelectNotification;
-    // TODO: implement initialize
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> show(
-    int id,
-    String? title,
-    String? body, {
-    LinuxNotificationDetails? notificationDetails,
-    String? payload,
-  }) {
-    validateId(id);
-    // TODO: implement show
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> cancel(int id) {
-    validateId(id);
-    // TODO: implement cancel
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> cancelAll() {
-    // TODO: implement cancelAll
-    throw UnimplementedError();
   }
 }
