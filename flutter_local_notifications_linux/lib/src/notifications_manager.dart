@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dbus/dbus.dart';
 import 'package:path/path.dart' as path;
 
+import 'dbus_wrapper.dart';
 import 'model/enums.dart';
 import 'model/icon.dart';
 import 'model/initialization_settings.dart';
@@ -12,42 +13,23 @@ import 'platform_info.dart';
 import 'storage.dart';
 import 'typedefs.dart';
 
-/// Mockable [DBusRemoteObject] builder for
-/// Desktop Notifications Specification https://developer.gnome.org/notification-spec/
-// ignore: one_member_abstracts
-abstract class NotificationDBusBuilder {
-  /// Build an instance of [DBusRemoteObject]
-  DBusRemoteObject build();
-}
-
-/// Real implementation of [NotificationDBusBuilder]
-class NotificationDBusBuilderImpl implements NotificationDBusBuilder {
-  @override
-  DBusRemoteObject build() => DBusRemoteObject(
-        DBusClient.session(),
-        _DBusInterfaceSpec.destination,
-        DBusObjectPath(_DBusInterfaceSpec.path),
-      );
-}
-
 /// Linux notification manager and client
 class LinuxNotificationManager {
   /// Constructs an instance of of [LinuxNotificationManager]
   LinuxNotificationManager({
-    NotificationDBusBuilder? dbusBuilder,
+    DBusWrapper? dbus,
     LinuxPlatformInfo? platformInfo,
     NotificationStorage? storage,
-  })  : _dbusBuilder = dbusBuilder ?? NotificationDBusBuilderImpl(),
+  })  : _dbus = dbus ?? DBusWrapperImpl(),
         _platformInfo = platformInfo ?? LinuxPlatformInfoImpl(),
         _storage = storage ?? NotificationStorageImpl();
 
-  final NotificationDBusBuilder _dbusBuilder;
+  final DBusWrapper _dbus;
   final LinuxPlatformInfo _platformInfo;
   final NotificationStorage _storage;
 
   late final LinuxInitializationSettings _initializationSettings;
   late final SelectNotificationCallback? _onSelectNotification;
-  late final DBusRemoteObject _dbus;
   late final LinuxPlatformInfoData _platformData;
 
   /// Initializes the manager.
@@ -58,7 +40,10 @@ class LinuxNotificationManager {
   }) async {
     _initializationSettings = initializationSettings;
     _onSelectNotification = onSelectNotification;
-    _dbus = _dbusBuilder.build();
+    _dbus.build(
+      destination: _DBusInterfaceSpec.destination,
+      path: _DBusInterfaceSpec.path,
+    );
     _platformData = await _platformInfo.getAll();
 
     await _storage.forceReloadCache();
@@ -134,7 +119,7 @@ class LinuxNotificationManager {
           DBusBoolean(data.hasAlpha),
           DBusInt32(data.bitsPerSample),
           DBusInt32(data.channels),
-          DBusArray.byte(data.data)
+          DBusArray.byte(data.data),
         ],
       );
     }
@@ -190,11 +175,7 @@ class LinuxNotificationManager {
 
   /// Subscribe to the signals for actions and closing notifications.
   void _subscribeSignals() {
-    DBusRemoteObjectSignalStream(
-      _dbus,
-      _DBusInterfaceSpec.destination,
-      _DBusMethodsSpec.actionInvoked,
-    ).listen(
+    _dbus.subscribeSignal(_DBusMethodsSpec.actionInvoked).listen(
       (DBusSignal s) {
         if (s.signature != DBusSignature('us')) {
           return;
@@ -206,11 +187,7 @@ class LinuxNotificationManager {
       },
     );
 
-    DBusRemoteObjectSignalStream(
-      _dbus,
-      _DBusInterfaceSpec.destination,
-      _DBusMethodsSpec.notificationClosed,
-    ).listen(
+    _dbus.subscribeSignal(_DBusMethodsSpec.notificationClosed).listen(
       (DBusSignal s) async {
         if (s.signature != DBusSignature('uu')) {
           return;

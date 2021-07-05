@@ -11,7 +11,8 @@ import 'platform_info.dart';
 const String _kFileName = 'notification_plugin_cache.json';
 
 /// Represents a persisten storage for the notifications info,
-/// see [LinuxNotificationInfo]
+/// see [LinuxNotificationInfo].
+/// The storage data exists within the user session.
 abstract class NotificationStorage {
   /// Get all notifications.
   Future<List<LinuxNotificationInfo>> getAll();
