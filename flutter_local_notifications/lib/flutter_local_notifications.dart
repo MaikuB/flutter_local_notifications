@@ -39,7 +39,8 @@ export 'package:flutter_local_notifications_platform_interface/flutter_local_not
         AndroidNotificationChannel,
         AndroidNotificationChannelGroup,
         AndroidFlutterLocalNotificationsPlugin,
-        ActiveNotification;
+        ActiveNotification,
+        SelectNotificationCallback,
+        WebNotificationDetails;
 
 export 'src/flutter_local_notifications_plugin.dart';
-export 'src/typedefs.dart';

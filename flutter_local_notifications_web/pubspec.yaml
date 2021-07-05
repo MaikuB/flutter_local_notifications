@@ -1,7 +1,7 @@
 name: flutter_local_notifications_web
 description: A new Flutter package project.
 version: 0.0.1
-homepage:
+homepage: https://github.com/cylyl/flutter_local_notifications
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -14,6 +14,14 @@ dependencies:
     path: ../flutter_local_notifications_platform_interface
   flutter_web_plugins:
     sdk: flutter
+  timezone: ^0.7.0
+  firebase_core:
+  firebase_messaging:
+  firebase_core_web:
+  firebase_messaging_web:
+  import_js_library:
+    git:
+      url: https://github.com/cylyl/flutter_web_import_js_library.git
 
 dev_dependencies:
   flutter_test:
@@ -29,3 +37,6 @@ flutter:
       web:
         pluginClass: FlutterLocalNotificationsWeb
         fileName: flutter_local_notifications_web.dart
+
+  assets:
+    - assets/flutter_local_notifications_web.js

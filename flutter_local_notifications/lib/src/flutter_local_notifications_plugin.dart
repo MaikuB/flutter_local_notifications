@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
 
-import 'typedefs.dart';
-
 /// Provides cross-platform functionality for displaying local notifications.
 ///
 /// The plugin will check the platform that is running on to use the appropriate

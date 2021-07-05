@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -366,7 +367,7 @@ class _HomePageState extends State<HomePage> {
                     await _cancelAllNotifications();
                   },
                 ),
-                if (Platform.isAndroid) ...<Widget>[
+                if (!kIsWeb && Platform.isAndroid) ...<Widget>[
                   const Text(
                     'Android-specific examples',
                     style: TextStyle(fontWeight: FontWeight.bold),
@@ -563,7 +564,7 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 ],
-                if (Platform.isIOS || Platform.isMacOS) ...<Widget>[
+                if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) ...<Widget>[
                   const Text(
                     'iOS and macOS-specific examples',
                     style: TextStyle(fontWeight: FontWeight.bold),

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/flutter_local_notifications/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter_local_notifications/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter_local_notifications/build" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter_local_notifications/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter_local_notifications/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter_local_notifications/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter_local_notifications_platform_interface/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter_local_notifications_platform_interface/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter_local_notifications_platform_interface/build" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter_local_notifications_web/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter_local_notifications_web/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/flutter_local_notifications_web/build" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Dart SDK" level="project" />
+    <orderEntry type="library" name="Dart Packages" level="project" />
+  </component>
+</module>
