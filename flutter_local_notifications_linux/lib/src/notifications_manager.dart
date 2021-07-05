@@ -3,17 +3,14 @@ import 'dart:async';
 import 'package:dbus/dbus.dart';
 import 'package:path/path.dart' as path;
 
-import 'enums.dart';
-import 'icon.dart';
-import 'initialization_settings.dart';
-import 'notification_details.dart';
+import 'model/enums.dart';
+import 'model/icon.dart';
+import 'model/initialization_settings.dart';
+import 'model/notification_details.dart';
+import 'notification_info.dart';
 import 'platform_info.dart';
+import 'storage.dart';
 import 'typedefs.dart';
-
-const String _kDbusDestination = 'org.freedesktop.Notifications';
-const String _kDbusPath = '/org/freedesktop/Notifications';
-const String _kDbusMethodNotify = 'Notify';
-const String _kDbusMethodClose = 'CloseNotification';
 
 /// Mockable [DBusRemoteObject] builder for
 /// Desktop Notifications Specification https://developer.gnome.org/notification-spec/
@@ -28,8 +25,8 @@ class NotificationDBusBuilderImpl implements NotificationDBusBuilder {
   @override
   DBusRemoteObject build() => DBusRemoteObject(
         DBusClient.session(),
-        _kDbusDestination,
-        DBusObjectPath(_kDbusPath),
+        _DBusInterfaceSpec.destination,
+        DBusObjectPath(_DBusInterfaceSpec.path),
       );
 }
 
@@ -39,11 +36,14 @@ class LinuxNotificationManager {
   LinuxNotificationManager({
     NotificationDBusBuilder? dbusBuilder,
     LinuxPlatformInfo? platformInfo,
+    NotificationStorage? storage,
   })  : _dbusBuilder = dbusBuilder ?? NotificationDBusBuilderImpl(),
-        _platformInfo = platformInfo ?? LinuxPlatformInfoImpl();
+        _platformInfo = platformInfo ?? LinuxPlatformInfoImpl(),
+        _storage = storage ?? NotificationStorageImpl();
 
   final NotificationDBusBuilder _dbusBuilder;
   final LinuxPlatformInfo _platformInfo;
+  final NotificationStorage _storage;
 
   late final LinuxInitializationSettings _initializationSettings;
   late final SelectNotificationCallback? _onSelectNotification;
@@ -60,6 +60,9 @@ class LinuxNotificationManager {
     _onSelectNotification = onSelectNotification;
     _dbus = _dbusBuilder.build();
     _platformData = await _platformInfo.getAll();
+
+    await _storage.forceReloadCache();
+    _subscribeSignals();
   }
 
   /// Show notification
@@ -70,42 +73,101 @@ class LinuxNotificationManager {
     LinuxNotificationDetails? details,
     String? payload,
   }) async {
+    final LinuxNotificationInfo? prevNotify = await _storage.getById(id);
     final LinuxNotificationIcon? defaultIcon =
         _initializationSettings.defaultIcon;
-    await _dbus.callMethod(
-      _kDbusDestination,
-      _kDbusMethodNotify,
+
+    final DBusMethodSuccessResponse result = await _dbus.callMethod(
+      _DBusInterfaceSpec.destination,
+      _DBusMethodsSpec.notify,
       <DBusValue>[
         // app_name
         DBusString(_platformData.appName ?? ''),
         // replaces_id
-        DBusUint32(id),
+        DBusUint32(prevNotify?.systemId ?? 0),
         // app_icon
         DBusString(_getAppIcon(details?.icon ?? defaultIcon) ?? ''),
         // summary
         DBusString(title ?? ''),
         // body
         DBusString(body ?? ''),
+        // TODO(proninyaroslav): add actions
         // actions
         DBusArray.string(const <String>[]),
         // hints
-        DBusDict.stringVariant(<String, DBusValue>{}),
+        DBusDict.stringVariant(_makeHints(details, defaultIcon)),
         // expire_timeout
         DBusInt32(details?.timeout.value ?? 0)
       ],
       replySignature: DBusSignature('u'),
     );
+
+    final int systemId = (result.returnValues[0] as DBusUint32).value;
+    final LinuxNotificationInfo notify = prevNotify?.copyWith(
+          systemId: systemId,
+          payload: payload,
+        ) ??
+        LinuxNotificationInfo(
+          id: id,
+          systemId: systemId,
+          payload: payload,
+        );
+    await _storage.insert(notify);
+  }
+
+  Map<String, DBusValue> _makeHints(
+    LinuxNotificationDetails? details,
+    LinuxNotificationIcon? defaultIcon,
+  ) {
+    final Map<String, DBusValue> hints = <String, DBusValue>{};
+    if (details == null && defaultIcon == null) {
+      return hints;
+    }
+    final LinuxNotificationIcon? icon = details?.icon ?? defaultIcon;
+    if (icon?.type == LinuxIconType.byteData) {
+      final RawIconData data = icon!.content as RawIconData;
+      hints['image-data'] = DBusStruct(
+        <DBusValue>[
+          DBusInt32(data.width),
+          DBusInt32(data.height),
+          DBusInt32(data.rowStride),
+          DBusBoolean(data.hasAlpha),
+          DBusInt32(data.bitsPerSample),
+          DBusInt32(data.channels),
+          DBusArray.byte(data.data)
+        ],
+      );
+    }
+
+    return hints;
   }
 
   /// Cancel notification with the given [id].
   Future<void> cancel(int id) async {
-    await _dbus.callMethod(
-      _kDbusDestination,
-      _kDbusMethodClose,
-      <DBusValue>[DBusUint32(id)],
-      replySignature: DBusSignature(''),
-    );
+    final LinuxNotificationInfo? notify = await _storage.getById(id);
+    await _storage.removeById(id);
+    if (notify != null) {
+      await _dbusCancel(notify.systemId);
+    }
   }
+
+  /// Cancel all notifications.
+  Future<void> cancelAll() async {
+    final List<LinuxNotificationInfo> notifyList = await _storage.getAll();
+    final List<int> idList = <int>[];
+    for (final LinuxNotificationInfo notify in notifyList) {
+      idList.add(notify.id);
+      await _dbusCancel(notify.systemId);
+    }
+    await _storage.removeByIdList(idList);
+  }
+
+  Future<void> _dbusCancel(int systemId) => _dbus.callMethod(
+        _DBusInterfaceSpec.destination,
+        _DBusMethodsSpec.closeNotification,
+        <DBusValue>[DBusUint32(systemId)],
+        replySignature: DBusSignature(''),
+      );
 
   String? _getAppIcon(LinuxNotificationIcon? icon) {
     if (icon == null) {
@@ -125,4 +187,50 @@ class LinuxNotificationManager {
         return icon.content as String;
     }
   }
+
+  /// Subscribe to the signals for actions and closing notifications.
+  void _subscribeSignals() {
+    DBusRemoteObjectSignalStream(
+      _dbus,
+      _DBusInterfaceSpec.destination,
+      _DBusMethodsSpec.actionInvoked,
+    ).listen(
+      (DBusSignal s) {
+        if (s.signature != DBusSignature('us')) {
+          return;
+        }
+
+        // TODO(proninyaroslav): add actions
+        final int id = (s.values[0] as DBusUint32).value;
+        final String actionKey = (s.values[1] as DBusString).value;
+      },
+    );
+
+    DBusRemoteObjectSignalStream(
+      _dbus,
+      _DBusInterfaceSpec.destination,
+      _DBusMethodsSpec.notificationClosed,
+    ).listen(
+      (DBusSignal s) async {
+        if (s.signature != DBusSignature('uu')) {
+          return;
+        }
+
+        final int systemId = (s.values[0] as DBusUint32).value;
+        await _storage.removeBySystemId(systemId);
+      },
+    );
+  }
+}
+
+class _DBusInterfaceSpec {
+  static const String destination = 'org.freedesktop.Notifications';
+  static const String path = '/org/freedesktop/Notifications';
+}
+
+class _DBusMethodsSpec {
+  static const String notify = 'Notify';
+  static const String closeNotification = 'CloseNotification';
+  static const String actionInvoked = 'ActionInvoked';
+  static const String notificationClosed = 'NotificationClosed';
 }

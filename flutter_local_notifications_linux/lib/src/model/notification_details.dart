@@ -4,6 +4,7 @@ import 'icon.dart';
 import 'sound.dart';
 import 'timeout.dart';
 
+// TODO(proninyaroslav): add another hints
 /// Configures notification details specific to Linux.
 class LinuxNotificationDetails {
   /// Constructs an instance of [LinuxNotificationDetails].
