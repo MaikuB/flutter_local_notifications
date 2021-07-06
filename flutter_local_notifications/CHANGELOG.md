@@ -1,3 +1,11 @@
+# [6.0.0]
+
+* Updated Flutter SDK constraint. To err on the safe side, this is why there's a major version bump for this release as the minimum version supported is 2.2
+* Updated Dart SDK constraint
+* Bumped mockito dependency
+* Addressed deprecation warnings that were appearing for Android builds
+* Updated API docs around the `tag` property associated with the `AndroidNotificationDetails` class
+
 # [5.0.0+4]
 
 * Fixed example app to re-add attributes to the Android app's `AndroidManifest.xml` to allow full-screen intent notifications to work
