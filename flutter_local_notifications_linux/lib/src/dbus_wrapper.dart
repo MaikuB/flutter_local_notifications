@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:dbus/dbus.dart';
 
-/// Mockable [DBusRemoteObject] manager
+/// Mockable [DBusRemoteObject] wrapper
 abstract class DBusWrapper {
   /// Build an instance of [DBusRemoteObject]
   void build({

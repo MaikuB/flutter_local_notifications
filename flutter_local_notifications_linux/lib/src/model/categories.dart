@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart';
+
 /// Categories of notifications.
+@immutable
 class LinuxNotificationCategory {
   /// Constructs an instance of [LinuxNotificationTimeout]
   /// with a given [name] of category.
@@ -97,4 +100,20 @@ class LinuxNotificationCategory {
 
   /// Name of category.
   final String name;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
+    return other is LinuxNotificationCategory &&
+      other.name == name;
+  }
+
+  @override
+  int get hashCode => name.hashCode;
+
+  @override
+  String toString() => 'LinuxNotificationCategory(name: $name)';
 }

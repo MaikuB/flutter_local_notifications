@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart';
+
 /// The timeout of the Linux notification.
+@immutable
 class LinuxNotificationTimeout {
   /// Constructs an instance of [LinuxNotificationTimeout]
   /// with a given [value] in milliseconds.
@@ -20,4 +23,19 @@ class LinuxNotificationTimeout {
 
   /// The integer representation in milliseconds.
   final int value;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
+    return other is LinuxNotificationTimeout && other.value == value;
+  }
+
+  @override
+  int get hashCode => value.hashCode;
+
+  @override
+  String toString() => 'LinuxNotificationTimeout(value: $value)';
 }

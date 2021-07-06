@@ -7,6 +7,7 @@ class LinuxInitializationSettings {
   const LinuxInitializationSettings({
     this.defaultIcon,
     this.defaultSound,
+    this.defaultSuppressSound,
   });
 
   /// Specifies the default icon for notifications.
@@ -14,4 +15,8 @@ class LinuxInitializationSettings {
 
   /// Specifies the default sound for notifications.
   final LinuxNotificationSound? defaultSound;
+
+  /// Causes the server to suppress playing any sounds, if it has that ability.
+  /// This is usually set when the client itself is going to play its own sound.
+  final bool? defaultSuppressSound;
 }

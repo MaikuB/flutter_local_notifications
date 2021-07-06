@@ -70,11 +70,8 @@ void main() {
     });
 
     test('Initialize', () async {
-      final LinuxInitializationSettings initSettings =
-          LinuxInitializationSettings(
-        defaultIcon: AssetsLinuxIcon('icon.png'),
-        defaultSound: AssetsLinuxSound('sound.mp3'),
-      );
+      const LinuxInitializationSettings initSettings =
+          LinuxInitializationSettings();
 
       await manager.initialize(initSettings);
 
@@ -116,8 +113,32 @@ void main() {
             // hints
             DBusDict.stringVariant(hints ?? <String, DBusValue>{}),
             // expire_timeout
-            DBusInt32(expireTimeout ?? 0),
+            DBusInt32(
+              expireTimeout ??
+                  const LinuxNotificationTimeout.systemDefault().value,
+            ),
           ];
+
+      void mockNotifyMethod(int systemId) => when(
+            () => mockDbus.callMethod(
+              'org.freedesktop.Notifications',
+              'Notify',
+              any(),
+              replySignature: DBusSignature('u'),
+            ),
+          ).thenAnswer(
+            (_) async => DBusMethodSuccessResponse(
+              <DBusValue>[DBusUint32(systemId)],
+            ),
+          );
+
+      VerificationResult verifyNotifyMethod(List<DBusValue> values) =>
+          verify(() => mockDbus.callMethod(
+                'org.freedesktop.Notifications',
+                'Notify',
+                values,
+                replySignature: DBusSignature('u'),
+              ));
 
       test('Simple notification', () async {
         const LinuxInitializationSettings initSettings =
@@ -133,18 +154,7 @@ void main() {
           body: 'Body',
         );
 
-        when(
-          () => mockDbus.callMethod(
-            'org.freedesktop.Notifications',
-            'Notify',
-            values,
-            replySignature: DBusSignature('u'),
-          ),
-        ).thenAnswer(
-          (_) async => DBusMethodSuccessResponse(
-            <DBusValue>[DBusUint32(notify.systemId)],
-          ),
-        );
+        mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
         ).thenAnswer((_) async {});
@@ -155,14 +165,35 @@ void main() {
         await manager.initialize(initSettings);
         await manager.show(notify.id, 'Title', 'Body');
 
+        verifyNotifyMethod(values).called(1);
         verify(
-          () => mockDbus.callMethod(
-            'org.freedesktop.Notifications',
-            'Notify',
-            values,
-            replySignature: DBusSignature('u'),
-          ),
+          () => mockStorage.insert(notify),
         ).called(1);
+      });
+
+      test('Simple notification without title and body', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings();
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues();
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null);
+
+        verifyNotifyMethod(values).called(1);
         verify(
           () => mockStorage.insert(notify),
         ).called(1);
@@ -189,18 +220,7 @@ void main() {
           body: 'Body',
         );
 
-        when(
-          () => mockDbus.callMethod(
-            'org.freedesktop.Notifications',
-            'Notify',
-            values,
-            replySignature: DBusSignature('u'),
-          ),
-        ).thenAnswer(
-          (_) async => DBusMethodSuccessResponse(
-            <DBusValue>[DBusUint32(newNotify.systemId)],
-          ),
-        );
+        mockNotifyMethod(newNotify.systemId);
         when(
           () => mockStorage.getById(newNotify.id),
         ).thenAnswer((_) async => prevNotify);
@@ -211,14 +231,7 @@ void main() {
         await manager.initialize(initSettings);
         await manager.show(newNotify.id, 'Title', 'Body');
 
-        verify(
-          () => mockDbus.callMethod(
-            'org.freedesktop.Notifications',
-            'Notify',
-            values,
-            replySignature: DBusSignature('u'),
-          ),
-        ).called(1);
+        verifyNotifyMethod(values).called(1);
         verify(
           () => mockStorage.insert(newNotify),
         ).called(1);
@@ -241,23 +254,9 @@ void main() {
 
         final List<DBusValue> values = buildNotifyMethodValues(
           appIcon: path.join(platformInfo.assetsPath!, 'details_icon.png'),
-          title: 'Title',
-          body: 'Body',
-          expireTimeout: details.timeout.value,
         );
 
-        when(
-          () => mockDbus.callMethod(
-            'org.freedesktop.Notifications',
-            'Notify',
-            values,
-            replySignature: DBusSignature('u'),
-          ),
-        ).thenAnswer(
-          (_) async => DBusMethodSuccessResponse(
-            <DBusValue>[DBusUint32(notify.systemId)],
-          ),
-        );
+        mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
         ).thenAnswer((_) async {});
@@ -266,7 +265,9 @@ void main() {
         ).thenAnswer((_) async => true);
 
         await manager.initialize(initSettings);
-        await manager.show(notify.id, 'Title', 'Body', details: details);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
       });
 
       test('Byte details icon', () async {
@@ -292,9 +293,6 @@ void main() {
         );
 
         final List<DBusValue> values = buildNotifyMethodValues(
-          title: 'Title',
-          body: 'Body',
-          expireTimeout: details.timeout.value,
           hints: <String, DBusValue>{
             'image-data': DBusStruct(
               <DBusValue>[
@@ -310,18 +308,7 @@ void main() {
           },
         );
 
-        when(
-          () => mockDbus.callMethod(
-            'org.freedesktop.Notifications',
-            'Notify',
-            values,
-            replySignature: DBusSignature('u'),
-          ),
-        ).thenAnswer(
-          (_) async => DBusMethodSuccessResponse(
-            <DBusValue>[DBusUint32(notify.systemId)],
-          ),
-        );
+        mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
         ).thenAnswer((_) async {});
@@ -330,7 +317,9 @@ void main() {
         ).thenAnswer((_) async => true);
 
         await manager.initialize(initSettings);
-        await manager.show(notify.id, 'Title', 'Body', details: details);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
       });
 
       test('Theme details icon', () async {
@@ -349,24 +338,10 @@ void main() {
         );
 
         final List<DBusValue> values = buildNotifyMethodValues(
-          appIcon: 'test',
-          title: 'Title',
-          body: 'Body',
-          expireTimeout: details.timeout.value,
+          appIcon: details.icon!.content as String,
         );
 
-        when(
-          () => mockDbus.callMethod(
-            'org.freedesktop.Notifications',
-            'Notify',
-            values,
-            replySignature: DBusSignature('u'),
-          ),
-        ).thenAnswer(
-          (_) async => DBusMethodSuccessResponse(
-            <DBusValue>[DBusUint32(notify.systemId)],
-          ),
-        );
+        mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
         ).thenAnswer((_) async {});
@@ -375,7 +350,9 @@ void main() {
         ).thenAnswer((_) async => true);
 
         await manager.initialize(initSettings);
-        await manager.show(notify.id, 'Title', 'Body', details: details);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
       });
 
       test('Default icon', () async {
@@ -391,22 +368,9 @@ void main() {
 
         final List<DBusValue> values = buildNotifyMethodValues(
           appIcon: path.join(platformInfo.assetsPath!, 'icon.png'),
-          title: 'Title',
-          body: 'Body',
         );
 
-        when(
-          () => mockDbus.callMethod(
-            'org.freedesktop.Notifications',
-            'Notify',
-            values,
-            replySignature: DBusSignature('u'),
-          ),
-        ).thenAnswer(
-          (_) async => DBusMethodSuccessResponse(
-            <DBusValue>[DBusUint32(notify.systemId)],
-          ),
-        );
+        mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
         ).thenAnswer((_) async {});
@@ -415,7 +379,9 @@ void main() {
         ).thenAnswer((_) async => true);
 
         await manager.initialize(initSettings);
-        await manager.show(notify.id, 'Title', 'Body');
+        await manager.show(notify.id, null, null);
+
+        verifyNotifyMethod(values).called(1);
       });
 
       test('Timeout', () async {
@@ -432,23 +398,10 @@ void main() {
         );
 
         final List<DBusValue> values = buildNotifyMethodValues(
-          title: 'Title',
-          body: 'Body',
           expireTimeout: details.timeout.value,
         );
 
-        when(
-          () => mockDbus.callMethod(
-            'org.freedesktop.Notifications',
-            'Notify',
-            values,
-            replySignature: DBusSignature('u'),
-          ),
-        ).thenAnswer(
-          (_) async => DBusMethodSuccessResponse(
-            <DBusValue>[DBusUint32(notify.systemId)],
-          ),
-        );
+        mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
         ).thenAnswer((_) async {});
@@ -457,7 +410,350 @@ void main() {
         ).thenAnswer((_) async => true);
 
         await manager.initialize(initSettings);
-        await manager.show(notify.id, 'Title', 'Body', details: details);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+      });
+
+      test('Assets sound in details', () async {
+        final LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings(
+          defaultSound: AssetsLinuxSound('default_sound.mp3'),
+        );
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        final LinuxNotificationDetails details = LinuxNotificationDetails(
+          sound: AssetsLinuxSound('sound.mp3'),
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          hints: <String, DBusValue>{
+            'sound-file': DBusString(
+              path.join(
+                platformInfo.assetsPath!,
+                details.sound!.content as String,
+              ),
+            ),
+          },
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+      });
+
+      test('Theme sound in details', () async {
+        final LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings(
+          defaultSound: AssetsLinuxSound('default_sound.mp3'),
+        );
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        final LinuxNotificationDetails details = LinuxNotificationDetails(
+          sound: ThemeLinuxSound('test'),
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          hints: <String, DBusValue>{
+            'sound-name': DBusString(details.sound!.content as String),
+          },
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+      });
+
+      test('Default sound', () async {
+        final LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings(
+          defaultSound: AssetsLinuxSound('sound.mp3'),
+        );
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          hints: <String, DBusValue>{
+            'sound-file': DBusString(
+              path.join(
+                platformInfo.assetsPath!,
+                initSettings.defaultSound!.content as String,
+              ),
+            ),
+          },
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null);
+
+        verifyNotifyMethod(values).called(1);
+      });
+
+      test('Category', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings();
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        final LinuxNotificationDetails details = LinuxNotificationDetails(
+          category: LinuxNotificationCategory.email(),
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          hints: <String, DBusValue>{
+            'category': DBusString(details.category!.name),
+          },
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+      });
+
+      test('Urgency', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings();
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        const LinuxNotificationDetails details = LinuxNotificationDetails(
+          urgency: LinuxNotificationUrgency.normal,
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          hints: <String, DBusValue>{
+            'urgency': DBusByte(details.urgency!.value),
+          },
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+      });
+
+      test('Resident notification', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings();
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        const LinuxNotificationDetails details = LinuxNotificationDetails(
+          resident: true,
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          hints: <String, DBusValue>{
+            'resident': DBusBoolean(details.resident!),
+          },
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+      });
+
+      test('Suppress sound in details', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings();
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        const LinuxNotificationDetails details = LinuxNotificationDetails(
+          suppressSound: true,
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          hints: <String, DBusValue>{
+            'suppress-sound': DBusBoolean(details.suppressSound!),
+          },
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+      });
+
+      test('Default suppress sound', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings(
+              defaultSuppressSound: true,
+            );
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          hints: <String, DBusValue>{
+            'suppress-sound': DBusBoolean(initSettings.defaultSuppressSound!),
+          },
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null);
+
+        verifyNotifyMethod(values).called(1);
+      });
+
+      test('Transient notification', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings();
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        const LinuxNotificationDetails details = LinuxNotificationDetails(
+          transient: true,
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          hints: <String, DBusValue>{
+            'transient': DBusBoolean(details.transient!),
+          },
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+      });
+
+      test('Notification location', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings();
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        const LinuxNotificationDetails details = LinuxNotificationDetails(
+          location: LinuxNotificationLocation(50, 100),
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          hints: <String, DBusValue>{
+            'x': DBusByte(details.location!.x),
+            'y': DBusByte(details.location!.y),
+          },
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
       });
     });
   });

@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:dbus/dbus.dart';
+import 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
+import 'package:flutter_local_notifications_linux/src/model/sound.dart';
+import 'package:flutter_local_notifications_linux/src/model/timeout.dart';
 import 'package:path/path.dart' as path;
 
 import 'dbus_wrapper.dart';
@@ -80,9 +83,12 @@ class LinuxNotificationManager {
         // actions
         DBusArray.string(const <String>[]),
         // hints
-        DBusDict.stringVariant(_makeHints(details, defaultIcon)),
+        DBusDict.stringVariant(_makeHints(details, _initializationSettings)),
         // expire_timeout
-        DBusInt32(details?.timeout.value ?? 0)
+        DBusInt32(
+          details?.timeout.value ??
+              const LinuxNotificationTimeout.systemDefault().value,
+        ),
       ],
       replySignature: DBusSignature('u'),
     );
@@ -102,13 +108,11 @@ class LinuxNotificationManager {
 
   Map<String, DBusValue> _makeHints(
     LinuxNotificationDetails? details,
-    LinuxNotificationIcon? defaultIcon,
+    LinuxInitializationSettings initSettings,
   ) {
     final Map<String, DBusValue> hints = <String, DBusValue>{};
-    if (details == null && defaultIcon == null) {
-      return hints;
-    }
-    final LinuxNotificationIcon? icon = details?.icon ?? defaultIcon;
+    final LinuxNotificationIcon? icon =
+        details?.icon ?? initSettings.defaultIcon;
     if (icon?.type == LinuxIconType.byteData) {
       final RawIconData data = icon!.content as RawIconData;
       hints['image-data'] = DBusStruct(
@@ -122,6 +126,45 @@ class LinuxNotificationManager {
           DBusArray.byte(data.data),
         ],
       );
+    }
+    final LinuxNotificationSound? sound =
+        details?.sound ?? initSettings.defaultSound;
+    if (sound != null) {
+      switch (sound.type) {
+        case LinuxSoundType.assets:
+          hints['sound-file'] = DBusString(
+            path.join(
+              _platformData.assetsPath!,
+              sound.content as String,
+            ),
+          );
+          break;
+        case LinuxSoundType.theme:
+          hints['sound-name'] = DBusString(sound.content as String);
+          break;
+      }
+    }
+    if (details?.category != null) {
+      hints['category'] = DBusString(details!.category!.name);
+    }
+    if (details?.urgency != null) {
+      hints['urgency'] = DBusByte(details!.urgency!.value);
+    }
+    if (details?.resident ?? false) {
+      hints['resident'] = const DBusBoolean(true);
+    }
+    final bool? suppressSound =
+        details?.suppressSound ?? initSettings.defaultSuppressSound;
+    if (suppressSound ?? false) {
+      hints['suppress-sound'] = const DBusBoolean(true);
+    }
+    if (details?.transient ?? false) {
+      hints['transient'] = const DBusBoolean(true);
+    }
+    if (details?.location != null) {
+      final LinuxNotificationLocation location = details!.location!;
+      hints['x'] = DBusByte(location.x);
+      hints['y'] = DBusByte(location.y);
     }
 
     return hints;
