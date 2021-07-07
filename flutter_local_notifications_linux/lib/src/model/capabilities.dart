@@ -4,7 +4,7 @@ import 'initialization_settings.dart';
 import 'notification_details.dart';
 import 'sound.dart';
 
-// TODO:(proninyaroslav) add actions
+// TODO(proninyaroslav): add actions
 
 /// Represents capabilities, implemented by the Linux notification server.
 @immutable
