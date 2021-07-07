@@ -42,3 +42,48 @@ enum LinuxSoundType {
   /// System theme sound, see [ThemeLinuxSound].
   theme,
 }
+
+/// Represents the notification hint value type.
+enum LinuxHintValueType {
+  /// Ordered list of values of the same type.
+  array,
+
+  /// Boolean value.
+  boolean,
+
+  /// Unsigned 8 bit value.
+  byte,
+
+  /// Associative array of values.
+  dict,
+
+  /// 64-bit floating point value.
+  double,
+
+  /// Signed 16-bit integer.
+  int16,
+
+  /// Signed 32-bit integer.
+  int32,
+
+  /// Signed 64-bit integer.
+  int64,
+
+  /// Unicode text string.
+  string,
+
+  /// Value that contains a fixed set of other values.
+  struct,
+
+  /// Unsigned 16-bit integer.
+  uint16,
+
+  /// Unsigned 32-bit integer.
+  uint32,
+
+  /// Unsigned 64-bit integer.
+  uint64,
+
+  /// Value that contains any type.
+  variant,
+}

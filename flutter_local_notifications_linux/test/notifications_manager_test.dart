@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:dbus/dbus.dart';
 import 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
 import 'package:flutter_local_notifications_linux/src/dbus_wrapper.dart';
+import 'package:flutter_local_notifications_linux/src/model/hint.dart';
 import 'package:flutter_local_notifications_linux/src/notification_info.dart';
 import 'package:flutter_local_notifications_linux/src/notifications_manager.dart';
 import 'package:flutter_local_notifications_linux/src/platform_info.dart';
@@ -780,6 +781,142 @@ void main() {
           hints: <String, DBusValue>{
             'x': DBusByte(details.location!.x),
             'y': DBusByte(details.location!.y),
+          },
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+      });
+
+      test('Custom hints', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings(defaultActionName: kDefaultActionName);
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        final LinuxNotificationDetails details = LinuxNotificationDetails(
+          customHints: <LinuxNotificationCustomHint>[
+            LinuxNotificationCustomHint(
+              'array-hint',
+              LinuxHintArrayValue(
+                <LinuxHintStringValue>[
+                  LinuxHintStringValue('1'),
+                  LinuxHintStringValue('2'),
+                ],
+              ),
+            ),
+            LinuxNotificationCustomHint(
+              'bool-hint',
+              LinuxHintBoolValue(true),
+            ),
+            LinuxNotificationCustomHint(
+              'byte-hint',
+              LinuxHintByteValue(1),
+            ),
+            LinuxNotificationCustomHint(
+              'dict-hint',
+              LinuxHintDictValue<LinuxHintByteValue, LinuxHintStringValue>(
+                <LinuxHintByteValue, LinuxHintStringValue>{
+                  LinuxHintByteValue(1): LinuxHintStringValue('1'),
+                  LinuxHintByteValue(2): LinuxHintStringValue('2'),
+                },
+              ),
+            ),
+            LinuxNotificationCustomHint(
+              'double-hint',
+              LinuxHintDoubleValue(1.1),
+            ),
+            LinuxNotificationCustomHint(
+              'int16-hint',
+              LinuxHintInt16Value(1),
+            ),
+            LinuxNotificationCustomHint(
+              'int32-hint',
+              LinuxHintInt32Value(1),
+            ),
+            LinuxNotificationCustomHint(
+              'int64-hint',
+              LinuxHintInt64Value(1),
+            ),
+            LinuxNotificationCustomHint(
+              'string-hint',
+              LinuxHintStringValue('test'),
+            ),
+            LinuxNotificationCustomHint(
+              'struct-hint',
+              LinuxHintStructValue<LinuxHintValue>(
+                <LinuxHintValue>[
+                  LinuxHintStringValue('test'),
+                  LinuxHintBoolValue(true),
+                ],
+              ),
+            ),
+            LinuxNotificationCustomHint(
+              'uint16-hint',
+              LinuxHintUint16Value(1),
+            ),
+            LinuxNotificationCustomHint(
+              'uint32-hint',
+              LinuxHintUint32Value(1),
+            ),
+            LinuxNotificationCustomHint(
+              'uint64-hint',
+              LinuxHintUint64Value(1),
+            ),
+            LinuxNotificationCustomHint(
+              'variant-hint',
+              LinuxHintVariantValue(LinuxHintByteValue(1)),
+            ),
+          ],
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          hints: <String, DBusValue>{
+            'array-hint': DBusArray(
+              DBusSignature('s'),
+              <DBusValue>[
+                const DBusString('1'),
+                const DBusString('2'),
+              ],
+            ),
+            'bool-hint': const DBusBoolean(true),
+            'byte-hint': DBusByte(1),
+            'dict-hint': DBusDict(
+              DBusSignature('y'),
+              DBusSignature('s'),
+              <DBusValue, DBusValue>{
+                DBusByte(1): const DBusString('1'),
+                DBusByte(2): const DBusString('2'),
+              },
+            ),
+            'double-hint': const DBusDouble(1.1),
+            'int16-hint': DBusInt16(1),
+            'int32-hint': DBusInt32(1),
+            'int64-hint': DBusInt64(1),
+            'string-hint': const DBusString('test'),
+            'struct-hint': DBusStruct(
+              <DBusValue>[
+                const DBusString('test'),
+                const DBusBoolean(true),
+              ],
+            ),
+            'uint16-hint': DBusUint16(1),
+            'uint32-hint': DBusUint32(1),
+            'uint64-hint': const DBusUint64(1),
+            'variant-hint': DBusVariant(DBusByte(1)),
           },
         );
 

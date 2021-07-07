@@ -1,6 +1,7 @@
 import 'capabilities.dart';
 import 'categories.dart';
 import 'enums.dart';
+import 'hint.dart';
 import 'icon.dart';
 import 'location.dart';
 import 'sound.dart';
@@ -20,6 +21,7 @@ class LinuxNotificationDetails {
     this.transient = false,
     this.location,
     this.defaultActionName,
+    this.customHints,
   });
 
   /// Specifies the notification icon.
@@ -69,4 +71,9 @@ class LinuxNotificationDetails {
   /// The name can be anything, though implementations are free not to
   /// display it.
   final String? defaultActionName;
+
+  /// Custom hints list to provide extra data to a notification server that
+  /// the server may be able to make use of. Before using, make sure that
+  /// the server supports this capability, see [LinuxServerCapabilities].
+  final List<LinuxNotificationCustomHint>? customHints;
 }

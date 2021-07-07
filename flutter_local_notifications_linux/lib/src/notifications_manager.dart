@@ -4,8 +4,10 @@ import 'package:dbus/dbus.dart';
 import 'package:path/path.dart' as path;
 
 import 'dbus_wrapper.dart';
+import 'helpers.dart';
 import 'model/capabilities.dart';
 import 'model/enums.dart';
+import 'model/hint.dart';
 import 'model/icon.dart';
 import 'model/initialization_settings.dart';
 import 'model/location.dart';
@@ -166,9 +168,24 @@ class LinuxNotificationManager {
       hints['x'] = DBusByte(location.x);
       hints['y'] = DBusByte(location.y);
     }
+    if (details?.customHints != null) {
+      hints.addAll(_buildCustomHints(details!.customHints!));
+    }
 
     return hints;
   }
+
+  Map<String, DBusValue> _buildCustomHints(
+    List<LinuxNotificationCustomHint> hints,
+  ) =>
+      Map<String, DBusValue>.fromEntries(
+        hints.map(
+          (LinuxNotificationCustomHint hint) => MapEntry<String, DBusValue>(
+            hint.name,
+            hint.value.toDBusValue(),
+          ),
+        ),
+      );
 
   // TODO:(proninyaroslav) add actions
   List<String> _buildActions(
