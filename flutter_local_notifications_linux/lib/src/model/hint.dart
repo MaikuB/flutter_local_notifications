@@ -30,7 +30,8 @@ abstract class LinuxHintValue<T> {
 }
 
 /// Ordered list of values of the same type.
-class LinuxHintArrayValue implements LinuxHintValue<List<LinuxHintValue>> {
+class LinuxHintArrayValue<T extends LinuxHintValue>
+    implements LinuxHintValue<List<T>> {
   /// Constructs an instance of [LinuxHintArrayValue].
   const LinuxHintArrayValue(this.value);
 
@@ -38,7 +39,7 @@ class LinuxHintArrayValue implements LinuxHintValue<List<LinuxHintValue>> {
   LinuxHintValueType get type => LinuxHintValueType.array;
 
   @override
-  final List<LinuxHintValue> value;
+  final List<T> value;
 }
 
 /// Boolean value.
@@ -180,16 +181,15 @@ class LinuxHintStringValue extends LinuxHintValue<String> {
 }
 
 /// Value that contains a fixed set of other values.
-class LinuxHintStructValue<T extends LinuxHintValue>
-    extends LinuxHintValue<List<T>> {
+class LinuxHintStructValue extends LinuxHintValue<List<LinuxHintValue>> {
   /// Constructs an instance of [LinuxHintStructValue].
-  LinuxHintStructValue(Iterable<T> value) : value = value.toList();
+  LinuxHintStructValue(Iterable<LinuxHintValue> value) : value = value.toList();
 
   @override
   LinuxHintValueType get type => LinuxHintValueType.struct;
 
   @override
-  final List<T> value;
+  final List<LinuxHintValue> value;
 }
 
 /// Unsigned 16-bit integer.

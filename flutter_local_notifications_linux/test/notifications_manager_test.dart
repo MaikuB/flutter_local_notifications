@@ -811,7 +811,7 @@ void main() {
           customHints: <LinuxNotificationCustomHint>[
             LinuxNotificationCustomHint(
               'array-hint',
-              LinuxHintArrayValue(
+              LinuxHintArrayValue<LinuxHintStringValue>(
                 <LinuxHintStringValue>[
                   LinuxHintStringValue('1'),
                   LinuxHintStringValue('2'),
@@ -857,7 +857,7 @@ void main() {
             ),
             LinuxNotificationCustomHint(
               'struct-hint',
-              LinuxHintStructValue<LinuxHintValue>(
+              LinuxHintStructValue(
                 <LinuxHintValue>[
                   LinuxHintStringValue('test'),
                   LinuxHintBoolValue(true),
