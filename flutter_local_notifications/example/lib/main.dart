@@ -76,10 +76,20 @@ Future<void> main() async {
           requestAlertPermission: false,
           requestBadgePermission: false,
           requestSoundPermission: false,
-          onDidReceiveLocalNotification:
-              (int id, String? title, String? body, String? payload) async {
-            didReceiveLocalNotificationSubject.add(ReceivedNotification(
-                id: id, title: title, body: body, payload: payload),);
+          onDidReceiveLocalNotification: (
+            int id,
+            String? title,
+            String? body,
+            String? payload,
+          ) async {
+            didReceiveLocalNotificationSubject.add(
+              ReceivedNotification(
+                id: id,
+                title: title,
+                body: body,
+                payload: payload,
+              ),
+            );
           });
   const MacOSInitializationSettings initializationSettingsMacOS =
       MacOSInitializationSettings(
@@ -88,7 +98,9 @@ Future<void> main() async {
     requestSoundPermission: false,
   );
   const LinuxInitializationSettings initializationSettingsLinux =
-      LinuxInitializationSettings();
+      LinuxInitializationSettings(
+    defaultActionName: 'Open notification',
+  );
   final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
     iOS: initializationSettingsIOS,

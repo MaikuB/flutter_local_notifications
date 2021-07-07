@@ -14,10 +14,11 @@ class LinuxNotificationDetails {
     this.category,
     this.urgency,
     this.timeout = const LinuxNotificationTimeout.systemDefault(),
-    this.resident,
-    this.suppressSound,
-    this.transient,
+    this.resident = false,
+    this.suppressSound = false,
+    this.transient = false,
     this.location,
+    this.defaultActionName,
   });
 
   /// Specifies the notification icon.
@@ -47,17 +48,23 @@ class LinuxNotificationDetails {
   /// the server until it is explicitly removed by the user or by the sender.
   /// This option is likely only useful when the server has
   /// the "persistence" capability.
-  final bool? resident;
+  final bool resident;
 
   /// Causes the server to suppress playing any sounds, if it has that ability.
   /// This is usually set when the client itself is going to play its own sound.
-  final bool? suppressSound;
+  final bool suppressSound;
 
   /// When set the server will treat the notification as transient and
   /// by-pass the server's persistence capability, if it should exist.
-  final bool? transient;
+  final bool transient;
 
   /// Specifies the location on the screen that the notification
   /// should point to.
   final LinuxNotificationLocation? location;
+
+  /// Name of the default action (usually triggered by clicking
+  /// the notification).
+  /// The name can be anything, though implementations are free not to
+  /// display it.
+  final String? defaultActionName;
 }

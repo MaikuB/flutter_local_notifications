@@ -1,16 +1,16 @@
 import 'dart:async';
 
 import 'package:dbus/dbus.dart';
-import 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
-import 'package:flutter_local_notifications_linux/src/model/sound.dart';
-import 'package:flutter_local_notifications_linux/src/model/timeout.dart';
 import 'package:path/path.dart' as path;
 
 import 'dbus_wrapper.dart';
 import 'model/enums.dart';
 import 'model/icon.dart';
 import 'model/initialization_settings.dart';
+import 'model/location.dart';
 import 'model/notification_details.dart';
+import 'model/sound.dart';
+import 'model/timeout.dart';
 import 'notification_info.dart';
 import 'platform_info.dart';
 import 'storage.dart';
@@ -79,11 +79,10 @@ class LinuxNotificationManager {
         DBusString(title ?? ''),
         // body
         DBusString(body ?? ''),
-        // TODO(proninyaroslav): add actions
         // actions
-        DBusArray.string(const <String>[]),
+        DBusArray.string(_buildActions(details, _initializationSettings)),
         // hints
-        DBusDict.stringVariant(_makeHints(details, _initializationSettings)),
+        DBusDict.stringVariant(_buildHints(details, _initializationSettings)),
         // expire_timeout
         DBusInt32(
           details?.timeout.value ??
@@ -106,7 +105,7 @@ class LinuxNotificationManager {
     await _storage.insert(notify);
   }
 
-  Map<String, DBusValue> _makeHints(
+  Map<String, DBusValue> _buildHints(
     LinuxNotificationDetails? details,
     LinuxInitializationSettings initSettings,
   ) {
@@ -170,6 +169,17 @@ class LinuxNotificationManager {
     return hints;
   }
 
+  // TODO:(proninyaroslav) add actions
+  List<String> _buildActions(
+    LinuxNotificationDetails? details,
+    LinuxInitializationSettings initSettings,
+  ) =>
+      // Add default action, which is triggered when the notification is clicked
+      <String>[
+        _kDefaultActionName,
+        details?.defaultActionName ?? initSettings.defaultActionName,
+      ];
+
   /// Cancel notification with the given [id].
   Future<void> cancel(int id) async {
     final LinuxNotificationInfo? notify = await _storage.getById(id);
@@ -219,14 +229,19 @@ class LinuxNotificationManager {
   /// Subscribe to the signals for actions and closing notifications.
   void _subscribeSignals() {
     _dbus.subscribeSignal(_DBusMethodsSpec.actionInvoked).listen(
-      (DBusSignal s) {
+      (DBusSignal s) async {
         if (s.signature != DBusSignature('us')) {
           return;
         }
 
-        // TODO(proninyaroslav): add actions
-        final int id = (s.values[0] as DBusUint32).value;
+        final int systemId = (s.values[0] as DBusUint32).value;
         final String actionKey = (s.values[1] as DBusString).value;
+        // TODO:(proninyaroslav) add actions
+        if (actionKey == _kDefaultActionName) {
+          final LinuxNotificationInfo? notify =
+              await _storage.getBySystemId(systemId);
+          await _onSelectNotification?.call(notify?.payload);
+        }
       },
     );
 
@@ -242,6 +257,8 @@ class LinuxNotificationManager {
     );
   }
 }
+
+const String _kDefaultActionName = 'default';
 
 class _DBusInterfaceSpec {
   static const String destination = 'org.freedesktop.Notifications';
