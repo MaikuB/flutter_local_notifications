@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 
 import 'helpers.dart';
+import 'model/capabilities.dart';
 import 'model/initialization_settings.dart';
 import 'model/notification_details.dart';
 import 'notifications_manager.dart';
 import 'typedefs.dart';
 
-// TODO(proninyaroslav): get capabilities
 /// Linux implementation of the local notifications plugin.
 class LinuxFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
@@ -66,4 +66,10 @@ class LinuxFlutterLocalNotificationsPlugin
 
   @override
   Future<void> cancelAll() => _manager.cancelAll();
+
+  /// Returns the system notification server capabilities.
+  /// Some functionality may not be implemented by the notification server,
+  /// conforming clients should check if it is available before using it.
+  Future<LinuxServerCapabilities> getCapabilities() =>
+      _manager.getCapabilities();
 }

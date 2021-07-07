@@ -2,6 +2,7 @@
 library flutter_local_notifications_linux;
 
 export 'src/flutter_local_notifications.dart';
+export 'src/model/capabilities.dart';
 export 'src/model/categories.dart';
 export 'src/model/enums.dart';
 export 'src/model/icon.dart';

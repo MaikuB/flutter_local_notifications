@@ -6,11 +6,11 @@ class LinuxNotificationLocation {
   /// Constructs an instance of [LinuxNotificationLocation]
   const LinuxNotificationLocation(this.x, this.y);
 
-  /// Represents the X location on the screen that the notification
+  /// Represents the `X` location on the screen that the notification
   /// should point to.
   final int x;
 
-  /// Represents the Y location on the screen that the notification
+  /// Represents the `Y` location on the screen that the notification
   /// should point to.
   final int y;
 

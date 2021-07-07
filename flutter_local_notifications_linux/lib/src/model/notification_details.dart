@@ -1,3 +1,4 @@
+import 'capabilities.dart';
 import 'categories.dart';
 import 'enums.dart';
 import 'icon.dart';
@@ -47,7 +48,7 @@ class LinuxNotificationDetails {
   /// when an action has been invoked. The notification will remain resident in
   /// the server until it is explicitly removed by the user or by the sender.
   /// This option is likely only useful when the server has
-  /// the "persistence" capability.
+  /// the [LinuxServerCapabilities.persistence] capability.
   final bool resident;
 
   /// Causes the server to suppress playing any sounds, if it has that ability.
@@ -55,7 +56,8 @@ class LinuxNotificationDetails {
   final bool suppressSound;
 
   /// When set the server will treat the notification as transient and
-  /// by-pass the server's persistence capability, if it should exist.
+  /// by-pass the server's [LinuxServerCapabilities.persistence] capability,
+  /// if it should exist.
   final bool transient;
 
   /// Specifies the location on the screen that the notification

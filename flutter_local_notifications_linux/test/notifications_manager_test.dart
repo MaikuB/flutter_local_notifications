@@ -1007,5 +1007,54 @@ void main() {
         ).called(1);
       }
     });
+
+    test('Notification server capabilities', () async {
+      const LinuxInitializationSettings initSettings =
+          LinuxInitializationSettings(defaultActionName: kDefaultActionName);
+
+      when(
+        () => mockDbus.callMethod(
+          'org.freedesktop.Notifications',
+          'GetCapabilities',
+          <DBusValue>[],
+          replySignature: DBusSignature('as'),
+        ),
+      ).thenAnswer(
+        (_) async => DBusMethodSuccessResponse(
+          <DBusValue>[
+            DBusArray(
+              DBusSignature('s'),
+              <DBusValue>[
+                const DBusString('body'),
+                const DBusString('body-hyperlinks'),
+                const DBusString('body-images'),
+                const DBusString('body-markup'),
+                const DBusString('icon-multi'),
+                const DBusString('icon-static'),
+                const DBusString('persistence'),
+                const DBusString('sound'),
+                const DBusString('test-cap'),
+              ],
+            ),
+          ],
+        ),
+      );
+
+      await manager.initialize(initSettings);
+      expect(
+        await manager.getCapabilities(),
+        const LinuxServerCapabilities(
+          otherCapabilities: <String>{'test-cap'},
+          body: true,
+          bodyHyperlinks: true,
+          bodyImages: true,
+          bodyMarkup: true,
+          iconMulti: true,
+          iconStatic: true,
+          persistence: true,
+          sound: true,
+        ),
+      );
+    });
   });
 }

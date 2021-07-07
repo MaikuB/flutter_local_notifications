@@ -4,6 +4,7 @@ import 'package:dbus/dbus.dart';
 import 'package:path/path.dart' as path;
 
 import 'dbus_wrapper.dart';
+import 'model/capabilities.dart';
 import 'model/enums.dart';
 import 'model/icon.dart';
 import 'model/initialization_settings.dart';
@@ -200,6 +201,33 @@ class LinuxNotificationManager {
     await _storage.removeByIdList(idList);
   }
 
+  /// Returns the system notification server capabilities.
+  Future<LinuxServerCapabilities> getCapabilities() async {
+    final DBusMethodSuccessResponse result = await _dbus.callMethod(
+      _DBusInterfaceSpec.destination,
+      _DBusMethodsSpec.getCapabilities,
+      <DBusValue>[],
+      replySignature: DBusSignature('as'),
+    );
+    final Set<String> capsSet = (result.returnValues[0] as DBusArray)
+        .children
+        .map((DBusValue c) => (c as DBusString).value)
+        .toSet();
+
+    final LinuxServerCapabilities capabilities = LinuxServerCapabilities(
+      otherCapabilities: const <String>{},
+      body: capsSet.remove('body'),
+      bodyHyperlinks: capsSet.remove('body-hyperlinks'),
+      bodyImages: capsSet.remove('body-images'),
+      bodyMarkup: capsSet.remove('body-markup'),
+      iconMulti: capsSet.remove('icon-multi'),
+      iconStatic: capsSet.remove('icon-static'),
+      persistence: capsSet.remove('persistence'),
+      sound: capsSet.remove('sound'),
+    );
+    return capabilities.copyWith(otherCapabilities: capsSet);
+  }
+
   Future<void> _dbusCancel(int systemId) => _dbus.callMethod(
         _DBusInterfaceSpec.destination,
         _DBusMethodsSpec.closeNotification,
@@ -270,4 +298,5 @@ class _DBusMethodsSpec {
   static const String closeNotification = 'CloseNotification';
   static const String actionInvoked = 'ActionInvoked';
   static const String notificationClosed = 'NotificationClosed';
+  static const String getCapabilities = 'GetCapabilities';
 }
