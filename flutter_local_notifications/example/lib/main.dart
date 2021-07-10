@@ -726,6 +726,12 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedElevatedButton(
+                        buttonText: 'Resident notification',
+                        onPressed: () async {
+                          await _showLinuxNotificationResident();
+                        },
+                      ),
+                      PaddedElevatedButton(
                         buttonText: 'Show notification on '
                             'different screen location',
                         onPressed: () async {
@@ -1872,10 +1878,10 @@ Future<void> _showLinuxNotificationWithBodyMarkup() async {
     0,
     'notification with body markup',
     '<b>bold text</b>\n'
-    '<i>italic text</i>\n'
-    '<u>underline text</u>\n'
-    'https://example.com\n'
-    '<a href="https://example.com">example.com</a>',
+        '<i>italic text</i>\n'
+        '<u>underline text</u>\n'
+        'https://example.com\n'
+        '<a href="https://example.com">example.com</a>',
     null,
   );
 }
@@ -2018,6 +2024,22 @@ Future<void> _showLinuxNotificationTransient() async {
   await flutterLocalNotificationsPlugin.show(
     0,
     'transient notification',
+    null,
+    platformChannelSpecifics,
+  );
+}
+
+Future<void> _showLinuxNotificationResident() async {
+  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
+      LinuxNotificationDetails(
+    resident: true,
+  );
+  const NotificationDetails platformChannelSpecifics = NotificationDetails(
+    linux: linuxPlatformChannelSpecifics,
+  );
+  await flutterLocalNotificationsPlugin.show(
+    0,
+    'resident notification',
     null,
     platformChannelSpecifics,
   );
