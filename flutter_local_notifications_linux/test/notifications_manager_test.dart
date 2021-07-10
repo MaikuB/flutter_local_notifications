@@ -969,7 +969,6 @@ void main() {
       const LinuxInitializationSettings initSettings =
           LinuxInitializationSettings(
         defaultActionName: kDefaultActionName,
-        defaultSuppressSound: true,
       );
 
       const List<LinuxNotificationInfo> notifications = <LinuxNotificationInfo>[
@@ -1190,6 +1189,41 @@ void main() {
           iconStatic: true,
           persistence: true,
           sound: true,
+        ),
+      );
+    });
+
+    test('Get system ID map', () async {
+      const LinuxInitializationSettings initSettings =
+          LinuxInitializationSettings(
+        defaultActionName: kDefaultActionName,
+      );
+
+      const List<LinuxNotificationInfo> notifications = <LinuxNotificationInfo>[
+        LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        ),
+        LinuxNotificationInfo(
+          id: 1,
+          systemId: 2,
+        ),
+      ];
+
+      when(
+        () => mockStorage.getAll(),
+      ).thenAnswer((_) async => notifications);
+
+      await manager.initialize(initSettings);
+      expect(
+        await manager.getSystemIdMap(),
+        Map<int, int>.fromEntries(
+          notifications.map(
+            (LinuxNotificationInfo notify) => MapEntry<int, int>(
+              notify.id,
+              notify.systemId,
+            ),
+          ),
         ),
       );
     });

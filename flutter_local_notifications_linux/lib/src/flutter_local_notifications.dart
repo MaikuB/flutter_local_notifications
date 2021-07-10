@@ -72,4 +72,8 @@ class LinuxFlutterLocalNotificationsPlugin
   /// conforming clients should check if it is available before using it.
   Future<LinuxServerCapabilities> getCapabilities() =>
       _manager.getCapabilities();
+
+  /// Returns a [Map] with the specified notification id as the key
+  /// and the id, assigned by the system, as the value.
+  Future<Map<int, int>> getSystemIdMap() => _manager.getSystemIdMap();
 }

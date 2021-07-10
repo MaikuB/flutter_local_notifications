@@ -245,6 +245,18 @@ class LinuxNotificationManager {
     return capabilities.copyWith(otherCapabilities: capsSet);
   }
 
+  /// Returns a [Map] with the specified notification id as the key
+  /// and the id, assigned by the system, as the value.
+  Future<Map<int, int>> getSystemIdMap() async =>
+      Map<int, int>.fromEntries(await _storage.getAll().then(
+            (List<LinuxNotificationInfo> list) => list.map(
+              (LinuxNotificationInfo notify) => MapEntry<int, int>(
+                notify.id,
+                notify.systemId,
+              ),
+            ),
+          ));
+
   Future<void> _dbusCancel(int systemId) => _dbus.callMethod(
         _DBusInterfaceSpec.destination,
         _DBusMethodsSpec.closeNotification,
