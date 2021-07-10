@@ -26,7 +26,7 @@ class AssetsLinuxIcon extends LinuxNotificationIcon {
   final String relativePath;
 }
 
-/// Represents an icon from a raw image data bytes, see [RawIconData].
+/// Represents an icon from a raw image data bytes, see [LinuxRawIconData].
 class ByteDataLinuxIcon extends LinuxNotificationIcon {
   /// Constructs an instance of [ByteDataLinuxIcon].
   ByteDataLinuxIcon(this.iconData);
@@ -38,7 +38,7 @@ class ByteDataLinuxIcon extends LinuxNotificationIcon {
   LinuxIconType get type => LinuxIconType.byteData;
 
   /// Icon data
-  final RawIconData iconData;
+  final LinuxRawIconData iconData;
 }
 
 /// Represents a system theme icon.
@@ -58,9 +58,9 @@ class ThemeLinuxIcon extends LinuxNotificationIcon {
 }
 
 /// Represents an icon in the raw image data.
-class RawIconData {
-  /// Constructs an instance of [RawIconData].
-  RawIconData({
+class LinuxRawIconData {
+  /// Constructs an instance of [LinuxRawIconData].
+  LinuxRawIconData({
     required this.data,
     required this.width,
     required this.height,

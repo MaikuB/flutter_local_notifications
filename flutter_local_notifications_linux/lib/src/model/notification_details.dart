@@ -8,6 +8,7 @@ import 'sound.dart';
 import 'timeout.dart';
 
 /// Configures notification details specific to Linux.
+/// The system may not support all features.
 class LinuxNotificationDetails {
   /// Constructs an instance of [LinuxNotificationDetails].
   const LinuxNotificationDetails({

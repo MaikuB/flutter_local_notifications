@@ -27,6 +27,7 @@ flutter:
   uses-material-design: true
   assets:
     - icons/
+    - sound/
 
 environment:
   sdk: ">=2.12.0-0 <3.0.0"

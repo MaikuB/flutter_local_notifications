@@ -313,7 +313,7 @@ void main() {
         );
 
         final ByteDataLinuxIcon icon = ByteDataLinuxIcon(
-          RawIconData(
+          LinuxRawIconData(
             data: Uint8List(64),
             width: 8,
             height: 8,

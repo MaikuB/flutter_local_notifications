@@ -116,7 +116,7 @@ class LinuxNotificationManager {
     final LinuxNotificationIcon? icon =
         details?.icon ?? initSettings.defaultIcon;
     if (icon?.type == LinuxIconType.byteData) {
-      final RawIconData data = icon!.content as RawIconData;
+      final LinuxRawIconData data = icon!.content as LinuxRawIconData;
       hints['image-data'] = DBusStruct(
         <DBusValue>[
           DBusInt32(data.width),
