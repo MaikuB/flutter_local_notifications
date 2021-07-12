@@ -31,3 +31,16 @@ class FilePathAndroidBitmap implements AndroidBitmap {
   @override
   String get bitmap => _bitmap;
 }
+
+/// Represents a base64 encoded AndroidBitmap.
+class Base64AndroidBitmap implements AndroidBitmap {
+  /// Constructs an instance of [Base64AndroidBitmap].
+  const Base64AndroidBitmap(this._bitmap);
+
+  final String _bitmap;
+
+  /// A base64 encoded Bitmap
+  /// bitmap.
+  @override
+  String get bitmap => _bitmap;
+}

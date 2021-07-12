@@ -22,6 +22,7 @@ import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Base64;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -461,6 +462,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             bitmap = BitmapFactory.decodeResource(context.getResources(), getDrawableResourceId(context, bitmapPath));
         } else if (bitmapSource == BitmapSource.FilePath) {
             bitmap = BitmapFactory.decodeFile(bitmapPath);
+        } else if (bitmapSource == BitmapSource.Base64) {
+            byte[] decodedString = Base64.decode(bitmapPath, Base64.DEFAULT);
+            bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         }
 
         return bitmap;
