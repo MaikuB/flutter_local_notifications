@@ -39,8 +39,7 @@ class Base64AndroidBitmap implements AndroidBitmap {
 
   final String _bitmap;
 
-  /// A base64 encoded Bitmap
-  /// bitmap.
+  /// A base64 encoded Bitmap string.
   @override
   String get bitmap => _bitmap;
 }

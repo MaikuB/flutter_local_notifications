@@ -147,6 +147,11 @@ extension BigPictureStyleInformationMapper on BigPictureStyleInformation {
         'bigPicture': bigPicture.bitmap,
         'bigPictureBitmapSource': AndroidBitmapSource.filePath.index,
       };
+    } else if (bigPicture is Base64AndroidBitmap) {
+      return <String, Object>{
+        'bigPicture': bigPicture.bitmap,
+        'bigPictureBitmapSource': AndroidBitmapSource.base64.index,
+      };
     } else {
       return <String, Object>{};
     }
@@ -162,6 +167,11 @@ extension BigPictureStyleInformationMapper on BigPictureStyleInformation {
       return <String, Object>{
         'largeIcon': largeIcon!.bitmap,
         'largeIconBitmapSource': AndroidBitmapSource.filePath.index,
+      };
+    } else if (largeIcon is Base64AndroidBitmap) {
+      return <String, Object>{
+        'largeIcon': largeIcon!.bitmap,
+        'largeIconBitmapSource': AndroidBitmapSource.base64.index,
       };
     } else {
       return <String, Object>{};

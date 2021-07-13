@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -430,6 +431,13 @@ class _HomePageState extends State<HomePage> {
                       ),
                       PaddedElevatedButton(
                         buttonText:
+                            'Show big picture notification from base64 String',
+                        onPressed: () async {
+                          await _showBigPictureNotificationBase64();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
                             'Show big picture notification, hide large icon '
                             'on expand',
                         onPressed: () async {
@@ -851,6 +859,36 @@ class _HomePageState extends State<HomePage> {
     final BigPictureStyleInformation bigPictureStyleInformation =
         BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath),
             largeIcon: FilePathAndroidBitmap(largeIconPath),
+            contentTitle: 'overridden <b>big</b> content title',
+            htmlFormatContentTitle: true,
+            summaryText: 'summary <i>text</i>',
+            htmlFormatSummaryText: true);
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('big text channel id',
+            'big text channel name', 'big text channel description',
+            styleInformation: bigPictureStyleInformation);
+    final NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'big text title', 'silent body', platformChannelSpecifics);
+  }
+
+  Future<String> _base64encodedImage(String url) async {
+    final http.Response response = await http.get(Uri.parse(url));
+    final base64Data = base64Encode(response.bodyBytes);
+    return base64Data;
+  }
+
+  Future<void> _showBigPictureNotificationBase64() async {
+    final String largeIcon =
+        await _base64encodedImage('https://via.placeholder.com/48x48');
+    final String bigPicture =
+        await _base64encodedImage('https://via.placeholder.com/400x800');
+
+    final BigPictureStyleInformation bigPictureStyleInformation =
+        BigPictureStyleInformation(
+            Base64AndroidBitmap(bigPicture), //Base64AndroidBitmap(bigPicture),
+            largeIcon: Base64AndroidBitmap(largeIcon),
             contentTitle: 'overridden <b>big</b> content title',
             htmlFormatContentTitle: true,
             summaryText: 'summary <i>text</i>',
