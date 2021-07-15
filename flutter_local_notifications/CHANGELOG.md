@@ -1,3 +1,7 @@
+# [7.0.0-dev.2]
+
+* [Android] fixed issue [1128](https://github.com/MaikuB/flutter_local_notifications/issues/1228) around how support for Android 12 is done so that it no longer references the preview SDK. Thanks to the PR from [tim-mardesen](https://github.com/tim-mardesen)
+
 # [7.0.0-dev.1]
 
 * Made changes required to support apps targeting Android 12
