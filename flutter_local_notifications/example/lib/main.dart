@@ -424,16 +424,26 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedElevatedButton(
-                        buttonText: 'Show big picture notification',
+                        buttonText:
+                            'Show big picture notification using local images',
                         onPressed: () async {
                           await _showBigPictureNotification();
                         },
                       ),
                       PaddedElevatedButton(
                         buttonText:
-                            'Show big picture notification from base64 String',
+                            'Show big picture notification using base64 String '
+                            'for images',
                         onPressed: () async {
                           await _showBigPictureNotificationBase64();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
+                            'Show big picture notification using URLs for '
+                            'Images',
+                        onPressed: () async {
+                          await _showBigPictureNotificationURL();
                         },
                       ),
                       PaddedElevatedButton(
@@ -875,7 +885,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<String> _base64encodedImage(String url) async {
     final http.Response response = await http.get(Uri.parse(url));
-    final base64Data = base64Encode(response.bodyBytes);
+    final String base64Data = base64Encode(response.bodyBytes);
     return base64Data;
   }
 
@@ -887,8 +897,34 @@ class _HomePageState extends State<HomePage> {
 
     final BigPictureStyleInformation bigPictureStyleInformation =
         BigPictureStyleInformation(
-            Base64AndroidBitmap(bigPicture), //Base64AndroidBitmap(bigPicture),
-            largeIcon: Base64AndroidBitmap(largeIcon),
+            ByteArrayAndroidBitmap.fromBase64String(
+                bigPicture), //Base64AndroidBitmap(bigPicture),
+            largeIcon: ByteArrayAndroidBitmap.fromBase64String(largeIcon),
+            contentTitle: 'overridden <b>big</b> content title',
+            htmlFormatContentTitle: true,
+            summaryText: 'summary <i>text</i>',
+            htmlFormatSummaryText: true);
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('big text channel id',
+            'big text channel name', 'big text channel description',
+            styleInformation: bigPictureStyleInformation);
+    final NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'big text title', 'silent body', platformChannelSpecifics);
+  }
+
+  Future<void> _showBigPictureNotificationURL() async {
+    final ByteArrayAndroidBitmap largeIcon =
+        await ByteArrayAndroidBitmap.fromUrl(
+            'https://via.placeholder.com/48x48');
+    final ByteArrayAndroidBitmap bigPicture =
+        await ByteArrayAndroidBitmap.fromUrl(
+            'https://via.placeholder.com/400x800');
+
+    final BigPictureStyleInformation bigPictureStyleInformation =
+        BigPictureStyleInformation(bigPicture,
+            largeIcon: largeIcon,
             contentTitle: 'overridden <b>big</b> content title',
             htmlFormatContentTitle: true,
             summaryText: 'summary <i>text</i>',

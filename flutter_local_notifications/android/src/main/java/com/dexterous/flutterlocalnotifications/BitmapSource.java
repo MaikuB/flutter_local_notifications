@@ -6,5 +6,5 @@ import androidx.annotation.Keep;
 public enum BitmapSource {
     DrawableResource,
     FilePath,
-    Base64
+    ByteArray
 }

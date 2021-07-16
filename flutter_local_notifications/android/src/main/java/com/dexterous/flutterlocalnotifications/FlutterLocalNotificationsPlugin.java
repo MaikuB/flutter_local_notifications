@@ -462,7 +462,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             bitmap = BitmapFactory.decodeResource(context.getResources(), getDrawableResourceId(context, bitmapPath));
         } else if (bitmapSource == BitmapSource.FilePath) {
             bitmap = BitmapFactory.decodeFile(bitmapPath);
-        } else if (bitmapSource == BitmapSource.Base64) {
+        } else if (bitmapSource == BitmapSource.ByteArray) {
             byte[] decodedString = Base64.decode(bitmapPath, Base64.DEFAULT);
             bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         }

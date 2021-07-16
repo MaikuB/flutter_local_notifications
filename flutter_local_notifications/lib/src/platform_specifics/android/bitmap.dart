@@ -1,7 +1,15 @@
+import 'dart:convert';
+
+import 'package:flutter_local_notifications/src/platform_specifics/android/enums.dart';
+import 'package:http/http.dart' as http;
+
 /// Represents a bitmap on Android.
 abstract class AndroidBitmap {
   /// The location of the bitmap.
-  String get bitmap;
+  Object get data;
+
+  /// The subclass source type
+  AndroidBitmapSource get source;
 }
 
 /// Represents a drawable resource belonging to the Android application that
@@ -16,7 +24,10 @@ class DrawableResourceAndroidBitmap implements AndroidBitmap {
   ///
   /// For example if the drawable resource is located at `res/drawable/app_icon.png`, the bitmap should be `app_icon`
   @override
-  String get bitmap => _bitmap;
+  Object get data => _bitmap;
+
+  @override
+  AndroidBitmapSource get source => AndroidBitmapSource.drawable;
 }
 
 /// Represents a file path that should be used for a bitmap on Android.
@@ -29,17 +40,32 @@ class FilePathAndroidBitmap implements AndroidBitmap {
   /// A file path on the Android device that refers to the location of the
   /// bitmap.
   @override
-  String get bitmap => _bitmap;
+  Object get data => _bitmap;
+
+  @override
+  AndroidBitmapSource get source => AndroidBitmapSource.filePath;
 }
 
 /// Represents a base64 encoded AndroidBitmap.
-class Base64AndroidBitmap implements AndroidBitmap {
-  /// Constructs an instance of [Base64AndroidBitmap].
-  const Base64AndroidBitmap(this._bitmap);
+class ByteArrayAndroidBitmap implements AndroidBitmap {
+  /// Constructs an instance of [ByteArrayAndroidBitmap].
+  const ByteArrayAndroidBitmap(this._bitmap);
+
+  factory ByteArrayAndroidBitmap.fromBase64String(String base64Image) =>
+      ByteArrayAndroidBitmap(base64Image);
+
+  static Future<ByteArrayAndroidBitmap> fromUrl(String url) async {
+    final http.Response response = await http.get(Uri.parse(url));
+    return ByteArrayAndroidBitmap.fromBase64String(
+        base64Encode(response.bodyBytes));
+  }
 
   final String _bitmap;
 
   /// A base64 encoded Bitmap string.
   @override
-  String get bitmap => _bitmap;
+  Object get data => _bitmap;
+
+  @override
+  AndroidBitmapSource get source => AndroidBitmapSource.byteArray;
 }

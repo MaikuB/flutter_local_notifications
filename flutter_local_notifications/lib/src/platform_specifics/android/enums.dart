@@ -6,8 +6,8 @@ enum AndroidBitmapSource {
   /// A file path.
   filePath,
 
-  /// A base64 encoded bitmap
-  base64,
+  /// A byte array of bitmap
+  byteArray,
 }
 
 /// Specifies the source for icons.
