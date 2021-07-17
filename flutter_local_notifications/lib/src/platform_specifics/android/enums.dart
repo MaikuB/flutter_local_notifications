@@ -6,7 +6,7 @@ enum AndroidBitmapSource {
   /// A file path.
   filePath,
 
-  /// A byte array of bitmap
+  /// A byte array bitmap.
   byteArray,
 }
 
