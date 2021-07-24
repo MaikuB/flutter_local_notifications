@@ -914,13 +914,16 @@ class _HomePageState extends State<HomePage> {
         0, 'big text title', 'silent body', platformChannelSpecifics);
   }
 
+  Future<Uint8List> _getByteArrayFromUrl(String url) async {
+    final http.Response response = await http.get(Uri.parse(url));
+    return response.bodyBytes;
+  }
+
   Future<void> _showBigPictureNotificationURL() async {
-    final ByteArrayAndroidBitmap largeIcon =
-        await ByteArrayAndroidBitmap.fromUrl(
-            'https://via.placeholder.com/48x48');
-    final ByteArrayAndroidBitmap bigPicture =
-        await ByteArrayAndroidBitmap.fromUrl(
-            'https://via.placeholder.com/400x800');
+    final ByteArrayAndroidBitmap largeIcon = ByteArrayAndroidBitmap(
+        await _getByteArrayFromUrl('https://via.placeholder.com/48x48'));
+    final ByteArrayAndroidBitmap bigPicture = ByteArrayAndroidBitmap(
+        await _getByteArrayFromUrl('https://via.placeholder.com/400x800'));
 
     final BigPictureStyleInformation bigPictureStyleInformation =
         BigPictureStyleInformation(bigPicture,

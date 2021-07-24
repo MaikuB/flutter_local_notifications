@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter_local_notifications/src/platform_specifics/android/enums.dart';
-import 'package:http/http.dart' as http;
 
 /// Represents a bitmap on Android.
 abstract class AndroidBitmap {
@@ -51,16 +51,9 @@ class ByteArrayAndroidBitmap implements AndroidBitmap {
   /// Constructs an instance of [ByteArrayAndroidBitmap].
   const ByteArrayAndroidBitmap(this._bitmap);
 
-  factory ByteArrayAndroidBitmap.fromBase64String(String base64Image) =>
-      ByteArrayAndroidBitmap(base64Image);
+  factory ByteArrayAndroidBitmap.fromBase64String(String base64Image) => ByteArrayAndroidBitmap(base64Decode(base64Image));
 
-  static Future<ByteArrayAndroidBitmap> fromUrl(String url) async {
-    final http.Response response = await http.get(Uri.parse(url));
-    return ByteArrayAndroidBitmap.fromBase64String(
-        base64Encode(response.bodyBytes));
-  }
-
-  final String _bitmap;
+  final Uint8List _bitmap;
 
   /// A base64 encoded Bitmap string.
   @override

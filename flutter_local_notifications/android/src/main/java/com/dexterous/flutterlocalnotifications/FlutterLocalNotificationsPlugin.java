@@ -179,9 +179,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
 
         setSmallIcon(context, notificationDetails, builder);
-        if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
-            builder.setLargeIcon(getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
-        }
+        builder.setLargeIcon(getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
         if (notificationDetails.color != null) {
             builder.setColor(notificationDetails.color.intValue());
         }
@@ -456,15 +454,15 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return context.getResources().getIdentifier(name, DRAWABLE, context.getPackageName());
     }
 
-    private static Bitmap getBitmapFromSource(Context context, String bitmapPath, BitmapSource bitmapSource) {
+    private static Bitmap getBitmapFromSource(Context context, Object data, BitmapSource bitmapSource) {
         Bitmap bitmap = null;
         if (bitmapSource == BitmapSource.DrawableResource) {
-            bitmap = BitmapFactory.decodeResource(context.getResources(), getDrawableResourceId(context, bitmapPath));
+            bitmap = BitmapFactory.decodeResource(context.getResources(), getDrawableResourceId(context, data.toString()));
         } else if (bitmapSource == BitmapSource.FilePath) {
-            bitmap = BitmapFactory.decodeFile(bitmapPath);
+            bitmap = BitmapFactory.decodeFile(data.toString());
         } else if (bitmapSource == BitmapSource.ByteArray) {
-            byte[] decodedString = Base64.decode(bitmapPath, Base64.DEFAULT);
-            bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            byte[] byteArray = (byte[]) data;
+            bitmap = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.length);
         }
 
         return bitmap;
@@ -1128,13 +1126,27 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             BigPictureStyleInformation bigPictureStyleInformation = (BigPictureStyleInformation) notificationDetails.styleInformation;
             if (hasInvalidLargeIcon(result, bigPictureStyleInformation.largeIcon, bigPictureStyleInformation.largeIconBitmapSource))
                 return true;
-            return bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.DrawableResource && !isValidDrawableResource(applicationContext, bigPictureStyleInformation.bigPicture, result, INVALID_BIG_PICTURE_ERROR_CODE);
+
+            if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.DrawableResource || bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.FilePath){
+                String largeIconPath = (String) bigPictureStyleInformation.bigPicture;
+                return !StringUtils.isNullOrEmpty(largeIconPath) && bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.DrawableResource && !isValidDrawableResource(applicationContext, largeIconPath, result, INVALID_LARGE_ICON_ERROR_CODE);
+            }else if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.ByteArray){
+                byte[] byteArray = (byte[])bigPictureStyleInformation.bigPicture;
+                return byteArray.length == 0;
+            }
         }
         return false;
     }
 
-    private boolean hasInvalidLargeIcon(Result result, String largeIcon, BitmapSource largeIconBitmapSource) {
-        return !StringUtils.isNullOrEmpty(largeIcon) && largeIconBitmapSource == BitmapSource.DrawableResource && !isValidDrawableResource(applicationContext, largeIcon, result, INVALID_LARGE_ICON_ERROR_CODE);
+    private boolean hasInvalidLargeIcon(Result result, Object largeIcon, BitmapSource largeIconBitmapSource) {
+        if (largeIconBitmapSource == BitmapSource.DrawableResource || largeIconBitmapSource == BitmapSource.FilePath){
+            String largeIconPath = (String) largeIcon;
+            return !StringUtils.isNullOrEmpty(largeIconPath) && largeIconBitmapSource == BitmapSource.DrawableResource && !isValidDrawableResource(applicationContext, largeIconPath, result, INVALID_LARGE_ICON_ERROR_CODE);
+        }else if (largeIconBitmapSource == BitmapSource.ByteArray){
+            byte[] byteArray = (byte[])largeIcon;
+            return byteArray.length == 0;
+        }
+        return false;
     }
 
     private boolean hasInvalidIcon(Result result, String icon) {
