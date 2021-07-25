@@ -22,7 +22,6 @@ import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Base64;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -457,9 +456,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static Bitmap getBitmapFromSource(Context context, Object data, BitmapSource bitmapSource) {
         Bitmap bitmap = null;
         if (bitmapSource == BitmapSource.DrawableResource) {
-            bitmap = BitmapFactory.decodeResource(context.getResources(), getDrawableResourceId(context, data.toString()));
+            bitmap = BitmapFactory.decodeResource(context.getResources(), getDrawableResourceId(context, (String) data));
         } else if (bitmapSource == BitmapSource.FilePath) {
-            bitmap = BitmapFactory.decodeFile(data.toString());
+            bitmap = BitmapFactory.decodeFile((String) data);
         } else if (bitmapSource == BitmapSource.ByteArray) {
             byte[] byteArray = (byte[]) data;
             bitmap = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.length);
@@ -1129,9 +1128,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
 
             if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.DrawableResource || bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.FilePath){
                 String largeIconPath = (String) bigPictureStyleInformation.bigPicture;
-                return !StringUtils.isNullOrEmpty(largeIconPath) && bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.DrawableResource && !isValidDrawableResource(applicationContext, largeIconPath, result, INVALID_LARGE_ICON_ERROR_CODE);
+                return !StringUtils.isNullOrEmpty(largeIconPath) && bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.DrawableResource && !isValidDrawableResource(applicationContext, largeIconPath, result, INVALID_BIG_PICTURE_ERROR_CODE);
             }else if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.ByteArray){
-                byte[] byteArray = (byte[])bigPictureStyleInformation.bigPicture;
+                byte[] byteArray = (byte[]) bigPictureStyleInformation.bigPicture;
                 return byteArray.length == 0;
             }
         }
@@ -1143,7 +1142,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             String largeIconPath = (String) largeIcon;
             return !StringUtils.isNullOrEmpty(largeIconPath) && largeIconBitmapSource == BitmapSource.DrawableResource && !isValidDrawableResource(applicationContext, largeIconPath, result, INVALID_LARGE_ICON_ERROR_CODE);
         }else if (largeIconBitmapSource == BitmapSource.ByteArray){
-            byte[] byteArray = (byte[])largeIcon;
+            byte[] byteArray = (byte[]) largeIcon;
             return byteArray.length == 0;
         }
         return false;
