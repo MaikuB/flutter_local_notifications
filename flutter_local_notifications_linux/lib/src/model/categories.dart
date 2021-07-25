@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 /// Categories of notifications.
 @immutable
 class LinuxNotificationCategory {
-  /// Constructs an instance of [LinuxNotificationTimeout]
+  /// Constructs an instance of [LinuxNotificationCategory]
   /// with a given [name] of category.
   const LinuxNotificationCategory(this.name);
 

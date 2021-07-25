@@ -93,7 +93,7 @@ task:
     - flutter drive --driver=test_driver/integration_test.dart --target=integration_test/flutter_local_notifications_test.dart
 
 task:
-  name: Run Linux pligin tests
+  name: Run Linux plugin tests
   container:
     image: cirrusci/flutter:stable
   pub_cache:
