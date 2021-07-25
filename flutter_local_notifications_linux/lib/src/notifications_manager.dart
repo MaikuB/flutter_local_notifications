@@ -24,9 +24,9 @@ import 'typedefs.dart';
 class LinuxNotificationManager {
   /// Constructs an instance of of [LinuxNotificationManager]
   LinuxNotificationManager()
-      : _dbus = DBusWrapperImpl(),
-        _platformInfo = LinuxPlatformInfoImpl(),
-        _storage = NotificationStorageImpl();
+      : _dbus = DBusWrapper(),
+        _platformInfo = LinuxPlatformInfo(),
+        _storage = NotificationStorage();
 
   /// Constructs an instance of of [LinuxNotificationManager]
   /// with the given class dependencies.
@@ -35,9 +35,9 @@ class LinuxNotificationManager {
     DBusWrapper? dbus,
     LinuxPlatformInfo? platformInfo,
     NotificationStorage? storage,
-  })  : _dbus = dbus ?? DBusWrapperImpl(),
-        _platformInfo = platformInfo ?? LinuxPlatformInfoImpl(),
-        _storage = storage ?? NotificationStorageImpl();
+  })  : _dbus = dbus ?? DBusWrapper(),
+        _platformInfo = platformInfo ?? LinuxPlatformInfo(),
+        _storage = storage ?? NotificationStorage();
 
   final DBusWrapper _dbus;
   final LinuxPlatformInfo _platformInfo;

@@ -6,15 +6,8 @@ import 'package:posix/posix.dart' as posix;
 import 'package:xdg_directories/xdg_directories.dart' as xdg;
 
 /// Provides Linux platform-specific info
-// ignore: one_member_abstracts
-abstract class LinuxPlatformInfo {
+class LinuxPlatformInfo {
   /// Returns all platform-specific info
-  Future<LinuxPlatformInfoData> getAll();
-}
-
-/// Real implementation of [LinuxPlatformInfo]
-class LinuxPlatformInfoImpl implements LinuxPlatformInfo {
-  @override
   Future<LinuxPlatformInfoData> getAll() async {
     try {
       final String exePath =

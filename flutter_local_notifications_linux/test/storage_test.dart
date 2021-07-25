@@ -41,7 +41,7 @@ void main() {
     });
 
     setUp(() {
-      storage = NotificationStorageImpl(
+      storage = NotificationStorage(
         platformInfo: mockPlatformInfo,
         fs: mockFs,
       );

@@ -13,43 +13,12 @@ const String _kFileName = 'notification_plugin_cache.json';
 /// Represents a persisten storage for the notifications info,
 /// see [LinuxNotificationInfo].
 /// The storage data exists within the user session.
-abstract class NotificationStorage {
-  /// Get all notifications.
-  Future<List<LinuxNotificationInfo>> getAll();
-
-  /// Get notification by [LinuxNotificationInfo.id].
-  Future<LinuxNotificationInfo?> getById(int id);
-
-  /// Get notification by [LinuxNotificationInfo.systemId].
-  Future<LinuxNotificationInfo?> getBySystemId(int systemId);
-
-  /// Insert notification to the storage.
-  /// Returns [true] if the operation succeeded.
-  Future<bool> insert(LinuxNotificationInfo notification);
-
-  /// Remove notification from the storage by [LinuxNotificationInfo.id].
-  /// Returns [true] if the operation succeeded.
-  Future<bool> removeById(int id);
-
-  /// Remove notification from the storage by [LinuxNotificationInfo.systemId].
-  /// Returns [true] if the operation succeeded.
-  Future<bool> removeBySystemId(int systemId);
-
-  /// Remove notification from the storage by [idList].
-  /// Returns [true] if the operation succeeded.
-  Future<bool> removeByIdList(List<int> idList);
-
-  /// Force read info from the disk to the cache.
-  Future<void> forceReloadCache();
-}
-
-/// Real implementation of [NotificationStorage].
-class NotificationStorageImpl implements NotificationStorage {
+class NotificationStorage {
   /// Constructs an instance of of [NotificationStorageImpl].
-  NotificationStorageImpl({
+  NotificationStorage({
     LinuxPlatformInfo? platformInfo,
     FileSystem? fs,
-  })  : _platformInfo = platformInfo ?? LinuxPlatformInfoImpl(),
+  })  : _platformInfo = platformInfo ?? LinuxPlatformInfo(),
         _fs = fs ?? LocalFileSystem();
 
   final LinuxPlatformInfo _platformInfo;
@@ -57,39 +26,42 @@ class NotificationStorageImpl implements NotificationStorage {
 
   _Cache? _cachedInfo;
 
-  @override
+  /// Get all notifications.
   Future<List<LinuxNotificationInfo>> getAll() async {
     final _Cache cache = await _readInfoMap();
     return cache.toImmutableMap().values.toList();
   }
 
-  @override
+  /// Get notification by [LinuxNotificationInfo.id].
   Future<LinuxNotificationInfo?> getBySystemId(int systemId) async {
     final _Cache cache = await _readInfoMap();
     return cache.getBySystemId(systemId);
   }
 
-  @override
+  /// Get notification by [LinuxNotificationInfo.systemId].
   Future<LinuxNotificationInfo?> getById(int id) async {
     final _Cache cache = await _readInfoMap();
     return cache.getById(id);
   }
 
-  @override
+  /// Insert notification to the storage.
+  /// Returns `true` if the operation succeeded.
   Future<bool> insert(LinuxNotificationInfo notification) async {
     final _Cache cache = await _readInfoMap();
     cache.insert(notification);
     return _writeInfoList(cache.values.toList());
   }
 
-  @override
+  /// Remove notification from the storage by [LinuxNotificationInfo.id].
+  /// Returns `true` if the operation succeeded.
   Future<bool> removeById(int id) async {
     final _Cache cache = await _readInfoMap();
     cache.removeById(id);
     return _writeInfoList(cache.values.toList());
   }
 
-  @override
+  /// Remove notification from the storage by [LinuxNotificationInfo.systemId].
+  /// Returns `true` if the operation succeeded.
   Future<bool> removeBySystemId(int systemId) async {
     final _Cache cache = await _readInfoMap();
     final LinuxNotificationInfo? info = cache.getBySystemId(systemId);
@@ -99,7 +71,8 @@ class NotificationStorageImpl implements NotificationStorage {
     return _writeInfoList(cache.values.toList());
   }
 
-  @override
+  /// Remove notification from the storage by [idList].
+  /// Returns `true` if the operation succeeded.
   Future<bool> removeByIdList(List<int> idList) async {
     final _Cache cache = await _readInfoMap();
     // ignore: prefer_foreach
@@ -109,7 +82,7 @@ class NotificationStorageImpl implements NotificationStorage {
     return _writeInfoList(cache.values.toList());
   }
 
-  @override
+  /// Force read info from the disk to the cache.
   Future<void> forceReloadCache() async {
     _cachedInfo = await _readToCache();
   }
