@@ -460,7 +460,17 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         } else if (bitmapSource == BitmapSource.FilePath) {
             bitmap = BitmapFactory.decodeFile((String) data);
         } else if (bitmapSource == BitmapSource.ByteArray) {
-            byte[] byteArray = (byte[]) data;
+            byte[] byteArray;
+            // if data is deserialized by gson, it is of the wrong type and we have to convert it
+            if (data instanceof ArrayList){
+                List<Double> l = (ArrayList<Double>) data;
+                byteArray = new byte[l.size()];
+                for(int i = 0; i < l.size(); i++) {
+                    byteArray[i] = (byte) l.get(i).intValue();
+                }
+            } else {
+                byteArray = (byte[]) data;
+            }
             bitmap = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.length);
         }
 
