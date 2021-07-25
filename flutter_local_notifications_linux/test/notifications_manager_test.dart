@@ -64,7 +64,7 @@ void main() {
     });
 
     setUp(() {
-      manager = LinuxNotificationManager(
+      manager = LinuxNotificationManager.private(
         dbus: mockDbus,
         platformInfo: mockPlatformInfo,
         storage: mockStorage,

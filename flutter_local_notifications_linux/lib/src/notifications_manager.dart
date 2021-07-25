@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dbus/dbus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 
 import 'dbus_wrapper.dart';
@@ -22,7 +23,15 @@ import 'typedefs.dart';
 /// Linux notification manager and client
 class LinuxNotificationManager {
   /// Constructs an instance of of [LinuxNotificationManager]
-  LinuxNotificationManager({
+  LinuxNotificationManager()
+      : _dbus = DBusWrapperImpl(),
+        _platformInfo = LinuxPlatformInfoImpl(),
+        _storage = NotificationStorageImpl();
+
+  /// Constructs an instance of of [LinuxNotificationManager]
+  /// with the given class dependencies.
+  @visibleForTesting
+  LinuxNotificationManager.private({
     DBusWrapper? dbus,
     LinuxPlatformInfo? platformInfo,
     NotificationStorage? storage,
