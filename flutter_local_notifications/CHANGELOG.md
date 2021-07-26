@@ -1,3 +1,8 @@
+# [7.0.0-dev.3]
+
+* Includes changes from 6.1.0 release
+* Fixed how the plugin was requesting the permission to schedule exact alarms. Thanks to the PR from [Willham12](https://github.com/Willham12)
+
 # [7.0.0-dev.2]
 
 * [Android] fixed issue [1128](https://github.com/MaikuB/flutter_local_notifications/issues/1228) around how support for Android 12 is done so that it no longer references the preview SDK. Thanks to the PR from [tim-mardesen](https://github.com/tim-mardesen)
