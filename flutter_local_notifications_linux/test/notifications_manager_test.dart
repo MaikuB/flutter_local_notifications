@@ -9,7 +9,7 @@ import 'package:flutter_local_notifications_linux/src/notification_info.dart';
 import 'package:flutter_local_notifications_linux/src/notifications_manager.dart';
 import 'package:flutter_local_notifications_linux/src/platform_info.dart';
 import 'package:flutter_local_notifications_linux/src/storage.dart';
-import 'package:flutter_local_notifications_linux/src/typedefs.dart';
+import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as path;
