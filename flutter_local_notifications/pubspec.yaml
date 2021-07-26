@@ -8,9 +8,10 @@ homepage: https://github.com/MaikuB/flutter_local_notifications/tree/master/flut
 dependencies:
   flutter:
     sdk: flutter
-  flutter_local_notifications_platform_interface: ^4.0.0
+  flutter_local_notifications_platform_interface: ^4.0.1
   platform: ^3.0.0
   timezone: ^0.7.0
+  flutter_local_notifications_linux: ^0.1.0
 
 dev_dependencies:
   flutter_driver:
@@ -30,6 +31,8 @@ flutter:
         pluginClass: FlutterLocalNotificationsPlugin
       macos:
         pluginClass: FlutterLocalNotificationsPlugin
+      linux:
+        default_package: flutter_local_notifications_linux
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
