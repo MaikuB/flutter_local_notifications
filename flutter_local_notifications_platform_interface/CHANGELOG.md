@@ -1,3 +1,7 @@
+## [4.0.1]
+
+* Moved the `SelectNotificationCallback`  typedef and `validateId` method previously defined in the plugin to the platform interface. This is so they could be reused by platform implementations
+
 ## [4.0.0]
 
 * Updated Flutter SDK constraint

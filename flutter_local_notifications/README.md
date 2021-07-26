@@ -3,7 +3,7 @@
 [![pub package](https://img.shields.io/pub/v/flutter_local_notifications.svg)](https://pub.dartlang.org/packages/flutter_local_notifications)
 [![Build Status](https://api.cirrus-ci.com/github/MaikuB/flutter_local_notifications.svg)](https://cirrus-ci.com/github/MaikuB/flutter_local_notifications/master)
 
-A cross platform plugin for displaying local notifications. 
+A cross platform plugin for displaying local notifications.
 
 ## Table of contents
 - **[📱 Supported platforms](#-supported-platforms)**
@@ -16,6 +16,7 @@ A cross platform plugin for displaying local notifications.
    - [Updating application badge](#updating-application-badge)
    - [Custom notification sounds](#custom-notification-sounds)
    - [macOS differences](#macos-differences)
+   - [Linux limitations](#Linux-limitations)
 - **[📷 Screenshots](#-screenshots)**
 - **[👏 Acknowledgements](#-acknowledgements)**
 - **[⚙️ Android Setup](#️-android-setup)**
@@ -47,6 +48,7 @@ A cross platform plugin for displaying local notifications.
 * **Android 4.1+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
 * **iOS 8.0+**. On iOS versions older than 10, the plugin will use the UILocalNotification APIs. The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on iOS 10 or newer.
 * **macOS 10.11+**. On macOS versions older than 10.14, the plugin will use the [NSUserNotification APIs](https://developer.apple.com/documentation/foundation/nsusernotification). The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on macOS 10.14 or newer.
+* **Linux**. Uses the [Desktop Notifications Specification](https://developer.gnome.org/notification-spec/).
 
 ## ✨ Features
 
@@ -83,6 +85,14 @@ A cross platform plugin for displaying local notifications.
 * [Android] Full-screen intent notifications
 * [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
 * [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
+* [Linux] Ability to to use themed/Flutter Assets icons and sound
+* [Linux] Ability to to set the category
+* [Linux] Configuring the urgency
+* [Linux] Configuring the timeout (depends on system implementation)
+* [Linux] Ability to set custom notification location (depends on system implementation)
+* [Linux] Ability to set custom hints
+* [Linux] Ability to suppress sound
+* [Linux] Resident and transient notifications
 
 ## ⚠ Caveats and limitations
 The cross-platform facing API exposed by the `FlutterLocalNotificationsPlugin` class doesn't expose platform-specific methods as its goal is to provide an abstraction for all platforms. As such, platform-specific configuration is passed in as data. There are platform-specific implementations of the plugin that can be obtained by calling the [`resolvePlatformSpecificImplementation`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/resolvePlatformSpecificImplementation.html). An example of using this is provided in the section on requesting permissions on iOS. In spite of this, there may still be gaps that don't cover your use case and don't make sense to add as they don't fit with the plugin's architecture or goals. Developers can fork or maintain their own code for showing notifications in these situations.
@@ -114,6 +124,14 @@ Due to limitations currently within the macOS Flutter engine, `getNotificationAp
 
 The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods that were implemented before macOS support was added and have been marked as deprecated aren't implemented on macOS.
 
+##### Linux limitations
+
+Capabilities depend on the system notification server implementation, therefore, not all features listed in `LinuxNotificationDetails` may be supported. One of the ways to check some capabilities is to call the `LinuxFlutterLocalNotificationsPlugin.getCapabilities()` method.
+
+Scheduled/pending notifications is currently not supported due to the lack of a scheduler API.
+
+To respond to notification after the application is terminated, your application should be registered as DBus activatable (see [DBusApplicationLaunching](https://wiki.gnome.org/HowDoI/DBusApplicationLaunching) for more information), and register action before activating the application. This is difficult to do in a plugin because plugins instantiate during application activation, so `getNotificationAppLaunchDetails` can't be implemented without changing the main user application.
+
 ## 📷 Screenshots
 
 | Platform | Screenshot |
@@ -121,6 +139,7 @@ The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods that were
 | Android | <img height="480" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/android_notification.png"> |
 | iOS | <img height="414" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/ios_notification.png"> |
 | macOS | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/macos_notification.png"> |
+| Linux | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/gnome_linux_notification.png"> <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/kde_linux_notification.png"> |
 
 
 ## 👏 Acknowledgements
@@ -199,7 +218,7 @@ By design, iOS applications *do not* display notifications while the app is in t
 
 For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. The default settings of the plugin will configure these such that a notification will be displayed when the app is in the foreground.
 
-For older versions of iOS, you need to handle the callback as part of specifying the method that should be fired to the `onDidReceiveLocalNotification` argument when creating an instance `IOSInitializationSettings` object that is passed to the function for initializing the plugin. 
+For older versions of iOS, you need to handle the callback as part of specifying the method that should be fired to the `onDidReceiveLocalNotification` argument when creating an instance `IOSInitializationSettings` object that is passed to the function for initializing the plugin.
 
 Here is an example:
 
@@ -259,7 +278,7 @@ The [`example`](https://github.com/MaikuB/flutter_local_notifications/tree/maste
 
 ### API reference
 
-Checkout the lovely [API documentation](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/flutter_local_notifications-library.html) generated by pub. 
+Checkout the lovely [API documentation](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/flutter_local_notifications-library.html) generated by pub.
 
 
 ## Initialisation
@@ -412,7 +431,7 @@ tz.initializeTimeZones();
 Once the time zone database has been initialised, developers may optionally want to set a default local location/time zone
 
 ```dart
-tz.setLocalLocation(tz.getLocation(timeZoneName)); 
+tz.setLocalLocation(tz.getLocation(timeZoneName));
 ```
 
 The `timezone` package doesn't provide a way to obtain the current time zone on the device so developers will need to use [platform channels](https://flutter.dev/docs/development/platform-integration/platform-channels) or use other packages that may be able to provide the information. The example app uses the [`flutter_native_timezone`](https://pub.dev/packages/flutter_native_timezone) plugin.
@@ -587,11 +606,11 @@ if(!UserDefaults.standard.bool(forKey: "Notification")) {
 
 ## 📈 Testing
 
-As the plugin class is not static, it is possible to mock and verify its behaviour when writing tests as part of your application. 
-Check the source code for a sample test suite that has been kindly implemented (_test/flutter_local_notifications_test.dart_) that demonstrates how this can be done. 
+As the plugin class is not static, it is possible to mock and verify its behaviour when writing tests as part of your application.
+Check the source code for a sample test suite that has been kindly implemented (_test/flutter_local_notifications_test.dart_) that demonstrates how this can be done.
 
-If you decide to use the plugin class directly as part of your tests, the methods will be mostly no-op and methods that return data will return default values. 
+If you decide to use the plugin class directly as part of your tests, the methods will be mostly no-op and methods that return data will return default values.
 
-Part of this is because the plugin detects if you're running on a supported plugin to determine which platform implementation of the plugin should be used. If the platform isn't supported, it will default to the aforementioned behaviour to reduce friction when writing tests. If this not desired then consider using mocks. 
+Part of this is because the plugin detects if you're running on a supported plugin to determine which platform implementation of the plugin should be used. If the platform isn't supported, it will default to the aforementioned behaviour to reduce friction when writing tests. If this not desired then consider using mocks.
 
 If a platform-specific implementation of the plugin is required for your tests, a [named constructor](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/FlutterLocalNotificationsPlugin.private.html) is available that allows you to specify the platform required e.g. a [`FakePlatform`](https://api.flutter.dev/flutter/package-platform_platform/FakePlatform-class.html).

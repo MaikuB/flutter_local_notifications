@@ -37,6 +37,20 @@ task:
     - flutter build macos
 
 task:
+  name: Build Linux example app
+  container:
+    image: cirrusci/flutter:dev
+  pub_cache:
+    folder: ~/.pub-cache
+  setup_script:
+    - apt update
+    - apt install cmake ninja-build clang pkg-config libgtk-3-dev -y
+    - flutter config --enable-linux-desktop
+  build_script:
+    - cd flutter_local_notifications/example
+    - flutter build linux
+
+task:
   name: Run platform interface tests
   container:
     image: cirrusci/flutter:stable
@@ -77,3 +91,13 @@ task:
     - cd flutter_local_notifications
     - cd example
     - flutter drive --driver=test_driver/integration_test.dart --target=integration_test/flutter_local_notifications_test.dart
+
+task:
+  name: Run Linux plugin tests
+  container:
+    image: cirrusci/flutter:stable
+  pub_cache:
+    folder: ~/.pub-cache
+  test_script:
+    - cd flutter_local_notifications_linux
+    - flutter test
