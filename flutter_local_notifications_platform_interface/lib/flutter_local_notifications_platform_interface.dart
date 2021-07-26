@@ -3,7 +3,9 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'src/notification_app_launch_details.dart';
 import 'src/types.dart';
 
+export 'src/helpers.dart';
 export 'src/notification_app_launch_details.dart';
+export 'src/typedefs.dart';
 export 'src/types.dart';
 
 /// The interface that all implementations of flutter_local_notifications must
