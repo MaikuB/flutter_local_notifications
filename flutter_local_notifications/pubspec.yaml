@@ -11,6 +11,9 @@ dependencies:
   flutter_local_notifications_platform_interface: ^4.0.0
   platform: ^3.0.0
   timezone: ^0.7.0
+  # TODO(proninyaroslav): change to version
+  flutter_local_notifications_linux:
+    path: '../flutter_local_notifications_linux'
 
 dev_dependencies:
   flutter_driver:
@@ -30,6 +33,8 @@ flutter:
         pluginClass: FlutterLocalNotificationsPlugin
       macos:
         pluginClass: FlutterLocalNotificationsPlugin
+      linux:
+        default_package: flutter_local_notifications_linux
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
