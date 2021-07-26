@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -374,7 +375,7 @@ class _HomePageState extends State<HomePage> {
                         await _cancelAllNotifications();
                       },
                     ),
-                    if (Platform.isAndroid) ...<Widget>[
+                    if (!kIsWeb && Platform.isAndroid) ...<Widget>[
                       const Text(
                         'Android-specific examples',
                         style: TextStyle(fontWeight: FontWeight.bold),
@@ -571,7 +572,8 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     ],
-                    if (Platform.isIOS || Platform.isMacOS) ...<Widget>[
+                    if (!kIsWeb &&
+                        (Platform.isIOS || Platform.isMacOS)) ...<Widget>[
                       const Text(
                         'iOS and macOS-specific examples',
                         style: TextStyle(fontWeight: FontWeight.bold),
