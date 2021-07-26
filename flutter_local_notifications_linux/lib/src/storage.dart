@@ -84,7 +84,7 @@ class NotificationStorage {
 
   /// Force read info from the disk to the cache.
   Future<void> forceReloadCache() async {
-    _cachedInfo = await _readToCache();
+    _cachedInfo = await _readFromCache();
   }
 
   Future<File?> _getStorageFile() async {
@@ -102,10 +102,10 @@ class NotificationStorage {
     if (_cachedInfo != null) {
       return _cachedInfo!;
     }
-    return _cachedInfo = await _readToCache();
+    return _cachedInfo = await _readFromCache();
   }
 
-  Future<_Cache> _readToCache() async {
+  Future<_Cache> _readFromCache() async {
     final _Cache cache = _Cache();
     final File? storageFile = await _getStorageFile();
     if (storageFile != null && storageFile.existsSync()) {
