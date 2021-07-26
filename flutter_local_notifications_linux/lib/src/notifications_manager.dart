@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dbus/dbus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:path/path.dart' as path;
 
 import 'dbus_wrapper.dart';
@@ -18,7 +19,6 @@ import 'model/timeout.dart';
 import 'notification_info.dart';
 import 'platform_info.dart';
 import 'storage.dart';
-import 'typedefs.dart';
 
 /// Linux notification manager and client
 class LinuxNotificationManager {

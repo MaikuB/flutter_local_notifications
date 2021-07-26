@@ -10,7 +10,6 @@ import 'initialization_settings.dart';
 import 'notification_details.dart';
 import 'platform_flutter_local_notifications.dart';
 import 'platform_specifics/ios/enums.dart';
-import 'typedefs.dart';
 import 'types.dart';
 
 /// Provides cross-platform functionality for displaying local notifications.

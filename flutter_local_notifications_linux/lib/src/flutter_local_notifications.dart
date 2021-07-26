@@ -1,12 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 
-import 'helpers.dart';
 import 'model/capabilities.dart';
 import 'model/initialization_settings.dart';
 import 'model/notification_details.dart';
 import 'notifications_manager.dart';
-import 'typedefs.dart';
 
 /// Linux implementation of the local notifications plugin.
 class LinuxFlutterLocalNotificationsPlugin

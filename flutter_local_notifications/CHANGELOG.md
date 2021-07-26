@@ -1,3 +1,7 @@
+# [6.1.0]
+
+* Added initial support to Linux. Thanks to the PR from [Yaroslav Pronin](https://github.com/proninyaroslav)
+
 # [6.0.0]
 
 * Updated Flutter SDK constraint. To err on the safe side, this is why there's a major version bump for this release as the minimum version supported is 2.2
