@@ -2,7 +2,7 @@ package com.dexterous.flutterlocalnotifications.models.styles;
 
 import androidx.annotation.Keep;
 
-import com.dexterous.flutterlocalnotifications.BitmapSource;
+import com.dexterous.flutterlocalnotifications.models.BitmapSource;
 
 @Keep
 public class BigPictureStyleInformation extends DefaultStyleInformation {

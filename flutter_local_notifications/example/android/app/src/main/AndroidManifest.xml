@@ -39,5 +39,12 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <service
+            android:name="com.dexterous.flutterlocalnotifications.ForegroundService"
+            android:enabled="true"            
+            android:exported="false"
+            android:stopWithTask="true"
+            android:foregroundServiceType="microphone" />
     </application>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 </manifest>

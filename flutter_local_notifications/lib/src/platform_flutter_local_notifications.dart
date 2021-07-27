@@ -8,6 +8,7 @@ import 'package:timezone/timezone.dart';
 import 'helpers.dart';
 import 'platform_specifics/android/active_notification.dart';
 import 'platform_specifics/android/enums.dart';
+import 'platform_specifics/android/foreground_service_constants.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
 import 'platform_specifics/android/notification_channel.dart';
@@ -201,6 +202,87 @@ class AndroidFlutterLocalNotificationsPlugin
       'payload': payload ?? ''
     });
   }
+
+  /// Starts an Android foreground service with the given notification.
+  /// 
+  /// The `id` must not be 0, since Android itself does not allow starting
+  /// a foreground service with a notification id of 0.
+  ///
+  /// Since not all users of this plugin need such a service, it was not
+  /// added to this plugins Android manifest. Thie means you have to add
+  /// it if you want to use the foreground service functionality. Add the
+  /// foreground service permission to your apps `AndroidManifest.xml` like
+  /// described in the [official Android documentation](https://developer.android.com/guide/components/foreground-services#request-foreground-service-permissions):
+  /// ```xml
+  /// <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+  /// ```
+  /// Furthermore, add the `service` itself to your `AndroidManifest.xml`
+  /// (inside the `<application>` tag):
+  /// ```xml
+  /// <service
+  ///  android:name="com.dexterous.flutterlocalnotifications.ForegroundService"
+  ///  android:enabled="true"
+  ///  android:exported="false"
+  ///  android:stopWithTask="true"
+  ///  android:foregroundServiceType="As you like" />
+  /// ```
+  /// While the `android:name` must exactly match this value, you can configure
+  /// the other parameters as you like, although it is recommended to copy the
+  /// values for `android:enabled`, `android:exported` and
+  /// `android:stopWithTask`. Suitable values for `foregroundServiceType` can be
+  /// found [here](https://developer.android.com/reference/android/app/Service#startForeground(int,%20android.app.Notification,%20int)).
+  ///
+  /// The notification of the foreground service can be updated by
+  /// simply calling this method multiple times.
+  ///
+  /// Information on selecting an appropriate `startType` for your app's usecase
+  /// should be taken from the official Android documentation, check [`Service.onStartCommand`](https://developer.android.com/reference/android/app/Service#onStartCommand(android.content.Intent,%20int,%20int)).
+  /// The there mentioned constants can be found in [AndroidServiceConstants].
+  ///
+  /// The notification for the foreground service will not be dismissable
+  /// and automatically removed when using [stopForegroundService].
+  ///
+  /// If `foregroundServiceType` is set, [`Service.startForeground(int id, Notification notification, int foregroundServiceType)`](https://developer.android.com/reference/android/app/Service#startForeground(int,%20android.app.Notification,%20int))
+  /// will be invoked , else  [`Service.startForeground(int id, Notification notification)`](https://developer.android.com/reference/android/app/Service#startForeground(int,%20android.app.Notification)) is used.
+  /// On devices older than [`Build.VERSION_CODES.Q`](https://developer.android.com/reference/android/os/Build.VERSION_CODES#Q), `foregroundServiceType` will be ignored.
+  /// Multiple type flags can be ORed together (using the `|` operator).
+  /// Note that `foregroundServiceType` (the parameter in this method)
+  /// must be a subset of the `android:foregroundServiceType`
+  /// defined in your `AndroidManifest.xml` (the one from the section above)!
+  Future<void> startForegroundService(int id, String? title, String? body,
+      {AndroidNotificationDetails? notificationDetails,
+      String? payload,
+      int startType = AndroidServiceConstants.startSticky,
+      int? foregroundServiceType}) {
+    validateId(id);
+    if (id == 0) {
+      throw ArgumentError.value(id, 'id',
+          'The id of a notification used for an Android foreground service must not be 0!'); // ignore: lines_longer_than_80_chars
+    }
+    return _channel.invokeMethod('startForegroundService', <String, Object>{
+      'notificationData': <String, Object?>{
+        'id': id,
+        'title': title,
+        'body': body,
+        'payload': payload ?? '',
+        'platformSpecifics': notificationDetails?.toMap(),
+      },
+      'startType': startType,
+      'hasForegroundServiceType': foregroundServiceType != null,
+      'foregroundServiceType': foregroundServiceType ?? 0
+    });
+  }
+
+  /// Stops a foreground service.
+  ///
+  /// If the foreground service was not started, this function
+  /// does nothing.
+  ///
+  /// It is sufficient to call this method once to stop the
+  /// foreground service, even if [startForegroundService] was called
+  /// multiple times.
+  Future<void> stopForegroundService() =>
+      _channel.invokeMethod('stopForegroundService');
 
   @override
   Future<void> show(

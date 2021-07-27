@@ -2,8 +2,10 @@ package com.dexterous.flutterlocalnotifications.models;
 
 import androidx.annotation.Keep;
 
+import java.io.Serializable;
+
 @Keep
-public class MessageDetails {
+public class MessageDetails implements Serializable {
     public String text;
     public Long timestamp;
     public PersonDetails person;
