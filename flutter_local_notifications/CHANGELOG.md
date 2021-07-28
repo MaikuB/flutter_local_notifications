@@ -1,3 +1,7 @@
+# [7.0.0]
+
+* **Breaking change** Removed support for Linux. This is because adding Linux made use of a plugin that was causing apps targeting the web to fail to build
+
 # [6.1.0]
 
 * Added initial support to Linux. Thanks to the PR from [Yaroslav Pronin](https://github.com/proninyaroslav)
