@@ -6,7 +6,7 @@ library flutter_local_notifications_linux;
 // support FFI (e.g., web) to avoid having transitive dependencies
 // break web compilation.
 export 'src/flutter_local_notifications_stub.dart'
-    if (dart.library.ffi) 'src/flutter_local_notifications_real.dart';
+    if (dart.library.ffi) 'src/flutter_local_notifications.dart';
 export 'src/model/capabilities.dart';
 export 'src/model/categories.dart';
 export 'src/model/enums.dart';
