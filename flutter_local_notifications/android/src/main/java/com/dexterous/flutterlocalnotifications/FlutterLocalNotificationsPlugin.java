@@ -462,16 +462,16 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         } else if (bitmapSource == BitmapSource.ByteArray) {
             byte[] byteArray;
             // if data is deserialized by gson, it is of the wrong type and we have to convert it
-            if (data instanceof ArrayList){
+            if (data instanceof ArrayList) {
                 List<Double> l = (ArrayList<Double>) data;
                 byteArray = new byte[l.size()];
-                for(int i = 0; i < l.size(); i++) {
+                for (int i = 0; i < l.size(); i++) {
                     byteArray[i] = (byte) l.get(i).intValue();
                 }
             } else {
                 byteArray = (byte[]) data;
             }
-            bitmap = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.length);
+            bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         }
 
         return bitmap;
@@ -1136,22 +1136,25 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             if (hasInvalidLargeIcon(result, bigPictureStyleInformation.largeIcon, bigPictureStyleInformation.largeIconBitmapSource))
                 return true;
 
-            if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.DrawableResource || bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.FilePath){
+            if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.DrawableResource) {
+                String bigPictureResourceName = (String) bigPictureStyleInformation.bigPicture;
+                return StringUtils.isNullOrEmpty(bigPictureResourceName) && !isValidDrawableResource(applicationContext, bigPictureResourceName, result, INVALID_BIG_PICTURE_ERROR_CODE);
+            } else if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.FilePath) {
                 String largeIconPath = (String) bigPictureStyleInformation.bigPicture;
-                return !StringUtils.isNullOrEmpty(largeIconPath) && bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.DrawableResource && !isValidDrawableResource(applicationContext, largeIconPath, result, INVALID_BIG_PICTURE_ERROR_CODE);
-            }else if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.ByteArray){
+                return StringUtils.isNullOrEmpty(largeIconPath);
+            } else if (bigPictureStyleInformation.bigPictureBitmapSource == BitmapSource.ByteArray) {
                 byte[] byteArray = (byte[]) bigPictureStyleInformation.bigPicture;
-                return byteArray.length == 0;
+                return byteArray == null || byteArray.length == 0;
             }
         }
         return false;
     }
 
     private boolean hasInvalidLargeIcon(Result result, Object largeIcon, BitmapSource largeIconBitmapSource) {
-        if (largeIconBitmapSource == BitmapSource.DrawableResource || largeIconBitmapSource == BitmapSource.FilePath){
+        if (largeIconBitmapSource == BitmapSource.DrawableResource || largeIconBitmapSource == BitmapSource.FilePath) {
             String largeIconPath = (String) largeIcon;
             return !StringUtils.isNullOrEmpty(largeIconPath) && largeIconBitmapSource == BitmapSource.DrawableResource && !isValidDrawableResource(applicationContext, largeIconPath, result, INVALID_LARGE_ICON_ERROR_CODE);
-        }else if (largeIconBitmapSource == BitmapSource.ByteArray){
+        } else if (largeIconBitmapSource == BitmapSource.ByteArray) {
             byte[] byteArray = (byte[]) largeIcon;
             return byteArray.length == 0;
         }
