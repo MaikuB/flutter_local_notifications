@@ -1,5 +1,3 @@
-import 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
-
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/macos/initialization_settings.dart';
@@ -11,7 +9,6 @@ class InitializationSettings {
     this.android,
     this.iOS,
     this.macOS,
-    this.linux,
   });
 
   /// Settings for Android.
@@ -22,7 +19,4 @@ class InitializationSettings {
 
   /// Settings for macOS.
   final MacOSInitializationSettings? macOS;
-
-   /// Settings for Linux.
-  final LinuxInitializationSettings? linux;
 }
