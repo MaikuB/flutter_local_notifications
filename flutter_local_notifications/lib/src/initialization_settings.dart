@@ -17,6 +17,6 @@ class InitializationSettings {
   /// Settings for iOS.
   final IOSInitializationSettings? iOS;
 
-  /// Settings for iOS.
+  /// Settings for macOS.
   final MacOSInitializationSettings? macOS;
 }

@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -74,20 +75,33 @@ Future<void> main() async {
           requestAlertPermission: false,
           requestBadgePermission: false,
           requestSoundPermission: false,
-          onDidReceiveLocalNotification:
-              (int id, String? title, String? body, String? payload) async {
-            didReceiveLocalNotificationSubject.add(ReceivedNotification(
-                id: id, title: title, body: body, payload: payload));
+          onDidReceiveLocalNotification: (
+            int id,
+            String? title,
+            String? body,
+            String? payload,
+          ) async {
+            didReceiveLocalNotificationSubject.add(
+              ReceivedNotification(
+                id: id,
+                title: title,
+                body: body,
+                payload: payload,
+              ),
+            );
           });
   const MacOSInitializationSettings initializationSettingsMacOS =
       MacOSInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false);
+    requestAlertPermission: false,
+    requestBadgePermission: false,
+    requestSoundPermission: false,
+  );
+
   final InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-      macOS: initializationSettingsMacOS);
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsIOS,
+    macOS: initializationSettingsMacOS,
+  );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String? payload) async {
     if (payload != null) {
@@ -242,39 +256,14 @@ class _HomePageState extends State<HomePage> {
                           'Tap on a notification when it appears to trigger'
                           ' navigation'),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                      child: Text.rich(
-                        TextSpan(
-                          children: <InlineSpan>[
-                            const TextSpan(
-                              text: 'Did notification launch app? ',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(
-                              text: '${widget.didNotificationLaunchApp}',
-                            )
-                          ],
-                        ),
-                      ),
+                    _InfoValueString(
+                      title: 'Did notification launch app?',
+                      value: widget.didNotificationLaunchApp,
                     ),
                     if (widget.didNotificationLaunchApp)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
-                        child: Text.rich(
-                          TextSpan(
-                            children: <InlineSpan>[
-                              const TextSpan(
-                                text: 'Launch notification payload: ',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              TextSpan(
-                                text: widget
-                                    .notificationAppLaunchDetails!.payload,
-                              )
-                            ],
-                          ),
-                        ),
+                      _InfoValueString(
+                        title: 'Launch notification payload:',
+                        value: widget.notificationAppLaunchDetails!.payload,
                       ),
                     PaddedElevatedButton(
                       buttonText: 'Show plain notification with payload',
@@ -304,52 +293,60 @@ class _HomePageState extends State<HomePage> {
                         await _showNotificationCustomSound();
                       },
                     ),
-                    PaddedElevatedButton(
-                      buttonText:
-                          'Schedule notification to appear in 5 seconds based '
-                          'on local time zone',
-                      onPressed: () async {
-                        await _zonedScheduleNotification();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Repeat notification every minute',
-                      onPressed: () async {
-                        await _repeatNotification();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText:
-                          'Schedule daily 10:00:00 am notification in your '
-                          'local time zone',
-                      onPressed: () async {
-                        await _scheduleDailyTenAMNotification();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText:
-                          'Schedule daily 10:00:00 am notification in your '
-                          "local time zone using last year's date",
-                      onPressed: () async {
-                        await _scheduleDailyTenAMLastYearNotification();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText:
-                          'Schedule weekly 10:00:00 am notification in your '
-                          'local time zone',
-                      onPressed: () async {
-                        await _scheduleWeeklyTenAMNotification();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText:
-                          'Schedule weekly Monday 10:00:00 am notification in '
-                          'your local time zone',
-                      onPressed: () async {
-                        await _scheduleWeeklyMondayTenAMNotification();
-                      },
-                    ),
+                    if (!kIsWeb && !Platform.isLinux) ...<Widget>[
+                      PaddedElevatedButton(
+                        buttonText:
+                            'Schedule notification to appear in 5 seconds '
+                            'based on local time zone',
+                        onPressed: () async {
+                          await _zonedScheduleNotification();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText: 'Repeat notification every minute',
+                        onPressed: () async {
+                          await _repeatNotification();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
+                            'Schedule daily 10:00:00 am notification in your '
+                            'local time zone',
+                        onPressed: () async {
+                          await _scheduleDailyTenAMNotification();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
+                            'Schedule daily 10:00:00 am notification in your '
+                            "local time zone using last year's date",
+                        onPressed: () async {
+                          await _scheduleDailyTenAMLastYearNotification();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
+                            'Schedule weekly 10:00:00 am notification in your '
+                            'local time zone',
+                        onPressed: () async {
+                          await _scheduleWeeklyTenAMNotification();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
+                            'Schedule weekly Monday 10:00:00 am notification '
+                            'in your local time zone',
+                        onPressed: () async {
+                          await _scheduleWeeklyMondayTenAMNotification();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText: 'Check pending notifications',
+                        onPressed: () async {
+                          await _checkPendingNotificationRequests();
+                        },
+                      ),
+                    ],
                     PaddedElevatedButton(
                       buttonText:
                           'Schedule monthly Monday 10:00:00 am notification in '
@@ -373,12 +370,6 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedElevatedButton(
-                      buttonText: 'Check pending notifications',
-                      onPressed: () async {
-                        await _checkPendingNotificationRequests();
-                      },
-                    ),
-                    PaddedElevatedButton(
                       buttonText: 'Cancel notification',
                       onPressed: () async {
                         await _cancelNotification();
@@ -390,7 +381,7 @@ class _HomePageState extends State<HomePage> {
                         await _cancelAllNotifications();
                       },
                     ),
-                    if (Platform.isAndroid) ...<Widget>[
+                    if (!kIsWeb && Platform.isAndroid) ...<Widget>[
                       const Text(
                         'Android-specific examples',
                         style: TextStyle(fontWeight: FontWeight.bold),
@@ -587,7 +578,8 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     ],
-                    if (Platform.isIOS || Platform.isMacOS) ...<Widget>[
+                    if (!kIsWeb &&
+                        (Platform.isIOS || Platform.isMacOS)) ...<Widget>[
                       const Text(
                         'iOS and macOS-specific examples',
                         style: TextStyle(fontWeight: FontWeight.bold),
@@ -733,14 +725,16 @@ class _HomePageState extends State<HomePage> {
     const MacOSNotificationDetails macOSPlatformChannelSpecifics =
         MacOSNotificationDetails(sound: 'slow_spring_board.aiff');
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: iOSPlatformChannelSpecifics,
-        macOS: macOSPlatformChannelSpecifics);
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics,
+      macOS: macOSPlatformChannelSpecifics,
+    );
     await flutterLocalNotificationsPlugin.show(
-        0,
-        'custom sound notification title',
-        'custom sound notification body',
-        platformChannelSpecifics);
+      0,
+      'custom sound notification title',
+      'custom sound notification body',
+      platformChannelSpecifics,
+    );
   }
 
   Future<void> _showNotificationCustomVibrationIconLed() async {
@@ -1813,6 +1807,37 @@ class SecondPageState extends State<SecondPage> {
               Navigator.pop(context);
             },
             child: const Text('Go back!'),
+          ),
+        ),
+      );
+}
+
+class _InfoValueString extends StatelessWidget {
+  const _InfoValueString({
+    required this.title,
+    required this.value,
+    Key? key,
+  }) : super(key: key);
+
+  final String title;
+  final Object? value;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+        child: Text.rich(
+          TextSpan(
+            children: <InlineSpan>[
+              TextSpan(
+                text: '$title ',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextSpan(
+                text: '$value',
+              )
+            ],
           ),
         ),
       );
