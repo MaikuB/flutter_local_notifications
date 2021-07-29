@@ -1,3 +1,10 @@
+# [8.0.0]
+
+* **Breaking change** the `AndroidBitmap` class is now a generic class i.e. `AndroidBitmap<T>`. This has resulted in the following changes
+ * the type of the `largeIcon` property that belongs to the `AndroidNotificationDetails` class has changed from `AndroidBitmap` to `AndroidBitmap<Object>`
+ * the type of the `largeIcon` and `bigPicture` properties that belongs to the `BigPictureStyleInformation` class has changed from `AndroidBitmap` to `AndroidBitmap<Object>`
+* [Android] Added the `ByteArrayAndroidBitmap` class that implements the `AndroidBitmaps<T>` class. This allows using a byte array to use as the large icon for a notification or as big picture if the big picture style has been applied. A `ByteArrayAndroidBitmap.fromBase64String()` named constructor is also available that will enable this using a base-64 encoded string. Thanks to the PR from [Alexander Petermann](https://github.com/lexxxel)
+
 # [7.0.0]
 
 * **Breaking change** Removed support for Linux. This is because adding Linux made use of a plugin that was causing apps targeting the web to fail to build
