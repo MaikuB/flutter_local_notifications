@@ -1,15 +1,7 @@
-# [7.0.0-dev.3]
+# [7.0.0]
 
-* Includes changes from 6.1.0 release
-* Fixed how the plugin was requesting the permission to schedule exact alarms. Thanks to the PR from [Willham12](https://github.com/Willham12)
-
-# [7.0.0-dev.2]
-
-* [Android] fixed issue [1128](https://github.com/MaikuB/flutter_local_notifications/issues/1228) around how support for Android 12 is done so that it no longer references the preview SDK. Thanks to the PR from [tim-mardesen](https://github.com/tim-mardesen)
-
-# [7.0.0-dev.1]
-
-* Made changes required to support apps targeting Android 12
+* **Breaking change** Removed support for Linux. This is because adding Linux made use of a plugin that was causing apps targeting the web to fail to build
+* **Note**: as this is more an urgent release to resolve the aforementioned issue that results in a breaking change, please note this release does not include the Android 12 support changes that were in the prereleases. This is to err on the side of caution as Android 12 hasn't reached platform stability yet
 
 # [6.1.0]
 
