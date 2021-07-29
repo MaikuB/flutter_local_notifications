@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
-import 'package:posix/posix.dart' as posix;
 import 'package:xdg_directories/xdg_directories.dart' as xdg;
+
+import 'ffi/posix.dart' as posix;
 
 /// Provides Linux platform-specific info
 class LinuxPlatformInfo {
@@ -48,13 +49,6 @@ class LinuxPlatformInfo {
 
 /// Represents Linux platform-specific info
 class LinuxPlatformInfoData {
-  /// Constructs an instance of [LinuxPlatformInfoData].
-  const LinuxPlatformInfoData({
-    this.appName,
-    this.assetsPath,
-    this.runtimePath,
-  });
-
   /// Application name
   final String? appName;
 
@@ -67,4 +61,11 @@ class LinuxPlatformInfoData {
   /// Please see XDG Base Directory Specification https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
   /// If `$XDG_RUNTIME_DIR` is not set, the following directory structure is used: `/tmp/APP_NAME/USER_ID/SESSION_ID`
   final String? runtimePath;
+
+  /// Constructs an instance of [LinuxPlatformInfoData].
+  const LinuxPlatformInfoData({
+    this.appName,
+    this.assetsPath,
+    this.runtimePath,
+  });
 }
