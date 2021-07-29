@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -414,9 +415,26 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedElevatedButton(
-                        buttonText: 'Show big picture notification',
+                        buttonText:
+                            'Show big picture notification using local images',
                         onPressed: () async {
                           await _showBigPictureNotification();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
+                            'Show big picture notification using base64 String '
+                            'for images',
+                        onPressed: () async {
+                          await _showBigPictureNotificationBase64();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
+                            'Show big picture notification using URLs for '
+                            'Images',
+                        onPressed: () async {
+                          await _showBigPictureNotificationURL();
                         },
                       ),
                       PaddedElevatedButton(
@@ -845,6 +863,65 @@ class _HomePageState extends State<HomePage> {
     final BigPictureStyleInformation bigPictureStyleInformation =
         BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath),
             largeIcon: FilePathAndroidBitmap(largeIconPath),
+            contentTitle: 'overridden <b>big</b> content title',
+            htmlFormatContentTitle: true,
+            summaryText: 'summary <i>text</i>',
+            htmlFormatSummaryText: true);
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('big text channel id',
+            'big text channel name', 'big text channel description',
+            styleInformation: bigPictureStyleInformation);
+    final NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'big text title', 'silent body', platformChannelSpecifics);
+  }
+
+  Future<String> _base64encodedImage(String url) async {
+    final http.Response response = await http.get(Uri.parse(url));
+    final String base64Data = base64Encode(response.bodyBytes);
+    return base64Data;
+  }
+
+  Future<void> _showBigPictureNotificationBase64() async {
+    final String largeIcon =
+        await _base64encodedImage('https://via.placeholder.com/48x48');
+    final String bigPicture =
+        await _base64encodedImage('https://via.placeholder.com/400x800');
+
+    final BigPictureStyleInformation bigPictureStyleInformation =
+        BigPictureStyleInformation(
+            ByteArrayAndroidBitmap.fromBase64String(
+                bigPicture), //Base64AndroidBitmap(bigPicture),
+            largeIcon: ByteArrayAndroidBitmap.fromBase64String(largeIcon),
+            contentTitle: 'overridden <b>big</b> content title',
+            htmlFormatContentTitle: true,
+            summaryText: 'summary <i>text</i>',
+            htmlFormatSummaryText: true);
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('big text channel id',
+            'big text channel name', 'big text channel description',
+            styleInformation: bigPictureStyleInformation);
+    final NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'big text title', 'silent body', platformChannelSpecifics);
+  }
+
+  Future<Uint8List> _getByteArrayFromUrl(String url) async {
+    final http.Response response = await http.get(Uri.parse(url));
+    return response.bodyBytes;
+  }
+
+  Future<void> _showBigPictureNotificationURL() async {
+    final ByteArrayAndroidBitmap largeIcon = ByteArrayAndroidBitmap(
+        await _getByteArrayFromUrl('https://via.placeholder.com/48x48'));
+    final ByteArrayAndroidBitmap bigPicture = ByteArrayAndroidBitmap(
+        await _getByteArrayFromUrl('https://via.placeholder.com/400x800'));
+
+    final BigPictureStyleInformation bigPictureStyleInformation =
+        BigPictureStyleInformation(bigPicture,
+            largeIcon: largeIcon,
             contentTitle: 'overridden <b>big</b> content title',
             htmlFormatContentTitle: true,
             summaryText: 'summary <i>text</i>',
