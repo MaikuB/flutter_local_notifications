@@ -30,6 +30,7 @@ import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
 import com.dexterous.flutterlocalnotifications.models.BitmapSource;
@@ -1321,27 +1322,26 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private void startForegroundService(MethodCall call, Result result) {
         Map<String, Object> notificationData = call.<Map<String, Object>>argument("notificationData");
         Integer startType = call.<Integer>argument("startType");
-        Boolean hasForegroundServiceType = call.<Boolean>argument("hasForegroundServiceType");
-        Integer foregroundServiceType = call.<Integer>argument("foregroundServiceType");
-        if (notificationData != null && startType != null && hasForegroundServiceType != null && foregroundServiceType != null) {
-            NotificationDetails notificationDetails = extractNotificationDetails(result, notificationData);
-            if (notificationDetails != null) {
-                if(notificationDetails.id!=0) {
-                    ForegroundServiceStartParameter parameter = new ForegroundServiceStartParameter(notificationDetails, startType, hasForegroundServiceType, foregroundServiceType);
-                    Intent intent = new Intent(applicationContext, ForegroundService.class);
-                    intent.putExtra(ForegroundServiceStartParameter.EXTRA, parameter);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        applicationContext.startForegroundService(intent);
+        int[] foregroundServiceType = call.<int[]>argument("foregroundServiceType");
+        if (foregroundServiceType == null || foregroundServiceType.length != 0) {
+            if (notificationData != null && startType != null) {
+                NotificationDetails notificationDetails = extractNotificationDetails(result, notificationData);
+                if (notificationDetails != null) {
+                    if (notificationDetails.id != 0) {
+                        ForegroundServiceStartParameter parameter = new ForegroundServiceStartParameter(notificationDetails, startType, foregroundServiceType);
+                        Intent intent = new Intent(applicationContext, ForegroundService.class);
+                        intent.putExtra(ForegroundServiceStartParameter.EXTRA, parameter);
+                        ContextCompat.startForegroundService(applicationContext, intent);
+                        result.success(null);
                     } else {
-                        applicationContext.startService(intent);
+                        result.error("ARGUMENT_ERROR", "The id of the notification for a foreground service must not be 0!", null);
                     }
-                    result.success(null);
-                } else {
-                    result.error("ARGUMENT_ERROR", "The id of the notification for a foreground service must not be 0!", null);
                 }
+            } else {
+                result.error("ARGUMENT_ERROR", "An argument passed to startForegroundService was null!", null);
             }
         } else {
-            result.error("ARGUMENT_ERROR", "An argument passed to startForegroundService was null!", null);
+            result.error("ARGUMENT_ERROR", "If foregroundServiceType is non-null it must not be empty!", null);
         }
     }
 

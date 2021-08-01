@@ -9,13 +9,11 @@ public class ForegroundServiceStartParameter implements Serializable {
 
     public final NotificationDetails notificationData;
     public final int startMode;
-    public final boolean hasForegroundServiceType;
-    public final int foregroundServiceType;
+    public final int[] foregroundServiceType;
 
-    public ForegroundServiceStartParameter(NotificationDetails notificationData, int startMode, boolean hasForegroundServiceType, int foregroundServiceType) {
+    public ForegroundServiceStartParameter(NotificationDetails notificationData, int startMode, int[] foregroundServiceType) {
         this.notificationData = notificationData;
         this.startMode = startMode;
-        this.hasForegroundServiceType = hasForegroundServiceType;
         this.foregroundServiceType = foregroundServiceType;
     }
 
@@ -24,7 +22,6 @@ public class ForegroundServiceStartParameter implements Serializable {
         return "ForegroundServiceStartParameter{" +
                 "notificationData=" + notificationData +
                 ", startMode=" + startMode +
-                ", hasForegroundServiceType=" + hasForegroundServiceType +
                 ", foregroundServiceType=" + foregroundServiceType +
                 '}';
     }

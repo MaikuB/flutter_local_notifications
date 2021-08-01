@@ -14,12 +14,20 @@ public class ForegroundService extends Service {
                 ForegroundServiceStartParameter.EXTRA);
         Notification notification = FlutterLocalNotificationsPlugin.
                 createNotification(this, parameter.notificationData);
-        if (parameter.hasForegroundServiceType && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(parameter.notificationData.id, notification, parameter.foregroundServiceType);
+        if (parameter.foregroundServiceType != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(parameter.notificationData.id, notification, orCombineFlags(parameter.foregroundServiceType));
         } else {
             startForeground(parameter.notificationData.id, notification);
         }
         return parameter.startMode;
+    }
+
+    private static int orCombineFlags(int[] flags) {
+        int flag = flags[0];
+        for (int i = 1; i < flags.length; i++) {
+            flag |= flags[i];
+        }
+        return flag;
     }
 
     @Override
