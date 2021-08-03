@@ -117,13 +117,8 @@ class AndroidServiceForegroundType {
   int get hashCode => value;
 
   @override
-  bool operator ==(Object other) {
-    if (other is AndroidServiceForegroundType) {
-      return other.value == value;
-    } else {
-      return false;
-    }
-  }
+  bool operator ==(Object other) =>
+      other is AndroidServiceForegroundType && other.value == value;
 }
 
 /// The available start types for an Android service.
@@ -154,13 +149,8 @@ class AndroidServiceStartType {
   int get hashCode => value;
 
   @override
-  bool operator ==(Object other) {
-    if (other is AndroidServiceStartType) {
-      return other.value == value;
-    } else {
-      return false;
-    }
-  }
+  bool operator ==(Object other) =>
+      other is AndroidServiceStartType && other.value == value;
 }
 
 /// The available importance levels for Android notifications.
@@ -207,13 +197,7 @@ class Importance {
   int get hashCode => value ?? 0;
 
   @override
-  bool operator ==(Object other) {
-    if (other is Importance) {
-      return other.value == value;
-    } else {
-      return false;
-    }
-  }
+  bool operator ==(Object other) => other is Importance && other.value == value;
 }
 
 /// Priority for notifications on Android 7.1 and lower.
@@ -246,15 +230,8 @@ class Priority {
 
   @override
   int get hashCode => value;
-
   @override
-  bool operator ==(Object other) {
-    if (other is Priority) {
-      return other.value == value;
-    } else {
-      return false;
-    }
-  }
+  bool operator ==(Object other) => other is Priority && other.value == value;
 }
 
 /// The available alert behaviours for grouped notifications.
