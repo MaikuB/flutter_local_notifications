@@ -2050,7 +2050,7 @@ void main() {
       ]);
     });
 
-    test('start Android foreground service', () async {
+    test('startForegroundService', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
@@ -2071,8 +2071,21 @@ void main() {
               'platformSpecifics': null,
             },
             'startType': AndroidServiceStartType.startSticky.value,
-            'foregroundServiceType': null
+            'foregroundServiceTypes': null
           }));
+    });
+
+    test('stopForegroundService', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .stopForegroundService();
+      expect(
+          log.last,
+          isMethodCall(
+            'stopForegroundService',
+            arguments: null,
+          ));
     });
   });
 
