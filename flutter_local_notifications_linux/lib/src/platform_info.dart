@@ -2,11 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
-import 'package:posix/posix.dart' as posix;
 import 'package:xdg_directories/xdg_directories.dart' as xdg;
+
+import 'posix.dart';
 
 /// Provides Linux platform-specific info
 class LinuxPlatformInfo {
+  final Posix _posix = Posix();
+
   /// Returns all platform-specific info
   Future<LinuxPlatformInfoData> getAll() async {
     try {
@@ -21,9 +24,9 @@ class LinuxPlatformInfo {
       );
       late final Directory runtimeDir;
       if (xdg.runtimeDir == null) {
-        final int pid = posix.getpid();
-        final int userId = posix.getuid();
-        final int sessionId = posix.getsid(pid);
+        final int pid = _posix.getpid();
+        final int userId = _posix.getuid();
+        final int sessionId = _posix.getsid(pid);
         runtimeDir = Directory(
           path.join('/tmp', processName, '$userId', '$sessionId'),
         );

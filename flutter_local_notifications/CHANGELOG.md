@@ -1,4 +1,20 @@
-# [6.1.0]
+# [8.0.0]
+
+* **Breaking change** the `AndroidBitmap` class is now a generic class i.e. `AndroidBitmap<T>`. This has resulted in the following changes
+ * the type of the `largeIcon` property that belongs to the `AndroidNotificationDetails` class has changed from `AndroidBitmap` to `AndroidBitmap<Object>`
+ * the type of the `largeIcon` and `bigPicture` properties that belongs to the `BigPictureStyleInformation` class has changed from `AndroidBitmap` to `AndroidBitmap<Object>`
+* [Android] Added the `ByteArrayAndroidBitmap` class that implements the `AndroidBitmaps<T>` class. This allows using a byte array to use as the large icon for a notification or as big picture if the big picture style has been applied. A `ByteArrayAndroidBitmap.fromBase64String()` named constructor is also available that will enable this using a base-64 encoded string. Thanks to the PR from [Alexander Petermann](https://github.com/lexxxel)
+
+# [7.0.0]
+
+* **Breaking change** Removed support for Linux. This is because adding Linux made use of a plugin that was causing apps targeting the web to fail to build
+* **Note**: as this is more an urgent release to resolve the aforementioned issue that results in a breaking change, please note this release does not include the Android 12 support changes that were in the prereleases. This is to err on the side of caution as Android 12 hasn't reached platform stability yet
+
+# [6.1.1]
+
+* **Breaking change** Removed support for Linux. This is because adding Linux made use of a plugin that was causing apps targeting the web to fail to build. This is identical to the 7.0.0 release but also done as a minor increment as 6.1.1 to fix build issues as developers would most likely use caret versioning
+
+# [6.1.0] **Bad build**
 
 * Added initial support to Linux. Thanks to the PR from [Yaroslav Pronin](https://github.com/proninyaroslav)
 * Prevent crashing on the web by adding guard clauses within the plugin to check if the plugin is being used within a web app due to an [issue](https://github.com/google/platform.dart/issues/32) with getting the operating system via the [platform](https://pub.dev/packages/platform) package, which in turn relies on `dart:io`'s `Platform` APIs

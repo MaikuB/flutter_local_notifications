@@ -6,7 +6,10 @@ enum AndroidBitmapSource {
   drawable,
 
   /// A file path.
-  filePath
+  filePath,
+
+  /// A byte array bitmap.
+  byteArray,
 }
 
 /// Specifies the source for icons.

@@ -150,7 +150,7 @@ class AndroidNotificationDetails {
   final Color? color;
 
   /// Specifics the large icon to use.
-  final AndroidBitmap? largeIcon;
+  final AndroidBitmap<Object>? largeIcon;
 
   /// Specifies if you would only like the sound, vibrate and ticker to be
   /// played if the notification is not already showing.
