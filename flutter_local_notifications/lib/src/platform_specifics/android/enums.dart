@@ -190,12 +190,12 @@ class Importance {
       <Importance>[unspecified, none, min, low, defaultImportance, high, max];
 
   /// The integer representation.
-  // TODO: This should not be nullable,
+  // TODO(maikub): This should not be nullable,
   //  but changing is a breaking change.
   final int? value;
 
   @override
-  // TODO: value should not be nullable in the first place.
+  // TODO(maikub): value should not be nullable in the first place.
   //  once that's fixed, remove the ?? here!
   int get hashCode => value ?? 0;
 
