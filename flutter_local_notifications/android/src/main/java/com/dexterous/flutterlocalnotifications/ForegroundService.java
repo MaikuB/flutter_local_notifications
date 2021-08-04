@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
 
+import java.util.ArrayList;
+
 public class ForegroundService extends Service {
 
     @Override
@@ -14,18 +16,18 @@ public class ForegroundService extends Service {
                 ForegroundServiceStartParameter.EXTRA);
         Notification notification = FlutterLocalNotificationsPlugin.
                 createNotification(this, parameter.notificationData);
-        if (parameter.foregroundServiceType != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(parameter.notificationData.id, notification, orCombineFlags(parameter.foregroundServiceType));
+        if (parameter.foregroundServiceTypes != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(parameter.notificationData.id, notification, orCombineFlags(parameter.foregroundServiceTypes));
         } else {
             startForeground(parameter.notificationData.id, notification);
         }
         return parameter.startMode;
     }
 
-    private static int orCombineFlags(int[] flags) {
-        int flag = flags[0];
-        for (int i = 1; i < flags.length; i++) {
-            flag |= flags[i];
+    private static int orCombineFlags(ArrayList<Integer> flags) {
+        int flag = flags.get(0);
+        for (int i = 1; i < flags.size(); i++) {
+            flag |= flags.get(i);
         }
         return flag;
     }

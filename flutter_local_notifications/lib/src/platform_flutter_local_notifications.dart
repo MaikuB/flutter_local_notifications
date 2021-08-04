@@ -255,14 +255,14 @@ class AndroidFlutterLocalNotificationsPlugin
       {AndroidNotificationDetails? notificationDetails,
       String? payload,
       AndroidServiceStartType startType = AndroidServiceStartType.startSticky,
-      Set<AndroidServiceForegroundType>? foregroundServiceType}) {
+      Set<AndroidServiceForegroundType>? foregroundServiceTypes}) {
     validateId(id);
     if (id == 0) {
       throw ArgumentError.value(id, 'id',
           'The id of a notification used for an Android foreground service must not be 0!'); // ignore: lines_longer_than_80_chars
     }
-    if (foregroundServiceType?.isEmpty ?? false) {
-      throw ArgumentError.value(foregroundServiceType, 'foregroundServiceType',
+    if (foregroundServiceTypes?.isEmpty ?? false) {
+      throw ArgumentError.value(foregroundServiceTypes, 'foregroundServiceType',
           'foregroundServiceType may be null but it must never be empty!');
     }
     return _channel.invokeMethod('startForegroundService', <String, Object?>{
@@ -274,7 +274,7 @@ class AndroidFlutterLocalNotificationsPlugin
         'platformSpecifics': notificationDetails?.toMap(),
       },
       'startType': startType.value,
-      'foregroundServiceType': foregroundServiceType
+      'foregroundServiceTypes': foregroundServiceTypes
           ?.map((AndroidServiceForegroundType type) => type.value)
           .toList()
     });

@@ -1350,13 +1350,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private void startForegroundService(MethodCall call, Result result) {
         Map<String, Object> notificationData = call.<Map<String, Object>>argument("notificationData");
         Integer startType = call.<Integer>argument("startType");
-        int[] foregroundServiceType = call.<int[]>argument("foregroundServiceType");
-        if (foregroundServiceType == null || foregroundServiceType.length != 0) {
+        ArrayList<Integer> foregroundServiceTypes = call.argument("foregroundServiceTypes");
+        if (foregroundServiceTypes == null || foregroundServiceTypes.size() != 0) {
             if (notificationData != null && startType != null) {
                 NotificationDetails notificationDetails = extractNotificationDetails(result, notificationData);
                 if (notificationDetails != null) {
                     if (notificationDetails.id != 0) {
-                        ForegroundServiceStartParameter parameter = new ForegroundServiceStartParameter(notificationDetails, startType, foregroundServiceType);
+                        ForegroundServiceStartParameter parameter = new ForegroundServiceStartParameter(notificationDetails, startType, foregroundServiceTypes);
                         Intent intent = new Intent(applicationContext, ForegroundService.class);
                         intent.putExtra(ForegroundServiceStartParameter.EXTRA, parameter);
                         ContextCompat.startForegroundService(applicationContext, intent);
@@ -1369,7 +1369,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 result.error("ARGUMENT_ERROR", "An argument passed to startForegroundService was null!", null);
             }
         } else {
-            result.error("ARGUMENT_ERROR", "If foregroundServiceType is non-null it must not be empty!", null);
+            result.error("ARGUMENT_ERROR", "If foregroundServiceTypes is non-null it must not be empty!", null);
         }
     }
 

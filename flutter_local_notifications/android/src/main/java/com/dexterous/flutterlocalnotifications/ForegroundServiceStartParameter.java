@@ -3,18 +3,19 @@ package com.dexterous.flutterlocalnotifications;
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class ForegroundServiceStartParameter implements Serializable {
     public final static String EXTRA = "com.dexterous.flutterlocalnotifications.ForegroundServiceStartParameter";
 
     public final NotificationDetails notificationData;
     public final int startMode;
-    public final int[] foregroundServiceType;
+    public final ArrayList<Integer> foregroundServiceTypes;
 
-    public ForegroundServiceStartParameter(NotificationDetails notificationData, int startMode, int[] foregroundServiceType) {
+    public ForegroundServiceStartParameter(NotificationDetails notificationData, int startMode, ArrayList<Integer> foregroundServiceTypes) {
         this.notificationData = notificationData;
         this.startMode = startMode;
-        this.foregroundServiceType = foregroundServiceType;
+        this.foregroundServiceTypes = foregroundServiceTypes;
     }
 
     @Override
@@ -22,7 +23,7 @@ public class ForegroundServiceStartParameter implements Serializable {
         return "ForegroundServiceStartParameter{" +
                 "notificationData=" + notificationData +
                 ", startMode=" + startMode +
-                ", foregroundServiceType=" + foregroundServiceType +
+                ", foregroundServiceTypes=" + foregroundServiceTypes +
                 '}';
     }
 }
