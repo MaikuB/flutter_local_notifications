@@ -1,3 +1,8 @@
+# [9.0.0-dev.1]
+
+* Restored Linux support
+* **Breaking change** the `value` property of the `Importance` class is now non-nullable.
+
 # [8.1.0]
 
 * [Android] added the `startForegroundService()` and `stopForegroundService()` methods to the `AndroidFlutterLocalNotificationsPlugin` class. This can be used to start and stop a foreground service that shows a foreground service respectively. Refer to the API docs for more details on how to use this. The example app has been updated to demonstrate their usage. Thanks to the PR from [EPNW](https://github.com/EPNW)

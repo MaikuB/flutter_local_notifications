@@ -190,14 +190,10 @@ class Importance {
       <Importance>[unspecified, none, min, low, defaultImportance, high, max];
 
   /// The integer representation.
-  // TODO(maikub): This should not be nullable,
-  //  but changing is a breaking change.
-  final int? value;
+  final int value;
 
   @override
-  // TODO(maikub): value should not be nullable in the first place.
-  //  once that's fixed, remove the ?? here!
-  int get hashCode => value ?? 0;
+  int get hashCode => value;
 
   @override
   bool operator ==(Object other) => other is Importance && other.value == value;
