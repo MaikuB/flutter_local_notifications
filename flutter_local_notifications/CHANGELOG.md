@@ -1,6 +1,7 @@
 # [9.0.0-dev.1]
 
 * Restored Linux support
+* Android 12 support
 * **Breaking change** the `value` property of the `Importance` class is now non-nullable
 * **Breaking change** the `FlutterLocalNotificationsPlugin.private()` constructor that was visible for testing purposes has been removed. The plugin now uses the [`defaultTargetPlatform`](https://api.flutter.dev/flutter/foundation/defaultTargetPlatform.html) property from the Flutter framework to determine the platform an application running on. This removes the need for depending on the `platform` package. To write tests that require a platform-specific implementation of the plugin, the [debugDefaultTargetPlatformOverride](https://api.flutter.dev/flutter/foundation/debugDefaultTargetPlatformOverride.html) property can be used to do so
 * Plugin now uses the [`clock`](https://pub.dev/packages/clock) package for internal logic that relies on geting the current time, such as validating that the date for a scheduled notification is set in the future
