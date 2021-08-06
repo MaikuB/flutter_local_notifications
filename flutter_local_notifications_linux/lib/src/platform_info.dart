@@ -75,6 +75,6 @@ class LinuxPlatformInfoData {
   /// other file objects should be placed
   /// (Corresponds to `$XDG_RUNTIME_DIR` environment variable).
   /// Please see XDG Base Directory Specification https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-  /// If `$XDG_RUNTIME_DIR` is not set, the following directory structure is used: `/tmp/APP_NAME/USER_ID/SESSION_ID`
+  /// If `$XDG_RUNTIME_DIR` is not set, the following directory structure is used: `/[$TMPDIR|tmp]/APP_NAME/USER_ID/SESSION_ID`
   final String? runtimePath;
 }
