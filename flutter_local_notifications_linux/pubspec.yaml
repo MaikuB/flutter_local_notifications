@@ -1,6 +1,6 @@
 name: flutter_local_notifications_linux
 description: Linux implementation of the flutter_local_notifications plugin
-version: 0.1.0+1
+version: 0.2.0
 homepage: https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications
 
 dependencies:
