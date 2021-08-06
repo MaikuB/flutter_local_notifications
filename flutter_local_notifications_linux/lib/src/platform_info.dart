@@ -27,8 +27,15 @@ class LinuxPlatformInfo {
         final int pid = _posix.getpid();
         final int userId = _posix.getuid();
         final int sessionId = _posix.getsid(pid);
+        final Map<String, String> env = Platform.environment;
+        final String? tmpdir = env['TMPDIR'];
         runtimeDir = Directory(
-          path.join('/tmp', processName, '$userId', '$sessionId'),
+          path.join(
+            tmpdir == null || tmpdir.isEmpty ? '/tmp' : tmpdir,
+            processName,
+            '$userId',
+            '$sessionId',
+          ),
         );
       } else {
         runtimeDir = Directory(path.join(xdg.runtimeDir!.path, processName));
