@@ -58,8 +58,8 @@ Future<void> main() async {
 
   await _configureLocalTimeZone();
 
-  final NotificationAppLaunchDetails? notificationAppLaunchDetails = Platform
-          .isLinux
+  final NotificationAppLaunchDetails? notificationAppLaunchDetails = !kIsWeb &&
+          Platform.isLinux
       ? null
       : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   String initialRoute = HomePage.routeName;
@@ -130,7 +130,7 @@ Future<void> main() async {
 }
 
 Future<void> _configureLocalTimeZone() async {
-  if (Platform.isLinux) {
+  if (kIsWeb || Platform.isLinux) {
     return;
   }
   tz.initializeTimeZones();
@@ -304,7 +304,7 @@ class _HomePageState extends State<HomePage> {
                         await _showNotificationCustomSound();
                       },
                     ),
-                    if (!Platform.isLinux) ...<Widget>[
+                    if (kIsWeb || !Platform.isLinux) ...<Widget>[
                       PaddedElevatedButton(
                         buttonText:
                             'Schedule notification to appear in 5 seconds '
@@ -633,7 +633,7 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     ],
-                    if (Platform.isLinux) ...<Widget>[
+                    if (!kIsWeb && Platform.isLinux) ...<Widget>[
                       const Text(
                         'Linux-specific examples',
                         style: TextStyle(fontWeight: FontWeight.bold),
