@@ -39,7 +39,7 @@ task:
 task:
   name: Build Linux example app
   container:
-    image: cirrusci/flutter:dev
+    image: cirrusci/flutter:stable
   pub_cache:
     folder: ~/.pub-cache
   setup_script:
