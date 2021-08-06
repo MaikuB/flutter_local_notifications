@@ -579,6 +579,18 @@ class _HomePageState extends State<HomePage> {
                           await _getActiveNotifications();
                         },
                       ),
+                      PaddedElevatedButton(
+                        buttonText: 'Start foreground service',
+                        onPressed: () async {
+                          await _startForegroundService();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText: 'Stop foreground service',
+                        onPressed: () async {
+                          await _stopForegroundService();
+                        },
+                      ),
                     ],
                     if (!kIsWeb &&
                         (Platform.isIOS || Platform.isMacOS)) ...<Widget>[
@@ -1603,6 +1615,28 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  Future<void> _startForegroundService() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            'your channel id', 'your channel name', 'your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker');
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.startForegroundService(1, 'plain title', 'plain body',
+            notificationDetails: androidPlatformChannelSpecifics,
+            payload: 'item x');
+  }
+
+  Future<void> _stopForegroundService() async {
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.stopForegroundService();
   }
 
   Future<void> _createNotificationChannel() async {

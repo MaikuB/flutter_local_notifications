@@ -17,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
@@ -29,8 +30,10 @@ import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
+import com.dexterous.flutterlocalnotifications.models.BitmapSource;
 import com.dexterous.flutterlocalnotifications.models.DateTimeComponents;
 import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
@@ -40,6 +43,7 @@ import com.dexterous.flutterlocalnotifications.models.NotificationChannelGroupDe
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
 import com.dexterous.flutterlocalnotifications.models.PersonDetails;
 import com.dexterous.flutterlocalnotifications.models.ScheduledNotificationRepeatFrequency;
+import com.dexterous.flutterlocalnotifications.models.SoundSource;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
@@ -97,6 +101,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String DELETE_NOTIFICATION_CHANNEL_METHOD = "deleteNotificationChannel";
     private static final String GET_ACTIVE_NOTIFICATIONS_METHOD = "getActiveNotifications";
     private static final String GET_NOTIFICATION_CHANNELS_METHOD = "getNotificationChannels";
+    private static final String START_FOREGROUND_SERVICE = "startForegroundService";
+    private static final String STOP_FOREGROUND_SERVICE = "stopForegroundService";
     private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
     private static final String SHOW_METHOD = "show";
     private static final String CANCEL_METHOD = "cancel";
@@ -160,7 +166,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         }
     }
 
-    private static Notification createNotification(Context context, NotificationDetails notificationDetails) {
+    protected static Notification createNotification(Context context, NotificationDetails notificationDetails) {
         setupNotificationChannel(context, NotificationChannelDetails.fromNotificationDetails(notificationDetails));
         Intent intent = getLaunchIntent(context);
         intent.setAction(SELECT_NOTIFICATION);
@@ -1001,6 +1007,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case GET_NOTIFICATION_CHANNELS_METHOD:
                 getNotificationChannels(result);
                 break;
+            case START_FOREGROUND_SERVICE:
+                startForegroundService(call, result);
+                break;
+            case STOP_FOREGROUND_SERVICE:
+                stopForegroundService(result);
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -1333,5 +1345,36 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             channelPayload.put("ledColor", channel.getLightColor());
         }
         return channelPayload;
+    }
+
+    private void startForegroundService(MethodCall call, Result result) {
+        Map<String, Object> notificationData = call.<Map<String, Object>>argument("notificationData");
+        Integer startType = call.<Integer>argument("startType");
+        ArrayList<Integer> foregroundServiceTypes = call.argument("foregroundServiceTypes");
+        if (foregroundServiceTypes == null || foregroundServiceTypes.size() != 0) {
+            if (notificationData != null && startType != null) {
+                NotificationDetails notificationDetails = extractNotificationDetails(result, notificationData);
+                if (notificationDetails != null) {
+                    if (notificationDetails.id != 0) {
+                        ForegroundServiceStartParameter parameter = new ForegroundServiceStartParameter(notificationDetails, startType, foregroundServiceTypes);
+                        Intent intent = new Intent(applicationContext, ForegroundService.class);
+                        intent.putExtra(ForegroundServiceStartParameter.EXTRA, parameter);
+                        ContextCompat.startForegroundService(applicationContext, intent);
+                        result.success(null);
+                    } else {
+                        result.error("ARGUMENT_ERROR", "The id of the notification for a foreground service must not be 0!", null);
+                    }
+                }
+            } else {
+                result.error("ARGUMENT_ERROR", "An argument passed to startForegroundService was null!", null);
+            }
+        } else {
+            result.error("ARGUMENT_ERROR", "If foregroundServiceTypes is non-null it must not be empty!", null);
+        }
+    }
+
+    private void stopForegroundService(Result result) {
+        applicationContext.stopService(new Intent(applicationContext, ForegroundService.class));
+        result.success(null);
     }
 }

@@ -6,10 +6,8 @@ import android.os.Build.VERSION_CODES;
 
 import androidx.annotation.Keep;
 
-import com.dexterous.flutterlocalnotifications.BitmapSource;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.RepeatInterval;
-import com.dexterous.flutterlocalnotifications.SoundSource;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
@@ -17,11 +15,12 @@ import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformati
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
 @Keep
-public class NotificationDetails {
+public class NotificationDetails implements Serializable {
     private static final String ID = "id";
     private static final String TITLE = "title";
     private static final String BODY = "body";

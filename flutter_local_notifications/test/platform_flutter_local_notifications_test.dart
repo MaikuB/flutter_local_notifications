@@ -2049,6 +2049,44 @@ void main() {
         isMethodCall('getNotificationAppLaunchDetails', arguments: null)
       ]);
     });
+
+    test('startForegroundService', () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(android: androidInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .startForegroundService(1, 'notification title', 'notification body');
+      expect(
+          log.last,
+          isMethodCall('startForegroundService', arguments: <String, Object?>{
+            'notificationData': <String, Object?>{
+              'id': 1,
+              'title': 'notification title',
+              'body': 'notification body',
+              'payload': '',
+              'platformSpecifics': null,
+            },
+            'startType': AndroidServiceStartType.startSticky.value,
+            'foregroundServiceTypes': null
+          }));
+    });
+
+    test('stopForegroundService', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .stopForegroundService();
+      expect(
+          log.last,
+          isMethodCall(
+            'stopForegroundService',
+            arguments: null,
+          ));
+    });
   });
 
   group('iOS', () {

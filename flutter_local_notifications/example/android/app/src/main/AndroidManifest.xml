@@ -39,5 +39,13 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- If you want your foreground service to be stopped if
+             your app is stopped, set android:stopWithTask to true.
+             See https://developer.android.com/reference/android/R.attr#stopWithTask -->
+        <service
+            android:name="com.dexterous.flutterlocalnotifications.ForegroundService"        
+            android:exported="false"
+            android:stopWithTask="false"/>
     </application>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 </manifest>

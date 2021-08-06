@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 /// Specifies the source for a bitmap used by Android notifications.
 enum AndroidBitmapSource {
   /// A drawable.
@@ -65,9 +67,99 @@ enum AndroidNotificationChannelAction {
   update
 }
 
+/// The available foreground types for an Android service.
+@immutable
+class AndroidServiceForegroundType {
+  /// Constructs an instance of [AndroidServiceForegroundType].
+  const AndroidServiceForegroundType(this.value);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_MANIFEST`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_MANIFEST).
+  static const AndroidServiceForegroundType foregroundServiceTypeManifest =
+      AndroidServiceForegroundType(-1);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_NONE).
+  static const AndroidServiceForegroundType foregroundServiceTypeNone =
+      AndroidServiceForegroundType(0);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_DATA_SYNC).
+  static const AndroidServiceForegroundType foregroundServiceTypeDataSync =
+      AndroidServiceForegroundType(1);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK).
+  static const AndroidServiceForegroundType foregroundServiceTypeMediaPlayback =
+      AndroidServiceForegroundType(2);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_PHONE_CALL).
+  static const AndroidServiceForegroundType foregroundServiceTypePhoneCall =
+      AndroidServiceForegroundType(4);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_LOCATION).
+  static const AndroidServiceForegroundType foregroundServiceTypeLocation =
+      AndroidServiceForegroundType(8);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE).
+  static const AndroidServiceForegroundType
+      foregroundServiceTypeConnectedDevice = AndroidServiceForegroundType(16);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION).
+  static const AndroidServiceForegroundType
+      foregroundServiceTypeMediaProjection = AndroidServiceForegroundType(32);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_CAMERA).
+  static const AndroidServiceForegroundType foregroundServiceTypeCamera =
+      AndroidServiceForegroundType(64);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_MICROPHONE).
+  static const AndroidServiceForegroundType foregroundServiceTypeMicrophone =
+      AndroidServiceForegroundType(128);
+
+  /// The integer representation.
+  final int value;
+
+  @override
+  int get hashCode => value;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AndroidServiceForegroundType && other.value == value;
+}
+
+/// The available start types for an Android service.
+@immutable
+class AndroidServiceStartType {
+  /// Constructs an instance of [AndroidServiceStartType].
+  const AndroidServiceStartType(this.value);
+
+  /// Corresponds to [`Service.START_STICKY_COMPATIBILITY`](https://developer.android.com/reference/android/app/Service#START_STICKY_COMPATIBILITY).
+  static const AndroidServiceStartType startStickyCompatibility =
+      AndroidServiceStartType(0);
+
+  /// Corresponds to [`Service.START_STICKY`](https://developer.android.com/reference/android/app/Service#START_STICKY).
+  static const AndroidServiceStartType startSticky = AndroidServiceStartType(1);
+
+  /// Corresponds to [`Service.START_NOT_STICKY`](https://developer.android.com/reference/android/app/Service#START_NOT_STICKY).
+  static const AndroidServiceStartType startNotSticky =
+      AndroidServiceStartType(2);
+
+  /// Corresponds to [`Service.START_REDELIVER_INTENT`](https://developer.android.com/reference/android/app/Service#START_REDELIVER_INTENT).
+  static const AndroidServiceStartType startRedeliverIntent =
+      AndroidServiceStartType(3);
+
+  /// The integer representation.
+  final int value;
+
+  @override
+  int get hashCode => value;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AndroidServiceStartType && other.value == value;
+}
+
 /// The available importance levels for Android notifications.
 ///
 /// Required for Android 8.0 or newer.
+@immutable
 class Importance {
   /// Constructs an instance of [Importance].
   const Importance(this.value);
@@ -98,10 +190,21 @@ class Importance {
       <Importance>[unspecified, none, min, low, defaultImportance, high, max];
 
   /// The integer representation.
+  // TODO(maikub): This should not be nullable,
+  //  but changing is a breaking change.
   final int? value;
+
+  @override
+  // TODO(maikub): value should not be nullable in the first place.
+  //  once that's fixed, remove the ?? here!
+  int get hashCode => value ?? 0;
+
+  @override
+  bool operator ==(Object other) => other is Importance && other.value == value;
 }
 
 /// Priority for notifications on Android 7.1 and lower.
+@immutable
 class Priority {
   /// Constructs an instance of [Priority].
   const Priority(this.value);
@@ -127,6 +230,11 @@ class Priority {
 
   /// The integer representation.
   final int value;
+
+  @override
+  int get hashCode => value;
+  @override
+  bool operator ==(Object other) => other is Priority && other.value == value;
 }
 
 /// The available alert behaviours for grouped notifications.
