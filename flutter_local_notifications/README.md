@@ -206,7 +206,7 @@ For older versions of iOS, you need to handle the callback as part of specifying
 Here is an example:
 
 ```dart
-// initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+// initialize the plugin. app_icon needs to be a added as a drawable resource to the Android head project
 const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('app_icon');
 final IOSInitializationSettings initializationSettingsIOS =
@@ -266,12 +266,12 @@ Checkout the lovely [API documentation](https://pub.dev/documentation/flutter_lo
 
 ## Initialization
 
-The first step is to create a new instance of the plugin class and then initialise it with the settings to use for each platform
+The first step is to create a new instance of the plugin class and then initialize it with the settings to use for each platform
 
 ```dart
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-// initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+// initialize the plugin. app_icon needs to be a added as a drawable resource to the Android head project
 const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('app_icon');
 final IOSInitializationSettings initializationSettingsIOS =
@@ -405,13 +405,13 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 ```
 
-Initialise the time zone database
+Initialize the time zone database
 
 ```dart
 tz.initializeTimeZones();
 ```
 
-Once the time zone database has been initialised, developers may optionally want to set a default local location/time zone
+Once the time zone database has been initialized, developers may optionally want to set a default local location/time zone
 
 ```dart
 tz.setLocalLocation(tz.getLocation(timeZoneName));
