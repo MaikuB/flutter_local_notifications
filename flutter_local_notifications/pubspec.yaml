@@ -6,11 +6,12 @@ version: 9.0.0-dev.1
 homepage: https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications
 
 dependencies:
+  clock: ^1.1.0
   flutter:
     sdk: flutter
+  flutter_local_notifications_linux: ^0.1.0
   flutter_local_notifications_platform_interface: ^4.0.1
   timezone: ^0.7.0
-  flutter_local_notifications_linux: ^0.1.0
 
 dev_dependencies:
   flutter_driver:

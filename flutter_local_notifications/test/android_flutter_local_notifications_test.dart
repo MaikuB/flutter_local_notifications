@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -11,7 +12,6 @@ import 'package:timezone/timezone.dart' as tz;
 import 'utils/date_formatter.dart';
 
 void main() {
-  // TODO(maikub): add tests for `periodicallyShow` after https://github.com/dart-lang/sdk/issues/28985 is resolved
   TestWidgetsFlutterBinding.ensureInitialized();
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
@@ -236,7 +236,7 @@ void main() {
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-      final int timestamp = DateTime.now().millisecondsSinceEpoch;
+      final int timestamp = clock.now().millisecondsSinceEpoch;
 
       final AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -316,7 +316,7 @@ void main() {
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-      final int timestamp = DateTime.now().millisecondsSinceEpoch;
+      final int timestamp = clock.now().millisecondsSinceEpoch;
 
       final AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
@@ -1380,7 +1380,7 @@ void main() {
     });
 
     test('show with default Android messaging style settings', () async {
-      final DateTime messageDateTime = DateTime.now();
+      final DateTime messageDateTime = clock.now();
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
@@ -1489,7 +1489,7 @@ void main() {
     });
 
     test('show with non-default Android messaging style settings', () async {
-      final DateTime messageDateTime = DateTime.now();
+      final DateTime messageDateTime = clock.now();
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
@@ -1608,6 +1608,97 @@ void main() {
               'tag': null,
             },
           }));
+    });
+
+    group('periodicallyShow', () {
+      final DateTime now = DateTime(2020, 10, 9);
+      for (final RepeatInterval repeatInterval in RepeatInterval.values) {
+        test('$repeatInterval', () async {
+          await withClock(Clock.fixed(now), () async {
+            const AndroidInitializationSettings androidInitializationSettings =
+                AndroidInitializationSettings('app_icon');
+            const InitializationSettings initializationSettings =
+                InitializationSettings(android: androidInitializationSettings);
+            await flutterLocalNotificationsPlugin
+                .initialize(initializationSettings);
+
+            const AndroidNotificationDetails androidNotificationDetails =
+                AndroidNotificationDetails(
+                    'channelId', 'channelName', 'channelDescription');
+            await flutterLocalNotificationsPlugin.periodicallyShow(
+              1,
+              'notification title',
+              'notification body',
+              repeatInterval,
+              const NotificationDetails(android: androidNotificationDetails),
+            );
+
+            expect(
+                log.last,
+                isMethodCall('periodicallyShow', arguments: <String, Object>{
+                  'id': 1,
+                  'title': 'notification title',
+                  'body': 'notification body',
+                  'payload': '',
+                  'calledAt': now.millisecondsSinceEpoch,
+                  'repeatInterval': repeatInterval.index,
+                  'platformSpecifics': <String, Object?>{
+                    'allowWhileIdle': false,
+                    'icon': null,
+                    'channelId': 'channelId',
+                    'channelName': 'channelName',
+                    'channelDescription': 'channelDescription',
+                    'channelShowBadge': true,
+                    'channelAction': AndroidNotificationChannelAction
+                        .createIfNotExists.index,
+                    'importance': Importance.defaultImportance.value,
+                    'priority': Priority.defaultPriority.value,
+                    'playSound': true,
+                    'enableVibration': true,
+                    'vibrationPattern': null,
+                    'groupKey': null,
+                    'setAsGroupSummary': false,
+                    'groupAlertBehavior': GroupAlertBehavior.all.index,
+                    'autoCancel': true,
+                    'ongoing': false,
+                    'colorAlpha': null,
+                    'colorRed': null,
+                    'colorGreen': null,
+                    'colorBlue': null,
+                    'onlyAlertOnce': false,
+                    'showWhen': true,
+                    'when': null,
+                    'usesChronometer': false,
+                    'showProgress': false,
+                    'maxProgress': 0,
+                    'progress': 0,
+                    'indeterminate': false,
+                    'enableLights': false,
+                    'ledColorAlpha': null,
+                    'ledColorRed': null,
+                    'ledColorGreen': null,
+                    'ledColorBlue': null,
+                    'ledOnMs': null,
+                    'ledOffMs': null,
+                    'ticker': null,
+                    'visibility': null,
+                    'timeoutAfter': null,
+                    'category': null,
+                    'additionalFlags': null,
+                    'fullScreenIntent': false,
+                    'shortcutId': null,
+                    'subText': null,
+                    'style': AndroidNotificationStyle.defaultStyle.index,
+                    'styleInformation': <String, Object>{
+                      'htmlFormatContent': false,
+                      'htmlFormatTitle': false,
+                    },
+                    'tag': null,
+                  },
+                }));
+          });
+        });
+      }
     });
 
     group('zonedSchedule', () {

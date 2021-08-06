@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -140,6 +141,68 @@ void main() {
               ],
             },
           }));
+    });
+
+    group('periodicallyShow', () {
+      final DateTime now = DateTime(2020, 10, 9);
+      for (final RepeatInterval repeatInterval in RepeatInterval.values) {
+        test('$repeatInterval', () async {
+          await withClock(Clock.fixed(now), () async {
+            const IOSInitializationSettings iosInitializationSettings =
+                IOSInitializationSettings();
+            const InitializationSettings initializationSettings =
+                InitializationSettings(iOS: iosInitializationSettings);
+            await flutterLocalNotificationsPlugin
+                .initialize(initializationSettings);
+
+            const NotificationDetails notificationDetails = NotificationDetails(
+                iOS: IOSNotificationDetails(
+                    presentAlert: true,
+                    presentBadge: true,
+                    presentSound: true,
+                    sound: 'sound.mp3',
+                    badgeNumber: 1,
+                    attachments: <IOSNotificationAttachment>[
+                  IOSNotificationAttachment('video.mp4',
+                      identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
+                ]));
+
+            await flutterLocalNotificationsPlugin.periodicallyShow(
+              1,
+              'notification title',
+              'notification body',
+              repeatInterval,
+              notificationDetails,
+            );
+
+            expect(
+                log.last,
+                isMethodCall('periodicallyShow', arguments: <String, Object>{
+                  'id': 1,
+                  'title': 'notification title',
+                  'body': 'notification body',
+                  'payload': '',
+                  'calledAt': now.millisecondsSinceEpoch,
+                  'repeatInterval': repeatInterval.index,
+                  'platformSpecifics': <String, Object?>{
+                    'presentAlert': true,
+                    'presentBadge': true,
+                    'presentSound': true,
+                    'subtitle': null,
+                    'sound': 'sound.mp3',
+                    'badgeNumber': 1,
+                    'threadIdentifier': null,
+                    'attachments': <Map<String, Object>>[
+                      <String, Object>{
+                        'filePath': 'video.mp4',
+                        'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                      }
+                    ],
+                  },
+                }));
+          });
+        });
+      }
     });
 
     group('zonedSchedule', () {

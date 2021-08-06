@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:clock/clock.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
@@ -167,7 +169,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.daily.index,
       'repeatTime': notificationTime.toMap(),
       'platformSpecifics': notificationDetails?.toMap(),
@@ -193,7 +195,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.weekly.index,
       'repeatTime': notificationTime.toMap(),
       'day': day.value,
@@ -330,7 +332,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? '',
@@ -592,7 +594,7 @@ class IOSFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.daily.index,
       'repeatTime': notificationTime.toMap(),
       'platformSpecifics': notificationDetails?.toMap(),
@@ -617,7 +619,7 @@ class IOSFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.weekly.index,
       'repeatTime': notificationTime.toMap(),
       'day': day.value,
@@ -661,7 +663,7 @@ class IOSFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
@@ -796,7 +798,7 @@ class MacOSFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
