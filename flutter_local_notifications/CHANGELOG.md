@@ -1,3 +1,7 @@
+# [9.0.0-dev.2]
+
+* Includes changes from 8.1.1 release
+
 # [9.0.0-dev.1]
 
 * Restored Linux support
