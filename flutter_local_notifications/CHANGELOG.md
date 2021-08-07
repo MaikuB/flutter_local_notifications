@@ -1,6 +1,6 @@
 # [8.1.1]
 
-* [Android] addressed an unchecked/unsafe operation warning
+* [Android] fixed issue [1263](https://github.com/MaikuB/flutter_local_notifications/issues/1263) around an unchecked/unsafe operation warning
 * [Android] fixed issue [1246](https://github.com/MaikuB/flutter_local_notifications/issues/1246) where calling `createNotificationChannel()` wasn't update a notification channel's name/description
 
 # [8.1.0]
