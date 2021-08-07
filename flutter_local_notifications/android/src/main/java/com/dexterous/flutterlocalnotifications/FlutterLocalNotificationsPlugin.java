@@ -459,6 +459,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return context.getResources().getIdentifier(name, DRAWABLE, context.getPackageName());
     }
 
+    @SuppressWarnings("unchecked")
     private static Bitmap getBitmapFromSource(Context context, Object data, BitmapSource bitmapSource) {
         Bitmap bitmap = null;
         if (bitmapSource == BitmapSource.DrawableResource) {

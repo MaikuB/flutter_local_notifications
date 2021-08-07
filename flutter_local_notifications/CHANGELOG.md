@@ -1,3 +1,8 @@
+# [8.1.1]
+
+* [Android] addressed an unchecked/unsafe operation warning
+
+
 # [8.1.0]
 
 * [Android] added the `startForegroundService()` and `stopForegroundService()` methods to the `AndroidFlutterLocalNotificationsPlugin` class. This can be used to start and stop a foreground service that shows a foreground service respectively. Refer to the API docs for more details on how to use this. The example app has been updated to demonstrate their usage. Thanks to the PR from [EPNW](https://github.com/EPNW)
