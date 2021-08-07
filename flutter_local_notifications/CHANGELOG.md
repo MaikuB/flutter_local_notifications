@@ -6,6 +6,11 @@
 * **Breaking change** the `FlutterLocalNotificationsPlugin.private()` constructor that was visible for testing purposes has been removed. The plugin now uses the [`defaultTargetPlatform`](https://api.flutter.dev/flutter/foundation/defaultTargetPlatform.html) property from the Flutter framework to determine the platform an application running on. This removes the need for depending on the `platform` package. To write tests that require a platform-specific implementation of the plugin, the [debugDefaultTargetPlatformOverride](https://api.flutter.dev/flutter/foundation/debugDefaultTargetPlatformOverride.html) property can be used to do so
 * Plugin now uses the [`clock`](https://pub.dev/packages/clock) package for internal logic that relies on geting the current time, such as validating that the date for a scheduled notification is set in the future
 
+# [8.1.1]
+
+* [Android] fixed issue [1263](https://github.com/MaikuB/flutter_local_notifications/issues/1263) around an unchecked/unsafe operation warning
+* [Android] fixed issue [1246](https://github.com/MaikuB/flutter_local_notifications/issues/1246) where calling `createNotificationChannel()` wasn't update a notification channel's name/description
+
 # [8.1.0]
 
 * [Android] added the `startForegroundService()` and `stopForegroundService()` methods to the `AndroidFlutterLocalNotificationsPlugin` class. This can be used to start and stop a foreground service that shows a foreground service respectively. Refer to the API docs for more details on how to use this. The example app has been updated to demonstrate their usage. Thanks to the PR from [EPNW](https://github.com/EPNW)
