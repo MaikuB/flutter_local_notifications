@@ -17,7 +17,6 @@ import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
@@ -167,7 +166,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     protected static Notification createNotification(Context context, NotificationDetails notificationDetails) {
-        setupNotificationChannel(context, NotificationChannelDetails.fromNotificationDetails(notificationDetails));
+        NotificationChannelDetails notificationChannelDetails = NotificationChannelDetails.fromNotificationDetails(notificationDetails);
+        if(canCreateNotificationChannel(context, notificationChannelDetails)) {
+            setupNotificationChannel(context, notificationChannelDetails);
+        }
         Intent intent = getLaunchIntent(context);
         intent.setAction(SELECT_NOTIFICATION);
         intent.putExtra(PAYLOAD, notificationDetails.payload);
@@ -229,6 +231,17 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             }
         }
         return notification;
+    }
+
+    private static Boolean canCreateNotificationChannel(Context context, NotificationChannelDetails notificationChannelDetails) {
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(notificationChannelDetails.id);
+            // only create/update the channel when needed/specified. Allow this happen to when channelAction may be null to support cases where notifications had been
+            // created on older versions of the plugin where channel management options weren't available back then
+            return ((notificationChannel == null && (notificationChannelDetails.channelAction == null || notificationChannelDetails.channelAction == NotificationChannelAction.CreateIfNotExists)) || (notificationChannel != null && notificationChannelDetails.channelAction == NotificationChannelAction.Update));
+        }
+        return false;
     }
 
     private static void setSmallIcon(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
@@ -459,6 +472,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return context.getResources().getIdentifier(name, DRAWABLE, context.getPackageName());
     }
 
+    @SuppressWarnings("unchecked")
     private static Bitmap getBitmapFromSource(Context context, Object data, BitmapSource bitmapSource) {
         Bitmap bitmap = null;
         if (bitmapSource == BitmapSource.DrawableResource) {
@@ -748,32 +762,28 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static void setupNotificationChannel(Context context, NotificationChannelDetails notificationChannelDetails) {
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(notificationChannelDetails.id);
-            // only create/update the channel when needed/specified. Allow this happen to when channelAction may be null to support cases where notifications had been
-            // created on older versions of the plugin where channel management options weren't available back then
-            if ((notificationChannel == null && (notificationChannelDetails.channelAction == null || notificationChannelDetails.channelAction == NotificationChannelAction.CreateIfNotExists)) || (notificationChannel != null && notificationChannelDetails.channelAction == NotificationChannelAction.Update)) {
-                notificationChannel = new NotificationChannel(notificationChannelDetails.id, notificationChannelDetails.name, notificationChannelDetails.importance);
-                notificationChannel.setDescription(notificationChannelDetails.description);
-                notificationChannel.setGroup(notificationChannelDetails.groupId);
-                if (notificationChannelDetails.playSound) {
-                    AudioAttributes audioAttributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build();
-                    Uri uri = retrieveSoundResourceUri(context, notificationChannelDetails.sound, notificationChannelDetails.soundSource);
-                    notificationChannel.setSound(uri, audioAttributes);
-                } else {
-                    notificationChannel.setSound(null, null);
-                }
-                notificationChannel.enableVibration(BooleanUtils.getValue(notificationChannelDetails.enableVibration));
-                if (notificationChannelDetails.vibrationPattern != null && notificationChannelDetails.vibrationPattern.length > 0) {
-                    notificationChannel.setVibrationPattern(notificationChannelDetails.vibrationPattern);
-                }
-                boolean enableLights = BooleanUtils.getValue(notificationChannelDetails.enableLights);
-                notificationChannel.enableLights(enableLights);
-                if (enableLights && notificationChannelDetails.ledColor != null) {
-                    notificationChannel.setLightColor(notificationChannelDetails.ledColor);
-                }
-                notificationChannel.setShowBadge(BooleanUtils.getValue(notificationChannelDetails.showBadge));
-                notificationManager.createNotificationChannel(notificationChannel);
+            NotificationChannel notificationChannel = new NotificationChannel(notificationChannelDetails.id, notificationChannelDetails.name, notificationChannelDetails.importance);
+            notificationChannel.setDescription(notificationChannelDetails.description);
+            notificationChannel.setGroup(notificationChannelDetails.groupId);
+            if (notificationChannelDetails.playSound) {
+                AudioAttributes audioAttributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build();
+                Uri uri = retrieveSoundResourceUri(context, notificationChannelDetails.sound, notificationChannelDetails.soundSource);
+                notificationChannel.setSound(uri, audioAttributes);
+            } else {
+                notificationChannel.setSound(null, null);
             }
+            notificationChannel.enableVibration(BooleanUtils.getValue(notificationChannelDetails.enableVibration));
+            if (notificationChannelDetails.vibrationPattern != null && notificationChannelDetails.vibrationPattern.length > 0) {
+                notificationChannel.setVibrationPattern(notificationChannelDetails.vibrationPattern);
+            }
+            boolean enableLights = BooleanUtils.getValue(notificationChannelDetails.enableLights);
+            notificationChannel.enableLights(enableLights);
+            if (enableLights && notificationChannelDetails.ledColor != null) {
+                notificationChannel.setLightColor(notificationChannelDetails.ledColor);
+            }
+            notificationChannel.setShowBadge(BooleanUtils.getValue(notificationChannelDetails.showBadge));
+            notificationManager.createNotificationChannel(notificationChannel);
+
         }
     }
 

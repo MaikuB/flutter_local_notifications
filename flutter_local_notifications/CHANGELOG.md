@@ -1,3 +1,8 @@
+# [8.1.1]
+
+* [Android] fixed issue [1263](https://github.com/MaikuB/flutter_local_notifications/issues/1263) around an unchecked/unsafe operation warning
+* [Android] fixed issue [1246](https://github.com/MaikuB/flutter_local_notifications/issues/1246) where calling `createNotificationChannel()` wasn't update a notification channel's name/description
+
 # [8.1.0]
 
 * [Android] added the `startForegroundService()` and `stopForegroundService()` methods to the `AndroidFlutterLocalNotificationsPlugin` class. This can be used to start and stop a foreground service that shows a foreground service respectively. Refer to the API docs for more details on how to use this. The example app has been updated to demonstrate their usage. Thanks to the PR from [EPNW](https://github.com/EPNW)
