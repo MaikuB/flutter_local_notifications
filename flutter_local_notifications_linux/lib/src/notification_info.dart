@@ -22,7 +22,7 @@ class LinuxNotificationInfo {
   final int id;
 
   /// Notification id, which is returned by the system,
-  /// see Desktop Notifications Specification https://developer.gnome.org/notification-spec/
+  /// see Desktop Notifications Specification https://specifications.freedesktop.org/notification-spec/latest/
   final int systemId;
 
   /// Notification payload, that will be passed back to the app
