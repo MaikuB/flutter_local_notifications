@@ -21,6 +21,7 @@ class LinuxInitializationSettings {
   final LinuxNotificationIcon? defaultIcon;
 
   /// Specifies the default sound for notifications.
+  /// Typical value is `ThemeLinuxSound('message')`
   final LinuxNotificationSound? defaultSound;
 
   /// Causes the server to suppress playing any sounds, if it has that ability.
