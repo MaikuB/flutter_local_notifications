@@ -16,6 +16,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:image/image.dart' as image;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -2016,20 +2017,22 @@ Future<void> _showLinuxNotificationWithCategory() async {
 }
 
 Future<void> _showLinuxNotificationWithByteDataIcon() async {
-  /// Build a simple color gradient icon.
-  final List<int> pixels = <int>[];
-  for (int y = 0; y < 255; y++) {
-    for (int x = 0; x < 255; x++) {
-      pixels..add(x)..add(y)..add(255);
-    }
-  }
+  final ByteData assetIcon = await rootBundle.load(
+    'icons/app_icon_density.png',
+  );
+  final image.Image? iconData = image.decodePng(
+    assetIcon.buffer.asUint8List().toList(),
+  );
+  final Uint8List iconBytes = iconData!.getBytes();
   final LinuxNotificationDetails linuxPlatformChannelSpecifics =
       LinuxNotificationDetails(
     icon: ByteDataLinuxIcon(
       LinuxRawIconData(
-        data: Uint8List.fromList(pixels),
-        width: 255,
-        height: 255,
+        data: iconBytes,
+        width: iconData.width,
+        height: iconData.height,
+        channels: 4, // The icon has an alpha channel
+        hasAlpha: true,
       ),
     ),
   );
