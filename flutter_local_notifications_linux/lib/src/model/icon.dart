@@ -86,6 +86,7 @@ class LinuxRawIconData {
   final int bitsPerSample;
 
   /// The number of channels in the image (e.g. 3 for RGB, 4 for RGBA).
+  /// If [hasAlpha] is `true`, must be 4.
   final int channels;
 
   /// Determines if the image has an alpha channel
