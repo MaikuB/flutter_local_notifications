@@ -70,7 +70,7 @@ class LinuxRawIconData {
     this.hasAlpha = false,
   }) : rowStride = rowStride ?? ((width * channels * bitsPerSample) / 8).ceil();
 
-  /// Raw data for the image in bytes.
+  /// Raw data (decoded from the image format) for the image in bytes.
   final Uint8List data;
 
   /// Width of the image in pixels
