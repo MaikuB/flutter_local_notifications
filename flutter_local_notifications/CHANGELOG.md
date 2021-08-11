@@ -1,3 +1,7 @@
+# [8.1.1+1]
+
+* Updated API docs for the `initialize()` to mention that the `getNotificationAppLaunchDetails()` method should be used to handle when a notification launches an application
+
 # [8.1.1]
 
 * [Android] fixed issue [1263](https://github.com/MaikuB/flutter_local_notifications/issues/1263) around an unchecked/unsafe operation warning
