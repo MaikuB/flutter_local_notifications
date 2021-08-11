@@ -13,9 +13,6 @@ abstract class FlutterLocalNotificationsPlatformLinux
   /// Initializes the plugin.
   ///
   /// Call this method on application before using the plugin further.
-  /// This should only be done once. When a notification created by this plugin
-  /// was used to launch the app, calling `initialize` is what will trigger to
-  /// the `onSelectNotification` callback to be fire.
   Future<bool?> initialize(
     LinuxInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
