@@ -5,7 +5,7 @@ import 'enums.dart';
 /// Represents a custom Linux notification hint.
 /// Hints are a way to provide extra data to a notification server that
 /// the server may be able to make use of.
-/// For more information, please see Desktop Notifications Specification https://developer.gnome.org/notification-spec/#hints
+/// For more information, please see Desktop Notifications Specification https://specifications.freedesktop.org/notification-spec/latest/ar01s08.html
 @optionalTypeArgs
 class LinuxNotificationCustomHint<T> {
   /// Constructs an instance of [LinuxNotificationCustomHint].
