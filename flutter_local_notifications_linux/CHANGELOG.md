@@ -1,3 +1,7 @@
+## [0.2.0+1]
+
+* Fixed links to GNOME developer documentation referenced in API docs
+
 ## [0.2.0]
 
 * Fixed issue when an app using the plugin is built on the web by using conditional imports
