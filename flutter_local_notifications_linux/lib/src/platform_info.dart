@@ -2,11 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
-import 'package:posix/posix.dart' as posix;
 import 'package:xdg_directories/xdg_directories.dart' as xdg;
+
+import 'posix.dart';
 
 /// Provides Linux platform-specific info
 class LinuxPlatformInfo {
+  final Posix _posix = Posix();
+
   /// Returns all platform-specific info
   Future<LinuxPlatformInfoData> getAll() async {
     try {
@@ -21,11 +24,18 @@ class LinuxPlatformInfo {
       );
       late final Directory runtimeDir;
       if (xdg.runtimeDir == null) {
-        final int pid = posix.getpid();
-        final int userId = posix.getuid();
-        final int sessionId = posix.getsid(pid);
+        final int pid = _posix.getpid();
+        final int userId = _posix.getuid();
+        final int sessionId = _posix.getsid(pid);
+        final Map<String, String> env = Platform.environment;
+        final String? tmpdir = env['TMPDIR'];
         runtimeDir = Directory(
-          path.join('/tmp', processName, '$userId', '$sessionId'),
+          path.join(
+            tmpdir == null || tmpdir.isEmpty ? '/tmp' : tmpdir,
+            processName,
+            '$userId',
+            '$sessionId',
+          ),
         );
       } else {
         runtimeDir = Directory(path.join(xdg.runtimeDir!.path, processName));
@@ -65,6 +75,6 @@ class LinuxPlatformInfoData {
   /// other file objects should be placed
   /// (Corresponds to `$XDG_RUNTIME_DIR` environment variable).
   /// Please see XDG Base Directory Specification https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
-  /// If `$XDG_RUNTIME_DIR` is not set, the following directory structure is used: `/tmp/APP_NAME/USER_ID/SESSION_ID`
+  /// If `$XDG_RUNTIME_DIR` is not set, the following directory structure is used: `/[$TMPDIR|tmp]/APP_NAME/USER_ID/SESSION_ID`
   final String? runtimePath;
 }

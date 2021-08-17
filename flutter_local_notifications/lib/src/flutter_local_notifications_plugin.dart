@@ -114,6 +114,9 @@ class FlutterLocalNotificationsPlugin {
   /// [IOSInitializationSettings.requestSoundPermission] values to false.
   /// [IOSFlutterLocalNotificationsPlugin.requestPermissions] can then be called
   /// to request permissions when needed.
+  ///
+  /// To handle when a notification launched an application, use
+  /// [getNotificationAppLaunchDetails].
   Future<bool?> initialize(
     InitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,

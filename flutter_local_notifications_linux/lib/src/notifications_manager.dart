@@ -47,12 +47,18 @@ class LinuxNotificationManager {
   late final SelectNotificationCallback? _onSelectNotification;
   late final LinuxPlatformInfoData _platformData;
 
+  bool _initialized = false;
+
   /// Initializes the manager.
   /// Call this method on application before using the manager further.
   Future<void> initialize(
     LinuxInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
   }) async {
+    if (_initialized) {
+      return;
+    }
+    _initialized = true;
     _initializationSettings = initializationSettings;
     _onSelectNotification = onSelectNotification;
     _dbus.build(

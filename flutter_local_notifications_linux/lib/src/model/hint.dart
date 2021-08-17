@@ -5,7 +5,7 @@ import 'enums.dart';
 /// Represents a custom Linux notification hint.
 /// Hints are a way to provide extra data to a notification server that
 /// the server may be able to make use of.
-/// For more information, please see Desktop Notifications Specification https://developer.gnome.org/notification-spec/#hints
+/// For more information, please see Desktop Notifications Specification https://specifications.freedesktop.org/notification-spec/latest/ar01s08.html
 @optionalTypeArgs
 class LinuxNotificationCustomHint<T> {
   /// Constructs an instance of [LinuxNotificationCustomHint].
@@ -57,15 +57,7 @@ class LinuxHintBoolValue extends LinuxHintValue<bool> {
 /// Unsigned 8 bit value.
 class LinuxHintByteValue extends LinuxHintValue<int> {
   /// Constructs an instance of [LinuxHintByteValue].
-  LinuxHintByteValue(this.value) {
-    if (value.isNegative || value > 255) {
-      throw ArgumentError.value(
-        value,
-        'value',
-        'Byte must be in range [0, 255]',
-      );
-    }
-  }
+  LinuxHintByteValue(this.value);
 
   @override
   LinuxHintValueType get type => LinuxHintValueType.byte;
@@ -111,15 +103,7 @@ class LinuxHintDoubleValue extends LinuxHintValue<double> {
 /// Signed 16-bit integer.
 class LinuxHintInt16Value extends LinuxHintValue<int> {
   /// Constructs an instance of [LinuxHintInt16Value].
-  LinuxHintInt16Value(this.value) {
-    if (value < -32768 || value > 32767) {
-      throw ArgumentError.value(
-        value,
-        'value',
-        'Int16 must be in range [-32768, 32767]',
-      );
-    }
-  }
+  LinuxHintInt16Value(this.value);
 
   @override
   LinuxHintValueType get type => LinuxHintValueType.int16;
@@ -131,15 +115,7 @@ class LinuxHintInt16Value extends LinuxHintValue<int> {
 /// Signed 32-bit integer.
 class LinuxHintInt32Value extends LinuxHintValue<int> {
   /// Constructs an instance of [LinuxHintInt32Value].
-  LinuxHintInt32Value(this.value) {
-    if (value < -2147483648 || value > 2147483647) {
-      throw ArgumentError.value(
-        value,
-        'value',
-        'Int32 must be in range [-2147483648, 2147483647]',
-      );
-    }
-  }
+  LinuxHintInt32Value(this.value);
 
   @override
   LinuxHintValueType get type => LinuxHintValueType.int32;
@@ -151,15 +127,7 @@ class LinuxHintInt32Value extends LinuxHintValue<int> {
 /// Signed 64-bit integer.
 class LinuxHintInt64Value extends LinuxHintValue<int> {
   /// Constructs an instance of [LinuxHintInt64Value].
-  LinuxHintInt64Value(this.value) {
-    if (value < -9223372036854775808 || value > 9223372036854775807) {
-      throw ArgumentError.value(
-        value,
-        'value',
-        'Uint64 must be in range [-9223372036854775808, 9223372036854775807]',
-      );
-    }
-  }
+  LinuxHintInt64Value(this.value);
 
   @override
   LinuxHintValueType get type => LinuxHintValueType.int64;
@@ -195,15 +163,7 @@ class LinuxHintStructValue extends LinuxHintValue<List<LinuxHintValue>> {
 /// Unsigned 16-bit integer.
 class LinuxHintUint16Value extends LinuxHintValue<int> {
   /// Constructs an instance of [LinuxHintUint16Value].
-  LinuxHintUint16Value(this.value) {
-    if (value.isNegative || value > 65535) {
-      throw ArgumentError.value(
-        value,
-        'value',
-        'Uint16 must be in range [0, 65535]',
-      );
-    }
-  }
+  LinuxHintUint16Value(this.value);
 
   @override
   LinuxHintValueType get type => LinuxHintValueType.uint16;
@@ -215,15 +175,7 @@ class LinuxHintUint16Value extends LinuxHintValue<int> {
 /// Unsigned 32-bit integer.
 class LinuxHintUint32Value extends LinuxHintValue<int> {
   /// Constructs an instance of [LinuxHintUint32Value].
-  LinuxHintUint32Value(this.value) {
-    if (value.isNegative || value > 4294967295) {
-      throw ArgumentError.value(
-        value,
-        'value',
-        'Uint32 must be in range [0, 4294967295]',
-      );
-    }
-  }
+  LinuxHintUint32Value(this.value);
 
   @override
   LinuxHintValueType get type => LinuxHintValueType.uint32;

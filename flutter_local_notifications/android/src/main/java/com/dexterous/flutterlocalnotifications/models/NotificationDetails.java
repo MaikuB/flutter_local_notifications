@@ -6,10 +6,8 @@ import android.os.Build.VERSION_CODES;
 
 import androidx.annotation.Keep;
 
-import com.dexterous.flutterlocalnotifications.BitmapSource;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.RepeatInterval;
-import com.dexterous.flutterlocalnotifications.SoundSource;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
@@ -17,11 +15,12 @@ import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformati
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
 @Keep
-public class NotificationDetails {
+public class NotificationDetails implements Serializable {
     private static final String ID = "id";
     private static final String TITLE = "title";
     private static final String BODY = "body";
@@ -149,7 +148,7 @@ public class NotificationDetails {
     public Boolean ongoing;
     public Integer day;
     public Integer color;
-    public String largeIcon;
+    public Object largeIcon;
     public BitmapSource largeIconBitmapSource;
     public Boolean onlyAlertOnce;
     public Boolean showProgress;
@@ -282,7 +281,7 @@ public class NotificationDetails {
     }
 
     private static void readLargeIconInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
-        notificationDetails.largeIcon = (String) platformChannelSpecifics.get(LARGE_ICON);
+        notificationDetails.largeIcon = platformChannelSpecifics.get(LARGE_ICON);
         if (platformChannelSpecifics.containsKey(LARGE_ICON_BITMAP_SOURCE)) {
             Integer argumentValue = (Integer) platformChannelSpecifics.get(LARGE_ICON_BITMAP_SOURCE);
             if (argumentValue != null) {
@@ -420,13 +419,13 @@ public class NotificationDetails {
         Boolean htmlFormatContentTitle = (Boolean) styleInformation.get(HTML_FORMAT_CONTENT_TITLE);
         String summaryText = (String) styleInformation.get(SUMMARY_TEXT);
         Boolean htmlFormatSummaryText = (Boolean) styleInformation.get(HTML_FORMAT_SUMMARY_TEXT);
-        String largeIcon = (String) styleInformation.get(LARGE_ICON);
+        Object largeIcon = styleInformation.get(LARGE_ICON);
         BitmapSource largeIconBitmapSource = null;
         if (styleInformation.containsKey(LARGE_ICON_BITMAP_SOURCE)) {
             Integer largeIconBitmapSourceArgument = (Integer) styleInformation.get(LARGE_ICON_BITMAP_SOURCE);
             largeIconBitmapSource = BitmapSource.values()[largeIconBitmapSourceArgument];
         }
-        String bigPicture = (String) styleInformation.get(BIG_PICTURE);
+        Object bigPicture = styleInformation.get(BIG_PICTURE);
         Integer bigPictureBitmapSourceArgument = (Integer) styleInformation.get(BIG_PICTURE_BITMAP_SOURCE);
         BitmapSource bigPictureBitmapSource = BitmapSource.values()[bigPictureBitmapSourceArgument];
         Boolean showThumbnail = (Boolean) styleInformation.get(HIDE_EXPANDED_LARGE_ICON);

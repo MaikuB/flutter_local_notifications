@@ -81,6 +81,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Ability to create and delete notification channels
 * [Android] Retrieve the list of active notifications
 * [Android] Full-screen intent notifications
+* [Android] Start a foreground service
 * [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
 * [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
 

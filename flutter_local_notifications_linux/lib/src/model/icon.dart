@@ -70,7 +70,7 @@ class LinuxRawIconData {
     this.hasAlpha = false,
   }) : rowStride = rowStride ?? ((width * channels * bitsPerSample) / 8).ceil();
 
-  /// Raw data for the image in bytes.
+  /// Raw data (decoded from the image format) for the image in bytes.
   final Uint8List data;
 
   /// Width of the image in pixels
@@ -86,6 +86,7 @@ class LinuxRawIconData {
   final int bitsPerSample;
 
   /// The number of channels in the image (e.g. 3 for RGB, 4 for RGBA).
+  /// If [hasAlpha] is `true`, must be 4.
   final int channels;
 
   /// Determines if the image has an alpha channel
