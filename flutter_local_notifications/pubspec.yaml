@@ -9,9 +9,14 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_local_notifications_platform_interface:
-    path: ../flutter_local_notifications_platform_interface
+#    path: ../flutter_local_notifications_platform_interface
+    git:
+      url: https://github.com/cylyl/flutter_local_notifications
+      path: flutter_local_notifications_platform_interface
   flutter_local_notifications_web:
-    path: ../flutter_local_notifications_web
+    git:
+      url: https://github.com/cylyl/flutter_local_notifications
+      path: flutter_local_notifications_web
   platform: ^3.0.0
   timezone: ^0.7.0
 
