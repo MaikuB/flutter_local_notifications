@@ -449,12 +449,13 @@ class AndroidFlutterLocalNotificationsPlugin
     return sound;
   }
 
-  Future<void> _handleMethod(MethodCall call) {
+  Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'selectNotification':
-        return _onSelectNotification!(call.arguments);
+        _onSelectNotification!(call.arguments);
+        break;
       default:
-        return Future<void>.error('Method not defined');
+        return await Future<void>.error('Method not defined');
     }
   }
 }
@@ -671,19 +672,19 @@ class IOSFlutterLocalNotificationsPlugin
     });
   }
 
-  Future<void> _handleMethod(MethodCall call) {
+  Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'selectNotification':
-        return _onSelectNotification!(call.arguments);
-
+        _onSelectNotification!(call.arguments);
+        break;
       case 'didReceiveLocalNotification':
-        return _onDidReceiveLocalNotification!(
+        return await _onDidReceiveLocalNotification!(
             call.arguments['id'],
             call.arguments['title'],
             call.arguments['body'],
             call.arguments['payload']);
       default:
-        return Future<void>.error('Method not defined');
+        return await Future<void>.error('Method not defined');
     }
   }
 }
@@ -809,12 +810,13 @@ class MacOSFlutterLocalNotificationsPlugin
     });
   }
 
-  Future<void> _handleMethod(MethodCall call) {
+  Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'selectNotification':
-        return _onSelectNotification!(call.arguments);
+        _onSelectNotification!(call.arguments);
+        break;
       default:
-        return Future<void>.error('Method not defined');
+        return await Future<void>.error('Method not defined');
     }
   }
 }

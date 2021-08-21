@@ -1,3 +1,8 @@
+# [9.0.0-dev.3]
+
+* **Breaking change** the `SelectNotificationCallback` typedef now maps to a function that returns `void` instead of a `Future<dynamic>`. This change was done to better communicate the plugin doesn't actually await any asynchronous computation and is similar to how button pressed callbacks work for Flutter where they are typically use [`VoidCallback`](https://api.flutter.dev/flutter/dart-ui/VoidCallback.html)
+* Updated example app to show how to display notification where a byte array is used to specify the icon on Linux
+
 # [9.0.0-dev.2]
 
 * Includes changes from 8.1.1 release
