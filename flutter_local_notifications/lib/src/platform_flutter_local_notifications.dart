@@ -72,12 +72,13 @@ class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback? _onSelectNotification;
 
-  /// Initializes the plugin. Call this method on application before using the
+  /// Initializes the plugin.
+  ///
+  /// Call this method on application before using the
   /// plugin further.
   ///
-  /// This should only be done once. When a notification created by this plugin
-  /// was used to launch the app, calling `initialize` is what will trigger to
-  /// the `onSelectNotification` callback to be fire.
+  /// To handle when a notification launched an application, use
+  /// [getNotificationAppLaunchDetails].
   Future<bool?> initialize(
     AndroidInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
@@ -468,9 +469,6 @@ class IOSFlutterLocalNotificationsPlugin
   /// Initializes the plugin.
   ///
   /// Call this method on application before using the plugin further.
-  /// This should only be done once. When a notification created by this plugin
-  /// was used to launch the app, calling `initialize` is what will trigger to
-  /// the `onSelectNotification` callback to be fire.
   ///
   /// Initialisation may also request notification permissions where users will
   /// see a permissions prompt. This may be fine in cases where it's acceptable
@@ -481,6 +479,9 @@ class IOSFlutterLocalNotificationsPlugin
   /// [IOSInitializationSettings.requestSoundPermission] values to false.
   /// [requestPermissions] can then be called to request permissions when
   /// needed.
+  ///
+  /// To handle when a notification launched an application, use
+  /// [getNotificationAppLaunchDetails].
   Future<bool?> initialize(
     IOSInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
@@ -708,6 +709,9 @@ class MacOSFlutterLocalNotificationsPlugin
   /// [MacOSInitializationSettings.requestSoundPermission] values to false.
   /// [requestPermissions] can then be called to request permissions when
   /// needed.
+  ///
+  /// To handle when a notification launched an application, use
+  /// [getNotificationAppLaunchDetails].
   Future<bool?> initialize(
     MacOSInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
