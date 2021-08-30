@@ -1,3 +1,7 @@
+# [8.1.1+2]
+
+* Bumped `timezone` dependency. Thanks to the PR from [Xavier H.](https://github.com/xvrh)
+
 # [8.1.1+1]
 
 * Updated API docs for the `initialize()` to mention that the `getNotificationAppLaunchDetails()` method should be used to handle when a notification launches an application
