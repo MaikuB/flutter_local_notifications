@@ -15,6 +15,14 @@
 * **Breaking change** the `FlutterLocalNotificationsPlugin.private()` constructor that was visible for testing purposes has been removed. The plugin now uses the [`defaultTargetPlatform`](https://api.flutter.dev/flutter/foundation/defaultTargetPlatform.html) property from the Flutter framework to determine the platform an application running on. This removes the need for depending on the `platform` package. To write tests that require a platform-specific implementation of the plugin, the [debugDefaultTargetPlatformOverride](https://api.flutter.dev/flutter/foundation/debugDefaultTargetPlatformOverride.html) property can be used to do so
 * Plugin now uses the [`clock`](https://pub.dev/packages/clock) package for internal logic that relies on geting the current time, such as validating that the date for a scheduled notification is set in the future
 
+# [8.2.0]
+
+* Added `dayOfMonthAndTime` and `dateAndTime` values to the `DateTimeComponents` enum. These allow for creating monthly and yearly notifications respectively. Thanks to the PR from [Denis Shakinov](https://github.com/DenisShakinov)
+
+# [8.1.1+2]
+
+* Bumped `timezone` dependency. Thanks to the PR from [Xavier H.](https://github.com/xvrh)
+
 # [8.1.1+1]
 
 * Updated API docs for the `initialize()` to mention that the `getNotificationAppLaunchDetails()` method should be used to handle when a notification launches an application
