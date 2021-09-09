@@ -798,8 +798,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotification() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            'your channel id', 'your channel name', 'your channel description',
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker');
@@ -834,9 +834,8 @@ class _HomePageState extends State<HomePage> {
                   tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
                   const NotificationDetails(
                       android: AndroidNotificationDetails(
-                          'full screen channel id',
-                          'full screen channel name',
-                          'full screen channel description',
+                          'full screen channel id', 'full screen channel name',
+                          channelDescription: 'full screen channel description',
                           priority: Priority.high,
                           importance: Importance.high,
                           fullScreenIntent: true)),
@@ -855,8 +854,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationWithNoBody() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            'your channel id', 'your channel name', 'your channel description',
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker');
@@ -870,8 +869,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationWithNoTitle() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            'your channel id', 'your channel name', 'your channel description',
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker');
@@ -896,7 +895,7 @@ class _HomePageState extends State<HomePage> {
         AndroidNotificationDetails(
       'your other channel id',
       'your other channel name',
-      'your other channel description',
+      channelDescription: 'your other channel description',
       sound: RawResourceAndroidNotificationSound('slow_spring_board'),
     );
     const IOSNotificationDetails iOSPlatformChannelSpecifics =
@@ -929,8 +928,9 @@ class _HomePageState extends State<HomePage> {
     vibrationPattern[3] = 2000;
 
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('other custom channel id',
-            'other custom channel name', 'other custom channel description',
+        AndroidNotificationDetails(
+            'other custom channel id', 'other custom channel name',
+            channelDescription: 'other custom channel description',
             icon: 'secondary_icon',
             largeIcon: const DrawableResourceAndroidBitmap('sample_large_icon'),
             vibrationPattern: vibrationPattern,
@@ -956,8 +956,9 @@ class _HomePageState extends State<HomePage> {
         'scheduled body',
         tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
         const NotificationDetails(
-            android: AndroidNotificationDetails('your channel id',
-                'your channel name', 'your channel description')),
+            android: AndroidNotificationDetails(
+                'your channel id', 'your channel name',
+                channelDescription: 'your channel description')),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);
@@ -966,7 +967,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotificationWithNoSound() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails('silent channel id', 'silent channel name',
-            'silent channel description',
+            channelDescription: 'silent channel description',
             playSound: false,
             styleInformation: DefaultStyleInformation(true, true));
     const IOSNotificationDetails iOSPlatformChannelSpecifics =
@@ -989,8 +990,8 @@ class _HomePageState extends State<HomePage> {
     final UriAndroidNotificationSound uriSound =
         UriAndroidNotificationSound(alarmUri!);
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            'uri channel id', 'uri channel name', 'uri channel description',
+        AndroidNotificationDetails('uri channel id', 'uri channel name',
+            channelDescription: 'uri channel description',
             sound: uriSound,
             styleInformation: const DefaultStyleInformation(true, true));
     final NotificationDetails platformChannelSpecifics =
@@ -1002,7 +1003,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showTimeoutNotification() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails('silent channel id', 'silent channel name',
-            'silent channel description',
+            channelDescription: 'silent channel description',
             timeoutAfter: 3000,
             styleInformation: DefaultStyleInformation(true, true));
     const NotificationDetails platformChannelSpecifics =
@@ -1015,8 +1016,8 @@ class _HomePageState extends State<HomePage> {
     // This value is from: https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTENT
     const int insistentFlag = 4;
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            'your channel id', 'your channel name', 'your channel description',
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker',
@@ -1050,8 +1051,9 @@ class _HomePageState extends State<HomePage> {
             summaryText: 'summary <i>text</i>',
             htmlFormatSummaryText: true);
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('big text channel id',
-            'big text channel name', 'big text channel description',
+        AndroidNotificationDetails(
+            'big text channel id', 'big text channel name',
+            channelDescription: 'big text channel description',
             styleInformation: bigPictureStyleInformation);
     final NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
@@ -1081,8 +1083,9 @@ class _HomePageState extends State<HomePage> {
             summaryText: 'summary <i>text</i>',
             htmlFormatSummaryText: true);
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('big text channel id',
-            'big text channel name', 'big text channel description',
+        AndroidNotificationDetails(
+            'big text channel id', 'big text channel name',
+            channelDescription: 'big text channel description',
             styleInformation: bigPictureStyleInformation);
     final NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
@@ -1109,8 +1112,9 @@ class _HomePageState extends State<HomePage> {
             summaryText: 'summary <i>text</i>',
             htmlFormatSummaryText: true);
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('big text channel id',
-            'big text channel name', 'big text channel description',
+        AndroidNotificationDetails(
+            'big text channel id', 'big text channel name',
+            channelDescription: 'big text channel description',
             styleInformation: bigPictureStyleInformation);
     final NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
@@ -1131,8 +1135,9 @@ class _HomePageState extends State<HomePage> {
             summaryText: 'summary <i>text</i>',
             htmlFormatSummaryText: true);
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('big text channel id',
-            'big text channel name', 'big text channel description',
+        AndroidNotificationDetails(
+            'big text channel id', 'big text channel name',
+            channelDescription: 'big text channel description',
             largeIcon: FilePathAndroidBitmap(largeIconPath),
             styleInformation: bigPictureStyleInformation);
     final NotificationDetails platformChannelSpecifics =
@@ -1148,7 +1153,7 @@ class _HomePageState extends State<HomePage> {
         AndroidNotificationDetails(
       'media channel id',
       'media channel name',
-      'media channel description',
+      channelDescription: 'media channel description',
       largeIcon: FilePathAndroidBitmap(largeIconPath),
       styleInformation: const MediaStyleInformation(),
     );
@@ -1169,8 +1174,9 @@ class _HomePageState extends State<HomePage> {
       htmlFormatSummaryText: true,
     );
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('big text channel id',
-            'big text channel name', 'big text channel description',
+        AndroidNotificationDetails(
+            'big text channel id', 'big text channel name',
+            channelDescription: 'big text channel description',
             styleInformation: bigTextStyleInformation);
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
@@ -1189,7 +1195,7 @@ class _HomePageState extends State<HomePage> {
         htmlFormatSummaryText: true);
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails('inbox channel id', 'inboxchannel name',
-            'inbox channel description',
+            channelDescription: 'inbox channel description',
             styleInformation: inboxStyleInformation);
     final NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
@@ -1246,8 +1252,9 @@ class _HomePageState extends State<HomePage> {
         messages: messages);
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails('message channel id', 'message channel name',
-            'message channel description',
-            category: 'msg', styleInformation: messagingStyle);
+            channelDescription: 'message channel description',
+            category: 'msg',
+            styleInformation: messagingStyle);
     final NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
@@ -1269,8 +1276,8 @@ class _HomePageState extends State<HomePage> {
     const String groupChannelDescription = 'grouped channel description';
     // example based on https://developer.android.com/training/notify-user/group.html
     const AndroidNotificationDetails firstNotificationAndroidSpecifics =
-        AndroidNotificationDetails(
-            groupChannelId, groupChannelName, groupChannelDescription,
+        AndroidNotificationDetails(groupChannelId, groupChannelName,
+            channelDescription: groupChannelDescription,
             importance: Importance.max,
             priority: Priority.high,
             groupKey: groupKey);
@@ -1279,8 +1286,8 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.show(1, 'Alex Faarborg',
         'You will not believe...', firstNotificationPlatformSpecifics);
     const AndroidNotificationDetails secondNotificationAndroidSpecifics =
-        AndroidNotificationDetails(
-            groupChannelId, groupChannelName, groupChannelDescription,
+        AndroidNotificationDetails(groupChannelId, groupChannelName,
+            channelDescription: groupChannelDescription,
             importance: Importance.max,
             priority: Priority.high,
             groupKey: groupKey);
@@ -1306,8 +1313,8 @@ class _HomePageState extends State<HomePage> {
         contentTitle: '2 messages',
         summaryText: 'janedoe@example.com');
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            groupChannelId, groupChannelName, groupChannelDescription,
+        AndroidNotificationDetails(groupChannelId, groupChannelName,
+            channelDescription: groupChannelDescription,
             styleInformation: inboxStyleInformation,
             groupKey: groupKey,
             setAsGroupSummary: true);
@@ -1319,9 +1326,11 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationWithTag() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            'your channel id', 'your channel name', 'your channel description',
-            importance: Importance.max, priority: Priority.high, tag: 'tag');
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            tag: 'tag');
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
     );
@@ -1356,8 +1365,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showOngoingNotification() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            'your channel id', 'your channel name', 'your channel description',
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             ongoing: true,
@@ -1370,8 +1379,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _repeatNotification() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('repeating channel id',
-            'repeating channel name', 'repeating description');
+        AndroidNotificationDetails(
+            'repeating channel id', 'repeating channel name',
+            channelDescription: 'repeating description');
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
@@ -1386,10 +1396,9 @@ class _HomePageState extends State<HomePage> {
         'daily scheduled notification body',
         _nextInstanceOfTenAM(),
         const NotificationDetails(
-          android: AndroidNotificationDetails(
-              'daily notification channel id',
+          android: AndroidNotificationDetails('daily notification channel id',
               'daily notification channel name',
-              'daily notification description'),
+              channelDescription: 'daily notification description'),
         ),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
@@ -1405,10 +1414,9 @@ class _HomePageState extends State<HomePage> {
         'daily scheduled notification body',
         _nextInstanceOfTenAMLastYear(),
         const NotificationDetails(
-          android: AndroidNotificationDetails(
-              'daily notification channel id',
+          android: AndroidNotificationDetails('daily notification channel id',
               'daily notification channel name',
-              'daily notification description'),
+              channelDescription: 'daily notification description'),
         ),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
@@ -1423,10 +1431,9 @@ class _HomePageState extends State<HomePage> {
         'weekly scheduled notification body',
         _nextInstanceOfTenAM(),
         const NotificationDetails(
-          android: AndroidNotificationDetails(
-              'weekly notification channel id',
+          android: AndroidNotificationDetails('weekly notification channel id',
               'weekly notification channel name',
-              'weekly notificationdescription'),
+              channelDescription: 'weekly notificationdescription'),
         ),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
@@ -1441,10 +1448,9 @@ class _HomePageState extends State<HomePage> {
         'weekly scheduled notification body',
         _nextInstanceOfMondayTenAM(),
         const NotificationDetails(
-          android: AndroidNotificationDetails(
-              'weekly notification channel id',
+          android: AndroidNotificationDetails('weekly notification channel id',
               'weekly notification channel name',
-              'weekly notificationdescription'),
+              channelDescription: 'weekly notificationdescription'),
         ),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
@@ -1459,10 +1465,9 @@ class _HomePageState extends State<HomePage> {
         'monthly scheduled notification body',
         _nextInstanceOfMondayTenAM(),
         const NotificationDetails(
-          android: AndroidNotificationDetails(
-              'monthly notification channel id',
+          android: AndroidNotificationDetails('monthly notification channel id',
               'monthly notification channel name',
-              'monthly notificationdescription'),
+              channelDescription: 'monthly notificationdescription'),
         ),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
@@ -1477,10 +1482,9 @@ class _HomePageState extends State<HomePage> {
         'yearly scheduled notification body',
         _nextInstanceOfMondayTenAM(),
         const NotificationDetails(
-          android: AndroidNotificationDetails(
-              'yearly notification channel id',
+          android: AndroidNotificationDetails('yearly notification channel id',
               'yearly notification channel name',
-              'yearly notification description'),
+              channelDescription: 'yearly notification description'),
         ),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
@@ -1513,8 +1517,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationWithNoBadge() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            'no badge channel', 'no badge name', 'no badge description',
+        AndroidNotificationDetails('no badge channel', 'no badge name',
+            channelDescription: 'no badge description',
             channelShowBadge: false,
             importance: Importance.max,
             priority: Priority.high,
@@ -1532,7 +1536,7 @@ class _HomePageState extends State<HomePage> {
       await Future<void>.delayed(const Duration(seconds: 1), () async {
         final AndroidNotificationDetails androidPlatformChannelSpecifics =
             AndroidNotificationDetails('progress channel', 'progress channel',
-                'progress channel description',
+                channelDescription: 'progress channel description',
                 channelShowBadge: false,
                 importance: Importance.max,
                 priority: Priority.high,
@@ -1555,9 +1559,8 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showIndeterminateProgressNotification() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-            'indeterminate progress channel',
-            'indeterminate progress channel',
-            'indeterminate progress channel description',
+            'indeterminate progress channel', 'indeterminate progress channel',
+            channelDescription: 'indeterminate progress channel description',
             channelShowBadge: false,
             importance: Importance.max,
             priority: Priority.high,
@@ -1577,7 +1580,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotificationUpdateChannelDescription() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails('your channel id', 'your channel name',
-            'your updated channel description',
+            channelDescription: 'your updated channel description',
             importance: Importance.max,
             priority: Priority.high,
             channelAction: AndroidNotificationChannelAction.update);
@@ -1593,8 +1596,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showPublicNotification() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            'your channel id', 'your channel name', 'your channel description',
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker',
@@ -1668,8 +1671,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationWithoutTimestamp() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            'your channel id', 'your channel name', 'your channel description',
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             showWhen: false);
@@ -1685,7 +1688,7 @@ class _HomePageState extends State<HomePage> {
         AndroidNotificationDetails(
       'your channel id',
       'your channel name',
-      'your channel description',
+      channelDescription: 'your channel description',
       importance: Importance.max,
       priority: Priority.high,
       when: DateTime.now().millisecondsSinceEpoch - 120 * 1000,
@@ -1702,7 +1705,7 @@ class _HomePageState extends State<HomePage> {
         AndroidNotificationDetails(
       'your channel id',
       'your channel name',
-      'your channel description',
+      channelDescription: 'your channel description',
       importance: Importance.max,
       priority: Priority.high,
       showWhen: false,
@@ -1720,7 +1723,7 @@ class _HomePageState extends State<HomePage> {
         AndroidNotificationDetails(
       'your channel id',
       'your channel name',
-      'your channel description',
+      channelDescription: 'your channel description',
       importance: Importance.max,
       priority: Priority.high,
       when: DateTime.now().millisecondsSinceEpoch - 120 * 1000,
@@ -1823,8 +1826,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _startForegroundService() async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            'your channel id', 'your channel name', 'your channel description',
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker');

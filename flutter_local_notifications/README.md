@@ -394,11 +394,11 @@ Here the call to `flutterLocalNotificationsPlugin.resolvePlatformSpecificImpleme
 
 ```dart
 const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
+    AndroidNotificationDetails('your channel id', 'your channel name',
+        channelDescription: 'your channel description',
         importance: Importance.max,
         priority: Priority.high,
-        showWhen: false);
+        ticker: 'ticker');
 const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.show(
@@ -446,8 +446,9 @@ await flutterLocalNotificationsPlugin.zonedSchedule(
     'scheduled body',
     tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
     const NotificationDetails(
-        android: AndroidNotificationDetails('your channel id',
-            'your channel name', 'your channel description')),
+        android: AndroidNotificationDetails(
+            'your channel id', 'your channel name',
+            channelDescription: 'your channel description')),
     androidAllowWhileIdle: true,
     uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime);
@@ -465,8 +466,9 @@ If you are trying to update your code so it doesn't use the deprecated methods f
 
 ```dart
 const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails('repeating channel id',
-        'repeating channel name', 'repeating description');
+    AndroidNotificationDetails(
+        'repeating channel id', 'repeating channel name',
+        channelDescription: 'repeating description');
 const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
@@ -513,8 +515,8 @@ const String groupChannelName = 'grouped channel name';
 const String groupChannelDescription = 'grouped channel description';
 // example based on https://developer.android.com/training/notify-user/group.html
 const AndroidNotificationDetails firstNotificationAndroidSpecifics =
-    AndroidNotificationDetails(
-        groupChannelId, groupChannelName, groupChannelDescription,
+    AndroidNotificationDetails(groupChannelId, groupChannelName,
+        channelDescription: groupChannelDescription,
         importance: Importance.max,
         priority: Priority.high,
         groupKey: groupKey);
@@ -523,8 +525,8 @@ const NotificationDetails firstNotificationPlatformSpecifics =
 await flutterLocalNotificationsPlugin.show(1, 'Alex Faarborg',
     'You will not believe...', firstNotificationPlatformSpecifics);
 const AndroidNotificationDetails secondNotificationAndroidSpecifics =
-    AndroidNotificationDetails(
-        groupChannelId, groupChannelName, groupChannelDescription,
+    AndroidNotificationDetails(groupChannelId, groupChannelName,
+        channelDescription: groupChannelDescription,
         importance: Importance.max,
         priority: Priority.high,
         groupKey: groupKey);
@@ -550,8 +552,8 @@ const InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
     contentTitle: '2 messages',
     summaryText: 'janedoe@example.com');
 const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails(
-        groupChannelId, groupChannelName, groupChannelDescription,
+    AndroidNotificationDetails(groupChannelId, groupChannelName,
+        channelDescription: groupChannelDescription,
         styleInformation: inboxStyleInformation,
         groupKey: groupKey,
         setAsGroupSummary: true);

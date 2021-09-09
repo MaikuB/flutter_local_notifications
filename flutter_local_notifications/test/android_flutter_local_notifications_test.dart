@@ -79,8 +79,8 @@ void main() {
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
-          AndroidNotificationDetails(
-              'channelId', 'channelName', 'channelDescription');
+          AndroidNotificationDetails('channelId', 'channelName',
+              channelDescription: 'channelDescription');
 
       await flutterLocalNotificationsPlugin.show(
           1,
@@ -157,8 +157,8 @@ void main() {
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       final AndroidNotificationDetails androidNotificationDetails =
-          AndroidNotificationDetails(
-              'channelId', 'channelName', 'channelDescription',
+          AndroidNotificationDetails('channelId', 'channelName',
+              channelDescription: 'channelDescription',
               additionalFlags: Int32List.fromList(<int>[4, 32]));
 
       await flutterLocalNotificationsPlugin.show(
@@ -239,9 +239,8 @@ void main() {
       final int timestamp = clock.now().millisecondsSinceEpoch;
 
       final AndroidNotificationDetails androidNotificationDetails =
-          AndroidNotificationDetails(
-              'channelId', 'channelName', 'channelDescription',
-              when: timestamp);
+          AndroidNotificationDetails('channelId', 'channelName',
+              channelDescription: 'channelDescription', when: timestamp);
       await flutterLocalNotificationsPlugin.show(
           1,
           'notification title',
@@ -319,9 +318,10 @@ void main() {
       final int timestamp = clock.now().millisecondsSinceEpoch;
 
       final AndroidNotificationDetails androidNotificationDetails =
-          AndroidNotificationDetails(
-              'channelId', 'channelName', 'channelDescription',
-              when: timestamp, usesChronometer: true);
+          AndroidNotificationDetails('channelId', 'channelName',
+              channelDescription: 'channelDescription',
+              when: timestamp,
+              usesChronometer: true);
       await flutterLocalNotificationsPlugin.show(
           1,
           'notification title',
@@ -401,7 +401,7 @@ void main() {
           AndroidNotificationDetails(
         'channelId',
         'channelName',
-        'channelDescription',
+        channelDescription: 'channelDescription',
         sound: RawResourceAndroidNotificationSound('sound.mp3'),
       );
 
@@ -485,7 +485,7 @@ void main() {
           AndroidNotificationDetails(
         'channelId',
         'channelName',
-        'channelDescription',
+        channelDescription: 'channelDescription',
         sound: UriAndroidNotificationSound('uri'),
       );
 
@@ -570,7 +570,7 @@ void main() {
           AndroidNotificationDetails(
         'channelId',
         'channelName',
-        'channelDescription',
+        channelDescription: 'channelDescription',
         styleInformation: DefaultStyleInformation(true, true),
       );
 
@@ -653,7 +653,7 @@ void main() {
           AndroidNotificationDetails(
         'channelId',
         'channelName',
-        'channelDescription',
+        channelDescription: 'channelDescription',
         styleInformation: BigPictureStyleInformation(
           DrawableResourceAndroidBitmap('bigPictureDrawable'),
         ),
@@ -745,7 +745,7 @@ void main() {
           AndroidNotificationDetails(
         'channelId',
         'channelName',
-        'channelDescription',
+        channelDescription: 'channelDescription',
         styleInformation: BigPictureStyleInformation(
           DrawableResourceAndroidBitmap('bigPictureDrawable'),
           contentTitle: 'contentTitle',
@@ -847,7 +847,7 @@ void main() {
           AndroidNotificationDetails(
         'channelId',
         'channelName',
-        'channelDescription',
+        channelDescription: 'channelDescription',
         styleInformation: BigPictureStyleInformation(
           FilePathAndroidBitmap('bigPictureFilePath'),
         ),
@@ -939,7 +939,7 @@ void main() {
           AndroidNotificationDetails(
         'channelId',
         'channelName',
-        'channelDescription',
+        channelDescription: 'channelDescription',
         styleInformation: BigPictureStyleInformation(
           FilePathAndroidBitmap('bigPictureFilePath'),
           contentTitle: 'contentTitle',
@@ -1039,7 +1039,7 @@ void main() {
           AndroidNotificationDetails(
         'channelId',
         'channelName',
-        'channelDescription',
+        channelDescription: 'channelDescription',
         styleInformation: InboxStyleInformation(
           <String>['line1'],
         ),
@@ -1128,7 +1128,7 @@ void main() {
           AndroidNotificationDetails(
         'channelId',
         'channelName',
-        'channelDescription',
+        channelDescription: 'channelDescription',
         styleInformation: InboxStyleInformation(
           <String>['line1'],
           htmlFormatLines: true,
@@ -1224,7 +1224,7 @@ void main() {
           AndroidNotificationDetails(
         'channelId',
         'channelName',
-        'channelDescription',
+        channelDescription: 'channelDescription',
         styleInformation: MediaStyleInformation(),
       );
 
@@ -1305,7 +1305,7 @@ void main() {
           AndroidNotificationDetails(
         'channelId',
         'channelName',
-        'channelDescription',
+        channelDescription: 'channelDescription',
         styleInformation: MediaStyleInformation(
           htmlFormatTitle: true,
           htmlFormatContent: true,
@@ -1390,7 +1390,7 @@ void main() {
           AndroidNotificationDetails(
         'channelId',
         'channelName',
-        'channelDescription',
+        channelDescription: 'channelDescription',
         styleInformation: MessagingStyleInformation(
           const Person(name: 'name'),
           messages: <Message>[
@@ -1499,7 +1499,7 @@ void main() {
           AndroidNotificationDetails(
         'channelId',
         'channelName',
-        'channelDescription',
+        channelDescription: 'channelDescription',
         styleInformation: MessagingStyleInformation(
           const Person(
             bot: true,
@@ -1623,8 +1623,8 @@ void main() {
                 .initialize(initializationSettings);
 
             const AndroidNotificationDetails androidNotificationDetails =
-                AndroidNotificationDetails(
-                    'channelId', 'channelName', 'channelDescription');
+                AndroidNotificationDetails('channelId', 'channelName',
+                    channelDescription: 'channelDescription');
             await flutterLocalNotificationsPlugin.periodicallyShow(
               1,
               'notification title',
@@ -1714,8 +1714,8 @@ void main() {
         final tz.TZDateTime scheduledDate =
             tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
         const AndroidNotificationDetails androidNotificationDetails =
-            AndroidNotificationDetails(
-                'channelId', 'channelName', 'channelDescription');
+            AndroidNotificationDetails('channelId', 'channelName',
+                channelDescription: 'channelDescription');
         await flutterLocalNotificationsPlugin.zonedSchedule(
             1,
             'notification title',
@@ -1803,8 +1803,8 @@ void main() {
         final tz.TZDateTime scheduledDate =
             tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
         const AndroidNotificationDetails androidNotificationDetails =
-            AndroidNotificationDetails(
-                'channelId', 'channelName', 'channelDescription');
+            AndroidNotificationDetails('channelId', 'channelName',
+                channelDescription: 'channelDescription');
         await flutterLocalNotificationsPlugin.zonedSchedule(
             1,
             'notification title',
@@ -1894,8 +1894,8 @@ void main() {
         final tz.TZDateTime scheduledDate =
             tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
         const AndroidNotificationDetails androidNotificationDetails =
-            AndroidNotificationDetails(
-                'channelId', 'channelName', 'channelDescription');
+            AndroidNotificationDetails('channelId', 'channelName',
+                channelDescription: 'channelDescription');
         await flutterLocalNotificationsPlugin.zonedSchedule(
             1,
             'notification title',
