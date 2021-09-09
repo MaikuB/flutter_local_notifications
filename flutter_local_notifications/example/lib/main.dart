@@ -1326,7 +1326,7 @@ class _HomePageState extends State<HomePage> {
           android: AndroidNotificationDetails(
               'yearly notification channel id',
               'yearly notification channel name',
-              'yearly notificationdescription'),
+              'yearly notification description'),
         ),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:

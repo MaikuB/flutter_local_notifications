@@ -1,3 +1,7 @@
+# [8.2.0]
+
+* Added `dayOfMonthAndTime` and `dateAndTime` values to the `DateTimeComponents` enum. These allow for creating monthly and yearly notifications respectively. Thanks to the PR from [Denis Shakinov](https://github.com/DenisShakinov)
+
 # [8.1.1+2]
 
 * Bumped `timezone` dependency. Thanks to the PR from [Xavier H.](https://github.com/xvrh)
