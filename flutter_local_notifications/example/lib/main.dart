@@ -12,11 +12,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as image;
 import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:image/image.dart' as image;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -1770,18 +1770,16 @@ class _HomePageState extends State<HomePage> {
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()!
         .createNotificationChannel(const AndroidNotificationChannel(
-            'grouped channel id 1',
-            'grouped channel name 1',
-            'grouped channel description 1',
+            'grouped channel id 1', 'grouped channel name 1',
+            description: 'grouped channel description 1',
             groupId: channelGroupId));
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()!
         .createNotificationChannel(const AndroidNotificationChannel(
-            'grouped channel id 2',
-            'grouped channel name 2',
-            'grouped channel description 2',
+            'grouped channel id 2', 'grouped channel name 2',
+            description: 'grouped channel description 2',
             groupId: channelGroupId));
 
     await showDialog<void>(
@@ -1850,7 +1848,7 @@ class _HomePageState extends State<HomePage> {
         AndroidNotificationChannel(
       'your channel id 2',
       'your channel name 2',
-      'your channel description 2',
+      description: 'your channel description 2',
     );
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<

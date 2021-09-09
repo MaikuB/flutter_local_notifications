@@ -2013,7 +2013,8 @@ void main() {
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()!
           .createNotificationChannel(const AndroidNotificationChannel(
-              'channelId', 'channelName', 'channelDescription'));
+              'channelId', 'channelName',
+              description: 'channelDescription'));
       expect(log, <Matcher>[
         isMethodCall('createNotificationChannel', arguments: <String, Object?>{
           'id': 'channelId',
@@ -2043,7 +2044,7 @@ void main() {
           .createNotificationChannel(const AndroidNotificationChannel(
             'channelId',
             'channelName',
-            'channelDescription',
+            description: 'channelDescription',
             groupId: 'channelGroupId',
             showBadge: false,
             importance: Importance.max,

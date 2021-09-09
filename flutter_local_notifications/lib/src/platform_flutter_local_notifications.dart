@@ -420,7 +420,7 @@ class AndroidFlutterLocalNotificationsPlugin
         ?.map((a) => AndroidNotificationChannel(
               a['id'],
               a['name'],
-              a['description'],
+              description: a['description'],
               groupId: a['groupId'],
               showBadge: a['showBadge'],
               importance: Importance(a['importance']),
