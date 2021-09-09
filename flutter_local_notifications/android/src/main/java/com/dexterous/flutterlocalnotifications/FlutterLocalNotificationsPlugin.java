@@ -885,6 +885,16 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                     nextFireDate = nextFireDate.plusDays(1);
                 }
                 return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+            } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DayOfMonthAndTime) {
+                while (nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
+                    nextFireDate = nextFireDate.plusDays(1);
+                }
+                return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+            } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DateAndTime) {
+                while (nextFireDate.getMonthValue() != scheduledDateTime.getMonthValue() || nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
+                    nextFireDate = nextFireDate.plusDays(1);
+                }
+                return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
             }
         } else {
             org.threeten.bp.ZoneId zoneId = org.threeten.bp.ZoneId.of(notificationDetails.timeZoneName);
@@ -899,6 +909,16 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
             } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DayOfWeekAndTime) {
                 while (nextFireDate.getDayOfWeek() != scheduledDateTime.getDayOfWeek()) {
+                    nextFireDate = nextFireDate.plusDays(1);
+                }
+                return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+            } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DayOfMonthAndTime) {
+                while (nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
+                    nextFireDate = nextFireDate.plusDays(1);
+                }
+                return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+            } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DateAndTime) {
+                while (nextFireDate.getMonthValue() != scheduledDateTime.getMonthValue() || nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
                     nextFireDate = nextFireDate.plusDays(1);
                 }
                 return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);

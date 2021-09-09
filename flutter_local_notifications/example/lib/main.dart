@@ -349,6 +349,22 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                     PaddedElevatedButton(
+                      buttonText:
+                          'Schedule monthly Monday 10:00:00 am notification in '
+                          'your local time zone',
+                      onPressed: () async {
+                        await _scheduleMonthlyMondayTenAMNotification();
+                      },
+                    ),
+                    PaddedElevatedButton(
+                      buttonText:
+                          'Schedule yearly Monday 10:00:00 am notification in '
+                          'your local time zone',
+                      onPressed: () async {
+                        await _scheduleYearlyMondayTenAMNotification();
+                      },
+                    ),
+                    PaddedElevatedButton(
                       buttonText: 'Show notification with no sound',
                       onPressed: () async {
                         await _showNotificationWithNoSound();
@@ -1280,6 +1296,42 @@ class _HomePageState extends State<HomePage> {
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+  }
+
+  Future<void> _scheduleMonthlyMondayTenAMNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'monthly scheduled notification title',
+        'monthly scheduled notification body',
+        _nextInstanceOfMondayTenAM(),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'monthly notification channel id',
+              'monthly notification channel name',
+              'monthly notificationdescription'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.dayOfMonthAndTime);
+  }
+
+  Future<void> _scheduleYearlyMondayTenAMNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'yearly scheduled notification title',
+        'yearly scheduled notification body',
+        _nextInstanceOfMondayTenAM(),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'yearly notification channel id',
+              'yearly notification channel name',
+              'yearly notificationdescription'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.dateAndTime);
   }
 
   tz.TZDateTime _nextInstanceOfTenAM() {

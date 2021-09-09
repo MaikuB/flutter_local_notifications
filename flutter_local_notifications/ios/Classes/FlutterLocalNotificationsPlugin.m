@@ -82,7 +82,9 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 
 typedef NS_ENUM(NSInteger, DateTimeComponents) {
     Time,
-    DayOfWeekAndTime
+    DayOfWeekAndTime,
+    DayOfMonthAndTime,
+    DateAndTime
 };
 
 typedef NS_ENUM(NSInteger, UILocalNotificationDateInterpretation) {
@@ -382,6 +384,10 @@ static FlutterError *getFlutterError(NSError *error) {
                 notification.repeatInterval = NSCalendarUnitDay;
             } else if([matchDateComponents integerValue] == DayOfWeekAndTime) {
                 notification.repeatInterval = NSCalendarUnitWeekOfYear;
+            } else if([matchDateComponents integerValue] == DayOfMonthAndTime) {
+                notification.repeatInterval = NSCalendarUnitMonth;
+            } else if([matchDateComponents integerValue] == DateAndTime) {
+                notification.repeatInterval = NSCalendarUnitYear;
             }
         }
         [[UIApplication sharedApplication] scheduleLocalNotification:notification];
@@ -620,6 +626,19 @@ static FlutterError *getFlutterError(NSError *error) {
             
         } else if([matchDateComponents integerValue] == DayOfWeekAndTime) {
             NSDateComponents *dateComponents    = [calendar components:( NSCalendarUnitWeekday |
+                                                                        NSCalendarUnitHour  |
+                                                                        NSCalendarUnitMinute|
+                                                                        NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
+            return [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:YES];
+        } else if([matchDateComponents integerValue] == DayOfMonthAndTime) {
+            NSDateComponents *dateComponents    = [calendar components:( NSCalendarUnitDay |
+                                                                        NSCalendarUnitHour  |
+                                                                        NSCalendarUnitMinute|
+                                                                        NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
+            return [UNCalendarNotificationTrigger triggerWithDateMatchingComponents:dateComponents repeats:YES];
+        } else if([matchDateComponents integerValue] == DateAndTime) {
+            NSDateComponents *dateComponents    = [calendar components:( NSCalendarUnitMonth |
+                                                                        NSCalendarUnitDay |
                                                                         NSCalendarUnitHour  |
                                                                         NSCalendarUnitMinute|
                                                                         NSCalendarUnitSecond | NSCalendarUnitTimeZone) fromDate:date];
