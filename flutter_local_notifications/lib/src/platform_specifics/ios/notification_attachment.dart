@@ -1,9 +1,10 @@
 /// Represents an attachment for an iOS notification.
 class IOSNotificationAttachment {
+  /// Constructs an instance of [IOSNotificationAttachment].
   const IOSNotificationAttachment(
     this.filePath, {
     this.identifier,
-  }) : assert(filePath != null);
+  });
 
   /// The local file path to the attachment.
   ///
@@ -14,5 +15,5 @@ class IOSNotificationAttachment {
   /// The unique identifier for the attachment.
   ///
   /// When left empty, the iOS APIs will generate a unique identifier
-  final String identifier;
+  final String? identifier;
 }

@@ -1,8 +1,12 @@
 package com.dexterous.flutterlocalnotifications.models;
 
+import androidx.annotation.Keep;
+
+import java.io.Serializable;
 import java.util.Map;
 
-public class NotificationChannelGroupDetails {
+@Keep
+public class NotificationChannelGroupDetails implements Serializable {
     private static final String ID = "id";
     private static final String NAME = "name";
     private static final String DESCRIPTION = "description";

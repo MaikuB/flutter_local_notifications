@@ -1,16 +1,14 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:platform/platform.dart';
 import 'package:timezone/timezone.dart';
 
-import '../flutter_local_notifications.dart';
 import 'initialization_settings.dart';
 import 'notification_details.dart';
 import 'platform_flutter_local_notifications.dart';
-import 'typedefs.dart';
+import 'platform_specifics/ios/enums.dart';
 import 'types.dart';
 
 /// Provides cross-platform functionality for displaying local notifications.
@@ -23,6 +21,7 @@ import 'types.dart';
 /// type of the plugin to get the underlying platform-specific implementation
 /// if access to platform-specific APIs are needed.
 class FlutterLocalNotificationsPlugin {
+  /// Factory for create an instance of [FlutterLocalNotificationsPlugin].
   factory FlutterLocalNotificationsPlugin() => _instance;
 
   /// Used internally for creating the appropriate platform-specific
@@ -39,6 +38,9 @@ class FlutterLocalNotificationsPlugin {
   @visibleForTesting
   FlutterLocalNotificationsPlugin.private(Platform platform)
       : _platform = platform {
+    if (kIsWeb) {
+      return;
+    }
     if (platform.isAndroid) {
       FlutterLocalNotificationsPlatform.instance =
           AndroidFlutterLocalNotificationsPlugin();
@@ -63,7 +65,7 @@ class FlutterLocalNotificationsPlugin {
   /// type for a result to be returned. For example, when the specified type
   /// argument is of type [AndroidFlutterLocalNotificationsPlugin], this will
   /// only return a result of that type when running on Android.
-  T resolvePlatformSpecificImplementation<
+  T? resolvePlatformSpecificImplementation<
       T extends FlutterLocalNotificationsPlatform>() {
     if (T == FlutterLocalNotificationsPlatform) {
       throw ArgumentError.value(
@@ -71,21 +73,24 @@ class FlutterLocalNotificationsPlugin {
           'The type argument must be a concrete subclass of '
           'FlutterLocalNotificationsPlatform');
     }
+    if (kIsWeb) {
+      return null;
+    }
     if (_platform.isAndroid &&
         T == AndroidFlutterLocalNotificationsPlugin &&
         FlutterLocalNotificationsPlatform.instance
             is AndroidFlutterLocalNotificationsPlugin) {
-      return FlutterLocalNotificationsPlatform.instance;
+      return FlutterLocalNotificationsPlatform.instance as T?;
     } else if (_platform.isIOS &&
         T == IOSFlutterLocalNotificationsPlugin &&
         FlutterLocalNotificationsPlatform.instance
             is IOSFlutterLocalNotificationsPlugin) {
-      return FlutterLocalNotificationsPlatform.instance;
+      return FlutterLocalNotificationsPlatform.instance as T?;
     } else if (_platform.isMacOS &&
         T == MacOSFlutterLocalNotificationsPlugin &&
         FlutterLocalNotificationsPlatform.instance
             is MacOSFlutterLocalNotificationsPlugin) {
-      return FlutterLocalNotificationsPlatform.instance;
+      return FlutterLocalNotificationsPlatform.instance as T?;
     }
 
     return null;
@@ -94,9 +99,6 @@ class FlutterLocalNotificationsPlugin {
   /// Initializes the plugin.
   ///
   /// Call this method on application before using the plugin further.
-  /// This should only be done once. When a notification created by this plugin
-  /// was used to launch the app, calling `initialize` is what will trigger
-  /// to the `onSelectNotification` callback to be fire.
   ///
   /// Will return a [bool] value to indicate if initialization succeeded.
   /// On iOS this is dependent on if permissions have been granted to show
@@ -112,24 +114,30 @@ class FlutterLocalNotificationsPlugin {
   /// [IOSInitializationSettings.requestSoundPermission] values to false.
   /// [IOSFlutterLocalNotificationsPlugin.requestPermissions] can then be called
   /// to request permissions when needed.
-  Future<bool> initialize(
+  ///
+  /// To handle when a notification launched an application, use
+  /// [getNotificationAppLaunchDetails].
+  Future<bool?> initialize(
     InitializationSettings initializationSettings, {
-    SelectNotificationCallback onSelectNotification,
+    SelectNotificationCallback? onSelectNotification,
   }) async {
+    if (kIsWeb) {
+      return true;
+    }
     if (_platform.isAndroid) {
       return resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
-          ?.initialize(initializationSettings?.android,
+          ?.initialize(initializationSettings.android!,
               onSelectNotification: onSelectNotification);
     } else if (_platform.isIOS) {
       return await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
-          ?.initialize(initializationSettings?.iOS,
+          ?.initialize(initializationSettings.iOS!,
               onSelectNotification: onSelectNotification);
     } else if (_platform.isMacOS) {
       return await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
-          ?.initialize(initializationSettings?.macOS,
+          ?.initialize(initializationSettings.macOS!,
               onSelectNotification: onSelectNotification);
     }
     return true;
@@ -147,7 +155,11 @@ class FlutterLocalNotificationsPlugin {
   /// Note that this will return null for applications running on macOS
   /// versions older than 10.14. This is because there's currently no mechanism
   /// for plugins to receive information on lifecycle events.
-  Future<NotificationAppLaunchDetails> getNotificationAppLaunchDetails() async {
+  Future<NotificationAppLaunchDetails?>
+      getNotificationAppLaunchDetails() async {
+    if (kIsWeb) {
+      return null;
+    }
     if (_platform.isAndroid) {
       return await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
@@ -162,7 +174,7 @@ class FlutterLocalNotificationsPlugin {
           ?.getNotificationAppLaunchDetails();
     } else {
       return await FlutterLocalNotificationsPlatform.instance
-              ?.getNotificationAppLaunchDetails() ??
+              .getNotificationAppLaunchDetails() ??
           const NotificationAppLaunchDetails(false, null);
     }
   }
@@ -171,11 +183,14 @@ class FlutterLocalNotificationsPlugin {
   /// the app when a notification is tapped.
   Future<void> show(
     int id,
-    String title,
-    String body,
-    NotificationDetails notificationDetails, {
-    String payload,
+    String? title,
+    String? body,
+    NotificationDetails? notificationDetails, {
+    String? payload,
   }) async {
+    if (kIsWeb) {
+      return;
+    }
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
@@ -194,7 +209,7 @@ class FlutterLocalNotificationsPlugin {
               notificationDetails: notificationDetails?.macOS,
               payload: payload);
     } else {
-      await FlutterLocalNotificationsPlatform.instance?.show(id, title, body);
+      await FlutterLocalNotificationsPlatform.instance.show(id, title, body);
     }
   }
 
@@ -202,8 +217,21 @@ class FlutterLocalNotificationsPlugin {
   ///
   /// This applies to notifications that have been scheduled and those that
   /// have already been presented.
-  Future<void> cancel(int id) async {
-    await FlutterLocalNotificationsPlatform.instance?.cancel(id);
+  ///
+  /// The `tag` parameter specifies the Android tag. If it is provided,
+  /// then the notification that matches both the id and the tag will
+  /// be canceled. `tag` has no effect on other platforms.
+  Future<void> cancel(int id, {String? tag}) async {
+    if (kIsWeb) {
+      return;
+    }
+    if (_platform.isAndroid) {
+      await resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.cancel(id, tag: tag);
+    } else {
+      await FlutterLocalNotificationsPlatform.instance.cancel(id);
+    }
   }
 
   /// Cancels/removes all notifications.
@@ -211,7 +239,7 @@ class FlutterLocalNotificationsPlugin {
   /// This applies to notifications that have been scheduled and those that
   /// have already been presented.
   Future<void> cancelAll() async {
-    await FlutterLocalNotificationsPlatform.instance?.cancelAll();
+    await FlutterLocalNotificationsPlatform.instance.cancelAll();
   }
 
   /// Schedules a notification to be shown at the specified date and time.
@@ -223,23 +251,25 @@ class FlutterLocalNotificationsPlugin {
       'instead.')
   Future<void> schedule(
     int id,
-    String title,
-    String body,
+    String? title,
+    String? body,
     DateTime scheduledDate,
     NotificationDetails notificationDetails, {
-    String payload,
+    String? payload,
     bool androidAllowWhileIdle = false,
   }) async {
+    if (kIsWeb) {
+      return;
+    }
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          .schedule(
-              id, title, body, scheduledDate, notificationDetails?.android,
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .schedule(id, title, body, scheduledDate, notificationDetails.android,
               payload: payload, androidAllowWhileIdle: androidAllowWhileIdle);
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
-          ?.schedule(id, title, body, scheduledDate, notificationDetails?.iOS,
+          ?.schedule(id, title, body, scheduledDate, notificationDetails.iOS,
               payload: payload);
     } else if (_platform.isMacOS) {
       throw UnimplementedError();
@@ -279,30 +309,32 @@ class FlutterLocalNotificationsPlugin {
   /// appear is 2020-10-20 10:00.
   Future<void> zonedSchedule(
     int id,
-    String title,
-    String body,
+    String? title,
+    String? body,
     TZDateTime scheduledDate,
     NotificationDetails notificationDetails, {
-    @required
-        UILocalNotificationDateInterpretation
-            uiLocalNotificationDateInterpretation,
-    @required bool androidAllowWhileIdle,
-    String payload,
-    DateTimeComponents matchDateTimeComponents,
+    required UILocalNotificationDateInterpretation
+        uiLocalNotificationDateInterpretation,
+    required bool androidAllowWhileIdle,
+    String? payload,
+    DateTimeComponents? matchDateTimeComponents,
   }) async {
+    if (kIsWeb) {
+      return;
+    }
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+              AndroidFlutterLocalNotificationsPlugin>()!
           .zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails?.android,
+              id, title, body, scheduledDate, notificationDetails.android,
               payload: payload,
               androidAllowWhileIdle: androidAllowWhileIdle,
-              matchDateComponents: matchDateTimeComponents);
+              matchDateTimeComponents: matchDateTimeComponents);
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails?.iOS,
+              id, title, body, scheduledDate, notificationDetails.iOS,
               uiLocalNotificationDateInterpretation:
                   uiLocalNotificationDateInterpretation,
               payload: payload,
@@ -311,7 +343,7 @@ class FlutterLocalNotificationsPlugin {
       await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
           ?.zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails?.macOS,
+              id, title, body, scheduledDate, notificationDetails.macOS,
               payload: payload,
               matchDateTimeComponents: matchDateTimeComponents);
     }
@@ -333,34 +365,36 @@ class FlutterLocalNotificationsPlugin {
   /// repeat.
   Future<void> periodicallyShow(
     int id,
-    String title,
-    String body,
+    String? title,
+    String? body,
     RepeatInterval repeatInterval,
     NotificationDetails notificationDetails, {
-    String payload,
+    String? payload,
     bool androidAllowWhileIdle = false,
   }) async {
+    if (kIsWeb) {
+      return;
+    }
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.periodicallyShow(id, title, body, repeatInterval,
-              notificationDetails: notificationDetails?.android,
+              notificationDetails: notificationDetails.android,
               payload: payload,
               androidAllowWhileIdle: androidAllowWhileIdle);
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.periodicallyShow(id, title, body, repeatInterval,
-              notificationDetails: notificationDetails?.iOS, payload: payload);
+              notificationDetails: notificationDetails.iOS, payload: payload);
     } else if (_platform.isMacOS) {
       await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
           ?.periodicallyShow(id, title, body, repeatInterval,
-              notificationDetails: notificationDetails?.macOS,
-              payload: payload);
+              notificationDetails: notificationDetails.macOS, payload: payload);
     } else {
       await FlutterLocalNotificationsPlatform.instance
-          ?.periodicallyShow(id, title, body, repeatInterval);
+          .periodicallyShow(id, title, body, repeatInterval);
     }
   }
 
@@ -372,23 +406,26 @@ class FlutterLocalNotificationsPlugin {
       'matchDateTimeComponents parameter.')
   Future<void> showDailyAtTime(
     int id,
-    String title,
-    String body,
+    String? title,
+    String? body,
     Time notificationTime,
     NotificationDetails notificationDetails, {
-    String payload,
+    String? payload,
   }) async {
+    if (kIsWeb) {
+      return;
+    }
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.showDailyAtTime(
-              id, title, body, notificationTime, notificationDetails?.android,
+              id, title, body, notificationTime, notificationDetails.android,
               payload: payload);
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.showDailyAtTime(
-              id, title, body, notificationTime, notificationDetails?.iOS,
+              id, title, body, notificationTime, notificationDetails.iOS,
               payload: payload);
     } else if (_platform.isMacOS) {
       throw UnimplementedError();
@@ -403,24 +440,27 @@ class FlutterLocalNotificationsPlugin {
       'the matchDateTimeComponents parameter.')
   Future<void> showWeeklyAtDayAndTime(
     int id,
-    String title,
-    String body,
+    String? title,
+    String? body,
     Day day,
     Time notificationTime,
     NotificationDetails notificationDetails, {
-    String payload,
+    String? payload,
   }) async {
+    if (kIsWeb) {
+      return;
+    }
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.showWeeklyAtDayAndTime(id, title, body, day, notificationTime,
-              notificationDetails?.android,
+              notificationDetails.android,
               payload: payload);
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.showWeeklyAtDayAndTime(
-              id, title, body, day, notificationTime, notificationDetails?.iOS,
+              id, title, body, day, notificationTime, notificationDetails.iOS,
               payload: payload);
     } else if (_platform.isMacOS) {
       throw UnimplementedError();
@@ -429,5 +469,5 @@ class FlutterLocalNotificationsPlugin {
 
   /// Returns a list of notifications pending to be delivered/shown.
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() =>
-      FlutterLocalNotificationsPlatform.instance?.pendingNotificationRequests();
+      FlutterLocalNotificationsPlatform.instance.pendingNotificationRequests();
 }

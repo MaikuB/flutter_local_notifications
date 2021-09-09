@@ -2,11 +2,13 @@ package com.dexterous.flutterlocalnotifications.models;
 
 import android.graphics.Color;
 
-import com.dexterous.flutterlocalnotifications.SoundSource;
+import androidx.annotation.Keep;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class NotificationChannelDetails {
+@Keep
+public class NotificationChannelDetails implements Serializable {
     private static final String ID = "id";
     private static final String NAME = "name";
     private static final String DESCRIPTION = "description";

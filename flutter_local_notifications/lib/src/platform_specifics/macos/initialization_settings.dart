@@ -1,5 +1,6 @@
 /// Plugin initialization settings for macOS.
 class MacOSInitializationSettings {
+  /// Constructs an instance of [MacOSInitializationSettings]
   const MacOSInitializationSettings({
     this.requestAlertPermission = true,
     this.requestSoundPermission = true,
@@ -7,12 +8,7 @@ class MacOSInitializationSettings {
     this.defaultPresentAlert = true,
     this.defaultPresentSound = true,
     this.defaultPresentBadge = true,
-  })  : assert(requestAlertPermission != null),
-        assert(requestSoundPermission != null),
-        assert(requestBadgePermission != null),
-        assert(defaultPresentAlert != null),
-        assert(defaultPresentBadge != null),
-        assert(defaultPresentSound != null);
+  });
 
   /// Request permission to display an alert.
   ///

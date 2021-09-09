@@ -1,3 +1,152 @@
+# [8.2.0]
+
+* Added `dayOfMonthAndTime` and `dateAndTime` values to the `DateTimeComponents` enum. These allow for creating monthly and yearly notifications respectively. Thanks to the PR from [Denis Shakinov](https://github.com/DenisShakinov)
+
+# [8.1.1+2]
+
+* Bumped `timezone` dependency. Thanks to the PR from [Xavier H.](https://github.com/xvrh)
+
+# [8.1.1+1]
+
+* Updated API docs for the `initialize()` to mention that the `getNotificationAppLaunchDetails()` method should be used to handle when a notification launches an application
+
+# [8.1.1]
+
+* [Android] fixed issue [1263](https://github.com/MaikuB/flutter_local_notifications/issues/1263) around an unchecked/unsafe operation warning
+* [Android] fixed issue [1246](https://github.com/MaikuB/flutter_local_notifications/issues/1246) where calling `createNotificationChannel()` wasn't update a notification channel's name/description
+
+# [8.1.0]
+
+* [Android] added the `startForegroundService()` and `stopForegroundService()` methods to the `AndroidFlutterLocalNotificationsPlugin` class. This can be used to start and stop a foreground service that shows a foreground service respectively. Refer to the API docs for more details on how to use this. The example app has been updated to demonstrate their usage. Thanks to the PR from [EPNW](https://github.com/EPNW)
+
+# [8.0.0]
+
+* **Breaking change** the `AndroidBitmap` class is now a generic class i.e. `AndroidBitmap<T>`. This has resulted in the following changes
+ * the type of the `largeIcon` property that belongs to the `AndroidNotificationDetails` class has changed from `AndroidBitmap` to `AndroidBitmap<Object>`
+ * the type of the `largeIcon` and `bigPicture` properties that belongs to the `BigPictureStyleInformation` class has changed from `AndroidBitmap` to `AndroidBitmap<Object>`
+* [Android] Added the `ByteArrayAndroidBitmap` class that implements the `AndroidBitmaps<T>` class. This allows using a byte array to use as the large icon for a notification or as big picture if the big picture style has been applied. A `ByteArrayAndroidBitmap.fromBase64String()` named constructor is also available that will enable this using a base-64 encoded string. Thanks to the PR from [Alexander Petermann](https://github.com/lexxxel)
+
+# [7.0.0]
+
+* **Breaking change** Removed support for Linux. This is because adding Linux made use of a plugin that was causing apps targeting the web to fail to build
+* **Note**: as this is more an urgent release to resolve the aforementioned issue that results in a breaking change, please note this release does not include the Android 12 support changes that were in the prereleases. This is to err on the side of caution as Android 12 hasn't reached platform stability yet
+
+# [6.1.1]
+
+* **Breaking change** Removed support for Linux. This is because adding Linux made use of a plugin that was causing apps targeting the web to fail to build. This is identical to the 7.0.0 release but also done as a minor increment as 6.1.1 to fix build issues as developers would most likely use caret versioning
+
+# [6.1.0] **Bad build**
+
+* Added initial support to Linux. Thanks to the PR from [Yaroslav Pronin](https://github.com/proninyaroslav)
+* Prevent crashing on the web by adding guard clauses within the plugin to check if the plugin is being used within a web app due to an [issue](https://github.com/google/platform.dart/issues/32) with getting the operating system via the [platform](https://pub.dev/packages/platform) package, which in turn relies on `dart:io`'s `Platform` APIs
+
+# [6.0.0]
+
+* Updated Flutter SDK constraint. To err on the safe side, this is why there's a major version bump for this release as the minimum version supported is 2.2
+* Updated Dart SDK constraint
+* Bumped mockito dependency
+* Addressed deprecation warnings that were appearing for Android builds
+* Updated API docs around the `tag` property associated with the `AndroidNotificationDetails` class
+
+# [5.0.0+4]
+
+* Fixed example app to re-add attributes to the Android app's `AndroidManifest.xml` to allow full-screen intent notifications to work
+
+# [5.0.0+3]
+
+* Updated readme on how to get the local timezone
+* Added link to location of example app to the readme
+
+# [5.0.0+2]
+
+* Updated example app to use the [flutter_native_timezone](https://pub.dev/packages/flutter_native_timezone) plugin to get the timezone
+* Updated readme to mention effect of using same notification id
+* Fixed wording and typo in full-screen intent notifications section of the readme. Thanks to PR from [Siddhartha Joshi](https://github.com/cimplesid)
+
+# [5.0.0+1]
+
+* Add link to explanation of the `onDidReceiveLocalNotification` callback to the initialisation section of the readme
+* Updated testing section to clarify behaviour on platforms that aren't supported
+* Updated `timezone` dependency
+
+# [5.0.0]
+
+* **Breaking change** migrated to null safety. Some arguments that were formerly null (e.g. some boolean values) are now non-nullable with a default value that should retain the old behaviour
+
+# [4.0.1+2]
+
+* [iOS/macOS] fixed issue where not requesting any permissions (i.e. all the boolean flags were set to false) would still cause a permissions prompt to appear. Thanks to the PR from [Andrey Parvatkin](https://github.com/badver)
+
+# [4.0.1+1]
+
+* Fixed typo in readme around the note relating to version 4.0 of the plugin where `onSelectNotification` will not be triggered when an app is launched by tapping on a notification.
+
+# [4.0.1]
+
+* [Android] added the `getNotificationChannels` method to the `AndroidFlutterLocalNotificationsPlugin` class. This can be used to a get list of all the notification channels on devices with Android 8.0 or newer. Thanks to the PR from [Shapovalova Vera](https://github.com/VAShapovalova)
+
+# [4.0.0]
+
+* **Breaking change** calling `initialize` will no longer trigger the `onSelectNotification` if a notification was tapped on prior to calling `initialize`. This was done as the `getNotificationAppLaunchDetails` method already provided a way to handle when an application was launched by a notification. Furthermore, calling `initialize` multiple times (e.g. on different pages) would have previously caused the `onSelectNotification` callback multiples times as well. This potentially results in the same notification being processed again
+* **Breaking change** the `matchDateComponents` parameter has been renamed to `matchDateTimeComponents`
+* Dates in the past can now be used with `zonedSchedule` when a value for the `matchDateTimeComponents` parameter has been specified to create recurring notifications. Thanks to the PR from [Erlend](https://github.com/erf) for implementing this and the previous change
+* [Android] notification data is now saved to shared preferences in a background thread to minimise jank. Thanks to the PR from [davidlepilote](https://github.com/davidlepilote)
+* [Android] the `tag` property has been added to the `AndroidNotificationDetails` class. This allows notifications on Android to be uniquely identifier through the use of the value of the `tag` and the `id` passed to the method for show/schedule the notification
+* [Android] the optional `tag` argument has been added to the `cancel` method for the `FlutterLocalNotificationsPlugin` and `AndroidFlutterLocalNotificationsPlugin` classes. This can be used to cancel notifications where the `tag` has been specified
+* [iOS][macOS] the `threadIdentifier` property has been added to the `IOSNotificationDetails` and `MacOSNotificationDetails` classes. This can be used to group notifications on iOS 10.0 or newer, and macOS 10.14 or newer. Thanks to the PR from [Marcin Chudy](https://github.com/mchudy) for adding this and the `tag` property for Android notifications
+* The Android and iOS example applications have been recreated in Kotlin and Swift respectively
+* Updated example application's dev dependency on the deprecated `e2e` for integration tests to use `integration_test` instead
+* Bumped Flutter dependencies
+* Example app cleanup including updating Proguard rules as specifying the rules for Flutter were no longer needed
+
+# [3.0.3]
+
+* [Android] added support for showing subtext in the notification. Thanks to the PR from [sidlatau](https://github.com/sidlatau)
+
+# [3.0.2]
+
+* [Android] added support for showing the notification timestamp as a stopwatch instead via the `usesChronometer` argument added to the constructor of the `AndroidNotificationDetails` class. Thanks to the PR from [andymstone](https://github.com/andymstone)
+* Updated readme to add more clarity on the compatibility with `firebase_messaging` plugin and iOS setup sections
+* Updated changelog entry for the 2.0.0 release around support for full-screen intents to clarify that the `fullScreenIntent` was added to the constructor of the `AndroidNotificationDetails` class.
+
+# [3.0.1+7]
+
+* [Android] fixed issue [935](https://github.com/MaikuB/flutter_local_notifications/issues/935) where scheduling a notification on Android devices running Android versions older than 4.4 (API 19) could cause a crash from using an API that isn't available
+
+# [3.0.1+6]
+
+* [Android] change how the intent that associated with the notification is determined so that the plugin. This is to allow the plugin to work with applications that use activity aliases as per issue [92](https://github.com/MaikuB/flutter_local_notifications/issues/912). Thanks the PR from  [crazecoder](https://github.com/crazecoder)
+* Fixed issue [924](https://github.com/MaikuB/flutter_local_notifications/issues/924), where example app will now use https URLs for downloading placeholder images. These images were used when displaying some of the notifications. Thanks to the PR from [Fareez](https://github.com/iqfareez)
+
+# [3.0.1+5]
+
+* Fixed links in table of contents in the readme. Thanks to the PR from [Dihak](https://github.com/dihak)
+* Added a note in the readme to indicate changes were done in version 3.0.1+4 to reduce the setup to ensure readers have updated their application to use the latest version of the plugin
+* Added a note around setting the application badge with a link to a plugin that supports this functionality
+
+# [3.0.1+4]
+
+* [Android] made changes so that the plugin will now register the receivers and permissions needed. This reduces the amount of setup needed as developers will no longer need to update their AndroidManifest.xml to do so. The section of the readme on the Android setup for scheduled notifications has been removed as a result
+* [Android] fixed an issue where notifications may not appear after rebooting
+* [Android] made changes so that the plugin itself specifies which classes should be kept when minified. This means developers should no longer need to add a rule for this plugin in their application's Proguard rules file. Note that rules for GSON will still be needed. The release build configuration section related to the Android setup has been updated to reflect this change
+* Bump dependency on `flutter_local_notifications_platform_interface`
+* Updated API docs
+
+# [3.0.1+3]
+
+* [Android] Fixed issue [898](https://github.com/MaikuB/flutter_local_notifications/issues/898) around duplicate pending notifications
+* Updated example app to more clearly indicate which button will demonstrate an Android notification with a different coloured icon and LED
+
+# [3.0.1+2]
+
+* [Android] additional fix for issue [871](https://github.com/MaikuB/flutter_local_notifications/issues/871) by switching the implementation of `deleteNotificationChannel` to use the `NotificationManager` APIs instead of the `NotificationManagerCompat` APIs
+
+# [3.0.1+1]
+
+* Updated API docs for the `UriAndroidNotificationSound` class to further clarify that developers may need to write code that makes use of platform channels
+* [Android] fix issue [881](https://github.com/MaikuB/flutter_local_notifications/issues/881) where recurring notifications may fail to schedule the next occurrence on older Android versions as the ThreeTen Android Backport library hadn't been initialised yet
+* [Android] switched implementation of `createNotificationChannelGroup` and `deleteNotificationChannelGroup` methods to use the `NotificationManager` APIs instead of the `NotificationManagerCompat` APIs. If you had issues with 3.0.1 then this should fix the issue (e.g. as reported in issue [871](https://github.com/MaikuB/flutter_local_notifications/issues/871)) as the the APIs that were previously being called would've required apps to use more recent versions of the AndroidX libraries
+
 # [3.0.1]
 
 * [Android] Added the `createNotificationChannelGroup` and `deleteNotificationChannelGroup` methods to the `AndroidFluttterLocalNotificationsPlugin` class that can be used to create and delete notification channel groups. The optional `groupId` parameter has been added to the `AndroidNotificationChannel` class that can be used to associated notification channels to a particular group. Example app has been updated to include code snippets for this.
@@ -39,7 +188,7 @@
 * [Android] Fixed an issue where the error message for an invalid source resource wasn't formatted correctly to include the name of the specified resource
 * [Android] Added `androidAllowWhileIdle` boolean argument to the `periodicallyShow` method. When set to true, this changes how recurring notifications are shown so that the Android `AlarmManager` API is used to schedule a notification with exact timing. When the notification appears, the next one is scheduled after that. This is get around the limitations where the `AlarmManager` APIs don't provide a way for work to be repeated with precising timing regardless of the power mode.
   The example app has been updated to include these changes so that it can be used as a reference as well
-* [Android] Added support for full-screen notifications via the `fullScreenIntent` argument that has been added to the `AndroidNotificationDetails` class. Thanks to the PR from [Nadav Fima](https://github.com/nadavfima)
+* [Android] Added support for full-screen notifications via the `fullScreenIntent` argument that has been added to the constructor of the `AndroidNotificationDetails` class. Thanks to the PR from [Nadav Fima](https://github.com/nadavfima)
 * [Android] Bumped compile SDK to 30 (Android 11)
 * [Android] Added ability to specify shortcut id that can be used for conversations. See https://developer.android.com/guide/topics/ui/conversations for more info. Note the plugin doesn't provide the ability to publish shortcuts so developers will likely need to look into writing their own code to do so and save the shortcut id so that it can be linked to notifications
 * [iOS] Updated the details in the plugin's podspec file

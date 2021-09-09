@@ -1,4 +1,9 @@
 package com.dexterous.flutterlocalnotifications.models.styles;
 
-public abstract class StyleInformation {
+import androidx.annotation.Keep;
+
+import java.io.Serializable;
+
+@Keep
+public abstract class StyleInformation  implements Serializable {
 }

@@ -1,7 +1,10 @@
 package com.dexterous.flutterlocalnotifications.models.styles;
 
+import androidx.annotation.Keep;
+
 import java.util.ArrayList;
 
+@Keep
 public class InboxStyleInformation extends DefaultStyleInformation {
     public Boolean htmlFormatLines;
     public ArrayList<String> lines;
