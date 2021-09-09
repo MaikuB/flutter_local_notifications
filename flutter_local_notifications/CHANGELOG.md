@@ -1,3 +1,8 @@
+# [9.0.0-dev.4]
+
+* **Breaking change**  fixed issue [1306](https://github.com/MaikuB/flutter_local_notifications/issues/1306) where an Android notification channel description should have been optional. This means the `description` property of the `AndroidNotificationChannel` class and the `channelDescription` property of the `AndroidNotificationDetails` class are now named optional parameters
+* Fixed grammatical errors in readme. Thanks to PR from [Aneesh Rao](https://github.com/sidrao2006)
+
 # [9.0.0-dev.3]
 
 * **Breaking change** the `SelectNotificationCallback` typedef now maps to a function that returns `void` instead of a `Future<dynamic>`. This change was done to better communicate the plugin doesn't actually await any asynchronous computation and is similar to how button pressed callbacks work for Flutter where they are typically use [`VoidCallback`](https://api.flutter.dev/flutter/dart-ui/VoidCallback.html)
