@@ -16,7 +16,7 @@ A cross platform plugin for displaying local notifications.
    - [Updating application badge](#updating-application-badge)
    - [Custom notification sounds](#custom-notification-sounds)
    - [macOS differences](#macos-differences)
-   - [Linux limitations](#Linux-limitations)
+   - [Linux limitations](#linux-limitations)
 - **[📷 Screenshots](#-screenshots)**
 - **[👏 Acknowledgements](#-acknowledgements)**
 - **[⚙️ Android Setup](#️-android-setup)**
