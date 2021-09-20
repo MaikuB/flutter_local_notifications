@@ -8,7 +8,8 @@ homepage: https://github.com/MaikuB/flutter_local_notifications/tree/master/flut
 dependencies:
   flutter:
     sdk: flutter
-  flutter_local_notifications_platform_interface: ^4.0.0
+  # flutter_local_notifications_platform_interface 4.0.1 not supported in lotum fork
+  flutter_local_notifications_platform_interface: 4.0.0
   platform: ^3.0.0
   timezone: ^0.7.0
 
