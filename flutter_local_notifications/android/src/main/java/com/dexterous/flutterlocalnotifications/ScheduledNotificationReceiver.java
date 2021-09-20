@@ -5,9 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import androidx.annotation.Keep;
-import androidx.core.app.NotificationManagerCompat;
-
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
 import com.dexterous.flutterlocalnotifications.utils.StringUtils;
 import com.google.gson.Gson;
@@ -15,14 +12,15 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 
+import androidx.annotation.Keep;
+import androidx.core.app.NotificationManagerCompat;
+
 /**
  * Created by michaelbui on 24/3/18.
  */
 
 @Keep
 public class ScheduledNotificationReceiver extends BroadcastReceiver {
-
-
     @Override
     public void onReceive(final Context context, Intent intent) {
         String notificationDetailsJson = intent.getStringExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_DETAILS);
@@ -41,11 +39,18 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
             }
         } else {
             Gson gson = FlutterLocalNotificationsPlugin.buildGson();
-            Type type = new TypeToken<NotificationDetails>() {
-            }.getType();
+            Type type = new TypeToken<NotificationDetails>() {}.getType();
             NotificationDetails notificationDetails = gson.fromJson(notificationDetailsJson, type);
-            FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
 
+            // It seems the that the notification details are sometimes missing channel id or name.
+            // Calling the showNotification method without the required channel info results in a
+            // crash, so we omit the notification if these parts of the notification are missing.
+            if (notificationDetails.channelId == null || notificationDetails.channelId.isEmpty() ||
+                notificationDetails.channelName == null || notificationDetails.channelName.isEmpty()) {
+                return;
+            }
+
+            FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
             FlutterLocalNotificationsPlugin.NotificationShownListener listener = FlutterLocalNotificationsPlugin.onNotificationShown;
             if (listener != null) {
                 listener.onShown(context, notificationDetails);
