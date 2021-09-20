@@ -24,7 +24,10 @@ enum AndroidIconSource {
   contentUri,
 
   /// A Flutter asset that is a bitmap.
-  flutterBitmapAsset
+  flutterBitmapAsset,
+
+  /// A byte array bitmap.
+  byteArray,
 }
 
 /// The available notification styles on Android.
@@ -229,6 +232,7 @@ class Priority {
 
   @override
   int get hashCode => value;
+
   @override
   bool operator ==(Object other) => other is Priority && other.value == value;
 }
