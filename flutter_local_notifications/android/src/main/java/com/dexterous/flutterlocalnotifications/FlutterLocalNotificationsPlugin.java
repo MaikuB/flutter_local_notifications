@@ -493,6 +493,21 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     }
 
     @SuppressWarnings("unchecked")
+    private static byte[] castObjectToByteArray(Object data) {
+        byte[] byteArray;
+        // if data is deserialized by gson, it is of the wrong type and we have to convert it
+        if (data instanceof ArrayList) {
+            List<Double> l = (ArrayList<Double>) data;
+            byteArray = new byte[l.size()];
+            for (int i = 0; i < l.size(); i++) {
+                byteArray[i] = (byte) l.get(i).intValue();
+            }
+        } else {
+            byteArray = (byte[]) data;
+        }
+        return byteArray;
+    }
+
     private static Bitmap getBitmapFromSource(Context context, Object data, BitmapSource bitmapSource) {
         Bitmap bitmap = null;
         if (bitmapSource == BitmapSource.DrawableResource) {
@@ -500,39 +515,29 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         } else if (bitmapSource == BitmapSource.FilePath) {
             bitmap = BitmapFactory.decodeFile((String) data);
         } else if (bitmapSource == BitmapSource.ByteArray) {
-            byte[] byteArray;
-            // if data is deserialized by gson, it is of the wrong type and we have to convert it
-            if (data instanceof ArrayList) {
-                List<Double> l = (ArrayList<Double>) data;
-                byteArray = new byte[l.size()];
-                for (int i = 0; i < l.size(); i++) {
-                    byteArray[i] = (byte) l.get(i).intValue();
-                }
-            } else {
-                byteArray = (byte[]) data;
-            }
+            byte[] byteArray = castObjectToByteArray(data);
             bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         }
 
         return bitmap;
     }
 
-    private static IconCompat getIconFromSource(Context context, String iconPath, IconSource iconSource) {
+    private static IconCompat getIconFromSource(Context context, Object data, IconSource iconSource) {
         IconCompat icon = null;
         switch (iconSource) {
             case DrawableResource:
-                icon = IconCompat.createWithResource(context, getDrawableResourceId(context, iconPath));
+                icon = IconCompat.createWithResource(context, getDrawableResourceId(context, (String) data));
                 break;
             case BitmapFilePath:
-                icon = IconCompat.createWithBitmap(BitmapFactory.decodeFile(iconPath));
+                icon = IconCompat.createWithBitmap(BitmapFactory.decodeFile((String) data));
                 break;
             case ContentUri:
-                icon = IconCompat.createWithContentUri(iconPath);
+                icon = IconCompat.createWithContentUri((String) data);
                 break;
             case FlutterBitmapAsset:
                 try {
                     FlutterLoader flutterLoader = FlutterInjector.instance().flutterLoader();
-                    AssetFileDescriptor assetFileDescriptor = context.getAssets().openFd(flutterLoader.getLookupKeyForAsset(iconPath));
+                    AssetFileDescriptor assetFileDescriptor = context.getAssets().openFd(flutterLoader.getLookupKeyForAsset((String) data));
                     FileInputStream fileInputStream = assetFileDescriptor.createInputStream();
                     icon = IconCompat.createWithBitmap(BitmapFactory.decodeStream(fileInputStream));
                     fileInputStream.close();
@@ -541,6 +546,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                     throw new RuntimeException(e);
                 }
                 break;
+            case ByteArray:
+                byte[] byteArray = castObjectToByteArray(data);
+                icon = IconCompat.createWithData(byteArray, 0, byteArray.length);
             default:
                 break;
         }

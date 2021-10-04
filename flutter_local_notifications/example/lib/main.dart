@@ -1234,6 +1234,13 @@ class _HomePageState extends State<HomePage> {
       bot: true,
       icon: BitmapFilePathAndroidIcon(largeIconPath),
     );
+    final Person chef = Person(
+        name: 'Master Chef',
+        key: '3',
+        uri: 'tel:111222333444',
+        icon: ByteArrayAndroidIcon.fromBase64String(
+            await _base64encodedImage('https://placekitten.com/48/48')));
+
     final List<Message> messages = <Message>[
       Message('Hi', DateTime.now(), null),
       Message("What's up?", DateTime.now().add(const Duration(minutes: 5)),
@@ -1242,6 +1249,8 @@ class _HomePageState extends State<HomePage> {
           dataMimeType: 'image/png', dataUri: imageUri),
       Message('What kind of food would you prefer?',
           DateTime.now().add(const Duration(minutes: 10)), lunchBot),
+      Message('You do not have time eat! Keep working!',
+          DateTime.now().add(const Duration(minutes: 11)), chef),
     ];
     final MessagingStyleInformation messagingStyle = MessagingStyleInformation(
         me,
@@ -1262,8 +1271,8 @@ class _HomePageState extends State<HomePage> {
 
     // wait 10 seconds and add another message to simulate another response
     await Future<void>.delayed(const Duration(seconds: 10), () async {
-      messages.add(Message(
-          'Thai', DateTime.now().add(const Duration(minutes: 11)), null));
+      messages.add(Message("I'm so sorry!!! But I really like thai food ...",
+          DateTime.now().add(const Duration(minutes: 11)), null));
       await flutterLocalNotificationsPlugin.show(
           0, 'message title', 'message body', platformChannelSpecifics);
     });
@@ -2250,6 +2259,7 @@ class SecondPage extends StatefulWidget {
 
 class SecondPageState extends State<SecondPage> {
   String? _payload;
+
   @override
   void initState() {
     super.initState();
