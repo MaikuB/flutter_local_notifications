@@ -492,7 +492,8 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return context.getResources().getIdentifier(name, DRAWABLE, context.getPackageName());
     }
 
-    private static byte[] objectDataToByteArray(Object data) {
+    @SuppressWarnings("unchecked")
+    private static byte[] castObjectToByteArray(Object data) {
         byte[] byteArray;
         // if data is deserialized by gson, it is of the wrong type and we have to convert it
         if (data instanceof ArrayList) {
@@ -507,7 +508,6 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return byteArray;
     }
 
-    @SuppressWarnings("unchecked")
     private static Bitmap getBitmapFromSource(Context context, Object data, BitmapSource bitmapSource) {
         Bitmap bitmap = null;
         if (bitmapSource == BitmapSource.DrawableResource) {
@@ -515,7 +515,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         } else if (bitmapSource == BitmapSource.FilePath) {
             bitmap = BitmapFactory.decodeFile((String) data);
         } else if (bitmapSource == BitmapSource.ByteArray) {
-            byte[] byteArray = objectDataToByteArray(data);
+            byte[] byteArray = castObjectToByteArray(data);
             bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         }
 
@@ -547,7 +547,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 }
                 break;
             case ByteArray:
-                byte[] byteArray = objectDataToByteArray(data);
+                byte[] byteArray = castObjectToByteArray(data);
                 icon = IconCompat.createWithData(byteArray, 0, byteArray.length);
             default:
                 break;
