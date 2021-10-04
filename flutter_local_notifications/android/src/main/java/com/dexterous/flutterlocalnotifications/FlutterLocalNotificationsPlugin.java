@@ -492,6 +492,21 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         return context.getResources().getIdentifier(name, DRAWABLE, context.getPackageName());
     }
 
+    private static byte[] objectDataToByteArray(Object data) {
+        byte[] byteArray;
+        // if data is deserialized by gson, it is of the wrong type and we have to convert it
+        if (data instanceof ArrayList) {
+            List<Double> l = (ArrayList<Double>) data;
+            byteArray = new byte[l.size()];
+            for (int i = 0; i < l.size(); i++) {
+                byteArray[i] = (byte) l.get(i).intValue();
+            }
+        } else {
+            byteArray = (byte[]) data;
+        }
+        return byteArray;
+    }
+
     @SuppressWarnings("unchecked")
     private static Bitmap getBitmapFromSource(Context context, Object data, BitmapSource bitmapSource) {
         Bitmap bitmap = null;
@@ -500,17 +515,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         } else if (bitmapSource == BitmapSource.FilePath) {
             bitmap = BitmapFactory.decodeFile((String) data);
         } else if (bitmapSource == BitmapSource.ByteArray) {
-            byte[] byteArray;
-            // if data is deserialized by gson, it is of the wrong type and we have to convert it
-            if (data instanceof ArrayList) {
-                List<Double> l = (ArrayList<Double>) data;
-                byteArray = new byte[l.size()];
-                for (int i = 0; i < l.size(); i++) {
-                    byteArray[i] = (byte) l.get(i).intValue();
-                }
-            } else {
-                byteArray = (byte[]) data;
-            }
+            byte[] byteArray = objectDataToByteArray(data);
             bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         }
 
@@ -542,17 +547,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 }
                 break;
             case ByteArray:
-                byte[] byteArray;
-                // if data is deserialized by gson, it is of the wrong type and we have to convert it
-                if (data instanceof ArrayList) {
-                    List<Double> l = (ArrayList<Double>) data;
-                    byteArray = new byte[l.size()];
-                    for (int i = 0; i < l.size(); i++) {
-                        byteArray[i] = (byte) l.get(i).intValue();
-                    }
-                } else {
-                    byteArray = (byte[]) data;
-                }
+                byte[] byteArray = objectDataToByteArray(data);
                 icon = IconCompat.createWithData(byteArray, 0, byteArray.length);
             default:
                 break;

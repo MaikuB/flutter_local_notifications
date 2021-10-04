@@ -1239,7 +1239,7 @@ class _HomePageState extends State<HomePage> {
         key: '3',
         uri: 'tel:111222333444',
         icon: ByteArrayAndroidIcon.fromBase64String(
-            await _base64encodedImage('http://placekitten.com/48/48')));
+            await _base64encodedImage('https://placekitten.com/48/48')));
 
     final List<Message> messages = <Message>[
       Message('Hi', DateTime.now(), null),
