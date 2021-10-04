@@ -1,6 +1,6 @@
 # [9.0.0-dev.5]
 
-* * **Breaking change** the `AndroidIcon` class is now a generic class i.e. `AndroidBitmap<T>`. This has resulted in the following change
+* * **Breaking change** the `AndroidIcon` class is now a generic class i.e. `AndroidIcon<T>`. This has resulted in the following change
  * the type of the `icon` property that belongs to the `Person` class has changed from `AndroidIcon?` to `AndroidIcon<Object>?`
 * [Android] Added the `ByteArrayAndroidIcon` class that implements the `AndroidIcon<T>` class. This allows using a byte array to use as the icon for a person in a message style notification. A `ByteArrayAndroidIcon.fromBase64String()` named constructor is also available that will enable this using a base-64 encoded string. Thanks to the PR from [Alexander Petermann](https://github.com/lexxxel)
 
