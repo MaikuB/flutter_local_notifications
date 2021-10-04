@@ -238,7 +238,7 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
 
 ...
 
-Future onDidReceiveLocalNotification(
+void onDidReceiveLocalNotification(
     int id, String title, String body, String payload) async {
   // display a dialog with the notification details, tap ok to go to another page
   showDialog(

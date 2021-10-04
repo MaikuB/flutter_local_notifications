@@ -678,11 +678,12 @@ class IOSFlutterLocalNotificationsPlugin
         _onSelectNotification!(call.arguments);
         break;
       case 'didReceiveLocalNotification':
-        return await _onDidReceiveLocalNotification!(
+        _onDidReceiveLocalNotification!(
             call.arguments['id'],
             call.arguments['title'],
             call.arguments['body'],
             call.arguments['payload']);
+        break;
       default:
         return await Future<void>.error('Method not defined');
     }
