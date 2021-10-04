@@ -1,3 +1,9 @@
+# [9.0.0-dev.5]
+
+* * **Breaking change** the `AndroidIcon` class is now a generic class i.e. `AndroidBitmap<T>`. This has resulted in the following change
+ * the type of the `icon` property that belongs to the `Person` class has changed from `AndroidIcon?` to `AndroidIcon<Object>?`
+* [Android] Added the `ByteArrayAndroidIcon` class that implements the `AndroidIcon<T>` class. This allows using a byte array to use as the icon for a person in a message style notification. A `ByteArrayAndroidIcon.fromBase64String()` named constructor is also available that will enable this using a base-64 encoded string. Thanks to the PR from [Alexander Petermann](https://github.com/lexxxel)
+
 # [9.0.0-dev.4]
 
 * **Breaking change**  fixed issue [1306](https://github.com/MaikuB/flutter_local_notifications/issues/1306) where an Android notification channel description should have been optional. This means the `description` property of the `AndroidNotificationChannel` class and the `channelDescription` property of the `AndroidNotificationDetails` class are now named optional parameters
@@ -46,7 +52,7 @@
 * **Breaking change** the `AndroidBitmap` class is now a generic class i.e. `AndroidBitmap<T>`. This has resulted in the following changes
  * the type of the `largeIcon` property that belongs to the `AndroidNotificationDetails` class has changed from `AndroidBitmap` to `AndroidBitmap<Object>`
  * the type of the `largeIcon` and `bigPicture` properties that belongs to the `BigPictureStyleInformation` class has changed from `AndroidBitmap` to `AndroidBitmap<Object>`
-* [Android] Added the `ByteArrayAndroidBitmap` class that implements the `AndroidBitmaps<T>` class. This allows using a byte array to use as the large icon for a notification or as big picture if the big picture style has been applied. A `ByteArrayAndroidBitmap.fromBase64String()` named constructor is also available that will enable this using a base-64 encoded string. Thanks to the PR from [Alexander Petermann](https://github.com/lexxxel)
+* [Android] Added the `ByteArrayAndroidBitmap` class that implements the `AndroidBitmap<T>` class. This allows using a byte array to use as the large icon for a notification or as big picture if the big picture style has been applied. A `ByteArrayAndroidBitmap.fromBase64String()` named constructor is also available that will enable this using a base-64 encoded string. Thanks to the PR from [Alexander Petermann](https://github.com/lexxxel)
 
 # [7.0.0]
 
