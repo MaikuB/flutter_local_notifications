@@ -312,7 +312,7 @@ class LinuxNotificationManager {
         if (actionKey == _kDefaultActionName) {
           final LinuxNotificationInfo? notify =
               await _storage.getBySystemId(systemId);
-          await _onSelectNotification?.call(notify?.payload);
+          _onSelectNotification?.call(notify?.payload);
         }
       },
     );

@@ -1,5 +1,4 @@
 import 'enums.dart';
-import 'icon.dart';
 import 'initialization_settings.dart';
 import 'message.dart';
 import 'notification_channel.dart';
@@ -86,29 +85,13 @@ extension PersonMapper on Person {
       }..addAll(_convertIconToMap());
 
   Map<String, Object> _convertIconToMap() {
-    if (icon is DrawableResourceAndroidIcon) {
-      return <String, Object>{
-        'icon': icon!.icon,
-        'iconSource': AndroidIconSource.drawableResource.index,
-      };
-    } else if (icon is BitmapFilePathAndroidIcon) {
-      return <String, Object>{
-        'icon': icon!.icon,
-        'iconSource': AndroidIconSource.bitmapFilePath.index,
-      };
-    } else if (icon is ContentUriAndroidIcon) {
-      return <String, Object>{
-        'icon': icon!.icon,
-        'iconSource': AndroidIconSource.contentUri.index,
-      };
-    } else if (icon is FlutterBitmapAssetAndroidIcon) {
-      return <String, Object>{
-        'icon': icon!.icon,
-        'iconSource': AndroidIconSource.flutterBitmapAsset.index,
-      };
-    } else {
+    if (icon == null) {
       return <String, Object>{};
     }
+    return <String, Object>{
+      'icon': icon!.data,
+      'iconSource': icon!.source.index,
+    };
   }
 }
 

@@ -1,3 +1,17 @@
+# [9.0.0]
+
+* **Breaking change** the `SelectNotificationCallback` and `DidReceiveLocalNotificationCallback` typedefs now map to functions that returns `void` instead of a `Future<dynamic>`. This change was done to better communicate the plugin doesn't actually await any asynchronous computation and is similar to how button pressed callbacks work for Flutter where they are typically use [`VoidCallback`](https://api.flutter.dev/flutter/dart-ui/VoidCallback.html)
+* Updated example app to show how to display notification where a byte array is used to specify the icon on Linux
+* **Breaking change** the `value` property of the `Importance` class is now non-nullable
+* **Breaking change** the `FlutterLocalNotificationsPlugin.private()` constructor that was visible for testing purposes has been removed. The plugin now uses the [`defaultTargetPlatform`](https://api.flutter.dev/flutter/foundation/defaultTargetPlatform.html) property from the Flutter framework to determine the platform an application running on. This removes the need for depending on the `platform` package. To write tests that require a platform-specific implementation of the plugin, the [debugDefaultTargetPlatformOverride](https://api.flutter.dev/flutter/foundation/debugDefaultTargetPlatformOverride.html) property can be used to do so
+* **Breaking change**  fixed issue [1306](https://github.com/MaikuB/flutter_local_notifications/issues/1306) where an Android notification channel description should have been optional. This means the `description` property of the `AndroidNotificationChannel` class and the `channelDescription` property of the `AndroidNotificationDetails` class are now named parameters
+* **Breaking change** the `AndroidIcon` class is now a generic class i.e. `AndroidIcon<T>` and it's `icon` property has been renamed to `data`. With this change, the type of the `icon` property that belongs to the `Person` class has changed from `AndroidIcon?` to `AndroidIcon<Object>?`
+* [Android] Added the `ByteArrayAndroidIcon` class that implements the `AndroidIcon<T>` class. This allows using a byte array to use as the icon for a person in a message style notification. A `ByteArrayAndroidIcon.fromBase64String()` named constructor is also available that will enable this using a base-64 encoded string. Thanks to the PR from [Alexander Petermann](https://github.com/lexxxel)
+* [Android] Android 12 support
+* Restored Linux support
+* Fixed grammatical errors in readme. Thanks to PR from [Aneesh Rao](https://github.com/sidrao2006)
+* Plugin now uses the [`clock`](https://pub.dev/packages/clock) package for internal logic that relies on geting the current time, such as validating that the date for a scheduled notification is set in the future
+
 # [8.2.0]
 
 * Added `dayOfMonthAndTime` and `dateAndTime` values to the `DateTimeComponents` enum. These allow for creating monthly and yearly notifications respectively. Thanks to the PR from [Denis Shakinov](https://github.com/DenisShakinov)
@@ -24,7 +38,7 @@
 * **Breaking change** the `AndroidBitmap` class is now a generic class i.e. `AndroidBitmap<T>`. This has resulted in the following changes
  * the type of the `largeIcon` property that belongs to the `AndroidNotificationDetails` class has changed from `AndroidBitmap` to `AndroidBitmap<Object>`
  * the type of the `largeIcon` and `bigPicture` properties that belongs to the `BigPictureStyleInformation` class has changed from `AndroidBitmap` to `AndroidBitmap<Object>`
-* [Android] Added the `ByteArrayAndroidBitmap` class that implements the `AndroidBitmaps<T>` class. This allows using a byte array to use as the large icon for a notification or as big picture if the big picture style has been applied. A `ByteArrayAndroidBitmap.fromBase64String()` named constructor is also available that will enable this using a base-64 encoded string. Thanks to the PR from [Alexander Petermann](https://github.com/lexxxel)
+* [Android] Added the `ByteArrayAndroidBitmap` class that implements the `AndroidBitmap<T>` class. This allows using a byte array to use as the large icon for a notification or as big picture if the big picture style has been applied. A `ByteArrayAndroidBitmap.fromBase64String()` named constructor is also available that will enable this using a base-64 encoded string. Thanks to the PR from [Alexander Petermann](https://github.com/lexxxel)
 
 # [7.0.0]
 

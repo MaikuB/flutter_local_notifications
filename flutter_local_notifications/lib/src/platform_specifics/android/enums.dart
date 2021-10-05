@@ -24,7 +24,10 @@ enum AndroidIconSource {
   contentUri,
 
   /// A Flutter asset that is a bitmap.
-  flutterBitmapAsset
+  flutterBitmapAsset,
+
+  /// A byte array bitmap.
+  byteArray,
 }
 
 /// The available notification styles on Android.
@@ -190,14 +193,10 @@ class Importance {
       <Importance>[unspecified, none, min, low, defaultImportance, high, max];
 
   /// The integer representation.
-  // TODO(maikub): This should not be nullable,
-  //  but changing is a breaking change.
-  final int? value;
+  final int value;
 
   @override
-  // TODO(maikub): value should not be nullable in the first place.
-  //  once that's fixed, remove the ?? here!
-  int get hashCode => value ?? 0;
+  int get hashCode => value;
 
   @override
   bool operator ==(Object other) => other is Importance && other.value == value;
@@ -233,6 +232,7 @@ class Priority {
 
   @override
   int get hashCode => value;
+
   @override
   bool operator ==(Object other) => other is Priority && other.value == value;
 }

@@ -1,3 +1,6 @@
+analyzer:
+  exclude:
+    - lib/generated_plugin_registrant.dart
 linter:
   rules:
     - always_declare_return_types

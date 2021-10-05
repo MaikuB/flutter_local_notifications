@@ -16,6 +16,7 @@ A cross platform plugin for displaying local notifications.
    - [Updating application badge](#updating-application-badge)
    - [Custom notification sounds](#custom-notification-sounds)
    - [macOS differences](#macos-differences)
+   - [Linux limitations](#linux-limitations)
 - **[📷 Screenshots](#-screenshots)**
 - **[👏 Acknowledgements](#-acknowledgements)**
 - **[⚙️ Android Setup](#️-android-setup)**
@@ -47,6 +48,7 @@ A cross platform plugin for displaying local notifications.
 * **Android 4.1+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
 * **iOS 8.0+**. On iOS versions older than 10, the plugin will use the UILocalNotification APIs. The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on iOS 10 or newer.
 * **macOS 10.11+**. On macOS versions older than 10.14, the plugin will use the [NSUserNotification APIs](https://developer.apple.com/documentation/foundation/nsusernotification). The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on macOS 10.14 or newer.
+* **Linux**. Uses the [Desktop Notifications Specification](https://developer.gnome.org/notification-spec/).
 
 ## ✨ Features
 
@@ -84,6 +86,14 @@ A cross platform plugin for displaying local notifications.
 * [Android] Start a foreground service
 * [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
 * [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
+* [Linux] Ability to to use themed/Flutter Assets icons and sound
+* [Linux] Ability to to set the category
+* [Linux] Configuring the urgency
+* [Linux] Configuring the timeout (depends on system implementation)
+* [Linux] Ability to set custom notification location (depends on system implementation)
+* [Linux] Ability to set custom hints
+* [Linux] Ability to suppress sound
+* [Linux] Resident and transient notifications
 
 ## ⚠ Caveats and limitations
 The cross-platform facing API exposed by the `FlutterLocalNotificationsPlugin` class doesn't expose platform-specific methods as its goal is to provide an abstraction for all platforms. As such, platform-specific configuration is passed in as data. There are platform-specific implementations of the plugin that can be obtained by calling the [`resolvePlatformSpecificImplementation`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/resolvePlatformSpecificImplementation.html). An example of using this is provided in the section on requesting permissions on iOS. In spite of this, there may still be gaps that don't cover your use case and don't make sense to add as they don't fit with the plugin's architecture or goals. Developers can fork or maintain their own code for showing notifications in these situations.
@@ -115,6 +125,14 @@ Due to limitations currently within the macOS Flutter engine, `getNotificationAp
 
 The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods that were implemented before macOS support was added and have been marked as deprecated aren't implemented on macOS.
 
+##### Linux limitations
+
+Capabilities depend on the system notification server implementation, therefore, not all features listed in `LinuxNotificationDetails` may be supported. One of the ways to check some capabilities is to call the `LinuxFlutterLocalNotificationsPlugin.getCapabilities()` method.
+
+Scheduled/pending notifications is currently not supported due to the lack of a scheduler API.
+
+To respond to notification after the application is terminated, your application should be registered as DBus activatable (see [DBusApplicationLaunching](https://wiki.gnome.org/HowDoI/DBusApplicationLaunching) for more information), and register action before activating the application. This is difficult to do in a plugin because plugins instantiate during application activation, so `getNotificationAppLaunchDetails` can't be implemented without changing the main user application.
+
 ## 📷 Screenshots
 
 | Platform | Screenshot |
@@ -122,7 +140,7 @@ The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods that were
 | Android | <img height="480" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/android_notification.png"> |
 | iOS | <img height="414" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/ios_notification.png"> |
 | macOS | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/macos_notification.png"> |
-
+| Linux | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/gnome_linux_notification.png"> <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/kde_linux_notification.png"> |
 
 
 ## 👏 Acknowledgements
@@ -220,7 +238,7 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
 
 ...
 
-Future onDidReceiveLocalNotification(
+void onDidReceiveLocalNotification(
     int id, String title, String body, String payload) async {
   // display a dialog with the notification details, tap ok to go to another page
   showDialog(
@@ -290,7 +308,7 @@ await flutterLocalNotificationsPlugin.initialize(initializationSettings,
 Initialisation can be done is in the `main` function of your application or can be done within the first page shown in your app. Developers can refer to the example app that has code for the initialising within the `main` function. The code above has been simplified for explaining the concepts. Here we have specified the default icon to use for notifications on Android (refer to the *Android setup* section) and designated the function (`selectNotification`) that should fire when a notification has been tapped on via the `onSelectNotification` callback. Specifying this callback is entirely optional but here it will trigger navigation to another page and display the payload associated with the notification.
 
 ```dart
-Future selectNotification(String payload) async {
+void selectNotification(String payload) async {
     if (payload != null) {
       debugPrint('notification payload: $payload');
     }
@@ -376,11 +394,11 @@ Here the call to `flutterLocalNotificationsPlugin.resolvePlatformSpecificImpleme
 
 ```dart
 const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails(
-        'your channel id', 'your channel name', 'your channel description',
+    AndroidNotificationDetails('your channel id', 'your channel name',
+        channelDescription: 'your channel description',
         importance: Importance.max,
         priority: Priority.high,
-        showWhen: false);
+        ticker: 'ticker');
 const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.show(
@@ -428,8 +446,9 @@ await flutterLocalNotificationsPlugin.zonedSchedule(
     'scheduled body',
     tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
     const NotificationDetails(
-        android: AndroidNotificationDetails('your channel id',
-            'your channel name', 'your channel description')),
+        android: AndroidNotificationDetails(
+            'your channel id', 'your channel name',
+            channelDescription: 'your channel description')),
     androidAllowWhileIdle: true,
     uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime);
@@ -447,8 +466,9 @@ If you are trying to update your code so it doesn't use the deprecated methods f
 
 ```dart
 const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails('repeating channel id',
-        'repeating channel name', 'repeating description');
+    AndroidNotificationDetails(
+        'repeating channel id', 'repeating channel name',
+        channelDescription: 'repeating description');
 const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
 await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
@@ -495,8 +515,8 @@ const String groupChannelName = 'grouped channel name';
 const String groupChannelDescription = 'grouped channel description';
 // example based on https://developer.android.com/training/notify-user/group.html
 const AndroidNotificationDetails firstNotificationAndroidSpecifics =
-    AndroidNotificationDetails(
-        groupChannelId, groupChannelName, groupChannelDescription,
+    AndroidNotificationDetails(groupChannelId, groupChannelName,
+        channelDescription: groupChannelDescription,
         importance: Importance.max,
         priority: Priority.high,
         groupKey: groupKey);
@@ -505,8 +525,8 @@ const NotificationDetails firstNotificationPlatformSpecifics =
 await flutterLocalNotificationsPlugin.show(1, 'Alex Faarborg',
     'You will not believe...', firstNotificationPlatformSpecifics);
 const AndroidNotificationDetails secondNotificationAndroidSpecifics =
-    AndroidNotificationDetails(
-        groupChannelId, groupChannelName, groupChannelDescription,
+    AndroidNotificationDetails(groupChannelId, groupChannelName,
+        channelDescription: groupChannelDescription,
         importance: Importance.max,
         priority: Priority.high,
         groupKey: groupKey);
@@ -532,8 +552,8 @@ const InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
     contentTitle: '2 messages',
     summaryText: 'janedoe@example.com');
 const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails(
-        groupChannelId, groupChannelName, groupChannelDescription,
+    AndroidNotificationDetails(groupChannelId, groupChannelName,
+        channelDescription: groupChannelDescription,
         styleInformation: inboxStyleInformation,
         groupKey: groupKey,
         setAsGroupSummary: true);
@@ -596,4 +616,4 @@ If you decide to use the plugin class directly as part of your tests, the method
 
 Part of this is because the plugin detects if you're running on a supported plugin to determine which platform implementation of the plugin should be used. If the platform isn't supported, it will default to the aforementioned behaviour to reduce friction when writing tests. If this not desired then consider using mocks.
 
-If a platform-specific implementation of the plugin is required for your tests, a [named constructor](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/FlutterLocalNotificationsPlugin.private.html) is available that allows you to specify the platform required e.g. a [`FakePlatform`](https://api.flutter.dev/flutter/package-platform_platform/FakePlatform-class.html).
+If a platform-specific implementation of the plugin is required for your tests, use the [debugDefaultTargetPlatformOverride](https://api.flutter.dev/flutter/foundation/debugDefaultTargetPlatformOverride.html) property provided by the Flutter framework.

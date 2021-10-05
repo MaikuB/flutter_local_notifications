@@ -16,7 +16,7 @@ class Person {
   final bool bot;
 
   /// Icon for this person.
-  final AndroidIcon? icon;
+  final AndroidIcon<Object>? icon;
 
   /// Whether or not this is an important person.
   final bool important;

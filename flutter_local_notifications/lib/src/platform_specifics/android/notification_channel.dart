@@ -9,8 +9,8 @@ class AndroidNotificationChannel {
   /// Constructs an instance of [AndroidNotificationChannel].
   const AndroidNotificationChannel(
     this.id,
-    this.name,
-    this.description, {
+    this.name, {
+    this.description,
     this.groupId,
     this.importance = Importance.defaultImportance,
     this.playSound = true,
@@ -29,7 +29,7 @@ class AndroidNotificationChannel {
   final String name;
 
   /// The channel's description.
-  final String description;
+  final String? description;
 
   /// The id of the group that the channel belongs to.
   final String? groupId;

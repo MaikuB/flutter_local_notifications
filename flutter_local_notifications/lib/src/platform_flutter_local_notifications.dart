@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:clock/clock.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
@@ -168,7 +170,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.daily.index,
       'repeatTime': notificationTime.toMap(),
       'platformSpecifics': notificationDetails?.toMap(),
@@ -194,7 +196,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.weekly.index,
       'repeatTime': notificationTime.toMap(),
       'day': day.value,
@@ -331,7 +333,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? '',
@@ -418,7 +420,7 @@ class AndroidFlutterLocalNotificationsPlugin
         ?.map((a) => AndroidNotificationChannel(
               a['id'],
               a['name'],
-              a['description'],
+              description: a['description'],
               groupId: a['groupId'],
               showBadge: a['showBadge'],
               importance: Importance(a['importance']),
@@ -447,12 +449,13 @@ class AndroidFlutterLocalNotificationsPlugin
     return sound;
   }
 
-  Future<void> _handleMethod(MethodCall call) {
+  Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'selectNotification':
-        return _onSelectNotification!(call.arguments);
+        _onSelectNotification!(call.arguments);
+        break;
       default:
-        return Future<void>.error('Method not defined');
+        return await Future<void>.error('Method not defined');
     }
   }
 }
@@ -593,7 +596,7 @@ class IOSFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.daily.index,
       'repeatTime': notificationTime.toMap(),
       'platformSpecifics': notificationDetails?.toMap(),
@@ -618,7 +621,7 @@ class IOSFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.weekly.index,
       'repeatTime': notificationTime.toMap(),
       'day': day.value,
@@ -662,26 +665,27 @@ class IOSFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
   }
 
-  Future<void> _handleMethod(MethodCall call) {
+  Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'selectNotification':
-        return _onSelectNotification!(call.arguments);
-
+        _onSelectNotification!(call.arguments);
+        break;
       case 'didReceiveLocalNotification':
-        return _onDidReceiveLocalNotification!(
+        _onDidReceiveLocalNotification!(
             call.arguments['id'],
             call.arguments['title'],
             call.arguments['body'],
             call.arguments['payload']);
+        break;
       default:
-        return Future<void>.error('Method not defined');
+        return await Future<void>.error('Method not defined');
     }
   }
 }
@@ -800,19 +804,20 @@ class MacOSFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
   }
 
-  Future<void> _handleMethod(MethodCall call) {
+  Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'selectNotification':
-        return _onSelectNotification!(call.arguments);
+        _onSelectNotification!(call.arguments);
+        break;
       default:
-        return Future<void>.error('Method not defined');
+        return await Future<void>.error('Method not defined');
     }
   }
 }

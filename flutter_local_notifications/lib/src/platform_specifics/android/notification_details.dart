@@ -11,8 +11,8 @@ class AndroidNotificationDetails {
   /// Constructs an instance of [AndroidNotificationDetails].
   const AndroidNotificationDetails(
     this.channelId,
-    this.channelName,
-    this.channelDescription, {
+    this.channelName, {
+    this.channelDescription,
     this.icon,
     this.importance = Importance.defaultImportance,
     this.priority = Priority.defaultPriority,
@@ -71,8 +71,8 @@ class AndroidNotificationDetails {
 
   /// The channel's description.
   ///
-  /// Required for Android 8.0 or newer.
-  final String channelDescription;
+  /// This property is only applicable to Android versions 8.0 or newer.
+  final String? channelDescription;
 
   /// Whether notifications posted to this channel can appear as application
   /// icon badges in a Launcher
