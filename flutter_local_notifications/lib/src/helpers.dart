@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:timezone/timezone.dart';
 
 import 'types.dart';
@@ -11,7 +12,7 @@ void validateDateIsInTheFuture(
   if (matchDateTimeComponents != null) {
     return;
   }
-  if (scheduledDate.isBefore(DateTime.now())) {
+  if (scheduledDate.isBefore(clock.now())) {
     throw ArgumentError.value(
         scheduledDate, 'scheduledDate', 'Must be a date in the future');
   }

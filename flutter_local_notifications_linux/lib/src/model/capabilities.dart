@@ -41,7 +41,7 @@ class LinuxServerCapabilities {
 
   /// Supports markup in the body text. The markup is XML-based, and consists
   /// of a small subset of HTML along with a few additional tags.
-  /// For more information, see Desktop Notifications Specification https://developer.gnome.org/notification-spec/#markup
+  /// For more information, see Desktop Notifications Specification https://specifications.freedesktop.org/notification-spec/latest/ar01s04.html
   /// If marked up text is sent to a server
   /// that does not give this cap, the markup will show through as regular text
   /// so must be stripped clientside.

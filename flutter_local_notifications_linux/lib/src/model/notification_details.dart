@@ -29,6 +29,7 @@ class LinuxNotificationDetails {
   final LinuxNotificationIcon? icon;
 
   /// Specifies the notification sound.
+  /// Typical value is `ThemeLinuxSound('message')`
   final LinuxNotificationSound? sound;
 
   /// Specifies the category for notification.

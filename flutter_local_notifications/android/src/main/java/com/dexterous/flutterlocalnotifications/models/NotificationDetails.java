@@ -6,10 +6,8 @@ import android.os.Build.VERSION_CODES;
 
 import androidx.annotation.Keep;
 
-import com.dexterous.flutterlocalnotifications.BitmapSource;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.RepeatInterval;
-import com.dexterous.flutterlocalnotifications.SoundSource;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
@@ -17,11 +15,12 @@ import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformati
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
 @Keep
-public class NotificationDetails {
+public class NotificationDetails implements Serializable {
     private static final String ID = "id";
     private static final String TITLE = "title";
     private static final String BODY = "body";
@@ -194,10 +193,10 @@ public class NotificationDetails {
         notificationDetails.body = (String) arguments.get(BODY);
         notificationDetails.scheduledDateTime = (String) arguments.get(SCHEDULED_DATE_TIME);
         notificationDetails.timeZoneName = (String) arguments.get(TIME_ZONE_NAME);
-        if(arguments.containsKey(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)) {
+        if (arguments.containsKey(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)) {
             notificationDetails.scheduledNotificationRepeatFrequency = ScheduledNotificationRepeatFrequency.values()[(Integer) arguments.get(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)];
         }
-        if(arguments.containsKey(MATCH_DATE_TIME_COMPONENTS)) {
+        if (arguments.containsKey(MATCH_DATE_TIME_COMPONENTS)) {
             notificationDetails.matchDateTimeComponents = DateTimeComponents.values()[(Integer) arguments.get(MATCH_DATE_TIME_COMPONENTS)];
         }
         if (arguments.containsKey(MILLISECONDS_SINCE_EPOCH)) {
@@ -217,7 +216,7 @@ public class NotificationDetails {
         if (arguments.containsKey(DAY)) {
             notificationDetails.day = (Integer) arguments.get(DAY);
         }
-        
+
         readPlatformSpecifics(arguments, notificationDetails);
         return notificationDetails;
     }
@@ -303,8 +302,8 @@ public class NotificationDetails {
     private static void readSoundInformation(NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
         notificationDetails.playSound = (Boolean) platformChannelSpecifics.get(PLAY_SOUND);
         notificationDetails.sound = (String) platformChannelSpecifics.get(SOUND);
-        Integer soundSourceIndex = (Integer)platformChannelSpecifics.get(SOUND_SOURCE);
-        if(soundSourceIndex != null) {
+        Integer soundSourceIndex = (Integer) platformChannelSpecifics.get(SOUND_SOURCE);
+        if (soundSourceIndex != null) {
             notificationDetails.soundSource = SoundSource.values()[soundSourceIndex];
         }
     }
@@ -376,7 +375,7 @@ public class NotificationDetails {
             return null;
         }
         Boolean bot = (Boolean) person.get(BOT);
-        String icon = (String) person.get(ICON);
+        Object icon = person.get(ICON);
         Integer iconSourceIndex = (Integer) person.get(ICON_SOURCE);
         IconSource iconSource = iconSourceIndex == null ? null : IconSource.values()[iconSourceIndex];
         Boolean important = (Boolean) person.get(IMPORTANT);
