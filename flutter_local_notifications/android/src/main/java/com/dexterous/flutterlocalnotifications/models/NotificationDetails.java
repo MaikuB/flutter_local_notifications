@@ -177,8 +177,7 @@ public class NotificationDetails implements Serializable {
     public String shortcutId;
     public String subText;
     public String tag;
-
-
+    public String appState;
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted.
     public Integer iconResourceId;
