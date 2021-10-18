@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
 import androidx.annotation.Keep;
 import androidx.core.app.NotificationManagerCompat;
@@ -29,6 +30,10 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
         if (StringUtils.isNullOrEmpty(notificationDetailsJson)) {
             // This logic is needed for apps that used the plugin prior to 0.3.4
             Notification notification = intent.getParcelableExtra("notification");
+            if (notification == null) {
+                fault("Notification is null - invalid data.", intent);
+                return;
+            }
             notification.when = System.currentTimeMillis();
             int notificationId = intent.getIntExtra("notification_id",
                     0);
@@ -43,7 +48,18 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
             Type type = new TypeToken<NotificationDetails>() {
             }.getType();
             NotificationDetails notificationDetails = gson.fromJson(notificationDetailsJson, type);
-            FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
+            if (notificationDetails == null) {
+                fault("NotificationDetails is null - gson.fromJson can't parse it.", intent);
+                return;
+            }
+
+            try {
+                FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
+            } catch (Exception e) {
+                fault("Exception while showing notification.", e, intent);
+                return;
+            }
+
             if (notificationDetails.scheduledNotificationRepeatFrequency != null) {
                 FlutterLocalNotificationsPlugin.zonedScheduleNextNotification(context, notificationDetails);
             } else if (notificationDetails.matchDateTimeComponents != null) {
@@ -55,6 +71,35 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
             }
         }
 
+    }
+
+    private void fault(String message, Intent intent) {
+        fault(message, null, intent);
+    }
+
+    private void fault(String message, Exception e, Intent intent) {
+        Bundle bundle = intent.getExtras();
+        StringBuilder sb = new StringBuilder();
+        if (bundle != null) {
+            sb.append("{\n");
+            for (String key : bundle.keySet()) {
+                sb.append("\t").append(key).append(" : ").append(bundle.get(key) != null ? bundle.get(key) : "NULL");
+                sb.append("\n");
+            }
+            sb.append("}");
+        } else {
+            sb.append("NULL");
+        }
+
+        StringBuilder msg = new StringBuilder(message);
+        msg.append("\n");
+        if (e != null) {
+            msg.append("Exception: ").append(e.toString()).append("\n");
+        }
+        msg.append("Intent extras: ");
+        msg.append(sb);
+
+        throw new RuntimeException(msg.toString());
     }
 
 }

@@ -1,3 +1,7 @@
+# [5.0.0+4]
+
+* More detailed exceptions in `ScheduledNotificationReceiver.onReceive()`.
+
 # [5.0.0+3]
 
 * Updated readme on how to get the local timezone
