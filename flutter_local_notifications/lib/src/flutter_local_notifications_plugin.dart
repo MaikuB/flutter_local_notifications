@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/src/platform_specifics/android/notification_data.dart';
 import 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
@@ -351,6 +352,22 @@ class FlutterLocalNotificationsPlugin {
               id, title, body, scheduledDate, notificationDetails.macOS,
               payload: payload,
               matchDateTimeComponents: matchDateTimeComponents);
+    }
+  }
+
+  Future<void> multipleZonedSchedule(
+  List<NotificationData> notificatinsData) async {
+    if (kIsWeb) {
+      return;
+    }
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      await resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()!
+          .multipleZonedSchedule(notificatinsData);
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return;
+    } else if (defaultTargetPlatform == TargetPlatform.macOS) {
+      return;
     }
   }
 

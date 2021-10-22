@@ -4,6 +4,7 @@ import 'package:clock/clock.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_local_notifications/src/platform_specifics/android/notification_data.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
 
@@ -152,6 +153,31 @@ class AndroidFlutterLocalNotificationsPlugin
               : <String, Object>{
                   'matchDateTimeComponents': matchDateTimeComponents.index
                 }));
+  }
+
+  /// Schedules multiple notification to be shown at the specified dates and times
+  /// relative to a specific time zone.
+  Future<void> multipleZonedSchedule(List<NotificationData> notificatinsData) async {
+    final List<Map<String, Object?>> data = [];
+    Map<String, Object?> serializedPlatformSpecifics;
+    for (final NotificationData notification in notificatinsData) {
+      validateId(notification.id);
+      validateDateIsInTheFuture(notification.scheduledDate, notification.matchDateTimeComponents);
+      ArgumentError.checkNotNull(notification.androidAllowWhileIdle, 'androidAllowWhileIdle');
+      serializedPlatformSpecifics = notification.notificationDetails.android?.toMap()
+          ?? <String, Object>{};
+      serializedPlatformSpecifics['allowWhileIdle'] =
+          notification.androidAllowWhileIdle;
+      data.add({'id': notification.id, 'title': notification.title,
+        'body': notification.body, 'platformSpecifics': serializedPlatformSpecifics,
+        'payload': notification.payload ?? ''}
+        ..addAll(notification.scheduledDate.toMap())
+        ..addAll(notification.matchDateTimeComponents == null ?
+        <String, Object>{} : <String, Object>{'matchDateTimeComponents':
+        notification.matchDateTimeComponents!.index}));
+    }
+
+    await _channel.invokeMethod('multipleZonedSchedule', data);
   }
 
   /// Shows a notification on a daily interval at the specified time.

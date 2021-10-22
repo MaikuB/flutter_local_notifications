@@ -305,6 +305,14 @@ class _HomePageState extends State<HomePage> {
                         await _showNotificationCustomSound();
                       },
                     ),
+                    if (Platform.isAndroid) ...<Widget>[
+                      PaddedElevatedButton(
+                        buttonText: 'Schedule 5 diffrent notification every minutes',
+                        onPressed: () async {
+                          await _multipleZonedScheduleNotification();
+                        },
+                      ),
+                    ],
                     if (kIsWeb || !Platform.isLinux) ...<Widget>[
                       PaddedElevatedButton(
                         buttonText:
@@ -962,6 +970,22 @@ class _HomePageState extends State<HomePage> {
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);
+  }
+
+  Future<void> _multipleZonedScheduleNotification() async {
+    final List<NotificationData> notificationsData = [];
+    for(int i = 0 ; i < 5 ; i++){
+      notificationsData.add(NotificationData(
+        i, 'multiple scheduled title $i' , 'multiple scheduled body $i',
+        tz.TZDateTime.now(tz.local).add(Duration(minutes: i + 1)),
+        const NotificationDetails(
+            android: AndroidNotificationDetails(
+                'your multiple scheduled channel id', 'your multiple scheduled channel name',
+                channelDescription: 'your channel description')),
+        androidAllowWhileIdle: true,
+      ));
+    }
+    await flutterLocalNotificationsPlugin.multipleZonedSchedule(notificationsData);
   }
 
   Future<void> _showNotificationWithNoSound() async {

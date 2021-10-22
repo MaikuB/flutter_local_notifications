@@ -87,7 +87,7 @@ import io.flutter.plugin.common.PluginRegistry;
  * FlutterLocalNotificationsPlugin
  */
 @Keep
-public class FlutterLocalNotificationsPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
+public class  FlutterLocalNotificationsPlugin implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
     private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
     private static final String DRAWABLE = "drawable";
     private static final String DEFAULT_ICON = "defaultIcon";
@@ -108,6 +108,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String CANCEL_ALL_METHOD = "cancelAll";
     private static final String SCHEDULE_METHOD = "schedule";
     private static final String ZONED_SCHEDULE_METHOD = "zonedSchedule";
+    private static final String MULTIPle_ZONED_SCHEDULE_METHOD = "multipleZonedSchedule";
     private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
     private static final String SHOW_DAILY_AT_TIME_METHOD = "showDailyAtTime";
     private static final String SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = "showWeeklyAtDayAndTime";
@@ -1032,6 +1033,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 zonedSchedule(call, result);
                 break;
             }
+            case MULTIPle_ZONED_SCHEDULE_METHOD: {
+                multipleZonedSchedule(call, result);
+                break;
+            }
             case PERIODICALLY_SHOW_METHOD:
             case SHOW_DAILY_AT_TIME_METHOD:
             case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD: {
@@ -1128,6 +1133,19 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             zonedScheduleNotification(applicationContext, notificationDetails, true);
             result.success(null);
         }
+    }
+    private void multipleZonedSchedule(MethodCall call, Result result) {
+        List<Map<String, Object>> arguments = call.arguments();
+        for (Map<String, Object> argument : arguments) {
+            NotificationDetails notificationDetails = extractNotificationDetails(result, argument);
+            if (notificationDetails != null) {
+                if (notificationDetails.matchDateTimeComponents != null) {
+                    notificationDetails.scheduledDateTime = getNextFireDateMatchingDateTimeComponents(notificationDetails);
+                }
+                zonedScheduleNotification(applicationContext, notificationDetails, true);
+            }
+        }
+        result.success(null);
     }
 
     private void show(MethodCall call, Result result) {
