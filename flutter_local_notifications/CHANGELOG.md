@@ -1,3 +1,7 @@
+# [9.0.1]
+
+* Fixed issue [1346](https://github.com/MaikuB/flutter_local_notifications/issues/1346) where an exception is thrown when `onSelectNotification` callback isn't specified
+
 # [9.0.0]
 
 * **Breaking change** the `SelectNotificationCallback` and `DidReceiveLocalNotificationCallback` typedefs now map to functions that returns `void` instead of a `Future<dynamic>`. This change was done to better communicate the plugin doesn't actually await any asynchronous computation and is similar to how button pressed callbacks work for Flutter where they are typically use [`VoidCallback`](https://api.flutter.dev/flutter/dart-ui/VoidCallback.html)
