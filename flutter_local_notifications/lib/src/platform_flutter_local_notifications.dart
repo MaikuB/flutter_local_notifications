@@ -452,7 +452,7 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'selectNotification':
-        _onSelectNotification!(call.arguments);
+        _onSelectNotification?.call(call.arguments);
         break;
       default:
         return await Future<void>.error('Method not defined');
@@ -675,7 +675,7 @@ class IOSFlutterLocalNotificationsPlugin
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'selectNotification':
-        _onSelectNotification!(call.arguments);
+        _onSelectNotification?.call(call.arguments);
         break;
       case 'didReceiveLocalNotification':
         _onDidReceiveLocalNotification!(
@@ -814,7 +814,7 @@ class MacOSFlutterLocalNotificationsPlugin
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'selectNotification':
-        _onSelectNotification!(call.arguments);
+        _onSelectNotification?.call(call.arguments);
         break;
       default:
         return await Future<void>.error('Method not defined');
