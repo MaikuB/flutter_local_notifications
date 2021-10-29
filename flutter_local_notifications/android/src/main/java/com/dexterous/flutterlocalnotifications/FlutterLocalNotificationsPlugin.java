@@ -1344,8 +1344,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 if (VERSION.SDK_INT >= VERSION_CODES.O) {
                     activeNotificationPayload.put("channelId", notification.getChannelId());
                 }
-                activeNotificationPayload.put("title", notification.extras.getString("android.title"));
-                activeNotificationPayload.put("body", notification.extras.getString("android.text"));
+
+                activeNotificationPayload.put("title", notification.extras.getCharSequence("android.title"));
+                activeNotificationPayload.put("body", notification.extras.getCharSequence("android.text"));
                 activeNotificationsPayload.add(activeNotificationPayload);
             }
             result.success(activeNotificationsPayload);
