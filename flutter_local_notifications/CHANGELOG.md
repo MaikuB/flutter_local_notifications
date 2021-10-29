@@ -1,3 +1,8 @@
+# [9.0.2]
+
+* [Android] Fixed issue [1357](https://github.com/MaikuB/flutter_local_notifications/issues/1357) where some details of a notification with formatted content weren't being returned
+* Fixed grammar issue in readme in the `Scheduled Android notifications` section. Thanks to [Yousef Akiba](https://github.com/yousefakiba) for the PR
+
 # [9.0.1]
 
 * Fixed issue [1346](https://github.com/MaikuB/flutter_local_notifications/issues/1346) where an exception is thrown when `onSelectNotification` callback isn't specified
