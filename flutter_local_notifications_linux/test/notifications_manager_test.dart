@@ -143,7 +143,7 @@ void main() {
             DBusString(body ?? ''),
             // actions
             DBusArray.string(
-                <String>['default', kDefaultActionName, ...?actions]),
+                actions ?? <String>['default', kDefaultActionName ]),
             // hints
             DBusDict.stringVariant(hints ?? <String, DBusValue>{}),
             // expire_timeout
@@ -198,6 +198,132 @@ void main() {
 
         await manager.initialize(initSettings);
         await manager.show(notify.id, 'Title', 'Body');
+
+        verifyNotifyMethod(values).called(1);
+        verify(
+          () => mockStorage.insert(notify),
+        ).called(1);
+      });
+
+      test('Simple notification with default initializer actions', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings(defaultActionName: kDefaultActionName);
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          actions: <String>["default", kDefaultActionName],
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null);
+
+        verifyNotifyMethod(values).called(1);
+        verify(
+          () => mockStorage.insert(notify),
+        ).called(1);
+      });
+
+      test('Simple notification with details actions', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings(defaultActionName: kDefaultActionName);
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        const LinuxNotificationDetails details =
+            LinuxNotificationDetails(defaultActionName: 'Other name');
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          actions: <String>['default', 'Other name'],
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+        verify(
+          () => mockStorage.insert(notify),
+        ).called(1);
+      });
+
+      test('Simple notification with no actions - details', () async {
+   const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings(defaultActionName: kDefaultActionName);
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        const LinuxNotificationDetails details =
+            LinuxNotificationDetails(enableDefaultAction: false);
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          actions: <String>[],
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+        verify(
+          () => mockStorage.insert(notify),
+        ).called(1);
+      });
+
+      test('Simple notification with no actions - initializer', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings(defaultActionName: null);
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          actions: <String>[],
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null);
 
         verifyNotifyMethod(values).called(1);
         verify(
