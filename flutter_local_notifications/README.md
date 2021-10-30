@@ -419,7 +419,7 @@ Usage of the `timezone` package requires initialisation that is covered in the p
 Import the `timezone` package
 
 ```dart
-import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 ```
 

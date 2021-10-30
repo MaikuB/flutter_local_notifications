@@ -1,7 +1,9 @@
 # [9.0.2]
 
 * [Android] Fixed issue [1357](https://github.com/MaikuB/flutter_local_notifications/issues/1357) where some details of a notification with formatted content weren't being returned
+* Bumped dependencies used by example app
 * Fixed grammar issue in readme in the `Scheduled Android notifications` section. Thanks to [Yousef Akiba](https://github.com/yousefakiba) for the PR
+* Updated example app and readme code around importing the `timezone` dependency so it uses the `all` variant of the IANA database that contains all timezones including those that are deprecated or may link to other timezones
 
 # [9.0.1]
 
