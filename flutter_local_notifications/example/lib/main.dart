@@ -787,6 +787,12 @@ class _HomePageState extends State<HomePage> {
                           await _showLinuxNotificationDifferentLocation();
                         },
                       ),
+                      PaddedElevatedButton(
+                        buttonText: 'Show non-clickable notification',
+                        onPressed: () async {
+                          await _showLinuxNotificationNonClickable();
+                        },
+                      )
                     ],
                   ],
                 ),
@@ -2232,6 +2238,20 @@ Future<void> _showLinuxNotificationDifferentLocation() async {
   await flutterLocalNotificationsPlugin.show(
     0,
     'notification on different screen location',
+    null,
+    platformChannelSpecifics,
+  );
+}
+
+Future<void> _showLinuxNotificationNonClickable() async {
+  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
+      LinuxNotificationDetails(enableDefaultAction: false);
+  const NotificationDetails platformChannelSpecifics = NotificationDetails(
+    linux: linuxPlatformChannelSpecifics,
+  );
+  await flutterLocalNotificationsPlugin.show(
+    0,
+    'notification that is not clickable',
     null,
     platformChannelSpecifics,
   );
