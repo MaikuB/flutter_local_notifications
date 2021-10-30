@@ -206,12 +206,21 @@ class LinuxNotificationManager {
   List<String> _buildActions(
     LinuxNotificationDetails? details,
     LinuxInitializationSettings initSettings,
-  ) =>
-      // Add default action, which is triggered when the notification is clicked
-      <String>[
-        _kDefaultActionName,
-        details?.defaultActionName ?? initSettings.defaultActionName,
-      ];
+  ) {
+    //if enableDefaultAction is set (or by default)
+    final String? defaultActionName = details?.enableDefaultAction ?? true
+        // return one of the available defaultActionNames
+        ? details?.defaultActionName ?? initSettings.defaultActionName
+        : null; //if enableDefaultAction is false, then don't set a name
+
+    // Add default action, which is triggered when the notification is clicked
+    return defaultActionName != null
+        ? <String>[
+            _kDefaultActionName,
+            defaultActionName,
+          ]
+        : <String>[];
+  }
 
   /// Cancel notification with the given [id].
   Future<void> cancel(int id) async {

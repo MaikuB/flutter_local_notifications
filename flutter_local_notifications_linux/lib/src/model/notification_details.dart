@@ -22,6 +22,7 @@ class LinuxNotificationDetails {
     this.transient = false,
     this.location,
     this.defaultActionName,
+    this.enableDefaultAction = true,
     this.customHints,
   });
 
@@ -73,6 +74,11 @@ class LinuxNotificationDetails {
   /// The name can be anything, though implementations are free not to
   /// display it.
   final String? defaultActionName;
+
+  /// Don't make this notification clickable if this is set to false.
+  /// Setting this overrides defaultActionName from both
+  /// LinuxNotificationDetails and LinuxInitializationSettings
+  final bool enableDefaultAction;
 
   /// Custom hints list to provide extra data to a notification server that
   /// the server may be able to make use of. Before using, make sure that

@@ -15,7 +15,8 @@ class LinuxInitializationSettings {
   /// the notification).
   /// The name can be anything, though implementations are free not to
   /// display it.
-  final String defaultActionName;
+  /// This can be null if the notification should not be clickable.
+  final String? defaultActionName;
 
   /// Specifies the default icon for notifications.
   final LinuxNotificationIcon? defaultIcon;
