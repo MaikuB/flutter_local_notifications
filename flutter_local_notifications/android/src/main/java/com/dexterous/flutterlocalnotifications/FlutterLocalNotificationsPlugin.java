@@ -135,6 +135,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private Activity mainActivity;
     private Intent launchIntent;
 
+    public interface NotificationShownListener {
+        void onShown(Context context, NotificationDetails details);
+    }
+
+    public static NotificationShownListener onNotificationShown;
+
     @SuppressWarnings("deprecation")
     public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
         FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
@@ -790,6 +796,11 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static void setupNotificationChannel(Context context, NotificationChannelDetails notificationChannelDetails) {
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationChannelDetails.importance == null) {
+                // Set default value to work around crash with mysteriously missing importance
+                notificationChannelDetails.importance = NotificationManager.IMPORTANCE_DEFAULT;
+            }
+
             NotificationChannel notificationChannel = new NotificationChannel(notificationChannelDetails.id, notificationChannelDetails.name, notificationChannelDetails.importance);
             notificationChannel.setDescription(notificationChannelDetails.description);
             notificationChannel.setGroup(notificationChannelDetails.groupId);
