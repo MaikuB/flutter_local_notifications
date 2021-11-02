@@ -1,6 +1,4 @@
-import 'bitmap.dart';
 import 'enums.dart';
-import 'icon.dart';
 import 'initialization_settings.dart';
 import 'message.dart';
 import 'notification_channel.dart';
@@ -87,29 +85,13 @@ extension PersonMapper on Person {
       }..addAll(_convertIconToMap());
 
   Map<String, Object> _convertIconToMap() {
-    if (icon is DrawableResourceAndroidIcon) {
-      return <String, Object>{
-        'icon': icon!.icon,
-        'iconSource': AndroidIconSource.drawableResource.index,
-      };
-    } else if (icon is BitmapFilePathAndroidIcon) {
-      return <String, Object>{
-        'icon': icon!.icon,
-        'iconSource': AndroidIconSource.bitmapFilePath.index,
-      };
-    } else if (icon is ContentUriAndroidIcon) {
-      return <String, Object>{
-        'icon': icon!.icon,
-        'iconSource': AndroidIconSource.contentUri.index,
-      };
-    } else if (icon is FlutterBitmapAssetAndroidIcon) {
-      return <String, Object>{
-        'icon': icon!.icon,
-        'iconSource': AndroidIconSource.flutterBitmapAsset.index,
-      };
-    } else {
+    if (icon == null) {
       return <String, Object>{};
     }
+    return <String, Object>{
+      'icon': icon!.data,
+      'iconSource': icon!.source.index,
+    };
   }
 }
 
@@ -136,36 +118,19 @@ extension BigPictureStyleInformationMapper on BigPictureStyleInformation {
       'hideExpandedLargeIcon': hideExpandedLargeIcon
     });
 
-  Map<String, Object> _convertBigPictureToMap() {
-    if (bigPicture is DrawableResourceAndroidBitmap) {
-      return <String, Object>{
-        'bigPicture': bigPicture.bitmap,
-        'bigPictureBitmapSource': AndroidBitmapSource.drawable.index,
+  Map<String, Object> _convertBigPictureToMap() => <String, Object>{
+        'bigPicture': bigPicture.data,
+        'bigPictureBitmapSource': bigPicture.source.index,
       };
-    } else if (bigPicture is FilePathAndroidBitmap) {
-      return <String, Object>{
-        'bigPicture': bigPicture.bitmap,
-        'bigPictureBitmapSource': AndroidBitmapSource.filePath.index,
-      };
-    } else {
-      return <String, Object>{};
-    }
-  }
 
   Map<String, Object> _convertLargeIconToMap() {
-    if (largeIcon is DrawableResourceAndroidBitmap) {
-      return <String, Object>{
-        'largeIcon': largeIcon!.bitmap,
-        'largeIconBitmapSource': AndroidBitmapSource.drawable.index,
-      };
-    } else if (largeIcon is FilePathAndroidBitmap) {
-      return <String, Object>{
-        'largeIcon': largeIcon!.bitmap,
-        'largeIconBitmapSource': AndroidBitmapSource.filePath.index,
-      };
-    } else {
+    if (largeIcon == null) {
       return <String, Object>{};
     }
+    return <String, Object>{
+      'largeIcon': largeIcon!.data,
+      'largeIconBitmapSource': largeIcon!.source.index,
+    };
   }
 }
 
@@ -302,18 +267,12 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
   }
 
   Map<String, Object> _convertLargeIconToMap() {
-    if (largeIcon is DrawableResourceAndroidBitmap) {
-      return <String, Object>{
-        'largeIcon': largeIcon!.bitmap,
-        'largeIconBitmapSource': AndroidBitmapSource.drawable.index,
-      };
-    } else if (largeIcon is FilePathAndroidBitmap) {
-      return <String, Object>{
-        'largeIcon': largeIcon!.bitmap,
-        'largeIconBitmapSource': AndroidBitmapSource.filePath.index,
-      };
-    } else {
+    if (largeIcon == null) {
       return <String, Object>{};
     }
+    return <String, Object>{
+      'largeIcon': largeIcon!.data,
+      'largeIconBitmapSource': largeIcon!.source.index,
+    };
   }
 }
