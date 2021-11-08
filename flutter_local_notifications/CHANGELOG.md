@@ -1,3 +1,7 @@
+# [9.0.3]
+
+* [Android] Fixed issue [1362](https://github.com/MaikuB/flutter_local_notifications/issues/1362) so that the plugin refer to Android sound resources by the resource name instead of the resource id as the resource id could change over time e.g. if new resources are added. Note that this is a fix that can't be applied retroactively
+
 # [9.0.2]
 
 * [Android] Fixed issue [1357](https://github.com/MaikuB/flutter_local_notifications/issues/1357) where some details of a notification with formatted content weren't being returned

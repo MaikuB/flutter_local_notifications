@@ -822,8 +822,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         } else {
             // allow null as soundSource was added later and prior to that, it was assumed to be a raw resource
             if (soundSource == null || soundSource == SoundSource.RawResource) {
-                int soundResourceId = context.getResources().getIdentifier(sound, "raw", context.getPackageName());
-                uri = Uri.parse("android.resource://" + context.getPackageName() + "/" + soundResourceId);
+                uri = Uri.parse("android.resource://" + context.getPackageName() + "/raw/" + sound);
             } else if (soundSource == SoundSource.Uri) {
                 uri = Uri.parse(sound);
             }
@@ -1388,10 +1387,18 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 List<SoundSource> soundSources = Arrays.asList(SoundSource.values());
                 if (soundUri.getScheme().equals("android.resource")) {
                     String[] splitUri = soundUri.toString().split("/");
-                    String resourceName = applicationContext.getResources().getResourceEntryName(Integer.parseInt(splitUri[splitUri.length - 1]));
-                    if (resourceName != null) {
+                    String resource = splitUri[splitUri.length - 1];
+                    Integer resourceId = tryParseInt(resource);
+                    if(resourceId == null) {
                         channelPayload.put("soundSource", soundSources.indexOf(SoundSource.RawResource));
-                        channelPayload.put("sound", resourceName);
+                        channelPayload.put("sound", resource);
+                    } else {
+                        // Kept for backwards compatibility when the source resource used to be based on id
+                        String resourceName = applicationContext.getResources().getResourceEntryName(resourceId);
+                        if (resourceName != null) {
+                            channelPayload.put("soundSource", soundSources.indexOf(SoundSource.RawResource));
+                            channelPayload.put("sound", resourceName);
+                        }
                     }
                 } else {
                     channelPayload.put("soundSource", soundSources.indexOf(SoundSource.Uri));
@@ -1404,6 +1411,14 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             channelPayload.put("ledColor", channel.getLightColor());
         }
         return channelPayload;
+    }
+
+    private Integer tryParseInt(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private void startForegroundService(MethodCall call, Result result) {
