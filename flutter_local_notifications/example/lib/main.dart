@@ -1960,6 +1960,7 @@ class _HomePageState extends State<HomePage> {
                 children: <Widget>[
                   Text(
                     'id: ${activeNotification.id}\n'
+                    'group: ${activeNotification.groupKey}\n'
                     'channelId: ${activeNotification.channelId}\n'
                     'title: ${activeNotification.title}\n'
                     'body: ${activeNotification.body}',
