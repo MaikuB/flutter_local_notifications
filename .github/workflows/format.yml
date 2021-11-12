@@ -4,10 +4,20 @@ on: push
 
 jobs:
 
-  formatting:
+  java_format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2 # v2 minimum required
       - uses: axel-op/googlejavaformat-action@v3
         with:
           args: "--skip-sorting-imports --replace"
+
+  objc_format:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2 # v2 minimum required
+      - name: Test
+        run: |
+          brew install clang-format
+          find . -name '*.m' -exec clang-format -i {} \;
+          git diff --exit-code
