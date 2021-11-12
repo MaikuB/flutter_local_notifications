@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v2 # v2 minimum required
       - name: Test
         run: |
-          brew install clang-format
+          which clang-format || brew install clang-format
           find . -name '*.m' -exec clang-format -i {} \;
           git diff --exit-code
 
@@ -28,6 +28,6 @@ jobs:
       - uses: actions/checkout@v2 # v2 minimum required
       - name: Test
         run: |
-          brew install swiftlint
+          which swiftlint || brew install swiftlint
           swiftlint --fix
           git diff --exit-code
