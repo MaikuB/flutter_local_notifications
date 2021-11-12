@@ -21,3 +21,13 @@ jobs:
           brew install clang-format
           find . -name '*.m' -exec clang-format -i {} \;
           git diff --exit-code
+
+  swift_format:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2 # v2 minimum required
+      - name: Test
+        run: |
+          brew install swiftlint
+          swiftlint --fix
+          git diff --exit-code
