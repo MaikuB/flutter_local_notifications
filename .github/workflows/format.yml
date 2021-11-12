@@ -20,6 +20,8 @@ jobs:
         run: |
           which clang-format || brew install clang-format
           find . -name '*.m' -exec clang-format -i {} \;
+          find . -path '*/ios/**/*.h' -exec clang-format -i {} \;
+          find . -path '*/macos/**/*.h' -exec clang-format -i {} \;
           git diff --exit-code
 
   swift_format:
