@@ -4,6 +4,6 @@ import androidx.annotation.Keep;
 
 @Keep
 public enum SoundSource {
-    RawResource,
-    Uri
+  RawResource,
+  Uri
 }
