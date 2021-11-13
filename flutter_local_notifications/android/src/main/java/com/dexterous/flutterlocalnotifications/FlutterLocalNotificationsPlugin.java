@@ -1335,7 +1335,6 @@ public class FlutterLocalNotificationsPlugin
     NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
     if (notificationDetails != null) {
       repeatNotification(applicationContext, notificationDetails, true, result);
-      result.success(null);
     }
   }
 
