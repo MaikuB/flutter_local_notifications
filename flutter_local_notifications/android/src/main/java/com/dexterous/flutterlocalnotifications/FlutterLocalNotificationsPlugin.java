@@ -363,15 +363,12 @@ public class FlutterLocalNotificationsPlugin
         new Runnable() {
           @Override
           public void run() {
-            editor.commit();
-            if (result == null) {
-              return;
-            }
+            final boolean committed = editor.commit();
             handler.post(
                 new Runnable() {
                   @Override
                   public void run() {
-                    result.success(null);
+                    result.success(committed);
                   }
                 });
           }
