@@ -487,14 +487,6 @@ public class FlutterLocalNotificationsPlugin
     saveScheduledNotification(context, notificationDetails, result);
   }
 
-  private static PendingIntent getActivityPendingIntent(Context context, int id, Intent intent) {
-    int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-    if (VERSION.SDK_INT >= VERSION_CODES.M) {
-      flags |= PendingIntent.FLAG_IMMUTABLE;
-    }
-    return PendingIntent.getActivity(context, id, intent, flags);
-  }
-
   private static PendingIntent getBroadcastPendingIntent(Context context, int id, Intent intent) {
     int flags = PendingIntent.FLAG_UPDATE_CURRENT;
     if (VERSION.SDK_INT >= VERSION_CODES.M) {
