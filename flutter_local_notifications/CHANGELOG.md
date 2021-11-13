@@ -1,3 +1,8 @@
+# [9.1.1]
+
+* [Android] updated APIs the plugin uses to write to shared preferences in the background
+* [Android] fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where there was a the `Future` for scheduling a notification could be completed prior to saving information on the scheduled notification to shared preferences. In this case the notification would still be scheduled but if the plugin was used to query the pending notifications quick enough, the plugin may have returned the incorrect number of pending notifications
+
 # [9.1.0]
 
 * [Android] Added `groupKey` to `ActiveNotification` that would allow for finding the notification's group. Thanks to the PR from [Roman](https://github.com/drstranges)
