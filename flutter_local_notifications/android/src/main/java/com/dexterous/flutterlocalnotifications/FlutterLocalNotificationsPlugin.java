@@ -366,10 +366,6 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private static void commitAsync(final SharedPreferences.Editor editor, final Result result) {
-    if (executor == null || handler == null) {
-      editor.commit();
-      return;
-    }
     executor.execute(
         new Runnable() {
           @Override
@@ -1411,7 +1407,11 @@ public class FlutterLocalNotificationsPlugin
         applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
     editor.putString(DEFAULT_ICON, defaultIcon);
-    commitAsync(editor, result);
+    if (executor != null && handler != null) {
+      commitAsync(editor, result);
+    } else {
+      editor.commit();
+    }
   }
 
   /// Extracts the details of the notifications passed from the Flutter side and also validates that
