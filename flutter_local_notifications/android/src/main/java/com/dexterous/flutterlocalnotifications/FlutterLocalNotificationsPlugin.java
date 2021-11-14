@@ -368,6 +368,10 @@ public class FlutterLocalNotificationsPlugin
                 new Runnable() {
                   @Override
                   public void run() {
+                    if (result == null) {
+                      return;
+                    }
+
                     result.success(committed);
                   }
                 });

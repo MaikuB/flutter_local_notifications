@@ -1,3 +1,7 @@
+# [9.1.2]
+
+* [Android] Fix NPE issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1387) from change introduced in 9.1.1 in updating how notifications were written to shared preferences
+
 # [9.1.1]
 
 * [Android] updated APIs the plugin uses to write to shared preferences in the background
