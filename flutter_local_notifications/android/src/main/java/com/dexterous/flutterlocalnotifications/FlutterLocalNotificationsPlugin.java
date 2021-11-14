@@ -355,10 +355,21 @@ public class FlutterLocalNotificationsPlugin
         context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
     editor.putString(SCHEDULED_NOTIFICATIONS, json);
-    commitAsync(editor, result);
+    if (executor != null && handler != null) {
+      commitAsync(editor, result);
+    } else {
+      final boolean committed = editor.commit();
+      if (result != null) {
+        result.success(committed);
+      }
+    }
   }
 
   private static void commitAsync(final SharedPreferences.Editor editor, final Result result) {
+    if (executor == null || handler == null) {
+      editor.commit();
+      return;
+    }
     executor.execute(
         new Runnable() {
           @Override
@@ -368,6 +379,10 @@ public class FlutterLocalNotificationsPlugin
                 new Runnable() {
                   @Override
                   public void run() {
+                    if (result == null) {
+                      return;
+                    }
+
                     result.success(committed);
                   }
                 });
