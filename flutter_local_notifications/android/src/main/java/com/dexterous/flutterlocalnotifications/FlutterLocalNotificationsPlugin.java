@@ -366,10 +366,6 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private static void commitAsync(final SharedPreferences.Editor editor, final Result result) {
-    if (executor == null || handler == null) {
-      editor.commit();
-      return;
-    }
     executor.execute(
         new Runnable() {
           @Override
