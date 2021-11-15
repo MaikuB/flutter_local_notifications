@@ -1,3 +1,33 @@
+# [9.1.2]
+
+* [Android] Fix NPE issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1387) from change introduced in 9.1.1 in updating how notifications were written to shared preferences
+
+# [9.1.1]
+
+* **BAD** [Android] updated APIs the plugin uses to write to shared preferences in the background
+* [Android] fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where there was a the `Future` for scheduling a notification could be completed prior to saving information on the scheduled notification to shared preferences. In this case the notification would still be scheduled but if the plugin was used to query the pending notifications quick enough, the plugin may have returned the incorrect number of pending notifications
+
+# [9.1.0]
+
+* [Android] Added `groupKey` to `ActiveNotification` that would allow for finding the notification's group. Thanks to the PR from [Roman](https://github.com/drstranges)
+* [Android] Migrate maven repository from jcenter to mavenCentral. Thanks to the PR from [tigertore](https://github.com/tigertore)
+
+
+# [9.0.3]
+
+* [Android] Fixed issue [1362](https://github.com/MaikuB/flutter_local_notifications/issues/1362) so that the plugin refer to Android sound resources by the resource name instead of the resource id as the resource id could change over time e.g. if new resources are added. Note that this is a fix that can't be applied retroactively
+
+# [9.0.2]
+
+* [Android] Fixed issue [1357](https://github.com/MaikuB/flutter_local_notifications/issues/1357) where some details of a notification with formatted content weren't being returned
+* Bumped dependencies used by example app
+* Fixed grammar issue in readme in the `Scheduled Android notifications` section. Thanks to [Yousef Akiba](https://github.com/yousefakiba) for the PR
+* Updated example app and readme code around importing the `timezone` dependency so it uses the `all` variant of the IANA database that contains all timezones including those that are deprecated or may link to other timezones
+
+# [9.0.1]
+
+* Fixed issue [1346](https://github.com/MaikuB/flutter_local_notifications/issues/1346) where an exception is thrown when `onSelectNotification` callback isn't specified
+
 # [9.0.0]
 
 * **Breaking change** the `SelectNotificationCallback` and `DidReceiveLocalNotificationCallback` typedefs now map to functions that returns `void` instead of a `Future<dynamic>`. This change was done to better communicate the plugin doesn't actually await any asynchronous computation and is similar to how button pressed callbacks work for Flutter where they are typically use [`VoidCallback`](https://api.flutter.dev/flutter/dart-ui/VoidCallback.html)
