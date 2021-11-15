@@ -53,7 +53,7 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
         FlutterLocalNotificationsPlugin.removeNotificationFromCache(
             context, notificationDetails.id, null);
       }
-      
+
       boolean locked = FlutterLocalNotificationsPlugin.isKeyguardLocked(context);
       boolean firstAlarm = firstAlarm(notificationDetails);
       boolean hasStartActivity = notificationDetails.startActivityClassName != null;
@@ -62,7 +62,7 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       }
     }
   }
-  
+
   boolean firstAlarm(NotificationDetails notificationDetails) {
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
       return LocalDateTime.parse(notificationDetails.scheduledDateTime).getSecond() == 0;

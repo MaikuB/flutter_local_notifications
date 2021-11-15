@@ -18,7 +18,6 @@ import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.PowerManager;
@@ -1114,24 +1113,33 @@ public class FlutterLocalNotificationsPlugin
   static String getNextFireDateMatchingDateTimeComponents(NotificationDetails notificationDetails) {
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
       ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
-      ZonedDateTime scheduledDateTime = ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime),
-          zoneId);
+      ZonedDateTime scheduledDateTime =
+          ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
       ZonedDateTime now = ZonedDateTime.now(zoneId);
-      ZonedDateTime nextFireDate = ZonedDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(),
-          scheduledDateTime.getHour(), scheduledDateTime.getMinute(), scheduledDateTime.getSecond(),
-          scheduledDateTime.getNano(), zoneId);
+      ZonedDateTime nextFireDate =
+          ZonedDateTime.of(
+              now.getYear(),
+              now.getMonthValue(),
+              now.getDayOfMonth(),
+              scheduledDateTime.getHour(),
+              scheduledDateTime.getMinute(),
+              scheduledDateTime.getSecond(),
+              scheduledDateTime.getNano(),
+              zoneId);
       while (nextFireDate.isBefore(now)) {
         // adjust to be a date in the future that matches the time
         nextFireDate = nextFireDate.plusDays(1);
       }
       if (notificationDetails.matchDateTimeComponents == DateTimeComponents.Time) {
         return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
-      } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DayOfWeekAndTime) {
+      } else if (notificationDetails.matchDateTimeComponents
+          == DateTimeComponents.DayOfWeekAndTime) {
         while (nextFireDate.getDayOfWeek() != scheduledDateTime.getDayOfWeek()) {
           nextFireDate = nextFireDate.plusDays(1);
         }
         return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
-      } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DayOfMonthAndTime) {
+      } else if (notificationDetails.matchDateTimeComponents
+          == DateTimeComponents.DayOfMonthAndTime) {
         while (nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
           nextFireDate = nextFireDate.plusDays(1);
         }
@@ -1145,24 +1153,34 @@ public class FlutterLocalNotificationsPlugin
       }
     } else {
       org.threeten.bp.ZoneId zoneId = org.threeten.bp.ZoneId.of(notificationDetails.timeZoneName);
-      org.threeten.bp.ZonedDateTime scheduledDateTime = org.threeten.bp.ZonedDateTime
-          .of(org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
+      org.threeten.bp.ZonedDateTime scheduledDateTime =
+          org.threeten.bp.ZonedDateTime.of(
+              org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
       org.threeten.bp.ZonedDateTime now = org.threeten.bp.ZonedDateTime.now(zoneId);
-      org.threeten.bp.ZonedDateTime nextFireDate = org.threeten.bp.ZonedDateTime.of(now.getYear(), now.getMonthValue(),
-          now.getDayOfMonth(), scheduledDateTime.getHour(), scheduledDateTime.getMinute(),
-          scheduledDateTime.getSecond(), scheduledDateTime.getNano(), zoneId);
+      org.threeten.bp.ZonedDateTime nextFireDate =
+          org.threeten.bp.ZonedDateTime.of(
+              now.getYear(),
+              now.getMonthValue(),
+              now.getDayOfMonth(),
+              scheduledDateTime.getHour(),
+              scheduledDateTime.getMinute(),
+              scheduledDateTime.getSecond(),
+              scheduledDateTime.getNano(),
+              zoneId);
       while (nextFireDate.isBefore(now)) {
         // adjust to be a date in the future that matches the time
         nextFireDate = nextFireDate.plusDays(1);
       }
       if (notificationDetails.matchDateTimeComponents == DateTimeComponents.Time) {
         return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
-      } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DayOfWeekAndTime) {
+      } else if (notificationDetails.matchDateTimeComponents
+          == DateTimeComponents.DayOfWeekAndTime) {
         while (nextFireDate.getDayOfWeek() != scheduledDateTime.getDayOfWeek()) {
           nextFireDate = nextFireDate.plusDays(1);
         }
         return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
-      } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DayOfMonthAndTime) {
+      } else if (notificationDetails.matchDateTimeComponents
+          == DateTimeComponents.DayOfMonthAndTime) {
         while (nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
           nextFireDate = nextFireDate.plusDays(1);
         }
@@ -1177,7 +1195,7 @@ public class FlutterLocalNotificationsPlugin
     }
     return null;
   }
-  
+
   static void startAlarmActivity(final Context context, NotificationDetails notificationDetails) {
     Intent intent = getLaunchIntent(context, notificationDetails);
     intent.setAction(SELECT_NOTIFICATION);
