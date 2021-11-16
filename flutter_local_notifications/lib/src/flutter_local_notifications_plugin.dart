@@ -191,6 +191,10 @@ class FlutterLocalNotificationsPlugin {
       return;
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
+      assert(
+        notificationDetails != null,
+        'Notification details is required to Android Platform',
+      );
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.show(id, title, body,

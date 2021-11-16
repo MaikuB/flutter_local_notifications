@@ -59,17 +59,15 @@ void main() {
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-      await flutterLocalNotificationsPlugin.show(
-          1, 'notification title', 'notification body', null);
-      expect(
-          log.last,
-          isMethodCall('show', arguments: <String, Object?>{
-            'id': 1,
-            'title': 'notification title',
-            'body': 'notification body',
-            'payload': '',
-            'platformSpecifics': null,
-          }));
+
+      expect(() async {
+        await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          null,
+        );
+      }, throwsA(isA<AssertionError>()));
     });
 
     test('show with default Android-specific details', () async {
