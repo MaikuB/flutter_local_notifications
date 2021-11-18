@@ -40,7 +40,8 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       NotificationDetails notificationDetails = gson.fromJson(notificationDetailsJson, type);
       FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
       if (notificationDetails.scheduledNotificationRepeatFrequency != null) {
-        FlutterLocalNotificationsPlugin.zonedScheduleNextNotification(context, notificationDetails);
+        FlutterLocalNotificationsPlugin.zonedScheduleNextNotification(
+            context, notificationDetails, null);
       } else if (notificationDetails.matchDateTimeComponents != null) {
         FlutterLocalNotificationsPlugin.zonedScheduleNextNotificationMatchingDateComponents(
             context, notificationDetails, null);

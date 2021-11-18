@@ -1051,14 +1051,14 @@ public class FlutterLocalNotificationsPlugin
   }
 
   static void zonedScheduleNextNotification(
-      Context context, NotificationDetails notificationDetails) {
+      Context context, NotificationDetails notificationDetails, Result result) {
     initAndroidThreeTen(context);
     String nextFireDate = getNextFireDate(notificationDetails);
     if (nextFireDate == null) {
       return;
     }
     notificationDetails.scheduledDateTime = nextFireDate;
-    zonedScheduleNotification(context, notificationDetails, true, null);
+    zonedScheduleNotification(context, notificationDetails, true, result);
   }
 
   static void zonedScheduleNextNotificationMatchingDateComponents(
@@ -1410,8 +1410,7 @@ public class FlutterLocalNotificationsPlugin
     if (executor != null && handler != null) {
       commitAsync(editor, result);
     } else {
-      final boolean committed = editor.commit();
-      result.success(committed);
+      editor.commit();
     }
   }
 
