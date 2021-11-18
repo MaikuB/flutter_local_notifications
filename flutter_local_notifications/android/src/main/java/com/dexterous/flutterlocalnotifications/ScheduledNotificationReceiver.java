@@ -41,7 +41,7 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
       if (notificationDetails.scheduledNotificationRepeatFrequency != null) {
         FlutterLocalNotificationsPlugin.zonedScheduleNextNotification(
-            context, notificationDetails, null);
+            context, notificationDetails);
       } else if (notificationDetails.matchDateTimeComponents != null) {
         FlutterLocalNotificationsPlugin.zonedScheduleNextNotificationMatchingDateComponents(
             context, notificationDetails, null);
