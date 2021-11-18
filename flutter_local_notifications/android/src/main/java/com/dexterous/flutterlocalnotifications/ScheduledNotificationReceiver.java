@@ -32,7 +32,7 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       notificationManager.notify(notificationId, notification);
       boolean repeat = intent.getBooleanExtra("repeat", false);
       if (!repeat) {
-        FlutterLocalNotificationsPlugin.removeNotificationFromCache(context, notificationId, null);
+        FlutterLocalNotificationsPlugin.removeNotificationFromCache(context, notificationId);
       }
     } else {
       Gson gson = FlutterLocalNotificationsPlugin.buildGson();
@@ -40,17 +40,16 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       NotificationDetails notificationDetails = gson.fromJson(notificationDetailsJson, type);
       FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
       if (notificationDetails.scheduledNotificationRepeatFrequency != null) {
-        FlutterLocalNotificationsPlugin.zonedScheduleNextNotification(
-            context, notificationDetails, null);
+        FlutterLocalNotificationsPlugin.zonedScheduleNextNotification(context, notificationDetails);
       } else if (notificationDetails.matchDateTimeComponents != null) {
         FlutterLocalNotificationsPlugin.zonedScheduleNextNotificationMatchingDateComponents(
-            context, notificationDetails, null);
+            context, notificationDetails);
       } else if (notificationDetails.repeatInterval != null) {
         FlutterLocalNotificationsPlugin.scheduleNextRepeatingNotification(
-            context, notificationDetails, null);
+            context, notificationDetails);
       } else {
         FlutterLocalNotificationsPlugin.removeNotificationFromCache(
-            context, notificationDetails.id, null);
+            context, notificationDetails.id);
       }
     }
   }
