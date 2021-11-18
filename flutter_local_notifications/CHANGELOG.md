@@ -1,3 +1,9 @@
+# [9.1.2+1]
+
+* [Android] some minor code clean up from 9.1.2 changes
+* Fixed a grammar issue in readme. Thanks to the PR from [Clément Besnier](https://github.com/clemsciences)
+
+
 # [9.1.2]
 
 * [Android] Fix NPE issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1387) from change introduced in 9.1.1 in updating how notifications were written to shared preferences
