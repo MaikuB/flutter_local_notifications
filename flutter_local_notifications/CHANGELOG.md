@@ -1,10 +1,14 @@
+# [9.1.4]
+
+* [Android] Reverted change in 9.1.0 that added the `groupKey` to `ActiveNotification` as this was a potentially breaking change. This will instead be part of a major release
+
 # [9.1.3]
 
 * [Android] Reverts Android changes done in 9.1.2 and 9.1.1 due to reported stability issues. Ths means issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) may still occur though is a rare occurrence and may require a different solution and assistance from the community with regards to testing
 
 # [9.1.2+1]
 
-* [Android] some minor code clean up from 9.1.2 changes
+* **BAD** [Android] some minor code clean up from 9.1.2 changes
 * Fixed a grammar issue in readme. Thanks to the PR from [Clément Besnier](https://github.com/clemsciences)
 
 
@@ -19,7 +23,7 @@
 
 # [9.1.0]
 
-* [Android] Added `groupKey` to `ActiveNotification` that would allow for finding the notification's group. Thanks to the PR from [Roman](https://github.com/drstranges)
+* **BAD** [Android] Added `groupKey` to `ActiveNotification` that would allow for finding the notification's group. Thanks to the PR from [Roman](https://github.com/drstranges)
 * [Android] Migrate maven repository from jcenter to mavenCentral. Thanks to the PR from [tigertore](https://github.com/tigertore)
 
 
