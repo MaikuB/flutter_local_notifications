@@ -4,20 +4,20 @@
 
 @implementation FlutterLocalNotificationsPlugin {
   FlutterMethodChannel *_channel;
-    bool _displayAlert;
-    bool _playSound;
-    bool _updateBadge;
-    bool _initialized;
-    bool _launchingAppFromNotification;
-    NSUserDefaults *_persistentState;
-    NSObject<FlutterPluginRegistrar> *_registrar;
-    NSString *_launchPayload;
-    UILocalNotification *_launchNotification;
+  bool _displayAlert;
+  bool _playSound;
+  bool _updateBadge;
+  bool _initialized;
+  bool _launchingAppFromNotification;
+  NSUserDefaults *_persistentState;
+  NSObject<FlutterPluginRegistrar> *_registrar;
+  NSString *_launchPayload;
+  UILocalNotification *_launchNotification;
 }
 
-static FlutterEngine* backgroundEngine;
+static FlutterEngine *backgroundEngine;
 static FlutterPluginRegistrantCallback registerPlugins;
-static ActionEventSink* actionEventSink;
+static ActionEventSink *actionEventSink;
 
 NSString *const INITIALIZE_METHOD = @"initialize";
 NSString *const GET_CALLBACK_METHOD = @"getCallbackHandle";
@@ -85,44 +85,45 @@ NSString *const PAYLOAD = @"payload";
 NSString *const NOTIFICATION_LAUNCHED_APP = @"notificationLaunchedApp";
 
 typedef NS_ENUM(NSInteger, RepeatInterval) {
-    EveryMinute,
-    Hourly,
-    Daily,
-    Weekly
+  EveryMinute,
+  Hourly,
+  Daily,
+  Weekly
 };
 
 typedef NS_ENUM(NSInteger, DateTimeComponents) {
-    Time,
+  Time,
   DayOfWeekAndTime,
   DayOfMonthAndTime,
   DateAndTime
 };
 
 typedef NS_ENUM(NSInteger, UILocalNotificationDateInterpretation) {
-    AbsoluteGMTTime,
-    WallClockTime
+  AbsoluteGMTTime,
+  WallClockTime
 };
 
 static FlutterError *getFlutterError(NSError *error) {
   return [FlutterError
       errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
-                               message:error.localizedDescription
-                               details:error.domain];
+            message:error.localizedDescription
+            details:error.domain];
 }
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:CHANNEL
-                                     binaryMessenger:[registrar messenger]];
-    
+                                  binaryMessenger:[registrar messenger]];
+
   FlutterLocalNotificationsPlugin *instance =
       [[FlutterLocalNotificationsPlugin alloc] initWithChannel:channel
                                                      registrar:registrar];
-    if (backgroundEngine == nil || registrar.messenger != backgroundEngine.binaryMessenger) {
-        [registrar addApplicationDelegate:instance];
-    }
-    
-    [registrar addMethodCallDelegate:instance channel:channel];
+  if (backgroundEngine == nil ||
+      registrar.messenger != backgroundEngine.binaryMessenger) {
+    [registrar addApplicationDelegate:instance];
+  }
+
+  [registrar addMethodCallDelegate:instance channel:channel];
 }
 
 + (void)setPluginRegistrantCallback:(FlutterPluginRegistrantCallback)callback {
@@ -131,62 +132,62 @@ static FlutterError *getFlutterError(NSError *error) {
 
 - (instancetype)initWithChannel:(FlutterMethodChannel *)channel
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-    self = [super init];
-    
-    if (self) {
-        _channel = channel;
-        _registrar = registrar;
-        _persistentState = [NSUserDefaults standardUserDefaults];
-    }
-    
-    return self;
+  self = [super init];
+
+  if (self) {
+    _channel = channel;
+    _registrar = registrar;
+    _persistentState = [NSUserDefaults standardUserDefaults];
+  }
+
+  return self;
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call
                   result:(FlutterResult)result {
   if ([INITIALIZE_METHOD isEqualToString:call.method]) {
-        [self initialize:call.arguments result:result];
-    } else if([GET_CALLBACK_METHOD isEqualToString:call.method]) {
-        NSNumber* handle = [_persistentState valueForKey:@"callback_handle"];
-        result(handle);
+    [self initialize:call.arguments result:result];
+  } else if ([GET_CALLBACK_METHOD isEqualToString:call.method]) {
+    NSNumber *handle = [_persistentState valueForKey:@"callback_handle"];
+    result(handle);
   } else if ([SHOW_METHOD isEqualToString:call.method]) {
-      
-        [self show:call.arguments result:result];
+
+    [self show:call.arguments result:result];
   } else if ([ZONED_SCHEDULE_METHOD isEqualToString:call.method]) {
-        [self zonedSchedule:call.arguments result:result];
+    [self zonedSchedule:call.arguments result:result];
   } else if ([SCHEDULE_METHOD isEqualToString:call.method]) {
-        [self schedule:call.arguments result:result];
+    [self schedule:call.arguments result:result];
   } else if ([PERIODICALLY_SHOW_METHOD isEqualToString:call.method]) {
-        [self periodicallyShow:call.arguments result:result];
+    [self periodicallyShow:call.arguments result:result];
   } else if ([SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]) {
-        [self showDailyAtTime:call.arguments result:result];
+    [self showDailyAtTime:call.arguments result:result];
   } else if ([SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
-        [self showWeeklyAtDayAndTime:call.arguments result:result];
+    [self showWeeklyAtDayAndTime:call.arguments result:result];
   } else if ([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
-        [self requestPermissions:call.arguments result:result];
+    [self requestPermissions:call.arguments result:result];
   } else if ([CANCEL_METHOD isEqualToString:call.method]) {
-        [self cancel:((NSNumber *)call.arguments) result:result];
+    [self cancel:((NSNumber *)call.arguments) result:result];
   } else if ([CANCEL_ALL_METHOD isEqualToString:call.method]) {
-        [self cancelAll:result];
+    [self cancelAll:result];
   } else if ([GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD
                  isEqualToString:call.method]) {
-        NSString *payload;
+    NSString *payload;
     if (_launchNotification != nil) {
-            payload = _launchNotification.userInfo[PAYLOAD];
-        } else {
-            payload = _launchPayload;
-        }
+      payload = _launchNotification.userInfo[PAYLOAD];
+    } else {
+      payload = _launchPayload;
+    }
     NSDictionary *notificationAppLaunchDetails = [NSDictionary
         dictionaryWithObjectsAndKeys:
             [NSNumber numberWithBool:_launchingAppFromNotification],
             NOTIFICATION_LAUNCHED_APP, payload, PAYLOAD, nil];
-        result(notificationAppLaunchDetails);
+    result(notificationAppLaunchDetails);
   } else if ([PENDING_NOTIFICATIONS_REQUESTS_METHOD
                  isEqualToString:call.method]) {
-        [self pendingNotificationRequests:result];
+    [self pendingNotificationRequests:result];
   } else {
-        result(FlutterMethodNotImplemented);
-    }
+    result(FlutterMethodNotImplemented);
+  }
 }
 
 - (void)pendingUserNotificationRequests:(FlutterResult _Nonnull)result
@@ -198,24 +199,24 @@ static FlutterError *getFlutterError(NSError *error) {
     NSMutableArray<NSMutableDictionary<NSString *, NSObject *> *>
         *pendingNotificationRequests =
             [[NSMutableArray alloc] initWithCapacity:[requests count]];
-        for (UNNotificationRequest *request in requests) {
+    for (UNNotificationRequest *request in requests) {
       NSMutableDictionary *pendingNotificationRequest =
           [[NSMutableDictionary alloc] init];
       pendingNotificationRequest[ID] =
           request.content.userInfo[NOTIFICATION_ID];
-            if (request.content.title != nil) {
-                pendingNotificationRequest[TITLE] = request.content.title;
-            }
-            if (request.content.body != nil) {
-                pendingNotificationRequest[BODY] = request.content.body;
-            }
-            if (request.content.userInfo[PAYLOAD] != [NSNull null]) {
-                pendingNotificationRequest[PAYLOAD] = request.content.userInfo[PAYLOAD];
-            }
-            [pendingNotificationRequests addObject:pendingNotificationRequest];
-        }
-        result(pendingNotificationRequests);
-    }];
+      if (request.content.title != nil) {
+        pendingNotificationRequest[TITLE] = request.content.title;
+      }
+      if (request.content.body != nil) {
+        pendingNotificationRequest[BODY] = request.content.body;
+      }
+      if (request.content.userInfo[PAYLOAD] != [NSNull null]) {
+        pendingNotificationRequest[PAYLOAD] = request.content.userInfo[PAYLOAD];
+      }
+      [pendingNotificationRequests addObject:pendingNotificationRequest];
+    }
+    result(pendingNotificationRequests);
+  }];
 }
 
 - (void)pendingLocalNotificationRequests:(FlutterResult _Nonnull)result {
@@ -230,165 +231,181 @@ static FlutterError *getFlutterError(NSError *error) {
         [[NSMutableDictionary alloc] init];
     pendingNotificationRequest[ID] =
         localNotification.userInfo[NOTIFICATION_ID];
-        if (localNotification.userInfo[TITLE] != [NSNull null]) {
-            pendingNotificationRequest[TITLE] = localNotification.userInfo[TITLE];
-        }
-        if (localNotification.alertBody) {
-            pendingNotificationRequest[BODY] = localNotification.alertBody;
-        }
-        if (localNotification.userInfo[PAYLOAD] != [NSNull null]) {
-            pendingNotificationRequest[PAYLOAD] = localNotification.userInfo[PAYLOAD];
-        }
-        [pendingNotificationRequests addObject:pendingNotificationRequest];
+    if (localNotification.userInfo[TITLE] != [NSNull null]) {
+      pendingNotificationRequest[TITLE] = localNotification.userInfo[TITLE];
     }
-    result(pendingNotificationRequests);
+    if (localNotification.alertBody) {
+      pendingNotificationRequest[BODY] = localNotification.alertBody;
+    }
+    if (localNotification.userInfo[PAYLOAD] != [NSNull null]) {
+      pendingNotificationRequest[PAYLOAD] = localNotification.userInfo[PAYLOAD];
+    }
+    [pendingNotificationRequests addObject:pendingNotificationRequest];
+  }
+  result(pendingNotificationRequests);
 }
 
 - (void)pendingNotificationRequests:(FlutterResult _Nonnull)result {
   if (@available(iOS 10.0, *)) {
-        [self pendingUserNotificationRequests:result];
-    } else {
-        [self pendingLocalNotificationRequests:result];
-    }
+    [self pendingUserNotificationRequests:result];
+  } else {
+    [self pendingLocalNotificationRequests:result];
+  }
 }
 
-- (UNNotificationCategoryOptions)parseNotificationCategoryOptions:(NSArray*)options API_AVAILABLE(ios(10.0)){
-    int result = UNNotificationCategoryOptionNone;
-    
-    for (NSNumber* option in options) {
-        result |= [option intValue];
-    }
-    
-    return result;
+- (UNNotificationCategoryOptions)parseNotificationCategoryOptions:
+    (NSArray *)options API_AVAILABLE(ios(10.0)) {
+  int result = UNNotificationCategoryOptionNone;
+
+  for (NSNumber *option in options) {
+    result |= [option intValue];
+  }
+
+  return result;
 }
 
-- (UNNotificationActionOptions)parseNotificationActionOptions:(NSArray*)options API_AVAILABLE(ios(10.0)){
-    int result = UNNotificationActionOptionNone;
-    
-    for (NSNumber* option in options) {
-        result |= [option intValue];
-    }
-    
-    return result;
+- (UNNotificationActionOptions)parseNotificationActionOptions:(NSArray *)options
+    API_AVAILABLE(ios(10.0)) {
+  int result = UNNotificationActionOptionNone;
+
+  for (NSNumber *option in options) {
+    result |= [option intValue];
+  }
+
+  return result;
 }
 
-/// Extracts notification categories from [arguments] and configures them as appropriate.
+/// Extracts notification categories from [arguments] and configures them as
+/// appropriate.
 ///
-/// This code will simply return the `completionHandler` if not running on a compatible iOS version or when no
-/// categories were specified in [arguments].
-- (void)configureNotificationCategories:(NSDictionary * _Nonnull)arguments
+/// This code will simply return the `completionHandler` if not running on a
+/// compatible iOS version or when no categories were specified in [arguments].
+- (void)configureNotificationCategories:(NSDictionary *_Nonnull)arguments
                                  result:(FlutterResult _Nonnull)result {
-    if (@available(iOS 10.0, *)) {
-        if ([self containsKey:@"notificationCategories" forDictionary:arguments]) {
-            NSMutableSet<UNNotificationCategory*>* newCategories = [NSMutableSet set];
-            
-            NSArray* categories = arguments[@"notificationCategories"];
-            
-            for (NSDictionary *category in categories) {
-                NSMutableArray<UNNotificationAction*>* newActions = [NSMutableArray array];
-                
-                NSArray* actions = category[@"actions"];
-                for (NSDictionary *action in actions) {
-                    NSString *type = action[@"type"];
-                    NSString *identifier = action[@"identifier"];
-                    NSString *title = action[@"title"];
-                    UNNotificationActionOptions options = [self parseNotificationActionOptions:action[@"options"]];
-                    
-                    if ([type isEqualToString:@"plain"]) {
-                        [newActions addObject:[UNNotificationAction actionWithIdentifier:identifier
-                                                                                   title:title
-                                                                                 options:options]];
-                    } else if ([type isEqualToString:@"text"]) {
-                        NSString *buttonTitle = action[@"buttonTitle"];
-                        NSString *placeholder = action[@"placeholder"];
-                        [newActions addObject:[UNTextInputNotificationAction actionWithIdentifier:identifier
-                                                                                            title:title
-                                                                                          options:options
-                                                                             textInputButtonTitle:buttonTitle
-                                                                             textInputPlaceholder:placeholder]];
-                    }
-                }
-              
-                UNNotificationCategory *newCategory = [UNNotificationCategory categoryWithIdentifier:category[@"identifier"]
-                                                                                             actions:newActions
-                                                                                   intentIdentifiers:@[]
-                                                                                             options:[self parseNotificationCategoryOptions:category[@"options"]]];
-                
-                [newCategories addObject:newCategory];
-            }
-                        
-            if (newCategories.count > 0) {
-                UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-                [center getNotificationCategoriesWithCompletionHandler:^(NSSet<UNNotificationCategory *> * _Nonnull existing) {
-                    [center setNotificationCategories:[existing setByAddingObjectsFromSet:newCategories]];
-                    
-                    result(@YES);
-                }];
-            } else {
-                result(@YES);
-            }
+  if (@available(iOS 10.0, *)) {
+    if ([self containsKey:@"notificationCategories" forDictionary:arguments]) {
+      NSMutableSet<UNNotificationCategory *> *newCategories =
+          [NSMutableSet set];
+
+      NSArray *categories = arguments[@"notificationCategories"];
+
+      for (NSDictionary *category in categories) {
+        NSMutableArray<UNNotificationAction *> *newActions =
+            [NSMutableArray array];
+
+        NSArray *actions = category[@"actions"];
+        for (NSDictionary *action in actions) {
+          NSString *type = action[@"type"];
+          NSString *identifier = action[@"identifier"];
+          NSString *title = action[@"title"];
+          UNNotificationActionOptions options =
+              [self parseNotificationActionOptions:action[@"options"]];
+
+          if ([type isEqualToString:@"plain"]) {
+            [newActions
+                addObject:[UNNotificationAction actionWithIdentifier:identifier
+                                                               title:title
+                                                             options:options]];
+          } else if ([type isEqualToString:@"text"]) {
+            NSString *buttonTitle = action[@"buttonTitle"];
+            NSString *placeholder = action[@"placeholder"];
+            [newActions addObject:[UNTextInputNotificationAction
+                                      actionWithIdentifier:identifier
+                                                     title:title
+                                                   options:options
+                                      textInputButtonTitle:buttonTitle
+                                      textInputPlaceholder:placeholder]];
+          }
         }
-    } else {
+
+        UNNotificationCategory *newCategory = [UNNotificationCategory
+            categoryWithIdentifier:category[@"identifier"]
+                           actions:newActions
+                 intentIdentifiers:@[]
+                           options:[self parseNotificationCategoryOptions:
+                                             category[@"options"]]];
+
+        [newCategories addObject:newCategory];
+      }
+
+      if (newCategories.count > 0) {
+        UNUserNotificationCenter *center =
+            [UNUserNotificationCenter currentNotificationCenter];
+        [center getNotificationCategoriesWithCompletionHandler:^(
+                    NSSet<UNNotificationCategory *> *_Nonnull existing) {
+          [center setNotificationCategories:
+                      [existing setByAddingObjectsFromSet:newCategories]];
+
+          result(@YES);
+        }];
+      } else {
         result(@YES);
+      }
     }
+  } else {
+    result(@YES);
+  }
 }
 
 - (void)initialize:(NSDictionary *_Nonnull)arguments
             result:(FlutterResult _Nonnull)result {
   if ([self containsKey:DEFAULT_PRESENT_ALERT forDictionary:arguments]) {
-        _displayAlert = [[arguments objectForKey:DEFAULT_PRESENT_ALERT] boolValue];
-    }
+    _displayAlert = [[arguments objectForKey:DEFAULT_PRESENT_ALERT] boolValue];
+  }
   if ([self containsKey:DEFAULT_PRESENT_SOUND forDictionary:arguments]) {
-        _playSound = [[arguments objectForKey:DEFAULT_PRESENT_SOUND] boolValue];
-    }
+    _playSound = [[arguments objectForKey:DEFAULT_PRESENT_SOUND] boolValue];
+  }
   if ([self containsKey:DEFAULT_PRESENT_BADGE forDictionary:arguments]) {
-        _updateBadge = [[arguments objectForKey:DEFAULT_PRESENT_BADGE] boolValue];
-    }
-    bool requestedSoundPermission = false;
-    bool requestedAlertPermission = false;
-    bool requestedBadgePermission = false;
+    _updateBadge = [[arguments objectForKey:DEFAULT_PRESENT_BADGE] boolValue];
+  }
+  bool requestedSoundPermission = false;
+  bool requestedAlertPermission = false;
+  bool requestedBadgePermission = false;
   if ([self containsKey:REQUEST_SOUND_PERMISSION forDictionary:arguments]) {
-        requestedSoundPermission = [arguments[REQUEST_SOUND_PERMISSION] boolValue];
-    }
+    requestedSoundPermission = [arguments[REQUEST_SOUND_PERMISSION] boolValue];
+  }
   if ([self containsKey:REQUEST_ALERT_PERMISSION forDictionary:arguments]) {
-        requestedAlertPermission = [arguments[REQUEST_ALERT_PERMISSION] boolValue];
-    }
+    requestedAlertPermission = [arguments[REQUEST_ALERT_PERMISSION] boolValue];
+  }
   if ([self containsKey:REQUEST_BADGE_PERMISSION forDictionary:arguments]) {
-        requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
-    }
-    
-    if([self containsKey:@"dispatcher_handle" forDictionary:arguments] &&
-       [self containsKey:@"callback_handle" forDictionary:arguments]) {
-        [_persistentState setObject:arguments[@"callback_handle"] forKey:@"callback_handle"];
-        [_persistentState setObject:arguments[@"dispatcher_handle"] forKey:@"dispatcher_handle"];
-    }
-    
-    // Configure the notification categories before requesting permissions
-    [self configureNotificationCategories:arguments result: result];
-        
-        // Once notification categories are set up, the permissions request will pick them up properly.
-        [self requestPermissionsImpl:requestedSoundPermission
-                     alertPermission:requestedAlertPermission
-                     badgePermission:requestedBadgePermission
+    requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
+  }
+
+  if ([self containsKey:@"dispatcher_handle" forDictionary:arguments] &&
+      [self containsKey:@"callback_handle" forDictionary:arguments]) {
+    [_persistentState setObject:arguments[@"callback_handle"]
+                         forKey:@"callback_handle"];
+    [_persistentState setObject:arguments[@"dispatcher_handle"]
+                         forKey:@"dispatcher_handle"];
+  }
+
+  // Configure the notification categories before requesting permissions
+  [self configureNotificationCategories:arguments result:result];
+
+  // Once notification categories are set up, the permissions request will pick
+  // them up properly.
+  [self requestPermissionsImpl:requestedSoundPermission
+               alertPermission:requestedAlertPermission
+               badgePermission:requestedBadgePermission
                         result:result];
-    
-    _initialized = true;
+
+  _initialized = true;
 }
 - (void)requestPermissions:(NSDictionary *_Nonnull)arguments
 
                     result:(FlutterResult _Nonnull)result {
-    bool soundPermission = false;
-    bool alertPermission = false;
-    bool badgePermission = false;
+  bool soundPermission = false;
+  bool alertPermission = false;
+  bool badgePermission = false;
   if ([self containsKey:SOUND_PERMISSION forDictionary:arguments]) {
-        soundPermission = [arguments[SOUND_PERMISSION] boolValue];
-    }
+    soundPermission = [arguments[SOUND_PERMISSION] boolValue];
+  }
   if ([self containsKey:ALERT_PERMISSION forDictionary:arguments]) {
-        alertPermission = [arguments[ALERT_PERMISSION] boolValue];
-    }
+    alertPermission = [arguments[ALERT_PERMISSION] boolValue];
+  }
   if ([self containsKey:BADGE_PERMISSION forDictionary:arguments]) {
-        badgePermission = [arguments[BADGE_PERMISSION] boolValue];
-    }
+    badgePermission = [arguments[BADGE_PERMISSION] boolValue];
+  }
   [self requestPermissionsImpl:soundPermission
                alertPermission:alertPermission
                badgePermission:badgePermission
@@ -406,98 +423,98 @@ static FlutterError *getFlutterError(NSError *error) {
   if (@available(iOS 10.0, *)) {
     UNUserNotificationCenter *center =
         [UNUserNotificationCenter currentNotificationCenter];
-        
-        UNAuthorizationOptions authorizationOptions = 0;
-        if (soundPermission) {
-            authorizationOptions += UNAuthorizationOptionSound;
-        }
-        if (alertPermission) {
-            authorizationOptions += UNAuthorizationOptionAlert;
-        }
-        if (badgePermission) {
-            authorizationOptions += UNAuthorizationOptionBadge;
-        }
+
+    UNAuthorizationOptions authorizationOptions = 0;
+    if (soundPermission) {
+      authorizationOptions += UNAuthorizationOptionSound;
+    }
+    if (alertPermission) {
+      authorizationOptions += UNAuthorizationOptionAlert;
+    }
+    if (badgePermission) {
+      authorizationOptions += UNAuthorizationOptionBadge;
+    }
     [center requestAuthorizationWithOptions:(authorizationOptions)
                           completionHandler:^(BOOL granted,
                                               NSError *_Nullable error) {
-            result(@(granted));
-        }];
-    } else {
-        UIUserNotificationType notificationTypes = 0;
-        if (soundPermission) {
-            notificationTypes |= UIUserNotificationTypeSound;
-        }
-        if (alertPermission) {
-            notificationTypes |= UIUserNotificationTypeAlert;
-        }
-        if (badgePermission) {
-            notificationTypes |= UIUserNotificationTypeBadge;
-        }
+                            result(@(granted));
+                          }];
+  } else {
+    UIUserNotificationType notificationTypes = 0;
+    if (soundPermission) {
+      notificationTypes |= UIUserNotificationTypeSound;
+    }
+    if (alertPermission) {
+      notificationTypes |= UIUserNotificationTypeAlert;
+    }
+    if (badgePermission) {
+      notificationTypes |= UIUserNotificationTypeBadge;
+    }
     UIUserNotificationSettings *settings =
         [UIUserNotificationSettings settingsForTypes:notificationTypes
                                           categories:nil];
     [[UIApplication sharedApplication]
         registerUserNotificationSettings:settings];
-        result(@YES);
-    }
+    result(@YES);
+  }
 }
 
 - (UILocalNotification *)buildStandardUILocalNotification:
     (NSDictionary *)arguments {
-    UILocalNotification *notification = [[UILocalNotification alloc] init];
+  UILocalNotification *notification = [[UILocalNotification alloc] init];
   if ([self containsKey:BODY forDictionary:arguments]) {
-        notification.alertBody = arguments[BODY];
-    }
-    
-    NSString *title;
+    notification.alertBody = arguments[BODY];
+  }
+
+  NSString *title;
   if ([self containsKey:TITLE forDictionary:arguments]) {
-        title = arguments[TITLE];
+    title = arguments[TITLE];
     if (@available(iOS 8.2, *)) {
-            notification.alertTitle = title;
-        }
+      notification.alertTitle = title;
     }
-    
-    bool presentAlert = _displayAlert;
-    bool presentSound = _playSound;
-    bool presentBadge = _updateBadge;
+  }
+
+  bool presentAlert = _displayAlert;
+  bool presentSound = _playSound;
+  bool presentBadge = _updateBadge;
   if (arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
-        NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
-        
+    NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
+
     if ([self containsKey:PRESENT_ALERT forDictionary:platformSpecifics]) {
-            presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
-        }
+      presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
+    }
     if ([self containsKey:PRESENT_SOUND forDictionary:platformSpecifics]) {
-            presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
-        }
+      presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
+    }
     if ([self containsKey:PRESENT_BADGE forDictionary:platformSpecifics]) {
-            presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
-        }
-        
+      presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
+    }
+
     if ([self containsKey:BADGE_NUMBER forDictionary:platformSpecifics]) {
       notification.applicationIconBadgeNumber =
           [platformSpecifics[BADGE_NUMBER] integerValue];
-        }
-        
+    }
+
     if ([self containsKey:SOUND forDictionary:platformSpecifics]) {
-            notification.soundName = [platformSpecifics[SOUND] stringValue];
-        }
+      notification.soundName = [platformSpecifics[SOUND] stringValue];
     }
-    
+  }
+
   if (presentSound && notification.soundName == nil) {
-        notification.soundName = UILocalNotificationDefaultSoundName;
-    }
-    
+    notification.soundName = UILocalNotificationDefaultSoundName;
+  }
+
   notification.userInfo = [self buildUserDict:arguments[ID]
                                         title:title
                                  presentAlert:presentAlert
                                  presentSound:presentSound
                                  presentBadge:presentBadge
                                       payload:arguments[PAYLOAD]];
-    return notification;
+  return notification;
 }
 
 - (NSString *)getIdentifier:(id)arguments {
-    return [arguments[ID] stringValue];
+  return [arguments[ID] stringValue];
 }
 
 - (void)show:(NSDictionary *_Nonnull)arguments
@@ -509,13 +526,13 @@ static FlutterError *getFlutterError(NSError *error) {
                          content:content
                           result:result
                          trigger:nil];
-    } else {
+  } else {
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
     [[UIApplication sharedApplication]
         presentLocalNotificationNow:notification];
-        result(nil);
-    }
+    result(nil);
+  }
 }
 
 - (void)zonedSchedule:(NSDictionary *_Nonnull)arguments
@@ -529,44 +546,44 @@ static FlutterError *getFlutterError(NSError *error) {
                          content:content
                           result:result
                          trigger:trigger];
-        
-    } else {
+
+  } else {
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
     NSString *scheduledDateTime = arguments[SCHEDULED_DATE_TIME];
-        NSString *timeZoneName = arguments[TIME_ZONE_NAME];
-        NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
+    NSString *timeZoneName = arguments[TIME_ZONE_NAME];
+    NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
     NSNumber *uiLocalNotificationDateInterpretation =
         arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION];
-        NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
-        [dateFormatter setTimeZone:timezone];
-        NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
-        notification.fireDate = date;
-        if (uiLocalNotificationDateInterpretation != nil) {
+    NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
+    [dateFormatter setTimeZone:timezone];
+    NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
+    notification.fireDate = date;
+    if (uiLocalNotificationDateInterpretation != nil) {
       if ([uiLocalNotificationDateInterpretation integerValue] ==
           AbsoluteGMTTime) {
-                notification.timeZone = nil;
+        notification.timeZone = nil;
       } else if ([uiLocalNotificationDateInterpretation integerValue] ==
                  WallClockTime) {
-                notification.timeZone = timezone;
-            }
-        }
+        notification.timeZone = timezone;
+      }
+    }
     if (matchDateComponents != nil) {
       if ([matchDateComponents integerValue] == Time) {
-                notification.repeatInterval = NSCalendarUnitDay;
+        notification.repeatInterval = NSCalendarUnitDay;
       } else if ([matchDateComponents integerValue] == DayOfWeekAndTime) {
-                notification.repeatInterval = NSCalendarUnitWeekOfYear;
+        notification.repeatInterval = NSCalendarUnitWeekOfYear;
       } else if ([matchDateComponents integerValue] == DayOfMonthAndTime) {
         notification.repeatInterval = NSCalendarUnitMonth;
       } else if ([matchDateComponents integerValue] == DateAndTime) {
         notification.repeatInterval = NSCalendarUnitYear;
-            }
-        }
-        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-        result(nil);
+      }
     }
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+    result(nil);
+  }
 }
 
 - (void)schedule:(NSDictionary *_Nonnull)arguments
@@ -578,7 +595,7 @@ static FlutterError *getFlutterError(NSError *error) {
         [self buildStandardNotificationContent:arguments result:result];
     NSDate *date = [NSDate
         dateWithTimeIntervalSince1970:[secondsSinceEpoch longLongValue]];
-        NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDateComponents *dateComponents =
         [calendar components:(NSCalendarUnitYear | NSCalendarUnitMonth |
                               NSCalendarUnitDay | NSCalendarUnitHour |
@@ -591,14 +608,14 @@ static FlutterError *getFlutterError(NSError *error) {
                          content:content
                           result:result
                          trigger:trigger];
-    } else {
+  } else {
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
     notification.fireDate = [NSDate
         dateWithTimeIntervalSince1970:[secondsSinceEpoch longLongValue]];
-        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-        result(nil);
-    }
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+    result(nil);
+  }
 }
 
 - (void)periodicallyShow:(NSDictionary *_Nonnull)arguments
@@ -612,47 +629,47 @@ static FlutterError *getFlutterError(NSError *error) {
                          content:content
                           result:result
                          trigger:trigger];
-    } else {
+  } else {
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
-        NSTimeInterval timeInterval = 0;
+    NSTimeInterval timeInterval = 0;
     switch ([arguments[REPEAT_INTERVAL] integerValue]) {
-            case EveryMinute:
-                timeInterval = 60;
-                notification.repeatInterval = NSCalendarUnitMinute;
-                break;
-            case Hourly:
-                timeInterval = 60 * 60;
-                notification.repeatInterval = NSCalendarUnitHour;
-                break;
-            case Daily:
-                timeInterval = 60 * 60 * 24;
-                notification.repeatInterval = NSCalendarUnitDay;
-                break;
-            case Weekly:
-                timeInterval = 60 * 60 * 24 * 7;
-                notification.repeatInterval = NSCalendarUnitWeekOfYear;
-                break;
-        }
-        notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:timeInterval];
-        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-        result(nil);
+    case EveryMinute:
+      timeInterval = 60;
+      notification.repeatInterval = NSCalendarUnitMinute;
+      break;
+    case Hourly:
+      timeInterval = 60 * 60;
+      notification.repeatInterval = NSCalendarUnitHour;
+      break;
+    case Daily:
+      timeInterval = 60 * 60 * 24;
+      notification.repeatInterval = NSCalendarUnitDay;
+      break;
+    case Weekly:
+      timeInterval = 60 * 60 * 24 * 7;
+      notification.repeatInterval = NSCalendarUnitWeekOfYear;
+      break;
     }
+    notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:timeInterval];
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+    result(nil);
+  }
 }
 
 - (void)showDailyAtTime:(NSDictionary *_Nonnull)arguments
                  result:(FlutterResult _Nonnull)result {
   NSDictionary *timeArguments = (NSDictionary *)arguments[REPEAT_TIME];
-    NSNumber *hourComponent = timeArguments[HOUR];
-    NSNumber *minutesComponent = timeArguments[MINUTE];
-    NSNumber *secondsComponent = timeArguments[SECOND];
+  NSNumber *hourComponent = timeArguments[HOUR];
+  NSNumber *minutesComponent = timeArguments[MINUTE];
+  NSNumber *secondsComponent = timeArguments[SECOND];
   if (@available(iOS 10.0, *)) {
     UNMutableNotificationContent *content =
         [self buildStandardNotificationContent:arguments result:result];
-        NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-        [dateComponents setHour:[hourComponent integerValue]];
-        [dateComponents setMinute:[minutesComponent integerValue]];
-        [dateComponents setSecond:[secondsComponent integerValue]];
+    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+    [dateComponents setHour:[hourComponent integerValue]];
+    [dateComponents setMinute:[minutesComponent integerValue]];
+    [dateComponents setSecond:[secondsComponent integerValue]];
     UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger
         triggerWithDateMatchingComponents:dateComponents
                                   repeats:YES];
@@ -660,36 +677,36 @@ static FlutterError *getFlutterError(NSError *error) {
                          content:content
                           result:result
                          trigger:trigger];
-    } else {
+  } else {
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
-        notification.repeatInterval = NSCalendarUnitDay;
-        NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-        [dateComponents setHour:[hourComponent integerValue]];
-        [dateComponents setMinute:[minutesComponent integerValue]];
-        [dateComponents setSecond:[secondsComponent integerValue]];
-        NSCalendar *calendar = [NSCalendar currentCalendar];
-        notification.fireDate = [calendar dateFromComponents:dateComponents];
-        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-        result(nil);
-    }
+    notification.repeatInterval = NSCalendarUnitDay;
+    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+    [dateComponents setHour:[hourComponent integerValue]];
+    [dateComponents setMinute:[minutesComponent integerValue]];
+    [dateComponents setSecond:[secondsComponent integerValue]];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    notification.fireDate = [calendar dateFromComponents:dateComponents];
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+    result(nil);
+  }
 }
 
 - (void)showWeeklyAtDayAndTime:(NSDictionary *_Nonnull)arguments
                         result:(FlutterResult _Nonnull)result {
   NSDictionary *timeArguments = (NSDictionary *)arguments[REPEAT_TIME];
-    NSNumber *dayOfWeekComponent = arguments[DAY];
-    NSNumber *hourComponent = timeArguments[HOUR];
-    NSNumber *minutesComponent = timeArguments[MINUTE];
-    NSNumber *secondsComponent = timeArguments[SECOND];
+  NSNumber *dayOfWeekComponent = arguments[DAY];
+  NSNumber *hourComponent = timeArguments[HOUR];
+  NSNumber *minutesComponent = timeArguments[MINUTE];
+  NSNumber *secondsComponent = timeArguments[SECOND];
   if (@available(iOS 10.0, *)) {
     UNMutableNotificationContent *content =
         [self buildStandardNotificationContent:arguments result:result];
-        NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-        [dateComponents setHour:[hourComponent integerValue]];
-        [dateComponents setMinute:[minutesComponent integerValue]];
-        [dateComponents setSecond:[secondsComponent integerValue]];
-        [dateComponents setWeekday:[dayOfWeekComponent integerValue]];
+    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+    [dateComponents setHour:[hourComponent integerValue]];
+    [dateComponents setMinute:[minutesComponent integerValue]];
+    [dateComponents setSecond:[secondsComponent integerValue]];
+    [dateComponents setWeekday:[dayOfWeekComponent integerValue]];
     UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger
         triggerWithDateMatchingComponents:dateComponents
                                   repeats:YES];
@@ -697,20 +714,20 @@ static FlutterError *getFlutterError(NSError *error) {
                          content:content
                           result:result
                          trigger:trigger];
-    } else {
+  } else {
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
-        notification.repeatInterval = NSCalendarUnitWeekOfYear;
-        NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-        [dateComponents setHour:[hourComponent integerValue]];
-        [dateComponents setMinute:[minutesComponent integerValue]];
-        [dateComponents setSecond:[secondsComponent integerValue]];
-        [dateComponents setWeekday:[dayOfWeekComponent integerValue]];
-        NSCalendar *calendar = [NSCalendar currentCalendar];
-        notification.fireDate = [calendar dateFromComponents:dateComponents];
-        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-        result(nil);
-    }
+    notification.repeatInterval = NSCalendarUnitWeekOfYear;
+    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+    [dateComponents setHour:[hourComponent integerValue]];
+    [dateComponents setMinute:[minutesComponent integerValue]];
+    [dateComponents setSecond:[secondsComponent integerValue]];
+    [dateComponents setWeekday:[dayOfWeekComponent integerValue]];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    notification.fireDate = [calendar dateFromComponents:dateComponents];
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+    result(nil);
+  }
 }
 
 - (void)cancel:(NSNumber *)id result:(FlutterResult _Nonnull)result {
@@ -719,9 +736,9 @@ static FlutterError *getFlutterError(NSError *error) {
         [UNUserNotificationCenter currentNotificationCenter];
     NSArray *idsToRemove =
         [[NSArray alloc] initWithObjects:[id stringValue], nil];
-        [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
-        [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
-    } else {
+    [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
+    [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
+  } else {
     NSArray *notifications =
         [UIApplication sharedApplication].scheduledLocalNotifications;
     for (int i = 0; i < [notifications count]; i++) {
@@ -731,23 +748,23 @@ static FlutterError *getFlutterError(NSError *error) {
       if ([userInfoNotificationId longValue] == [id longValue]) {
         [[UIApplication sharedApplication]
             cancelLocalNotification:localNotification];
-                break;
-            }
-        }
+        break;
+      }
     }
-    result(nil);
+  }
+  result(nil);
 }
 
 - (void)cancelAll:(FlutterResult _Nonnull)result {
   if (@available(iOS 10.0, *)) {
     UNUserNotificationCenter *center =
         [UNUserNotificationCenter currentNotificationCenter];
-        [center removeAllPendingNotificationRequests];
-        [center removeAllDeliveredNotifications];
-    } else {
-        [[UIApplication sharedApplication] cancelAllLocalNotifications];
-    }
-    result(nil);
+    [center removeAllPendingNotificationRequests];
+    [center removeAllDeliveredNotifications];
+  } else {
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
+  }
+  result(nil);
 }
 
 - (UNMutableNotificationContent *)
@@ -757,38 +774,38 @@ static FlutterError *getFlutterError(NSError *error) {
   UNMutableNotificationContent *content =
       [[UNMutableNotificationContent alloc] init];
   if ([self containsKey:TITLE forDictionary:arguments]) {
-        content.title = arguments[TITLE];
-    }
+    content.title = arguments[TITLE];
+  }
   if ([self containsKey:BODY forDictionary:arguments]) {
-        content.body = arguments[BODY];
-    }
-    bool presentAlert = _displayAlert;
-    bool presentSound = _playSound;
-    bool presentBadge = _updateBadge;
+    content.body = arguments[BODY];
+  }
+  bool presentAlert = _displayAlert;
+  bool presentSound = _playSound;
+  bool presentBadge = _updateBadge;
   if (arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
-        NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
+    NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
     if ([self containsKey:PRESENT_ALERT forDictionary:platformSpecifics]) {
-            presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
-        }
+      presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
+    }
     if ([self containsKey:PRESENT_SOUND forDictionary:platformSpecifics]) {
-            presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
-        }
+      presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
+    }
     if ([self containsKey:PRESENT_BADGE forDictionary:platformSpecifics]) {
-            presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
-        }
+      presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
+    }
     if ([self containsKey:BADGE_NUMBER forDictionary:platformSpecifics]) {
-            content.badge = [platformSpecifics objectForKey:BADGE_NUMBER];
+      content.badge = [platformSpecifics objectForKey:BADGE_NUMBER];
     }
     if ([self containsKey:THREAD_IDENTIFIER forDictionary:platformSpecifics]) {
       content.threadIdentifier = platformSpecifics[THREAD_IDENTIFIER];
-        }
+    }
     if ([self containsKey:ATTACHMENTS forDictionary:platformSpecifics]) {
-            NSArray<NSDictionary *> *attachments = platformSpecifics[ATTACHMENTS];
+      NSArray<NSDictionary *> *attachments = platformSpecifics[ATTACHMENTS];
       if (attachments.count > 0) {
         NSMutableArray<UNNotificationAttachment *> *notificationAttachments =
             [NSMutableArray arrayWithCapacity:attachments.count];
-                for (NSDictionary *attachment in attachments) {
-                    NSError *error;
+        for (NSDictionary *attachment in attachments) {
+          NSError *error;
           UNNotificationAttachment *notificationAttachment =
               [UNNotificationAttachment
                   attachmentWithIdentifier:attachment[ATTACHMENT_IDENTIFIER]
@@ -799,58 +816,58 @@ static FlutterError *getFlutterError(NSError *error) {
                                    options:nil
                                      error:&error];
           if (error) {
-                        result(getFlutterError(error));
-                        return nil;
-                    }
-                    [notificationAttachments addObject:notificationAttachment];
-                }
-                content.attachments = notificationAttachments;
-            }
+            result(getFlutterError(error));
+            return nil;
+          }
+          [notificationAttachments addObject:notificationAttachment];
         }
+        content.attachments = notificationAttachments;
+      }
+    }
     if ([self containsKey:SOUND forDictionary:platformSpecifics]) {
-            content.sound = [UNNotificationSound soundNamed:platformSpecifics[SOUND]];
-        }
+      content.sound = [UNNotificationSound soundNamed:platformSpecifics[SOUND]];
+    }
     if ([self containsKey:SUBTITLE forDictionary:platformSpecifics]) {
-            content.subtitle = platformSpecifics[SUBTITLE];
-        }
-        if([self containsKey:@"categoryIdentifier" forDictionary:platformSpecifics]) {
-            content.categoryIdentifier = platformSpecifics[@"categoryIdentifier"];
-        }
+      content.subtitle = platformSpecifics[SUBTITLE];
     }
-    
-    
+    if ([self containsKey:@"categoryIdentifier"
+            forDictionary:platformSpecifics]) {
+      content.categoryIdentifier = platformSpecifics[@"categoryIdentifier"];
+    }
+  }
+
   if (presentSound && content.sound == nil) {
-        content.sound = UNNotificationSound.defaultSound;
-    }
+    content.sound = UNNotificationSound.defaultSound;
+  }
   content.userInfo = [self buildUserDict:arguments[ID]
                                    title:content.title
                             presentAlert:presentAlert
                             presentSound:presentSound
                             presentBadge:presentBadge
                                  payload:arguments[PAYLOAD]];
-    return content;
+  return content;
 }
 
 - (UNCalendarNotificationTrigger *)buildUserNotificationCalendarTrigger:
     (id)arguments NS_AVAILABLE_IOS(10.0) {
   NSString *scheduledDateTime = arguments[SCHEDULED_DATE_TIME];
-    NSString *timeZoneName = arguments[TIME_ZONE_NAME];
-    
-    NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+  NSString *timeZoneName = arguments[TIME_ZONE_NAME];
 
-    // Needed for some countries, when phone DateTime format is 12H
-    NSLocale *posix = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+  NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
+  NSCalendar *calendar = [NSCalendar currentCalendar];
+  NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
+  NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
 
-    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
-    [dateFormatter setTimeZone:timezone];
-    [dateFormatter setLocale:posix];
+  // Needed for some countries, when phone DateTime format is 12H
+  NSLocale *posix = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
 
-    NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
+  [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
+  [dateFormatter setTimeZone:timezone];
+  [dateFormatter setLocale:posix];
 
-    calendar.timeZone = timezone;
+  NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
+
+  calendar.timeZone = timezone;
   if (matchDateComponents != nil) {
     if ([matchDateComponents integerValue] == Time) {
       NSDateComponents *dateComponents =
@@ -860,7 +877,7 @@ static FlutterError *getFlutterError(NSError *error) {
       return [UNCalendarNotificationTrigger
           triggerWithDateMatchingComponents:dateComponents
                                     repeats:YES];
-            
+
     } else if ([matchDateComponents integerValue] == DayOfWeekAndTime) {
       NSDateComponents *dateComponents =
           [calendar components:(NSCalendarUnitWeekday | NSCalendarUnitHour |
@@ -888,9 +905,9 @@ static FlutterError *getFlutterError(NSError *error) {
       return [UNCalendarNotificationTrigger
           triggerWithDateMatchingComponents:dateComponents
                                     repeats:YES];
-        }
-        return nil;
     }
+    return nil;
+  }
   NSDateComponents *dateComponents = [calendar
       components:(NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay |
                   NSCalendarUnitHour | NSCalendarUnitMinute |
@@ -904,23 +921,23 @@ static FlutterError *getFlutterError(NSError *error) {
 - (UNTimeIntervalNotificationTrigger *)buildUserNotificationTimeIntervalTrigger:
     (id)arguments API_AVAILABLE(ios(10.0)) {
   switch ([arguments[REPEAT_INTERVAL] integerValue]) {
-        case EveryMinute:
-            return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:60
-                                                                      repeats:YES];
-        case Hourly:
-            return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:60 * 60
-                                                                      repeats:YES];
-        case Daily:
+  case EveryMinute:
+    return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:60
+                                                              repeats:YES];
+  case Hourly:
+    return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:60 * 60
+                                                              repeats:YES];
+  case Daily:
     return
         [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:60 * 60 * 24
-                                                                      repeats:YES];
-            break;
-        case Weekly:
+                                                           repeats:YES];
+    break;
+  case Weekly:
     return [UNTimeIntervalNotificationTrigger
         triggerWithTimeInterval:60 * 60 * 24 * 7
-                                                                      repeats:YES];
-    }
-    return nil;
+                        repeats:YES];
+  }
+  return nil;
 }
 
 - (NSDictionary *)buildUserDict:(NSNumber *)id
@@ -929,16 +946,16 @@ static FlutterError *getFlutterError(NSError *error) {
                    presentSound:(bool)presentSound
                    presentBadge:(bool)presentBadge
                         payload:(NSString *)payload {
-    NSMutableDictionary *userDict = [[NSMutableDictionary alloc] init];
-    userDict[NOTIFICATION_ID] = id;
+  NSMutableDictionary *userDict = [[NSMutableDictionary alloc] init];
+  userDict[NOTIFICATION_ID] = id;
   if (title) {
-        userDict[TITLE] = title;
-    }
-    userDict[PRESENT_ALERT] = [NSNumber numberWithBool:presentAlert];
-    userDict[PRESENT_SOUND] = [NSNumber numberWithBool:presentSound];
-    userDict[PRESENT_BADGE] = [NSNumber numberWithBool:presentBadge];
-    userDict[PAYLOAD] = payload;
-    return userDict;
+    userDict[TITLE] = title;
+  }
+  userDict[PRESENT_ALERT] = [NSNumber numberWithBool:presentAlert];
+  userDict[PRESENT_SOUND] = [NSNumber numberWithBool:presentSound];
+  userDict[PRESENT_BADGE] = [NSNumber numberWithBool:presentBadge];
+  userDict[PAYLOAD] = payload;
+  return userDict;
 }
 
 - (void)addNotificationRequest:(NSString *)identifier
@@ -954,12 +971,12 @@ static FlutterError *getFlutterError(NSError *error) {
       [UNUserNotificationCenter currentNotificationCenter];
   [center addNotificationRequest:notificationRequest
            withCompletionHandler:^(NSError *_Nullable error) {
-        if (error == nil) {
-            result(nil);
-            return;
-        }
-        result(getFlutterError(error));
-    }];
+             if (error == nil) {
+               result(nil);
+               return;
+             }
+             result(getFlutterError(error));
+           }];
 }
 
 - (BOOL)isAFlutterLocalNotification:(NSDictionary *)userInfo {
@@ -969,43 +986,49 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)handleSelectNotification:(NSString *)payload {
-    [_channel invokeMethod:@"selectNotification" arguments:payload];
+  [_channel invokeMethod:@"selectNotification" arguments:payload];
 }
 
 - (BOOL)containsKey:(NSString *)key forDictionary:(NSDictionary *)dictionary {
-    return dictionary[key] != [NSNull null] && dictionary[key] != nil;
+  return dictionary[key] != [NSNull null] && dictionary[key] != nil;
 }
 
 - (void)startEngineIfNeeded {
-    if (backgroundEngine) {
-        return;
-    }
-    
-    NSNumber* dispatcherHandle = [_persistentState objectForKey:@"dispatcher_handle"];
-    
-    backgroundEngine = [[FlutterEngine alloc] initWithName:@"FlutterLocalNotificationsIsolate"
-                                                   project:nil
-                                    allowHeadlessExecution:true];
-    
-    FlutterCallbackInformation *info = [FlutterCallbackCache lookupCallbackInformation:[dispatcherHandle longValue]];
-    
-    if (!info) {
-        NSLog(@"callback information could not be retrieved");
-        abort();
-    }
-    
-    NSString* entryPoint = info.callbackName;
-    NSString* uri = info.callbackLibraryPath;
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        FlutterEventChannel* channel = [FlutterEventChannel eventChannelWithName:@"dexterous.com/flutter/local_notifications/actions" binaryMessenger:backgroundEngine.binaryMessenger];
-                
-        [backgroundEngine runWithEntrypoint:entryPoint libraryURI:uri];
-        [channel setStreamHandler:actionEventSink];
+  if (backgroundEngine) {
+    return;
+  }
 
-        NSAssert(registerPlugins != nil, @"failed to set registerPlugins");
-        registerPlugins(backgroundEngine);
-    });
+  NSNumber *dispatcherHandle =
+      [_persistentState objectForKey:@"dispatcher_handle"];
+
+  backgroundEngine =
+      [[FlutterEngine alloc] initWithName:@"FlutterLocalNotificationsIsolate"
+                                  project:nil
+                   allowHeadlessExecution:true];
+
+  FlutterCallbackInformation *info = [FlutterCallbackCache
+      lookupCallbackInformation:[dispatcherHandle longValue]];
+
+  if (!info) {
+    NSLog(@"callback information could not be retrieved");
+    abort();
+  }
+
+  NSString *entryPoint = info.callbackName;
+  NSString *uri = info.callbackLibraryPath;
+
+  dispatch_async(dispatch_get_main_queue(), ^{
+    FlutterEventChannel *channel = [FlutterEventChannel
+        eventChannelWithName:
+            @"dexterous.com/flutter/local_notifications/actions"
+             binaryMessenger:backgroundEngine.binaryMessenger];
+
+    [backgroundEngine runWithEntrypoint:entryPoint libraryURI:uri];
+    [channel setStreamHandler:actionEventSink];
+
+    NSAssert(registerPlugins != nil, @"failed to set registerPlugins");
+    registerPlugins(backgroundEngine);
+  });
 }
 
 #pragma mark - UNUserNotificationCenterDelegate
@@ -1016,32 +1039,32 @@ static FlutterError *getFlutterError(NSError *error) {
     NS_AVAILABLE_IOS(10.0) {
   if (![self
           isAFlutterLocalNotification:notification.request.content.userInfo]) {
-        return;
-    }
-    UNNotificationPresentationOptions presentationOptions = 0;
+    return;
+  }
+  UNNotificationPresentationOptions presentationOptions = 0;
   NSNumber *presentAlertValue =
       (NSNumber *)notification.request.content.userInfo[PRESENT_ALERT];
   NSNumber *presentSoundValue =
       (NSNumber *)notification.request.content.userInfo[PRESENT_SOUND];
   NSNumber *presentBadgeValue =
       (NSNumber *)notification.request.content.userInfo[PRESENT_BADGE];
-    bool presentAlert = [presentAlertValue boolValue];
-    bool presentSound = [presentSoundValue boolValue];
-    bool presentBadge = [presentBadgeValue boolValue];
+  bool presentAlert = [presentAlertValue boolValue];
+  bool presentSound = [presentSoundValue boolValue];
+  bool presentBadge = [presentBadgeValue boolValue];
   if (presentAlert) {
-        presentationOptions |= UNNotificationPresentationOptionAlert;
-    }
+    presentationOptions |= UNNotificationPresentationOptionAlert;
+  }
   if (presentSound) {
-        presentationOptions |= UNNotificationPresentationOptionSound;
-    }
+    presentationOptions |= UNNotificationPresentationOptionSound;
+  }
   if (presentBadge) {
-        presentationOptions |= UNNotificationPresentationOptionBadge;
-    }
-    completionHandler(presentationOptions);
+    presentationOptions |= UNNotificationPresentationOptionBadge;
+  }
+  completionHandler(presentationOptions);
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
-didReceiveNotificationResponse:(UNNotificationResponse *)response
+    didReceiveNotificationResponse:(UNNotificationResponse *)response
              withCompletionHandler:(void (^)(void))completionHandler
     NS_AVAILABLE_IOS(10.0) {
   if ([response.actionIdentifier
@@ -1050,75 +1073,74 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
                                             .userInfo]) {
     NSString *payload =
         (NSString *)response.notification.request.content.userInfo[PAYLOAD];
-        if (_initialized) {
-            [self handleSelectNotification:payload];
-        } else {
-            _launchPayload = payload;
-            _launchingAppFromNotification = true;
-        }
-        completionHandler();
-    } else if (response.actionIdentifier != nil) {        
-        if (!actionEventSink) {
-            actionEventSink = [[ActionEventSink alloc] init];
-        }
-        
-        NSString *text = @"";
-        if ([response respondsToSelector:@selector(userText)]) {
-            text = [(UNTextInputNotificationResponse*) response userText];
-        }
-        
-        [actionEventSink addItem:@{
-            @"id": response.actionIdentifier,
-            @"input": text,
-            @"payload": response.notification.request.content.userInfo[@"payload"],
-        }];
-        
-        
-        [self startEngineIfNeeded];
-        
-        completionHandler();
+    if (_initialized) {
+      [self handleSelectNotification:payload];
+    } else {
+      _launchPayload = payload;
+      _launchingAppFromNotification = true;
     }
+    completionHandler();
+  } else if (response.actionIdentifier != nil) {
+    if (!actionEventSink) {
+      actionEventSink = [[ActionEventSink alloc] init];
+    }
+
+    NSString *text = @"";
+    if ([response respondsToSelector:@selector(userText)]) {
+      text = [(UNTextInputNotificationResponse *)response userText];
+    }
+
+    [actionEventSink addItem:@{
+      @"id" : response.actionIdentifier,
+      @"input" : text,
+      @"payload" : response.notification.request.content.userInfo[@"payload"],
+    }];
+
+    [self startEngineIfNeeded];
+
+    completionHandler();
+  }
 }
 
 #pragma mark - AppDelegate
 - (BOOL)application:(UIApplication *)application
-didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    if (launchOptions != nil) {
+    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  if (launchOptions != nil) {
     UILocalNotification *launchNotification =
         (UILocalNotification *)[launchOptions
             objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
     _launchingAppFromNotification =
         launchNotification != nil &&
         [self isAFlutterLocalNotification:launchNotification.userInfo];
-        if (_launchingAppFromNotification) {
-            _launchNotification = launchNotification;
-        }
+    if (_launchingAppFromNotification) {
+      _launchNotification = launchNotification;
     }
-    
-    return YES;
+  }
+
+  return YES;
 }
 
 - (void)application:(UIApplication *)application
     didReceiveLocalNotification:(UILocalNotification *)notification {
   if (@available(iOS 10.0, *)) {
-        return;
-    }
+    return;
+  }
   if (![self isAFlutterLocalNotification:notification.userInfo]) {
-        return;
-    }
-    
-    NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
+    return;
+  }
+
+  NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
   arguments[ID] = notification.userInfo[NOTIFICATION_ID];
-    if (notification.userInfo[TITLE] != [NSNull null]) {
-        arguments[TITLE] = notification.userInfo[TITLE];
-    }
-    if (notification.alertBody != nil) {
-        arguments[BODY] = notification.alertBody;
-    }
-    if (notification.userInfo[PAYLOAD] != [NSNull null]) {
+  if (notification.userInfo[TITLE] != [NSNull null]) {
+    arguments[TITLE] = notification.userInfo[TITLE];
+  }
+  if (notification.alertBody != nil) {
+    arguments[BODY] = notification.alertBody;
+  }
+  if (notification.userInfo[PAYLOAD] != [NSNull null]) {
     arguments[PAYLOAD] = notification.userInfo[PAYLOAD];
-    }
-    [_channel invokeMethod:DID_RECEIVE_LOCAL_NOTIFICATION arguments:arguments];
+  }
+  [_channel invokeMethod:DID_RECEIVE_LOCAL_NOTIFICATION arguments:arguments];
 }
 
 @end

@@ -11,9 +11,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ActionEventSink : NSObject<FlutterStreamHandler>
+@interface ActionEventSink : NSObject <FlutterStreamHandler>
 
-- (void)addItem:(NSDictionary*)item;
+- (void)addItem:(NSDictionary *)item;
 
 @end
 
