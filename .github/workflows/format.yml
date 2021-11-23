@@ -22,7 +22,7 @@ jobs:
           find . -name '*.m' -exec clang-format -i {} \;
           find . -path '*/ios/**/*.h' -exec clang-format -i {} \;
           find . -path '*/macos/**/*.h' -exec clang-format -i {} \;
-          git diff --exit-code
+          git diff --exit-code || (git commit --all -m "Clang Format" && git push)
 
   swift_format:
     runs-on: macos-latest
@@ -32,4 +32,4 @@ jobs:
         run: |
           which swiftlint || brew install swiftlint
           swiftlint --fix
-          git diff --exit-code
+          git diff --exit-code || (git commit --all -m "Swift Format" && git push)
