@@ -1,3 +1,166 @@
+# [9.1.4]
+
+* [Android] Reverted change in 9.1.0 that added the `groupKey` to `ActiveNotification` as this was a potentially breaking change. This will instead be part of a major release
+
+# [9.1.3]
+
+* [Android] Reverts Android changes done in 9.1.2 and 9.1.1 due to reported stability issues. Ths means issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) may still occur though is a rare occurrence and may require a different solution and assistance from the community with regards to testing
+
+# [9.1.2+1]
+
+* **BAD** [Android] some minor code clean up from 9.1.2 changes
+* Fixed a grammar issue in readme. Thanks to the PR from [Clément Besnier](https://github.com/clemsciences)
+
+
+# [9.1.2]
+
+* [Android] Fix NPE issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1387) from change introduced in 9.1.1 in updating how notifications were written to shared preferences
+
+# [9.1.1]
+
+* **BAD** [Android] updated APIs the plugin uses to write to shared preferences in the background
+* [Android] fix  where there was a the `Future` for scheduling a notification could be completed prior to saving information on the scheduled notification to shared preferences. In this case the notification would still be scheduled but if the plugin was used to query the pending notifications quick enough, the plugin may have returned the incorrect number of pending notifications
+
+# [9.1.0]
+
+* **BAD** [Android] Added `groupKey` to `ActiveNotification` that would allow for finding the notification's group. Thanks to the PR from [Roman](https://github.com/drstranges)
+* [Android] Migrate maven repository from jcenter to mavenCentral. Thanks to the PR from [tigertore](https://github.com/tigertore)
+
+
+# [9.0.3]
+
+* [Android] Fixed issue [1362](https://github.com/MaikuB/flutter_local_notifications/issues/1362) so that the plugin refer to Android sound resources by the resource name instead of the resource id as the resource id could change over time e.g. if new resources are added. Note that this is a fix that can't be applied retroactively
+
+# [9.0.2]
+
+* [Android] Fixed issue [1357](https://github.com/MaikuB/flutter_local_notifications/issues/1357) where some details of a notification with formatted content weren't being returned
+* Bumped dependencies used by example app
+* Fixed grammar issue in readme in the `Scheduled Android notifications` section. Thanks to [Yousef Akiba](https://github.com/yousefakiba) for the PR
+* Updated example app and readme code around importing the `timezone` dependency so it uses the `all` variant of the IANA database that contains all timezones including those that are deprecated or may link to other timezones
+
+# [9.0.1]
+
+* Fixed issue [1346](https://github.com/MaikuB/flutter_local_notifications/issues/1346) where an exception is thrown when `onSelectNotification` callback isn't specified
+
+# [9.0.0]
+
+* **Breaking change** the `SelectNotificationCallback` and `DidReceiveLocalNotificationCallback` typedefs now map to functions that returns `void` instead of a `Future<dynamic>`. This change was done to better communicate the plugin doesn't actually await any asynchronous computation and is similar to how button pressed callbacks work for Flutter where they are typically use [`VoidCallback`](https://api.flutter.dev/flutter/dart-ui/VoidCallback.html)
+* Updated example app to show how to display notification where a byte array is used to specify the icon on Linux
+* **Breaking change** the `value` property of the `Importance` class is now non-nullable
+* **Breaking change** the `FlutterLocalNotificationsPlugin.private()` constructor that was visible for testing purposes has been removed. The plugin now uses the [`defaultTargetPlatform`](https://api.flutter.dev/flutter/foundation/defaultTargetPlatform.html) property from the Flutter framework to determine the platform an application running on. This removes the need for depending on the `platform` package. To write tests that require a platform-specific implementation of the plugin, the [debugDefaultTargetPlatformOverride](https://api.flutter.dev/flutter/foundation/debugDefaultTargetPlatformOverride.html) property can be used to do so
+* **Breaking change**  fixed issue [1306](https://github.com/MaikuB/flutter_local_notifications/issues/1306) where an Android notification channel description should have been optional. This means the `description` property of the `AndroidNotificationChannel` class and the `channelDescription` property of the `AndroidNotificationDetails` class are now named parameters
+* **Breaking change** the `AndroidIcon` class is now a generic class i.e. `AndroidIcon<T>` and it's `icon` property has been renamed to `data`. With this change, the type of the `icon` property that belongs to the `Person` class has changed from `AndroidIcon?` to `AndroidIcon<Object>?`
+* [Android] Added the `ByteArrayAndroidIcon` class that implements the `AndroidIcon<T>` class. This allows using a byte array to use as the icon for a person in a message style notification. A `ByteArrayAndroidIcon.fromBase64String()` named constructor is also available that will enable this using a base-64 encoded string. Thanks to the PR from [Alexander Petermann](https://github.com/lexxxel)
+* [Android] Android 12 support
+* Restored Linux support
+* Fixed grammatical errors in readme. Thanks to PR from [Aneesh Rao](https://github.com/sidrao2006)
+* Plugin now uses the [`clock`](https://pub.dev/packages/clock) package for internal logic that relies on geting the current time, such as validating that the date for a scheduled notification is set in the future
+
+# [8.2.0]
+
+* Added `dayOfMonthAndTime` and `dateAndTime` values to the `DateTimeComponents` enum. These allow for creating monthly and yearly notifications respectively. Thanks to the PR from [Denis Shakinov](https://github.com/DenisShakinov)
+
+# [8.1.1+2]
+
+* Bumped `timezone` dependency. Thanks to the PR from [Xavier H.](https://github.com/xvrh)
+
+# [8.1.1+1]
+
+* Updated API docs for the `initialize()` to mention that the `getNotificationAppLaunchDetails()` method should be used to handle when a notification launches an application
+
+# [8.1.1]
+
+* [Android] fixed issue [1263](https://github.com/MaikuB/flutter_local_notifications/issues/1263) around an unchecked/unsafe operation warning
+* [Android] fixed issue [1246](https://github.com/MaikuB/flutter_local_notifications/issues/1246) where calling `createNotificationChannel()` wasn't update a notification channel's name/description
+
+# [8.1.0]
+
+* [Android] added the `startForegroundService()` and `stopForegroundService()` methods to the `AndroidFlutterLocalNotificationsPlugin` class. This can be used to start and stop a foreground service that shows a foreground service respectively. Refer to the API docs for more details on how to use this. The example app has been updated to demonstrate their usage. Thanks to the PR from [EPNW](https://github.com/EPNW)
+
+# [8.0.0]
+
+* **Breaking change** the `AndroidBitmap` class is now a generic class i.e. `AndroidBitmap<T>`. This has resulted in the following changes
+ * the type of the `largeIcon` property that belongs to the `AndroidNotificationDetails` class has changed from `AndroidBitmap` to `AndroidBitmap<Object>`
+ * the type of the `largeIcon` and `bigPicture` properties that belongs to the `BigPictureStyleInformation` class has changed from `AndroidBitmap` to `AndroidBitmap<Object>`
+* [Android] Added the `ByteArrayAndroidBitmap` class that implements the `AndroidBitmap<T>` class. This allows using a byte array to use as the large icon for a notification or as big picture if the big picture style has been applied. A `ByteArrayAndroidBitmap.fromBase64String()` named constructor is also available that will enable this using a base-64 encoded string. Thanks to the PR from [Alexander Petermann](https://github.com/lexxxel)
+
+# [7.0.0]
+
+* **Breaking change** Removed support for Linux. This is because adding Linux made use of a plugin that was causing apps targeting the web to fail to build
+* **Note**: as this is more an urgent release to resolve the aforementioned issue that results in a breaking change, please note this release does not include the Android 12 support changes that were in the prereleases. This is to err on the side of caution as Android 12 hasn't reached platform stability yet
+
+# [6.1.1]
+
+* **Breaking change** Removed support for Linux. This is because adding Linux made use of a plugin that was causing apps targeting the web to fail to build. This is identical to the 7.0.0 release but also done as a minor increment as 6.1.1 to fix build issues as developers would most likely use caret versioning
+
+# [6.1.0] **Bad build**
+
+* Added initial support to Linux. Thanks to the PR from [Yaroslav Pronin](https://github.com/proninyaroslav)
+* Prevent crashing on the web by adding guard clauses within the plugin to check if the plugin is being used within a web app due to an [issue](https://github.com/google/platform.dart/issues/32) with getting the operating system via the [platform](https://pub.dev/packages/platform) package, which in turn relies on `dart:io`'s `Platform` APIs
+
+# [6.0.0]
+
+* Updated Flutter SDK constraint. To err on the safe side, this is why there's a major version bump for this release as the minimum version supported is 2.2
+* Updated Dart SDK constraint
+* Bumped mockito dependency
+* Addressed deprecation warnings that were appearing for Android builds
+* Updated API docs around the `tag` property associated with the `AndroidNotificationDetails` class
+
+# [5.0.0+4]
+
+* Fixed example app to re-add attributes to the Android app's `AndroidManifest.xml` to allow full-screen intent notifications to work
+
+# [5.0.0+3]
+
+* Updated readme on how to get the local timezone
+* Added link to location of example app to the readme
+
+# [5.0.0+2]
+
+* Updated example app to use the [flutter_native_timezone](https://pub.dev/packages/flutter_native_timezone) plugin to get the timezone
+* Updated readme to mention effect of using same notification id
+* Fixed wording and typo in full-screen intent notifications section of the readme. Thanks to PR from [Siddhartha Joshi](https://github.com/cimplesid)
+
+# [5.0.0+1]
+
+* Add link to explanation of the `onDidReceiveLocalNotification` callback to the initialisation section of the readme
+* Updated testing section to clarify behaviour on platforms that aren't supported
+* Updated `timezone` dependency
+
+# [5.0.0]
+
+* **Breaking change** migrated to null safety. Some arguments that were formerly null (e.g. some boolean values) are now non-nullable with a default value that should retain the old behaviour
+
+# [4.0.1+2]
+
+* [iOS/macOS] fixed issue where not requesting any permissions (i.e. all the boolean flags were set to false) would still cause a permissions prompt to appear. Thanks to the PR from [Andrey Parvatkin](https://github.com/badver)
+
+# [4.0.1+1]
+
+* Fixed typo in readme around the note relating to version 4.0 of the plugin where `onSelectNotification` will not be triggered when an app is launched by tapping on a notification.
+
+# [4.0.1]
+
+* [Android] added the `getNotificationChannels` method to the `AndroidFlutterLocalNotificationsPlugin` class. This can be used to a get list of all the notification channels on devices with Android 8.0 or newer. Thanks to the PR from [Shapovalova Vera](https://github.com/VAShapovalova)
+
+# [4.0.0]
+
+* **Breaking change** calling `initialize` will no longer trigger the `onSelectNotification` if a notification was tapped on prior to calling `initialize`. This was done as the `getNotificationAppLaunchDetails` method already provided a way to handle when an application was launched by a notification. Furthermore, calling `initialize` multiple times (e.g. on different pages) would have previously caused the `onSelectNotification` callback multiples times as well. This potentially results in the same notification being processed again
+* **Breaking change** the `matchDateComponents` parameter has been renamed to `matchDateTimeComponents`
+* Dates in the past can now be used with `zonedSchedule` when a value for the `matchDateTimeComponents` parameter has been specified to create recurring notifications. Thanks to the PR from [Erlend](https://github.com/erf) for implementing this and the previous change
+* [Android] notification data is now saved to shared preferences in a background thread to minimise jank. Thanks to the PR from [davidlepilote](https://github.com/davidlepilote)
+* [Android] the `tag` property has been added to the `AndroidNotificationDetails` class. This allows notifications on Android to be uniquely identifier through the use of the value of the `tag` and the `id` passed to the method for show/schedule the notification
+* [Android] the optional `tag` argument has been added to the `cancel` method for the `FlutterLocalNotificationsPlugin` and `AndroidFlutterLocalNotificationsPlugin` classes. This can be used to cancel notifications where the `tag` has been specified
+* [iOS][macOS] the `threadIdentifier` property has been added to the `IOSNotificationDetails` and `MacOSNotificationDetails` classes. This can be used to group notifications on iOS 10.0 or newer, and macOS 10.14 or newer. Thanks to the PR from [Marcin Chudy](https://github.com/mchudy) for adding this and the `tag` property for Android notifications
+* The Android and iOS example applications have been recreated in Kotlin and Swift respectively
+* Updated example application's dev dependency on the deprecated `e2e` for integration tests to use `integration_test` instead
+* Bumped Flutter dependencies
+* Example app cleanup including updating Proguard rules as specifying the rules for Flutter were no longer needed
+
+# [3.0.3]
+
+* [Android] added support for showing subtext in the notification. Thanks to the PR from [sidlatau](https://github.com/sidlatau)
+
 # [3.0.2]
 
 * [Android] added support for showing the notification timestamp as a stopwatch instead via the `usesChronometer` argument added to the constructor of the `AndroidNotificationDetails` class. Thanks to the PR from [andymstone](https://github.com/andymstone)

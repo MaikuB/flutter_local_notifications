@@ -1,5 +1,7 @@
+export 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
 export 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart'
     show
+        SelectNotificationCallback,
         PendingNotificationRequest,
         RepeatInterval,
         NotificationAppLaunchDetails;
@@ -31,6 +33,7 @@ export 'src/platform_specifics/android/styles/style_information.dart';
 export 'src/platform_specifics/ios/enums.dart';
 export 'src/platform_specifics/ios/initialization_settings.dart';
 export 'src/platform_specifics/ios/notification_attachment.dart';
+export 'src/platform_specifics/ios/notification_details.dart';
 export 'src/platform_specifics/ios/notification_details.dart';
 export 'src/platform_specifics/macos/initialization_settings.dart';
 export 'src/platform_specifics/macos/notification_attachment.dart';
