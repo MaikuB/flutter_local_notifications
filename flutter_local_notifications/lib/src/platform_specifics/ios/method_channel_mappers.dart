@@ -14,8 +14,8 @@ extension IOSNotificationActionMapper on IOSNotificationAction {
             .map((e) => e.index + 1) // ignore: always_specify_types
             .toList(),
         'type': describeEnum(type),
-        if (buttonTitle != null) 'buttonTitle': buttonTitle,
-        if (placeholder != null) 'placeholder': placeholder,
+        if (buttonTitle != null) 'buttonTitle': buttonTitle!,
+        if (placeholder != null) 'placeholder': placeholder!,
       };
 }
 
@@ -40,8 +40,8 @@ extension IOSInitializationSettingsMapper on IOSInitializationSettings {
         'defaultPresentSound': defaultPresentSound,
         'defaultPresentBadge': defaultPresentBadge,
         'notificationCategories': notificationCategories
-            ?.map((e) => e.toMap()) // ignore: always_specify_types
-            ?.toList(),
+            .map((e) => e.toMap()) // ignore: always_specify_types
+            .toList(),
       };
 }
 
@@ -53,16 +53,17 @@ extension IOSNotificationAttachmentMapper on IOSNotificationAttachment {
 }
 
 extension IOSNotificationDetailsMapper on IOSNotificationDetails {
-  Map<String, Object> toMap() => <String, Object>{
+  Map<String, Object?> toMap() => <String, Object?>{
         'presentAlert': presentAlert,
         'presentSound': presentSound,
         'presentBadge': presentBadge,
         'subtitle': subtitle,
         'sound': sound,
         'badgeNumber': badgeNumber,
+        'threadIdentifier': threadIdentifier,
         'attachments': attachments
             ?.map((a) => a.toMap()) // ignore: always_specify_types
-            ?.toList(),
+            .toList(),
         'categoryIdentifier': categoryIdentifier,
       };
 }

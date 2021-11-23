@@ -4,6 +4,8 @@ import androidx.annotation.Keep;
 
 @Keep
 public enum DateTimeComponents {
-    Time,
-    DayOfWeekAndTime
+  Time,
+  DayOfWeekAndTime,
+  DayOfMonthAndTime,
+  DateAndTime
 }

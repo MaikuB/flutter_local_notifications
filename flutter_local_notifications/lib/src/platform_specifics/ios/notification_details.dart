@@ -11,6 +11,7 @@ class IOSNotificationDetails {
     this.badgeNumber,
     this.attachments,
     this.subtitle,
+    this.threadIdentifier,
     this.categoryIdentifier,
   });
 
@@ -21,7 +22,7 @@ class IOSNotificationDetails {
   /// to [IOSInitializationSettings.defaultPresentAlert].
   ///
   /// This property is only applicable to iOS 10 or newer.
-  final bool presentAlert;
+  final bool? presentAlert;
 
   /// Play a sound when the notification is triggered while app is in
   /// the foreground.
@@ -30,7 +31,7 @@ class IOSNotificationDetails {
   /// [IOSInitializationSettings.defaultPresentSound].
   ///
   /// This property is only applicable to iOS 10 or newer.
-  final bool presentSound;
+  final bool? presentSound;
 
   /// Apply the badge value when the notification is triggered while app is in
   /// the foreground.
@@ -39,14 +40,14 @@ class IOSNotificationDetails {
   /// [IOSInitializationSettings.defaultPresentBadge].
   ///
   /// This property is only applicable to iOS 10 or newer.
-  final bool presentBadge;
+  final bool? presentBadge;
 
   /// Specifies the name of the file to play for the notification.
   ///
   /// Requires setting [presentSound] to true. If [presentSound] is set to true
   /// but [sound] isn't specified then it will use the default notification
   /// sound.
-  final String sound;
+  final String? sound;
 
   /// Specify the number to display as the app icon's badge when the
   /// notification arrives.
@@ -54,21 +55,27 @@ class IOSNotificationDetails {
   /// Specify the number `0` to remove the current badge, if present. Greater
   /// than `0` to display a badge with that number.
   /// Specify `null` to leave the current badge unchanged.
-  final int badgeNumber;
+  final int? badgeNumber;
 
   /// Specifies the list of attachments included with the notification.
   ///
   /// This property is only applicable to iOS 10 or newer.
-  final List<IOSNotificationAttachment> attachments;
+  final List<IOSNotificationAttachment>? attachments;
 
   /// Specifies the secondary description.
   ///
   /// This property is only applicable to iOS 10 or newer.
-  final String subtitle;
+  final String? subtitle;
+
+  /// Specifies the thread identifier that can be used to group
+  /// notifications together.
+  ///
+  /// This property is only applicable to iOS 10 or newer.
+  final String? threadIdentifier;
 
   /// The identifier of the app-defined category object.
   ///
   /// This must refer to a [IOSNotificationCategory] identifier configured via
   /// [InitializationSettings].
-  final String categoryIdentifier;
+  final String? categoryIdentifier;
 }

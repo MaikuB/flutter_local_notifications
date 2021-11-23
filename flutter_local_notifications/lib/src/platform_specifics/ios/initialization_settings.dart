@@ -40,8 +40,8 @@ class IOSNotificationAction {
   factory IOSNotificationAction.text(
     String identifier,
     String title, {
-    @required String buttonTitle,
-    String placeholder,
+    required String buttonTitle,
+    String? placeholder,
     Set<IOSNotificationActionOption> options =
         const <IOSNotificationActionOption>{},
   }) =>
@@ -79,10 +79,10 @@ class IOSNotificationAction {
 
   /// The localized title of the text input button that is displayed to the
   /// user.
-  final String buttonTitle;
+  final String? buttonTitle;
 
   /// The localized placeholder text to display in the text input field.
-  final String placeholder;
+  final String? placeholder;
 }
 
 /// Corresponds to the `UNNotificationCategory` type which is used to configure
@@ -121,12 +121,7 @@ class IOSInitializationSettings {
     this.defaultPresentBadge = true,
     this.onDidReceiveLocalNotification,
     this.notificationCategories = const <IOSNotificationCategory>[],
-  })  : assert(requestAlertPermission != null),
-        assert(requestSoundPermission != null),
-        assert(requestBadgePermission != null),
-        assert(defaultPresentAlert != null),
-        assert(defaultPresentBadge != null),
-        assert(defaultPresentSound != null);
+  });
 
   /// Request permission to display an alert.
   ///
@@ -172,7 +167,7 @@ class IOSInitializationSettings {
   /// in the foreground.
   ///
   /// This property is only applicable to iOS versions older than 10.
-  final DidReceiveLocalNotificationCallback onDidReceiveLocalNotification;
+  final DidReceiveLocalNotificationCallback? onDidReceiveLocalNotification;
 
   /// Configure the notification categories ([IOSNotificationCategory])
   /// available. This allows for fine-tuning of preview display.

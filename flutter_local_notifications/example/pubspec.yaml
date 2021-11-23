@@ -3,29 +3,37 @@ description: Demonstrates how to use the flutter_local_notifications plugin.
 publish_to: none
 
 dependencies:
+  cupertino_icons: ^1.0.2
+  device_info: ^2.0.2
   flutter:
     sdk: flutter
-  cupertino_icons: ^0.1.3
-  device_info: ^0.4.2+4
-  http: ^0.12.0+4
-  path_provider: ^1.6.7
-  shared_preferences: ^0.5.7
-  rxdart: ^0.24.0
   flutter_local_notifications:
     path: ../
+  flutter_local_notifications_platform_interface:
+    path: ../../flutter_local_notifications_platform_interface/
+  flutter_local_notifications_linux:
+    path: ../../flutter_local_notifications_linux/
+  flutter_native_timezone: ^2.0.0
+  http: ^0.13.4
+  image: ^3.0.8
+  path_provider: ^2.0.0
+  rxdart: ^0.27.2
+  shared_preferences: ^2.0.1
 
 dev_dependencies:
   flutter_driver:
     sdk: flutter
   flutter_test:
     sdk: flutter
-  e2e: ^0.4.3+1
+  integration_test:
+    sdk: flutter
 
 flutter:
   uses-material-design: true
   assets:
     - icons/
+    - sound/
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
-  flutter: ">=1.12.13+hotfix.5"
+  sdk: '>=2.12.0-0 <3.0.0'
+  flutter: '>=1.26.0-0' # allows for using integration_test from SDK
