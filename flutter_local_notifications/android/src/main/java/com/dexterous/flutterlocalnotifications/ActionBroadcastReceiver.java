@@ -4,10 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationCompat.Action;
 import androidx.core.app.RemoteInput;
 import com.dexterous.flutterlocalnotifications.isolate.IsolatePreferences;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -23,91 +20,89 @@ import java.util.List;
 import java.util.Map;
 
 public class ActionBroadcastReceiver extends BroadcastReceiver {
-	public static final String ACTION_TAPPED = "com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver.ACTION_TAPPED";
+  public static final String ACTION_TAPPED =
+      "com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver.ACTION_TAPPED";
 
-	@Nullable
-	private static ActionEventSink actionEventSink;
+  @Nullable private static ActionEventSink actionEventSink;
 
-	@Nullable
-	private static FlutterEngine engine;
+  @Nullable private static FlutterEngine engine;
 
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		final String id = intent.getStringExtra("id");
+  @Override
+  public void onReceive(Context context, Intent intent) {
+    final String id = intent.getStringExtra("id");
 
-		final Map<String, Object> action = new HashMap<>();
-		action.put("id", id);
+    final Map<String, Object> action = new HashMap<>();
+    action.put("id", id);
 
-		action.put("payload", intent.hasExtra("payload") ? intent.getStringExtra("payload") : "");
+    action.put("payload", intent.hasExtra("payload") ? intent.getStringExtra("payload") : "");
 
-		Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
-		if (remoteInput != null) {
-			action.put("input", remoteInput.getString("FlutterLocalNotificationsPluginInputResult"));
-		} else {
-			action.put("input", "");
-		}
+    Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
+    if (remoteInput != null) {
+      action.put("input", remoteInput.getString("FlutterLocalNotificationsPluginInputResult"));
+    } else {
+      action.put("input", "");
+    }
 
-		if (actionEventSink == null) {
-			actionEventSink = new ActionEventSink();
-		}
-		actionEventSink.addItem(action);
+    if (actionEventSink == null) {
+      actionEventSink = new ActionEventSink();
+    }
+    actionEventSink.addItem(action);
 
-		startEngine(context);
-	}
+    startEngine(context);
+  }
 
-	private static class ActionEventSink implements StreamHandler {
+  private static class ActionEventSink implements StreamHandler {
 
-		final List<Map<String, Object>> cache = new ArrayList<>();
+    final List<Map<String, Object>> cache = new ArrayList<>();
 
-		@Nullable
-		private EventSink eventSink;
+    @Nullable private EventSink eventSink;
 
-		public void addItem(Map<String, Object> item) {
-			if (eventSink != null) {
-				eventSink.success(item);
-			} else {
-				cache.add(item);
-			}
-		}
+    public void addItem(Map<String, Object> item) {
+      if (eventSink != null) {
+        eventSink.success(item);
+      } else {
+        cache.add(item);
+      }
+    }
 
-		@Override
-		public void onListen(Object arguments, EventSink events) {
-			for (Map<String, Object> item : cache) {
-				events.success(item);
-			}
+    @Override
+    public void onListen(Object arguments, EventSink events) {
+      for (Map<String, Object> item : cache) {
+        events.success(item);
+      }
 
-			cache.clear();
-			eventSink = events;
-		}
+      cache.clear();
+      eventSink = events;
+    }
 
-		@Override
-		public void onCancel(Object arguments) {
-			eventSink = null;
-		}
-	}
+    @Override
+    public void onCancel(Object arguments) {
+      eventSink = null;
+    }
+  }
 
-	private void startEngine(Context context) {
-		long dispatcherHandle = IsolatePreferences.getCallbackDispatcherHandle(context);
+  private void startEngine(Context context) {
+    long dispatcherHandle = IsolatePreferences.getCallbackDispatcherHandle(context);
 
-		if (dispatcherHandle != -1L && engine == null) {
-			engine = new FlutterEngine(context);
-			FlutterMain.ensureInitializationComplete(context, null);
+    if (dispatcherHandle != -1L && engine == null) {
+      engine = new FlutterEngine(context);
+      FlutterMain.ensureInitializationComplete(context, null);
 
-			FlutterCallbackInformation callbackInfo =
-					FlutterCallbackInformation.lookupCallbackInformation(dispatcherHandle);
-			String dartBundlePath = FlutterMain.findAppBundlePath();
+      FlutterCallbackInformation callbackInfo =
+          FlutterCallbackInformation.lookupCallbackInformation(dispatcherHandle);
+      String dartBundlePath = FlutterMain.findAppBundlePath();
 
-			EventChannel channel = new EventChannel(
-					engine.getDartExecutor().getBinaryMessenger(),
-					"dexterous.com/flutter/local_notifications/actions");
+      EventChannel channel =
+          new EventChannel(
+              engine.getDartExecutor().getBinaryMessenger(),
+              "dexterous.com/flutter/local_notifications/actions");
 
-			channel.setStreamHandler(actionEventSink);
+      channel.setStreamHandler(actionEventSink);
 
-			engine
-					.getDartExecutor()
-					.executeDartCallback(
-							new DartExecutor.DartCallback(context.getAssets(), dartBundlePath, callbackInfo));
-		}
-	}
-
+      engine
+          .getDartExecutor()
+          .executeDartCallback(
+              new DartExecutor.DartCallback(context.getAssets(), dartBundlePath, callbackInfo));
+    }
+  }
 }
