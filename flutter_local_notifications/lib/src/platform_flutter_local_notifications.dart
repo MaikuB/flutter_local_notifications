@@ -8,7 +8,6 @@ import 'package:flutter_local_notifications_platform_interface/flutter_local_not
 import 'package:timezone/timezone.dart';
 
 import 'helpers.dart';
-import 'platform_specifics/android/active_notification.dart';
 import 'platform_specifics/android/enums.dart';
 import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
@@ -64,6 +63,33 @@ class MethodChannelFlutterLocalNotificationsPlugin
                 p['id'], p['title'], p['body'], p['payload']))
             .toList() ??
         <PendingNotificationRequest>[];
+  }
+
+  /// Returns the list of active notifications shown by the application that
+  /// haven't been dismissed/removed.
+  ///
+  /// This method is only applicable to Android 6.0 or newer and will throw an
+  /// [PlatformException] when called on a device with an incompatible Android
+  /// version.
+  ///
+  /// This method is only applicable to iOS 10.0 or newer and will return an
+  /// empty list when called on a device with an incompatible iOS version.
+  @override
+  Future<List<ActiveNotification>> getActiveNotifications() async {
+    final List<Map<dynamic, dynamic>>? activeNotifications =
+        await _channel.invokeListMethod('getActiveNotifications');
+    return activeNotifications
+            // ignore: always_specify_types
+            ?.map((p) => ActiveNotification(
+                  id: p['id'],
+                  channelId: p['channelId'],
+                  groupKey: p['groupKey'],
+                  title: p['title'],
+                  body: p['body'],
+                  payload: p['payload'],
+                ))
+            .toList() ??
+        <ActiveNotification>[];
   }
 }
 
@@ -386,26 +412,6 @@ class AndroidFlutterLocalNotificationsPlugin
   /// This method is only applicable to Android versions 8.0 or newer.
   Future<void> deleteNotificationChannel(String channelId) =>
       _channel.invokeMethod('deleteNotificationChannel', channelId);
-
-  /// Returns the list of active notifications shown by the application that
-  /// haven't been dismissed/removed.
-  ///
-  /// This method is only applicable to Android 6.0 or newer and will throw an
-  /// [PlatformException] when called on a device with an incompatible Android
-  /// version.
-  Future<List<ActiveNotification>?> getActiveNotifications() async {
-    final List<Map<dynamic, dynamic>>? activeNotifications =
-        await _channel.invokeListMethod('getActiveNotifications');
-    return activeNotifications
-        // ignore: always_specify_types
-        ?.map((a) => ActiveNotification(
-              a['id'],
-              a['channelId'],
-              a['title'],
-              a['body'],
-            ))
-        .toList();
-  }
 
   /// Returns the list of all notification channels.
   ///

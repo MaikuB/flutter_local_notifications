@@ -28,10 +28,10 @@ void main() {
         log.add(methodCall);
         if (methodCall.method == 'pendingNotificationRequests') {
           return <Map<String, Object?>>[];
-        } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
-          return null;
         } else if (methodCall.method == 'getActiveNotifications') {
           return <Map<String, Object?>>[];
+        } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
+          return null;
         }
       });
     });
@@ -2085,15 +2085,6 @@ void main() {
       ]);
     });
 
-    test('getActiveNotifications', () async {
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()!
-          .getActiveNotifications();
-      expect(log,
-          <Matcher>[isMethodCall('getActiveNotifications', arguments: null)]);
-    });
-
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
       expect(log, <Matcher>[
@@ -2127,11 +2118,7 @@ void main() {
     });
 
     test('getActiveNotifications', () async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()!
-          .getActiveNotifications();
+      await flutterLocalNotificationsPlugin.getActiveNotifications();
       expect(log,
           <Matcher>[isMethodCall('getActiveNotifications', arguments: null)]);
     });

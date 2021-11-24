@@ -475,4 +475,8 @@ class FlutterLocalNotificationsPlugin {
   /// Returns a list of notifications pending to be delivered/shown.
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() =>
       FlutterLocalNotificationsPlatform.instance.pendingNotificationRequests();
+
+  /// Returns a list of notifications that are already delivered/shown.
+  Future<List<ActiveNotification>> getActiveNotifications() =>
+      FlutterLocalNotificationsPlatform.instance.getActiveNotifications();
 }

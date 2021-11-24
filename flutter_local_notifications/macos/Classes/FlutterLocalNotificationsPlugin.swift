@@ -35,6 +35,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let threadIdentifier = "threadIdentifier"
     }
 
+    struct ErrorMessages {
+        static let getActiveNotificationsErrorMessage = "MacOS version must be 10.14 or newer to use getActiveNotifications";
+    }
+
     struct DateFormatStrings {
         static let isoFormat = "yyyy-MM-dd'T'HH:mm:ss"
     }
@@ -134,6 +138,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             cancelAll(result)
         case "pendingNotificationRequests":
             pendingNotificationRequests(result)
+        case "getActiveNotifications":
+            getActiveNotifications(result)
         case "show":
             show(call, result)
         case "zonedSchedule":
@@ -238,6 +244,20 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 requestDictionaries.append([MethodCallArguments.id: Int(scheduledNotification.identifier!) as Any, MethodCallArguments.title: scheduledNotification.title, MethodCallArguments.body: scheduledNotification.informativeText, MethodCallArguments.payload: scheduledNotification.userInfo![MethodCallArguments.payload]])
             }
             result(requestDictionaries)
+        }
+    }
+
+    func getActiveNotifications(_ result: @escaping FlutterResult) {
+        if #available(OSX 10.14, *) {
+            UNUserNotificationCenter.current().getDeliveredNotifications { (requests) in
+                var requestDictionaries: [[String: Any?]] = []
+                for request in requests {
+                    requestDictionaries.append([MethodCallArguments.id: Int(request.request.identifier) as Any, MethodCallArguments.title: request.request.content.title, MethodCallArguments.body: request.request.content.body, MethodCallArguments.payload: request.request.content.userInfo[MethodCallArguments.payload]])
+                }
+                result(requestDictionaries)
+            }
+        } else {
+            result(FlutterError.init(code: "getActiveNotifications_error", message: ErrorMessages.getActiveNotificationsErrorMessage, details: nil))
         }
     }
 

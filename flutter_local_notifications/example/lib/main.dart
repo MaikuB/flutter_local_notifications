@@ -358,6 +358,12 @@ class _HomePageState extends State<HomePage> {
                           await _checkPendingNotificationRequests();
                         },
                       ),
+                      PaddedElevatedButton(
+                        buttonText: 'Get active notifications',
+                        onPressed: () async {
+                          await _getActiveNotifications();
+                        },
+                      ),
                     ],
                     PaddedElevatedButton(
                       buttonText:
@@ -598,12 +604,6 @@ class _HomePageState extends State<HomePage> {
                         buttonText: 'Get notification channels',
                         onPressed: () async {
                           await _getNotificationChannels();
-                        },
-                      ),
-                      PaddedElevatedButton(
-                        buttonText: 'Get active notifications',
-                        onPressed: () async {
-                          await _getActiveNotifications();
                         },
                       ),
                       PaddedElevatedButton(
@@ -1927,20 +1927,31 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<Widget> _getActiveNotificationsDialogContent() async {
-    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    if (!(androidInfo.version.sdkInt >= 23)) {
-      return const Text(
-        '"getActiveNotifications" is available only for Android 6.0 or newer',
-      );
+    if (Platform.isAndroid) {
+      final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      if (androidInfo.version.sdkInt < 23) {
+        return const Text(
+          '"getActiveNotifications" is available only for Android 6.0 or newer',
+        );
+      }
+    } else if (Platform.isIOS) {
+      final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      final List<String> fullVersion = iosInfo.systemVersion.split('.');
+      if (fullVersion.isNotEmpty) {
+        final int? version = int.tryParse(fullVersion[0]);
+        if (version != null && version < 10) {
+          return const Text(
+            '"getActiveNotifications" returns an empty list before iOS 10',
+          );
+        }
+      }
     }
 
     try {
       final List<ActiveNotification>? activeNotifications =
-          await flutterLocalNotificationsPlugin
-              .resolvePlatformSpecificImplementation<
-                  AndroidFlutterLocalNotificationsPlugin>()!
-              .getActiveNotifications();
+          await flutterLocalNotificationsPlugin.getActiveNotifications();
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
