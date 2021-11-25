@@ -48,12 +48,12 @@ class ReceivedNotification {
 
 String? selectedNotificationPayload;
 
-void notificationTapBackground(String id, String? input, String? payload) {
-  // ignore: avoid_print
-  print('notification action tapped: $id with payload: $payload');
-  if (input?.isNotEmpty ?? false) {
+void notificationTapBackground(NotificationActionDetails details) {
+  print(
+      'notification(${details.id}) action tapped: ${details.actionId} with payload: ${details.payload}');
+  if (details.input?.isNotEmpty ?? false) {
     // ignore: avoid_print
-    print('notification action tapped with input: $input');
+    print('notification action tapped with input: ${details.input}');
   }
 }
 
@@ -915,8 +915,8 @@ class _HomePageState extends State<HomePage> {
       iOS: iosNotificationDetails,
     );
     await flutterLocalNotificationsPlugin.show(
-        0, 'plain title', 'plain body', platformChannelSpecifics,
-        payload: 'item x');
+        112, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item z');
   }
 
   Future<void> _showNotificationWithTextAction() async {

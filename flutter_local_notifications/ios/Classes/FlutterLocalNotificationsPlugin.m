@@ -1091,7 +1091,8 @@ static FlutterError *getFlutterError(NSError *error) {
     }
 
     [actionEventSink addItem:@{
-      @"id" : response.actionIdentifier,
+      @"notificationId" : response.notification.request.identifier,
+      @"actionId" : response.actionIdentifier,
       @"input" : text,
       @"payload" : response.notification.request.content.userInfo[@"payload"],
     }];

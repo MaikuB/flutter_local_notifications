@@ -22,6 +22,8 @@ import java.util.Map;
 public class ActionBroadcastReceiver extends BroadcastReceiver {
   public static final String ACTION_TAPPED =
       "com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver.ACTION_TAPPED";
+  public static final String ACTION_ID = "actionId";
+  public static final String NOTIFICATION_ID = "notificationId";
 
   @Nullable private static ActionEventSink actionEventSink;
 
@@ -29,11 +31,11 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
-    final String id = intent.getStringExtra("id");
 
     final Map<String, Object> action = new HashMap<>();
-    action.put("id", id);
-
+    action.put("notificationId", intent.getIntExtra(NOTIFICATION_ID, -1));
+    action.put(
+        "actionId", intent.hasExtra(ACTION_ID) ? intent.getStringExtra(ACTION_ID) : "unknown");
     action.put("payload", intent.hasExtra("payload") ? intent.getStringExtra("payload") : "");
 
     Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
