@@ -234,7 +234,7 @@ public class FlutterLocalNotificationsPlugin
                 .putExtra("id", action.id)
                 .putExtra(PAYLOAD, notificationDetails.payload);
         PendingIntent actionPendingIntent =
-            PendingIntent.getBroadcast(context, requestCode++, actionIntent, 0);
+            PendingIntent.getBroadcast(context, requestCode++, actionIntent, PendingIntent.FLAG_ONE_SHOT);
         Builder actionBuilder = new Builder(icon, action.title, actionPendingIntent);
 
         if (action.contextual != null) {
