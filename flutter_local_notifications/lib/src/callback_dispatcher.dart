@@ -28,7 +28,21 @@ void callbackDispatcher() {
         .map<Map<String, dynamic>>(
             (Map<dynamic, dynamic> event) => Map.castFrom(event))
         .listen((Map<String, dynamic> event) {
-      callback?.call(event['id'], event['input'], event['payload']);
+      final Object notificationId = event['notificationId'];
+      final int id;
+      if (notificationId is int) {
+        id = notificationId;
+      } else if (notificationId is String) {
+        id = int.parse(notificationId);
+      } else {
+        id = -1;
+      }
+      callback?.call(NotificationActionDetails(
+        id: id,
+        actionId: event['actionId'],
+        input: event['input'],
+        payload: event['payload'],
+      ));
     });
   });
 }

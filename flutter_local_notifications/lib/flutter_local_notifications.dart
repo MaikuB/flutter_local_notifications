@@ -4,7 +4,8 @@ export 'package:flutter_local_notifications_platform_interface/flutter_local_not
         SelectNotificationCallback,
         PendingNotificationRequest,
         RepeatInterval,
-        NotificationAppLaunchDetails;
+        NotificationAppLaunchDetails,
+        NotificationActionDetails;
 
 export 'src/flutter_local_notifications_plugin.dart';
 export 'src/initialization_settings.dart';
