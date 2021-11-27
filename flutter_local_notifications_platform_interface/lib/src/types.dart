@@ -53,6 +53,8 @@ class ActiveNotification {
   final String? channelId;
 
   /// The notification's group.
+  ///
+  /// Returned only on Android.
   final String? groupKey;
 
   /// The notification's title.
