@@ -1311,7 +1311,7 @@ public class FlutterLocalNotificationsPlugin
     }
     result.success(pendingNotifications);
   }
-  
+
   private void getActiveNotifications(Result result) {
     if (VERSION.SDK_INT < VERSION_CODES.M) {
       result.error(
