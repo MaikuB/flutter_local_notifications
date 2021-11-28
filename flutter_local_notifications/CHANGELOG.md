@@ -1,3 +1,16 @@
+# [10.0.0-dev.1]
+
+* [iOS] `getActiveNotifications()` is now supported for iOS versions 10.0 or newer
+* [macOS] `getActiveNotifications()` is now supported for macOS versions 10.14 or newer
+* [Android] **Breaking change** the following error codes included in `PlatformException`s that can occur on Android have been updated
+  * `INVALID_ICON` -> `invalid_icon`
+  * `INVALID_LARGE_ICON` -> `invalid_large_icon`
+  * `INVALID_BIG_PICTURE` -> `invalid_big_picture`
+  * `INVALID_SOUND` -> `invalid_sound`
+  * `INVALID_LED_DETAILS` -> `invalid_led_details`
+  * `GET_ACTIVE_NOTIFICATIONS_ERROR_CODE` -> `unsupported_os_version`
+  * `GET_NOTIFICATION_CHANNELS_ERROR_CODE` -> getNotificationChannelsError`
+
 # [9.1.4]
 
 * [Android] Reverted change in 9.1.0 that added the `groupKey` to `ActiveNotification` as this was a potentially breaking change. This will instead be part of a major release
