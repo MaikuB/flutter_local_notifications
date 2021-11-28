@@ -24,6 +24,8 @@ void main() {
         log.add(methodCall);
         if (methodCall.method == 'pendingNotificationRequests') {
           return <Map<String, Object>?>[];
+        } else if (methodCall.method == 'getActiveNotifications') {
+          return <Map<String, Object>?>[];
         } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
           return null;
         }
@@ -433,6 +435,12 @@ void main() {
       expect(log, <Matcher>[
         isMethodCall('pendingNotificationRequests', arguments: null)
       ]);
+    });
+
+    test('getActiveNotifications', () async {
+      await flutterLocalNotificationsPlugin.getActiveNotifications();
+      expect(log,
+          <Matcher>[isMethodCall('getActiveNotifications', arguments: null)]);
     });
 
     test('getNotificationAppLaunchDetails', () async {

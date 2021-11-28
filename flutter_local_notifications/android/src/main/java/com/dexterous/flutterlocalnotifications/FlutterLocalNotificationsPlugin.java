@@ -99,11 +99,11 @@ public class FlutterLocalNotificationsPlugin
       "deleteNotificationChannelGroup";
   private static final String CREATE_NOTIFICATION_CHANNEL_METHOD = "createNotificationChannel";
   private static final String DELETE_NOTIFICATION_CHANNEL_METHOD = "deleteNotificationChannel";
-  private static final String GET_ACTIVE_NOTIFICATIONS_METHOD = "getActiveNotifications";
   private static final String GET_NOTIFICATION_CHANNELS_METHOD = "getNotificationChannels";
   private static final String START_FOREGROUND_SERVICE = "startForegroundService";
   private static final String STOP_FOREGROUND_SERVICE = "stopForegroundService";
   private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
+  private static final String GET_ACTIVE_NOTIFICATIONS_METHOD = "getActiveNotifications";
   private static final String SHOW_METHOD = "show";
   private static final String CANCEL_METHOD = "cancel";
   private static final String CANCEL_ALL_METHOD = "cancelAll";
@@ -1266,6 +1266,9 @@ public class FlutterLocalNotificationsPlugin
       case PENDING_NOTIFICATION_REQUESTS_METHOD:
         pendingNotificationRequests(result);
         break;
+      case GET_ACTIVE_NOTIFICATIONS_METHOD:
+        getActiveNotifications(result);
+        break;
       case CREATE_NOTIFICATION_CHANNEL_GROUP_METHOD:
         createNotificationChannelGroup(call, result);
         break;
@@ -1277,9 +1280,6 @@ public class FlutterLocalNotificationsPlugin
         break;
       case DELETE_NOTIFICATION_CHANNEL_METHOD:
         deleteNotificationChannel(call, result);
-        break;
-      case GET_ACTIVE_NOTIFICATIONS_METHOD:
-        getActiveNotifications(result);
         break;
       case GET_NOTIFICATION_CHANNELS_METHOD:
         getNotificationChannels(result);
@@ -1310,6 +1310,38 @@ public class FlutterLocalNotificationsPlugin
       pendingNotifications.add(pendingNotification);
     }
     result.success(pendingNotifications);
+  }
+  
+  private void getActiveNotifications(Result result) {
+    if (VERSION.SDK_INT < VERSION_CODES.M) {
+      result.error(
+          GET_ACTIVE_NOTIFICATIONS_ERROR_CODE, GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE, null);
+      return;
+    }
+    NotificationManager notificationManager =
+        (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+    try {
+      StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
+      List<Map<String, Object>> activeNotificationsPayload = new ArrayList<>();
+
+      for (StatusBarNotification activeNotification : activeNotifications) {
+        HashMap<String, Object> activeNotificationPayload = new HashMap<>();
+        activeNotificationPayload.put("id", activeNotification.getId());
+        Notification notification = activeNotification.getNotification();
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
+          activeNotificationPayload.put("channelId", notification.getChannelId());
+        }
+
+        activeNotificationPayload.put("groupKey", notification.getGroup());
+        activeNotificationPayload.put(
+            "title", notification.extras.getCharSequence("android.title"));
+        activeNotificationPayload.put("body", notification.extras.getCharSequence("android.text"));
+        activeNotificationsPayload.add(activeNotificationPayload);
+      }
+      result.success(activeNotificationsPayload);
+    } catch (Throwable e) {
+      result.error(GET_ACTIVE_NOTIFICATIONS_ERROR_CODE, e.getMessage(), e.getStackTrace());
+    }
   }
 
   private void cancel(MethodCall call, Result result) {
@@ -1584,38 +1616,6 @@ public class FlutterLocalNotificationsPlugin
       notificationManager.deleteNotificationChannel(channelId);
     }
     result.success(null);
-  }
-
-  private void getActiveNotifications(Result result) {
-    if (VERSION.SDK_INT < VERSION_CODES.M) {
-      result.error(
-          GET_ACTIVE_NOTIFICATIONS_ERROR_CODE, GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE, null);
-      return;
-    }
-    NotificationManager notificationManager =
-        (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
-    try {
-      StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
-      List<Map<String, Object>> activeNotificationsPayload = new ArrayList<>();
-
-      for (StatusBarNotification activeNotification : activeNotifications) {
-        HashMap<String, Object> activeNotificationPayload = new HashMap<>();
-        activeNotificationPayload.put("id", activeNotification.getId());
-        Notification notification = activeNotification.getNotification();
-        if (VERSION.SDK_INT >= VERSION_CODES.O) {
-          activeNotificationPayload.put("channelId", notification.getChannelId());
-        }
-
-        activeNotificationPayload.put("groupKey", notification.getGroup());
-        activeNotificationPayload.put(
-            "title", notification.extras.getCharSequence("android.title"));
-        activeNotificationPayload.put("body", notification.extras.getCharSequence("android.text"));
-        activeNotificationsPayload.add(activeNotificationPayload);
-      }
-      result.success(activeNotificationsPayload);
-    } catch (Throwable e) {
-      result.error(GET_ACTIVE_NOTIFICATIONS_ERROR_CODE, e.getMessage(), e.getStackTrace());
-    }
   }
 
   private void getNotificationChannels(Result result) {

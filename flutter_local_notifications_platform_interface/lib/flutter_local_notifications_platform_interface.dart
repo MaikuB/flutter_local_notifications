@@ -70,4 +70,10 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
     throw UnimplementedError(
         'pendingNotificationRequest() has not been implemented');
   }
+
+  /// Returns a list of notifications already delivered
+  Future<List<ActiveNotification>> getActiveNotifications() {
+    throw UnimplementedError(
+        'getActiveNotifications() has not been implemented');
+  }
 }

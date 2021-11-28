@@ -3,6 +3,7 @@ export 'package:flutter_local_notifications_platform_interface/flutter_local_not
     show
         SelectNotificationCallback,
         PendingNotificationRequest,
+        ActiveNotification,
         RepeatInterval,
         NotificationAppLaunchDetails;
 
@@ -11,7 +12,6 @@ export 'src/initialization_settings.dart';
 export 'src/notification_details.dart';
 export 'src/platform_flutter_local_notifications.dart'
     hide MethodChannelFlutterLocalNotificationsPlugin;
-export 'src/platform_specifics/android/active_notification.dart';
 export 'src/platform_specifics/android/bitmap.dart';
 export 'src/platform_specifics/android/enums.dart'
     hide AndroidBitmapSource, AndroidIconSource, AndroidNotificationSoundSource;
