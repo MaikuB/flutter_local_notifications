@@ -1943,7 +1943,7 @@ class _HomePageState extends State<HomePage> {
         final int? version = int.tryParse(fullVersion[0]);
         if (version != null && version < 10) {
           return const Text(
-            '"getActiveNotifications" returns an empty list before iOS 10',
+            '"getActiveNotifications" is available only for iOS 10.0 or newer',
           );
         }
       }
