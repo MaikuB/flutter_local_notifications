@@ -36,7 +36,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
 
     struct ErrorMessages {
-        static let getActiveNotificationsErrorMessage = "MacOS version must be 10.14 or newer to use getActiveNotifications";
+        static let getActiveNotificationsErrorMessage = "MacOS version must be 10.14 or newer to use getActiveNotifications"
     }
 
     struct DateFormatStrings {
