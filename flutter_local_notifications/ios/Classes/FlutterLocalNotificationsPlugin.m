@@ -79,7 +79,7 @@ NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
 NSString *const NOTIFICATION_LAUNCHED_APP = @"notificationLaunchedApp";
 
-NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_CODE = @"GET_ACTIVE_NOTIFICATIONS_ERROR_CODE";
+NSString *const UNSUPPORTED_OS_VERSION_ERROR_CODE = @"unsupported_os_version";
 NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE = @"iOS version must be 10.0 or newer to use getActiveNotifications";
 
 typedef NS_ENUM(NSInteger, RepeatInterval) {
@@ -276,7 +276,7 @@ static FlutterError *getFlutterError(NSError *error) {
     [self activeUserNotificationRequests:result];
   } else {
     result([FlutterError
-      errorWithCode:GET_ACTIVE_NOTIFICATIONS_ERROR_CODE
+      errorWithCode:UNSUPPORTED_OS_VERSION_ERROR_CODE
             message:GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE
             details:nil]);
   }

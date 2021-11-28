@@ -116,17 +116,15 @@ public class FlutterLocalNotificationsPlugin
       "getNotificationAppLaunchDetails";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
   private static final String PAYLOAD = "payload";
-  private static final String INVALID_ICON_ERROR_CODE = "INVALID_ICON";
-  private static final String INVALID_LARGE_ICON_ERROR_CODE = "INVALID_LARGE_ICON";
-  private static final String INVALID_BIG_PICTURE_ERROR_CODE = "INVALID_BIG_PICTURE";
-  private static final String INVALID_SOUND_ERROR_CODE = "INVALID_SOUND";
-  private static final String INVALID_LED_DETAILS_ERROR_CODE = "INVALID_LED_DETAILS";
-  private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_CODE =
-      "GET_ACTIVE_NOTIFICATIONS_ERROR_CODE";
+  private static final String INVALID_ICON_ERROR_CODE = "invalid_icon";
+  private static final String INVALID_LARGE_ICON_ERROR_CODE = "invalid_large_icon";
+  private static final String INVALID_BIG_PICTURE_ERROR_CODE = "invalid_big_picture";
+  private static final String INVALID_SOUND_ERROR_CODE = "invalid_sound";
+  private static final String INVALID_LED_DETAILS_ERROR_CODE = "invalid_led_details";
+  private static final String UNSUPPORTED_OS_VERSION_ERROR_CODE = "unsupported_os_version";
   private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
       "Android version must be 6.0 or newer to use getActiveNotifications";
-  private static final String GET_NOTIFICATION_CHANNELS_ERROR_CODE =
-      "GET_NOTIFICATION_CHANNELS_ERROR_CODE";
+  private static final String GET_NOTIFICATION_CHANNELS_ERROR_CODE = "getNotificationChannelsError";
   private static final String INVALID_LED_DETAILS_ERROR_MESSAGE =
       "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of"
           + " Android before Oreo";
@@ -1314,8 +1312,7 @@ public class FlutterLocalNotificationsPlugin
 
   private void getActiveNotifications(Result result) {
     if (VERSION.SDK_INT < VERSION_CODES.M) {
-      result.error(
-          GET_ACTIVE_NOTIFICATIONS_ERROR_CODE, GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE, null);
+      result.error(UNSUPPORTED_OS_VERSION_ERROR_CODE, GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE, null);
       return;
     }
     NotificationManager notificationManager =
@@ -1340,7 +1337,7 @@ public class FlutterLocalNotificationsPlugin
       }
       result.success(activeNotificationsPayload);
     } catch (Throwable e) {
-      result.error(GET_ACTIVE_NOTIFICATIONS_ERROR_CODE, e.getMessage(), e.getStackTrace());
+      result.error(UNSUPPORTED_OS_VERSION_ERROR_CODE, e.getMessage(), e.getStackTrace());
     }
   }
 

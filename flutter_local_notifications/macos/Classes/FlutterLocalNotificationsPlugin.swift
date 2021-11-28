@@ -36,7 +36,11 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
 
     struct ErrorMessages {
-        static let getActiveNotificationsErrorMessage = "MacOS version must be 10.14 or newer to use getActiveNotifications"
+        static let getActiveNotificationsErrorMessage = "macOS version must be 10.14 or newer to use getActiveNotifications"
+    }
+    
+    struct ErrorCodes {
+        static let unsupportedOSVersion = "unsupported_os_version"
     }
 
     struct DateFormatStrings {
@@ -257,7 +261,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 result(requestDictionaries)
             }
         } else {
-            result(FlutterError.init(code: "getActiveNotifications_error", message: ErrorMessages.getActiveNotificationsErrorMessage, details: nil))
+            result(FlutterError.init(code: ErrorCodes.unsupportedOSVersion, message: ErrorMessages.getActiveNotificationsErrorMessage, details: nil))
         }
     }
 
