@@ -24,8 +24,7 @@ NSString *const CANCEL_METHOD = @"cancel";
 NSString *const CANCEL_ALL_METHOD = @"cancelAll";
 NSString *const PENDING_NOTIFICATIONS_REQUESTS_METHOD =
     @"pendingNotificationRequests";
-NSString *const GET_ACTIVE_NOTIFICATIONS_METHOD =
-    @"getActiveNotifications";
+NSString *const GET_ACTIVE_NOTIFICATIONS_METHOD = @"getActiveNotifications";
 NSString *const GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
     @"getNotificationAppLaunchDetails";
 NSString *const CHANNEL = @"dexterous.com/flutter/local_notifications";
@@ -80,7 +79,8 @@ NSString *const PAYLOAD = @"payload";
 NSString *const NOTIFICATION_LAUNCHED_APP = @"notificationLaunchedApp";
 
 NSString *const UNSUPPORTED_OS_VERSION_ERROR_CODE = @"unsupported_os_version";
-NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE = @"iOS version must be 10.0 or newer to use getActiveNotifications";
+NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
+    @"iOS version must be 10.0 or newer to use getActiveNotifications";
 
 typedef NS_ENUM(NSInteger, RepeatInterval) {
   EveryMinute,
@@ -171,8 +171,7 @@ static FlutterError *getFlutterError(NSError *error) {
   } else if ([PENDING_NOTIFICATIONS_REQUESTS_METHOD
                  isEqualToString:call.method]) {
     [self pendingNotificationRequests:result];
-  } else if ([GET_ACTIVE_NOTIFICATIONS_METHOD
-                 isEqualToString:call.method]) {
+  } else if ([GET_ACTIVE_NOTIFICATIONS_METHOD isEqualToString:call.method]) {
     [self getActiveNotifications:result];
   } else {
     result(FlutterMethodNotImplemented);
@@ -229,7 +228,8 @@ static FlutterError *getFlutterError(NSError *error) {
         activeNotification[BODY] = notification.request.content.body;
       }
       if (notification.request.content.userInfo[PAYLOAD] != [NSNull null]) {
-        activeNotification[PAYLOAD] = notification.request.content.userInfo[PAYLOAD];
+        activeNotification[PAYLOAD] =
+            notification.request.content.userInfo[PAYLOAD];
       }
       [activeNotifications addObject:activeNotification];
     }
@@ -275,10 +275,9 @@ static FlutterError *getFlutterError(NSError *error) {
   if (@available(iOS 10.0, *)) {
     [self activeUserNotificationRequests:result];
   } else {
-    result([FlutterError
-      errorWithCode:UNSUPPORTED_OS_VERSION_ERROR_CODE
-            message:GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE
-            details:nil]);
+    result([FlutterError errorWithCode:UNSUPPORTED_OS_VERSION_ERROR_CODE
+                               message:GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE
+                               details:nil]);
   }
 }
 
