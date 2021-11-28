@@ -1,7 +1,7 @@
 ## [6.0.0-dev.1]
 
 * **Breaking change** the parameters of `ActiveNotification`'s constructor are now are named instead of positional
-* [Android] `groupKey` has been added to `ActiveNotification`. This was previously available in version `9.1.0` of the `flutter_local_notifications` plugin
+* [Android] `groupKey` has been added to `ActiveNotification`. This was previously available in version `9.1.0` of the `flutter_local_notifications` plugin but then removed as it should've been part of a major release instead of a minor one
 
 ## [5.0.0]
 
