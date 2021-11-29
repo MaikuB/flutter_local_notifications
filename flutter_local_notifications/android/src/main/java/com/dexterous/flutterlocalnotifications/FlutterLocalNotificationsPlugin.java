@@ -20,9 +20,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.os.PowerManager;
-import android.os.Handler;
-import android.os.Looper;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
@@ -751,16 +748,16 @@ public class FlutterLocalNotificationsPlugin
 
   private static Intent getLaunchIntent(Context context, NotificationDetails notificationDetails) {
     if (isKeyguardLocked(context) && notificationDetails.startActivityClassName != null) {
-        try {
-            return new Intent(context, Class.forName(notificationDetails.startActivityClassName));
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+      try {
+        return new Intent(context, Class.forName(notificationDetails.startActivityClassName));
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }
     }
     String packageName = context.getPackageName();
     PackageManager packageManager = context.getPackageManager();
     return packageManager.getLaunchIntentForPackage(packageName);
-}
+  }
 
   private static void setStyle(
       Context context,
