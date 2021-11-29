@@ -263,7 +263,8 @@ public class NotificationDetails implements Serializable {
       notificationDetails.shortcutId = (String) platformChannelSpecifics.get(SHORTCUT_ID);
       notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
       notificationDetails.subText = (String) platformChannelSpecifics.get(SUB_TEXT);
-      notificationDetails.startActivityClassName = (String) platformChannelSpecifics.get(START_ACTIVITY_CLASS_NAME);
+      notificationDetails.startActivityClassName =
+          (String) platformChannelSpecifics.get(START_ACTIVITY_CLASS_NAME);
       notificationDetails.tag = (String) platformChannelSpecifics.get(TAG);
     }
   }
