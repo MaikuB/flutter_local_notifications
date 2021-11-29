@@ -400,7 +400,6 @@ class AndroidFlutterLocalNotificationsPlugin
         // ignore: always_specify_types
         ?.map((a) => ActiveNotification(
               a['id'],
-              a['groupKey'],
               a['channelId'],
               a['title'],
               a['body'],

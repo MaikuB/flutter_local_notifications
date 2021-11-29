@@ -1,3 +1,17 @@
+# [9.1.4]
+
+* [Android] Reverted change in 9.1.0 that added the `groupKey` to `ActiveNotification` as this was a potentially breaking change. This will instead be part of a major release
+
+# [9.1.3]
+
+* [Android] Reverts Android changes done in 9.1.2 and 9.1.1 due to reported stability issues. Ths means issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) may still occur though is a rare occurrence and may require a different solution and assistance from the community with regards to testing
+
+# [9.1.2+1]
+
+* **BAD** [Android] some minor code clean up from 9.1.2 changes
+* Fixed a grammar issue in readme. Thanks to the PR from [Clément Besnier](https://github.com/clemsciences)
+
+
 # [9.1.2]
 
 * [Android] Fix NPE issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1387) from change introduced in 9.1.1 in updating how notifications were written to shared preferences
@@ -5,11 +19,11 @@
 # [9.1.1]
 
 * **BAD** [Android] updated APIs the plugin uses to write to shared preferences in the background
-* [Android] fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where there was a the `Future` for scheduling a notification could be completed prior to saving information on the scheduled notification to shared preferences. In this case the notification would still be scheduled but if the plugin was used to query the pending notifications quick enough, the plugin may have returned the incorrect number of pending notifications
+* [Android] fix  where there was a the `Future` for scheduling a notification could be completed prior to saving information on the scheduled notification to shared preferences. In this case the notification would still be scheduled but if the plugin was used to query the pending notifications quick enough, the plugin may have returned the incorrect number of pending notifications
 
 # [9.1.0]
 
-* [Android] Added `groupKey` to `ActiveNotification` that would allow for finding the notification's group. Thanks to the PR from [Roman](https://github.com/drstranges)
+* **BAD** [Android] Added `groupKey` to `ActiveNotification` that would allow for finding the notification's group. Thanks to the PR from [Roman](https://github.com/drstranges)
 * [Android] Migrate maven repository from jcenter to mavenCentral. Thanks to the PR from [tigertore](https://github.com/tigertore)
 
 
