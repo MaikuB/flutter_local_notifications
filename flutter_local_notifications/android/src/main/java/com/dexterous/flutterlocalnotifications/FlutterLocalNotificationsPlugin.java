@@ -221,7 +221,8 @@ public class FlutterLocalNotificationsPlugin
             .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
 
     if (notificationDetails.actions != null) {
-      int requestCode = 999;
+      // Space out request codes by 16 so even with 16 actions they won't clash
+      int requestCode = notificationDetails.id * 16;
       for (NotificationAction action : notificationDetails.actions) {
         IconCompat icon = null;
         if (!TextUtils.isEmpty(action.icon)) {
