@@ -47,5 +47,6 @@ class DBusWrapper {
 
   /// Creates a stream of signal with the given [name].
   DBusRemoteObjectSignalStream subscribeSignal(String name) =>
-      DBusRemoteObjectSignalStream(object: _object, interface: _destination, name: name);
+      DBusRemoteObjectSignalStream(
+          object: _object, interface: _destination, name: name);
 }
