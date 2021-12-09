@@ -1,3 +1,7 @@
+# [9.1.5]
+
+* Bumped `flutter_local_notifications_linux` dependency
+
 # [9.1.4]
 
 * [Android] Reverted change in 9.1.0 that added the `groupKey` to `ActiveNotification` as this was a potentially breaking change. This will instead be part of a major release
