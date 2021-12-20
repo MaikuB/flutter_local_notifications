@@ -1734,5 +1734,4 @@ public class FlutterLocalNotificationsPlugin
     NotificationManagerCompat notificationManager = getNotificationManager(applicationContext);
     result.success(notificationManager.areNotificationsEnabled());
   }
-
 }
