@@ -1038,11 +1038,11 @@ void main() {
         for (final LinuxNotificationInfo notify in notifications) {
           callback(
             DBusSignal(
-              '',
-              DBusObjectPath('/org/freedesktop/Notifications'),
-              'org.freedesktop.Notifications',
-              'NotificationClosed',
-              <DBusValue>[
+              sender: '',
+              path: DBusObjectPath('/org/freedesktop/Notifications'),
+              interface: 'org.freedesktop.Notifications',
+              name: 'NotificationClosed',
+              values: <DBusValue>[
                 DBusUint32(notify.systemId),
                 DBusUint32(1),
               ],
@@ -1105,11 +1105,11 @@ void main() {
         for (final LinuxNotificationInfo notify in notifications) {
           callback(
             DBusSignal(
-              '',
-              DBusObjectPath('/org/freedesktop/Notifications'),
-              'org.freedesktop.Notifications',
-              'ActionInvoked',
-              <DBusValue>[
+              sender: '',
+              path: DBusObjectPath('/org/freedesktop/Notifications'),
+              interface: 'org.freedesktop.Notifications',
+              name: 'ActionInvoked',
+              values: <DBusValue>[
                 DBusUint32(notify.systemId),
                 const DBusString('default'),
               ],
