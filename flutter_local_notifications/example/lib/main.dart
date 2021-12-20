@@ -400,6 +400,11 @@ class _HomePageState extends State<HomePage> {
                       ),
                       PaddedElevatedButton(
                         buttonText:
+                            'Check if notifications are enabled for this app',
+                        onPressed: _areNotifcationsEnabledOnAndroid,
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
                             'Show plain notification with payload and update '
                             'channel description',
                         onPressed: () async {
@@ -1884,6 +1889,30 @@ class _HomePageState extends State<HomePage> {
             ));
   }
 
+  Future<void> _areNotifcationsEnabledOnAndroid() async {
+    final bool? areEnabled = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.areNotificationsEnabled();
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              content: Text(areEnabled == null
+                  ? 'ERROR: received null'
+                  : (areEnabled
+                      ? 'Notifications are enabled'
+                      : 'Notifications are NOT enabled')),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ));
+  }
+
   Future<void> _deleteNotificationChannel() async {
     const String channelId = 'your channel id 2';
     await flutterLocalNotificationsPlugin
@@ -2093,7 +2122,8 @@ Future<void> _showLinuxNotificationWithByteDataIcon() async {
         data: iconBytes,
         width: iconData.width,
         height: iconData.height,
-        channels: 4, // The icon has an alpha channel
+        channels: 4,
+        // The icon has an alpha channel
         hasAlpha: true,
       ),
     ),

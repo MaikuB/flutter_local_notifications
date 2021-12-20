@@ -94,6 +94,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
     private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
     private static final String INITIALIZE_METHOD = "initialize";
+    private static final String ARE_NOTIFICATIONS_ENABLED_METHOD = "areNotificationsEnabled";
     private static final String CREATE_NOTIFICATION_CHANNEL_GROUP_METHOD = "createNotificationChannelGroup";
     private static final String DELETE_NOTIFICATION_CHANNEL_GROUP_METHOD = "deleteNotificationChannelGroup";
     private static final String CREATE_NOTIFICATION_CHANNEL_METHOD = "createNotificationChannel";
@@ -1071,6 +1072,9 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             case STOP_FOREGROUND_SERVICE:
                 stopForegroundService(result);
                 break;
+            case ARE_NOTIFICATIONS_ENABLED_METHOD:
+                areNotificationsEnabled(result);
+                break;
             default:
                 result.notImplemented();
                 break;
@@ -1435,5 +1439,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private void stopForegroundService(Result result) {
         applicationContext.stopService(new Intent(applicationContext, ForegroundService.class));
         result.success(null);
+    }
+
+    private void areNotificationsEnabled(Result result) {
+        NotificationManagerCompat notificationManager = getNotificationManager(applicationContext);
+        result.success(notificationManager.areNotificationsEnabled());
     }
 }
