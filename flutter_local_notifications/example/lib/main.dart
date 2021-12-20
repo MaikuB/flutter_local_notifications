@@ -2122,8 +2122,7 @@ Future<void> _showLinuxNotificationWithByteDataIcon() async {
         data: iconBytes,
         width: iconData.width,
         height: iconData.height,
-        channels: 4,
-        // The icon has an alpha channel
+        channels: 4, // The icon has an alpha channel
         hasAlpha: true,
       ),
     ),
