@@ -432,7 +432,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedElevatedButton(
-                      buttonText: 'Cancel notification',
+                      buttonText: 'Cancel latest notification',
                       onPressed: () async {
                         await _cancelNotification();
                       },
@@ -1076,11 +1076,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _cancelNotification() async {
-    await flutterLocalNotificationsPlugin.cancel(0);
+    await flutterLocalNotificationsPlugin.cancel(--id);
   }
 
   Future<void> _cancelNotificationWithTag() async {
-    await flutterLocalNotificationsPlugin.cancel(0, tag: 'tag');
+    await flutterLocalNotificationsPlugin.cancel(--id, tag: 'tag');
   }
 
   Future<void> _showNotificationCustomSound() async {
