@@ -167,7 +167,6 @@ Notification icons should be added as a drawable resource. The example project/c
 
 When specifying the large icon bitmap or big picture bitmap (associated with the big picture style), bitmaps can be either a drawable resource or file on the device. This is specified via a single property (e.g. the `largeIcon` property associated with the `AndroidNotificationDetails` class) where a value that is an instance of the `DrawableResourceAndroidBitmap` means the bitmap should be loaded from an drawable resource. If this is an instance of the `FilePathAndroidBitmap`, this indicates it should be loaded from a file referred to by a given file path.
 
-If the plugin is initialized in the `main()` method make sure that `WidgetsFlutterBinding.ensureInitialized()` is executed before. Otherwise it can happen, that the plugin throws Null Pointer Exceptions. Also see issue [#1364](https://github.com/MaikuB/flutter_local_notifications/issues/1364) for more information.
 
 ⚠️ For Android 8.0+, sounds and vibrations are associated with notification channels and can only be configured when they are first created. Showing/scheduling a notification will create a channel with the specified id if it doesn't exist already. If another notification specifies the same channel id but tries to specify another sound or vibration pattern then nothing occurs.
 
