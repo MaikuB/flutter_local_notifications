@@ -281,7 +281,7 @@ static FlutterError *getFlutterError(NSError *error) {
 /// This code will simply return the `completionHandler` if not running on a
 /// compatible iOS version or when no categories were specified in [arguments].
 - (void)configureNotificationCategories:(NSDictionary *_Nonnull)arguments
-                                 result:(FlutterResult _Nonnull)result {
+                  withCompletionHandler:(void (^)(void))completionHandler {
   if (@available(iOS 10.0, *)) {
     if ([self containsKey:@"notificationCategories" forDictionary:arguments]) {
       NSMutableSet<UNNotificationCategory *> *newCategories =
@@ -336,14 +336,14 @@ static FlutterError *getFlutterError(NSError *error) {
           [center setNotificationCategories:
                       [existing setByAddingObjectsFromSet:newCategories]];
 
-          result(@YES);
+          completionHandler();
         }];
       } else {
-        result(@YES);
+        completionHandler();
       }
     }
   } else {
-    result(@YES);
+    completionHandler();
   }
 }
 
@@ -380,14 +380,15 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 
   // Configure the notification categories before requesting permissions
-  [self configureNotificationCategories:arguments result:result];
-
-  // Once notification categories are set up, the permissions request will pick
-  // them up properly.
-  [self requestPermissionsImpl:requestedSoundPermission
-               alertPermission:requestedAlertPermission
-               badgePermission:requestedBadgePermission
-                        result:result];
+  [self configureNotificationCategories:arguments
+                  withCompletionHandler:^{
+    // Once notification categories are set up, the permissions request will pick
+    // them up properly.
+    [self requestPermissionsImpl:requestedSoundPermission
+                 alertPermission:requestedAlertPermission
+                 badgePermission:requestedBadgePermission
+                          result:result];
+  }];
 
   _initialized = true;
 }
