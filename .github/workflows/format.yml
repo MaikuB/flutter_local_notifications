@@ -3,14 +3,13 @@ name: format
 on: push
 
 jobs:
-
   java_format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2 # v2 minimum required
       - uses: axel-op/googlejavaformat-action@v3
         with:
-          args: "--skip-sorting-imports --replace"
+          args: '--skip-sorting-imports --replace'
 
   objc_format:
     runs-on: macos-latest
