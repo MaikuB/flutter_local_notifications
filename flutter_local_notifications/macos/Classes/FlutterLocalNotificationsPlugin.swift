@@ -155,7 +155,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let requestedAlertPermission = arguments[MethodCallArguments.requestAlertPermission] as! Bool
             let requestedSoundPermission = arguments[MethodCallArguments.requestSoundPermission] as! Bool
             let requestedBadgePermission = arguments[MethodCallArguments.requestBadgePermission] as! Bool
-            
+
             configureNotificationCategories(arguments) {
                 self.requestPermissionsImpl(
                     soundPermission: requestedSoundPermission,
@@ -164,24 +164,24 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                     result: result
                 )
             }
-            
+
             initialized = true
         } else {
             result(true)
             initialized = true
         }
     }
-    
+
     func configureNotificationCategories(_ arguments: [String: AnyObject],
                                          withCompletionHandler completionHandler: @escaping () -> Void) {
         if #available(OSX 10.14, *) {
-            if let categories = arguments["notificationCategories"] as? [[String:AnyObject]] {
+            if let categories = arguments["notificationCategories"] as? [[String: AnyObject]] {
                 var newCategories = Set<UNNotificationCategory>()
-                
+
                 for category in categories {
-                    var newActions = Array<UNNotificationAction>()
-                    
-                    if let actions = category["actions"] as? [[String:AnyObject]] {
+                    var newActions = [UNNotificationAction]()
+
+                    if let actions = category["actions"] as? [[String: AnyObject]] {
                         for action in actions {
                             let type = action["type"] as! String
                             let identifier = action["identifier"] as! String
@@ -205,7 +205,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                             }
                         }
                     }
-                                        
+
                     let newCategory = UNNotificationCategory(
                         identifier: category["identifier"] as! String,
                         actions: newActions,
@@ -214,17 +214,17 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                         categorySummaryFormat: nil,
                         options: Converters.parseNotificationCategoryOptions(category["options"] as! [NSNumber])
                     )
-                    
+
                     newCategories.insert(newCategory)
 
                 }
-                
+
                 let center = UNUserNotificationCenter.current()
                 center.getNotificationCategories { existing  in
                     center.setNotificationCategories(existing.union(newCategories))
                     completionHandler()
                 }
-                
+
             } else {
                 completionHandler()
             }
