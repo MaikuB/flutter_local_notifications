@@ -400,6 +400,11 @@ class _HomePageState extends State<HomePage> {
                       ),
                       PaddedElevatedButton(
                         buttonText:
+                            'Check if notifications are enabled for this app',
+                        onPressed: _areNotifcationsEnabledOnAndroid,
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
                             'Show plain notification with payload and update '
                             'channel description',
                         onPressed: () async {
@@ -1873,6 +1878,30 @@ class _HomePageState extends State<HomePage> {
               content:
                   Text('Channel with name ${androidNotificationChannel.name} '
                       'created'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ));
+  }
+
+  Future<void> _areNotifcationsEnabledOnAndroid() async {
+    final bool? areEnabled = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.areNotificationsEnabled();
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              content: Text(areEnabled == null
+                  ? 'ERROR: received null'
+                  : (areEnabled
+                      ? 'Notifications are enabled'
+                      : 'Notifications are NOT enabled')),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
