@@ -382,13 +382,13 @@ static FlutterError *getFlutterError(NSError *error) {
   // Configure the notification categories before requesting permissions
   [self configureNotificationCategories:arguments
                   withCompletionHandler:^{
-    // Once notification categories are set up, the permissions request will pick
-    // them up properly.
-    [self requestPermissionsImpl:requestedSoundPermission
-                 alertPermission:requestedAlertPermission
-                 badgePermission:requestedBadgePermission
-                          result:result];
-  }];
+                    // Once notification categories are set up, the permissions
+                    // request will pick them up properly.
+                    [self requestPermissionsImpl:requestedSoundPermission
+                                 alertPermission:requestedAlertPermission
+                                 badgePermission:requestedBadgePermission
+                                          result:result];
+                  }];
 
   _initialized = true;
 }
