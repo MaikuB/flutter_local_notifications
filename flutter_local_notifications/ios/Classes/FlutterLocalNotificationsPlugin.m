@@ -1,5 +1,5 @@
 #import "ActionEventSink.h"
-
+#import "Converters.h"
 #import "FlutterLocalNotificationsPlugin.h"
 
 @implementation FlutterLocalNotificationsPlugin {
@@ -253,28 +253,6 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
-- (UNNotificationCategoryOptions)parseNotificationCategoryOptions:
-    (NSArray *)options API_AVAILABLE(ios(10.0)) {
-  int result = UNNotificationCategoryOptionNone;
-
-  for (NSNumber *option in options) {
-    result |= [option intValue];
-  }
-
-  return result;
-}
-
-- (UNNotificationActionOptions)parseNotificationActionOptions:(NSArray *)options
-    API_AVAILABLE(ios(10.0)) {
-  int result = UNNotificationActionOptionNone;
-
-  for (NSNumber *option in options) {
-    result |= [option intValue];
-  }
-
-  return result;
-}
-
 /// Extracts notification categories from [arguments] and configures them as
 /// appropriate.
 ///
@@ -299,7 +277,7 @@ static FlutterError *getFlutterError(NSError *error) {
           NSString *identifier = action[@"identifier"];
           NSString *title = action[@"title"];
           UNNotificationActionOptions options =
-              [self parseNotificationActionOptions:action[@"options"]];
+              [Converters parseNotificationActionOptions:action[@"options"]];
 
           if ([type isEqualToString:@"plain"]) {
             [newActions
@@ -322,7 +300,7 @@ static FlutterError *getFlutterError(NSError *error) {
             categoryWithIdentifier:category[@"identifier"]
                            actions:newActions
                  intentIdentifiers:@[]
-                           options:[self parseNotificationCategoryOptions:
+                           options:[Converters parseNotificationCategoryOptions:
                                              category[@"options"]]];
 
         [newCategories addObject:newCategory];

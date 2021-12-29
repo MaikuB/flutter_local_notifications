@@ -84,6 +84,47 @@ Future<void> main() async {
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('app_icon');
 
+  final List<DarwinNotificationCategory> darwinNotificationCategories =
+      <DarwinNotificationCategory>[
+    DarwinNotificationCategory(
+      'textCategory',
+      actions: <DarwinNotificationAction>[
+        DarwinNotificationAction.text(
+          'text_1',
+          'Action 1',
+          buttonTitle: 'Send',
+          placeholder: 'Placeholder',
+          options: const <DarwinNotificationActionOption>{
+            DarwinNotificationActionOption.foreground,
+          },
+        ),
+      ],
+    ),
+    DarwinNotificationCategory(
+      'plainCategory',
+      actions: <DarwinNotificationAction>[
+        DarwinNotificationAction.plain('id_1', 'Action 1'),
+        DarwinNotificationAction.plain(
+          'id_2',
+          'Action 2',
+          options: <DarwinNotificationActionOption>{
+            DarwinNotificationActionOption.destructive,
+          },
+        ),
+        DarwinNotificationAction.plain(
+          'id_3',
+          'Action 3',
+          options: <DarwinNotificationActionOption>{
+            DarwinNotificationActionOption.foreground,
+          },
+        ),
+      ],
+      options: <DarwinNotificationCategoryOption>{
+        DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
+      },
+    )
+  ];
+
   /// Note: permissions aren't requested here just to demonstrate that can be
   /// done later
   final IOSInitializationSettings initializationSettingsIOS =
@@ -102,51 +143,14 @@ Future<void> main() async {
         ),
       );
     },
-    notificationCategories: <IOSNotificationCategory>[
-      IOSNotificationCategory(
-        'textCategory',
-        actions: <IOSNotificationAction>[
-          IOSNotificationAction.text(
-            'text_1',
-            'Action 1',
-            buttonTitle: 'Send',
-            placeholder: 'Placeholder',
-            options: const <IOSNotificationActionOption>{
-              IOSNotificationActionOption.foreground,
-            },
-          ),
-        ],
-      ),
-      IOSNotificationCategory(
-        'plainCategory',
-        actions: <IOSNotificationAction>[
-          IOSNotificationAction.plain('id_1', 'Action 1'),
-          IOSNotificationAction.plain(
-            'id_2',
-            'Action 2',
-            options: <IOSNotificationActionOption>{
-              IOSNotificationActionOption.destructive,
-            },
-          ),
-          IOSNotificationAction.plain(
-            'id_3',
-            'Action 3',
-            options: <IOSNotificationActionOption>{
-              IOSNotificationActionOption.foreground,
-            },
-          ),
-        ],
-        options: <IOSNotificationCategoryOption>{
-          IOSNotificationCategoryOption.hiddenPreviewShowTitle,
-        },
-      )
-    ],
+    notificationCategories: darwinNotificationCategories,
   );
-  const MacOSInitializationSettings initializationSettingsMacOS =
+  final MacOSInitializationSettings initializationSettingsMacOS =
       MacOSInitializationSettings(
     requestAlertPermission: false,
     requestBadgePermission: false,
     requestSoundPermission: false,
+    notificationCategories: darwinNotificationCategories,
   );
   final LinuxInitializationSettings initializationSettingsLinux =
       LinuxInitializationSettings(
@@ -919,9 +923,15 @@ class _HomePageState extends State<HomePage> {
       categoryIdentifier: 'plainCategory',
     );
 
+    const MacOSNotificationDetails macOSNotificationDetails =
+        MacOSNotificationDetails(
+      categoryIdentifier: 'plainCategory',
+    );
+
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iosNotificationDetails,
+      macOS: macOSNotificationDetails,
     );
     await flutterLocalNotificationsPlugin.show(
         id++, 'plain title', 'plain body', platformChannelSpecifics,

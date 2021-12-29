@@ -1,35 +1,9 @@
-import 'package:flutter/foundation.dart';
-
+import '../darwin/mappers.dart';
 import 'initialization_settings.dart';
 import 'notification_attachment.dart';
 import 'notification_details.dart';
 
 // ignore_for_file: public_member_api_docs
-
-extension IOSNotificationActionMapper on IOSNotificationAction {
-  Map<String, Object> toMap() => <String, Object>{
-        'identifier': identifier,
-        'title': title,
-        'options': options
-            .map((e) => e.index + 1) // ignore: always_specify_types
-            .toList(),
-        'type': describeEnum(type),
-        if (buttonTitle != null) 'buttonTitle': buttonTitle!,
-        if (placeholder != null) 'placeholder': placeholder!,
-      };
-}
-
-extension IOSNotificationCategoryMapper on IOSNotificationCategory {
-  Map<String, Object> toMap() => <String, Object>{
-        'identifier': identifier,
-        'actions': actions
-            .map((e) => e.toMap()) // ignore: always_specify_types
-            .toList(),
-        'options': options
-            .map((e) => e.index + 1) // ignore: always_specify_types
-            .toList(),
-      };
-}
 
 extension IOSInitializationSettingsMapper on IOSInitializationSettings {
   Map<String, Object> toMap() => <String, Object>{

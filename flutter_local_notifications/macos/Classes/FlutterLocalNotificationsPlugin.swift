@@ -22,6 +22,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let id = "id"
         static let title = "title"
         static let subtitle = "subtitle"
+        static let categoryIdentifier = "categoryIdentifier"
         static let body = "body"
         static let scheduledDateTime = "scheduledDateTime"
         static let timeZoneName = "timeZoneName"
@@ -154,11 +155,81 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let requestedAlertPermission = arguments[MethodCallArguments.requestAlertPermission] as! Bool
             let requestedSoundPermission = arguments[MethodCallArguments.requestSoundPermission] as! Bool
             let requestedBadgePermission = arguments[MethodCallArguments.requestBadgePermission] as! Bool
-            requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, result: result)
+            
+            configureNotificationCategories(arguments) {
+                self.requestPermissionsImpl(
+                    soundPermission: requestedSoundPermission,
+                    alertPermission: requestedAlertPermission,
+                    badgePermission: requestedBadgePermission,
+                    result: result
+                )
+            }
+            
             initialized = true
         } else {
             result(true)
             initialized = true
+        }
+    }
+    
+    func configureNotificationCategories(_ arguments: [String: AnyObject],
+                                         withCompletionHandler completionHandler: @escaping () -> Void) {
+        if #available(OSX 10.14, *) {
+            if let categories = arguments["notificationCategories"] as? [[String:AnyObject]] {
+                var newCategories = Set<UNNotificationCategory>()
+                
+                for category in categories {
+                    var newActions = Array<UNNotificationAction>()
+                    
+                    if let actions = category["actions"] as? [[String:AnyObject]] {
+                        for action in actions {
+                            let type = action["type"] as! String
+                            let identifier = action["identifier"] as! String
+                            let title = action["title"] as! String
+                            let options = action["options"] as! [Any]
+                            if type == "plain" {
+                                newActions.append(UNNotificationAction(
+                                    identifier: identifier,
+                                    title: title, options: Converters.parseNotificationActionOptions(options)
+                                ))
+                            } else if type == "text" {
+                                let buttonTitle = action["buttonTitle"] as! String
+                                let placeholder = action["placeholder"] as! String
+                                newActions.append(UNTextInputNotificationAction(
+                                    identifier: identifier,
+                                    title: title,
+                                    options: Converters.parseNotificationActionOptions(options),
+                                    textInputButtonTitle: buttonTitle,
+                                    textInputPlaceholder: placeholder
+                                ))
+                            }
+                        }
+                    }
+                                        
+                    let newCategory = UNNotificationCategory(
+                        identifier: category["identifier"] as! String,
+                        actions: newActions,
+                        intentIdentifiers: [],
+                        hiddenPreviewsBodyPlaceholder: nil,
+                        categorySummaryFormat: nil,
+                        options: Converters.parseNotificationCategoryOptions(category["options"] as! [NSNumber])
+                    )
+                    
+                    newCategories.insert(newCategory)
+
+                }
+                
+                let center = UNUserNotificationCenter.current()
+                center.getNotificationCategories { existing  in
+                    center.setNotificationCategories(existing.union(newCategories))
+                    completionHandler()
+                }
+                
+            } else {
+                completionHandler()
+            }
+        } else {
+            completionHandler()
         }
     }
 
@@ -369,6 +440,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             }
             if let threadIdentifier = platformSpecifics[MethodCallArguments.threadIdentifier] as? String {
                 content.threadIdentifier = threadIdentifier
+            }
+            if let categoryIdentifier = platformSpecifics[MethodCallArguments.categoryIdentifier] as? String {
+                content.categoryIdentifier = categoryIdentifier
             }
             if let attachments = platformSpecifics[MethodCallArguments.attachments] as? [[String: AnyObject]] {
                 content.attachments = []

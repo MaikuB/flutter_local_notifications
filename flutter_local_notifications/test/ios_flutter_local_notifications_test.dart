@@ -57,33 +57,33 @@ void main() {
     test('initialize with notification categories', () async {
       final IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings(
-        notificationCategories: <IOSNotificationCategory>[
-          IOSNotificationCategory(
+        notificationCategories: <DarwinNotificationCategory>[
+          DarwinNotificationCategory(
             'category1',
-            actions: <IOSNotificationAction>[
-              IOSNotificationAction.plain(
+            actions: <DarwinNotificationAction>[
+              DarwinNotificationAction.plain(
                 'action1',
                 'Action 1',
-                options: <IOSNotificationActionOption>{
-                  IOSNotificationActionOption.destructive,
+                options: <DarwinNotificationActionOption>{
+                  DarwinNotificationActionOption.destructive,
                 },
               ),
             ],
-            options: <IOSNotificationCategoryOption>{
-              IOSNotificationCategoryOption.allowAnnouncement,
+            options: <DarwinNotificationCategoryOption>{
+              DarwinNotificationCategoryOption.allowAnnouncement,
             },
           ),
-          IOSNotificationCategory(
+          DarwinNotificationCategory(
             'category2',
-            actions: <IOSNotificationAction>[
-              IOSNotificationAction.plain('action2', 'Action 2'),
-              IOSNotificationAction.plain('action3', 'Action 3'),
+            actions: <DarwinNotificationAction>[
+              DarwinNotificationAction.plain('action2', 'Action 2'),
+              DarwinNotificationAction.plain('action3', 'Action 3'),
             ],
           ),
-          IOSNotificationCategory(
+          DarwinNotificationCategory(
             'category3',
-            actions: <IOSNotificationAction>[
-              IOSNotificationAction.text(
+            actions: <DarwinNotificationAction>[
+              DarwinNotificationAction.text(
                 'action4',
                 'Action 4',
                 buttonTitle: 'Send',
