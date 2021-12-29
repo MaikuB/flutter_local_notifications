@@ -1,2 +1,4 @@
 pubspec.lock
 .vscode
+*.idea
+*.DS_Store
