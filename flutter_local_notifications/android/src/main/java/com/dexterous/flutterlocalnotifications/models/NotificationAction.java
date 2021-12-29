@@ -1,5 +1,6 @@
 package com.dexterous.flutterlocalnotifications.models;
 
+import android.graphics.Color;
 import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +28,16 @@ public class NotificationAction {
 
   private static final String ID = "id";
   private static final String TITLE = "title";
+  private static final String TITLE_COLOR_ALPHA = "titleColorAlpha";
+  private static final String TITLE_COLOR_RED = "titleColorRed";
+  private static final String TITLE_COLOR_GREEN = "titleColorGreen";
+  private static final String TITLE_COLOR_BLUE = "titleColorBlue";
   private static final String ICON = "icon";
   private static final String ICON_SOURCE = "iconBitmapSource";
 
   public String id;
   public String title;
+  public Integer titleColor;
   public String icon;
   public Boolean contextual;
   public Boolean showsUserInterface;
@@ -43,6 +49,15 @@ public class NotificationAction {
     NotificationAction action = new NotificationAction();
     action.id = (String) arguments.get(ID);
     action.title = (String) arguments.get(TITLE);
+
+    Integer a = (Integer) arguments.get(TITLE_COLOR_ALPHA);
+    Integer r = (Integer) arguments.get(TITLE_COLOR_RED);
+    Integer g = (Integer) arguments.get(TITLE_COLOR_GREEN);
+    Integer b = (Integer) arguments.get(TITLE_COLOR_BLUE);
+    if (a != null && r != null && g != null && b != null) {
+      action.titleColor = Color.argb(a, r, g, b);
+    }
+
     action.icon = (String) arguments.get(ICON);
     action.contextual = (Boolean) arguments.get("contextual");
     action.showsUserInterface = (Boolean) arguments.get("showsUserInterface");

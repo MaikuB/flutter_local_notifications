@@ -21,8 +21,11 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.core.app.AlarmManagerCompat;
@@ -30,10 +33,9 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.Action.Builder;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
-import androidx.core.content.ContextCompat;
 import androidx.core.app.RemoteInput;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
-
 import com.dexterous.flutterlocalnotifications.isolate.IsolatePreferences;
 import com.dexterous.flutterlocalnotifications.models.BitmapSource;
 import com.dexterous.flutterlocalnotifications.models.DateTimeComponents;
@@ -60,8 +62,17 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.jakewharton.threetenabp.AndroidThreeTen;
-
+import io.flutter.FlutterInjector;
 import io.flutter.embedding.engine.loader.FlutterLoader;
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
+import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -76,18 +87,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import io.flutter.FlutterInjector;
-import io.flutter.embedding.engine.loader.FlutterLoader;
-import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.embedding.engine.plugins.activity.ActivityAware;
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry;
 
 /** FlutterLocalNotificationsPlugin */
 @Keep
@@ -238,7 +237,14 @@ public class FlutterLocalNotificationsPlugin
         PendingIntent actionPendingIntent =
             PendingIntent.getBroadcast(
                 context, requestCode++, actionIntent, PendingIntent.FLAG_ONE_SHOT);
-        Builder actionBuilder = new Builder(icon, action.title, actionPendingIntent);
+
+        final Spannable actionTitleSpannable = new SpannableString(action.title);
+        if (action.titleColor != null) {
+          actionTitleSpannable.setSpan(
+              new ForegroundColorSpan(action.titleColor), 0, actionTitleSpannable.length(), 0);
+        }
+
+        Builder actionBuilder = new Builder(icon, actionTitleSpannable, actionPendingIntent);
 
         if (action.contextual != null) {
           actionBuilder.setContextual(action.contextual);

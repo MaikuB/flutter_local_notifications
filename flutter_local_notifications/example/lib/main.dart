@@ -903,6 +903,7 @@ class _HomePageState extends State<HomePage> {
         AndroidNotificationAction(
           'id_2',
           'Action 2',
+          titleColor: Color.fromARGB(255, 255, 0, 0),
           icon: DrawableResourceAndroidBitmap('secondary_icon'),
         ),
         AndroidNotificationAction(

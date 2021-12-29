@@ -49,6 +49,7 @@ class AndroidNotificationAction {
   const AndroidNotificationAction(
     this.id,
     this.title, {
+    this.titleColor,
     this.icon,
     this.contextual = false,
     this.showsUserInterface = false,
@@ -62,6 +63,9 @@ class AndroidNotificationAction {
 
   /// The title of the action
   final String title;
+
+  /// The color of the title of the action
+  final Color? titleColor;
 
   /// Icon to show for this action.
   final AndroidBitmap<Object>? icon;

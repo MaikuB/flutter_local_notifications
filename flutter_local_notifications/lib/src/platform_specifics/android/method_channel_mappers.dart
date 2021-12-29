@@ -290,6 +290,10 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
             (AndroidNotificationAction e) => <String, dynamic>{
               'id': e.id,
               'title': e.title,
+              'titleColorAlpha': e.titleColor?.alpha,
+              'titleColorRed': e.titleColor?.red,
+              'titleColorGreen': e.titleColor?.green,
+              'titleColorBlue': e.titleColor?.blue,
               if (e.icon != null) ...<String, Object>{
                 'icon': e.icon!.data,
                 'iconBitmapSource': e.icon!.source.index,
