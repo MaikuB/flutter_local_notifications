@@ -1,0 +1,21 @@
+name: flutter_local_notifications
+repository: https://github.com/MaikuB/flutter_local_notifications
+packages:
+  - flutter_local_notifications/*
+  - flutter_local_notifications_linux/*
+  - flutter_local_notifications_platform_interface/*
+
+ide:
+  intellij: false
+
+scripts:
+  analyze:
+    run: melos exec -c 1 -- "dart analyze . --fatal-infos"
+    description: Run dart analyzer in a specific package.
+  test:
+    description: Run tests in a specific package.
+    run: melos exec --concurrency=1 -- "flutter test"
+    select-package:
+      dir-exists:
+        - "test/"
+  format: dart format -o write .
