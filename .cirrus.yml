@@ -4,10 +4,11 @@ task:
     image: cirrusci/flutter:stable
   pub_cache:
     folder: ~/.pub-cache
-  build_script:
+  install_melos_script:
     - dart pub global activate melos
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
+  build_script:
     - melos run build:example_android
 
 task:
@@ -19,10 +20,11 @@ task:
   upgrade_script:
     - flutter channel stable
     - flutter upgrade
-  build_script:
+  install_melos_script:
     - dart pub global activate melos
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
+  build_script:
     - melos run build:example_ios
 
 task:
@@ -36,10 +38,11 @@ task:
     - flutter upgrade
   setup_script:
     - flutter config --enable-macos-desktop
-  build_script:
+  install_melos_script:
     - dart pub global activate melos
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
+  build_script:
     - melos run build:example_macos
 
 task:
@@ -52,21 +55,23 @@ task:
     - apt update
     - apt install cmake ninja-build clang pkg-config libgtk-3-dev -y
     - flutter config --enable-linux-desktop
-  build_script:
+  install_melos_script:
     - dart pub global activate melos
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
+  build_script:
     - melos run build:example_linux
 
 task:
   name: Run all unit tests
   container:
     image: cirrusci/flutter:stable
-  test_script:
+  install_melos_script:
     - dart pub global activate melos
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
-    - melos run test
+  test_script:
+    -  melos run test
 
 task:
   name: Run integration tests (Android)
@@ -80,6 +85,10 @@ task:
     kvm: true
   pub_cache:
     folder: ~/.pub-cache
+  install_melos_script:
+    - dart pub global activate melos
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - melos bootstrap
   install_images_script: sdkmanager "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
   create_device_script:
     echo no | avdmanager create avd --force -n test -k "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
@@ -88,7 +97,4 @@ task:
   wait_for_emulator_script:
     android-wait-for-emulator
   test_script:
-    - dart pub global activate melos
-    - export PATH="$PATH":"$HOME/.pub-cache/bin"
-    - melos bootstrap
     - melos run test:integration:android
