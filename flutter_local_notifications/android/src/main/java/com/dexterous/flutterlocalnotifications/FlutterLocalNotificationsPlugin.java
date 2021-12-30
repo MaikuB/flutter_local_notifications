@@ -1462,7 +1462,7 @@ public class FlutterLocalNotificationsPlugin
     Long dispatcherHandle = call.argument(DISPATCHER_HANDLE);
     Long callbackHandle = call.argument(CALLBACK_HANDLE);
     if (dispatcherHandle != null && callbackHandle != null) {
-      IsolatePreferences.saveCallbackKeys(applicationContext, dispatcherHandle, callbackHandle);
+      new IsolatePreferences(applicationContext).saveCallbackKeys(dispatcherHandle, callbackHandle);
     }
 
     initAndroidThreeTen(applicationContext);
@@ -1476,7 +1476,7 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private void getCallbackHandle(Result result) {
-    final Long handle = IsolatePreferences.getCallbackHandle(applicationContext);
+    final Long handle = new IsolatePreferences(applicationContext).getCallbackHandle();
     result.success(handle);
   }
 

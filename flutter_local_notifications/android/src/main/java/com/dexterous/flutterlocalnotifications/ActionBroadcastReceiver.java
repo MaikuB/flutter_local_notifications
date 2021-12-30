@@ -4,22 +4,35 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.core.app.RemoteInput;
 import com.dexterous.flutterlocalnotifications.isolate.IsolatePreferences;
+import io.flutter.FlutterInjector;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.dart.DartExecutor;
+import io.flutter.embedding.engine.loader.FlutterLoader;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.EventChannel.StreamHandler;
 import io.flutter.view.FlutterCallbackInformation;
-import io.flutter.view.FlutterMain;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ActionBroadcastReceiver extends BroadcastReceiver {
+  @VisibleForTesting
+  ActionBroadcastReceiver(IsolatePreferences preferences) {
+    this.preferences = preferences;
+  }
+
+	@Keep
+	public ActionBroadcastReceiver() {}
+
+  IsolatePreferences preferences;
+
   public static final String ACTION_TAPPED =
       "com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver.ACTION_TAPPED";
   public static final String ACTION_ID = "actionId";
@@ -31,6 +44,11 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
+    if (!ACTION_TAPPED.equalsIgnoreCase(intent.getAction())) {
+      return;
+    }
+
+    preferences = preferences == null ? new IsolatePreferences(context) : preferences;
 
     final Map<String, Object> action = new HashMap<>();
     action.put("notificationId", intent.getIntExtra(NOTIFICATION_ID, -1));
@@ -84,15 +102,18 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
   }
 
   private void startEngine(Context context) {
-    long dispatcherHandle = IsolatePreferences.getCallbackDispatcherHandle(context);
+    FlutterCallbackInformation dispatcherHandle = preferences.lookupDispatcherHandle();
 
-    if (dispatcherHandle != -1L && engine == null) {
+    if (dispatcherHandle != null && engine == null) {
+      FlutterInjector injector = FlutterInjector.instance();
+      FlutterLoader loader = injector.flutterLoader();
+
+      loader.startInitialization(context);
+      loader.ensureInitializationComplete(context, null);
+
       engine = new FlutterEngine(context);
-      FlutterMain.ensureInitializationComplete(context, null);
 
-      FlutterCallbackInformation callbackInfo =
-          FlutterCallbackInformation.lookupCallbackInformation(dispatcherHandle);
-      String dartBundlePath = FlutterMain.findAppBundlePath();
+      String dartBundlePath = loader.findAppBundlePath();
 
       EventChannel channel =
           new EventChannel(
@@ -104,7 +125,7 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
       engine
           .getDartExecutor()
           .executeDartCallback(
-              new DartExecutor.DartCallback(context.getAssets(), dartBundlePath, callbackInfo));
+              new DartExecutor.DartCallback(context.getAssets(), dartBundlePath, dispatcherHandle));
     }
   }
 }
