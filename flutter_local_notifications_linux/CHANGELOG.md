@@ -1,6 +1,6 @@
-## [0.5.0]
+## [0.4.1]
 
-* **Breaking change** `initialize()` will now return an appropriate boolean value if plugin has been initialised instead of returning null all the time
+* fix `initialize()` returning null all the time instead of returning an appropriate boolean value to indicate if plugin has been initialised
 
 ## [0.4.0]
 
