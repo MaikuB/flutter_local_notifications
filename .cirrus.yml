@@ -6,6 +6,7 @@ task:
     folder: ~/.pub-cache
   install_melos_script:
     - dart pub global activate melos
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
   build_script:
     - melos run build:example_android
@@ -21,6 +22,7 @@ task:
     - flutter upgrade
   install_melos_script:
     - dart pub global activate melos
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
   build_script:
     - melos run build:example_ios
@@ -38,6 +40,7 @@ task:
     - flutter config --enable-macos-desktop
   install_melos_script:
     - dart pub global activate melos
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
   build_script:
     - melos run build:example_macos
@@ -54,6 +57,7 @@ task:
     - flutter config --enable-linux-desktop
   install_melos_script:
     - dart pub global activate melos
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
   build_script:
     - melos run build:example_linux
@@ -64,6 +68,7 @@ task:
     image: cirrusci/flutter:stable
   install_melos_script:
     - dart pub global activate melos
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
   test_script:
     -  melos run test
@@ -82,6 +87,7 @@ task:
     folder: ~/.pub-cache
   install_melos_script:
     - dart pub global activate melos
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
   install_images_script: sdkmanager "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
   create_device_script:
