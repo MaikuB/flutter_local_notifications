@@ -1,3 +1,8 @@
+# [9.2.0]
+
+* [Android] Added `areNotificationsEnabled()` method to `AndroidFlutterLocalNotificationsPlugin`. This allows querying if notifications are enabled for the app calling the method. Thanks to the PR from [Konstantin Pelz](https://github.com/komape)
+* [Linux] Fix `initialize()` returning null all the time instead of returning an appropriate boolean value to indicate if plugin has been initialised 
+
 # [9.1.5]
 
 * Bumped `flutter_local_notifications_linux` dependency
