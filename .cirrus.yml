@@ -71,7 +71,7 @@ task:
   test_script:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
-    - melos run test --no-select
+    - melos run test:unit --no-select
 
 task:
   name: Run integration tests (Android)
@@ -97,4 +97,30 @@ task:
   test_script:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
-    - melos run test:integration:android
+    - melos run test:integration
+task:
+  name: Run integration tests (iOS)
+  osx_instance:
+    image: monterey-xcode
+  pub_cache:
+    folder: ~/.pub-cache
+  simulator_script:
+    - xcrun simctl list devicetypes
+    - xcrun simctl list runtimes
+    # create simulator
+    - udid=$(xcrun simctl create "iPhone 13" com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-15-2)
+    # boot simulator
+    - xcrun simctl boot $udid
+    # enable notifications permissions via AppleSimulatorUtils
+    - brew tap wix/brew
+    - brew install applesimutils
+    - applesimutils --byId $udid --bundle com.dexterous.flutterLocalNotificationsExample --setPermissions notifications=YES
+  upgrade_script:
+    - flutter channel stable
+    - flutter upgrade
+  install_melos_script:
+    - dart pub global activate melos
+  test_script:
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - melos bootstrap
+    - melos run test:integration
