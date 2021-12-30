@@ -23,6 +23,6 @@ class InitializationSettings {
   /// Settings for macOS.
   final MacOSInitializationSettings? macOS;
 
-   /// Settings for Linux.
+  /// Settings for Linux.
   final LinuxInitializationSettings? linux;
 }

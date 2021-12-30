@@ -15,8 +15,8 @@ class DBusWrapper {
     _destination = destination;
     _object = DBusRemoteObject(
       DBusClient.session(),
-      destination,
-      DBusObjectPath(path),
+      name: destination,
+      path: DBusObjectPath(path),
     );
   }
 
@@ -47,5 +47,6 @@ class DBusWrapper {
 
   /// Creates a stream of signal with the given [name].
   DBusRemoteObjectSignalStream subscribeSignal(String name) =>
-      DBusRemoteObjectSignalStream(_object, _destination, name);
+      DBusRemoteObjectSignalStream(
+          object: _object, interface: _destination, name: name);
 }

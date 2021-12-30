@@ -32,12 +32,11 @@ class LinuxFlutterLocalNotificationsPlugin
   Future<bool?> initialize(
     LinuxInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
-  }) async {
-    await _manager.initialize(
-      initializationSettings,
-      onSelectNotification: onSelectNotification,
-    );
-  }
+  }) =>
+      _manager.initialize(
+        initializationSettings,
+        onSelectNotification: onSelectNotification,
+      );
 
   /// Show a notification with an optional payload that will be passed back to
   /// the app when a notification is tapped on.
