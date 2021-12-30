@@ -63,7 +63,7 @@ task:
     - melos run build:example_linux
 
 task:
-  name: Run all unit tests
+  name: Run all unit tests (Dart)
   container:
     image: cirrusci/flutter:stable
   install_melos_script:
@@ -72,6 +72,17 @@ task:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
     - melos run test --no-select
+
+task:
+  name: Run all unit tests (Android)
+  container:
+    image: cirrusci/flutter:stable
+  install_melos_script:
+    - dart pub global activate melos
+  test_script:
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - melos bootstrap
+    - melos run test:unit:android
 
 task:
   name: Run integration tests (Android)
