@@ -126,7 +126,7 @@ task:
     - melos run test:integration
 task:
   name: Run integration tests (Linux)
-  osx_instance:
+  container:
     image: cirrusci/flutter:stable
   pub_cache:
     folder: ~/.pub-cache
