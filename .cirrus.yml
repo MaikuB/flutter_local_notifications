@@ -14,7 +14,7 @@ task:
 task:
   name: Build iOS example app
   osx_instance:
-    image: big-sur-xcode-12.4
+    image: monterey-xcode
   pub_cache:
     folder: ~/.pub-cache
   upgrade_script:
@@ -30,7 +30,7 @@ task:
 task:
   name: Build macOS example app
   osx_instance:
-    image: big-sur-xcode-12.4
+    image: monterey-xcode
   pub_cache:
     folder: ~/.pub-cache
   upgrade_script:
