@@ -130,9 +130,6 @@ task:
     image: cirrusci/flutter:stable
   pub_cache:
     folder: ~/.pub-cache
-  upgrade_script:
-    - flutter channel stable
-    - flutter upgrade
   install_melos_script:
     - dart pub global activate melos
   test_script:
