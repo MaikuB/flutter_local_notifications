@@ -4,6 +4,8 @@ task:
     image: cirrusci/flutter:stable
   pub_cache:
     folder: ~/.pub-cache
+  upgrade_script:
+    - flutter upgrade
   install_melos_script:
     - dart pub global activate melos
   build_script:
@@ -30,7 +32,7 @@ task:
 task:
   name: Build macOS example app
   osx_instance:
-    image: big-sur-xcode-12.4
+    image: monterey-xcode
   pub_cache:
     folder: ~/.pub-cache
   upgrade_script:
@@ -85,6 +87,8 @@ task:
     kvm: true
   pub_cache:
     folder: ~/.pub-cache
+  upgrade_script:
+    - flutter upgrade
   install_melos_script:
     - dart pub global activate melos
   install_images_script: sdkmanager "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
