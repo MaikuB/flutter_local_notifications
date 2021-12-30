@@ -51,12 +51,12 @@ class LinuxNotificationManager {
 
   /// Initializes the manager.
   /// Call this method on application before using the manager further.
-  Future<void> initialize(
+  Future<bool> initialize(
     LinuxInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
   }) async {
     if (_initialized) {
-      return;
+      return _initialized;
     }
     _initialized = true;
     _initializationSettings = initializationSettings;
@@ -69,6 +69,7 @@ class LinuxNotificationManager {
 
     await _storage.forceReloadCache();
     _subscribeSignals();
+    return _initialized;
   }
 
   /// Show notification

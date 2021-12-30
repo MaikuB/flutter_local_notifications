@@ -1,3 +1,7 @@
+## [0.5.0]
+
+* **Breaking change** `initialize()` will now return an appropriate boolean value if plugin has been initialised instead of returning null all the time
+
 ## [0.4.0]
 
 *  Bumped `dbus` dependency.
