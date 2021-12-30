@@ -125,21 +125,6 @@ task:
     - melos bootstrap
     - melos run test:integration
 task:
-  name: Run integration tests (macOS)
-  osx_instance:
-    image: monterey-xcode
-  pub_cache:
-    folder: ~/.pub-cache
-  upgrade_script:
-    - flutter channel stable
-    - flutter upgrade
-  install_melos_script:
-    - dart pub global activate melos
-  test_script:
-    - export PATH="$PATH":"$HOME/.pub-cache/bin"
-    - melos bootstrap
-    - melos run test:integration
-task:
   name: Run integration tests (Linux)
   osx_instance:
     image: cirrusci/flutter:stable
