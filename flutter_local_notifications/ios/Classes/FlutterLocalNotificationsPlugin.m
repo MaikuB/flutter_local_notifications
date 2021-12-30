@@ -1,6 +1,6 @@
+#import "FlutterLocalNotificationsPlugin.h"
 #import "ActionEventSink.h"
 #import "Converters.h"
-#import "FlutterLocalNotificationsPlugin.h"
 
 @implementation FlutterLocalNotificationsPlugin {
   FlutterMethodChannel *_channel;
@@ -301,7 +301,7 @@ static FlutterError *getFlutterError(NSError *error) {
                            actions:newActions
                  intentIdentifiers:@[]
                            options:[Converters parseNotificationCategoryOptions:
-                                             category[@"options"]]];
+                                                   category[@"options"]]];
 
         [newCategories addObject:newCategory];
       }
