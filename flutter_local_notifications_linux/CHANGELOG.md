@@ -1,6 +1,10 @@
+## [0.4.1+1]
+
+* Fixed minor casing error in 0.4.1 changelog entry
+
 ## [0.4.1]
 
-* fix `initialize()` returning null all the time instead of returning an appropriate boolean value to indicate if plugin has been initialised
+* Fix `initialize()` returning null all the time instead of returning an appropriate boolean value to indicate if plugin has been initialised
 
 ## [0.4.0]
 
