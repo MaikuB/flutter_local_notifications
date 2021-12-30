@@ -4,6 +4,7 @@ packages:
   - flutter_local_notifications/*
   - flutter_local_notifications_linux/*
   - flutter_local_notifications_platform_interface/*
+  - "**/example/*"
 
 ide:
   intellij: false
@@ -18,4 +19,48 @@ scripts:
     select-package:
       dir-exists:
         - "test/"
+  test:integration:android:
+    run: melos exec -c 1 "flutter drive --no-pub --driver=test_driver/integration_test.dart --target=integration_test/flutter_local_notifications_test.dart"
+    description:
+      Run integration tests on an Android emulator
+    select-package:
+      file-exists:
+        - integration_test/flutter_local_notifications_test.dart
+      scope: "*example*"
+  build:example_android:
+    run: |
+      melos exec -c 1 -- \
+        "flutter build apk --no-pub"
+    description: Build a specific example app for Android.
+    select-package:
+      dir-exists:
+        - android
+      scope: "*example*"
+  build:example_ios:
+    run: |
+      melos exec -c 1 -- \
+        "flutter build ios --no-codesign --debug"
+    description: Build a specific example app for iOS.
+    select-package:
+      dir-exists:
+        - ios
+      scope: "*example*"
+  build:example_macos:
+    run: |
+      melos exec -c 1 -- \
+        "flutter build macos"
+    description: Build a specific example app for macOS.
+    select-package:
+      dir-exists:
+        - macos
+      scope: "*example*"
+  build:example_linux:
+    run: |
+      melos exec -c 1 -- \
+        "flutter build linux"
+    description: Build a specific example app for Linux.
+    select-package:
+      dir-exists:
+        - linux
+      scope: "*example*"
   format: dart format -o write .
