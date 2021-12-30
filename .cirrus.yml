@@ -6,9 +6,9 @@ task:
     folder: ~/.pub-cache
   install_melos_script:
     - dart pub global activate melos
+  build_script:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
-  build_script:
     - melos run build:example_android
 
 task:
@@ -22,9 +22,9 @@ task:
     - flutter upgrade
   install_melos_script:
     - dart pub global activate melos
+  build_script:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
-  build_script:
     - melos run build:example_ios
 
 task:
@@ -40,9 +40,9 @@ task:
     - flutter config --enable-macos-desktop
   install_melos_script:
     - dart pub global activate melos
+  build_script:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
-  build_script:
     - melos run build:example_macos
 
 task:
@@ -57,9 +57,9 @@ task:
     - flutter config --enable-linux-desktop
   install_melos_script:
     - dart pub global activate melos
+  build_script:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
-  build_script:
     - melos run build:example_linux
 
 task:
@@ -68,10 +68,10 @@ task:
     image: cirrusci/flutter:stable
   install_melos_script:
     - dart pub global activate melos
+  test_script:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
-  test_script:
-    -  melos run test
+    - melos run test
 
 task:
   name: Run integration tests (Android)
@@ -87,8 +87,6 @@ task:
     folder: ~/.pub-cache
   install_melos_script:
     - dart pub global activate melos
-    - export PATH="$PATH":"$HOME/.pub-cache/bin"
-    - melos bootstrap
   install_images_script: sdkmanager "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
   create_device_script:
     echo no | avdmanager create avd --force -n test -k "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
@@ -97,4 +95,6 @@ task:
   wait_for_emulator_script:
     android-wait-for-emulator
   test_script:
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - melos bootstrap
     - melos run test:integration:android
