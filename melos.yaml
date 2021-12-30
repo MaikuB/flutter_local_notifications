@@ -4,7 +4,7 @@ packages:
   - flutter_local_notifications/*
   - flutter_local_notifications_linux/*
   - flutter_local_notifications_platform_interface/*
-  - "**/example/*"
+  - '**/example/*'
 
 ide:
   intellij: false
@@ -25,7 +25,14 @@ scripts:
     select-package:
       dir-exists:
         - integration_test
-      scope: "*example*"
+      scope: '*example*'
+  test:integration:linux:
+    run: melos exec -c 1 -- "flutter test -d linux integration_test"
+    description: Run integration tests
+    select-package:
+      dir-exists:
+        - integration_test
+      scope: '*example*'
   build:example_android:
     run: |
       melos exec -c 1 -- \
@@ -34,7 +41,7 @@ scripts:
     select-package:
       dir-exists:
         - android
-      scope: "*example*"
+      scope: '*example*'
   build:example_ios:
     run: |
       melos exec -c 1 -- \
@@ -43,7 +50,7 @@ scripts:
     select-package:
       dir-exists:
         - ios
-      scope: "*example*"
+      scope: '*example*'
   build:example_macos:
     run: |
       melos exec -c 1 -- \
@@ -52,7 +59,7 @@ scripts:
     select-package:
       dir-exists:
         - macos
-      scope: "*example*"
+      scope: '*example*'
   build:example_linux:
     run: |
       melos exec -c 1 -- \
@@ -61,5 +68,5 @@ scripts:
     select-package:
       dir-exists:
         - linux
-      scope: "*example*"
+      scope: '*example*'
   format: dart format -o write .
