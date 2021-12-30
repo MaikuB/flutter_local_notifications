@@ -1,6 +1,7 @@
 #import "FlutterLocalNotificationsPlugin.h"
 #import "ActionEventSink.h"
 #import "Converters.h"
+#import "FlutterEngineManager.h"
 
 @implementation FlutterLocalNotificationsPlugin {
   FlutterMethodChannel *_channel;
@@ -9,13 +10,12 @@
   bool _updateBadge;
   bool _initialized;
   bool _launchingAppFromNotification;
-  NSUserDefaults *_persistentState;
   NSObject<FlutterPluginRegistrar> *_registrar;
   NSString *_launchPayload;
   UILocalNotification *_launchNotification;
+  FlutterEngineManager *_flutterEngineManager;
 }
 
-static FlutterEngine *backgroundEngine;
 static FlutterPluginRegistrantCallback registerPlugins;
 static ActionEventSink *actionEventSink;
 
@@ -118,8 +118,8 @@ static FlutterError *getFlutterError(NSError *error) {
   FlutterLocalNotificationsPlugin *instance =
       [[FlutterLocalNotificationsPlugin alloc] initWithChannel:channel
                                                      registrar:registrar];
-  if (backgroundEngine == nil ||
-      registrar.messenger != backgroundEngine.binaryMessenger) {
+  
+  if ([FlutterEngineManager shouldAddAppDelegateToRegistrar:registrar]) {
     [registrar addApplicationDelegate:instance];
   }
 
@@ -137,7 +137,7 @@ static FlutterError *getFlutterError(NSError *error) {
   if (self) {
     _channel = channel;
     _registrar = registrar;
-    _persistentState = [NSUserDefaults standardUserDefaults];
+    _flutterEngineManager = [[FlutterEngineManager alloc] init];
   }
 
   return self;
@@ -148,8 +148,7 @@ static FlutterError *getFlutterError(NSError *error) {
   if ([INITIALIZE_METHOD isEqualToString:call.method]) {
     [self initialize:call.arguments result:result];
   } else if ([GET_CALLBACK_METHOD isEqualToString:call.method]) {
-    NSNumber *handle = [_persistentState valueForKey:@"callback_handle"];
-    result(handle);
+    result([_flutterEngineManager getCallbackHandle]);
   } else if ([SHOW_METHOD isEqualToString:call.method]) {
 
     [self show:call.arguments result:result];
@@ -351,10 +350,8 @@ static FlutterError *getFlutterError(NSError *error) {
 
   if ([self containsKey:@"dispatcher_handle" forDictionary:arguments] &&
       [self containsKey:@"callback_handle" forDictionary:arguments]) {
-    [_persistentState setObject:arguments[@"callback_handle"]
-                         forKey:@"callback_handle"];
-    [_persistentState setObject:arguments[@"dispatcher_handle"]
-                         forKey:@"dispatcher_handle"];
+    [_flutterEngineManager registerDispatcherHandle:arguments[@"dispatcher_handle"]
+                                       callbackHandle:arguments[@"callback_handle"]];
   }
 
   // Configure the notification categories before requesting permissions
@@ -972,44 +969,6 @@ static FlutterError *getFlutterError(NSError *error) {
   return dictionary[key] != [NSNull null] && dictionary[key] != nil;
 }
 
-- (void)startEngineIfNeeded {
-  if (backgroundEngine) {
-    return;
-  }
-
-  NSNumber *dispatcherHandle =
-      [_persistentState objectForKey:@"dispatcher_handle"];
-
-  backgroundEngine =
-      [[FlutterEngine alloc] initWithName:@"FlutterLocalNotificationsIsolate"
-                                  project:nil
-                   allowHeadlessExecution:true];
-
-  FlutterCallbackInformation *info = [FlutterCallbackCache
-      lookupCallbackInformation:[dispatcherHandle longValue]];
-
-  if (!info) {
-    NSLog(@"callback information could not be retrieved");
-    abort();
-  }
-
-  NSString *entryPoint = info.callbackName;
-  NSString *uri = info.callbackLibraryPath;
-
-  dispatch_async(dispatch_get_main_queue(), ^{
-    FlutterEventChannel *channel = [FlutterEventChannel
-        eventChannelWithName:
-            @"dexterous.com/flutter/local_notifications/actions"
-             binaryMessenger:backgroundEngine.binaryMessenger];
-
-    [backgroundEngine runWithEntrypoint:entryPoint libraryURI:uri];
-    [channel setStreamHandler:actionEventSink];
-
-    NSAssert(registerPlugins != nil, @"failed to set registerPlugins");
-    registerPlugins(backgroundEngine);
-  });
-}
-
 #pragma mark - UNUserNotificationCenterDelegate
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
@@ -1076,7 +1035,8 @@ static FlutterError *getFlutterError(NSError *error) {
       @"payload" : response.notification.request.content.userInfo[@"payload"],
     }];
 
-    [self startEngineIfNeeded];
+    [_flutterEngineManager startEngineIfNeeded:actionEventSink
+                                 registerPlugins:registerPlugins];
 
     completionHandler();
   }

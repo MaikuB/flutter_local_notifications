@@ -64,7 +64,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     var defaultPresentBadge = false
     var launchPayload: String?
     var launchingAppFromNotification = false
-
+    
     init(fromChannel channel: FlutterMethodChannel) {
         self.channel = channel
     }
@@ -102,12 +102,31 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     @available(OSX 10.14, *)
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        let payload = response.notification.request.content.userInfo[MethodCallArguments.payload] as? String
-        if initialized {
-            handleSelectNotification(payload: payload)
+        
+        if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
+            let payload = response.notification.request.content.userInfo[MethodCallArguments.payload] as? String
+            if initialized {
+                handleSelectNotification(payload: payload)
+            } else {
+                launchPayload = payload
+                launchingAppFromNotification = true
+            }
+            
+            completionHandler()
         } else {
-            launchPayload = payload
-            launchingAppFromNotification = true
+            let text = (response as? UNTextInputNotificationResponse)?.userText ?? ""
+            
+            // No isolate can be used for macOS until https://github.com/flutter/flutter/issues/65222 is resolved.
+            //
+            // Therefore, we call the regular method channel and let the macos plugin handle it appropriately.
+            handleNotificationActionTapped(payload: [
+                "notificationId" : response.notification.request.identifier,
+                "actionId" : response.actionIdentifier,
+                "input" : text,
+                "payload" : response.notification.request.content.userInfo["payload"] as? String ?? "",
+            ])
+            
+            completionHandler()
         }
     }
 
@@ -566,5 +585,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     func handleSelectNotification(payload: String?) {
         channel.invokeMethod("selectNotification", arguments: payload)
+    }
+    
+    func handleNotificationActionTapped(payload: [String: Any]) {
+        channel.invokeMethod("actionTapped", arguments: payload)
     }
 }

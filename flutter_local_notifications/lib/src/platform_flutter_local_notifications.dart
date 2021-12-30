@@ -713,6 +713,7 @@ class IOSFlutterLocalNotificationsPlugin
 class MacOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback? _onSelectNotification;
+  NotificationActionCallback? _onNotificationActionSelected;
 
   /// Initializes the plugin.
   ///
@@ -733,11 +734,11 @@ class MacOSFlutterLocalNotificationsPlugin
   ///
   /// To handle when a notification launched an application, use
   /// [getNotificationAppLaunchDetails].
-  Future<bool?> initialize(
-    MacOSInitializationSettings initializationSettings, {
-    SelectNotificationCallback? onSelectNotification,
-  }) async {
+  Future<bool?> initialize(MacOSInitializationSettings initializationSettings,
+      {SelectNotificationCallback? onSelectNotification,
+      NotificationActionCallback? onNotificationActionSelected}) async {
     _onSelectNotification = onSelectNotification;
+    _onNotificationActionSelected = onNotificationActionSelected;
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
         'initialize', initializationSettings.toMap());
@@ -834,6 +835,14 @@ class MacOSFlutterLocalNotificationsPlugin
     switch (call.method) {
       case 'selectNotification':
         _onSelectNotification?.call(call.arguments);
+        break;
+      case 'actionTapped':
+        _onNotificationActionSelected?.call(NotificationActionDetails(
+          id: int.parse(call.arguments['notificationId']),
+          actionId: call.arguments['actionId'],
+          input: call.arguments['input'],
+          payload: call.arguments['payload'],
+        ));
         break;
       default:
         return await Future<void>.error('Method not defined');

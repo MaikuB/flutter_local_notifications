@@ -135,7 +135,8 @@ class FlutterLocalNotificationsPlugin {
       return await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.macOS!,
-              onSelectNotification: onSelectNotification);
+              onSelectNotification: onSelectNotification,
+              onNotificationActionSelected: backgroundHandler);
     } else if (defaultTargetPlatform == TargetPlatform.linux) {
       return await resolvePlatformSpecificImplementation<
               LinuxFlutterLocalNotificationsPlugin>()
