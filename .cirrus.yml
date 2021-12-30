@@ -71,7 +71,7 @@ task:
   test_script:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
-    - melos run test
+    - melos run test --no-select
 
 task:
   name: Run integration tests (Android)
