@@ -14,5 +14,5 @@ void main() {
     test('getpid', () {
       expect(posix.getpid(), equals(pid));
     });
-  });
+  }, skip: !Platform.isLinux);
 }

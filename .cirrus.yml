@@ -4,27 +4,33 @@ task:
     image: cirrusci/flutter:stable
   pub_cache:
     folder: ~/.pub-cache
+  install_melos_script:
+    - dart pub global activate melos
   build_script:
-    - cd flutter_local_notifications/example
-    - flutter build apk --debug
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - melos bootstrap
+    - melos run build:example_android
 
 task:
   name: Build iOS example app
   osx_instance:
-    image: big-sur-xcode-12.4
+    image: monterey-xcode
   pub_cache:
     folder: ~/.pub-cache
   upgrade_script:
     - flutter channel stable
     - flutter upgrade
+  install_melos_script:
+    - dart pub global activate melos
   build_script:
-    - cd flutter_local_notifications/example
-    - flutter build ios --no-codesign --debug
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - melos bootstrap
+    - melos run build:example_ios
 
 task:
   name: Build macOS example app
   osx_instance:
-    image: big-sur-xcode-12.4
+    image: monterey-xcode
   pub_cache:
     folder: ~/.pub-cache
   upgrade_script:
@@ -32,9 +38,12 @@ task:
     - flutter upgrade
   setup_script:
     - flutter config --enable-macos-desktop
+  install_melos_script:
+    - dart pub global activate melos
   build_script:
-    - cd flutter_local_notifications/example
-    - flutter build macos
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - melos bootstrap
+    - melos run build:example_macos
 
 task:
   name: Build Linux example app
@@ -46,27 +55,23 @@ task:
     - apt update
     - apt install cmake ninja-build clang pkg-config libgtk-3-dev -y
     - flutter config --enable-linux-desktop
+  install_melos_script:
+    - dart pub global activate melos
   build_script:
-    - cd flutter_local_notifications/example
-    - flutter build linux
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - melos bootstrap
+    - melos run build:example_linux
 
 task:
-  name: Run platform interface tests
+  name: Run all unit tests
   container:
     image: cirrusci/flutter:stable
+  install_melos_script:
+    - dart pub global activate melos
   test_script:
-    - cd flutter_local_notifications_platform_interface
-    - flutter test
-
-task:
-  name: Run plugin unit tests
-  container:
-    image: cirrusci/flutter:stable
-  pub_cache:
-    folder: ~/.pub-cache
-  test_script:
-    - cd flutter_local_notifications
-    - flutter test
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - melos bootstrap
+    - melos run test --no-select
 
 task:
   name: Run integration tests (Android)
@@ -80,6 +85,8 @@ task:
     kvm: true
   pub_cache:
     folder: ~/.pub-cache
+  install_melos_script:
+    - dart pub global activate melos
   install_images_script: sdkmanager "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
   create_device_script:
     echo no | avdmanager create avd --force -n test -k "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
@@ -88,16 +95,6 @@ task:
   wait_for_emulator_script:
     android-wait-for-emulator
   test_script:
-    - cd flutter_local_notifications
-    - cd example
-    - flutter drive --driver=test_driver/integration_test.dart --target=integration_test/flutter_local_notifications_test.dart
-
-task:
-  name: Run Linux plugin tests
-  container:
-    image: cirrusci/flutter:stable
-  pub_cache:
-    folder: ~/.pub-cache
-  test_script:
-    - cd flutter_local_notifications_linux
-    - flutter test
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - melos bootstrap
+    - melos run test:integration:android
