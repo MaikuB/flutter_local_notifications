@@ -28,8 +28,8 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
     this.preferences = preferences;
   }
 
-	@Keep
-	public ActionBroadcastReceiver() {}
+  @Keep
+  public ActionBroadcastReceiver() {}
 
   IsolatePreferences preferences;
 

@@ -3,7 +3,6 @@ package com.dexterous.flutterlocalnotifications.isolate;
 import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 import io.flutter.view.FlutterCallbackInformation;
 
 public class IsolatePreferences {
