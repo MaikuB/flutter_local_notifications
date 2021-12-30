@@ -18,14 +18,14 @@ scripts:
     run: melos exec --concurrency=1 -- "flutter test"
     select-package:
       dir-exists:
-        - "test/"
+        - test
   test:integration:android:
-    run: melos exec -c 1 "flutter drive --no-pub --driver=test_driver/integration_test.dart --target=integration_test/flutter_local_notifications_test.dart"
+    run: melos exec -c 1 -- "flutter test integration_test"
     description:
       Run integration tests on an Android emulator
     select-package:
-      file-exists:
-        - integration_test/flutter_local_notifications_test.dart
+      dir-exists:
+        - integration_test
       scope: "*example*"
   build:example_android:
     run: |
