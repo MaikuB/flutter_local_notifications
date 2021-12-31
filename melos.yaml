@@ -34,7 +34,7 @@ scripts:
   build:example_android:
     run: |
       melos exec -c 1 -- \
-        "flutter build apk"
+        "flutter build apk --debug"
     description: Build a specific example app for Android.
     select-package:
       dir-exists:
