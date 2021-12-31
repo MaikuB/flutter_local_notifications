@@ -13,8 +13,8 @@ scripts:
   analyze:
     run: melos exec -c 1 -- "dart analyze . --fatal-infos"
     description: Run dart analyzer in a specific package.
-  test:
-    description: Run tests in a specific package.
+  test:unit:
+    description: Run unit tests in a specific package.
     run: melos exec --concurrency=1 -- "flutter test"
     select-package:
       dir-exists:
@@ -24,10 +24,9 @@ scripts:
     run: melos exec -c 1 -- "cd android && ./gradlew flutter_local_notifications:testDebug"
     select-package:
       scope: "*example*"
-  test:integration:android:
+  test:integration:
     run: melos exec -c 1 -- "flutter test integration_test"
-    description:
-      Run integration tests on an Android emulator
+    description: Run integration tests
     select-package:
       dir-exists:
         - integration_test
