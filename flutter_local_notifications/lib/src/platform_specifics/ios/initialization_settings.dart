@@ -64,6 +64,11 @@ class IOSInitializationSettings {
   /// Configure the notification categories ([DarwinNotificationCategory])
   /// available. This allows for fine-tuning of preview display.
   ///
+  /// IMPORTANT: A change to the category actions will either require a full app
+  /// uninstall / reinstall or a change to the category identifier. This is
+  /// because iOS configures the castegories once per App launch and considers
+  /// them immutable while the App is installed.
+  ///
   /// Notification actions are configured in each [DarwinNotificationCategory].
   final List<DarwinNotificationCategory> notificationCategories;
 }

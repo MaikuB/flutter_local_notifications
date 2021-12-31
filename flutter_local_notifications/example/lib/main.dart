@@ -55,6 +55,12 @@ class ReceivedNotification {
 String? selectedNotificationPayload;
 const String navigationActionId = 'id_3';
 
+/// Defines a iOS/MacOS notification category for text input actions.
+const String iosNotificationCategoryText = 'textCategory';
+
+/// Defines a iOS/MacOS notification category for plain actions.
+const String iosNotificationCategoryPlain = 'plainCategory';
+
 void notificationTapBackground(NotificationActionDetails details) {
   print(
       'notification(${details.id}) action tapped: ${details.actionId} with payload: ${details.payload}');
@@ -94,7 +100,7 @@ Future<void> main() async {
   final List<DarwinNotificationCategory> darwinNotificationCategories =
       <DarwinNotificationCategory>[
     DarwinNotificationCategory(
-      'textCategory',
+      iosNotificationCategoryText,
       actions: <DarwinNotificationAction>[
         DarwinNotificationAction.text(
           'text_1',
@@ -108,21 +114,28 @@ Future<void> main() async {
       ],
     ),
     DarwinNotificationCategory(
-      'plainCategory',
+      iosNotificationCategoryPlain,
       actions: <DarwinNotificationAction>[
         DarwinNotificationAction.plain('id_1', 'Action 1'),
         DarwinNotificationAction.plain(
           'id_2',
-          'Action 2',
+          'Action 2 (destructive)',
           options: <DarwinNotificationActionOption>{
             DarwinNotificationActionOption.destructive,
           },
         ),
         DarwinNotificationAction.plain(
           navigationActionId,
-          'Action 3',
+          'Action 3 (foreground)',
           options: <DarwinNotificationActionOption>{
             DarwinNotificationActionOption.foreground,
+          },
+        ),
+        DarwinNotificationAction.plain(
+          'id_4',
+          'Action 4 (auth required)',
+          options: <DarwinNotificationActionOption>{
+            DarwinNotificationActionOption.authenticationRequired,
           },
         ),
       ],
@@ -947,12 +960,12 @@ class _HomePageState extends State<HomePage> {
 
     const IOSNotificationDetails iosNotificationDetails =
         IOSNotificationDetails(
-      categoryIdentifier: 'plainCategory',
+      categoryIdentifier: iosNotificationCategoryPlain,
     );
 
     const MacOSNotificationDetails macOSNotificationDetails =
         MacOSNotificationDetails(
-      categoryIdentifier: 'plainCategory',
+      categoryIdentifier: iosNotificationCategoryPlain,
     );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
@@ -990,7 +1003,7 @@ class _HomePageState extends State<HomePage> {
 
     const IOSNotificationDetails iosNotificationDetails =
         IOSNotificationDetails(
-      categoryIdentifier: 'textCategory',
+      categoryIdentifier: iosNotificationCategoryText,
     );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
@@ -1029,7 +1042,7 @@ class _HomePageState extends State<HomePage> {
 
     const IOSNotificationDetails iosNotificationDetails =
         IOSNotificationDetails(
-      categoryIdentifier: 'textCategory',
+      categoryIdentifier: iosNotificationCategoryText,
     );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
