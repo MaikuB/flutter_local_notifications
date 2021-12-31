@@ -18,6 +18,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:url_launcher/url_launcher.dart';
 
 int id = 0;
 
@@ -53,6 +54,11 @@ class ReceivedNotification {
 }
 
 String? selectedNotificationPayload;
+
+/// A notificaiton action which triggers a url launch event
+const String urlLaunchActionId = 'id_1';
+
+/// A notificaiton action which triggers a App navigation event
 const String navigationActionId = 'id_3';
 
 /// Defines a iOS/MacOS notification category for text input actions.
@@ -265,6 +271,9 @@ class _HomePageState extends State<HomePage> {
     // ignore: avoid_annotating_with_dynamic
     port.listen((dynamic data) async {
       final NotificationActionDetails action = data;
+      if (action.actionId == urlLaunchActionId) {
+        await launch('https://flutter.dev');
+      }
       if (action.actionId == navigationActionId) {
         await Navigator.of(context).push(MaterialPageRoute<void>(
           builder: (BuildContext context) => SecondPage(action.payload),
