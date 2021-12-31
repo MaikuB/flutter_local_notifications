@@ -10,7 +10,7 @@ extension DarwinNotificationActionMapper on DarwinNotificationAction {
         'identifier': identifier,
         'title': title,
         'options': options
-            .map((e) => e.index + 1) // ignore: always_specify_types
+            .map((e) => 1 << e.index) // ignore: always_specify_types
             .toList(),
         'type': describeEnum(type),
         if (buttonTitle != null) 'buttonTitle': buttonTitle!,
@@ -25,7 +25,7 @@ extension DarwinNotificationCategoryMapper on DarwinNotificationCategory {
             .map((e) => e.toMap()) // ignore: always_specify_types
             .toList(),
         'options': options
-            .map((e) => e.index + 1) // ignore: always_specify_types
+            .map((e) => 1 << e.index) // ignore: always_specify_types
             .toList(),
       };
 }
