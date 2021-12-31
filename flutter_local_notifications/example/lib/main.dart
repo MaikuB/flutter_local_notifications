@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -34,6 +35,9 @@ final BehaviorSubject<String?> selectNotificationSubject =
 const MethodChannel platform =
     MethodChannel('dexterx.dev/flutter_local_notifications_example');
 
+ReceivePort port = ReceivePort();
+const String portName = 'notification_send_port';
+
 class ReceivedNotification {
   ReceivedNotification({
     required this.id,
@@ -49,6 +53,7 @@ class ReceivedNotification {
 }
 
 String? selectedNotificationPayload;
+const String navigationActionId = 'id_3';
 
 void notificationTapBackground(NotificationActionDetails details) {
   print(
@@ -58,6 +63,8 @@ void notificationTapBackground(NotificationActionDetails details) {
     print('notification action tapped with input: ${details.input}');
   }
   FlutterLocalNotificationsPlugin().cancel(details.id);
+  final SendPort? send = IsolateNameServer.lookupPortByName(portName);
+  send?.send(details);
 }
 
 /// IMPORTANT: running the following code on its own won't work as there is
@@ -112,7 +119,7 @@ Future<void> main() async {
           },
         ),
         DarwinNotificationAction.plain(
-          'id_3',
+          navigationActionId,
           'Action 3',
           options: <DarwinNotificationActionOption>{
             DarwinNotificationActionOption.foreground,
@@ -237,6 +244,20 @@ class _HomePageState extends State<HomePage> {
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
+    _configureListeningForNavigationAction();
+  }
+
+  void _configureListeningForNavigationAction() {
+    IsolateNameServer.registerPortWithName(port.sendPort, portName);
+    // ignore: avoid_annotating_with_dynamic
+    port.listen((dynamic data) async {
+      final NotificationActionDetails action = data;
+      if (action.actionId == navigationActionId) {
+        await Navigator.of(context).push(MaterialPageRoute<void>(
+          builder: (BuildContext context) => SecondPage(action.payload),
+        ));
+      }
+    });
   }
 
   void _requestPermissions() {
@@ -275,8 +296,7 @@ class _HomePageState extends State<HomePage> {
               isDefaultAction: true,
               onPressed: () async {
                 Navigator.of(context, rootNavigator: true).pop();
-                await Navigator.push(
-                  context,
+                await Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (BuildContext context) =>
                         SecondPage(receivedNotification.payload),
@@ -293,7 +313,9 @@ class _HomePageState extends State<HomePage> {
 
   void _configureSelectNotificationSubject() {
     selectNotificationSubject.stream.listen((String? payload) async {
-      await Navigator.pushNamed(context, '/secondPage');
+      await Navigator.of(context).push(MaterialPageRoute<void>(
+        builder: (BuildContext context) => SecondPage(payload),
+      ));
     });
   }
 
@@ -916,7 +938,7 @@ class _HomePageState extends State<HomePage> {
           icon: DrawableResourceAndroidBitmap('secondary_icon'),
         ),
         AndroidNotificationAction(
-          'id_3',
+          navigationActionId,
           'Action 3',
           icon: DrawableResourceAndroidBitmap('secondary_icon'),
         ),
