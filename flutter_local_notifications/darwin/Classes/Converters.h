@@ -10,8 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface Converters : NSObject
 
-+ (UNNotificationCategoryOptions)parseNotificationCategoryOptions:(NSArray *)options API_AVAILABLE(ios(10.0));
-+ (UNNotificationActionOptions)parseNotificationActionOptions:(NSArray *)options API_AVAILABLE(ios(10.0));
++ (UNNotificationCategoryOptions)parseNotificationCategoryOptions:
+    (NSArray *)options API_AVAILABLE(ios(10.0));
++ (UNNotificationActionOptions)parseNotificationActionOptions:(NSArray *)options
+    API_AVAILABLE(ios(10.0));
 
 @end
 
