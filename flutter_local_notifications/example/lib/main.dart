@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:device_info/device_info.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -1959,7 +1959,7 @@ class _HomePageState extends State<HomePage> {
     if (Platform.isAndroid) {
       final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      if (androidInfo.version.sdkInt < 23) {
+      if (androidInfo.version.sdkInt! < 23) {
         return const Text(
           '"getActiveNotifications" is available only for Android 6.0 or newer',
         );
@@ -1967,7 +1967,7 @@ class _HomePageState extends State<HomePage> {
     } else if (Platform.isIOS) {
       final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      final List<String> fullVersion = iosInfo.systemVersion.split('.');
+      final List<String> fullVersion = iosInfo.systemVersion!.split('.');
       if (fullVersion.isNotEmpty) {
         final int? version = int.tryParse(fullVersion[0]);
         if (version != null && version < 10) {
