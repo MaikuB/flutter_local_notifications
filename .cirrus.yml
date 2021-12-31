@@ -107,7 +107,9 @@ task:
     android-wait-for-emulator
   test_script:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - flutter precache
     - melos bootstrap
+    - melos run build:example_android
     - melos run test:integration
 task:
   name: Run integration tests (iOS)
