@@ -17,74 +17,74 @@ NS_ASSUME_NONNULL_BEGIN
 static FlutterEngine *backgroundEngine;
 
 @implementation FlutterEngineManager {
-    NSUserDefaults* _persistentState;
+  NSUserDefaults *_persistentState;
 }
 
-+ (BOOL)shouldAddAppDelegateToRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-    return backgroundEngine == nil || registrar.messenger != backgroundEngine.binaryMessenger;
++ (BOOL)shouldAddAppDelegateToRegistrar:
+    (NSObject<FlutterPluginRegistrar> *)registrar {
+  return backgroundEngine == nil ||
+         registrar.messenger != backgroundEngine.binaryMessenger;
 }
 
 - (instancetype)init {
-    self = [super init];
-    
-    if (self) {
-        _persistentState = [NSUserDefaults standardUserDefaults];
-    }
-    
-    return self;
+  self = [super init];
+
+  if (self) {
+    _persistentState = [NSUserDefaults standardUserDefaults];
+  }
+
+  return self;
 }
 
 - (void)startEngineIfNeeded:(ActionEventSink *)actionEventSink
             registerPlugins:(FlutterPluginRegistrantCallback)registerPlugins {
-    if (backgroundEngine) {
-        return;
-    }
-    
-    NSNumber *dispatcherHandle =
-    [_persistentState objectForKey:@"dispatcher_handle"];
-    
-    backgroundEngine =
-    [[FlutterEngine alloc] initWithName:@"FlutterLocalNotificationsIsolate"
-                                project:nil
-                 allowHeadlessExecution:true];
-    
-    FlutterCallbackInformation *info = [FlutterCallbackCache
-                                        lookupCallbackInformation:[dispatcherHandle longValue]];
-    
-    if (!info) {
-        NSLog(@"callback information could not be retrieved");
-        abort();
-    }
-    
-    NSString *entryPoint = info.callbackName;
-    NSString *uri = info.callbackLibraryPath;
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        FlutterEventChannel *channel = [FlutterEventChannel
-                                        eventChannelWithName:
-                                            @"dexterous.com/flutter/local_notifications/actions"
-                                        binaryMessenger:backgroundEngine.binaryMessenger];
-        
-        [backgroundEngine runWithEntrypoint:entryPoint libraryURI:uri];
-        [channel setStreamHandler:actionEventSink];
-        
-        NSAssert(registerPlugins != nil, @"failed to set registerPlugins");
-        registerPlugins(backgroundEngine);
-    });
+  if (backgroundEngine) {
+    return;
+  }
+
+  NSNumber *dispatcherHandle =
+      [_persistentState objectForKey:@"dispatcher_handle"];
+
+  backgroundEngine =
+      [[FlutterEngine alloc] initWithName:@"FlutterLocalNotificationsIsolate"
+                                  project:nil
+                   allowHeadlessExecution:true];
+
+  FlutterCallbackInformation *info = [FlutterCallbackCache
+      lookupCallbackInformation:[dispatcherHandle longValue]];
+
+  if (!info) {
+    NSLog(@"callback information could not be retrieved");
+    abort();
+  }
+
+  NSString *entryPoint = info.callbackName;
+  NSString *uri = info.callbackLibraryPath;
+
+  dispatch_async(dispatch_get_main_queue(), ^{
+    FlutterEventChannel *channel = [FlutterEventChannel
+        eventChannelWithName:
+            @"dexterous.com/flutter/local_notifications/actions"
+             binaryMessenger:backgroundEngine.binaryMessenger];
+
+    [backgroundEngine runWithEntrypoint:entryPoint libraryURI:uri];
+    [channel setStreamHandler:actionEventSink];
+
+    NSAssert(registerPlugins != nil, @"failed to set registerPlugins");
+    registerPlugins(backgroundEngine);
+  });
 }
 
 - (void)registerDispatcherHandle:(NSNumber *)dispatcherHandle
                   callbackHandle:(NSNumber *)callbackHandle {
-    [_persistentState setObject:callbackHandle
-                         forKey:@"callback_handle"];
-    [_persistentState setObject:dispatcherHandle
-                         forKey:@"dispatcher_handle"];
+  [_persistentState setObject:callbackHandle forKey:@"callback_handle"];
+  [_persistentState setObject:dispatcherHandle forKey:@"dispatcher_handle"];
 }
 
 /// Called from the dart side to know which Dart method to call up next to
 /// actually handle the notification.
 - (NSNumber *)getCallbackHandle {
-    return [_persistentState valueForKey:@"callback_handle"];
+  return [_persistentState valueForKey:@"callback_handle"];
 }
 
 @end
