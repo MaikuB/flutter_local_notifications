@@ -7,37 +7,85 @@
 
 #import <Foundation/Foundation.h>
 
-#if TARGET_OS_OSX
-#import <FlutterMacOS/FlutterMacOS.h>
-#else
 #import <Flutter/Flutter.h>
-#endif
 
 #import "ActionEventSink.h"
+#import "FlutterEngineManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FlutterEngineManager : NSObject
+static FlutterEngine *backgroundEngine;
 
-/// The App Delegate used by this plugin should only be added to the main
-/// isolate in a Flutter App.
-///
-/// This method checks whether the background engine is running or whether the
-/// registrat belongs to it.
-+ (BOOL)shouldAddAppDelegateToRegistrar:
-    (NSObject<FlutterPluginRegistrar> *)registrar;
+@implementation FlutterEngineManager {
+    NSUserDefaults* _persistentState;
+}
 
-#if TARGET_OS_IOS
++ (BOOL)shouldAddAppDelegateToRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+    return backgroundEngine == nil || registrar.messenger != backgroundEngine.binaryMessenger;
+}
+
+- (instancetype)init {
+    self = [super init];
+    
+    if (self) {
+        _persistentState = [NSUserDefaults standardUserDefaults];
+    }
+    
+    return self;
+}
+
 - (void)startEngineIfNeeded:(ActionEventSink *)actionEventSink
-            registerPlugins:(FlutterPluginRegistrantCallback)registerPlugins;
-#endif
+            registerPlugins:(FlutterPluginRegistrantCallback)registerPlugins {
+    if (backgroundEngine) {
+        return;
+    }
+    
+    NSNumber *dispatcherHandle =
+    [_persistentState objectForKey:@"dispatcher_handle"];
+    
+    backgroundEngine =
+    [[FlutterEngine alloc] initWithName:@"FlutterLocalNotificationsIsolate"
+                                project:nil
+                 allowHeadlessExecution:true];
+    
+    FlutterCallbackInformation *info = [FlutterCallbackCache
+                                        lookupCallbackInformation:[dispatcherHandle longValue]];
+    
+    if (!info) {
+        NSLog(@"callback information could not be retrieved");
+        abort();
+    }
+    
+    NSString *entryPoint = info.callbackName;
+    NSString *uri = info.callbackLibraryPath;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        FlutterEventChannel *channel = [FlutterEventChannel
+                                        eventChannelWithName:
+                                            @"dexterous.com/flutter/local_notifications/actions"
+                                        binaryMessenger:backgroundEngine.binaryMessenger];
+        
+        [backgroundEngine runWithEntrypoint:entryPoint libraryURI:uri];
+        [channel setStreamHandler:actionEventSink];
+        
+        NSAssert(registerPlugins != nil, @"failed to set registerPlugins");
+        registerPlugins(backgroundEngine);
+    });
+}
 
 - (void)registerDispatcherHandle:(NSNumber *)dispatcherHandle
-                  callbackHandle:(NSNumber *)callbackHandle;
+                  callbackHandle:(NSNumber *)callbackHandle {
+    [_persistentState setObject:callbackHandle
+                         forKey:@"callback_handle"];
+    [_persistentState setObject:dispatcherHandle
+                         forKey:@"dispatcher_handle"];
+}
 
 /// Called from the dart side to know which Dart method to call up next to
 /// actually handle the notification.
-- (NSNumber *)getCallbackHandle;
+- (NSNumber *)getCallbackHandle {
+    return [_persistentState valueForKey:@"callback_handle"];
+}
 
 @end
 

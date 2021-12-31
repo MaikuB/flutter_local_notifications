@@ -7,11 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
-#if TARGET_OS_OSX
-#import <FlutterMacOS/FlutterMacOS.h>
-#else
 #import <Flutter/Flutter.h>
-#endif
 
 #import "ActionEventSink.h"
 
@@ -25,10 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// This method checks whether the background engine is running or whether the registrat belongs to it.
 + (BOOL)shouldAddAppDelegateToRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
-#if TARGET_OS_IOS
 - (void)startEngineIfNeeded:(ActionEventSink*)actionEventSink
             registerPlugins:(FlutterPluginRegistrantCallback)registerPlugins;
-#endif
 
 - (void)registerDispatcherHandle:(NSNumber*)dispatcherHandle
                   callbackHandle:(NSNumber*)callbackHandle;
