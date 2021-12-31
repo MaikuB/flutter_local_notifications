@@ -1,0 +1,65 @@
+name: flutter_local_notifications
+repository: https://github.com/MaikuB/flutter_local_notifications
+packages:
+  - flutter_local_notifications/*
+  - flutter_local_notifications_linux/*
+  - flutter_local_notifications_platform_interface/*
+  - "**/example/*"
+
+ide:
+  intellij: false
+
+scripts:
+  analyze:
+    run: melos exec -c 1 -- "dart analyze . --fatal-infos"
+    description: Run dart analyzer in a specific package.
+  test:unit:
+    description: Run unit tests in a specific package.
+    run: melos exec --concurrency=1 -- "flutter test"
+    select-package:
+      dir-exists:
+        - test
+  test:integration:
+    run: melos exec -c 1 -- "flutter test integration_test"
+    description: Run integration tests
+    select-package:
+      dir-exists:
+        - integration_test
+      scope: "*example*"
+  build:example_android:
+    run: |
+      melos exec -c 1 -- \
+        "flutter build apk"
+    description: Build a specific example app for Android.
+    select-package:
+      dir-exists:
+        - android
+      scope: "*example*"
+  build:example_ios:
+    run: |
+      melos exec -c 1 -- \
+        "flutter build ios --no-codesign --debug"
+    description: Build a specific example app for iOS.
+    select-package:
+      dir-exists:
+        - ios
+      scope: "*example*"
+  build:example_macos:
+    run: |
+      melos exec -c 1 -- \
+        "flutter build macos"
+    description: Build a specific example app for macOS.
+    select-package:
+      dir-exists:
+        - macos
+      scope: "*example*"
+  build:example_linux:
+    run: |
+      melos exec -c 1 -- \
+        "flutter build linux"
+    description: Build a specific example app for Linux.
+    select-package:
+      dir-exists:
+        - linux
+      scope: "*example*"
+  format: dart format -o write .

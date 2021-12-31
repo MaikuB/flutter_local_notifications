@@ -84,6 +84,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Retrieve the list of active notifications
 * [Android] Full-screen intent notifications
 * [Android] Start a foreground service
+* [Android] Ability to check if notifications are enabled
 * [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
 * [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
 * [Linux] Ability to to use themed/Flutter Assets icons and sound

@@ -8,20 +8,28 @@ import 'package:integration_test/integration_test.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('app_icon');
+  const IOSInitializationSettings initializationSettingsIOS =
+      IOSInitializationSettings();
+  const MacOSInitializationSettings initializationSettingsMacOS =
+      MacOSInitializationSettings();
+  final LinuxInitializationSettings initializationSettingsLinux =
+      LinuxInitializationSettings(
+    defaultActionName: 'Open notification',
+    defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),
+  );
+  final InitializationSettings initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+      macOS: initializationSettingsMacOS,
+      linux: initializationSettingsLinux);
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   group('initialize()', () {
     setUpAll(() async {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     });
     testWidgets('can initialise', (WidgetTester tester) async {
-      const AndroidInitializationSettings initializationSettingsAndroid =
-          AndroidInitializationSettings('app_icon');
-      const IOSInitializationSettings initializationSettingsIOS =
-          IOSInitializationSettings();
-      const InitializationSettings initializationSettings =
-          InitializationSettings(
-              android: initializationSettingsAndroid,
-              iOS: initializationSettingsIOS);
       final bool initialised = await flutterLocalNotificationsPlugin
           .initialize(initializationSettings);
       expect(initialised, isTrue);
@@ -30,14 +38,6 @@ void main() {
   group('resolvePlatformSpecificImplementation()', () {
     setUpAll(() async {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-      const AndroidInitializationSettings initializationSettingsAndroid =
-          AndroidInitializationSettings('app_icon');
-      const IOSInitializationSettings initializationSettingsIOS =
-          IOSInitializationSettings();
-      const InitializationSettings initializationSettings =
-          InitializationSettings(
-              android: initializationSettingsAndroid,
-              iOS: initializationSettingsIOS);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
     });
 

@@ -107,8 +107,7 @@ class LinuxNotificationCategory {
       return true;
     }
 
-    return other is LinuxNotificationCategory &&
-      other.name == name;
+    return other is LinuxNotificationCategory && other.name == name;
   }
 
   @override

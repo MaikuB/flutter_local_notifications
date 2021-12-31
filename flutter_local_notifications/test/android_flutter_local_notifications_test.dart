@@ -2167,5 +2167,14 @@ void main() {
             arguments: null,
           ));
     });
+
+    test('areNotificationsEnabled', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .areNotificationsEnabled();
+      expect(
+          log.last, isMethodCall('areNotificationsEnabled', arguments: null));
+    });
   });
 }
