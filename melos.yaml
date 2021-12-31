@@ -21,7 +21,7 @@ scripts:
         - test
   test:unit:android:
     description: Runs java unit tests
-    run: melos exec -c 1 -- "cd android && ./gradlew flutter_local_notifications:testDebug"
+    run: melos exec -c 1 -- "flutter build apk --debug && cd android && ./gradlew flutter_local_notifications:testDebug"
     select-package:
       scope: "*example*"
   test:integration:
