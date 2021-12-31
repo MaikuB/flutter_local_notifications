@@ -115,7 +115,7 @@ void main() {
                   'options': <int>[2],
                 }
               ],
-              'options': <int>[5],
+              'options': <int>[16],
             },
             <String, dynamic>{
               'identifier': 'category2',
@@ -243,6 +243,7 @@ void main() {
                   'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                 }
               ],
+              'categoryIdentifier': 'category1',
             },
           }));
     });
@@ -260,16 +261,20 @@ void main() {
                 .initialize(initializationSettings);
 
             const NotificationDetails notificationDetails = NotificationDetails(
-                iOS: IOSNotificationDetails(
-                    presentAlert: true,
-                    presentBadge: true,
-                    presentSound: true,
-                    sound: 'sound.mp3',
-                    badgeNumber: 1,
-                    attachments: <IOSNotificationAttachment>[
-                  IOSNotificationAttachment('video.mp4',
-                      identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
-                ]));
+              iOS: IOSNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+                sound: 'sound.mp3',
+                badgeNumber: 1,
+                attachments: <IOSNotificationAttachment>[
+                  IOSNotificationAttachment(
+                    'video.mp4',
+                    identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                  )
+                ],
+              ),
+            );
 
             await flutterLocalNotificationsPlugin.periodicallyShow(
               1,
@@ -280,8 +285,10 @@ void main() {
             );
 
             expect(
-                log.last,
-                isMethodCall('periodicallyShow', arguments: <String, Object>{
+              log.last,
+              isMethodCall(
+                'periodicallyShow',
+                arguments: <String, Object>{
                   'id': 1,
                   'title': 'notification title',
                   'body': 'notification body',
@@ -302,9 +309,11 @@ void main() {
                         'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                       }
                     ],
-                    'categoryIdentifier': 'category1',
+                    'categoryIdentifier': null,
                   },
-                }));
+                },
+              ),
+            );
           });
         });
       }

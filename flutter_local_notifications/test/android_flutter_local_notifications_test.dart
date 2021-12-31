@@ -26,7 +26,9 @@ void main() {
       // ignore: always_specify_types
       channel.setMockMethodCallHandler((methodCall) async {
         log.add(methodCall);
-        if (methodCall.method == 'pendingNotificationRequests') {
+        if (methodCall.method == 'initialize') {
+          return true;
+        } else if (methodCall.method == 'pendingNotificationRequests') {
           return <Map<String, Object?>>[];
         } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
           return null;
