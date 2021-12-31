@@ -118,7 +118,7 @@ static FlutterError *getFlutterError(NSError *error) {
   FlutterLocalNotificationsPlugin *instance =
       [[FlutterLocalNotificationsPlugin alloc] initWithChannel:channel
                                                      registrar:registrar];
-  
+
   if ([FlutterEngineManager shouldAddAppDelegateToRegistrar:registrar]) {
     [registrar addApplicationDelegate:instance];
   }
@@ -350,8 +350,9 @@ static FlutterError *getFlutterError(NSError *error) {
 
   if ([self containsKey:@"dispatcher_handle" forDictionary:arguments] &&
       [self containsKey:@"callback_handle" forDictionary:arguments]) {
-    [_flutterEngineManager registerDispatcherHandle:arguments[@"dispatcher_handle"]
-                                       callbackHandle:arguments[@"callback_handle"]];
+    [_flutterEngineManager
+        registerDispatcherHandle:arguments[@"dispatcher_handle"]
+                  callbackHandle:arguments[@"callback_handle"]];
   }
 
   // Configure the notification categories before requesting permissions
@@ -1036,7 +1037,7 @@ static FlutterError *getFlutterError(NSError *error) {
     }];
 
     [_flutterEngineManager startEngineIfNeeded:actionEventSink
-                                 registerPlugins:registerPlugins];
+                               registerPlugins:registerPlugins];
 
     completionHandler();
   }
