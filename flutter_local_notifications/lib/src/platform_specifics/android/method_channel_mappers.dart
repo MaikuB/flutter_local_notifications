@@ -304,7 +304,8 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
               'inputs': e.inputs
                   .map((AndroidNotificationActionInput input) =>
                       _convertInputToMap(input))
-                  .toList()
+                  .toList(),
+              'cancelNotification': e.cancelNotification,
             },
           )
           .toList(),

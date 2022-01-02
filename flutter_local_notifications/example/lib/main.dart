@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_local_notifications_example/navigation_event_listener.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as image;
@@ -18,7 +19,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:url_launcher/url_launcher.dart';
 
 int id = 0;
 
@@ -36,7 +36,6 @@ final BehaviorSubject<String?> selectNotificationSubject =
 const MethodChannel platform =
     MethodChannel('dexterx.dev/flutter_local_notifications_example');
 
-ReceivePort port = ReceivePort();
 const String portName = 'notification_send_port';
 
 class ReceivedNotification {
@@ -55,10 +54,10 @@ class ReceivedNotification {
 
 String? selectedNotificationPayload;
 
-/// A notificaiton action which triggers a url launch event
+/// A notification action which triggers a url launch event
 const String urlLaunchActionId = 'id_1';
 
-/// A notificaiton action which triggers a App navigation event
+/// A notification action which triggers a App navigation event
 const String navigationActionId = 'id_3';
 
 /// Defines a iOS/MacOS notification category for text input actions.
@@ -74,7 +73,7 @@ void notificationTapBackground(NotificationActionDetails details) {
     // ignore: avoid_print
     print('notification action tapped with input: ${details.input}');
   }
-  FlutterLocalNotificationsPlugin().cancel(details.id);
+
   final SendPort? send = IsolateNameServer.lookupPortByName(portName);
   send?.send(details);
 }
@@ -263,23 +262,6 @@ class _HomePageState extends State<HomePage> {
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
-    _configureListeningForNavigationAction();
-  }
-
-  void _configureListeningForNavigationAction() {
-    IsolateNameServer.registerPortWithName(port.sendPort, portName);
-    // ignore: avoid_annotating_with_dynamic
-    port.listen((dynamic data) async {
-      final NotificationActionDetails action = data;
-      if (action.actionId == urlLaunchActionId) {
-        await launch('https://flutter.dev');
-      }
-      if (action.actionId == navigationActionId) {
-        await Navigator.of(context).push(MaterialPageRoute<void>(
-          builder: (BuildContext context) => SecondPage(action.payload),
-        ));
-      }
-    });
   }
 
   void _requestPermissions() {
@@ -349,12 +331,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Plugin example app'),
-          ),
-          body: SingleChildScrollView(
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const Text('Plugin example app'),
+        ),
+        body: SingleChildScrollView(
+          child: NavigationEventListener(
             child: Padding(
               padding: const EdgeInsets.all(8),
               child: Center(
@@ -963,6 +945,10 @@ class _HomePageState extends State<HomePage> {
           navigationActionId,
           'Action 3',
           icon: DrawableResourceAndroidBitmap('secondary_icon'),
+
+          // By default, Android plugin will dismiss the notification when the
+          // user tapped on a action (this mimics the behavior on iOS).
+          cancelNotification: false,
         ),
       ],
     );
@@ -999,7 +985,7 @@ class _HomePageState extends State<HomePage> {
       actions: <AndroidNotificationAction>[
         AndroidNotificationAction(
           'text_id_1',
-          'Action 1',
+          'Enter Text',
           icon: DrawableResourceAndroidBitmap('food'),
           inputs: <AndroidNotificationActionInput>[
             AndroidNotificationActionInput(
@@ -1019,8 +1005,8 @@ class _HomePageState extends State<HomePage> {
       android: androidPlatformChannelSpecifics,
       iOS: iosNotificationDetails,
     );
-    await flutterLocalNotificationsPlugin.show(
-        id++, 'plain title', 'plain body', platformChannelSpecifics,
+    await flutterLocalNotificationsPlugin.show(id++, 'Text Input Notification',
+        'Expand to see input action', platformChannelSpecifics,
         payload: 'item x');
   }
 

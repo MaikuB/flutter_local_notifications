@@ -92,6 +92,7 @@ import java.util.Map;
 @Keep
 public class FlutterLocalNotificationsPlugin
     implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
+
   private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
   private static final String DISPATCHER_HANDLE = "dispatcher_handle";
   private static final String CALLBACK_HANDLE = "callback_handle";
@@ -124,7 +125,8 @@ public class FlutterLocalNotificationsPlugin
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
-  private static final String PAYLOAD = "payload";
+  static final String CANCEL_NOTIFICATION = "cancelNotification";
+  static final String PAYLOAD = "payload";
   private static final String INVALID_ICON_ERROR_CODE = "INVALID_ICON";
   private static final String INVALID_LARGE_ICON_ERROR_CODE = "INVALID_LARGE_ICON";
   private static final String INVALID_BIG_PICTURE_ERROR_CODE = "INVALID_BIG_PICTURE";
@@ -225,7 +227,7 @@ public class FlutterLocalNotificationsPlugin
       int requestCode = notificationDetails.id * 16;
       for (NotificationAction action : notificationDetails.actions) {
         IconCompat icon = null;
-        if (!TextUtils.isEmpty(action.icon)) {
+        if (!TextUtils.isEmpty(action.icon) && action.iconSource != null) {
           icon = getIconFromSource(context, action.icon, action.iconSource);
         }
 
@@ -234,8 +236,9 @@ public class FlutterLocalNotificationsPlugin
                 .setAction(ActionBroadcastReceiver.ACTION_TAPPED)
                 .putExtra(ActionBroadcastReceiver.NOTIFICATION_ID, notificationDetails.id)
                 .putExtra(ActionBroadcastReceiver.ACTION_ID, action.id)
+                .putExtra(CANCEL_NOTIFICATION, action.cancelNotification)
                 .putExtra(PAYLOAD, notificationDetails.payload);
-        PendingIntent actionPendingIntent =
+        final PendingIntent actionPendingIntent =
             PendingIntent.getBroadcast(
                 context, requestCode++, actionIntent, PendingIntent.FLAG_ONE_SHOT);
 
@@ -257,10 +260,9 @@ public class FlutterLocalNotificationsPlugin
           actionBuilder.setAllowGeneratedReplies(action.allowGeneratedReplies);
         }
 
-        for (NotificationActionInput input : action.inputs) {
+        for (NotificationActionInput input : action.actionInputs) {
           RemoteInput.Builder remoteInput =
-              new RemoteInput.Builder("FlutterLocalNotificationsPluginInputResult")
-                  .setLabel(input.label);
+              new RemoteInput.Builder(ActionBroadcastReceiver.INPUT_RESULT).setLabel(input.label);
           if (input.allowFreeFormInput != null) {
             remoteInput.setAllowFreeFormInput(input.allowFreeFormInput);
           }
@@ -1265,7 +1267,7 @@ public class FlutterLocalNotificationsPlugin
   }
 
   @Override
-  public void onDetachedFromEngine(FlutterPluginBinding binding) {}
+  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {}
 
   @Override
   public void onAttachedToActivity(ActivityPluginBinding binding) {
@@ -1291,7 +1293,7 @@ public class FlutterLocalNotificationsPlugin
   }
 
   @Override
-  public void onMethodCall(MethodCall call, Result result) {
+  public void onMethodCall(MethodCall call, @NonNull Result result) {
     switch (call.method) {
       case INITIALIZE_METHOD:
         {
@@ -1605,7 +1607,7 @@ public class FlutterLocalNotificationsPlugin
       alarmManager.cancel(pendingIntent);
     }
 
-    saveScheduledNotifications(applicationContext, new ArrayList<NotificationDetails>());
+    saveScheduledNotifications(applicationContext, new ArrayList<>());
     result.success(null);
   }
 
@@ -1775,7 +1777,7 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private void startForegroundService(MethodCall call, Result result) {
-    Map<String, Object> notificationData = call.<Map<String, Object>>argument("notificationData");
+    Map<String, Object> notificationData = call.argument("notificationData");
     Integer startType = call.<Integer>argument("startType");
     ArrayList<Integer> foregroundServiceTypes = call.argument("foregroundServiceTypes");
     if (foregroundServiceTypes == null || foregroundServiceTypes.size() != 0) {

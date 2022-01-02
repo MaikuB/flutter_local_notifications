@@ -55,6 +55,7 @@ class AndroidNotificationAction {
     this.showsUserInterface = false,
     this.allowGeneratedReplies = false,
     this.inputs = const <AndroidNotificationActionInput>[],
+    this.cancelNotification = true,
   });
 
   /// This ID will be sent back in the action handler defined in
@@ -88,6 +89,10 @@ class AndroidNotificationAction {
 
   /// Add an input to be collected from the user when this action is sent.
   final List<AndroidNotificationActionInput> inputs;
+
+  /// Set whether the notification should be canceled when this action is
+  /// selected.
+  final bool cancelNotification;
 }
 
 /// Contains notification details specific to Android.

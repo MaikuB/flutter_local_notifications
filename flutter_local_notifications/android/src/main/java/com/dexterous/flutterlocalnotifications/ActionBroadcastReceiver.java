@@ -4,9 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.RemoteInput;
 import com.dexterous.flutterlocalnotifications.isolate.IsolatePreferences;
 import io.flutter.FlutterInjector;
@@ -37,6 +39,9 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
       "com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver.ACTION_TAPPED";
   public static final String ACTION_ID = "actionId";
   public static final String NOTIFICATION_ID = "notificationId";
+  private static final String INPUT = "input";
+
+  public static final String INPUT_RESULT = "FlutterLocalNotificationsPluginInputResult";
 
   @Nullable private static ActionEventSink actionEventSink;
 
@@ -51,16 +56,25 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
     preferences = preferences == null ? new IsolatePreferences(context) : preferences;
 
     final Map<String, Object> action = new HashMap<>();
-    action.put("notificationId", intent.getIntExtra(NOTIFICATION_ID, -1));
+    final int notificationId = intent.getIntExtra(NOTIFICATION_ID, -1);
+    action.put(NOTIFICATION_ID, notificationId);
     action.put(
-        "actionId", intent.hasExtra(ACTION_ID) ? intent.getStringExtra(ACTION_ID) : "unknown");
-    action.put("payload", intent.hasExtra("payload") ? intent.getStringExtra("payload") : "");
+        ACTION_ID, intent.hasExtra(ACTION_ID) ? intent.getStringExtra(ACTION_ID) : "unknown");
+    action.put(
+        FlutterLocalNotificationsPlugin.PAYLOAD,
+        intent.hasExtra(FlutterLocalNotificationsPlugin.PAYLOAD)
+            ? intent.getStringExtra(FlutterLocalNotificationsPlugin.PAYLOAD)
+            : "");
 
     Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
     if (remoteInput != null) {
-      action.put("input", remoteInput.getString("FlutterLocalNotificationsPluginInputResult"));
+      action.put(INPUT, remoteInput.getString(INPUT_RESULT));
     } else {
-      action.put("input", "");
+      action.put(INPUT, "");
+    }
+
+    if (intent.getBooleanExtra(FlutterLocalNotificationsPlugin.CANCEL_NOTIFICATION, false)) {
+      NotificationManagerCompat.from(context).cancel(notificationId);
     }
 
     if (actionEventSink == null) {

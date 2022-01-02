@@ -3,9 +3,8 @@ package com.dexterous.flutterlocalnotifications.models;
 import android.graphics.Color;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-
 import androidx.annotation.Keep;
-
+import androidx.annotation.Nullable;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.RepeatInterval;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
@@ -14,7 +13,6 @@ import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInforma
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -178,7 +176,7 @@ public class NotificationDetails implements Serializable {
   public Boolean fullScreenIntent;
   public String shortcutId;
   public String subText;
-  public List<NotificationAction> actions;
+  public @Nullable List<NotificationAction> actions;
   public String tag;
 
   // Note: this is set on the Android to save details about the icon that should be used when
@@ -270,14 +268,11 @@ public class NotificationDetails implements Serializable {
         List<Map<String, Object>> inputActions =
             (List<Map<String, Object>>) platformChannelSpecifics.get(ACTIONS);
         if (!inputActions.isEmpty()) {
+          notificationDetails.actions = new ArrayList<>();
+
           for (Map<String, Object> input : inputActions) {
-            final NotificationAction action = NotificationAction.from(input);
-            if (action != null) {
-              if (notificationDetails.actions == null) {
-                notificationDetails.actions = new ArrayList<>();
-              }
-              notificationDetails.actions.add(action);
-            }
+            final NotificationAction action = new NotificationAction(input);
+            notificationDetails.actions.add(action);
           }
         }
       }
