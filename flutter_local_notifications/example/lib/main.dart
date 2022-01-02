@@ -1001,10 +1001,17 @@ class _HomePageState extends State<HomePage> {
       categoryIdentifier: iosNotificationCategoryText,
     );
 
+    const MacOSNotificationDetails macOSNotificationDetails =
+        MacOSNotificationDetails(
+      categoryIdentifier: iosNotificationCategoryText,
+    );
+
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iosNotificationDetails,
+      macOS: macOSNotificationDetails,
     );
+
     await flutterLocalNotificationsPlugin.show(id++, 'Text Input Notification',
         'Expand to see input action', platformChannelSpecifics,
         payload: 'item x');
@@ -1039,10 +1046,15 @@ class _HomePageState extends State<HomePage> {
         IOSNotificationDetails(
       categoryIdentifier: iosNotificationCategoryText,
     );
+    const MacOSNotificationDetails macOSNotificationDetails =
+        MacOSNotificationDetails(
+      categoryIdentifier: iosNotificationCategoryText,
+    );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iosNotificationDetails,
+      macOS: macOSNotificationDetails,
     );
     await flutterLocalNotificationsPlugin.show(
         id++, 'plain title', 'plain body', platformChannelSpecifics,

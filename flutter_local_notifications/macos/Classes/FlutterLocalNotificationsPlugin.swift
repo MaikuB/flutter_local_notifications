@@ -209,7 +209,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                             if type == "plain" {
                                 newActions.append(UNNotificationAction(
                                     identifier: identifier,
-                                    title: title, options: Converters.parseNotificationActionOptions(options)
+                                    title: title,
+                                    options: Converters.parseNotificationActionOptions(options)
                                 ))
                             } else if type == "text" {
                                 let buttonTitle = action["buttonTitle"] as! String
@@ -240,7 +241,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
                 let center = UNUserNotificationCenter.current()
                 center.getNotificationCategories { existing  in
-                    center.setNotificationCategories(existing.union(newCategories))
+                    center.setNotificationCategories(newCategories)
                     completionHandler()
                 }
 
