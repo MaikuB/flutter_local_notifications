@@ -57,8 +57,7 @@ public class NotificationActionTest {
             Collections.singletonList("choice"),
             true,
             "label",
-            Collections.singletonList("text/plain")
-				),
+            Collections.singletonList("text/plain")),
         action.actionInputs.get(0));
   }
 }

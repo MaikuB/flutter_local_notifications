@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class NotificationAction {
   public static class NotificationActionInput {
@@ -23,42 +22,44 @@ public class NotificationAction {
       this.allowedMimeTypes = allowedMimeTypes;
     }
 
-		@SuppressWarnings("EqualsReplaceableByObjectsCall")
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) {
-				return true;
-			}
-			if (o == null || getClass() != o.getClass()) {
-				return false;
-			}
+    @SuppressWarnings("EqualsReplaceableByObjectsCall")
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
 
-			NotificationActionInput that = (NotificationActionInput) o;
+      NotificationActionInput that = (NotificationActionInput) o;
 
-			if (choices != null ? !choices.equals(that.choices) : that.choices != null) {
-				return false;
-			}
-			if (allowFreeFormInput != null ? !allowFreeFormInput.equals(that.allowFreeFormInput)
-					: that.allowFreeFormInput != null) {
-				return false;
-			}
-			if (label != null ? !label.equals(that.label) : that.label != null) {
-				return false;
-			}
-			return allowedMimeTypes != null ? allowedMimeTypes.equals(that.allowedMimeTypes)
-					: that.allowedMimeTypes == null;
-		}
+      if (choices != null ? !choices.equals(that.choices) : that.choices != null) {
+        return false;
+      }
+      if (allowFreeFormInput != null
+          ? !allowFreeFormInput.equals(that.allowFreeFormInput)
+          : that.allowFreeFormInput != null) {
+        return false;
+      }
+      if (label != null ? !label.equals(that.label) : that.label != null) {
+        return false;
+      }
+      return allowedMimeTypes != null
+          ? allowedMimeTypes.equals(that.allowedMimeTypes)
+          : that.allowedMimeTypes == null;
+    }
 
-		@Override
-		public int hashCode() {
-			int result = choices != null ? choices.hashCode() : 0;
-			result = 31 * result + (allowFreeFormInput != null ? allowFreeFormInput.hashCode() : 0);
-			result = 31 * result + (label != null ? label.hashCode() : 0);
-			result = 31 * result + (allowedMimeTypes != null ? allowedMimeTypes.hashCode() : 0);
-			return result;
-		}
+    @Override
+    public int hashCode() {
+      int result = choices != null ? choices.hashCode() : 0;
+      result = 31 * result + (allowFreeFormInput != null ? allowFreeFormInput.hashCode() : 0);
+      result = 31 * result + (label != null ? label.hashCode() : 0);
+      result = 31 * result + (allowedMimeTypes != null ? allowedMimeTypes.hashCode() : 0);
+      return result;
+    }
 
-		@Nullable public final List<String> choices;
+    @Nullable public final List<String> choices;
     public final Boolean allowFreeFormInput;
     public final String label;
     @Nullable public final List<String> allowedMimeTypes;
@@ -127,9 +128,7 @@ public class NotificationAction {
                   castList(String.class, (Collection<?>) input.get("choices")),
                   (Boolean) input.get("allowFreeFormInput"),
                   (String) input.get("label"),
-                  castList(String.class, (Collection<?>) input.get("allowedMimeTypes"))
-							)
-					);
+                  castList(String.class, (Collection<?>) input.get("allowedMimeTypes"))));
         }
       }
     }
