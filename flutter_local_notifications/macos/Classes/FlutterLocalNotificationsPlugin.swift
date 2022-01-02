@@ -240,7 +240,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 }
 
                 let center = UNUserNotificationCenter.current()
-                center.getNotificationCategories { existing  in
+                center.getNotificationCategories { _  in
                     center.setNotificationCategories(newCategories)
                     completionHandler()
                 }
