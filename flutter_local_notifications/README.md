@@ -291,14 +291,14 @@ When the user selects a action, the plugin will start a **separate Flutter Engin
 
 Adjust `AppDelegate.m` and set the plugin registrant callback:
 
-Add this function anywhere in AppDelegate.m:
+If you're using Objective-C, add this function anywhere in AppDelegate.m:
 ``` objc
 void registerPlugins(NSObject<FlutterPluginRegistry>* registry) {
     [GeneratedPluginRegistrant registerWithRegistry:registry];
 }
 ```
 
-Extend `didFinishLaunchingWithOptions` and register the callback:
+then extend `didFinishLaunchingWithOptions` and register the callback:
 
 ``` objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -309,53 +309,67 @@ Extend `didFinishLaunchingWithOptions` and register the callback:
 }
 ```
 
-iOS Notification actions need to be configured before the App is started, using the `initialize` method:
+For Swift, open the `AppDelegate.swift` and update the `didFinishLaunchingWithOptions` as follows
+where the commented code indicates the code to add in and why
 
-``` dart
-final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings(
-    // ...
-    notificationCategories: [
-        const IOSNotificationCategory(
-            'demoCategory',
-            <IOSNotificationAction>[
-                IOSNotificationAction('id_1', 'Action 1'),
-                IOSNotificationAction(
-                'id_2',
-                'Action 2',
-                options: <IOSNotificationActionOption>{
-                    IOSNotificationActionOption.destructive,
-                },
-                ),
-                IOSNotificationAction(
-                'id_3',
-                'Action 3',
-                options: <IOSNotificationActionOption>{
-                    IOSNotificationActionOption.foreground,
-                },
-                ),
-            ],
-            options: <IOSNotificationCategoryOption>{
-                IOSNotificationCategoryOption.hiddenPreviewShowTitle,
-            },
-        )
-],
-```
+```swift
+override func application(
+  _ application: UIApplication,
+  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+  ) -> Bool {
+  // This is required to make any communication available in the action isolate.
+  FlutterLocalNotificationsPlugin.setPluginRegistrantCallback { (registry) in
+    GeneratedPluginRegistrant.register(with: registry)
+  }
 
-On iOS, the notification category will define which actions are availble. On Android, you can put the actions directly in the Notification object.
-
-**Usage**:
-
-You need to configure a **top level**, **static** method which will handle the action:
-
-``` dart
-void notificationTapBackground(String id) {
-  print('notification action tapped: $id');
+  ...
+  return super.application(application, didFinishLaunchingWithOptions: launchOptions)
 }
 ```
 
-The passed `id` parameter is the same specified in `NotificationAction`. Remember this function runs in a separate isolate! You will need to use a different mechanism to communicate with the main App.
+On iOS/macOS, notification actions need to be configured before the app is started using the `initialize` method
 
-Accessing plugins will work; however in particular on Android there is **no** access to the `Activity` context which means some plugins (like `url_launcher`) will require additional flags to start the main `Activity` again.
+``` dart
+final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
+    // ...
+    notificationCategories: [
+    const DarwinNotificationCategory(
+        'demoCategory',
+        <DarwinNotificationAction>[
+            IOSNotificationAction('id_1', 'Action 1'),
+            IOSNotificationAction(
+            'id_2',
+            'Action 2',
+            options: <DarwinNotificationActionOption>{
+                DarwinNotificationActionOption.destructive,
+            },
+            ),
+            DarwinNotificationAction(
+            'id_3',
+            'Action 3',
+            options: <DarwinNotificationActionOption>{
+                DarwinNotificationActionOption.foreground,
+            },
+            ),
+        ],
+        options: <DarwinNotificationCategoryOption>{
+            DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
+        },
+    )
+],
+```
+
+On iOS/macOS, the notification category will define which actions are availble. On Android, you can put the actions directly in the `AndroidNotificationDetails` class.
+
+**Usage**:
+
+You need to configure a **top level** or **static** method which will handle the action:
+
+``` dart
+void notificationTapBackground(NotificationActionDetails notificationActionDetails) {
+  // handle action
+}
+```
 
 Specify this function as a parameter in the `initialize` method of this plugin:
 
@@ -369,17 +383,21 @@ await flutterLocalNotificationsPlugin.initialize(
 );
 ```
 
-**Specifying Actions on notifications**:
+Remember this function runs in a separate isolate! You will need to use a different mechanism (e.g. [`IsolateNameServer` APIs](https://api.flutter.dev/flutter/dart-ui/IsolateNameServer-class.html)) to communicate with the main isolate that the app will run from.
 
-The notification actions are platform specifics and you have to specify them differently for each platform.
+Accessing plugins will work; however in particular on Android there is **no** access to the `Activity` context which means some plugins (like `url_launcher`) will require additional flags to start the main `Activity` again.
 
-On iOS, the actions are defined on a category, please see the configuration section for details.
+**Specifying actions on notifications**:
+
+The notification actions are platform specific and you have to specify them differently for each platform.
+
+On iOS/macOS, the actions are defined on a category, please see the configuration section for details.
 
 On Android, the actions are configured directly on the notification.
 
 ``` dart
 Future<void> _showNotificationWithActions() async {
-  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+  const AndroidNotificationDetails androidNotificationDetails =
       AndroidNotificationDetails(
     '...',
     '...',
@@ -390,14 +408,14 @@ Future<void> _showNotificationWithActions() async {
       AndroidNotificationAction('id_3', 'Action 3'),
     ],
   );
-  const NotificationDetails platformChannelSpecifics =
-      NotificationDetails(android: androidPlatformChannelSpecifics);
+  const NotificationDetails notificationDetails =
+      NotificationDetails(android: androidNotificationDetails);
   await flutterLocalNotificationsPlugin.show(
-      0, '...', '...', platformChannelSpecifics);
+      0, '...', '...', notificationDetails);
 }
 ```
 
-Each notification will have a internal ID & an public Action title.
+Each notification will have a internal ID & an public action title.
 
 ### Example app
 
@@ -418,15 +436,13 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
 const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('app_icon');
-final IOSInitializationSettings initializationSettingsIOS =
-    IOSInitializationSettings(
+final DarwinInitializationSettings initializationSettingsDarwin =
+    DarwinInitializationSettings(
         onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-final MacOSInitializationSettings initializationSettingsMacOS =
-    MacOSInitializationSettings();
 final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
-    iOS: initializationSettingsIOS,
-    macOS: initializationSettingsMacOS);
+    iOS: initializationSettingsDarwin,
+    macOS: initializationSettingsDarwin);
 await flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: selectNotification);
 ```
@@ -447,26 +463,26 @@ void selectNotification(String payload) async {
 
 In the real world, this payload could represent the id of the item you want to display the details of. Once the initialisation is complete, then you can manage the displaying of notifications.
 
-The `IOSInitializationSettings` and `MacOSInitializationSettings` provides default settings on how the notification be presented when it is triggered and the application is in the foreground. There are optional named parameters that can be modified to suit your application's purposes. Here, it is omitted and the default values for these named properties is set such that all presentation options (alert, sound, badge) are enabled.
+The `DarwinInitializationSettings` class provides default settings on how the notification be presented when it is triggered and the application is in the foreground on iOS/macOS. There are optional named parameters that can be modified to suit your application's purposes. Here, it is omitted and the default values for these named properties is set such that all presentation options (alert, sound, badge) are enabled. 
 
 On iOS and macOS, initialisation may show a prompt to requires users to give the application permission to display notifications (note: permissions don't need to be requested on Android). Depending on when this happens, this may not be the ideal user experience for your application. If so, please refer to the next section on how to work around this.
 
-For an explanation of the `onDidReceiveLocalNotification` callback associated with the `IOSInitializationSettings` class, please read  [this](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications#handling-notifications-whilst-the-app-is-in-the-foreground).
+For an explanation of the `onDidReceiveLocalNotification` callback associated with the `DarwinInitializationSettings` class, please read  [this](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications#handling-notifications-whilst-the-app-is-in-the-foreground).
 
 
 *Note*: from version 4.0 of the plugin, calling `initialize` will not trigger the `onSelectNotification` callback when the application was started by tapping on a notification to trigger. Use the `getNotificationAppLaunchDetails` method that is available in the plugin if you need to handle a notification triggering the launch for an app e.g. change the home route of the app for deep-linking.
 
 ### [iOS (all supported versions) and macOS 10.14+] Requesting notification permissions
 
-The constructor for the `IOSInitializationSettings` and `MacOSInitializationSettings` classes has three named parameters (`requestSoundPermission`, `requestBadgePermission` and `requestAlertPermission`) that controls which permissions are being requested. If you want to request permissions at a later point in your application on iOS, set all of the above to false when initialising the plugin.
+The constructor for the `DarwinInitializationSettings` class  has three named parameters (`requestSoundPermission`, `requestBadgePermission` and `requestAlertPermission`) that controls which permissions are being requested. If you want to request permissions at a later point in your application on iOS, set all of the above to false when initialising the plugin.
 
 ```dart
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('app_icon');
-  final IOSInitializationSettings initializationSettingsIOS =
-      IOSInitializationSettings(
+  final DarwinInitializationSettings initializationSettingsDarwin =
+      DarwinInitializationSettings(
     requestSoundPermission: false,
     requestBadgePermission: false,
     requestAlertPermission: false,
@@ -479,8 +495,8 @@ The constructor for the `IOSInitializationSettings` and `MacOSInitializationSett
           requestSoundPermission: false);
   final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-      macOS: initializationSettingsMacOS);
+      iOS: initializationSettingsDarwin,
+      macOS: initializationSettingsDarwin);
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: onSelectNotification);
 ```
@@ -519,16 +535,16 @@ Here the call to `flutterLocalNotificationsPlugin.resolvePlatformSpecificImpleme
 ### Displaying a notification
 
 ```dart
-const AndroidNotificationDetails androidPlatformChannelSpecifics =
+const AndroidNotificationDetails androidNotificationDetails =
     AndroidNotificationDetails('your channel id', 'your channel name',
         channelDescription: 'your channel description',
         importance: Importance.max,
         priority: Priority.high,
         ticker: 'ticker');
-const NotificationDetails platformChannelSpecifics =
-    NotificationDetails(android: androidPlatformChannelSpecifics);
+const NotificationDetails notificationDetails =
+    NotificationDetails(android: androidNotificationDetails);
 await flutterLocalNotificationsPlugin.show(
-    0, 'plain title', 'plain body', platformChannelSpecifics,
+    0, 'plain title', 'plain body', notificationDetails,
     payload: 'item x');
 ```
 
@@ -591,14 +607,14 @@ If you are trying to update your code so it doesn't use the deprecated methods f
 ### Periodically show a notification with a specified interval
 
 ```dart
-const AndroidNotificationDetails androidPlatformChannelSpecifics =
+const AndroidNotificationDetails androidNotificationDetails =
     AndroidNotificationDetails(
         'repeating channel id', 'repeating channel name',
         channelDescription: 'repeating description');
-const NotificationDetails platformChannelSpecifics =
-    NotificationDetails(android: androidPlatformChannelSpecifics);
+const NotificationDetails notificationDetails =
+    NotificationDetails(android: androidNotificationDetails);
 await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
-    'repeating body', RepeatInterval.everyMinute, platformChannelSpecifics,
+    'repeating body', RepeatInterval.everyMinute, notificationDetails,
     androidAllowWhileIdle: true);
 ```
 
@@ -677,16 +693,16 @@ const InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
     lines,
     contentTitle: '2 messages',
     summaryText: 'janedoe@example.com');
-const AndroidNotificationDetails androidPlatformChannelSpecifics =
+const AndroidNotificationDetails androidNotificationDetails =
     AndroidNotificationDetails(groupChannelId, groupChannelName,
         channelDescription: groupChannelDescription,
         styleInformation: inboxStyleInformation,
         groupKey: groupKey,
         setAsGroupSummary: true);
-const NotificationDetails platformChannelSpecifics =
-    NotificationDetails(android: androidPlatformChannelSpecifics);
+const NotificationDetails notificationDetails =
+    NotificationDetails(android: androidNotificationDetails);
 await flutterLocalNotificationsPlugin.show(
-    3, 'Attention', 'Two messages', platformChannelSpecifics);
+    3, 'Attention', 'Two messages', notificationDetails);
 ```
 
 ### Cancelling/deleting a notification
