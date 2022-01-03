@@ -841,7 +841,7 @@ class MacOSFlutterLocalNotificationsPlugin
       case 'selectNotification':
         _onSelectNotification?.call(call.arguments);
         break;
-      case 'actionTapped':
+      case 'selectNotificationAction':
         _onSelectNotificationAction?.call(NotificationActionDetails(
           id: int.parse(call.arguments['notificationId']),
           actionId: call.arguments['actionId'],

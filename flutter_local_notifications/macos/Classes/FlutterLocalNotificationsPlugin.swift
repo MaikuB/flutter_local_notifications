@@ -127,7 +127,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             // No isolate can be used for macOS until https://github.com/flutter/flutter/issues/65222 is resolved.
             //
             // Therefore, we call the regular method channel and let the macos plugin handle it appropriately.
-            handleNotificationActionTapped(payload: [
+            handleSelectNotificationAction(payload: [
                 "notificationId": response.notification.request.identifier,
                 "actionId": response.actionIdentifier,
                 "input": text,
@@ -612,7 +612,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         channel.invokeMethod("selectNotification", arguments: payload)
     }
 
-    func handleNotificationActionTapped(payload: [String: Any]) {
-        channel.invokeMethod("actionTapped", arguments: payload)
+    func handleSelectNotificationAction(payload: [String: Any]) {
+        channel.invokeMethod("selectNotificationAction", arguments: payload)
     }
 }
