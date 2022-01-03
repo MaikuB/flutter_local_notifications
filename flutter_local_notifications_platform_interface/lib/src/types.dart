@@ -83,7 +83,8 @@ class NotificationActionDetails {
   /// The id of the action that was triggered.
   final String actionId;
 
-  /// The value of the input field if the notification action had an input field.
+  /// The value of the input field if the notification action had an input
+  /// field.
   final String? input;
 
   /// The notification's payload

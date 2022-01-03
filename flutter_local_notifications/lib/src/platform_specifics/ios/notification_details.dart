@@ -75,7 +75,7 @@ class IOSNotificationDetails {
 
   /// The identifier of the app-defined category object.
   ///
-  /// This must refer to a [DarwinNotificationCategory] identifier configured via
-  /// [InitializationSettings].
+  /// This must refer to a [DarwinNotificationCategory] identifier configured
+  /// via [InitializationSettings].
   final String? categoryIdentifier;
 }

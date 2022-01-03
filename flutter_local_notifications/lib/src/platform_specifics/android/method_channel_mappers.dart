@@ -1,5 +1,3 @@
-import 'package:flutter_local_notifications/src/platform_specifics/android/bitmap.dart';
-
 import 'enums.dart';
 import 'initialization_settings.dart';
 import 'message.dart';

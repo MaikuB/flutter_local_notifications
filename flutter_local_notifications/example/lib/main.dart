@@ -11,7 +11,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_local_notifications_example/navigation_event_listener.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as image;
@@ -19,6 +18,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+
+import 'navigation_event_listener.dart';
 
 int id = 0;
 
@@ -67,8 +68,9 @@ const String iosNotificationCategoryText = 'textCategory';
 const String iosNotificationCategoryPlain = 'plainCategory';
 
 void notificationTapBackground(NotificationActionDetails details) {
-  print(
-      'notification(${details.id}) action tapped: ${details.actionId} with payload: ${details.payload}');
+  // ignore: avoid_print
+  print('notification(${details.id}) action tapped: ${details.actionId} with'
+      ' payload: ${details.payload}');
   if (details.input?.isNotEmpty ?? false) {
     // ignore: avoid_print
     print('notification action tapped with input: ${details.input}');
