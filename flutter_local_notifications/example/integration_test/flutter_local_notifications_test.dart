@@ -10,10 +10,10 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('app_icon');
-  const IOSInitializationSettings initializationSettingsIOS =
-      IOSInitializationSettings();
-  const MacOSInitializationSettings initializationSettingsMacOS =
-      MacOSInitializationSettings();
+  const DarwinInitializationSettings initializationSettingsIOS =
+      DarwinInitializationSettings();
+  const DarwinInitializationSettings initializationSettingsMacOS =
+      DarwinInitializationSettings();
   final LinuxInitializationSettings initializationSettingsLinux =
       LinuxInitializationSettings(
     defaultActionName: 'Open notification',

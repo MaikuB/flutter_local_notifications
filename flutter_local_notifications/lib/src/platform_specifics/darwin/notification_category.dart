@@ -1,5 +1,5 @@
-import 'darwin_notification_action.dart';
-import 'darwin_notification_category_option.dart';
+import 'notification_action.dart';
+import 'notification_category_option.dart';
 
 /// Corresponds to the `UNNotificationCategory` type which is used to configure
 /// notification categories and accompanying options.

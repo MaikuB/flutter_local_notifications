@@ -1,9 +1,10 @@
 import 'notification_attachment.dart';
 
-/// Configures notification details specific to macOS.
-class MacOSNotificationDetails {
-  /// Constructs an instance of [MacOSNotificationDetails].
-  const MacOSNotificationDetails({
+/// Configures notification details specific to Darwin-based operation systems
+/// such as iOS and macOS
+class DarwinNotificationDetails {
+  /// Constructs an instance of [DarwinNotificationDetails].
+  const DarwinNotificationDetails({
     this.presentAlert,
     this.presentBadge,
     this.presentSound,
@@ -19,27 +20,29 @@ class MacOSNotificationDetails {
   /// in the foreground.
   ///
   /// When this is set to `null`, it will use the default setting given
-  /// to [MacOSInitializationSettings.defaultPresentAlert].
+  /// to [IOSInitializationSettings.defaultPresentAlert].
   ///
-  /// This property is only applicable to macOS 10.14 or newer.
+  /// On iOS, this property is only applicable to iOS 10 or newer.
+  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
   final bool? presentAlert;
 
   /// Play a sound when the notification is triggered while app is in
   /// the foreground.
   ///
   /// When this is set to `null`, it will use the default setting given to
-  /// [MacOSInitializationSettings.defaultPresentSound].
+  /// [IOSInitializationSettings.defaultPresentSound].
   ///
-  /// This property is only applicable to macOS 10.14 or newer.
+  /// This property is only applicable to iOS 10 or newer.
   final bool? presentSound;
 
   /// Apply the badge value when the notification is triggered while app is in
   /// the foreground.
   ///
   /// When this is set to `null`, it will use the default setting given to
-  /// [MacOSInitializationSettings.defaultPresentBadge].
+  /// [IOSInitializationSettings.defaultPresentBadge].
   ///
-  /// This property is only applicable to macOS 10.14 or newer.
+  /// On iOS, this property is only applicable to iOS 10 or newer.
+  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
   final bool? presentBadge;
 
   /// Specifies the name of the file to play for the notification.
@@ -59,16 +62,21 @@ class MacOSNotificationDetails {
 
   /// Specifies the list of attachments included with the notification.
   ///
-  /// This property is only applicable to macOS 10.14 or newer.
-  final List<MacOSNotificationAttachment>? attachments;
+  /// On iOS, this property is only applicable to iOS 10 or newer.
+  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
+  final List<DarwinNotificationAttachment>? attachments;
 
   /// Specifies the secondary description.
+  ///
+  /// On iOS, this property is only applicable to iOS 10 or newer.
+  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
   final String? subtitle;
 
   /// Specifies the thread identifier that can be used to group
   /// notifications together.
   ///
-  /// This property is only applicable to macOS 10.14 or newer.
+  /// On iOS, this property is only applicable to iOS 10 or newer.
+  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
   final String? threadIdentifier;
 
   /// The identifier of the app-defined category object.

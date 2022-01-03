@@ -15,13 +15,10 @@ import 'platform_specifics/android/notification_channel.dart';
 import 'platform_specifics/android/notification_channel_group.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/android/notification_sound.dart';
+import 'platform_specifics/darwin/initialization_settings.dart';
+import 'platform_specifics/darwin/mappers.dart';
+import 'platform_specifics/darwin/notification_details.dart';
 import 'platform_specifics/ios/enums.dart';
-import 'platform_specifics/ios/initialization_settings.dart';
-import 'platform_specifics/ios/method_channel_mappers.dart';
-import 'platform_specifics/ios/notification_details.dart';
-import 'platform_specifics/macos/initialization_settings.dart';
-import 'platform_specifics/macos/method_channel_mappers.dart';
-import 'platform_specifics/macos/notification_details.dart';
 import 'type_mappers.dart';
 import 'typedefs.dart';
 import 'types.dart';
@@ -493,16 +490,16 @@ class IOSFlutterLocalNotificationsPlugin
   /// see a permissions prompt. This may be fine in cases where it's acceptable
   /// to do this when the application runs for the first time. However, if your
   /// applicationn needs to do this at a later point in time, set the
-  /// [IOSInitializationSettings.requestAlertPermission],
-  /// [IOSInitializationSettings.requestBadgePermission] and
-  /// [IOSInitializationSettings.requestSoundPermission] values to false.
+  /// [DarwinInitializationSettings.requestAlertPermission],
+  /// [DarwinInitializationSettings.requestBadgePermission] and
+  /// [DarwinInitializationSettings.requestSoundPermission] values to false.
   /// [requestPermissions] can then be called to request permissions when
   /// needed.
   ///
   /// To handle when a notification launched an application, use
   /// [getNotificationAppLaunchDetails].
   Future<bool?> initialize(
-    IOSInitializationSettings initializationSettings, {
+    DarwinInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
     NotificationActionCallback? backgroundHandler,
   }) async {
@@ -540,7 +537,7 @@ class IOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     DateTime scheduledDate,
-    IOSNotificationDetails? notificationDetails, {
+    DarwinNotificationDetails? notificationDetails, {
     String? payload,
   }) async {
     validateId(id);
@@ -572,7 +569,7 @@ class IOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     TZDateTime scheduledDate,
-    IOSNotificationDetails? notificationDetails, {
+    DarwinNotificationDetails? notificationDetails, {
     required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
     String? payload,
@@ -611,7 +608,7 @@ class IOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     Time notificationTime,
-    IOSNotificationDetails? notificationDetails, {
+    DarwinNotificationDetails? notificationDetails, {
     String? payload,
   }) async {
     validateId(id);
@@ -636,7 +633,7 @@ class IOSFlutterLocalNotificationsPlugin
     String? body,
     Day day,
     Time notificationTime,
-    IOSNotificationDetails? notificationDetails, {
+    DarwinNotificationDetails? notificationDetails, {
     String? payload,
   }) async {
     validateId(id);
@@ -658,7 +655,7 @@ class IOSFlutterLocalNotificationsPlugin
     int id,
     String? title,
     String? body, {
-    IOSNotificationDetails? notificationDetails,
+    DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) {
     validateId(id);
@@ -680,7 +677,7 @@ class IOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     RepeatInterval repeatInterval, {
-    IOSNotificationDetails? notificationDetails,
+    DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) async {
     validateId(id);
@@ -730,15 +727,15 @@ class MacOSFlutterLocalNotificationsPlugin
   /// see a permissions prompt. This may be fine in cases where it's acceptable
   /// to do this when the application runs for the first time. However, if your
   /// applicationn needs to do this at a later point in time, set the
-  /// [MacOSInitializationSettings.requestAlertPermission],
-  /// [MacOSInitializationSettings.requestBadgePermission] and
-  /// [MacOSInitializationSettings.requestSoundPermission] values to false.
+  /// [DarwinInitializationSettings.requestAlertPermission],
+  /// [DarwinInitializationSettings.requestBadgePermission] and
+  /// [DarwinInitializationSettings.requestSoundPermission] values to false.
   /// [requestPermissions] can then be called to request permissions when
   /// needed.
   ///
   /// To handle when a notification launched an application, use
   /// [getNotificationAppLaunchDetails].
-  Future<bool?> initialize(MacOSInitializationSettings initializationSettings,
+  Future<bool?> initialize(DarwinInitializationSettings initializationSettings,
       {SelectNotificationCallback? onSelectNotification,
       NotificationActionCallback? onNotificationActionSelected}) async {
     _onSelectNotification = onSelectNotification;
@@ -768,7 +765,7 @@ class MacOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     TZDateTime scheduledDate,
-    MacOSNotificationDetails? notificationDetails, {
+    DarwinNotificationDetails? notificationDetails, {
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
@@ -798,7 +795,7 @@ class MacOSFlutterLocalNotificationsPlugin
     int id,
     String? title,
     String? body, {
-    MacOSNotificationDetails? notificationDetails,
+    DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) {
     validateId(id);
@@ -820,7 +817,7 @@ class MacOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     RepeatInterval repeatInterval, {
-    MacOSNotificationDetails? notificationDetails,
+    DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) async {
     validateId(id);

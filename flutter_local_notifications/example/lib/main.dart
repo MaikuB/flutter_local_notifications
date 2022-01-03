@@ -62,7 +62,7 @@ const String urlLaunchActionId = 'id_1';
 const String navigationActionId = 'id_3';
 
 /// Defines a iOS/MacOS notification category for text input actions.
-const String iosNotificationCategoryText = 'textCategory';
+const String darwinNotificationCategoryText = 'textCategory';
 
 /// Defines a iOS/MacOS notification category for plain actions.
 const String iosNotificationCategoryPlain = 'plainCategory';
@@ -107,7 +107,7 @@ Future<void> main() async {
   final List<DarwinNotificationCategory> darwinNotificationCategories =
       <DarwinNotificationCategory>[
     DarwinNotificationCategory(
-      iosNotificationCategoryText,
+      darwinNotificationCategoryText,
       actions: <DarwinNotificationAction>[
         DarwinNotificationAction.text(
           'text_1',
@@ -154,8 +154,8 @@ Future<void> main() async {
 
   /// Note: permissions aren't requested here just to demonstrate that can be
   /// done later
-  final IOSInitializationSettings initializationSettingsIOS =
-      IOSInitializationSettings(
+  final DarwinInitializationSettings initializationSettingsDarwin =
+      DarwinInitializationSettings(
     requestAlertPermission: false,
     requestBadgePermission: false,
     requestSoundPermission: false,
@@ -172,13 +172,6 @@ Future<void> main() async {
     },
     notificationCategories: darwinNotificationCategories,
   );
-  final MacOSInitializationSettings initializationSettingsMacOS =
-      MacOSInitializationSettings(
-    requestAlertPermission: false,
-    requestBadgePermission: false,
-    requestSoundPermission: false,
-    notificationCategories: darwinNotificationCategories,
-  );
   final LinuxInitializationSettings initializationSettingsLinux =
       LinuxInitializationSettings(
     defaultActionName: 'Open notification',
@@ -186,8 +179,8 @@ Future<void> main() async {
   );
   final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
-    iOS: initializationSettingsIOS,
-    macOS: initializationSettingsMacOS,
+    iOS: initializationSettingsDarwin,
+    macOS: initializationSettingsDarwin,
     linux: initializationSettingsLinux,
   );
   await flutterLocalNotificationsPlugin.initialize(
@@ -908,21 +901,21 @@ class _HomePageState extends State<HomePage> {
       );
 
   Future<void> _showNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker');
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'plain title', 'plain body', platformChannelSpecifics,
+        id++, 'plain title', 'plain body', notificationDetails,
         payload: 'item x');
   }
 
   Future<void> _showNotificationWithActions() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       'your channel id',
       'your channel name',
@@ -955,28 +948,28 @@ class _HomePageState extends State<HomePage> {
       ],
     );
 
-    const IOSNotificationDetails iosNotificationDetails =
-        IOSNotificationDetails(
+    const DarwinNotificationDetails iosNotificationDetails =
+        DarwinNotificationDetails(
       categoryIdentifier: iosNotificationCategoryPlain,
     );
 
-    const MacOSNotificationDetails macOSNotificationDetails =
-        MacOSNotificationDetails(
+    const DarwinNotificationDetails macOSNotificationDetails =
+        DarwinNotificationDetails(
       categoryIdentifier: iosNotificationCategoryPlain,
     );
 
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
       iOS: iosNotificationDetails,
       macOS: macOSNotificationDetails,
     );
     await flutterLocalNotificationsPlugin.show(
-        id++, 'plain title', 'plain body', platformChannelSpecifics,
+        id++, 'plain title', 'plain body', notificationDetails,
         payload: 'item z');
   }
 
   Future<void> _showNotificationWithTextAction() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       'your channel id',
       'your channel name',
@@ -998,29 +991,24 @@ class _HomePageState extends State<HomePage> {
       ],
     );
 
-    const IOSNotificationDetails iosNotificationDetails =
-        IOSNotificationDetails(
-      categoryIdentifier: iosNotificationCategoryText,
+    const DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(
+      categoryIdentifier: darwinNotificationCategoryText,
     );
 
-    const MacOSNotificationDetails macOSNotificationDetails =
-        MacOSNotificationDetails(
-      categoryIdentifier: iosNotificationCategoryText,
-    );
-
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-      iOS: iosNotificationDetails,
-      macOS: macOSNotificationDetails,
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+      iOS: darwinNotificationDetails,
+      macOS: darwinNotificationDetails,
     );
 
     await flutterLocalNotificationsPlugin.show(id++, 'Text Input Notification',
-        'Expand to see input action', platformChannelSpecifics,
+        'Expand to see input action', notificationDetails,
         payload: 'item x');
   }
 
   Future<void> _showNotificationWithTextChoice() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       'your channel id',
       'your channel name',
@@ -1044,22 +1032,18 @@ class _HomePageState extends State<HomePage> {
       ],
     );
 
-    const IOSNotificationDetails iosNotificationDetails =
-        IOSNotificationDetails(
-      categoryIdentifier: iosNotificationCategoryText,
-    );
-    const MacOSNotificationDetails macOSNotificationDetails =
-        MacOSNotificationDetails(
-      categoryIdentifier: iosNotificationCategoryText,
+    const DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(
+      categoryIdentifier: darwinNotificationCategoryText,
     );
 
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-      iOS: iosNotificationDetails,
-      macOS: macOSNotificationDetails,
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+      iOS: darwinNotificationDetails,
+      macOS: darwinNotificationDetails,
     );
     await flutterLocalNotificationsPlugin.show(
-        id++, 'plain title', 'plain body', platformChannelSpecifics,
+        id++, 'plain title', 'plain body', notificationDetails,
         payload: 'item x');
   }
 
@@ -1106,33 +1090,32 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showNotificationWithNoBody() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker');
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
     );
     await flutterLocalNotificationsPlugin.show(
-        id++, 'plain title', null, platformChannelSpecifics,
+        id++, 'plain title', null, notificationDetails,
         payload: 'item x');
   }
 
   Future<void> _showNotificationWithNoTitle() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker');
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
     );
-    await flutterLocalNotificationsPlugin.show(
-        id++, null, 'plain body', platformChannelSpecifics,
-        payload: 'item x');
+    await flutterLocalNotificationsPlugin
+        .show(id++, null, 'plain body', notificationDetails, payload: 'item x');
   }
 
   Future<void> _cancelNotification() async {
@@ -1144,32 +1127,30 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showNotificationCustomSound() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       'your other channel id',
       'your other channel name',
       channelDescription: 'your other channel description',
       sound: RawResourceAndroidNotificationSound('slow_spring_board'),
     );
-    const IOSNotificationDetails iOSPlatformChannelSpecifics =
-        IOSNotificationDetails(sound: 'slow_spring_board.aiff');
-    const MacOSNotificationDetails macOSPlatformChannelSpecifics =
-        MacOSNotificationDetails(sound: 'slow_spring_board.aiff');
+    const DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(sound: 'slow_spring_board.aiff');
     final LinuxNotificationDetails linuxPlatformChannelSpecifics =
         LinuxNotificationDetails(
       sound: AssetsLinuxSound('sound/slow_spring_board.mp3'),
     );
-    final NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-      iOS: iOSPlatformChannelSpecifics,
-      macOS: macOSPlatformChannelSpecifics,
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+      iOS: darwinNotificationDetails,
+      macOS: darwinNotificationDetails,
       linux: linuxPlatformChannelSpecifics,
     );
     await flutterLocalNotificationsPlugin.show(
       id++,
       'custom sound notification title',
       'custom sound notification body',
-      platformChannelSpecifics,
+      notificationDetails,
     );
   }
 
@@ -1180,7 +1161,7 @@ class _HomePageState extends State<HomePage> {
     vibrationPattern[2] = 5000;
     vibrationPattern[3] = 2000;
 
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
             'other custom channel id', 'other custom channel name',
             channelDescription: 'other custom channel description',
@@ -1193,13 +1174,13 @@ class _HomePageState extends State<HomePage> {
             ledOnMs: 1000,
             ledOffMs: 500);
 
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    final NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
         id++,
         'title of notification with custom vibration pattern, LED and icon',
         'body of notification with custom vibration pattern, LED and icon',
-        platformChannelSpecifics);
+        notificationDetails);
   }
 
   Future<void> _zonedScheduleNotification() async {
@@ -1218,21 +1199,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showNotificationWithNoSound() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('silent channel id', 'silent channel name',
             channelDescription: 'silent channel description',
             playSound: false,
             styleInformation: DefaultStyleInformation(true, true));
-    const IOSNotificationDetails iOSPlatformChannelSpecifics =
-        IOSNotificationDetails(presentSound: false);
-    const MacOSNotificationDetails macOSPlatformChannelSpecifics =
-        MacOSNotificationDetails(presentSound: false);
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-        android: androidPlatformChannelSpecifics,
-        iOS: iOSPlatformChannelSpecifics,
-        macOS: macOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(id++, '<b>silent</b> title',
-        '<b>silent</b> body', platformChannelSpecifics);
+    const DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(presentSound: false);
+    const NotificationDetails notificationDetails = NotificationDetails(
+        android: androidNotificationDetails,
+        iOS: darwinNotificationDetails,
+        macOS: darwinNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        id++, '<b>silent</b> title', '<b>silent</b> body', notificationDetails);
   }
 
   Future<void> _showSoundUriNotification() async {
@@ -1242,43 +1221,43 @@ class _HomePageState extends State<HomePage> {
     final String? alarmUri = await platform.invokeMethod<String>('getAlarmUri');
     final UriAndroidNotificationSound uriSound =
         UriAndroidNotificationSound(alarmUri!);
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('uri channel id', 'uri channel name',
             channelDescription: 'uri channel description',
             sound: uriSound,
             styleInformation: const DefaultStyleInformation(true, true));
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    final NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'uri sound title', 'uri sound body', platformChannelSpecifics);
+        id++, 'uri sound title', 'uri sound body', notificationDetails);
   }
 
   Future<void> _showTimeoutNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('silent channel id', 'silent channel name',
             channelDescription: 'silent channel description',
             timeoutAfter: 3000,
             styleInformation: DefaultStyleInformation(true, true));
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(id++, 'timeout notification',
-        'Times out after 3 seconds', platformChannelSpecifics);
+        'Times out after 3 seconds', notificationDetails);
   }
 
   Future<void> _showInsistentNotification() async {
     // This value is from: https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTENT
     const int insistentFlag = 4;
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker',
             additionalFlags: Int32List.fromList(<int>[insistentFlag]));
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    final NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'insistent title', 'insistent body', platformChannelSpecifics,
+        id++, 'insistent title', 'insistent body', notificationDetails,
         payload: 'item x');
   }
 
@@ -1303,15 +1282,15 @@ class _HomePageState extends State<HomePage> {
             htmlFormatContentTitle: true,
             summaryText: 'summary <i>text</i>',
             htmlFormatSummaryText: true);
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
             'big text channel id', 'big text channel name',
             channelDescription: 'big text channel description',
             styleInformation: bigPictureStyleInformation);
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    final NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'big text title', 'silent body', platformChannelSpecifics);
+        id++, 'big text title', 'silent body', notificationDetails);
   }
 
   Future<String> _base64encodedImage(String url) async {
@@ -1335,15 +1314,15 @@ class _HomePageState extends State<HomePage> {
             htmlFormatContentTitle: true,
             summaryText: 'summary <i>text</i>',
             htmlFormatSummaryText: true);
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
             'big text channel id', 'big text channel name',
             channelDescription: 'big text channel description',
             styleInformation: bigPictureStyleInformation);
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    final NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'big text title', 'silent body', platformChannelSpecifics);
+        id++, 'big text title', 'silent body', notificationDetails);
   }
 
   Future<Uint8List> _getByteArrayFromUrl(String url) async {
@@ -1364,15 +1343,15 @@ class _HomePageState extends State<HomePage> {
             htmlFormatContentTitle: true,
             summaryText: 'summary <i>text</i>',
             htmlFormatSummaryText: true);
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
             'big text channel id', 'big text channel name',
             channelDescription: 'big text channel description',
             styleInformation: bigPictureStyleInformation);
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    final NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'big text title', 'silent body', platformChannelSpecifics);
+        id++, 'big text title', 'silent body', notificationDetails);
   }
 
   Future<void> _showBigPictureNotificationHiddenLargeIcon() async {
@@ -1387,22 +1366,22 @@ class _HomePageState extends State<HomePage> {
             htmlFormatContentTitle: true,
             summaryText: 'summary <i>text</i>',
             htmlFormatSummaryText: true);
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
             'big text channel id', 'big text channel name',
             channelDescription: 'big text channel description',
             largeIcon: FilePathAndroidBitmap(largeIconPath),
             styleInformation: bigPictureStyleInformation);
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    final NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'big text title', 'silent body', platformChannelSpecifics);
+        id++, 'big text title', 'silent body', notificationDetails);
   }
 
   Future<void> _showNotificationMediaStyle() async {
     final String largeIconPath = await _downloadAndSaveFile(
         'https://via.placeholder.com/128x128/00FF00/000000', 'largeIcon');
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       'media channel id',
       'media channel name',
@@ -1410,10 +1389,10 @@ class _HomePageState extends State<HomePage> {
       largeIcon: FilePathAndroidBitmap(largeIconPath),
       styleInformation: const MediaStyleInformation(),
     );
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(id++, 'notification title',
-        'notification body', platformChannelSpecifics);
+    final NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        id++, 'notification title', 'notification body', notificationDetails);
   }
 
   Future<void> _showBigTextNotification() async {
@@ -1426,15 +1405,15 @@ class _HomePageState extends State<HomePage> {
       summaryText: 'summary <i>text</i>',
       htmlFormatSummaryText: true,
     );
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
             'big text channel id', 'big text channel name',
             channelDescription: 'big text channel description',
             styleInformation: bigTextStyleInformation);
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'big text title', 'silent body', platformChannelSpecifics);
+        id++, 'big text title', 'silent body', notificationDetails);
   }
 
   Future<void> _showInboxNotification() async {
@@ -1446,14 +1425,14 @@ class _HomePageState extends State<HomePage> {
         htmlFormatContentTitle: true,
         summaryText: 'summary <i>text</i>',
         htmlFormatSummaryText: true);
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('inbox channel id', 'inboxchannel name',
             channelDescription: 'inbox channel description',
             styleInformation: inboxStyleInformation);
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    final NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'inbox title', 'inbox body', platformChannelSpecifics);
+        id++, 'inbox title', 'inbox body', notificationDetails);
   }
 
   Future<void> _showMessagingNotification() async {
@@ -1512,22 +1491,22 @@ class _HomePageState extends State<HomePage> {
         htmlFormatContent: true,
         htmlFormatTitle: true,
         messages: messages);
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('message channel id', 'message channel name',
             channelDescription: 'message channel description',
             category: 'msg',
             styleInformation: messagingStyle);
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    final NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'message title', 'message body', platformChannelSpecifics);
+        id++, 'message title', 'message body', notificationDetails);
 
     // wait 10 seconds and add another message to simulate another response
     await Future<void>.delayed(const Duration(seconds: 10), () async {
       messages.add(Message("I'm so sorry!!! But I really like thai food ...",
           DateTime.now().add(const Duration(minutes: 11)), null));
       await flutterLocalNotificationsPlugin.show(
-          id++, 'message title', 'message body', platformChannelSpecifics);
+          id++, 'message title', 'message body', notificationDetails);
     });
   }
 
@@ -1574,30 +1553,30 @@ class _HomePageState extends State<HomePage> {
         lines,
         contentTitle: '2 messages',
         summaryText: 'janedoe@example.com');
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(groupChannelId, groupChannelName,
             channelDescription: groupChannelDescription,
             styleInformation: inboxStyleInformation,
             groupKey: groupKey,
             setAsGroupSummary: true);
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'Attention', 'Two messages', platformChannelSpecifics);
+        id++, 'Attention', 'Two messages', notificationDetails);
   }
 
   Future<void> _showNotificationWithTag() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             tag: 'tag');
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
     );
     await flutterLocalNotificationsPlugin.show(
-        id++, 'first notification', null, platformChannelSpecifics);
+        id++, 'first notification', null, notificationDetails);
   }
 
   Future<void> _checkPendingNotificationRequests() async {
@@ -1626,35 +1605,35 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showOngoingNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             ongoing: true,
             autoCancel: false);
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
         id++,
         'ongoing notification title',
         'ongoing notification body',
-        platformChannelSpecifics);
+        notificationDetails);
   }
 
   Future<void> _repeatNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
             'repeating channel id', 'repeating channel name',
             channelDescription: 'repeating description');
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.periodicallyShow(
         id++,
         'repeating title',
         'repeating body',
         RepeatInterval.everyMinute,
-        platformChannelSpecifics,
+        notificationDetails,
         androidAllowWhileIdle: true);
   }
 
@@ -1785,17 +1764,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showNotificationWithNoBadge() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('no badge channel', 'no badge name',
             channelDescription: 'no badge description',
             channelShowBadge: false,
             importance: Importance.max,
             priority: Priority.high,
             onlyAlertOnce: true);
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'no badge title', 'no badge body', platformChannelSpecifics,
+        id++, 'no badge title', 'no badge body', notificationDetails,
         payload: 'item x');
   }
 
@@ -1803,7 +1782,7 @@ class _HomePageState extends State<HomePage> {
     const int maxProgress = 5;
     for (int i = 0; i <= maxProgress; i++) {
       await Future<void>.delayed(const Duration(seconds: 1), () async {
-        final AndroidNotificationDetails androidPlatformChannelSpecifics =
+        final AndroidNotificationDetails androidNotificationDetails =
             AndroidNotificationDetails('progress channel', 'progress channel',
                 channelDescription: 'progress channel description',
                 channelShowBadge: false,
@@ -1813,20 +1792,20 @@ class _HomePageState extends State<HomePage> {
                 showProgress: true,
                 maxProgress: maxProgress,
                 progress: i);
-        final NotificationDetails platformChannelSpecifics =
-            NotificationDetails(android: androidPlatformChannelSpecifics);
+        final NotificationDetails notificationDetails =
+            NotificationDetails(android: androidNotificationDetails);
         await flutterLocalNotificationsPlugin.show(
             id++,
             'progress notification title',
             'progress notification body',
-            platformChannelSpecifics,
+            notificationDetails,
             payload: 'item x');
       });
     }
   }
 
   Future<void> _showIndeterminateProgressNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
             'indeterminate progress channel', 'indeterminate progress channel',
             channelDescription: 'indeterminate progress channel description',
@@ -1836,75 +1815,71 @@ class _HomePageState extends State<HomePage> {
             onlyAlertOnce: true,
             showProgress: true,
             indeterminate: true);
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
         id++,
         'indeterminate progress notification title',
         'indeterminate progress notification body',
-        platformChannelSpecifics,
+        notificationDetails,
         payload: 'item x');
   }
 
   Future<void> _showNotificationUpdateChannelDescription() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your updated channel description',
             importance: Importance.max,
             priority: Priority.high,
             channelAction: AndroidNotificationChannelAction.update);
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
         id++,
         'updated notification channel',
         'check settings to see updated channel description',
-        platformChannelSpecifics,
+        notificationDetails,
         payload: 'item x');
   }
 
   Future<void> _showPublicNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker',
             visibility: NotificationVisibility.public);
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
         id++,
         'public notification title',
         'public notification body',
-        platformChannelSpecifics,
+        notificationDetails,
         payload: 'item x');
   }
 
   Future<void> _showNotificationWithSubtitle() async {
-    const IOSNotificationDetails iOSPlatformChannelSpecifics =
-        IOSNotificationDetails(subtitle: 'the subtitle');
-    const MacOSNotificationDetails macOSPlatformChannelSpecifics =
-        MacOSNotificationDetails(subtitle: 'the subtitle');
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-        iOS: iOSPlatformChannelSpecifics, macOS: macOSPlatformChannelSpecifics);
+    const DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(subtitle: 'the subtitle');
+    const NotificationDetails notificationDetails = NotificationDetails(
+        iOS: darwinNotificationDetails, macOS: darwinNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
         id++,
         'title of notification with a subtitle',
         'body of notification with a subtitle',
-        platformChannelSpecifics,
+        notificationDetails,
         payload: 'item x');
   }
 
   Future<void> _showNotificationWithIconBadge() async {
-    const IOSNotificationDetails iOSPlatformChannelSpecifics =
-        IOSNotificationDetails(badgeNumber: 1);
-    const MacOSNotificationDetails macOSPlatformChannelSpecifics =
-        MacOSNotificationDetails(badgeNumber: 1);
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-        iOS: iOSPlatformChannelSpecifics, macOS: macOSPlatformChannelSpecifics);
+    const DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(badgeNumber: 1);
+    const NotificationDetails notificationDetails = NotificationDetails(
+        iOS: darwinNotificationDetails, macOS: darwinNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'icon badge title', 'icon badge body', platformChannelSpecifics,
+        id++, 'icon badge title', 'icon badge body', notificationDetails,
         payload: 'item x');
   }
 
@@ -1912,13 +1887,10 @@ class _HomePageState extends State<HomePage> {
     NotificationDetails buildNotificationDetailsForThread(
       String threadIdentifier,
     ) {
-      final IOSNotificationDetails iOSPlatformChannelSpecifics =
-          IOSNotificationDetails(threadIdentifier: threadIdentifier);
-      final MacOSNotificationDetails macOSPlatformChannelSpecifics =
-          MacOSNotificationDetails(threadIdentifier: threadIdentifier);
+      final DarwinNotificationDetails darwinNotificationDetails =
+          DarwinNotificationDetails(threadIdentifier: threadIdentifier);
       return NotificationDetails(
-          iOS: iOSPlatformChannelSpecifics,
-          macOS: macOSPlatformChannelSpecifics);
+          iOS: darwinNotificationDetails, macOS: darwinNotificationDetails);
     }
 
     final NotificationDetails thread1PlatformChannelSpecifics =
@@ -1942,21 +1914,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showNotificationWithoutTimestamp() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your channel description',
             importance: Importance.max,
             priority: Priority.high,
             showWhen: false);
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'plain title', 'plain body', platformChannelSpecifics,
+        id++, 'plain title', 'plain body', notificationDetails,
         payload: 'item x');
   }
 
   Future<void> _showNotificationWithCustomTimestamp() async {
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       'your channel id',
       'your channel name',
@@ -1965,15 +1937,15 @@ class _HomePageState extends State<HomePage> {
       priority: Priority.high,
       when: DateTime.now().millisecondsSinceEpoch - 120 * 1000,
     );
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    final NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'plain title', 'plain body', platformChannelSpecifics,
+        id++, 'plain title', 'plain body', notificationDetails,
         payload: 'item x');
   }
 
   Future<void> _showNotificationWithCustomSubText() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       'your channel id',
       'your channel name',
@@ -1983,15 +1955,15 @@ class _HomePageState extends State<HomePage> {
       showWhen: false,
       subText: 'custom subtext',
     );
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'plain title', 'plain body', platformChannelSpecifics,
+        id++, 'plain title', 'plain body', notificationDetails,
         payload: 'item x');
   }
 
   Future<void> _showNotificationWithChronometer() async {
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       'your channel id',
       'your channel name',
@@ -2001,26 +1973,22 @@ class _HomePageState extends State<HomePage> {
       when: DateTime.now().millisecondsSinceEpoch - 120 * 1000,
       usesChronometer: true,
     );
-    final NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    final NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
-        id++, 'plain title', 'plain body', platformChannelSpecifics,
+        id++, 'plain title', 'plain body', notificationDetails,
         payload: 'item x');
   }
 
   Future<void> _showNotificationWithAttachment() async {
     final String bigPicturePath = await _downloadAndSaveFile(
         'https://via.placeholder.com/600x200', 'bigPicture.jpg');
-    final IOSNotificationDetails iOSPlatformChannelSpecifics =
-        IOSNotificationDetails(attachments: <IOSNotificationAttachment>[
-      IOSNotificationAttachment(bigPicturePath)
-    ]);
-    final MacOSNotificationDetails macOSPlatformChannelSpecifics =
-        MacOSNotificationDetails(attachments: <MacOSNotificationAttachment>[
-      MacOSNotificationAttachment(bigPicturePath)
+    final DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(attachments: <DarwinNotificationAttachment>[
+      DarwinNotificationAttachment(bigPicturePath)
     ]);
     final NotificationDetails notificationDetails = NotificationDetails(
-        iOS: iOSPlatformChannelSpecifics, macOS: macOSPlatformChannelSpecifics);
+        iOS: darwinNotificationDetails, macOS: darwinNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
         id++,
         'notification with attachment title',
@@ -2097,7 +2065,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _startForegroundService() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+    const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your channel description',
             importance: Importance.max,
@@ -2107,8 +2075,7 @@ class _HomePageState extends State<HomePage> {
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.startForegroundService(1, 'plain title', 'plain body',
-            notificationDetails: androidPlatformChannelSpecifics,
-            payload: 'item x');
+            notificationDetails: androidNotificationDetails, payload: 'item x');
   }
 
   Future<void> _stopForegroundService() async {
@@ -2365,14 +2332,14 @@ Future<void> _showLinuxNotificationWithCategory() async {
       LinuxNotificationDetails(
     category: LinuxNotificationCategory.emailArrived(),
   );
-  final NotificationDetails platformChannelSpecifics = NotificationDetails(
+  final NotificationDetails notificationDetails = NotificationDetails(
     linux: linuxPlatformChannelSpecifics,
   );
   await flutterLocalNotificationsPlugin.show(
     id++,
     'notification with category',
     null,
-    platformChannelSpecifics,
+    notificationDetails,
   );
 }
 
@@ -2396,14 +2363,14 @@ Future<void> _showLinuxNotificationWithByteDataIcon() async {
       ),
     ),
   );
-  final NotificationDetails platformChannelSpecifics = NotificationDetails(
+  final NotificationDetails notificationDetails = NotificationDetails(
     linux: linuxPlatformChannelSpecifics,
   );
   await flutterLocalNotificationsPlugin.show(
     id++,
     'notification with byte data icon',
     null,
-    platformChannelSpecifics,
+    notificationDetails,
   );
 }
 
@@ -2412,14 +2379,14 @@ Future<void> _showLinuxNotificationWithThemeIcon() async {
       LinuxNotificationDetails(
     icon: ThemeLinuxIcon('media-eject'),
   );
-  final NotificationDetails platformChannelSpecifics = NotificationDetails(
+  final NotificationDetails notificationDetails = NotificationDetails(
     linux: linuxPlatformChannelSpecifics,
   );
   await flutterLocalNotificationsPlugin.show(
     id++,
     'notification with theme icon',
     null,
-    platformChannelSpecifics,
+    notificationDetails,
   );
 }
 
@@ -2428,14 +2395,14 @@ Future<void> _showLinuxNotificationWithThemeSound() async {
       LinuxNotificationDetails(
     sound: ThemeLinuxSound('message-new-email'),
   );
-  final NotificationDetails platformChannelSpecifics = NotificationDetails(
+  final NotificationDetails notificationDetails = NotificationDetails(
     linux: linuxPlatformChannelSpecifics,
   );
   await flutterLocalNotificationsPlugin.show(
     id++,
     'notification with theme sound',
     null,
-    platformChannelSpecifics,
+    notificationDetails,
   );
 }
 
@@ -2444,14 +2411,14 @@ Future<void> _showLinuxNotificationWithCriticalUrgency() async {
       LinuxNotificationDetails(
     urgency: LinuxNotificationUrgency.critical,
   );
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(
+  const NotificationDetails notificationDetails = NotificationDetails(
     linux: linuxPlatformChannelSpecifics,
   );
   await flutterLocalNotificationsPlugin.show(
     id++,
     'notification with critical urgency',
     null,
-    platformChannelSpecifics,
+    notificationDetails,
   );
 }
 
@@ -2462,14 +2429,14 @@ Future<void> _showLinuxNotificationWithTimeout() async {
       const Duration(seconds: 1),
     ),
   );
-  final NotificationDetails platformChannelSpecifics = NotificationDetails(
+  final NotificationDetails notificationDetails = NotificationDetails(
     linux: linuxPlatformChannelSpecifics,
   );
   await flutterLocalNotificationsPlugin.show(
     id++,
     'notification with timeout',
     null,
-    platformChannelSpecifics,
+    notificationDetails,
   );
 }
 
@@ -2478,14 +2445,14 @@ Future<void> _showLinuxNotificationSuppressSound() async {
       LinuxNotificationDetails(
     suppressSound: true,
   );
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(
+  const NotificationDetails notificationDetails = NotificationDetails(
     linux: linuxPlatformChannelSpecifics,
   );
   await flutterLocalNotificationsPlugin.show(
     id++,
     'suppress notification sound',
     null,
-    platformChannelSpecifics,
+    notificationDetails,
   );
 }
 
@@ -2494,14 +2461,14 @@ Future<void> _showLinuxNotificationTransient() async {
       LinuxNotificationDetails(
     transient: true,
   );
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(
+  const NotificationDetails notificationDetails = NotificationDetails(
     linux: linuxPlatformChannelSpecifics,
   );
   await flutterLocalNotificationsPlugin.show(
     id++,
     'transient notification',
     null,
-    platformChannelSpecifics,
+    notificationDetails,
   );
 }
 
@@ -2510,28 +2477,28 @@ Future<void> _showLinuxNotificationResident() async {
       LinuxNotificationDetails(
     resident: true,
   );
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(
+  const NotificationDetails notificationDetails = NotificationDetails(
     linux: linuxPlatformChannelSpecifics,
   );
   await flutterLocalNotificationsPlugin.show(
     id++,
     'resident notification',
     null,
-    platformChannelSpecifics,
+    notificationDetails,
   );
 }
 
 Future<void> _showLinuxNotificationDifferentLocation() async {
   const LinuxNotificationDetails linuxPlatformChannelSpecifics =
       LinuxNotificationDetails(location: LinuxNotificationLocation(10, 10));
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(
+  const NotificationDetails notificationDetails = NotificationDetails(
     linux: linuxPlatformChannelSpecifics,
   );
   await flutterLocalNotificationsPlugin.show(
     id++,
     'notification on different screen location',
     null,
-    platformChannelSpecifics,
+    notificationDetails,
   );
 }
 
