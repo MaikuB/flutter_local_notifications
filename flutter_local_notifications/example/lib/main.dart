@@ -191,7 +191,7 @@ Future<void> main() async {
       }
       selectNotificationSubject.add(payload);
     },
-    backgroundHandler: notificationTapBackground,
+    onSelectNotificationAction: notificationTapBackground,
   );
   runApp(
     MaterialApp(

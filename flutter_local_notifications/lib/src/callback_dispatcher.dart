@@ -16,11 +16,11 @@ void callbackDispatcher() {
       MethodChannel('dexterous.com/flutter/local_notifications');
 
   channel.invokeMethod<int>('getCallbackHandle').then((int? handle) {
-    final NotificationActionCallback? callback = handle == null
+    final SelectNotificationActionCallback? callback = handle == null
         ? null
         : PluginUtilities.getCallbackFromHandle(
                 CallbackHandle.fromRawHandle(handle))
-            as NotificationActionCallback?;
+            as SelectNotificationActionCallback?;
 
     backgroundChannel
         .receiveBroadcastStream()

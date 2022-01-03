@@ -103,19 +103,20 @@ class AndroidFlutterLocalNotificationsPlugin
   /// To handle when a notification launched an application, use
   /// [getNotificationAppLaunchDetails].
   ///
-  /// [backgroundHandler] specifies a callback handler which receives
+  /// [onSelectNotificationAction] specifies a callback handler which receives
   /// notification action IDs.
   Future<bool> initialize(
     AndroidInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
-    NotificationActionCallback? backgroundHandler,
+    SelectNotificationActionCallback? onSelectNotificationAction,
   }) async {
     _onSelectNotification = onSelectNotification;
     _channel.setMethodCallHandler(_handleMethod);
 
     final Map<String, Object> arguments = initializationSettings.toMap();
 
-    _evaluateBackgroundHandler(backgroundHandler, arguments);
+    _evaluateSelectNotificationActionCallback(
+        onSelectNotificationAction, arguments);
 
     return await _channel.invokeMethod('initialize', arguments);
   }
@@ -501,7 +502,7 @@ class IOSFlutterLocalNotificationsPlugin
   Future<bool?> initialize(
     DarwinInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
-    NotificationActionCallback? backgroundHandler,
+    SelectNotificationActionCallback? onSelectNotificationAction,
   }) async {
     _onSelectNotification = onSelectNotification;
     _onDidReceiveLocalNotification =
@@ -510,7 +511,8 @@ class IOSFlutterLocalNotificationsPlugin
 
     final Map<String, Object> arguments = initializationSettings.toMap();
 
-    _evaluateBackgroundHandler(backgroundHandler, arguments);
+    _evaluateSelectNotificationActionCallback(
+        onSelectNotificationAction, arguments);
 
     return await _channel.invokeMethod('initialize', arguments);
   }
@@ -714,7 +716,7 @@ class IOSFlutterLocalNotificationsPlugin
 class MacOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback? _onSelectNotification;
-  NotificationActionCallback? _onNotificationActionSelected;
+  SelectNotificationActionCallback? _onSelectNotificationAction;
 
   /// Initializes the plugin.
   ///
@@ -735,11 +737,13 @@ class MacOSFlutterLocalNotificationsPlugin
   ///
   /// To handle when a notification launched an application, use
   /// [getNotificationAppLaunchDetails].
-  Future<bool?> initialize(DarwinInitializationSettings initializationSettings,
-      {SelectNotificationCallback? onSelectNotification,
-      NotificationActionCallback? onNotificationActionSelected}) async {
+  Future<bool?> initialize(
+    DarwinInitializationSettings initializationSettings, {
+    SelectNotificationCallback? onSelectNotification,
+    SelectNotificationActionCallback? onSelectNotificationAction,
+  }) async {
     _onSelectNotification = onSelectNotification;
-    _onNotificationActionSelected = onNotificationActionSelected;
+    _onSelectNotificationAction = onSelectNotificationAction;
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
         'initialize', initializationSettings.toMap());
@@ -838,7 +842,7 @@ class MacOSFlutterLocalNotificationsPlugin
         _onSelectNotification?.call(call.arguments);
         break;
       case 'actionTapped':
-        _onNotificationActionSelected?.call(NotificationActionDetails(
+        _onSelectNotificationAction?.call(NotificationActionDetails(
           id: int.parse(call.arguments['notificationId']),
           actionId: call.arguments['actionId'],
           input: call.arguments['input'],
@@ -851,20 +855,20 @@ class MacOSFlutterLocalNotificationsPlugin
   }
 }
 
-/// Checks [backgroundHandler] method, if not `null`, for eligibility to
+/// Checks [onSelectNotificationAction], if not `null`, for eligibility to
 /// be used as a background callback.
 ///
 /// If the method is `null`, no further action will be taken.
 ///
 /// This will add a `dispatcher_handle` and `callback_handle` argument to the
 /// [arguments] map when the config is correct.
-void _evaluateBackgroundHandler(
-  NotificationActionCallback? backgroundHandler,
+void _evaluateSelectNotificationActionCallback(
+  SelectNotificationActionCallback? onSelectNotificationAction,
   Map<String, Object> arguments,
 ) {
-  if (backgroundHandler != null) {
+  if (onSelectNotificationAction != null) {
     final CallbackHandle? callback =
-        PluginUtilities.getCallbackHandle(backgroundHandler);
+        PluginUtilities.getCallbackHandle(onSelectNotificationAction);
     assert(callback != null, '''
           The backgroundHandler needs to be either a static function or a top 
           level function to be accessible as a Flutter entry point.''');

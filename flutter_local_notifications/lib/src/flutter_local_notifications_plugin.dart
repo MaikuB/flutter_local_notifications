@@ -103,9 +103,10 @@ class FlutterLocalNotificationsPlugin {
   /// permissions where users will see a permissions prompt. This may be fine
   /// in cases where it's acceptable to do this when the application runs for
   /// the first time. However, if your application needs to do this at a later
-  /// point in time, set the [IOSInitializationSettings.requestAlertPermission],
-  /// [IOSInitializationSettings.requestBadgePermission] and
-  /// [IOSInitializationSettings.requestSoundPermission] values to false.
+  /// point in time, set the
+  /// [DarwinInitializationSettings.requestAlertPermission],
+  /// [DarwinInitializationSettings.requestBadgePermission] and
+  /// [DarwinInitializationSettings.requestSoundPermission] values to false.
   /// [IOSFlutterLocalNotificationsPlugin.requestPermissions] can then be called
   /// to request permissions when needed.
   ///
@@ -114,7 +115,7 @@ class FlutterLocalNotificationsPlugin {
   Future<bool?> initialize(
     InitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
-    NotificationActionCallback? backgroundHandler,
+    SelectNotificationActionCallback? onSelectNotificationAction,
   }) async {
     if (kIsWeb) {
       return true;
@@ -124,19 +125,19 @@ class FlutterLocalNotificationsPlugin {
               AndroidFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.android!,
               onSelectNotification: onSelectNotification,
-              backgroundHandler: backgroundHandler);
+              onSelectNotificationAction: onSelectNotificationAction);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       return await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.iOS!,
               onSelectNotification: onSelectNotification,
-              backgroundHandler: backgroundHandler);
+              onSelectNotificationAction: onSelectNotificationAction);
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       return await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.macOS!,
               onSelectNotification: onSelectNotification,
-              onNotificationActionSelected: backgroundHandler);
+              onSelectNotificationAction: onSelectNotificationAction);
     } else if (defaultTargetPlatform == TargetPlatform.linux) {
       return await resolvePlatformSpecificImplementation<
               LinuxFlutterLocalNotificationsPlugin>()
