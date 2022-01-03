@@ -1,3 +1,8 @@
+# [10.0.0-dev.2]
+
+* [Android][iOS][macOS] Added support for notification actions. Massive thanks to [Sebastian Roth](https://github.com/ened) and [Pieter van Loon](https://github.com/Kavantix) for their work on this
+* [Android] Updated how scheduled notifications are saved to shared preferences so it is done in the background. This is to fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where `pendingNotificationRequests` method may not report the correct number of scheduled notifications if it is invoked before the data had been saved to shared preferences
+
 # [10.0.0-dev.1]
 
 * [iOS] `getActiveNotifications()` is now supported for iOS versions 10.0 or newer

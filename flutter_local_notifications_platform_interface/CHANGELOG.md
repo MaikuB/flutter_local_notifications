@@ -1,3 +1,7 @@
+## [6.0.0-dev.2]
+
+* Added `NotificationActionDetails` class and `NotificationActionCallback` typedef for dealing with notification actions
+
 ## [6.0.0-dev.1]
 
 * **Breaking change** the parameters of `ActiveNotification`'s constructor are now are named instead of positional

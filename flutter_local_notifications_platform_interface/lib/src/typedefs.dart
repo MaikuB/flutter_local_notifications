@@ -1,9 +1,9 @@
 import 'types.dart';
 
-/// Signature of callback passed to [initialize] that is triggered when user
-/// taps on a notification.
+/// Signature of callback passed that is triggered when user taps on a
+/// notification.
 typedef SelectNotificationCallback = void Function(String? payload);
 
-/// Callback function when a notification is received.
+/// Signature of callback triggered when a user taps on a notification action
 typedef NotificationActionCallback = void Function(
     NotificationActionDetails details);
