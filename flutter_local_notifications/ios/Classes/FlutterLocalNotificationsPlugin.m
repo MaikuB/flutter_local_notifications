@@ -362,14 +362,14 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)getActiveNotifications:(FlutterResult _Nonnull)result {
-   if (@available(iOS 10.0, *)) {
-     [self activeUserNotificationRequests:result];
-   } else {
-     result([FlutterError errorWithCode:UNSUPPORTED_OS_VERSION_ERROR_CODE
-                                message:GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE
-                                details:nil]);
-   }
- }
+  if (@available(iOS 10.0, *)) {
+    [self activeUserNotificationRequests:result];
+  } else {
+    result([FlutterError errorWithCode:UNSUPPORTED_OS_VERSION_ERROR_CODE
+                               message:GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE
+                               details:nil]);
+  }
+}
 
 - (void)initialize:(NSDictionary *_Nonnull)arguments
             result:(FlutterResult _Nonnull)result {
