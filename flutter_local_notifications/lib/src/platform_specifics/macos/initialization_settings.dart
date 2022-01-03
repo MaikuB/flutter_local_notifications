@@ -1,3 +1,5 @@
+import '../darwin/darwin_notification_category.dart';
+
 /// Plugin initialization settings for macOS.
 class MacOSInitializationSettings {
   /// Constructs an instance of [MacOSInitializationSettings]
@@ -8,6 +10,7 @@ class MacOSInitializationSettings {
     this.defaultPresentAlert = true,
     this.defaultPresentSound = true,
     this.defaultPresentBadge = true,
+    this.notificationCategories = const <DarwinNotificationCategory>[],
   });
 
   /// Request permission to display an alert.
@@ -48,4 +51,10 @@ class MacOSInitializationSettings {
   ///
   /// This property is only applicable to macOS 10.14 or newer.
   final bool defaultPresentBadge;
+
+  /// Configure the notification categories ([DarwinNotificationCategory])
+  /// available. This allows for fine-tuning of preview display.
+  ///
+  /// Notification actions are configured in each [DarwinNotificationCategory].
+  final List<DarwinNotificationCategory> notificationCategories;
 }

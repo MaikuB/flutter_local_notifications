@@ -24,10 +24,16 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 31
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         minSdkVersion 16
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
     lintOptions {
         disable 'InvalidPackage'
     }
@@ -38,4 +44,9 @@ dependencies {
     implementation "androidx.media:media:1.1.0"
     implementation "com.google.code.gson:gson:2.8.6"
     implementation "com.jakewharton.threetenabp:threetenabp:1.2.3"
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:3.10.0'
+    testImplementation 'androidx.test:core:1.2.0'
+    testImplementation "org.robolectric:robolectric:4.7.3"
 }

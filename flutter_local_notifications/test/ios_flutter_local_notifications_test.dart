@@ -51,10 +51,110 @@ void main() {
           'defaultPresentAlert': true,
           'defaultPresentSound': true,
           'defaultPresentBadge': true,
+          'notificationCategories': <String>[],
         })
       ]);
     });
 
+    test('initialize with notification categories', () async {
+      final IOSInitializationSettings iosInitializationSettings =
+          IOSInitializationSettings(
+        notificationCategories: <DarwinNotificationCategory>[
+          DarwinNotificationCategory(
+            'category1',
+            actions: <DarwinNotificationAction>[
+              DarwinNotificationAction.plain(
+                'action1',
+                'Action 1',
+                options: <DarwinNotificationActionOption>{
+                  DarwinNotificationActionOption.destructive,
+                },
+              ),
+            ],
+            options: <DarwinNotificationCategoryOption>{
+              DarwinNotificationCategoryOption.allowAnnouncement,
+            },
+          ),
+          DarwinNotificationCategory(
+            'category2',
+            actions: <DarwinNotificationAction>[
+              DarwinNotificationAction.plain('action2', 'Action 2'),
+              DarwinNotificationAction.plain('action3', 'Action 3'),
+            ],
+          ),
+          DarwinNotificationCategory(
+            'category3',
+            actions: <DarwinNotificationAction>[
+              DarwinNotificationAction.text(
+                'action4',
+                'Action 4',
+                buttonTitle: 'Send',
+                placeholder: 'Placeholder',
+              ),
+            ],
+          )
+        ],
+      );
+      final InitializationSettings initializationSettings =
+          InitializationSettings(iOS: iosInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      expect(log, <Matcher>[
+        isMethodCall('initialize', arguments: <String, Object>{
+          'requestAlertPermission': true,
+          'requestSoundPermission': true,
+          'requestBadgePermission': true,
+          'defaultPresentAlert': true,
+          'defaultPresentSound': true,
+          'defaultPresentBadge': true,
+          'notificationCategories': <Map<String, dynamic>>[
+            <String, dynamic>{
+              'identifier': 'category1',
+              'actions': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'type': 'plain',
+                  'identifier': 'action1',
+                  'title': 'Action 1',
+                  'options': <int>[2],
+                }
+              ],
+              'options': <int>[16],
+            },
+            <String, dynamic>{
+              'identifier': 'category2',
+              'actions': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'type': 'plain',
+                  'identifier': 'action2',
+                  'title': 'Action 2',
+                  'options': <int>[],
+                },
+                <String, dynamic>{
+                  'type': 'plain',
+                  'identifier': 'action3',
+                  'title': 'Action 3',
+                  'options': <int>[],
+                },
+              ],
+              'options': <int>[],
+            },
+            <String, dynamic>{
+              'identifier': 'category3',
+              'actions': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'type': 'text',
+                  'identifier': 'action4',
+                  'title': 'Action 4',
+                  'options': <int>[],
+                  'buttonTitle': 'Send',
+                  'placeholder': 'Placeholder',
+                },
+              ],
+              'options': <int>[],
+            }
+          ],
+        })
+      ]);
+    });
     test('initialize with all settings off', () async {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings(
@@ -75,6 +175,7 @@ void main() {
           'defaultPresentAlert': false,
           'defaultPresentSound': false,
           'defaultPresentBadge': false,
+          'notificationCategories': <String>[],
         })
       ]);
     });
@@ -105,17 +206,20 @@ void main() {
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const NotificationDetails notificationDetails = NotificationDetails(
-          iOS: IOSNotificationDetails(
-              presentAlert: true,
-              presentBadge: true,
-              presentSound: true,
-              subtitle: 'a subtitle',
-              sound: 'sound.mp3',
-              badgeNumber: 1,
-              attachments: <IOSNotificationAttachment>[
+        iOS: IOSNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+          subtitle: 'a subtitle',
+          sound: 'sound.mp3',
+          badgeNumber: 1,
+          attachments: <IOSNotificationAttachment>[
             IOSNotificationAttachment('video.mp4',
                 identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373'),
-          ]));
+          ],
+          categoryIdentifier: 'category1',
+        ),
+      );
 
       await flutterLocalNotificationsPlugin.show(
           1, 'notification title', 'notification body', notificationDetails);
@@ -141,6 +245,7 @@ void main() {
                   'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                 }
               ],
+              'categoryIdentifier': 'category1',
             },
           }));
     });
@@ -158,16 +263,20 @@ void main() {
                 .initialize(initializationSettings);
 
             const NotificationDetails notificationDetails = NotificationDetails(
-                iOS: IOSNotificationDetails(
-                    presentAlert: true,
-                    presentBadge: true,
-                    presentSound: true,
-                    sound: 'sound.mp3',
-                    badgeNumber: 1,
-                    attachments: <IOSNotificationAttachment>[
-                  IOSNotificationAttachment('video.mp4',
-                      identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
-                ]));
+              iOS: IOSNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+                sound: 'sound.mp3',
+                badgeNumber: 1,
+                attachments: <IOSNotificationAttachment>[
+                  IOSNotificationAttachment(
+                    'video.mp4',
+                    identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                  )
+                ],
+              ),
+            );
 
             await flutterLocalNotificationsPlugin.periodicallyShow(
               1,
@@ -178,8 +287,10 @@ void main() {
             );
 
             expect(
-                log.last,
-                isMethodCall('periodicallyShow', arguments: <String, Object>{
+              log.last,
+              isMethodCall(
+                'periodicallyShow',
+                arguments: <String, Object>{
                   'id': 1,
                   'title': 'notification title',
                   'body': 'notification body',
@@ -200,8 +311,11 @@ void main() {
                         'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                       }
                     ],
+                    'categoryIdentifier': null,
                   },
-                }));
+                },
+              ),
+            );
           });
         });
       }
@@ -266,6 +380,7 @@ void main() {
                     'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                   }
                 ],
+                'categoryIdentifier': null,
               },
             }));
       });
@@ -330,6 +445,7 @@ void main() {
                     'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                   }
                 ],
+                'categoryIdentifier': null,
               },
             }));
       });
@@ -395,6 +511,7 @@ void main() {
                     'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                   }
                 ],
+                'categoryIdentifier': null,
               },
             }));
       });
