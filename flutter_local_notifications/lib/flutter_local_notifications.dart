@@ -4,7 +4,8 @@ export 'package:flutter_local_notifications_platform_interface/flutter_local_not
         SelectNotificationCallback,
         PendingNotificationRequest,
         RepeatInterval,
-        NotificationAppLaunchDetails;
+        NotificationAppLaunchDetails,
+        NotificationActionDetails;
 
 export 'src/flutter_local_notifications_plugin.dart';
 export 'src/initialization_settings.dart';
@@ -30,9 +31,14 @@ export 'src/platform_specifics/android/styles/inbox_style_information.dart';
 export 'src/platform_specifics/android/styles/media_style_information.dart';
 export 'src/platform_specifics/android/styles/messaging_style_information.dart';
 export 'src/platform_specifics/android/styles/style_information.dart';
+export 'src/platform_specifics/darwin/darwin_notification_action.dart';
+export 'src/platform_specifics/darwin/darwin_notification_action_option.dart';
+export 'src/platform_specifics/darwin/darwin_notification_category.dart';
+export 'src/platform_specifics/darwin/darwin_notification_category_option.dart';
 export 'src/platform_specifics/ios/enums.dart';
 export 'src/platform_specifics/ios/initialization_settings.dart';
 export 'src/platform_specifics/ios/notification_attachment.dart';
+export 'src/platform_specifics/ios/notification_details.dart';
 export 'src/platform_specifics/ios/notification_details.dart';
 export 'src/platform_specifics/macos/initialization_settings.dart';
 export 'src/platform_specifics/macos/notification_attachment.dart';

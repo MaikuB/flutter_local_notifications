@@ -6,6 +6,95 @@ import 'enums.dart';
 import 'notification_sound.dart';
 import 'styles/style_information.dart';
 
+/// Mirrors the `RemoteInput` functionality available in NotificationCompat.
+///
+/// See the official docs at
+/// https://developer.android.com/reference/kotlin/androidx/core/app/RemoteInput?hl=en
+/// for details.
+class AndroidNotificationActionInput {
+  /// Constructs a [AndroidNotificationActionInput]. The platform will create
+  /// this object using `RemoteInput.Builder`. See the official docs
+  /// https://developer.android.com/reference/kotlin/androidx/core/app/RemoteInput.Builder?hl=en
+  /// for details.
+  const AndroidNotificationActionInput({
+    this.choices = const <String>[],
+    this.allowFreeFormInput = true,
+    this.label,
+    this.allowedMimeTypes = const <String>{},
+  });
+
+  /// Specifies choices available to the user to satisfy this input.
+  final List<String> choices;
+
+  /// Specifies whether the user can provide arbitrary text values.
+  final bool allowFreeFormInput;
+
+  /// Set a label to be displayed to the user when collecting this input.
+  final String? label;
+
+  /// Specifies whether the user can provide arbitrary values.
+  final Set<String> allowedMimeTypes;
+}
+
+/// Mirrors the `Action` class in AndroidX.
+///
+/// See the offical docs at
+/// https://developer.android.com/reference/kotlin/androidx/core/app/NotificationCompat.Action?hl=en
+/// for details.
+class AndroidNotificationAction {
+  /// Constructs a [AndroidNotificationAction] object. The platform will create
+  /// this object using `Action.Builder`. See the offical docs
+  /// https://developer.android.com/reference/kotlin/androidx/core/app/NotificationCompat.Action.Builder?hl=en
+  /// for details.
+  const AndroidNotificationAction(
+    this.id,
+    this.title, {
+    this.titleColor,
+    this.icon,
+    this.contextual = false,
+    this.showsUserInterface = false,
+    this.allowGeneratedReplies = false,
+    this.inputs = const <AndroidNotificationActionInput>[],
+    this.cancelNotification = true,
+  });
+
+  /// This ID will be sent back in the action handler defined in
+  /// [FlutterLocalNotificationsPlugin].
+  final String id;
+
+  /// The title of the action
+  final String title;
+
+  /// The color of the title of the action
+  final Color? titleColor;
+
+  /// Icon to show for this action.
+  final AndroidBitmap<Object>? icon;
+
+  /// Sets whether this Action is a contextual action, i.e. whether the action
+  /// is dependent on the notification message body. An example of a contextual
+  /// action could be an action opening a map application with an address shown
+  /// in the notification.
+  final bool contextual;
+
+  /// Set whether or not this Action's PendingIntent will open a user interface.
+  final bool showsUserInterface;
+
+  /// Set whether the platform should automatically generate possible replies to
+  /// add to RemoteInput#getChoices(). If the Action doesn't have a RemoteInput,
+  /// this has no effect.
+  ///
+  /// You need to specify [inputs] for this property to work.
+  final bool allowGeneratedReplies;
+
+  /// Add an input to be collected from the user when this action is sent.
+  final List<AndroidNotificationActionInput> inputs;
+
+  /// Set whether the notification should be canceled when this action is
+  /// selected.
+  final bool cancelNotification;
+}
+
 /// Contains notification details specific to Android.
 class AndroidNotificationDetails {
   /// Constructs an instance of [AndroidNotificationDetails].
@@ -51,6 +140,7 @@ class AndroidNotificationDetails {
     this.additionalFlags,
     this.subText,
     this.tag,
+    this.actions,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -253,6 +343,13 @@ class AndroidNotificationDetails {
   /// For a list of a values, refer to the documented constants prefixed with "FLAG_" (without the quotes) at https://developer.android.com/reference/android/app/Notification.html#constants_1.
   /// For example, use a value of 4 to allow the audio to repeat as documented at https://developer.android.com/reference/android/app/Notification.html#FLAG_INSISTEN
   final Int32List? additionalFlags;
+
+  /// Specify a list of actions associated with this notifications.
+  ///
+  /// Users will be able tap on the actions without actually launching the App.
+  /// Note that tapping a action will spawn a separate isolate that runs
+  /// **independently** from the main app.
+  final List<AndroidNotificationAction>? actions;
 
   /// Provides some additional information that is displayed in the
   /// notification.

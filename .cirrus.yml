@@ -63,7 +63,7 @@ task:
     - melos run build:example_linux
 
 task:
-  name: Run all unit tests
+  name: Run all unit tests (Dart)
   container:
     image: cirrusci/flutter:stable
   install_melos_script:
@@ -72,6 +72,17 @@ task:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
     - melos run test:unit --no-select
+
+task:
+  name: Run all unit tests (Android)
+  container:
+    image: cirrusci/flutter:stable
+  install_melos_script:
+    - dart pub global activate melos
+  test_script:
+    - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - melos bootstrap
+    - melos run test:unit:android
 
 task:
   name: Run integration tests (Android)
@@ -96,7 +107,9 @@ task:
     android-wait-for-emulator
   test_script:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
+    - flutter precache
     - melos bootstrap
+    - melos run build:example_android
     - melos run test:integration
 task:
   name: Run integration tests (iOS)

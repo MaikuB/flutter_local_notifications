@@ -12,6 +12,7 @@ class IOSNotificationDetails {
     this.attachments,
     this.subtitle,
     this.threadIdentifier,
+    this.categoryIdentifier,
   });
 
   /// Display an alert when the notification is triggered while app is
@@ -71,4 +72,10 @@ class IOSNotificationDetails {
   ///
   /// This property is only applicable to iOS 10 or newer.
   final String? threadIdentifier;
+
+  /// The identifier of the app-defined category object.
+  ///
+  /// This must refer to a [DarwinNotificationCategory] identifier configured via
+  /// [InitializationSettings].
+  final String? categoryIdentifier;
 }

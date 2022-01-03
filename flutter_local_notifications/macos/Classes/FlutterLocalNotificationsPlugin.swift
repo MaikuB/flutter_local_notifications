@@ -22,6 +22,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let id = "id"
         static let title = "title"
         static let subtitle = "subtitle"
+        static let categoryIdentifier = "categoryIdentifier"
         static let body = "body"
         static let scheduledDateTime = "scheduledDateTime"
         static let timeZoneName = "timeZoneName"
@@ -101,12 +102,31 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     @available(OSX 10.14, *)
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        let payload = response.notification.request.content.userInfo[MethodCallArguments.payload] as? String
-        if initialized {
-            handleSelectNotification(payload: payload)
+
+        if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
+            let payload = response.notification.request.content.userInfo[MethodCallArguments.payload] as? String
+            if initialized {
+                handleSelectNotification(payload: payload)
+            } else {
+                launchPayload = payload
+                launchingAppFromNotification = true
+            }
+
+            completionHandler()
         } else {
-            launchPayload = payload
-            launchingAppFromNotification = true
+            let text = (response as? UNTextInputNotificationResponse)?.userText ?? ""
+
+            // No isolate can be used for macOS until https://github.com/flutter/flutter/issues/65222 is resolved.
+            //
+            // Therefore, we call the regular method channel and let the macos plugin handle it appropriately.
+            handleNotificationActionTapped(payload: [
+                "notificationId": response.notification.request.identifier,
+                "actionId": response.actionIdentifier,
+                "input": text,
+                "payload": response.notification.request.content.userInfo["payload"] as? String ?? ""
+            ])
+
+            completionHandler()
         }
     }
 
@@ -154,11 +174,82 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let requestedAlertPermission = arguments[MethodCallArguments.requestAlertPermission] as! Bool
             let requestedSoundPermission = arguments[MethodCallArguments.requestSoundPermission] as! Bool
             let requestedBadgePermission = arguments[MethodCallArguments.requestBadgePermission] as! Bool
-            requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, result: result)
+
+            configureNotificationCategories(arguments) {
+                self.requestPermissionsImpl(
+                    soundPermission: requestedSoundPermission,
+                    alertPermission: requestedAlertPermission,
+                    badgePermission: requestedBadgePermission,
+                    result: result
+                )
+            }
+
             initialized = true
         } else {
             result(true)
             initialized = true
+        }
+    }
+
+    func configureNotificationCategories(_ arguments: [String: AnyObject],
+                                         withCompletionHandler completionHandler: @escaping () -> Void) {
+        if #available(OSX 10.14, *) {
+            if let categories = arguments["notificationCategories"] as? [[String: AnyObject]] {
+                var newCategories = Set<UNNotificationCategory>()
+
+                for category in categories {
+                    var newActions = [UNNotificationAction]()
+
+                    if let actions = category["actions"] as? [[String: AnyObject]] {
+                        for action in actions {
+                            let type = action["type"] as! String
+                            let identifier = action["identifier"] as! String
+                            let title = action["title"] as! String
+                            let options = action["options"] as! [Any]
+                            if type == "plain" {
+                                newActions.append(UNNotificationAction(
+                                    identifier: identifier,
+                                    title: title,
+                                    options: Converters.parseNotificationActionOptions(options)
+                                ))
+                            } else if type == "text" {
+                                let buttonTitle = action["buttonTitle"] as! String
+                                let placeholder = action["placeholder"] as! String
+                                newActions.append(UNTextInputNotificationAction(
+                                    identifier: identifier,
+                                    title: title,
+                                    options: Converters.parseNotificationActionOptions(options),
+                                    textInputButtonTitle: buttonTitle,
+                                    textInputPlaceholder: placeholder
+                                ))
+                            }
+                        }
+                    }
+
+                    let newCategory = UNNotificationCategory(
+                        identifier: category["identifier"] as! String,
+                        actions: newActions,
+                        intentIdentifiers: [],
+                        hiddenPreviewsBodyPlaceholder: nil,
+                        categorySummaryFormat: nil,
+                        options: Converters.parseNotificationCategoryOptions(category["options"] as! [NSNumber])
+                    )
+
+                    newCategories.insert(newCategory)
+
+                }
+
+                let center = UNUserNotificationCenter.current()
+                center.getNotificationCategories { _  in
+                    center.setNotificationCategories(newCategories)
+                    completionHandler()
+                }
+
+            } else {
+                completionHandler()
+            }
+        } else {
+            completionHandler()
         }
     }
 
@@ -370,6 +461,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             if let threadIdentifier = platformSpecifics[MethodCallArguments.threadIdentifier] as? String {
                 content.threadIdentifier = threadIdentifier
             }
+            if let categoryIdentifier = platformSpecifics[MethodCallArguments.categoryIdentifier] as? String {
+                content.categoryIdentifier = categoryIdentifier
+            }
             if let attachments = platformSpecifics[MethodCallArguments.attachments] as? [[String: AnyObject]] {
                 content.attachments = []
                 for attachment in attachments {
@@ -492,5 +586,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     func handleSelectNotification(payload: String?) {
         channel.invokeMethod("selectNotification", arguments: payload)
+    }
+
+    func handleNotificationActionTapped(payload: [String: Any]) {
+        channel.invokeMethod("actionTapped", arguments: payload)
     }
 }
