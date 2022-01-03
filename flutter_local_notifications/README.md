@@ -221,7 +221,7 @@ By design, iOS applications *do not* display notifications while the app is in t
 
 For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. The default settings of the plugin will configure these such that a notification will be displayed when the app is in the foreground.
 
-For older versions of iOS, you need to handle the callback as part of specifying the method that should be fired to the `onDidReceiveLocalNotification` argument when creating an instance `IOSInitializationSettings` object that is passed to the function for initializing the plugin.
+For older versions of iOS, you need to handle the callback as part of specifying the method that should be fired to the `onDidReceiveLocalNotification` argument when creating an instance `DarwinInitializationSettings` object that is passed to the function for initializing the plugin.
 
 Here is an example:
 
@@ -229,12 +229,12 @@ Here is an example:
 // initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
 const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('app_icon');
-final IOSInitializationSettings initializationSettingsIOS =
-    IOSInitializationSettings(
+final DarwinInitializationSettings initializationSettingsDarwom =
+    DarwinInitializationSettings(
         onDidReceiveLocalNotification: onDidReceiveLocalNotification);
 final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
-    iOS: initializationSettingsIOS);
+    iOS: initializationSettingsDarwin);
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: onSelectNotification);
 
@@ -467,7 +467,7 @@ The `DarwinInitializationSettings` class provides default settings on how the no
 
 On iOS and macOS, initialisation may show a prompt to requires users to give the application permission to display notifications (note: permissions don't need to be requested on Android). Depending on when this happens, this may not be the ideal user experience for your application. If so, please refer to the next section on how to work around this.
 
-For an explanation of the `onDidReceiveLocalNotification` callback associated with the `DarwinInitializationSettings` class, please read  [this](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications#handling-notifications-whilst-the-app-is-in-the-foreground).
+For an explanation of the `onDidReceiveLocalNotification` callback associated with the `DarwinInitializationSettings` class, please read [this](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications#handling-notifications-whilst-the-app-is-in-the-foreground).
 
 
 *Note*: from version 4.0 of the plugin, calling `initialize` will not trigger the `onSelectNotification` callback when the application was started by tapping on a notification to trigger. Use the `getNotificationAppLaunchDetails` method that is available in the plugin if you need to handle a notification triggering the launch for an app e.g. change the home route of the app for deep-linking.
