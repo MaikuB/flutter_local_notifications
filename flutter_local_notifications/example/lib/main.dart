@@ -485,18 +485,28 @@ class _HomePageState extends State<HomePage> {
                         await _showNotificationWithActions();
                       },
                     ),
-                    PaddedElevatedButton(
-                      buttonText: 'Show notification with text actions',
-                      onPressed: () async {
-                        await _showNotificationWithTextAction();
-                      },
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Show notification with text choice',
-                      onPressed: () async {
-                        await _showNotificationWithTextChoice();
-                      },
-                    ),
+                    if (Platform.isLinux)
+                      PaddedElevatedButton(
+                        buttonText:
+                            'Show notification with icon action (if supported)',
+                        onPressed: () async {
+                          await _showNotificationWithIconAction();
+                        },
+                      ),
+                    if (!Platform.isLinux)
+                      PaddedElevatedButton(
+                        buttonText: 'Show notification with text actions',
+                        onPressed: () async {
+                          await _showNotificationWithTextAction();
+                        },
+                      ),
+                    if (!Platform.isLinux)
+                      PaddedElevatedButton(
+                        buttonText: 'Show notification with text choice',
+                        onPressed: () async {
+                          await _showNotificationWithTextChoice();
+                        },
+                      ),
                     const Divider(),
                     if (Platform.isAndroid) ...<Widget>[
                       const Text(
@@ -813,6 +823,14 @@ class _HomePageState extends State<HomePage> {
                                     value: caps.sound,
                                   ),
                                   _InfoValueString(
+                                    title: 'Actions:',
+                                    value: caps.actions,
+                                  ),
+                                  _InfoValueString(
+                                    title: 'Action icons:',
+                                    value: caps.actionIcons,
+                                  ),
+                                  _InfoValueString(
                                     title: 'Other capabilities:',
                                     value: caps.otherCapabilities,
                                   ),
@@ -925,7 +943,7 @@ class _HomePageState extends State<HomePage> {
       ticker: 'ticker',
       actions: <AndroidNotificationAction>[
         AndroidNotificationAction(
-          'id_1',
+          urlLaunchActionId,
           'Action 1',
           icon: DrawableResourceAndroidBitmap('food'),
           contextual: true,
@@ -958,10 +976,25 @@ class _HomePageState extends State<HomePage> {
       categoryIdentifier: iosNotificationCategoryPlain,
     );
 
+    const LinuxNotificationDetails linuxNotificationDetails =
+        LinuxNotificationDetails(
+      actions: <LinuxNotificationAction>[
+        LinuxNotificationAction(
+          key: urlLaunchActionId,
+          label: 'Action 1',
+        ),
+        LinuxNotificationAction(
+          key: navigationActionId,
+          label: 'Action 2',
+        ),
+      ],
+    );
+
     const NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
       iOS: iosNotificationDetails,
       macOS: macOSNotificationDetails,
+      linux: linuxNotificationDetails,
     );
     await flutterLocalNotificationsPlugin.show(
         id++, 'plain title', 'plain body', notificationDetails,
@@ -1005,6 +1038,25 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.show(id++, 'Text Input Notification',
         'Expand to see input action', notificationDetails,
         payload: 'item x');
+  }
+
+  Future<void> _showNotificationWithIconAction() async {
+    const LinuxNotificationDetails linuxNotificationDetails =
+        LinuxNotificationDetails(
+      actions: <LinuxNotificationAction>[
+        LinuxNotificationAction(
+          key: 'media-eject',
+          label: 'Eject',
+        ),
+      ],
+    );
+
+    const NotificationDetails notificationDetails = NotificationDetails(
+      linux: linuxNotificationDetails,
+    );
+    await flutterLocalNotificationsPlugin.show(
+        id++, 'plain title', 'plain body', notificationDetails,
+        payload: 'item z');
   }
 
   Future<void> _showNotificationWithTextChoice() async {

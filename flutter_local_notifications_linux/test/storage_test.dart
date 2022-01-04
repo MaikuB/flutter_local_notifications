@@ -55,6 +55,15 @@ void main() {
           systemId: 2,
           payload: 'test',
         ),
+        LinuxNotificationInfo(
+          id: 3,
+          systemId: 3,
+          payload: 'test',
+          actions: <LinuxNotificationActionInfo>[
+            LinuxNotificationActionInfo(key: '1'),
+            LinuxNotificationActionInfo(key: '2'),
+          ],
+        ),
       ];
 
       when(() => mockStorageFile.existsSync()).thenReturn(false);
@@ -68,10 +77,11 @@ void main() {
 
       expect(await storage.insert(notifications[0]), isTrue);
       expect(await storage.insert(notifications[1]), isTrue);
+      expect(await storage.insert(notifications[2]), isTrue);
 
       verify(
         () => mockStorageFile.createSync(recursive: true),
-      ).called(2);
+      ).called(3);
       verify(
         () => mockStorageFile.writeAsStringSync(
           jsonEncode(<LinuxNotificationInfo>[notifications[0]]),
@@ -124,6 +134,14 @@ void main() {
           systemId: 2,
           payload: 'test',
         ),
+        LinuxNotificationInfo(
+            id: 3,
+            systemId: 3,
+            payload: 'test',
+            actions: <LinuxNotificationActionInfo>[
+              LinuxNotificationActionInfo(key: '1'),
+              LinuxNotificationActionInfo(key: '2'),
+            ]),
       ];
 
       when(() => mockStorageFile.existsSync()).thenReturn(true);
@@ -144,6 +162,7 @@ void main() {
       ).thenReturn(jsonEncode(notifications));
       await storage.insert(notifications[0]);
       await storage.insert(notifications[1]);
+      await storage.insert(notifications[2]);
 
       expect(
         await storage.getAll(),
