@@ -49,7 +49,7 @@ A cross platform plugin for displaying local notifications.
 * **Android 4.1+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
 * **iOS 8.0+**. On iOS versions older than 10, the plugin will use the UILocalNotification APIs. The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on iOS 10 or newer.
 * **macOS 10.11+**. On macOS versions older than 10.14, the plugin will use the [NSUserNotification APIs](https://developer.apple.com/documentation/foundation/nsusernotification). The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on macOS 10.14 or newer.
-* **Linux**. Uses the [Desktop Notifications Specification](https://developer.gnome.org/notification-spec/).
+* **Linux**. Uses the [Desktop Notifications Specification](https://specifications.freedesktop.org/notification-spec/latest/).
 
 ## ✨ Features
 
@@ -133,7 +133,7 @@ Capabilities depend on the system notification server implementation, therefore,
 
 Scheduled/pending notifications is currently not supported due to the lack of a scheduler API.
 
-To respond to notification after the application is terminated, your application should be registered as DBus activatable (see [DBusApplicationLaunching](https://wiki.gnome.org/HowDoI/DBusApplicationLaunching) for more information), and register action before activating the application. This is difficult to do in a plugin because plugins instantiate during application activation, so `getNotificationAppLaunchDetails` can't be implemented without changing the main user application.
+`onSelectNotification` and `onSelectNotificationAction` callbacks are launched in the main isolate of the running application and cannot be launched in the background if the application is not running. To respond to notification after the application is terminated, your application should be registered as DBus activatable (please see [DBusApplicationLaunching](https://wiki.gnome.org/HowDoI/DBusApplicationLaunching) for more information), and register action before activating the application. This is difficult to do in a plugin because plugins instantiate during application activation, so `getNotificationAppLaunchDetails` can't be implemented without changing the main user application.
 
 ## 📷 Screenshots
 
@@ -232,9 +232,13 @@ const AndroidInitializationSettings initializationSettingsAndroid =
 final DarwinInitializationSettings initializationSettingsDarwom =
     DarwinInitializationSettings(
         onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+final LinuxInitializationSettings initializationSettingsLinux =
+    LinuxInitializationSettings(
+        defaultActionName: 'Open notification');
 final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
-    iOS: initializationSettingsDarwin);
+    iOS: initializationSettingsDarwin,
+    linux: initializationSettingsLinux);
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: onSelectNotification);
 
@@ -277,15 +281,15 @@ If you encounter any issues please refer to the API docs and the sample code in 
 
 ### Notification Actions
 
-Notifications can now contain actions. These actions may be selected by the user when a App is sleeping or terminated and will wake up your app. However, it may not wake up the user-visible part of your App; but only the part of it which runs in the background. 
+Notifications can now contain actions. These actions may be selected by the user when a App is sleeping or terminated and will wake up your app. However, it may not wake up the user-visible part of your App; but only the part of it which runs in the background. An exception is the Linux implementation: please see details in [Linux limitations](#linux-limitations) chapter.
 
 This plugin contains handlers for iOS & Android to handle these cases and will allow you to specify a Dart entry point (a function).
 
-When the user selects a action, the plugin will start a **separate Flutter Engine** which only exists to execute this callback.
+When the user selects a action, the plugin will start a **separate Flutter Engine** which only exists to execute this callback. Linux implementation runs this callback in the current main isolate.
 
 **Configuration**:
 
-*Android* does not require any configuration.
+*Android* and *Linux* do not require any configuration.
 
 *iOS* will require a few steps:
 
@@ -359,7 +363,7 @@ final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitiali
 ],
 ```
 
-On iOS/macOS, the notification category will define which actions are availble. On Android, you can put the actions directly in the `AndroidNotificationDetails` class.
+On iOS/macOS, the notification category will define which actions are availble. On Android and Linux, you can put the actions directly in the `AndroidNotificationDetails` and `LinuxNotificationDetails` classes.
 
 **Usage**:
 
@@ -379,11 +383,11 @@ await flutterLocalNotificationsPlugin.initialize(
     onSelectNotification: (String payload) async {
         // ...
     },
-    backgroundHandler: notificationTapBackground,
+    onSelectNotificationAction: notificationTapBackground,
 );
 ```
 
-Remember this function runs in a separate isolate! You will need to use a different mechanism (e.g. [`IsolateNameServer` APIs](https://api.flutter.dev/flutter/dart-ui/IsolateNameServer-class.html)) to communicate with the main isolate that the app will run from.
+Remember this function runs (except Linux) in a separate isolate! You will need to use a different mechanism (e.g. [`IsolateNameServer` APIs](https://api.flutter.dev/flutter/dart-ui/IsolateNameServer-class.html)) to communicate with the main isolate that the app will run from.
 
 Accessing plugins will work; however in particular on Android there is **no** access to the `Activity` context which means some plugins (like `url_launcher`) will require additional flags to start the main `Activity` again.
 
@@ -393,7 +397,7 @@ The notification actions are platform specific and you have to specify them diff
 
 On iOS/macOS, the actions are defined on a category, please see the configuration section for details.
 
-On Android, the actions are configured directly on the notification.
+On Android and Linux, the actions are configured directly on the notification.
 
 ``` dart
 Future<void> _showNotificationWithActions() async {
@@ -439,10 +443,14 @@ const AndroidInitializationSettings initializationSettingsAndroid =
 final DarwinInitializationSettings initializationSettingsDarwin =
     DarwinInitializationSettings(
         onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+final LinuxInitializationSettings initializationSettingsLinux =
+    LinuxInitializationSettings(
+        defaultActionName: 'Open notification');
 final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
     iOS: initializationSettingsDarwin,
-    macOS: initializationSettingsDarwin);
+    macOS: initializationSettingsDarwin,
+    linux: initializationSettingsLinux);
 await flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onSelectNotification: selectNotification);
 ```
@@ -464,6 +472,8 @@ void selectNotification(String payload) async {
 In the real world, this payload could represent the id of the item you want to display the details of. Once the initialisation is complete, then you can manage the displaying of notifications.
 
 The `DarwinInitializationSettings` class provides default settings on how the notification be presented when it is triggered and the application is in the foreground on iOS/macOS. There are optional named parameters that can be modified to suit your application's purposes. Here, it is omitted and the default values for these named properties is set such that all presentation options (alert, sound, badge) are enabled. 
+
+The `LinuxInitializationSettings` class requires a name for the default action that calls the `onSelectNotification` callback when the notification is clicked. 
 
 On iOS and macOS, initialisation may show a prompt to requires users to give the application permission to display notifications (note: permissions don't need to be requested on Android). Depending on when this happens, this may not be the ideal user experience for your application. If so, please refer to the next section on how to work around this.
 
@@ -493,10 +503,14 @@ The constructor for the `DarwinInitializationSettings` class  has three named pa
           requestAlertPermission: false,
           requestBadgePermission: false,
           requestSoundPermission: false);
+  final LinuxInitializationSettings initializationSettingsLinux =
+    LinuxInitializationSettings(
+        defaultActionName: 'Open notification');
   final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
-      macOS: initializationSettingsDarwin);
+      macOS: initializationSettingsDarwin,
+      linux: initializationSettingsLinux);
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: onSelectNotification);
 ```
