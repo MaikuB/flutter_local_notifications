@@ -1,3 +1,7 @@
+## [0.5.0-dev.2]
+
+* Added support for notification actions
+
 ## [0.5.0-dev.1]
 
 * Bumped `flutter_local_notifications_platform_interface` dependency

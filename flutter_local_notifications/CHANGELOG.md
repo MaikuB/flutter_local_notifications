@@ -1,3 +1,7 @@
+# [10.0.0-dev.3]
+
+* [Linux] Added support for notification actions. Thanks to the PR from [Yaroslav Pronin](https://github.com/proninyaroslav)
+
 # [10.0.0-dev.2]
 
 * [iOS][macOS] **Breaking changes** iOS and macOS classes have been renamed and refactored as they are based on the same operating system and share the same notification APIs. Rather than having a prefix of either `IOS` or `MacOS`, these are now replaced by classes with a `Darwin` prefix. For example, `IOSInitializationSettings` can be replaced with `DarwinInitializationSettings`

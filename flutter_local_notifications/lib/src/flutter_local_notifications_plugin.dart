@@ -142,7 +142,8 @@ class FlutterLocalNotificationsPlugin {
       return await resolvePlatformSpecificImplementation<
               LinuxFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.linux!,
-              onSelectNotification: onSelectNotification);
+              onSelectNotification: onSelectNotification,
+              onSelectNotificationAction: onSelectNotificationAction);
     }
     return true;
   }
