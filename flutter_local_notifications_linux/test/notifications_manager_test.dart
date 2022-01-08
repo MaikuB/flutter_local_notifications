@@ -25,6 +25,8 @@ void main() {
     late final LinuxPlatformInfo mockPlatformInfo;
     late final NotificationStorage mockStorage;
     late final SelectNotificationCallback mockSelectNotificationCallback;
+    late final SelectNotificationActionCallback
+        mockSelectNotificationActionCallback;
 
     const LinuxPlatformInfoData platformInfo = LinuxPlatformInfoData(
       appName: 'Test',
@@ -33,12 +35,23 @@ void main() {
     );
 
     setUpAll(() {
+      registerFallbackValue(
+        NotificationActionDetails(
+          id: 0,
+          actionId: '',
+          input: null,
+          payload: null,
+        ),
+      );
+
       mockDbus = MockDBusWrapper();
       mockActionInvokedSignal = MockDBusRemoteObjectSignalStream();
       mockNotifyClosedSignal = MockDBusRemoteObjectSignalStream();
       mockPlatformInfo = MockLinuxPlatformInfo();
       mockStorage = MockNotificationStorage();
       mockSelectNotificationCallback = MockSelectNotificationCallback();
+      mockSelectNotificationActionCallback =
+          MockSelectNotificationActionCallback();
 
       when(
         () => mockPlatformInfo.getAll(),
@@ -60,6 +73,10 @@ void main() {
       ).thenAnswer((_) => mockNotifyClosedSignal);
       when(
         () => mockSelectNotificationCallback.call(any()),
+      ).thenAnswer((_) async => <void>{});
+
+      when(
+        () => mockSelectNotificationActionCallback.call(any()),
       ).thenAnswer((_) async => <void>{});
     });
 
@@ -933,6 +950,101 @@ void main() {
 
         verifyNotifyMethod(values).called(1);
       });
+
+      test('Notification actions', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings(defaultActionName: kDefaultActionName);
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+          actions: <LinuxNotificationActionInfo>[
+            LinuxNotificationActionInfo(key: '1'),
+            LinuxNotificationActionInfo(key: '2'),
+          ],
+        );
+
+        const LinuxNotificationDetails details = LinuxNotificationDetails(
+          actions: <LinuxNotificationAction>[
+            LinuxNotificationAction(
+              key: '1',
+              label: 'action1',
+            ),
+            LinuxNotificationAction(
+              key: '2',
+              label: 'action2',
+            ),
+          ],
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          actions: <String>[
+            '1',
+            'action1',
+            '2',
+            'action2',
+          ],
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+      });
+
+      test('Notification action key as icon', () async {
+        const LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings(defaultActionName: kDefaultActionName);
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+          actions: <LinuxNotificationActionInfo>[
+            LinuxNotificationActionInfo(key: 'media-eject'),
+          ],
+        );
+
+        const LinuxNotificationDetails details = LinuxNotificationDetails(
+          actions: <LinuxNotificationAction>[
+            LinuxNotificationAction(
+              key: 'media-eject',
+              label: 'eject',
+            ),
+          ],
+          actionKeyAsIconName: true,
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          actions: <String>[
+            'media-eject',
+            'eject',
+          ],
+          hints: <String, DBusValue>{
+            'action-icons': const DBusBoolean(true),
+          },
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+      });
     });
 
     test('Cancel', () async {
@@ -1170,6 +1282,8 @@ void main() {
                 const DBusString('persistence'),
                 const DBusString('sound'),
                 const DBusString('test-cap'),
+                const DBusString('actions'),
+                const DBusString('action-icons'),
               ],
             ),
           ],
@@ -1189,6 +1303,8 @@ void main() {
           iconStatic: true,
           persistence: true,
           sound: true,
+          actions: true,
+          actionIcons: true,
         ),
       );
     });
@@ -1226,6 +1342,80 @@ void main() {
           ),
         ),
       );
+    });
+
+    test('Open notification action', () async {
+      const LinuxInitializationSettings initSettings =
+          LinuxInitializationSettings(
+        defaultActionName: kDefaultActionName,
+      );
+
+      const List<LinuxNotificationInfo> notifications = <LinuxNotificationInfo>[
+        LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+          actions: <LinuxNotificationActionInfo>[
+            LinuxNotificationActionInfo(key: '1'),
+          ],
+        ),
+        LinuxNotificationInfo(
+          id: 1,
+          systemId: 2,
+          actions: <LinuxNotificationActionInfo>[
+            LinuxNotificationActionInfo(key: '2'),
+          ],
+        ),
+      ];
+
+      final List<Completer<void>> completers = <Completer<void>>[];
+      for (final LinuxNotificationInfo notify in notifications) {
+        when(
+          () => mockStorage.getBySystemId(notify.systemId),
+        ).thenAnswer((_) async => notify);
+        completers.add(Completer<void>());
+      }
+      when(
+        () => mockActionInvokedSignal.listen(any()),
+      ).thenAnswer((Invocation invocation) {
+        final Future<void> Function(DBusSignal) callback =
+            invocation.positionalArguments.single;
+        for (final LinuxNotificationInfo notify in notifications) {
+          callback(
+            DBusSignal(
+              sender: '',
+              path: DBusObjectPath('/org/freedesktop/Notifications'),
+              interface: 'org.freedesktop.Notifications',
+              name: 'ActionInvoked',
+              values: <DBusValue>[
+                DBusUint32(notify.systemId),
+                DBusString(notify.actions[0].key),
+              ],
+            ),
+          ).then((_) {
+            for (final Completer<void> completer in completers) {
+              if (!completer.isCompleted) {
+                completer.complete();
+              }
+            }
+          });
+        }
+        return FakeStreamSubscription<DBusSignal>();
+      });
+
+      await manager.initialize(
+        initSettings,
+        onSelectNotificationAction: mockSelectNotificationActionCallback,
+      );
+      await Future.forEach(
+        completers,
+        (Completer<void> completer) => completer.future,
+      );
+
+      for (final LinuxNotificationInfo notify in notifications) {
+        verify(
+          () => mockStorage.getBySystemId(notify.systemId),
+        ).called(1);
+      }
     });
   });
 }

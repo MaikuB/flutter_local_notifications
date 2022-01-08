@@ -24,6 +24,7 @@ class LinuxFlutterLocalNotificationsPlugin
   Future<bool?> initialize(
     LinuxInitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
+    SelectNotificationActionCallback? onSelectNotificationAction,
   }) async {
     assert(false);
   }
