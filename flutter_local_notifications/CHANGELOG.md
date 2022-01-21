@@ -1,3 +1,7 @@
+# [10.0.0-dev.4]
+
+* [Android] Fix Android 12 specific issue related to notification acitons by adding exported flag to the receiver used to process actions
+
 # [10.0.0-dev.3]
 
 * [Linux] Added support for notification actions. Thanks to the PR from [Yaroslav Pronin](https://github.com/proninyaroslav)
