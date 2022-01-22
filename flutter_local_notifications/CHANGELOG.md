@@ -1,3 +1,7 @@
+# [10.0.0-dev.5]
+
+* [Android] Fix error where plugin was lookup to the notification action callback and failed to find it as it was doing before the Flutter engine was initialised
+
 # [10.0.0-dev.4]
 
 * [Android] Fix Android 12 specific issue related to notification acitons by adding exported flag to the receiver used to process actions
