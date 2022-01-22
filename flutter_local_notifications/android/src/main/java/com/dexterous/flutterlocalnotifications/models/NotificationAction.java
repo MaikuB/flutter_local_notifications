@@ -1,6 +1,8 @@
 package com.dexterous.flutterlocalnotifications.models;
 
 import android.graphics.Color;
+
+import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@Keep
 public class NotificationAction {
   public static class NotificationActionInput {
 
