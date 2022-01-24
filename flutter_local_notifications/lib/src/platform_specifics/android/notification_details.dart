@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -141,6 +142,7 @@ class AndroidNotificationDetails {
     this.subText,
     this.tag,
     this.actions,
+    this.colorized = false,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -377,4 +379,8 @@ class AndroidNotificationDetails {
   /// AlarmManager APIs used for scheduling notifications only allow for using
   /// the id to uniquely identify alarms.
   final String? tag;
+
+  /// Specify coloring background should be enabled, if false, color will be applied to app icon.
+  /// For most styles, the coloring will only be applied if the notification is for a foreground service notification.
+  final bool colorized;
 }

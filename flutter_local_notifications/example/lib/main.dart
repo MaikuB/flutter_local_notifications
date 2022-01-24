@@ -191,6 +191,11 @@ Future<void> main() async {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onSelectNotification: (String? payload) async {
+      await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.stopForegroundService();
+      
       if (payload != null) {
         debugPrint('notification payload: $payload');
       }
@@ -548,6 +553,13 @@ class _HomePageState extends State<HomePage> {
                         buttonText: 'Show insistent notification',
                         onPressed: () async {
                           await _showInsistentNotification();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
+                            'Show big picture notification using local images coloring background',
+                        onPressed: () async {
+                          await _showBigPictureNotificationColoringBackground();
                         },
                       ),
                       PaddedElevatedButton(
@@ -1287,6 +1299,40 @@ class _HomePageState extends State<HomePage> {
     final File file = File(filePath);
     await file.writeAsBytes(response.bodyBytes);
     return filePath;
+  }
+
+  Future<void> _showBigPictureNotificationColoringBackground() async {
+    final String largeIconPath = await _downloadAndSaveFile(
+        'https://via.placeholder.com/48x48', 'largeIcon');
+    final String bigPicturePath = await _downloadAndSaveFile(
+        'https://via.placeholder.com/400x800', 'bigPicture');
+    final BigPictureStyleInformation bigPictureStyleInformation =
+        BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath),
+            largeIcon: FilePathAndroidBitmap(largeIconPath),
+            contentTitle: 'overridden <b>big</b> content title',
+            htmlFormatContentTitle: true,
+            summaryText: 'summary <i>text</i>',
+            htmlFormatSummaryText: true);
+    final AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'big text channel id',
+      'big text channel name',
+      channelDescription: 'big text channel description',
+      styleInformation: bigPictureStyleInformation,
+      color: Colors.blue,
+      colorized: true,
+    );
+    // final NotificationDetails platformChannelSpecifics =
+    //     NotificationDetails(android: androidPlatformChannelSpecifics);
+    // await flutterLocalNotificationsPlugin.show(
+    //     id++, 'big text title', 'silent body', platformChannelSpecifics);
+  // only using foreground service can color the background
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.startForegroundService(1, 'big text title', 'silent body',
+            notificationDetails: androidPlatformChannelSpecifics,
+            payload: 'item x');
   }
 
   Future<void> _showBigPictureNotification() async {

@@ -118,6 +118,7 @@ public class NotificationDetails implements Serializable {
   private static final String SHORTCUT_ID = "shortcutId";
   private static final String SUB_TEXT = "subText";
   private static final String ACTIONS = "actions";
+  private static final String COLORIZED = "colorized";
 
   public Integer id;
   public String title;
@@ -178,10 +179,12 @@ public class NotificationDetails implements Serializable {
   public String subText;
   public @Nullable List<NotificationAction> actions;
   public String tag;
+  public Boolean colorized;
 
   // Note: this is set on the Android to save details about the icon that should be used when
   // re-hydrating scheduled notifications when a device has been restarted.
   public Integer iconResourceId;
+
 
   public static NotificationDetails from(Map<String, Object> arguments) {
     NotificationDetails notificationDetails = new NotificationDetails();
@@ -263,6 +266,7 @@ public class NotificationDetails implements Serializable {
       notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
       notificationDetails.subText = (String) platformChannelSpecifics.get(SUB_TEXT);
       notificationDetails.tag = (String) platformChannelSpecifics.get(TAG);
+      notificationDetails.colorized = (Boolean) platformChannelSpecifics.get(COLORIZED);
 
       if (platformChannelSpecifics.containsKey(ACTIONS)) {
         List<Map<String, Object>> inputActions =
