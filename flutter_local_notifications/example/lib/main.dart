@@ -191,11 +191,6 @@ Future<void> main() async {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onSelectNotification: (String? payload) async {
-      await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.stopForegroundService();
-      
       if (payload != null) {
         debugPrint('notification payload: $payload');
       }
@@ -557,13 +552,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                       PaddedElevatedButton(
                         buttonText:
-                            'Show big picture notification using local images coloring background',
-                        onPressed: () async {
-                          await _showBigPictureNotificationColoringBackground();
-                        },
-                      ),
-                      PaddedElevatedButton(
-                        buttonText:
                             'Show big picture notification using local images',
                         onPressed: () async {
                           await _showBigPictureNotification();
@@ -737,6 +725,13 @@ class _HomePageState extends State<HomePage> {
                         buttonText: 'Stop foreground service',
                         onPressed: () async {
                           await _stopForegroundService();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
+                            'Show colored background notification with forgground service',
+                        onPressed: () async {
+                          await _showColoredBackgroundNotification();
                         },
                       ),
                     ],
@@ -994,6 +989,8 @@ class _HomePageState extends State<HomePage> {
       importance: Importance.max,
       priority: Priority.high,
       ticker: 'ticker',
+      color: Colors.blue,
+      colorized: true,
       actions: <AndroidNotificationAction>[
         AndroidNotificationAction(
           'text_id_1',
@@ -1027,6 +1024,13 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.show(id++, 'Text Input Notification',
         'Expand to see input action', platformChannelSpecifics,
         payload: 'item x');
+
+    // await flutterLocalNotificationsPlugin
+    //     .resolvePlatformSpecificImplementation<
+    //         AndroidFlutterLocalNotificationsPlugin>()
+    //     ?.startForegroundService(1, 'big text title', 'silent body',
+    //         notificationDetails: androidPlatformChannelSpecifics,
+    //         payload: 'item x');
   }
 
   Future<void> _showNotificationWithTextChoice() async {
@@ -1299,40 +1303,6 @@ class _HomePageState extends State<HomePage> {
     final File file = File(filePath);
     await file.writeAsBytes(response.bodyBytes);
     return filePath;
-  }
-
-  Future<void> _showBigPictureNotificationColoringBackground() async {
-    final String largeIconPath = await _downloadAndSaveFile(
-        'https://via.placeholder.com/48x48', 'largeIcon');
-    final String bigPicturePath = await _downloadAndSaveFile(
-        'https://via.placeholder.com/400x800', 'bigPicture');
-    final BigPictureStyleInformation bigPictureStyleInformation =
-        BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath),
-            largeIcon: FilePathAndroidBitmap(largeIconPath),
-            contentTitle: 'overridden <b>big</b> content title',
-            htmlFormatContentTitle: true,
-            summaryText: 'summary <i>text</i>',
-            htmlFormatSummaryText: true);
-    final AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'big text channel id',
-      'big text channel name',
-      channelDescription: 'big text channel description',
-      styleInformation: bigPictureStyleInformation,
-      color: Colors.blue,
-      colorized: true,
-    );
-    // final NotificationDetails platformChannelSpecifics =
-    //     NotificationDetails(android: androidPlatformChannelSpecifics);
-    // await flutterLocalNotificationsPlugin.show(
-    //     id++, 'big text title', 'silent body', platformChannelSpecifics);
-  // only using foreground service can color the background
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.startForegroundService(1, 'big text title', 'silent body',
-            notificationDetails: androidPlatformChannelSpecifics,
-            payload: 'item x');
   }
 
   Future<void> _showBigPictureNotification() async {
@@ -2160,6 +2130,29 @@ class _HomePageState extends State<HomePage> {
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.stopForegroundService();
+  }
+
+  Future<void> _showColoredBackgroundNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      channelDescription: 'color background channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+      color: Colors.blue,
+      colorized: true,
+    );
+
+    /// only using foreground service can color the background
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.startForegroundService(
+            1, 'colored background text title', 'colored background text body',
+            notificationDetails: androidPlatformChannelSpecifics,
+            payload: 'item x');
   }
 
   Future<void> _createNotificationChannel() async {
