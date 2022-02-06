@@ -2356,7 +2356,7 @@ void main() {
           log.last, isMethodCall('areNotificationsEnabled', arguments: null));
     });
 
-    test('show colored background notification', () async {
+    test('startForegroundServiceWithBlueBackgroundNotification', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
