@@ -185,7 +185,6 @@ public class NotificationDetails implements Serializable {
   // re-hydrating scheduled notifications when a device has been restarted.
   public Integer iconResourceId;
 
-
   public static NotificationDetails from(Map<String, Object> arguments) {
     NotificationDetails notificationDetails = new NotificationDetails();
     notificationDetails.payload = (String) arguments.get(PAYLOAD);
