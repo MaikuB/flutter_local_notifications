@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/src/platform_specifics/android/enums.dart';
@@ -171,6 +172,7 @@ void main() {
                 'htmlFormatTitle': false,
               },
               'tag': null,
+              'colorized': false,
               'actions': <Map<String, Object>>[
                 <String, Object>{
                   'id': 'action1',
@@ -288,6 +290,7 @@ void main() {
                 'htmlFormatTitle': false,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -367,6 +370,7 @@ void main() {
                 'htmlFormatTitle': false,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -447,6 +451,7 @@ void main() {
                 'htmlFormatTitle': false,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -528,6 +533,7 @@ void main() {
                 'htmlFormatTitle': false,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -613,6 +619,7 @@ void main() {
                 'htmlFormatTitle': false,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -697,6 +704,7 @@ void main() {
                 'htmlFormatTitle': false,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -780,6 +788,7 @@ void main() {
                 'htmlFormatTitle': true,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -872,6 +881,7 @@ void main() {
                 'hideExpandedLargeIcon': false,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -974,6 +984,7 @@ void main() {
                 'hideExpandedLargeIcon': true,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -1066,6 +1077,7 @@ void main() {
                 'hideExpandedLargeIcon': false,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -1168,6 +1180,7 @@ void main() {
                 'hideExpandedLargeIcon': true,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -1257,6 +1270,7 @@ void main() {
                 'htmlFormatLines': false,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -1353,6 +1367,7 @@ void main() {
                 'htmlFormatLines': true,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -1434,6 +1449,7 @@ void main() {
                 'htmlFormatTitle': false,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -1518,6 +1534,7 @@ void main() {
                 'htmlFormatTitle': true,
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -1627,6 +1644,7 @@ void main() {
                 ],
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -1749,6 +1767,7 @@ void main() {
                 ],
               },
               'tag': null,
+              'colorized': false,
             },
           }));
     });
@@ -1837,6 +1856,7 @@ void main() {
                       'htmlFormatTitle': false,
                     },
                     'tag': null,
+                    'colorized': false,
                   },
                 }));
           });
@@ -1929,6 +1949,7 @@ void main() {
                   'htmlFormatTitle': false,
                 },
                 'tag': null,
+                'colorized': false,
               },
             }));
       });
@@ -2020,6 +2041,7 @@ void main() {
                   'htmlFormatTitle': false,
                 },
                 'tag': null,
+                'colorized': false,
               },
             }));
       });
@@ -2112,6 +2134,7 @@ void main() {
                   'htmlFormatTitle': false,
                 },
                 'tag': null,
+                'colorized': false,
               },
             }));
       });
@@ -2331,6 +2354,97 @@ void main() {
           .areNotificationsEnabled();
       expect(
           log.last, isMethodCall('areNotificationsEnabled', arguments: null));
+    });
+
+    test('startForegroundServiceWithBlueBackgroundNotification', () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(android: androidInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidPlatformChannelSpecifics =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        channelDescription: 'channelDescription',
+        color: Colors.blue,
+        colorized: true,
+      );
+
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .startForegroundService(1, 'colored background notification title',
+              'colored background notification body',
+              notificationDetails: androidPlatformChannelSpecifics);
+      expect(
+          log.last,
+          isMethodCall(
+            'startForegroundService',
+            arguments: <String, Object?>{
+              'notificationData': {
+                'id': 1,
+                'title': 'colored background notification title',
+                'body': 'colored background notification body',
+                'payload': '',
+                'platformSpecifics': <String, Object?>{
+                  'icon': null,
+                  'channelId': 'channelId',
+                  'channelName': 'channelName',
+                  'channelDescription': 'channelDescription',
+                  'channelShowBadge': true,
+                  'channelAction':
+                      AndroidNotificationChannelAction.createIfNotExists.index,
+                  'importance': Importance.defaultImportance.value,
+                  'priority': Priority.defaultPriority.value,
+                  'playSound': true,
+                  'enableVibration': true,
+                  'vibrationPattern': null,
+                  'groupKey': null,
+                  'setAsGroupSummary': false,
+                  'groupAlertBehavior': GroupAlertBehavior.all.index,
+                  'autoCancel': true,
+                  'ongoing': false,
+                  'colorAlpha': 255,
+                  'colorRed': 33,
+                  'colorGreen': 150,
+                  'colorBlue': 243,
+                  'onlyAlertOnce': false,
+                  'showWhen': true,
+                  'when': null,
+                  'usesChronometer': false,
+                  'showProgress': false,
+                  'maxProgress': 0,
+                  'progress': 0,
+                  'indeterminate': false,
+                  'enableLights': false,
+                  'ledColorAlpha': null,
+                  'ledColorRed': null,
+                  'ledColorGreen': null,
+                  'ledColorBlue': null,
+                  'ledOnMs': null,
+                  'ledOffMs': null,
+                  'ticker': null,
+                  'visibility': null,
+                  'timeoutAfter': null,
+                  'category': null,
+                  'additionalFlags': null,
+                  'fullScreenIntent': false,
+                  'shortcutId': null,
+                  'subText': null,
+                  'style': AndroidNotificationStyle.defaultStyle.index,
+                  'styleInformation': <String, Object>{
+                    'htmlFormatContent': false,
+                    'htmlFormatTitle': false,
+                  },
+                  'tag': null,
+                  'colorized': true,
+                },
+              },
+              'startType': AndroidServiceStartType.startSticky.value,
+              'foregroundServiceTypes': null
+            },
+          ));
     });
   });
 }
