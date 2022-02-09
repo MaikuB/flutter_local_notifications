@@ -722,11 +722,18 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedElevatedButton(
+                        buttonText:
+                            'Start foreground service with blue background notification',
+                        onPressed: () async {
+                          await _startForegroundServiceWithBlueBackgroundNotification();
+                        },
+                      ),
+                      PaddedElevatedButton(
                         buttonText: 'Stop foreground service',
                         onPressed: () async {
                           await _stopForegroundService();
                         },
-                      ),
+                      ),                      
                     ],
                     if (!kIsWeb &&
                         (Platform.isIOS || Platform.isMacOS)) ...<Widget>[
@@ -1015,6 +1022,13 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.show(id++, 'Text Input Notification',
         'Expand to see input action', platformChannelSpecifics,
         payload: 'item x');
+
+    // await flutterLocalNotificationsPlugin
+    //     .resolvePlatformSpecificImplementation<
+    //         AndroidFlutterLocalNotificationsPlugin>()
+    //     ?.startForegroundService(1, 'big text title', 'silent body',
+    //         notificationDetails: androidPlatformChannelSpecifics,
+    //         payload: 'item x');
   }
 
   Future<void> _showNotificationWithTextChoice() async {
@@ -2109,12 +2123,37 @@ class _HomePageState extends State<HomePage> {
             payload: 'item x');
   }
 
+  Future<void> _startForegroundServiceWithBlueBackgroundNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      channelDescription: 'color background channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+      color: Colors.blue,
+      colorized: true,
+    );
+
+    /// only using foreground service can color the background
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.startForegroundService(
+            1, 'colored background text title', 'colored background text body',
+            notificationDetails: androidPlatformChannelSpecifics,
+            payload: 'item x');
+  }
+
   Future<void> _stopForegroundService() async {
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.stopForegroundService();
   }
+
+  
 
   Future<void> _createNotificationChannel() async {
     const AndroidNotificationChannel androidNotificationChannel =
