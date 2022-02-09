@@ -13,6 +13,10 @@ dependencies:
   flutter_local_notifications_platform_interface: ^6.0.0
   timezone: ^0.8.0
 
+dependency_overrides:
+  flutter_local_notifications_platform_interface:
+    path: ../flutter_local_notifications_platform_interface
+
 dev_dependencies:
   flutter_driver:
     sdk: flutter
@@ -33,6 +37,8 @@ flutter:
         pluginClass: FlutterLocalNotificationsPlugin
       linux:
         default_package: flutter_local_notifications_linux
+      windows:
+        pluginClass: FlutterLocalNotificationsPlugin
 
 environment:
   sdk: '>=2.12.0 <3.0.0'

@@ -850,6 +850,19 @@ class MacOSFlutterLocalNotificationsPlugin
   }
 }
 
+class WindowsFlutterLocalNotificationsPlugin
+    extends MethodChannelFlutterLocalNotificationsPlugin {
+  @override
+  Future<void> show(int id, String? title, String? body, {String? payload}) {
+    return _channel.invokeMethod('show', <String, Object?>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'payload': payload ?? '',
+    });
+  }
+}
+
 /// Checks [backgroundHandler] method, if not `null`, for eligibility to
 /// be used as a background callback.
 ///

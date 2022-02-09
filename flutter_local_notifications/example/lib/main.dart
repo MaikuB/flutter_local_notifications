@@ -210,7 +210,7 @@ Future<void> main() async {
 }
 
 Future<void> _configureLocalTimeZone() async {
-  if (kIsWeb || Platform.isLinux) {
+  if (kIsWeb || Platform.isLinux || Platform.isWindows) {
     return;
   }
   tz.initializeTimeZones();
