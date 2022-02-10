@@ -9,7 +9,6 @@ set(PLUGIN_NAME "flutter_local_notifications_plugin")
 
 # nuget configuration
 set(NUGET_PACKAGES_PATH "${CMAKE_BINARY_DIR}/packages")
-set(CPPWINRT_VERSION "2.0.220131.2")
 
 FetchContent_Declare(nuget
   URL "https://dist.nuget.org/win-x86-commandline/v6.0.0/nuget.exe"
@@ -28,7 +27,7 @@ function(nuget_install pkg ver)
 		${NUGET} install ${pkg} -Version ${ver} -OutputDirectory ${NUGET_PACKAGES_PATH}
 	    RESULT_VARIABLE result)
 	if (NOT result EQUAL 0)
-	    message(FATAL_ERROR "Failed to install nuget package ${pkg}, version ${ver}")
+	    message(FATAL_ERROR "Failed to install nuget package ${pkg}, version ${ver}, ${result}")
 	endif()
 endfunction()
 
@@ -38,8 +37,10 @@ add_library(${PLUGIN_NAME} SHARED
   "utils/utils.cpp")
 
 # setup c++/winrt
-nuget_install("Microsoft.Windows.CppWinRT" ${CPPWINRT_VERSION})
+set(CPPWINRT_VERSION "2.0.220131.2")
 set(CPPWINRT ${NUGET_PACKAGES_PATH}/Microsoft.Windows.CppWinRT.${CPPWINRT_VERSION}/bin/cppwinrt.exe)
+
+nuget_install("Microsoft.Windows.CppWinRT" ${CPPWINRT_VERSION})
 execute_process(COMMAND
     ${CPPWINRT} -input sdk -output include
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}

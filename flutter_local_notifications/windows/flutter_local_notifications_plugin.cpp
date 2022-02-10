@@ -83,8 +83,8 @@ namespace {
 		else if (method_name == Method::SHOW) {
 			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
 			if (args != nullptr) {
-				const auto& title = Utils::GetString("title", args).value();
-				const auto& body = Utils::GetString("body", args).value();
+				const auto title = Utils::GetString("title", args).value();
+				const auto body = Utils::GetString("body", args).value();
 				const auto payload = Utils::GetString("payload", args);
 
 				ShowNotification(title, body, payload);
@@ -103,34 +103,21 @@ namespace {
 		const std::string& title,
 		const std::string& body,
 		const std::optional<std::string>& payload) {
-		/*XmlDocument doc;
-		doc.LoadXml(L"\
-			<toast>\
-				<visual>\
-					<binding template=\"ToastGeneric\">\
-						<text></text>\
-						<text></text>\
-					</binding>\
-				</visual>\
-			</toast>");
 
-		if (payload.has_value()) {
-			doc.DocumentElement().SetAttribute(L"launch", winrt::to_hstring(payload.value()));
-		}*/
-		//doc.SelectSingleNode(L"//text[1]").InnerText(winrt::to_hstring(title));
-		//doc.SelectSingleNode(L"//text[2]").InnerText(winrt::to_hstring(body));
-
-		const auto doc = winrt::Windows::UI::Notifications::ToastNotificationManager::GetTemplateContent(winrt::Windows::UI::Notifications::ToastTemplateType::ToastText01);
-
-		XmlNodeList nodes = doc.GetElementsByTagName(L"text");
+		// obtain a notification template with a title and a body
+		const auto doc = winrt::Windows::UI::Notifications::ToastNotificationManager::GetTemplateContent(winrt::Windows::UI::Notifications::ToastTemplateType::ToastText02);
+		// find all <text /> tags
+		const auto nodes = doc.GetElementsByTagName(L"text");
+		// change the text of the first <text></text>
 		nodes.Item(0).AppendChild(doc.CreateTextNode(winrt::to_hstring(title)));
+		// change the text of the second <text></text>
+		nodes.Item(1).AppendChild(doc.CreateTextNode(winrt::to_hstring(body)));
 
 		winrt::Windows::UI::Notifications::ToastNotification notif{ doc };
-		const auto notifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(L"example");
+		const auto notifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(L"com.dexterous.example");
 
 		notifier.Show(notif);
 	}
-
 }  // namespace
 
 void FlutterLocalNotificationsPluginRegisterWithRegistrar(
