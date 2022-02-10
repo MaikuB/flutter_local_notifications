@@ -43,5 +43,6 @@ export 'src/platform_specifics/ios/notification_details.dart';
 export 'src/platform_specifics/macos/initialization_settings.dart';
 export 'src/platform_specifics/macos/notification_attachment.dart';
 export 'src/platform_specifics/macos/notification_details.dart';
+export 'src/platform_specifics/windows/initialization_settings.dart';
 export 'src/typedefs.dart';
 export 'src/types.dart';

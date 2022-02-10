@@ -182,11 +182,16 @@ Future<void> main() async {
     defaultActionName: 'Open notification',
     defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),
   );
+  const WindowsInitializationSettings initializationSettingsWindows =
+      WindowsInitializationSettings(
+    appName: 'Flutter Local Notifications Example',
+  );
   final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
     iOS: initializationSettingsIOS,
     macOS: initializationSettingsMacOS,
     linux: initializationSettingsLinux,
+    windows: initializationSettingsWindows,
   );
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
@@ -733,7 +738,7 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () async {
                           await _stopForegroundService();
                         },
-                      ),                      
+                      ),
                     ],
                     if (!kIsWeb &&
                         (Platform.isIOS || Platform.isMacOS)) ...<Widget>[
@@ -2153,8 +2158,6 @@ class _HomePageState extends State<HomePage> {
         ?.stopForegroundService();
   }
 
-  
-
   Future<void> _createNotificationChannel() async {
     const AndroidNotificationChannel androidNotificationChannel =
         AndroidNotificationChannel(
@@ -2417,7 +2420,8 @@ Future<void> _showLinuxNotificationWithByteDataIcon() async {
         data: iconBytes,
         width: iconData.width,
         height: iconData.height,
-        channels: 4, // The icon has an alpha channel
+        channels: 4,
+        // The icon has an alpha channel
         hasAlpha: true,
       ),
     ),

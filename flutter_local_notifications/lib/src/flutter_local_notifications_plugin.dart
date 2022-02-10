@@ -150,6 +150,11 @@ class FlutterLocalNotificationsPlugin {
               LinuxFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.linux!,
               onSelectNotification: onSelectNotification);
+    } else if (defaultTargetPlatform == TargetPlatform.windows) {
+      return await resolvePlatformSpecificImplementation<
+              WindowsFlutterLocalNotificationsPlugin>()
+          ?.initialize(initializationSettings.windows!,
+              onSelectNotification: onSelectNotification);
     }
     return true;
   }

@@ -33,12 +33,14 @@ namespace {
 		virtual ~FlutterLocalNotificationsPlugin();
 
 	private:
-		winrt::Windows::UI::Notifications::ToastNotificationManager toastManager;
+		std::optional<winrt::Windows::UI::Notifications::ToastNotifier> toastNotifier;
 
 		// Called when a method is called on this plugin's channel from Dart.
 		void HandleMethodCall(
 			const flutter::MethodCall<flutter::EncodableValue>& method_call,
 			std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
+		void Initialize(const std::string& appName);
 
 		void ShowNotification(
 			const std::string& title,
@@ -62,12 +64,9 @@ namespace {
 		});
 
 		registrar->AddPlugin(std::move(plugin));
-
-		SetCurrentProcessExplicitAppUserModelID(L"Com.Example.Flutter.FlutterLocalNotificationPlugin");
 	}
 
-	FlutterLocalNotificationsPlugin::FlutterLocalNotificationsPlugin() :
-		toastManager{} {}
+	FlutterLocalNotificationsPlugin::FlutterLocalNotificationsPlugin() {}
 
 	FlutterLocalNotificationsPlugin::~FlutterLocalNotificationsPlugin() {}
 
@@ -76,9 +75,22 @@ namespace {
 		std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
 		std::cout << method_call.method_name() << std::endl;
 		std::cout << Method::GET_NOTIFICATION_APP_LAUNCH_DETAILS << std::endl;
+
 		const auto& method_name = method_call.method_name();
 		if (method_name == Method::GET_NOTIFICATION_APP_LAUNCH_DETAILS) {
 			result->Success();
+		}
+		else if (method_name == Method::INITIALIZE) {
+			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
+			if (args != nullptr) {
+				const auto appName = Utils::GetString("appName", args).value();
+
+				Initialize(appName);
+				result->Success(true);
+			}
+			else {
+				result->Error("INTERNAL", "flutter_local_notifications encountered an internal error.");
+			}
 		}
 		else if (method_name == Method::SHOW) {
 			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
@@ -99,6 +111,10 @@ namespace {
 		}
 	}
 
+	void FlutterLocalNotificationsPlugin::Initialize(const std::string& appName) {
+		toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(winrt::to_hstring(appName));
+	}
+
 	void FlutterLocalNotificationsPlugin::ShowNotification(
 		const std::string& title,
 		const std::string& body,
@@ -114,7 +130,7 @@ namespace {
 		nodes.Item(1).AppendChild(doc.CreateTextNode(winrt::to_hstring(body)));
 
 		winrt::Windows::UI::Notifications::ToastNotification notif{ doc };
-		const auto notifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(L"com.dexterous.example");
+		const auto notifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(L"Test App Name");
 
 		notifier.Show(notif);
 	}

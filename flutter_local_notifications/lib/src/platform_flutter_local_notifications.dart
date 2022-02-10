@@ -25,6 +25,8 @@ import 'platform_specifics/ios/notification_details.dart';
 import 'platform_specifics/macos/initialization_settings.dart';
 import 'platform_specifics/macos/method_channel_mappers.dart';
 import 'platform_specifics/macos/notification_details.dart';
+import 'platform_specifics/windows/initialization_settings.dart';
+import 'platform_specifics/windows/method_channel_mappers.dart';
 import 'type_mappers.dart';
 import 'typedefs.dart';
 import 'types.dart';
@@ -850,17 +852,32 @@ class MacOSFlutterLocalNotificationsPlugin
   }
 }
 
+/// Windows implementation of the flutter_local_notifications plugin.
 class WindowsFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
+  /// Initializes the plugin.
+  ///
+  /// Call this method on application before using the plugin further.
+  /// This should only be done once. When a notification created by this plugin
+  /// was used to launch the app, calling [initialize] is what will trigger to
+  /// the [onSelectNotification] callback to be fire.
+  ///
+  /// To handle when a notification launched an application, use
+  /// [getNotificationAppLaunchDetails].
+  Future<bool?> initialize(
+    WindowsInitializationSettings settings, {
+    SelectNotificationCallback? onSelectNotification,
+  }) =>
+      _channel.invokeMethod('initialize', settings.toMap());
+
   @override
-  Future<void> show(int id, String? title, String? body, {String? payload}) {
-    return _channel.invokeMethod('show', <String, Object?>{
-      'id': id,
-      'title': title,
-      'body': body,
-      'payload': payload ?? '',
-    });
-  }
+  Future<void> show(int id, String? title, String? body, {String? payload}) =>
+      _channel.invokeMethod('show', <String, Object?>{
+        'id': id,
+        'title': title,
+        'body': body,
+        'payload': payload ?? '',
+      });
 }
 
 /// Checks [backgroundHandler] method, if not `null`, for eligibility to
