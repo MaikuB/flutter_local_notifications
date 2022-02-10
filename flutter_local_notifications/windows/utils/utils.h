@@ -11,7 +11,8 @@ namespace Utils {
 	/// <param name="key">The key that maps to the desired string value.</param>
 	/// <param name="m">The EncodabeMap that stores the key-value pair.</param>
 	/// <returns>The string value that the key maps to, or nullopt if none is found.</returns>
-	std::optional<std::string> GetString(const std::string& key, const flutter::EncodableMap* m);
+	template <typename T>
+	std::optional<T> GetMapValue(const std::string& key, const flutter::EncodableMap* m);
 }
 
 #endif // !UTILS_H

@@ -33,6 +33,7 @@ namespace {
 		virtual ~FlutterLocalNotificationsPlugin();
 
 	private:
+		std::map<int, winrt::Windows::UI::Notifications::ToastNotification&> activeNotifications;
 		std::optional<winrt::Windows::UI::Notifications::ToastNotifier> toastNotifier;
 
 		// Called when a method is called on this plugin's channel from Dart.
@@ -43,9 +44,12 @@ namespace {
 		void Initialize(const std::string& appName);
 
 		void ShowNotification(
+			const int id,
 			const std::string& title,
 			const std::string& body,
 			const std::optional<std::string>& payload);
+
+		void CancelNotification(const int id);
 	};
 
 	// static
@@ -83,7 +87,7 @@ namespace {
 		else if (method_name == Method::INITIALIZE) {
 			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
 			if (args != nullptr) {
-				const auto appName = Utils::GetString("appName", args).value();
+				const auto appName = Utils::GetMapValue<std::string>("appName", args).value();
 
 				Initialize(appName);
 				result->Success(true);
@@ -94,12 +98,24 @@ namespace {
 		}
 		else if (method_name == Method::SHOW) {
 			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
-			if (args != nullptr) {
-				const auto title = Utils::GetString("title", args).value();
-				const auto body = Utils::GetString("body", args).value();
-				const auto payload = Utils::GetString("payload", args);
+			if (args != nullptr && toastNotifier.has_value()) {
+				const auto id = Utils::GetMapValue<int>("id", args).value();
+				const auto title = Utils::GetMapValue<std::string>("title", args).value();
+				const auto body = Utils::GetMapValue<std::string>("body", args).value();
+				const auto payload = Utils::GetMapValue<std::string>("payload", args);
 
-				ShowNotification(title, body, payload);
+				ShowNotification(id, title, body, payload);
+				result->Success();
+			}
+			else {
+				result->Error("INTERNAL", "flutter_local_notifications encountered an internal error.");
+			}
+		}
+		else if (method_name == Method::CANCEL && toastNotifier.has_value()) {
+			const auto args = method_call.arguments();
+			if (std::holds_alternative<int>(*args)) {
+				const auto id = std::get<int>(*args);
+				CancelNotification(id);
 				result->Success();
 			}
 			else {
@@ -116,6 +132,7 @@ namespace {
 	}
 
 	void FlutterLocalNotificationsPlugin::ShowNotification(
+		const int id,
 		const std::string& title,
 		const std::string& body,
 		const std::optional<std::string>& payload) {
@@ -130,9 +147,17 @@ namespace {
 		nodes.Item(1).AppendChild(doc.CreateTextNode(winrt::to_hstring(body)));
 
 		winrt::Windows::UI::Notifications::ToastNotification notif{ doc };
-		const auto notifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(L"Test App Name");
 
-		notifier.Show(notif);
+		toastNotifier.value().Show(notif);
+		activeNotifications[id] = notif;
+	}
+
+	void FlutterLocalNotificationsPlugin::CancelNotification(const int id) {
+		const auto p = activeNotifications.find(id);
+		if (p != activeNotifications.end()) {
+			const auto& notif = p->second;
+			toastNotifier.value().Hide(notif);
+		}
 	}
 }  // namespace
 

@@ -5,3 +5,4 @@
 const std::string Method::GET_NOTIFICATION_APP_LAUNCH_DETAILS = "getNotificationAppLaunchDetails";
 const std::string Method::SHOW = "show";
 const std::string Method::INITIALIZE = "initialize";
+const std::string Method::CANCEL = "cancel";
