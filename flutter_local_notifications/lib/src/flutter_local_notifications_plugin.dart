@@ -40,6 +40,9 @@ class FlutterLocalNotificationsPlugin {
     } else if (defaultTargetPlatform == TargetPlatform.linux) {
       FlutterLocalNotificationsPlatform.instance =
           LinuxFlutterLocalNotificationsPlugin();
+    } else if (defaultTargetPlatform == TargetPlatform.windows) {
+      FlutterLocalNotificationsPlatform.instance =
+          WindowsFlutterLocalNotificationsPlugin();
     }
   }
 
@@ -84,6 +87,11 @@ class FlutterLocalNotificationsPlugin {
         T == LinuxFlutterLocalNotificationsPlugin &&
         FlutterLocalNotificationsPlatform.instance
             is LinuxFlutterLocalNotificationsPlugin) {
+      return FlutterLocalNotificationsPlatform.instance as T?;
+    } else if (defaultTargetPlatform == TargetPlatform.windows &&
+        T == WindowsFlutterLocalNotificationsPlugin &&
+        FlutterLocalNotificationsPlatform.instance
+            is WindowsFlutterLocalNotificationsPlugin) {
       return FlutterLocalNotificationsPlatform.instance as T?;
     }
 
@@ -142,6 +150,11 @@ class FlutterLocalNotificationsPlugin {
               LinuxFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.linux!,
               onSelectNotification: onSelectNotification);
+    } else if (defaultTargetPlatform == TargetPlatform.windows) {
+      return await resolvePlatformSpecificImplementation<
+              WindowsFlutterLocalNotificationsPlugin>()
+          ?.initialize(initializationSettings.windows!,
+              onSelectNotification: onSelectNotification);
     }
     return true;
   }
@@ -174,6 +187,10 @@ class FlutterLocalNotificationsPlugin {
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       return await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
+          ?.getNotificationAppLaunchDetails();
+    } else if (defaultTargetPlatform == TargetPlatform.windows) {
+      return await resolvePlatformSpecificImplementation<
+              WindowsFlutterLocalNotificationsPlugin>()
           ?.getNotificationAppLaunchDetails();
     } else {
       return await FlutterLocalNotificationsPlatform.instance

@@ -24,6 +24,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  msix: ^2.8.17
 
 dependency_overrides: 
   flutter_local_notifications_platform_interface:
@@ -40,3 +41,8 @@ flutter:
 environment:
   sdk: '>=2.12.0-0 <3.0.0'
   flutter: '>=1.26.0-0' # allows for using integration_test from SDK
+
+msix_config:
+  display_name: Flutter Local Notifications Example
+  identity_name: Com.Example.FlutterLocalNotificationsExample
+  debug: true

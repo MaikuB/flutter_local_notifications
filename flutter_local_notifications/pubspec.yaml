@@ -33,6 +33,8 @@ flutter:
         pluginClass: FlutterLocalNotificationsPlugin
       linux:
         default_package: flutter_local_notifications_linux
+      windows:
+        pluginClass: FlutterLocalNotificationsPlugin
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
