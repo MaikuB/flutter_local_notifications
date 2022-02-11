@@ -343,26 +343,7 @@ public class FlutterLocalNotificationsPlugin
     SharedPreferences sharedPreferences =
         context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
-    editor.putString(SCHEDULED_NOTIFICATIONS, json);
-    tryCommittingInBackground(editor, 3);
-  }
-
-  private static void tryCommittingInBackground(
-      final SharedPreferences.Editor editor, final int tries) {
-    if (tries == 0) {
-      return;
-    }
-    new Thread(
-            new Runnable() {
-              @Override
-              public void run() {
-                final boolean isCommitted = editor.commit();
-                if (!isCommitted) {
-                  tryCommittingInBackground(editor, tries - 1);
-                }
-              }
-            })
-        .start();
+    editor.putString(SCHEDULED_NOTIFICATIONS, json).apply();
   }
 
   static void removeNotificationFromCache(Context context, Integer notificationId) {
@@ -1394,8 +1375,7 @@ public class FlutterLocalNotificationsPlugin
     SharedPreferences sharedPreferences =
         applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
-    editor.putString(DEFAULT_ICON, defaultIcon);
-    tryCommittingInBackground(editor, 3);
+    editor.putString(DEFAULT_ICON, defaultIcon).apply();
     result.success(true);
   }
 
