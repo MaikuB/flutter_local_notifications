@@ -1,10 +1,14 @@
+# [10.0.0-dev.6]
+
+* [Android] Fixed issue [1476](https://github.com/MaikuB/flutter_local_notifications/issues/1476) where crash can occur on Android 12 as mutability flags weren't being applied to intents associated with notification actions
+
 # [10.0.0-dev.5]
 
-* [Android] Fix error where plugin was lookup to the notification action callback and failed to find it as it was doing before the Flutter engine was initialised
+* [Android] Fixed error where plugin was lookup to the notification action callback and failed to find it as it was doing before the Flutter engine was initialised
 
 # [10.0.0-dev.4]
 
-* [Android] Fix Android 12 specific issue related to notification acitons by adding exported flag to the receiver used to process actions
+* [Android] Fixed Android 12 specific issue related to notification actions by adding exported flag to the receiver used to process actions
 
 # [10.0.0-dev.3]
 
