@@ -239,7 +239,7 @@ public class FlutterLocalNotificationsPlugin
                 .putExtra(CANCEL_NOTIFICATION, action.cancelNotification)
                 .putExtra(PAYLOAD, notificationDetails.payload);
         int actionFlags = PendingIntent.FLAG_ONE_SHOT;
-        if(action.actionInputs == null || action.actionInputs.isEmpty()) {
+        if (action.actionInputs == null || action.actionInputs.isEmpty()) {
           if (VERSION.SDK_INT >= VERSION_CODES.M) {
             actionFlags |= PendingIntent.FLAG_IMMUTABLE;
           }
@@ -249,9 +249,9 @@ public class FlutterLocalNotificationsPlugin
           }
         }
 
-        @SuppressLint("UnspecifiedImmutableFlag") final PendingIntent actionPendingIntent =
-            PendingIntent.getBroadcast(
-                context, requestCode++, actionIntent, actionFlags);
+        @SuppressLint("UnspecifiedImmutableFlag")
+        final PendingIntent actionPendingIntent =
+            PendingIntent.getBroadcast(context, requestCode++, actionIntent, actionFlags);
 
         final Spannable actionTitleSpannable = new SpannableString(action.title);
         if (action.titleColor != null) {
