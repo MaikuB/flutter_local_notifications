@@ -1,3 +1,8 @@
+# [9.3.0]
+
+* [Android] Updated how scheduled notifications are saved to shared preferences so it is done in the background. This is to fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where `pendingNotificationRequests` method may not report the correct number of scheduled notifications if it is invoked before the data had been saved to shared preferences
+* [Android] Added `colorized` property to `AndroidNotificationDetails` class. This can be used to apply a background colour to the notification but for most styles, this only works if a foreground service was used. Example app has been updated to demonstrate its usage. Thanks to the PR from [benechiu](https://github.com/benechiu)
+
 # [9.2.0]
 
 * [Android] Added `areNotificationsEnabled()` method to `AndroidFlutterLocalNotificationsPlugin`. This allows querying if notifications are enabled for the app calling the method. Thanks to the PR from [Konstantin Pelz](https://github.com/komape)
