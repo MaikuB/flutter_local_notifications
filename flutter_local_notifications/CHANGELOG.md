@@ -1,6 +1,6 @@
 # [9.3.1]
 
-* Fix issue [1479](https://github.com/MaikuB/flutter_local_notifications/issues/1479) by removed `dart:ffi` import
+* Fix issue [1479](https://github.com/MaikuB/flutter_local_notifications/issues/1479) that could cause compilation issue on the web by removing `dart:ffi` import
 
 # [9.3.0]
 
