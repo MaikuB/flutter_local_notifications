@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_local_notifications_linux: ^0.4.1
-  flutter_local_notifications_platform_interface: ^6.0.0
+  flutter_local_notifications_platform_interface: ^5.0.0
   timezone: ^0.8.0
 
 dev_dependencies:

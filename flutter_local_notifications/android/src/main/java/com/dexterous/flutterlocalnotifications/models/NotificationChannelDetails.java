@@ -1,7 +1,9 @@
 package com.dexterous.flutterlocalnotifications.models;
 
 import android.graphics.Color;
+
 import androidx.annotation.Keep;
+
 import java.io.Serializable;
 import java.util.Map;
 

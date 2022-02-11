@@ -15,7 +15,6 @@ dependencies:
   path_provider: ^2.0.0
   rxdart: ^0.27.2
   shared_preferences: ^2.0.1
-  url_launcher: ^6.0.17
 
 dev_dependencies:
   flutter_driver:
@@ -24,12 +23,6 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-
-dependency_overrides: 
-  flutter_local_notifications_platform_interface:
-    path: ../../flutter_local_notifications_platform_interface/
-  flutter_local_notifications_linux:
-    path: ../../flutter_local_notifications_linux/
 
 flutter:
   uses-material-design: true
