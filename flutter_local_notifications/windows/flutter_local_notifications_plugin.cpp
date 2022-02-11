@@ -33,7 +33,7 @@ namespace {
 		virtual ~FlutterLocalNotificationsPlugin();
 
 	private:
-		std::map<int, winrt::Windows::UI::Notifications::ToastNotification&> activeNotifications;
+		std::map<int, winrt::Windows::UI::Notifications::ToastNotification*> activeNotifications;
 		std::optional<winrt::Windows::UI::Notifications::ToastNotifier> toastNotifier;
 
 		// Called when a method is called on this plugin's channel from Dart.
@@ -45,8 +45,8 @@ namespace {
 
 		void ShowNotification(
 			const int id,
-			const std::string& title,
-			const std::string& body,
+			const std::optional<std::string>& title,
+			const std::optional<std::string>& body,
 			const std::optional<std::string>& payload);
 
 		void CancelNotification(const int id);
@@ -100,8 +100,8 @@ namespace {
 			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
 			if (args != nullptr && toastNotifier.has_value()) {
 				const auto id = Utils::GetMapValue<int>("id", args).value();
-				const auto title = Utils::GetMapValue<std::string>("title", args).value();
-				const auto body = Utils::GetMapValue<std::string>("body", args).value();
+				const auto title = Utils::GetMapValue<std::string>("title", args);
+				const auto body = Utils::GetMapValue<std::string>("body", args);
 				const auto payload = Utils::GetMapValue<std::string>("payload", args);
 
 				ShowNotification(id, title, body, payload);
@@ -133,30 +133,35 @@ namespace {
 
 	void FlutterLocalNotificationsPlugin::ShowNotification(
 		const int id,
-		const std::string& title,
-		const std::string& body,
+		const std::optional<std::string>& title,
+		const std::optional<std::string>& body,
 		const std::optional<std::string>& payload) {
 
 		// obtain a notification template with a title and a body
 		const auto doc = winrt::Windows::UI::Notifications::ToastNotificationManager::GetTemplateContent(winrt::Windows::UI::Notifications::ToastTemplateType::ToastText02);
 		// find all <text /> tags
 		const auto nodes = doc.GetElementsByTagName(L"text");
-		// change the text of the first <text></text>
-		nodes.Item(0).AppendChild(doc.CreateTextNode(winrt::to_hstring(title)));
-		// change the text of the second <text></text>
-		nodes.Item(1).AppendChild(doc.CreateTextNode(winrt::to_hstring(body)));
 
+		if (title.has_value()) {
+			// change the text of the first <text></text>, which will be the title
+			nodes.Item(0).AppendChild(doc.CreateTextNode(winrt::to_hstring(title.value())));
+		}
+		if (body.has_value()) {
+			// change the text of the second <text></text>, which will be the body
+			nodes.Item(1).AppendChild(doc.CreateTextNode(winrt::to_hstring(body.value())));
+		}
+		
 		winrt::Windows::UI::Notifications::ToastNotification notif{ doc };
 
 		toastNotifier.value().Show(notif);
-		activeNotifications[id] = notif;
+		activeNotifications[id] = &notif;
 	}
 
 	void FlutterLocalNotificationsPlugin::CancelNotification(const int id) {
 		const auto p = activeNotifications.find(id);
 		if (p != activeNotifications.end()) {
 			const auto& notif = p->second;
-			toastNotifier.value().Hide(notif);
+			toastNotifier.value().Hide(*notif);
 		}
 	}
 }  // namespace

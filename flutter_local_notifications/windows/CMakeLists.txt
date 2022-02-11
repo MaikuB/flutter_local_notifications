@@ -34,7 +34,7 @@ endfunction()
 add_library(${PLUGIN_NAME} SHARED
   "flutter_local_notifications_plugin.cpp"
   "methods.cpp"
-  "utils/utils.cpp")
+  "utils/utils.h")
 
 # setup c++/winrt
 set(CPPWINRT_VERSION "2.0.220131.2")
