@@ -1,5 +1,4 @@
 import '../../typedefs.dart';
-import '../darwin/darwin_notification_category.dart';
 
 /// Plugin initialization settings for iOS.
 class IOSInitializationSettings {
@@ -12,7 +11,6 @@ class IOSInitializationSettings {
     this.defaultPresentSound = true,
     this.defaultPresentBadge = true,
     this.onDidReceiveLocalNotification,
-    this.notificationCategories = const <DarwinNotificationCategory>[],
   });
 
   /// Request permission to display an alert.
@@ -60,15 +58,4 @@ class IOSInitializationSettings {
   ///
   /// This property is only applicable to iOS versions older than 10.
   final DidReceiveLocalNotificationCallback? onDidReceiveLocalNotification;
-
-  /// Configure the notification categories ([DarwinNotificationCategory])
-  /// available. This allows for fine-tuning of preview display.
-  ///
-  /// IMPORTANT: A change to the category actions will either require a full app
-  /// uninstall / reinstall or a change to the category identifier. This is
-  /// because iOS configures the castegories once per App launch and considers
-  /// them immutable while the App is installed.
-  ///
-  /// Notification actions are configured in each [DarwinNotificationCategory].
-  final List<DarwinNotificationCategory> notificationCategories;
 }

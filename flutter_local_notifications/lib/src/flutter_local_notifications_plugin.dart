@@ -114,7 +114,6 @@ class FlutterLocalNotificationsPlugin {
   Future<bool?> initialize(
     InitializationSettings initializationSettings, {
     SelectNotificationCallback? onSelectNotification,
-    NotificationActionCallback? backgroundHandler,
   }) async {
     if (kIsWeb) {
       return true;
@@ -123,20 +122,17 @@ class FlutterLocalNotificationsPlugin {
       return resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.android!,
-              onSelectNotification: onSelectNotification,
-              backgroundHandler: backgroundHandler);
+              onSelectNotification: onSelectNotification);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       return await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.iOS!,
-              onSelectNotification: onSelectNotification,
-              backgroundHandler: backgroundHandler);
+              onSelectNotification: onSelectNotification);
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       return await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.macOS!,
-              onSelectNotification: onSelectNotification,
-              onNotificationActionSelected: backgroundHandler);
+              onSelectNotification: onSelectNotification);
     } else if (defaultTargetPlatform == TargetPlatform.linux) {
       return await resolvePlatformSpecificImplementation<
               LinuxFlutterLocalNotificationsPlugin>()

@@ -27,9 +27,7 @@ void main() {
       // ignore: always_specify_types
       channel.setMockMethodCallHandler((methodCall) async {
         log.add(methodCall);
-        if (methodCall.method == 'initialize') {
-          return true;
-        } else if (methodCall.method == 'pendingNotificationRequests') {
+        if (methodCall.method == 'pendingNotificationRequests') {
           return <Map<String, Object?>>[];
         } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
           return null;
@@ -75,145 +73,6 @@ void main() {
           }));
     });
 
-    test('show with Android actions', () async {
-      const AndroidNotificationDetails androidNotificationDetails =
-          AndroidNotificationDetails(
-        'channelId',
-        'channelName',
-        channelDescription: 'channelDescription',
-        actions: <AndroidNotificationAction>[
-          AndroidNotificationAction(
-            'action1',
-            'Action 1',
-            titleColor: Color.fromARGB(255, 0, 127, 16),
-            contextual: true,
-            showsUserInterface: true,
-            allowGeneratedReplies: true,
-            cancelNotification: false,
-          ),
-          AndroidNotificationAction(
-            'action2',
-            'Action 2',
-            titleColor: Color.fromARGB(255, 0, 127, 16),
-            inputs: <AndroidNotificationActionInput>[
-              AndroidNotificationActionInput(
-                choices: <String>['choice1', 'choice2'],
-                label: 'Select something',
-                allowedMimeTypes: <String>{'text/plain'},
-              ),
-            ],
-          )
-        ],
-      );
-
-      await flutterLocalNotificationsPlugin.show(
-        1,
-        'notification title',
-        'notification body',
-        const NotificationDetails(android: androidNotificationDetails),
-      );
-      expect(
-        log.last,
-        isMethodCall(
-          'show',
-          arguments: <String, Object?>{
-            'id': 1,
-            'title': 'notification title',
-            'body': 'notification body',
-            'payload': '',
-            'platformSpecifics': <String, Object?>{
-              'icon': null,
-              'channelId': 'channelId',
-              'channelName': 'channelName',
-              'channelDescription': 'channelDescription',
-              'channelShowBadge': true,
-              'channelAction':
-                  AndroidNotificationChannelAction.createIfNotExists.index,
-              'importance': Importance.defaultImportance.value,
-              'priority': Priority.defaultPriority.value,
-              'playSound': true,
-              'enableVibration': true,
-              'vibrationPattern': null,
-              'groupKey': null,
-              'setAsGroupSummary': false,
-              'groupAlertBehavior': GroupAlertBehavior.all.index,
-              'autoCancel': true,
-              'ongoing': false,
-              'colorAlpha': null,
-              'colorRed': null,
-              'colorGreen': null,
-              'colorBlue': null,
-              'onlyAlertOnce': false,
-              'showWhen': true,
-              'when': null,
-              'usesChronometer': false,
-              'showProgress': false,
-              'maxProgress': 0,
-              'progress': 0,
-              'indeterminate': false,
-              'enableLights': false,
-              'ledColorAlpha': null,
-              'ledColorRed': null,
-              'ledColorGreen': null,
-              'ledColorBlue': null,
-              'ledOnMs': null,
-              'ledOffMs': null,
-              'ticker': null,
-              'visibility': null,
-              'timeoutAfter': null,
-              'category': null,
-              'additionalFlags': null,
-              'fullScreenIntent': false,
-              'shortcutId': null,
-              'subText': null,
-              'style': AndroidNotificationStyle.defaultStyle.index,
-              'styleInformation': <String, Object>{
-                'htmlFormatContent': false,
-                'htmlFormatTitle': false,
-              },
-              'tag': null,
-              'colorized': false,
-              'actions': <Map<String, Object>>[
-                <String, Object>{
-                  'id': 'action1',
-                  'title': 'Action 1',
-                  'titleColorAlpha': 255,
-                  'titleColorRed': 0,
-                  'titleColorGreen': 127,
-                  'titleColorBlue': 16,
-                  'contextual': true,
-                  'showsUserInterface': true,
-                  'allowGeneratedReplies': true,
-                  'inputs': <Object>[],
-                  'cancelNotification': false
-                },
-                <String, Object>{
-                  'id': 'action2',
-                  'title': 'Action 2',
-                  'titleColorAlpha': 255,
-                  'titleColorRed': 0,
-                  'titleColorGreen': 127,
-                  'titleColorBlue': 16,
-                  'contextual': false,
-                  'showsUserInterface': false,
-                  'allowGeneratedReplies': false,
-                  'inputs': <Map<String, Object>>[
-                    <String, Object>{
-                      'choices': <String>['choice1', 'choice2'],
-                      'allowFreeFormInput': true,
-                      'label': 'Select something',
-                      'allowedMimeType': <String>['text/plain']
-                    }
-                  ],
-                  'cancelNotification': true,
-                }
-              ],
-            },
-          },
-        ),
-      );
-    });
-
     test('show with default Android-specific details', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
@@ -221,11 +80,8 @@ void main() {
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       const AndroidNotificationDetails androidNotificationDetails =
-          AndroidNotificationDetails(
-        'channelId',
-        'channelName',
-        channelDescription: 'channelDescription',
-      );
+          AndroidNotificationDetails('channelId', 'channelName',
+              channelDescription: 'channelDescription');
 
       await flutterLocalNotificationsPlugin.show(
           1,

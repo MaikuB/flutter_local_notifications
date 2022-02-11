@@ -3,8 +3,9 @@ package com.dexterous.flutterlocalnotifications.models;
 import android.graphics.Color;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+
 import androidx.annotation.Keep;
-import androidx.annotation.Nullable;
+
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.RepeatInterval;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
@@ -13,9 +14,9 @@ import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInforma
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Keep
@@ -117,7 +118,6 @@ public class NotificationDetails implements Serializable {
   private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
   private static final String SHORTCUT_ID = "shortcutId";
   private static final String SUB_TEXT = "subText";
-  private static final String ACTIONS = "actions";
   private static final String COLORIZED = "colorized";
 
   public Integer id;
@@ -177,7 +177,6 @@ public class NotificationDetails implements Serializable {
   public Boolean fullScreenIntent;
   public String shortcutId;
   public String subText;
-  public @Nullable List<NotificationAction> actions;
   public String tag;
   public Boolean colorized;
 
@@ -266,19 +265,6 @@ public class NotificationDetails implements Serializable {
       notificationDetails.subText = (String) platformChannelSpecifics.get(SUB_TEXT);
       notificationDetails.tag = (String) platformChannelSpecifics.get(TAG);
       notificationDetails.colorized = (Boolean) platformChannelSpecifics.get(COLORIZED);
-
-      if (platformChannelSpecifics.containsKey(ACTIONS)) {
-        List<Map<String, Object>> inputActions =
-            (List<Map<String, Object>>) platformChannelSpecifics.get(ACTIONS);
-        if (!inputActions.isEmpty()) {
-          notificationDetails.actions = new ArrayList<>();
-
-          for (Map<String, Object> input : inputActions) {
-            final NotificationAction action = new NotificationAction(input);
-            notificationDetails.actions.add(action);
-          }
-        }
-      }
     }
   }
 

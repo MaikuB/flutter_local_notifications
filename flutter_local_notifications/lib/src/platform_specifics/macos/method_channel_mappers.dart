@@ -1,4 +1,3 @@
-import '../darwin/mappers.dart';
 import 'initialization_settings.dart';
 import 'notification_attachment.dart';
 import 'notification_details.dart';
@@ -11,10 +10,7 @@ extension MacOSInitializationSettingsMapper on MacOSInitializationSettings {
         'requestBadgePermission': requestBadgePermission,
         'defaultPresentAlert': defaultPresentAlert,
         'defaultPresentSound': defaultPresentSound,
-        'defaultPresentBadge': defaultPresentBadge,
-        'notificationCategories': notificationCategories
-            .map((e) => e.toMap()) // ignore: always_specify_types
-            .toList(),
+        'defaultPresentBadge': defaultPresentBadge
       };
 }
 
@@ -36,7 +32,6 @@ extension MacOSNotificationDetailsMapper on MacOSNotificationDetails {
         'threadIdentifier': threadIdentifier,
         'attachments': attachments
             ?.map((a) => a.toMap()) // ignore: always_specify_types
-            .toList(),
-        'categoryIdentifier': categoryIdentifier,
+            .toList()
       };
 }

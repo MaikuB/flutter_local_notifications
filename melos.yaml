@@ -19,11 +19,6 @@ scripts:
     select-package:
       dir-exists:
         - test
-  test:unit:android:
-    description: Runs java unit tests
-    run: melos exec -c 1 -- "flutter build apk --debug && cd android && ./gradlew flutter_local_notifications:testDebug"
-    select-package:
-      scope: "*example*"
   test:integration:
     run: melos exec -c 1 -- "flutter test integration_test"
     description: Run integration tests
@@ -34,7 +29,7 @@ scripts:
   build:example_android:
     run: |
       melos exec -c 1 -- \
-        "flutter build apk --debug"
+        "flutter build apk"
     description: Build a specific example app for Android.
     select-package:
       dir-exists:
