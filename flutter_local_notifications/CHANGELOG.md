@@ -1,3 +1,7 @@
+# [10.0.0-dev.7]
+
+* Includes fix from 9.3.1
+
 # [10.0.0-dev.6]
 
 * [Android] Fixed issue [1476](https://github.com/MaikuB/flutter_local_notifications/issues/1476) where crash can occur on Android 12 as mutability flags weren't being applied to intents associated with notification actions
@@ -33,6 +37,10 @@
   * `GET_ACTIVE_NOTIFICATIONS_ERROR_CODE` -> `unsupported_os_version`
   * `GET_NOTIFICATION_CHANNELS_ERROR_CODE` -> `getNotificationChannelsError`
   
+# [9.3.1]
+
+* Fix issue [1479](https://github.com/MaikuB/flutter_local_notifications/issues/1479) that could cause compilation issue on the web by removing `dart:ffi` import
+
 # [9.3.0]
 
 * [Android] Updated how scheduled notifications are saved to shared preferences so it is done in the background. This is to fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where `pendingNotificationRequests` method may not report the correct number of scheduled notifications if it is invoked before the data had been saved to shared preferences
