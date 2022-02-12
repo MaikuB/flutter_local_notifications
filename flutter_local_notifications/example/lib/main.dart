@@ -101,8 +101,21 @@ Future<void> main() async {
     initialRoute = SecondPage.routeName;
   }
 
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('app_icon');
+  final AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings(
+    'app_icon',
+    onDidReceiveLocalNotification:
+        (int id, String? title, String? body, String? payload) async {
+      didReceiveLocalNotificationSubject.add(
+        ReceivedNotification(
+          id: id,
+          title: title,
+          body: body,
+          payload: payload,
+        ),
+      );
+    },
+  );
 
   final List<DarwinNotificationCategory> darwinNotificationCategories =
       <DarwinNotificationCategory>[

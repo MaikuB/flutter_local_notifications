@@ -94,6 +94,12 @@ import java.util.Map;
 public class FlutterLocalNotificationsPlugin
     implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
 
+  public static FlutterLocalNotificationsPlugin INSTANCE;
+
+  public FlutterLocalNotificationsPlugin() {
+    INSTANCE = this;
+}
+
   private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
   private static final String DISPATCHER_HANDLE = "dispatcher_handle";
   private static final String CALLBACK_HANDLE = "callback_handle";
@@ -1075,17 +1081,31 @@ public class FlutterLocalNotificationsPlugin
     return true;
   }
 
-  static void showNotification(Context context, NotificationDetails notificationDetails) {
-    Notification notification = createNotification(context, notificationDetails);
-    NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
+    static void showNotification(Context context, NotificationDetails notificationDetails) {
+        Notification notification = createNotification(context, notificationDetails);
+        NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
 
-    if (notificationDetails.tag != null) {
-      notificationManagerCompat.notify(
-          notificationDetails.tag, notificationDetails.id, notification);
-    } else {
-      notificationManagerCompat.notify(notificationDetails.id, notification);
+        if (notificationDetails.tag != null) {
+            notificationManagerCompat.notify(
+                    notificationDetails.tag, notificationDetails.id, notification);
+        } else {
+            notificationManagerCompat.notify(notificationDetails.id, notification);
+        }
+
+        if (FlutterLocalNotificationsPlugin.INSTANCE != null) {
+            FlutterLocalNotificationsPlugin.INSTANCE.sendDidReceiveLocalNotificationMessage(notificationDetails);
+        }
     }
-  }
+
+    private void sendDidReceiveLocalNotificationMessage(NotificationDetails notificationDetails) {
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("id", notificationDetails.id);
+        arguments.put("title", notificationDetails.title);
+        arguments.put("body", notificationDetails.body);
+        arguments.put("payload", notificationDetails.payload);
+
+        channel.invokeMethod("didReceiveLocalNotification", arguments);
+    }
 
   static void zonedScheduleNextNotification(
       Context context, NotificationDetails notificationDetails) {

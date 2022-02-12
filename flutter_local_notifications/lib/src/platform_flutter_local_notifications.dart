@@ -94,6 +94,7 @@ class MethodChannelFlutterLocalNotificationsPlugin
 class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
   SelectNotificationCallback? _onSelectNotification;
+  DidReceiveLocalNotificationCallback? _onDidReceiveLocalNotification;
 
   /// Initializes the plugin.
   ///
@@ -111,6 +112,8 @@ class AndroidFlutterLocalNotificationsPlugin
     SelectNotificationActionCallback? onSelectNotificationAction,
   }) async {
     _onSelectNotification = onSelectNotification;
+    _onDidReceiveLocalNotification =
+        initializationSettings.onDidReceiveLocalNotification;
     _channel.setMethodCallHandler(_handleMethod);
 
     final Map<String, Object> arguments = initializationSettings.toMap();
@@ -469,6 +472,14 @@ class AndroidFlutterLocalNotificationsPlugin
     switch (call.method) {
       case 'selectNotification':
         _onSelectNotification?.call(call.arguments);
+        break;
+      case 'didReceiveLocalNotification':
+        _onDidReceiveLocalNotification?.call(
+          call.arguments['id'],
+          call.arguments['title'],
+          call.arguments['body'],
+          call.arguments['payload'],
+        );
         break;
       default:
         return await Future<void>.error('Method not defined');
