@@ -6,5 +6,8 @@ extension WindowsInitializationSettingsMapper on WindowsInitializationSettings {
   /// Maps [WindowsInitializationSettings] to a [Map].
   Map<String, dynamic> toMap() => <String, dynamic>{
         'appName': appName,
+        'aumid': appUserModelId,
+        'iconPath': iconPath,
+        'iconBgColor': iconBackgroundColor,
       };
 }

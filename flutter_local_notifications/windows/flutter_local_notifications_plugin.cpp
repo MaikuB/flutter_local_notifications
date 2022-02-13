@@ -1,10 +1,12 @@
 #include "include/flutter_local_notifications/flutter_local_notifications_plugin.h"
 #include "include/flutter_local_notifications/methods.h"
 #include "utils/utils.h"
+#include "registration.h"
 
 // This must be included before many other Windows headers.
 #include <windows.h>
 #include <ShObjIdl_core.h>
+#include <NotificationActivationCallback.h>
 #include <winrt/Windows.UI.Notifications.h>
 #include <winrt/Windows.UI.Notifications.Management.h>
 #include <winrt/Windows.Data.Xml.Dom.h>
@@ -33,23 +35,47 @@ namespace {
 		virtual ~FlutterLocalNotificationsPlugin();
 
 	private:
-		std::map<int, winrt::Windows::UI::Notifications::ToastNotification*> activeNotifications;
 		std::optional<winrt::Windows::UI::Notifications::ToastNotifier> toastNotifier;
+		std::optional<winrt::Windows::UI::Notifications::ToastNotificationHistory> toastNotificationHistory;
 
 		// Called when a method is called on this plugin's channel from Dart.
 		void HandleMethodCall(
 			const flutter::MethodCall<flutter::EncodableValue>& method_call,
 			std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
-		void Initialize(const std::string& appName);
+		/// <summary>
+		/// Initializes this plugin.
+		/// </summary>
+		/// <param name="appName">The display name of this app that should be shown in the notification toast.</param>
+		void Initialize(
+			const std::string& appName,
+			const std::string& aumid,
+			const std::optional<std::string>& iconPath,
+			const std::optional<std::string>& iconBgColor);
 
+		/// <summary>
+		/// Displays a single notification toast.
+		/// </summary>
+		/// <param name="id">A unique ID that identifies this notification. It can be used to cancel/dismiss the notification.</param>
+		/// <param name="title">An optional title of the notification.</param>
+		/// <param name="body">An optional body of the notification.</param>
+		/// <param name="payload"></param>
 		void ShowNotification(
 			const int id,
 			const std::optional<std::string>& title,
 			const std::optional<std::string>& body,
 			const std::optional<std::string>& payload);
 
+		/// <summary>
+		/// Dismisses the notification that has the given ID.
+		/// </summary>
+		/// <param name="id">The ID of the notification to be dismissed.</param>
 		void CancelNotification(const int id);
+
+		/// <summary>
+		/// Dismisses all currently active notifications.
+		/// </summary>
+		void CancelAllNotifications();
 	};
 
 	// static
@@ -78,7 +104,6 @@ namespace {
 		const flutter::MethodCall<flutter::EncodableValue>& method_call,
 		std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
 		std::cout << method_call.method_name() << std::endl;
-		std::cout << Method::GET_NOTIFICATION_APP_LAUNCH_DETAILS << std::endl;
 
 		const auto& method_name = method_call.method_name();
 		if (method_name == Method::GET_NOTIFICATION_APP_LAUNCH_DETAILS) {
@@ -88,8 +113,11 @@ namespace {
 			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
 			if (args != nullptr) {
 				const auto appName = Utils::GetMapValue<std::string>("appName", args).value();
+				const auto aumid = Utils::GetMapValue<std::string>("aumid", args).value();
+				const auto iconPath = Utils::GetMapValue<std::string>("iconPath", args);
+				const auto iconBgColor = Utils::GetMapValue<std::string>("iconBgColor", args);
 
-				Initialize(appName);
+				Initialize(appName, aumid, iconPath, iconBgColor);
 				result->Success(true);
 			}
 			else {
@@ -122,13 +150,23 @@ namespace {
 				result->Error("INTERNAL", "flutter_local_notifications encountered an internal error.");
 			}
 		}
+		else if (method_name == Method::CANCEL_ALL && toastNotifier.has_value()) {
+			CancelAllNotifications();
+			result->Success();
+		}
 		else {
 			result->NotImplemented();
 		}
 	}
 
-	void FlutterLocalNotificationsPlugin::Initialize(const std::string& appName) {
-		toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(winrt::to_hstring(appName));
+	void FlutterLocalNotificationsPlugin::Initialize(
+		const std::string& appName,
+		const std::string& aumid,
+		const std::optional<std::string>& iconPath,
+		const std::optional<std::string>& iconBgColor) {
+		std::cout << "Initialize" << std::endl;
+		PluginRegistration::RegisterApp(aumid, appName, iconPath, iconBgColor);
+		toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(winrt::to_hstring(aumid));
 	}
 
 	void FlutterLocalNotificationsPlugin::ShowNotification(
@@ -152,17 +190,24 @@ namespace {
 		}
 		
 		winrt::Windows::UI::Notifications::ToastNotification notif{ doc };
+		notif.Tag(winrt::to_hstring(id));
 
 		toastNotifier.value().Show(notif);
-		activeNotifications[id] = &notif;
 	}
 
 	void FlutterLocalNotificationsPlugin::CancelNotification(const int id) {
-		const auto p = activeNotifications.find(id);
-		if (p != activeNotifications.end()) {
-			const auto& notif = p->second;
-			toastNotifier.value().Hide(*notif);
+		if (!toastNotificationHistory.has_value()) {
+			toastNotificationHistory = winrt::Windows::UI::Notifications::ToastNotificationManager::History();
 		}
+		toastNotificationHistory.value().Remove(winrt::to_hstring(id));
+	}
+
+	void FlutterLocalNotificationsPlugin::CancelAllNotifications() {
+		
+		if (!toastNotificationHistory.has_value()) {
+			toastNotificationHistory = winrt::Windows::UI::Notifications::ToastNotificationManager::History();
+		}
+		toastNotificationHistory.value().Clear();
 	}
 }  // namespace
 
