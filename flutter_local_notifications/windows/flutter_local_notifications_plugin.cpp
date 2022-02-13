@@ -46,7 +46,10 @@ namespace {
 		/// <summary>
 		/// Initializes this plugin.
 		/// </summary>
-		/// <param name="appName">The display name of this app that should be shown in the notification toast.</param>
+		/// <param name="aumid">The app user model ID that identifies the app.</param>
+		/// <param name="appName">The display name of the app.</param>
+		/// <param name="iconPath">An optional path to the icon of the app.</param>
+		/// <param name="iconBgColor">An optional background color of the icon, in AARRGGBB format.</param>
 		void Initialize(
 			const std::string& appName,
 			const std::string& aumid,
@@ -102,9 +105,8 @@ namespace {
 
 	void FlutterLocalNotificationsPlugin::HandleMethodCall(
 		const flutter::MethodCall<flutter::EncodableValue>& method_call,
-		std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-		std::cout << method_call.method_name() << std::endl;
-
+		std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result
+	) {
 		const auto& method_name = method_call.method_name();
 		if (method_name == Method::GET_NOTIFICATION_APP_LAUNCH_DETAILS) {
 			result->Success();
@@ -163,8 +165,8 @@ namespace {
 		const std::string& appName,
 		const std::string& aumid,
 		const std::optional<std::string>& iconPath,
-		const std::optional<std::string>& iconBgColor) {
-		std::cout << "Initialize" << std::endl;
+		const std::optional<std::string>& iconBgColor
+	) {
 		PluginRegistration::RegisterApp(aumid, appName, iconPath, iconBgColor);
 		toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(winrt::to_hstring(aumid));
 	}
@@ -173,8 +175,8 @@ namespace {
 		const int id,
 		const std::optional<std::string>& title,
 		const std::optional<std::string>& body,
-		const std::optional<std::string>& payload) {
-
+		const std::optional<std::string>& payload
+	) {
 		// obtain a notification template with a title and a body
 		const auto doc = winrt::Windows::UI::Notifications::ToastNotificationManager::GetTemplateContent(winrt::Windows::UI::Notifications::ToastTemplateType::ToastText02);
 		// find all <text /> tags
@@ -188,7 +190,7 @@ namespace {
 			// change the text of the second <text></text>, which will be the body
 			nodes.Item(1).AppendChild(doc.CreateTextNode(winrt::to_hstring(body.value())));
 		}
-		
+
 		winrt::Windows::UI::Notifications::ToastNotification notif{ doc };
 		notif.Tag(winrt::to_hstring(id));
 
@@ -203,7 +205,6 @@ namespace {
 	}
 
 	void FlutterLocalNotificationsPlugin::CancelAllNotifications() {
-		
 		if (!toastNotificationHistory.has_value()) {
 			toastNotificationHistory = winrt::Windows::UI::Notifications::ToastNotificationManager::History();
 		}

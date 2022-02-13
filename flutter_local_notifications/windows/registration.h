@@ -4,6 +4,9 @@
 #include <string>
 #include <optional>
 
+/// <summary>
+/// Contains logic for handling Registry values.
+/// </summary>
 namespace PluginRegistration {
 	/// <summary>
 	/// Registers the running app to the Windows Registry.

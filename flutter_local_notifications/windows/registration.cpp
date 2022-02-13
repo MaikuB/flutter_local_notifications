@@ -25,6 +25,9 @@ static constexpr winrt::guid CALLBACK_GUID{
 	0x68d0c89d, 0x760f, 0x4f79, {0xa0, 0x67, 0xae, 0x8d, 0x42, 0x20, 0xcc, 0xc1}
 };
 
+/// <summary>
+/// String representation of the callback GUID.
+/// </summary>
 const std::string CALLBACK_GUID_STR = "{68d0c89d-760f-4f79-a067-ae8d4220ccc1}";
 
 /// <summary>
@@ -94,6 +97,11 @@ using RegistryKey = winrt::handle_type<RegistryHandle>;
 
 /// <summary>
 /// Updates the Registry to enable notifications.
+/// 
+/// Related resources:
+/// <ul>
+///   <li>https://docs.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/send-local-toast-other-apps</li>
+/// </ul>
 /// </summary>
 /// <param name="aumid">The app user model ID of the app. Provided during initialization of the plugin.</param>
 /// <param name="appName">The display name of the app. The name will be shown on the notification toasts.</param>
@@ -105,17 +113,16 @@ void UpdateRegistry(
 	const std::optional<std::string>& iconPath,
 	const std::optional<std::string>& iconBgColor
 ) {
-	std::cout << "Update registry" << std::endl;
-
 	std::stringstream ss;
 	ss << "Software\\Microsoft\\Windows\\CurrentVersion\\PushNotifications\\Backup\\" << aumid;
-	const auto key_path = ss.str();
+	const auto notifSettingsKeyPath = ss.str();
 	RegistryKey key;
 
 	// create registry key
+	// HKEY_CURRENT_USER\Software\Microsoft\\Windows\CurrentVersion\PushNotifications\Backup
 	winrt::check_win32(RegCreateKeyExA(
 		HKEY_CURRENT_USER,
-		key_path.c_str(),
+		notifSettingsKeyPath.c_str(),
 		0,
 		nullptr,
 		0,
@@ -125,9 +132,12 @@ void UpdateRegistry(
 		nullptr));
 
 	// put the following key values under the key
+	// HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\PushNotifications\Backup\<aumid>
+	// 
 	// appType = app:desktop
 	// Setting = s:banner,s:toast,s:audio,c:toast,c:ringing
 	// wnsId = NonImmersivePackage
+
 	const std::string appType = "app:desktop";
 	const std::string setting = "s:banner,s:toast,s:audio,c:toast,c:ringing";
 	const std::string wnsId = "NonImmersivePackage";
@@ -138,7 +148,6 @@ void UpdateRegistry(
 		REG_SZ,
 		reinterpret_cast<const BYTE*>(appType.c_str()),
 		static_cast<uint32_t>(appType.size() + 1 * sizeof(char))));
-
 	winrt::check_win32(RegSetValueExA(
 		key.get(),
 		"Setting",
@@ -146,7 +155,6 @@ void UpdateRegistry(
 		REG_SZ,
 		reinterpret_cast<const BYTE*>(setting.c_str()),
 		static_cast<uint32_t>(setting.size() + 1 * sizeof(char))));
-
 	winrt::check_win32(RegSetValueExA(
 		key.get(),
 		"wnsId",
@@ -155,14 +163,16 @@ void UpdateRegistry(
 		reinterpret_cast<const BYTE*>(wnsId.c_str()),
 		static_cast<uint32_t>(wnsId.size() + 1 * sizeof(char))));
 
+	// now, we register app info to the Registry.
+
 	ss.clear();
 	ss.str(std::string());
 	ss << "Software\\Classes\\AppUserModelId\\" << aumid;
 	const auto appInfoKeyPath = ss.str();
-	std::cout << "aumid " << appInfoKeyPath << std::endl;
 	RegistryKey appInfoKey;
 
 	// create registry key
+	// HKEY_CURRENT_USER\Software\Classes\AppUserModelId\<aumid>
 	winrt::check_win32(RegCreateKeyExA(
 		HKEY_CURRENT_USER,
 		appInfoKeyPath.c_str(),
@@ -204,6 +214,7 @@ void UpdateRegistry(
 			static_cast<uint32_t>(v.size() + 1 * sizeof(char))));
 	}
 
+	// register the guid of the notification activation callback
 	winrt::check_win32(RegSetValueExA(
 		appInfoKey.get(),
 		"CustomActivator",
@@ -213,6 +224,10 @@ void UpdateRegistry(
 		static_cast<uint32_t>(CALLBACK_GUID_STR.size() + 1 * sizeof(char))));
 }
 
+/// <summary>
+/// Register the notificatio activation callback factory
+/// and the guid of the callback.
+/// </summary>
 void RegisterCallback() {
 	DWORD registration{};
 
