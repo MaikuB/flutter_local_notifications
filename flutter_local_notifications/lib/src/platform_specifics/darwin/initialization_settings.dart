@@ -60,8 +60,6 @@ class DarwinInitializationSettings {
 
   /// Callback for handling when a notification is triggered while the app is
   /// in the foreground.
-  ///
-  /// This property is only applicable to iOS versions older than 10.
   final DidReceiveLocalNotificationCallback? onDidReceiveLocalNotification;
 
   /// Configure the notification categories ([DarwinNotificationCategory])

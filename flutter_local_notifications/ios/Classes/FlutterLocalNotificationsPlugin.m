@@ -1046,7 +1046,20 @@ static FlutterError *getFlutterError(NSError *error) {
   if (presentBadge) {
     presentationOptions |= UNNotificationPresentationOptionBadge;
   }
+    
   completionHandler(presentationOptions);
+    NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
+    arguments[ID] = notification.request.content.userInfo[NOTIFICATION_ID];
+    if (notification.request.content.userInfo[TITLE] != [NSNull null]) {
+      arguments[TITLE] = notification.request.content.userInfo[TITLE];
+    }
+    if (notification.request.content.body != nil) {
+      arguments[BODY] = notification.request.content.body;
+    }
+    if (notification.request.content.userInfo[PAYLOAD] != [NSNull null]) {
+      arguments[PAYLOAD] = notification.request.content.userInfo[PAYLOAD];
+    }
+    [_channel invokeMethod:DID_RECEIVE_LOCAL_NOTIFICATION arguments:arguments];
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
