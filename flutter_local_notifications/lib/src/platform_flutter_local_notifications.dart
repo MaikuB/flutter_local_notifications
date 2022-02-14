@@ -871,12 +871,26 @@ class WindowsFlutterLocalNotificationsPlugin
       _channel.invokeMethod('initialize', settings.toMap());
 
   @override
-  Future<void> show(int id, String? title, String? body, {String? payload}) =>
-      _channel.invokeMethod('show', <String, Object?>{
+  Future<void> show(
+    int id,
+    String? title,
+    String? body, {
+    String? payload,
+    String? group,
+  }) =>
+      _channel.invokeMethod('show', <String, dynamic>{
         'id': id,
         'title': title,
         'body': body,
+        'group': group,
         'payload': payload ?? '',
+      });
+
+  @override
+  Future<void> cancel(int id, {String? group}) =>
+      _channel.invokeMethod('cancel', <String, dynamic>{
+        'id': id,
+        'group': group,
       });
 }
 

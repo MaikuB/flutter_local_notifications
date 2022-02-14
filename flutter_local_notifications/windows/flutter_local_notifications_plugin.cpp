@@ -35,6 +35,7 @@ namespace {
 		virtual ~FlutterLocalNotificationsPlugin();
 
 	private:
+		std::wstring _aumid;
 		std::optional<winrt::Windows::UI::Notifications::ToastNotifier> toastNotifier;
 		std::optional<winrt::Windows::UI::Notifications::ToastNotificationHistory> toastNotificationHistory;
 
@@ -67,13 +68,15 @@ namespace {
 			const int id,
 			const std::optional<std::string>& title,
 			const std::optional<std::string>& body,
-			const std::optional<std::string>& payload);
+			const std::optional<std::string>& payload,
+			const std::optional<std::string>& group);
 
 		/// <summary>
 		/// Dismisses the notification that has the given ID.
 		/// </summary>
 		/// <param name="id">The ID of the notification to be dismissed.</param>
-		void CancelNotification(const int id);
+		/// <param name="group">The group the notification is in. Default is the aumid of this app.</param>
+		void CancelNotification(const int id, const std::optional<std::string>& group);
 
 		/// <summary>
 		/// Dismisses all currently active notifications.
@@ -133,8 +136,9 @@ namespace {
 				const auto title = Utils::GetMapValue<std::string>("title", args);
 				const auto body = Utils::GetMapValue<std::string>("body", args);
 				const auto payload = Utils::GetMapValue<std::string>("payload", args);
+				const auto group = Utils::GetMapValue<std::string>("group", args);
 
-				ShowNotification(id, title, body, payload);
+				ShowNotification(id, title, body, payload, group);
 				result->Success();
 			}
 			else {
@@ -142,10 +146,12 @@ namespace {
 			}
 		}
 		else if (method_name == Method::CANCEL && toastNotifier.has_value()) {
-			const auto args = method_call.arguments();
-			if (std::holds_alternative<int>(*args)) {
-				const auto id = std::get<int>(*args);
-				CancelNotification(id);
+			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
+			if (args != nullptr) {
+				const auto id = Utils::GetMapValue<int>("id", args).value();
+				const auto group = Utils::GetMapValue<std::string>("group", args);
+
+				CancelNotification(id, group);
 				result->Success();
 			}
 			else {
@@ -167,6 +173,7 @@ namespace {
 		const std::optional<std::string>& iconPath,
 		const std::optional<std::string>& iconBgColor
 	) {
+		_aumid = winrt::to_hstring(aumid);
 		PluginRegistration::RegisterApp(aumid, appName, iconPath, iconBgColor);
 		toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(winrt::to_hstring(aumid));
 	}
@@ -175,7 +182,8 @@ namespace {
 		const int id,
 		const std::optional<std::string>& title,
 		const std::optional<std::string>& body,
-		const std::optional<std::string>& payload
+		const std::optional<std::string>& payload,
+		const std::optional<std::string>& group
 	) {
 		// obtain a notification template with a title and a body
 		const auto doc = winrt::Windows::UI::Notifications::ToastNotificationManager::GetTemplateContent(winrt::Windows::UI::Notifications::ToastTemplateType::ToastText02);
@@ -193,22 +201,34 @@ namespace {
 
 		winrt::Windows::UI::Notifications::ToastNotification notif{ doc };
 		notif.Tag(winrt::to_hstring(id));
+		if (group.has_value()) {
+			notif.Group(winrt::to_hstring(group.value()));
+		}
+		else {
+			notif.Group(_aumid);
+		}
 
 		toastNotifier.value().Show(notif);
 	}
 
-	void FlutterLocalNotificationsPlugin::CancelNotification(const int id) {
+	void FlutterLocalNotificationsPlugin::CancelNotification(const int id, const std::optional<std::string>& group) {
 		if (!toastNotificationHistory.has_value()) {
 			toastNotificationHistory = winrt::Windows::UI::Notifications::ToastNotificationManager::History();
 		}
-		toastNotificationHistory.value().Remove(winrt::to_hstring(id));
+
+		if (group.has_value()) {
+			toastNotificationHistory.value().Remove(winrt::to_hstring(id), winrt::to_hstring(group.value()), _aumid);
+		}
+		else {
+			toastNotificationHistory.value().Remove(winrt::to_hstring(id), _aumid, _aumid);
+		}
 	}
 
 	void FlutterLocalNotificationsPlugin::CancelAllNotifications() {
 		if (!toastNotificationHistory.has_value()) {
 			toastNotificationHistory = winrt::Windows::UI::Notifications::ToastNotificationManager::History();
 		}
-		toastNotificationHistory.value().Clear();
+		toastNotificationHistory.value().Clear(_aumid);
 	}
 }  // namespace
 
