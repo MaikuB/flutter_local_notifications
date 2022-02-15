@@ -1,3 +1,7 @@
+# [10.0.0-dev.8]
+
+* Includes fix from 9.3.2
+
 # [10.0.0-dev.7]
 
 * Includes fix from 9.3.1
