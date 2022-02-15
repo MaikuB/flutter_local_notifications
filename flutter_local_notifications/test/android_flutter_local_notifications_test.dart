@@ -90,6 +90,7 @@ void main() {
             showsUserInterface: true,
             allowGeneratedReplies: true,
             cancelNotification: false,
+            launchApp: true,
           ),
           AndroidNotificationAction(
             'action2',
@@ -185,7 +186,8 @@ void main() {
                   'showsUserInterface': true,
                   'allowGeneratedReplies': true,
                   'inputs': <Object>[],
-                  'cancelNotification': false
+                  'cancelNotification': false,
+                  'launchApp': true,
                 },
                 <String, Object>{
                   'id': 'action2',
@@ -206,6 +208,7 @@ void main() {
                     }
                   ],
                   'cancelNotification': true,
+                  'launchApp': false,
                 }
               ],
             },

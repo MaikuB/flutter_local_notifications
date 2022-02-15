@@ -28,7 +28,11 @@ class _NavigationEventListenerState extends State<NavigationEventListener> {
     super.initState();
 
     if (!IsolateNameServer.registerPortWithName(port.sendPort, portName)) {
-      throw Exception('Could not register SendPort');
+      // throw Exception('Could not register SendPort');
+
+      // Exception was conflicting when notification action was selected
+      // from the background.
+      debugPrint('WARNING: SendPort is already registered');
     }
 
     // ignore: avoid_annotating_with_dynamic
