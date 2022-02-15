@@ -220,7 +220,9 @@ public class FlutterLocalNotificationsPlugin
       builder.setColor(notificationDetails.color.intValue());
     }
 
-    builder.setColorized(notificationDetails.colorized);
+    if (notificationDetails.colorized != null) {
+      builder.setColorized(notificationDetails.colorized);
+    }
 
     if (notificationDetails.showWhen != null) {
       builder.setShowWhen(BooleanUtils.getValue(notificationDetails.showWhen));
