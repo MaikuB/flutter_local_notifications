@@ -249,13 +249,15 @@ public class FlutterLocalNotificationsPlugin
           }
         }
 
-
-
         @SuppressLint("UnspecifiedImmutableFlag")
         PendingIntent actionPendingIntent =
             PendingIntent.getBroadcast(context, requestCode++, actionIntent, actionFlags);
         if (action.launchApp == true) {
-          actionPendingIntent = PendingIntent.getActivity(context, requestCode++, intent, actionFlags);
+          String actionReferences =
+                  "{payload: "+notificationDetails.payload+", action_id: "+action.id+"}";
+          intent.putExtra(PAYLOAD, actionReferences);
+          actionPendingIntent = PendingIntent
+                  .getActivity(context, requestCode++, intent, actionFlags);
         }
 
         final Spannable actionTitleSpannable = new SpannableString(action.title);

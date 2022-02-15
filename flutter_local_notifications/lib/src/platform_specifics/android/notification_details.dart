@@ -99,7 +99,8 @@ class AndroidNotificationAction {
   ///
   /// Note that this makes the action behave as if the user selected the
   /// notification and will call onSelectNotification within your
-  /// initialization settings.
+  /// initialization settings. The ID will also be included in the
+  /// notifications payload, allowing you to configure additional logic.
   final bool launchApp;
 }
 
