@@ -56,6 +56,7 @@ class AndroidNotificationAction {
     this.allowGeneratedReplies = false,
     this.inputs = const <AndroidNotificationActionInput>[],
     this.cancelNotification = true,
+    this.launchApp = false,
   });
 
   /// This ID will be sent back in the action handler defined in
@@ -93,6 +94,13 @@ class AndroidNotificationAction {
   /// Set whether the notification should be canceled when this action is
   /// selected.
   final bool cancelNotification;
+
+  /// Set whether the action will bring your app to the foreground.
+  ///
+  /// Note that this makes the action behave as if the user selected the
+  /// notification and will call onSelectNotification within your
+  /// initialization settings.
+  final bool launchApp;
 }
 
 /// Contains notification details specific to Android.

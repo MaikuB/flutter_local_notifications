@@ -82,6 +82,7 @@ public class NotificationAction {
   private static final String SHOWS_USER_INTERFACE = "showsUserInterface";
   private static final String ALLOW_GENERATED_REPLIES = "allowGeneratedReplies";
   private static final String CANCEL_NOTIFICATION = "cancelNotification";
+  private static final String LAUNCH_APP = "launchApp";
 
   public final String id;
   public final String title;
@@ -92,11 +93,13 @@ public class NotificationAction {
   @Nullable public final Boolean showsUserInterface;
   @Nullable public final Boolean allowGeneratedReplies;
   @Nullable public final IconSource iconSource;
+  @Nullable public final Boolean launchApp;
   public final List<NotificationActionInput> actionInputs = new ArrayList<>();
 
   public NotificationAction(Map<String, Object> arguments) {
     id = (String) arguments.get(ID);
     cancelNotification = (Boolean) arguments.get(CANCEL_NOTIFICATION);
+    launchApp = (Boolean) arguments.get(LAUNCH_APP);
     title = (String) arguments.get(TITLE);
 
     Integer a = (Integer) arguments.get(TITLE_COLOR_ALPHA);
