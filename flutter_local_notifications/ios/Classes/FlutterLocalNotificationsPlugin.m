@@ -38,9 +38,11 @@ NSString *const DAY = @"day";
 NSString *const REQUEST_SOUND_PERMISSION = @"requestSoundPermission";
 NSString *const REQUEST_ALERT_PERMISSION = @"requestAlertPermission";
 NSString *const REQUEST_BADGE_PERMISSION = @"requestBadgePermission";
+NSString *const REQUEST_CRITICAL_PERMISSION = @"requestCriticalPermission";
 NSString *const SOUND_PERMISSION = @"sound";
 NSString *const ALERT_PERMISSION = @"alert";
 NSString *const BADGE_PERMISSION = @"badge";
+NSString *const CRITICAL_PERMISSION = @"critical";
 NSString *const DEFAULT_PRESENT_ALERT = @"defaultPresentAlert";
 NSString *const DEFAULT_PRESENT_SOUND = @"defaultPresentSound";
 NSString *const DEFAULT_PRESENT_BADGE = @"defaultPresentBadge";
@@ -56,6 +58,7 @@ NSString *const SOUND = @"sound";
 NSString *const ATTACHMENTS = @"attachments";
 NSString *const ATTACHMENT_IDENTIFIER = @"identifier";
 NSString *const ATTACHMENT_FILE_PATH = @"filePath";
+NSString *const INTERRUPTION_LEVEL = @"interruptionLevel";
 NSString *const THREAD_IDENTIFIER = @"threadIdentifier";
 NSString *const PRESENT_ALERT = @"presentAlert";
 NSString *const PRESENT_SOUND = @"presentSound";
@@ -95,6 +98,7 @@ typedef NS_ENUM(NSInteger, UILocalNotificationDateInterpretation) {
   AbsoluteGMTTime,
   WallClockTime
 };
+
 
 static FlutterError *getFlutterError(NSError *error) {
   return [FlutterError
@@ -248,6 +252,7 @@ static FlutterError *getFlutterError(NSError *error) {
   bool requestedSoundPermission = false;
   bool requestedAlertPermission = false;
   bool requestedBadgePermission = false;
+  bool requestedCriticalPermission = false;
   if ([self containsKey:REQUEST_SOUND_PERMISSION forDictionary:arguments]) {
     requestedSoundPermission = [arguments[REQUEST_SOUND_PERMISSION] boolValue];
   }
@@ -257,9 +262,13 @@ static FlutterError *getFlutterError(NSError *error) {
   if ([self containsKey:REQUEST_BADGE_PERMISSION forDictionary:arguments]) {
     requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
   }
+  if ([self containsKey:REQUEST_CRITICAL_PERMISSION forDictionary:arguments]) {
+    requestedCriticalPermission = [arguments[REQUEST_CRITICAL_PERMISSION] boolValue];
+  }
   [self requestPermissionsImpl:requestedSoundPermission
                alertPermission:requestedAlertPermission
                badgePermission:requestedBadgePermission
+               criticalPermission:requestedCriticalPermission
                         result:result];
 
   _initialized = true;
@@ -270,6 +279,7 @@ static FlutterError *getFlutterError(NSError *error) {
   bool soundPermission = false;
   bool alertPermission = false;
   bool badgePermission = false;
+  bool criticalPermission = false;
   if ([self containsKey:SOUND_PERMISSION forDictionary:arguments]) {
     soundPermission = [arguments[SOUND_PERMISSION] boolValue];
   }
@@ -279,17 +289,22 @@ static FlutterError *getFlutterError(NSError *error) {
   if ([self containsKey:BADGE_PERMISSION forDictionary:arguments]) {
     badgePermission = [arguments[BADGE_PERMISSION] boolValue];
   }
+  if ([self containsKey:CRITICAL_PERMISSION forDictionary:arguments]) {
+    criticalPermission = [arguments[CRITICAL_PERMISSION] boolValue];
+  }
   [self requestPermissionsImpl:soundPermission
                alertPermission:alertPermission
                badgePermission:badgePermission
+               criticalPermission:criticalPermission
                         result:result];
 }
 
 - (void)requestPermissionsImpl:(bool)soundPermission
                alertPermission:(bool)alertPermission
                badgePermission:(bool)badgePermission
+               criticalPermission:(bool)criticalPermission
                         result:(FlutterResult _Nonnull)result {
-  if (!soundPermission && !alertPermission && !badgePermission) {
+  if (!soundPermission && !alertPermission && !badgePermission && !criticalPermission) {
     result(@NO);
     return;
   }
@@ -306,6 +321,9 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     if (badgePermission) {
       authorizationOptions += UNAuthorizationOptionBadge;
+    }
+    if (criticalPermission) {
+      authorizationOptions += UNAuthorizationOptionCriticalAlert;
     }
     [center requestAuthorizationWithOptions:(authorizationOptions)
                           completionHandler:^(BOOL granted,
@@ -703,6 +721,21 @@ static FlutterError *getFlutterError(NSError *error) {
     if ([self containsKey:SUBTITLE forDictionary:platformSpecifics]) {
       content.subtitle = platformSpecifics[SUBTITLE];
     }
+    if ([self containsKey:INTERRUPTION_LEVEL forDictionary:platformSpecifics]) {
+      NSNumber *interruptionLevel = platformSpecifics[INTERRUPTION_LEVEL];
+
+      if (interruptionLevel != nil) {
+        if ([interruptionLevel integerValue] == UNNotificationInterruptionLevelPassive) {
+          content.interruptionLevel = UNNotificationInterruptionLevelPassive;
+        } else if ([interruptionLevel integerValue] == UNNotificationInterruptionLevelActive) {
+          content.interruptionLevel = UNNotificationInterruptionLevelActive;
+        } else if ([interruptionLevel integerValue] == UNNotificationInterruptionLevelTimeSensitive) {
+          content.interruptionLevel = UNNotificationInterruptionLevelTimeSensitive;
+        } else if ([interruptionLevel integerValue] == UNNotificationInterruptionLevelCritical) {
+          content.interruptionLevel = UNNotificationInterruptionLevelCritical;
+        }
+      }
+    }
   }
   if (presentSound && content.sound == nil) {
     content.sound = UNNotificationSound.defaultSound;
@@ -713,6 +746,9 @@ static FlutterError *getFlutterError(NSError *error) {
                             presentSound:presentSound
                             presentBadge:presentBadge
                                  payload:arguments[PAYLOAD]];
+  
+
+    
   return content;
 }
 

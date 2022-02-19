@@ -46,6 +46,7 @@ void main() {
           'requestAlertPermission': true,
           'requestSoundPermission': true,
           'requestBadgePermission': true,
+          'requestCriticalPermission': true,
           'defaultPresentAlert': true,
           'defaultPresentSound': true,
           'defaultPresentBadge': true,
@@ -59,6 +60,7 @@ void main() {
               requestAlertPermission: false,
               requestBadgePermission: false,
               requestSoundPermission: false,
+              requestCriticalPermission: false,
               defaultPresentAlert: false,
               defaultPresentBadge: false,
               defaultPresentSound: false);
@@ -70,6 +72,7 @@ void main() {
           'requestAlertPermission': false,
           'requestSoundPermission': false,
           'requestBadgePermission': false,
+          'requestCriticalPermission': false,
           'defaultPresentAlert': false,
           'defaultPresentSound': false,
           'defaultPresentBadge': false,
@@ -133,6 +136,7 @@ void main() {
               'sound': 'sound.mp3',
               'badgeNumber': 1,
               'threadIdentifier': null,
+              'interruptionLevel': null,
               'attachments': <Map<String, Object>>[
                 <String, Object>{
                   'filePath': 'video.mp4',
@@ -192,6 +196,7 @@ void main() {
                     'sound': 'sound.mp3',
                     'badgeNumber': 1,
                     'threadIdentifier': null,
+                    'interruptionLevel': null,
                     'attachments': <Map<String, Object>>[
                       <String, Object>{
                         'filePath': 'video.mp4',
@@ -258,6 +263,7 @@ void main() {
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,
+                'interruptionLevel': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -321,6 +327,7 @@ void main() {
                 'subtitle': null,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
+                'interruptionLevel': null,
                 'threadIdentifier': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
@@ -387,6 +394,7 @@ void main() {
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,
+                'interruptionLevel': null,
                 'attachments': <Map<String, Object>>[
                   <String, Object>{
                     'filePath': 'video.mp4',
@@ -407,6 +415,7 @@ void main() {
           'sound': false,
           'badge': false,
           'alert': false,
+          'critical': false,
         })
       ]);
     });
@@ -414,12 +423,18 @@ void main() {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()!
-          .requestPermissions(sound: true, badge: true, alert: true);
+          .requestPermissions(
+            sound: true,
+            badge: true,
+            alert: true,
+            critical: true,
+          );
       expect(log, <Matcher>[
         isMethodCall('requestPermissions', arguments: <String, Object>{
           'sound': true,
           'badge': true,
           'alert': true,
+          'critical': true,
         })
       ]);
     });

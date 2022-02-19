@@ -3,16 +3,16 @@ import 'notification_attachment.dart';
 /// Configures notification details specific to iOS.
 class IOSNotificationDetails {
   /// Constructs an instance of [IOSNotificationDetails].
-  const IOSNotificationDetails({
-    this.presentAlert,
-    this.presentBadge,
-    this.presentSound,
-    this.sound,
-    this.badgeNumber,
-    this.attachments,
-    this.subtitle,
-    this.threadIdentifier,
-  });
+  const IOSNotificationDetails(
+      {this.presentAlert,
+      this.presentBadge,
+      this.presentSound,
+      this.sound,
+      this.badgeNumber,
+      this.attachments,
+      this.subtitle,
+      this.threadIdentifier,
+      this.interruptionLevel});
 
   /// Display an alert when the notification is triggered while app is
   /// in the foreground.
@@ -71,4 +71,39 @@ class IOSNotificationDetails {
   ///
   /// This property is only applicable to iOS 10 or newer.
   final String? threadIdentifier;
+
+  /// The interruption level that indicates the priority and
+  /// delivery timing of a notification.
+  ///
+  /// This property is only applicable to iOS 10 or newer.
+  final InterruptionLevel? interruptionLevel;
+}
+
+/// Constants that indicate the importance and delivery
+/// timing of a notification.
+enum InterruptionLevel {
+
+  /// The system adds the notification to the notification
+  /// list without lighting up the screen or playing a sound.
+  passive,
+
+  /// The system presents the notification immediately,
+  /// lights up the screen, and can play a sound.
+  active,
+
+  /// The system presents the notification immediately,
+  /// lights up the screen, and can play a sound,
+  /// but won’t break through system notification controls.
+  ///
+  /// In order for this to work, the 'Time Sensitive Notifications'
+  /// capability needs to be added to the iOS project.
+  /// See https://help.apple.com/xcode/mac/current/#/dev88ff319e7
+  timeSensitive,
+
+  /// The system presents the notification immediately,
+  /// lights up the screen, and bypasses the mute switch to play a sound.
+  ///
+  /// Subject to specific approval from Apple:
+  /// https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/
+  critical,
 }
