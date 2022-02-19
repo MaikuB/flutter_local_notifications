@@ -3,16 +3,17 @@ import 'notification_attachment.dart';
 /// Configures notification details specific to iOS.
 class IOSNotificationDetails {
   /// Constructs an instance of [IOSNotificationDetails].
-  const IOSNotificationDetails(
-      {this.presentAlert,
-      this.presentBadge,
-      this.presentSound,
-      this.sound,
-      this.badgeNumber,
-      this.attachments,
-      this.subtitle,
-      this.threadIdentifier,
-      this.interruptionLevel});
+  const IOSNotificationDetails({
+    this.presentAlert,
+    this.presentBadge,
+    this.presentSound,
+    this.sound,
+    this.badgeNumber,
+    this.attachments,
+    this.subtitle,
+    this.threadIdentifier,
+    this.interruptionLevel,
+  });
 
   /// Display an alert when the notification is triggered while app is
   /// in the foreground.
@@ -82,7 +83,6 @@ class IOSNotificationDetails {
 /// Constants that indicate the importance and delivery
 /// timing of a notification.
 enum InterruptionLevel {
-
   /// The system adds the notification to the notification
   /// list without lighting up the screen or playing a sound.
   passive,
