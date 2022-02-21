@@ -8,6 +8,10 @@ on:
 
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: flutter_local_notifications
+
 jobs:
   publish:
     runs-on: ubuntu-latest
