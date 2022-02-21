@@ -1,3 +1,7 @@
+# [5.0.0+5]
+
+* Updated Readme.
+
 # [5.0.0+4]
 
 * More detailed exceptions in `ScheduledNotificationReceiver.onReceive()`.
