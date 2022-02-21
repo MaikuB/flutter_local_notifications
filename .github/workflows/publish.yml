@@ -1,0 +1,23 @@
+name: Publish
+
+on:
+  workflow_run:
+    workflows: ["Analyze & Test"]
+    types: [completed]
+    branches: [master]
+
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Dart and Flutter Package Publisher
+        uses: k-paxian/dart-package-publisher@f77facb198d722a4c307649f6a39410195d40684
+        with:
+          accessToken: ${{ secrets.OAUTH_ACCESS_TOKEN }}
+          refreshToken: ${{ secrets.OAUTH_REFRESH_TOKEN }}
+          skipTests: true
+          flutter: true
