@@ -1,3 +1,7 @@
+# [5.0.0+6]
+
+* Published as `flutter_local_notifications_plus`.
+
 # [5.0.0+5]
 
 * Updated Readme.
