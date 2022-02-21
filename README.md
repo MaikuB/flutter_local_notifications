@@ -1,5 +1,20 @@
 # Flutter Local Notifications plugin
 
+This is fork of [flutter_local_notifications](https://github.com/MaikuB/flutter_local_notifications).
+
+## New features
+
+### Android 
+
+* Ability to set your own custom layout for notifications.
+* More detailed exceptions in `ScheduledNotificationReceiver.onReceive()`.
+
+### iOS
+
+* Method `setBadgeNumber()` to set counter value on the icon.
+
+# Original readme
+
 This repository consists hosts the following packages
 
 - [`flutter_local_notifications`](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications): code for the cross-platform facing plugin used to display local notifications within Flutter applications

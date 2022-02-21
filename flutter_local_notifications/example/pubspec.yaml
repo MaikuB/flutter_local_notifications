@@ -5,7 +5,7 @@ publish_to: none
 dependencies:
   flutter:
     sdk: flutter
-  flutter_local_notifications:
+  flutter_local_notifications_plus:
     path: ../
   cupertino_icons: ^1.0.2
   device_info: ^2.0.0
