@@ -6,6 +6,10 @@
 
 * Bumped `flutter_local_notifications_platform_interface` dependency
 
+## [0.4.2]
+
+* Bumped dependencies. Thanks to PR from [Guy Luz](https://github.com/guyluz11)
+
 ## [0.4.1+1]
 
 * Fixed minor casing error in 0.4.1 changelog entry
