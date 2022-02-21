@@ -1,3 +1,7 @@
+## [0.5.0-dev.3]
+
+* Includes changes from 0.4.2
+
 ## [0.5.0-dev.2]
 
 * Added support for notification actions
