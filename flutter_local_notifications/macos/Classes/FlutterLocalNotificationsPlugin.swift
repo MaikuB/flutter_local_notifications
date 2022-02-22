@@ -580,9 +580,6 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         if badgePermission {
             options.insert(.badge)
         }
-        if badgePermission {
-            options.insert(.badge)
-        }
         if criticalPermission {
             options.insert(.criticalAlert)
         }
