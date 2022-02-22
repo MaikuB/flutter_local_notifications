@@ -267,6 +267,7 @@ class _HomePageState extends State<HomePage> {
           alert: true,
           badge: true,
           sound: true,
+          critical: true,
         );
     flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -275,6 +276,7 @@ class _HomePageState extends State<HomePage> {
           alert: true,
           badge: true,
           sound: true,
+          critical: true,
         );
   }
 
@@ -738,7 +740,7 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () async {
                           await _stopForegroundService();
                         },
-                      ),                      
+                      ),
                     ],
                     if (!kIsWeb &&
                         (Platform.isIOS || Platform.isMacOS)) ...<Widget>[
@@ -768,6 +770,12 @@ class _HomePageState extends State<HomePage> {
                         buttonText: 'Show notifications with thread identifier',
                         onPressed: () async {
                           await _showNotificationsWithThreadIdentifier();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText: 'Show notification with time sensitive interruption level',
+                        onPressed: () async {
+                          await _showNotificationWithTimeSensitiveInterruptionLevel();
                         },
                       ),
                     ],
@@ -1979,6 +1987,19 @@ class _HomePageState extends State<HomePage> {
         'third notification', thread2PlatformChannelSpecifics);
   }
 
+  Future<void> _showNotificationWithTimeSensitiveInterruptionLevel() async {
+    const DarwinNotificationDetails darwinNotificationDetails =
+    DarwinNotificationDetails(interruptionLevel: InterruptionLevel.timeSensitive);
+    const NotificationDetails notificationDetails = NotificationDetails(
+        iOS: darwinNotificationDetails, macOS: darwinNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        id++,
+        'title of time sensitive notification',
+        'body of time sensitive notification',
+        notificationDetails,
+        payload: 'item x');
+  }
+
   Future<void> _showNotificationWithoutTimestamp() async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
@@ -2174,7 +2195,7 @@ class _HomePageState extends State<HomePage> {
         ?.stopForegroundService();
   }
 
-  
+
 
   Future<void> _createNotificationChannel() async {
     const AndroidNotificationChannel androidNotificationChannel =

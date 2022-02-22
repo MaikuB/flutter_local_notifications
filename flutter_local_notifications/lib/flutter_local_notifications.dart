@@ -38,6 +38,7 @@ export 'src/platform_specifics/darwin/notification_attachment.dart';
 export 'src/platform_specifics/darwin/notification_category.dart';
 export 'src/platform_specifics/darwin/notification_category_option.dart';
 export 'src/platform_specifics/darwin/notification_details.dart';
+export 'src/platform_specifics/darwin/notification_interruption_level.dart';
 export 'src/platform_specifics/ios/enums.dart';
 export 'src/typedefs.dart';
 export 'src/types.dart';
