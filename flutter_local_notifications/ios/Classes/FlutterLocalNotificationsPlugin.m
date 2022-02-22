@@ -878,19 +878,7 @@ static FlutterError *getFlutterError(NSError *error) {
         NSNumber *interruptionLevel = platformSpecifics[INTERRUPTION_LEVEL];
 
         if (interruptionLevel != nil) {
-          // in theory the if-branches below and this single line do the same thing:
           content.interruptionLevel = [interruptionLevel integerValue];
-          // i am not sure which version to go with. Suggestion?
-          
-//          if ([interruptionLevel integerValue] == UNNotificationInterruptionLevelPassive) {
-//            content.interruptionLevel = UNNotificationInterruptionLevelPassive;
-//          } else if ([interruptionLevel integerValue] == UNNotificationInterruptionLevelActive) {
-//            content.interruptionLevel = UNNotificationInterruptionLevelActive;
-//          } else if ([interruptionLevel integerValue] == UNNotificationInterruptionLevelTimeSensitive) {
-//            content.interruptionLevel = UNNotificationInterruptionLevelTimeSensitive;
-//          } else if ([interruptionLevel integerValue] == UNNotificationInterruptionLevelCritical) {
-//            content.interruptionLevel = UNNotificationInterruptionLevelCritical;
-//          }
         }
       }
     }
