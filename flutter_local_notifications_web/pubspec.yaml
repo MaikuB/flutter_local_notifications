@@ -17,7 +17,7 @@ dependencies:
       path: flutter_local_notifications_platform_interface
   flutter_web_plugins:
     sdk: flutter
-  timezone: ^0.7.0
+  timezone: ^0.8.0
   firebase_core:
   firebase_messaging:
   firebase_core_web:
