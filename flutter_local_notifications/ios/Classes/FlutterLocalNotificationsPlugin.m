@@ -1053,8 +1053,8 @@ static FlutterError *getFlutterError(NSError *error) {
     didReceiveNotificationResponse:(UNNotificationResponse *)response
              withCompletionHandler:(void (^)(void))completionHandler
     NS_AVAILABLE_IOS(10.0) {
-  if (![self
-          isAFlutterLocalNotification:response.notification.request.content.userInfo]) {
+  if (![self isAFlutterLocalNotification:response.notification.request.content
+                                             .userInfo]) {
     return;
   }
   if ([response.actionIdentifier
