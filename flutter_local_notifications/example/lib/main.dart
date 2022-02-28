@@ -197,7 +197,11 @@ class _HomePageState extends State<HomePage> {
     flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             MacOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions();
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
   }
 
   void _configureDidReceiveLocalNotificationSubject() {
