@@ -1,3 +1,7 @@
+# [10.0.0-dev.9]
+
+* [iOS] Fixed issue [1506](https://github.com/MaikuB/flutter_local_notifications/issues/1506) where the plugin was trying to process responses to notifications created outside of the plugin (e.g. those from Firebase) and resulted in an exception
+
 # [10.0.0-dev.8]
 
 * Includes fix from 9.3.2
