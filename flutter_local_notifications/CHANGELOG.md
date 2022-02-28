@@ -1,7 +1,7 @@
 # [10.0.0-dev.9]
 
 * [iOS] Fixed issue [1506](https://github.com/MaikuB/flutter_local_notifications/issues/1506) where the plugin was trying to process responses to notifications created outside of the plugin (e.g. those from Firebase) and resulted in an exception
-* [macOS] **Breaking change** the `requestPermissions()` method of the `MacOSFlutterLocalNotificationsPlugin` class now only accepts non-nullable parameters that default to `true`. This makes it consistent with the iOS implementation of the plugin and also fix issue [1507](https://github.com/MaikuB/flutter_local_notifications/issues/1507)
+* [macOS] **Breaking change** the `requestPermissions()` method of the `MacOSFlutterLocalNotificationsPlugin` class now only accepts non-nullable parameters that default to `false`. This makes it consistent with the iOS implementation of the plugin and also fix issue [1507](https://github.com/MaikuB/flutter_local_notifications/issues/1507)
 
 # [10.0.0-dev.8]
 

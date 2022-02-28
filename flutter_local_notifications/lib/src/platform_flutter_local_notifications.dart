@@ -752,9 +752,9 @@ class MacOSFlutterLocalNotificationsPlugin
   /// Requests the specified permission(s) from user and returns current
   /// permission status.
   Future<bool?> requestPermissions({
-    bool sound = true,
-    bool alert = true,
-    bool badge = true,
+    bool sound = false,
+    bool alert = false,
+    bool badge = false,
   }) =>
       _channel.invokeMethod<bool>('requestPermissions', <String, bool?>{
         'sound': sound,

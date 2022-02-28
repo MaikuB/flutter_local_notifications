@@ -738,7 +738,7 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () async {
                           await _stopForegroundService();
                         },
-                      ),                      
+                      ),
                     ],
                     if (!kIsWeb &&
                         (Platform.isIOS || Platform.isMacOS)) ...<Widget>[
@@ -2173,8 +2173,6 @@ class _HomePageState extends State<HomePage> {
             AndroidFlutterLocalNotificationsPlugin>()
         ?.stopForegroundService();
   }
-
-  
 
   Future<void> _createNotificationChannel() async {
     const AndroidNotificationChannel androidNotificationChannel =
