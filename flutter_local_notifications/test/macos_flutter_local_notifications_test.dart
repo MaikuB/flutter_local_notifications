@@ -452,10 +452,10 @@ void main() {
           .requestPermissions();
       expect(log, <Matcher>[
         isMethodCall('requestPermissions', arguments: <String, Object?>{
-          'sound': null,
-          'badge': null,
-          'alert': null,
-          'critical': null,
+          'sound': false,
+          'badge': false,
+          'alert': false,
+          'critical': false,
         })
       ]);
     });

@@ -2195,8 +2195,6 @@ class _HomePageState extends State<HomePage> {
         ?.stopForegroundService();
   }
 
-
-
   Future<void> _createNotificationChannel() async {
     const AndroidNotificationChannel androidNotificationChannel =
         AndroidNotificationChannel(
