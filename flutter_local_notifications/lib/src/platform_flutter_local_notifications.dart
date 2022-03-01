@@ -403,6 +403,7 @@ class AndroidFlutterLocalNotificationsPlugin
               a['channelId'],
               a['title'],
               a['body'],
+              tag: a['tag'],
             ))
         .toList();
   }
