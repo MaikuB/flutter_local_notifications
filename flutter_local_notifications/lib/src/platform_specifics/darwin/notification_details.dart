@@ -90,6 +90,7 @@ class DarwinNotificationDetails {
   /// The interruption level that indicates the priority and
   /// delivery timing of a notification.
   ///
-  /// This property is only applicable to iOS 15.0 or newer.
+  /// This property is only applicable to iOS 15.0 and macOS 12.0 or newer.
+  /// https://developer.apple.com/documentation/usernotifications/unnotificationcontent/3747256-interruptionlevel
   final InterruptionLevel? interruptionLevel;
 }
