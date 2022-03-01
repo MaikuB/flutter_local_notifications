@@ -37,7 +37,7 @@ class DarwinInitializationSettings {
   /// Subject to specific approval from Apple:
   /// https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/
   ///
-  /// Default value is true.
+  /// Default value is 'false'.
   final bool requestCriticalPermission;
 
   /// Configures the default setting on if an alert should be displayed when a
