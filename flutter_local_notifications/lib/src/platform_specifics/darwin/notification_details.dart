@@ -1,5 +1,5 @@
+import 'interruption_level.dart';
 import 'notification_attachment.dart';
-import 'notification_interruption_level.dart';
 
 /// Configures notification details specific to Darwin-based operation systems
 /// such as iOS and macOS

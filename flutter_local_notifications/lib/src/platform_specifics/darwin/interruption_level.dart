@@ -1,20 +1,26 @@
+import 'package:flutter/foundation.dart';
+
 /// Constants that indicate the importance and delivery
 /// timing of a notification.
 ///
-/// This enum is mirroring the corresponding Apple API, do not change the order:
+/// This mirrors the corresponding the following Apple API
 /// https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel
-enum InterruptionLevel {
+@immutable
+class InterruptionLevel {
+  /// Constructs an instance of [InterruptionLevel]
+  const InterruptionLevel(this.value);
+
   /// The system adds the notification to the notification
   /// list without lighting up the screen or playing a sound.
   ///
   /// https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel/passive
-  passive,
+  static const InterruptionLevel passive = InterruptionLevel(0);
 
   /// The system presents the notification immediately,
   /// lights up the screen, and can play a sound.
   ///
   /// https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel/active
-  active,
+  static const InterruptionLevel active = InterruptionLevel(1);
 
   /// The system presents the notification immediately,
   /// lights up the screen, and can play a sound,
@@ -25,7 +31,7 @@ enum InterruptionLevel {
   /// See https://help.apple.com/xcode/mac/current/#/dev88ff319e7
   ///
   /// https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel/timesensitive
-  timeSensitive,
+  static const InterruptionLevel timeSensitive = InterruptionLevel(2);
 
   /// The system presents the notification immediately,
   /// lights up the screen, and bypasses the mute switch to play a sound.
@@ -34,5 +40,15 @@ enum InterruptionLevel {
   /// https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/
   ///
   /// https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel/critical
-  critical,
+  static const InterruptionLevel critical = InterruptionLevel(3);
+
+  /// The integer representation.
+  final int value;
+
+  @override
+  int get hashCode => value;
+
+  @override
+  bool operator ==(Object other) =>
+      other is InterruptionLevel && other.value == value;
 }

@@ -64,7 +64,7 @@ extension DarwinNotificationDetailsMapper on DarwinNotificationDetails {
         'sound': sound,
         'badgeNumber': badgeNumber,
         'threadIdentifier': threadIdentifier,
-        'interruptionLevel': interruptionLevel?.index,
+        'interruptionLevel': interruptionLevel?.value,
         'attachments': attachments
             ?.map((a) => a.toMap()) // ignore: always_specify_types
             .toList(),
