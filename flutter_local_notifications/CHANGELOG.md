@@ -1,3 +1,28 @@
+# [9.3.3]
+* [macOS] Fixed issue [1507](https://github.com/MaikuB/flutter_local_notifications/issues/1507) where calling the `requestPermissions()` method of the `MacOSFlutterLocalNotificationsPlugin` class led to a crash. This will be coalesced to assume that the `boolean` parameters around the requested permissions default to `false` to be consistent with the iOS implementation. Note that in 10.0.0 the method will have a breaking change so that these parameters are non-nullable
+
+# [9.3.2]
+
+* Fix issue [1485](https://github.com/MaikuB/flutter_local_notifications/issues/1485) where the addition of `colorized` property caused backwards compatibility issues with previously scheduled notifications as this would be null when deserialised from shared preferences
+
+# [9.3.1]
+
+* Fix issue [1479](https://github.com/MaikuB/flutter_local_notifications/issues/1479) that could cause compilation issue on the web by removing `dart:ffi` import
+
+# [9.3.0]
+
+* [Android] Updated how scheduled notifications are saved to shared preferences so it is done in the background. This is to fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where `pendingNotificationRequests` method may not report the correct number of scheduled notifications if it is invoked before the data had been saved to shared preferences
+* [Android] Added `colorized` property to `AndroidNotificationDetails` class. This can be used to apply a background colour to the notification but for most styles, this only works if a foreground service was used. Example app has been updated to demonstrate its usage. Thanks to the PR from [benechiu](https://github.com/benechiu)
+
+# [9.2.0]
+
+* [Android] Added `areNotificationsEnabled()` method to `AndroidFlutterLocalNotificationsPlugin`. This allows querying if notifications are enabled for the app calling the method. Thanks to the PR from [Konstantin Pelz](https://github.com/komape)
+* [Linux] Fix `initialize()` returning null all the time instead of returning an appropriate boolean value to indicate if plugin has been initialised 
+
+# [9.1.5]
+
+* Bumped `flutter_local_notifications_linux` dependency
+
 # [9.1.4]
 
 * [Android] Reverted change in 9.1.0 that added the `groupKey` to `ActiveNotification` as this was a potentially breaking change. This will instead be part of a major release

@@ -52,6 +52,7 @@ class AndroidNotificationDetails {
     this.additionalFlags,
     this.subText,
     this.tag,
+    this.colorized = false,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -284,4 +285,14 @@ class AndroidNotificationDetails {
   /// AlarmManager APIs used for scheduling notifications only allow for using
   /// the id to uniquely identify alarms.
   final String? tag;
+
+  /// Specifies if the [color] should be used as the background colour of the
+  /// notification.
+  ///
+  /// Set `true` to enable this. If `false` then the [color] will be
+  /// applied to the app icon.
+  ///
+  /// For most styles, the colouring will only be applied if the notification is
+  /// for a foreground service notification.
+  final bool colorized;
 }

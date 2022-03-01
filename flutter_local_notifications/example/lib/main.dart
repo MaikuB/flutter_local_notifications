@@ -400,6 +400,11 @@ class _HomePageState extends State<HomePage> {
                       ),
                       PaddedElevatedButton(
                         buttonText:
+                            'Check if notifications are enabled for this app',
+                        onPressed: _areNotifcationsEnabledOnAndroid,
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
                             'Show plain notification with payload and update '
                             'channel description',
                         onPressed: () async {
@@ -610,6 +615,13 @@ class _HomePageState extends State<HomePage> {
                         buttonText: 'Start foreground service',
                         onPressed: () async {
                           await _startForegroundService();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
+                            'Start foreground service with blue background notification',
+                        onPressed: () async {
+                          await _startForegroundServiceWithBlueBackgroundNotification();
                         },
                       ),
                       PaddedElevatedButton(
@@ -1848,6 +1860,29 @@ class _HomePageState extends State<HomePage> {
             payload: 'item x');
   }
 
+  Future<void> _startForegroundServiceWithBlueBackgroundNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'your channel id',
+      'your channel name',
+      channelDescription: 'color background channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+      color: Colors.blue,
+      colorized: true,
+    );
+
+    /// only using foreground service can color the background
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.startForegroundService(
+            1, 'colored background text title', 'colored background text body',
+            notificationDetails: androidPlatformChannelSpecifics,
+            payload: 'item x');
+  }
+
   Future<void> _stopForegroundService() async {
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -1873,6 +1908,30 @@ class _HomePageState extends State<HomePage> {
               content:
                   Text('Channel with name ${androidNotificationChannel.name} '
                       'created'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ));
+  }
+
+  Future<void> _areNotifcationsEnabledOnAndroid() async {
+    final bool? areEnabled = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.areNotificationsEnabled();
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              content: Text(areEnabled == null
+                  ? 'ERROR: received null'
+                  : (areEnabled
+                      ? 'Notifications are enabled'
+                      : 'Notifications are NOT enabled')),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {

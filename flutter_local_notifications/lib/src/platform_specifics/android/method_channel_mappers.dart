@@ -217,6 +217,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'additionalFlags': additionalFlags,
         'subText': subText,
         'tag': tag,
+        'colorized': colorized,
       }
         ..addAll(_convertStyleInformationToMap())
         ..addAll(_convertNotificationSoundToMap(sound))

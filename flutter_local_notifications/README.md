@@ -48,7 +48,7 @@ A cross platform plugin for displaying local notifications.
 * **Android 4.1+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
 * **iOS 8.0+**. On iOS versions older than 10, the plugin will use the UILocalNotification APIs. The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on iOS 10 or newer.
 * **macOS 10.11+**. On macOS versions older than 10.14, the plugin will use the [NSUserNotification APIs](https://developer.apple.com/documentation/foundation/nsusernotification). The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on macOS 10.14 or newer.
-* **Linux**. Uses the [Desktop Notifications Specification](https://developer.gnome.org/notification-spec/).
+* **Linux**. Uses the [Desktop Notifications Specification](https://specifications.freedesktop.org/notification-spec/).
 
 ## ✨ Features
 
@@ -84,6 +84,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Retrieve the list of active notifications
 * [Android] Full-screen intent notifications
 * [Android] Start a foreground service
+* [Android] Ability to check if notifications are enabled
 * [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
 * [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
 * [Linux] Ability to to use themed/Flutter Assets icons and sound

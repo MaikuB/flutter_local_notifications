@@ -119,6 +119,7 @@ public class NotificationDetails implements Serializable {
   private static final String SHORTCUT_ID = "shortcutId";
   private static final String START_ACTIVITY_CLASS_NAME = "startActivityClassName";
   private static final String SUB_TEXT = "subText";
+  private static final String COLORIZED = "colorized";
 
   public Integer id;
   public String title;
@@ -179,6 +180,7 @@ public class NotificationDetails implements Serializable {
   public String startActivityClassName;
   public String subText;
   public String tag;
+  public Boolean colorized;
 
   // Note: this is set on the Android to save details about the icon that should be used when
   // re-hydrating scheduled notifications when a device has been restarted.
@@ -266,6 +268,7 @@ public class NotificationDetails implements Serializable {
       notificationDetails.startActivityClassName =
           (String) platformChannelSpecifics.get(START_ACTIVITY_CLASS_NAME);
       notificationDetails.tag = (String) platformChannelSpecifics.get(TAG);
+      notificationDetails.colorized = (Boolean) platformChannelSpecifics.get(COLORIZED);
     }
   }
 

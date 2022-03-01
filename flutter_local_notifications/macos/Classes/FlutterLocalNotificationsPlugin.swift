@@ -165,10 +165,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     func requestPermissions(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         if #available(OSX 10.14, *) {
             let arguments = call.arguments as! [String: AnyObject]
-            let requestedAlertPermission = arguments[MethodCallArguments.alert] as! Bool
-            let requestedSoundPermission = arguments[MethodCallArguments.sound] as! Bool
-            let requestedBadgePermission = arguments[MethodCallArguments.badge] as! Bool
-            requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, result: result)
+            let requestedAlertPermission = arguments[MethodCallArguments.alert] as? Bool
+            let requestedSoundPermission = arguments[MethodCallArguments.sound] as? Bool
+            let requestedBadgePermission = arguments[MethodCallArguments.badge] as? Bool
+            requestPermissionsImpl(soundPermission: requestedSoundPermission ?? false, alertPermission: requestedAlertPermission ?? false, badgePermission: requestedBadgePermission ?? false, result: result)
         } else {
             result(nil)
         }
