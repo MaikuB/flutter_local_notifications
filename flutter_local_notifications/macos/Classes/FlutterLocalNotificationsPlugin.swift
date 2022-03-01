@@ -15,9 +15,11 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let requestAlertPermission = "requestAlertPermission"
         static let requestSoundPermission = "requestSoundPermission"
         static let requestBadgePermission = "requestBadgePermission"
+        static let requestCriticalPermission = "requestCriticalPermission"
         static let alert = "alert"
         static let sound = "sound"
         static let badge = "badge"
+        static let critical = "critical"
         static let notificationLaunchedApp = "notificationLaunchedApp"
         static let id = "id"
         static let title = "title"
@@ -34,6 +36,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let identifier = "identifier"
         static let filePath = "filePath"
         static let threadIdentifier = "threadIdentifier"
+        static let interruptionLevel = "interruptionLevel"
     }
 
     struct ErrorMessages {
@@ -184,12 +187,14 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let requestedAlertPermission = arguments[MethodCallArguments.requestAlertPermission] as! Bool
             let requestedSoundPermission = arguments[MethodCallArguments.requestSoundPermission] as! Bool
             let requestedBadgePermission = arguments[MethodCallArguments.requestBadgePermission] as! Bool
+            let requestedCriticalPermission = arguments[MethodCallArguments.requestCriticalPermission] as! Bool
 
             configureNotificationCategories(arguments) {
                 self.requestPermissionsImpl(
                     soundPermission: requestedSoundPermission,
                     alertPermission: requestedAlertPermission,
                     badgePermission: requestedBadgePermission,
+                    criticalPermission: requestedCriticalPermission,
                     result: result
                 )
             }
@@ -269,7 +274,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let requestedAlertPermission = arguments[MethodCallArguments.alert] as! Bool
             let requestedSoundPermission = arguments[MethodCallArguments.sound] as! Bool
             let requestedBadgePermission = arguments[MethodCallArguments.badge] as! Bool
-            requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, result: result)
+            let requestedCriticalPermission = arguments[MethodCallArguments.critical] as! Bool
+            requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, criticalPermission: requestedCriticalPermission, result: result)
         } else {
             result(nil)
         }
@@ -488,6 +494,11 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             if let categoryIdentifier = platformSpecifics[MethodCallArguments.categoryIdentifier] as? String {
                 content.categoryIdentifier = categoryIdentifier
             }
+            if #available(macOS 12.0, *) {
+              if let rawInterruptionLevel = platformSpecifics[MethodCallArguments.interruptionLevel] as? UInt {
+                content.interruptionLevel = UNNotificationInterruptionLevel.init(rawValue: rawInterruptionLevel)!
+              }
+            }
             if let attachments = platformSpecifics[MethodCallArguments.attachments] as? [[String: AnyObject]] {
                 content.attachments = []
                 for attachment in attachments {
@@ -554,8 +565,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
 
     @available(OSX 10.14, *)
-    func requestPermissionsImpl(soundPermission: Bool, alertPermission: Bool, badgePermission: Bool, result: @escaping FlutterResult) {
-        if !soundPermission && !alertPermission && !badgePermission {
+    func requestPermissionsImpl(soundPermission: Bool, alertPermission: Bool, badgePermission: Bool, criticalPermission: Bool, result: @escaping FlutterResult) {
+        if !soundPermission && !alertPermission && !badgePermission && !criticalPermission {
             result(false)
             return
         }
@@ -568,6 +579,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         }
         if badgePermission {
             options.insert(.badge)
+        }
+        if criticalPermission {
+            options.insert(.criticalAlert)
         }
         UNUserNotificationCenter.current().requestAuthorization(options: options) { (granted, _) in
             result(granted)

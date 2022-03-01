@@ -9,6 +9,7 @@ class DarwinInitializationSettings {
     this.requestAlertPermission = true,
     this.requestSoundPermission = true,
     this.requestBadgePermission = true,
+    this.requestCriticalPermission = false,
     this.defaultPresentAlert = true,
     this.defaultPresentSound = true,
     this.defaultPresentBadge = true,
@@ -30,6 +31,14 @@ class DarwinInitializationSettings {
   ///
   /// Default value is true.
   final bool requestBadgePermission;
+
+  /// Request permission to show critical notifications.
+  ///
+  /// Subject to specific approval from Apple:
+  /// https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/
+  ///
+  /// Default value is 'false'.
+  final bool requestCriticalPermission;
 
   /// Configures the default setting on if an alert should be displayed when a
   /// notification is triggered while app is in the foreground.
