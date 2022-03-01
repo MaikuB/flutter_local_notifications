@@ -1,3 +1,7 @@
+# [10.0.0-dev.10]
+
+* [iOS][macOS] Added support for specifying interruption level of notifications and ability to request critical alert permissions. Thanks to the PR from [maprohu)](https://github.com/maprohu)
+
 # [10.0.0-dev.9]
 
 * [iOS] Fixed issue [1506](https://github.com/MaikuB/flutter_local_notifications/issues/1506) where the plugin was trying to process responses to notifications created outside of the plugin (e.g. those from Firebase) and resulted in an exception
