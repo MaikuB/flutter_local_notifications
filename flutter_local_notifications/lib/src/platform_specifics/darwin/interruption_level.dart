@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 /// Constants that indicate the importance and delivery
 /// timing of a notification.
 ///
-/// This mirrors the corresponding the following Apple API
+/// This mirrors the following Apple API
 /// https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel
 @immutable
 class InterruptionLevel {
