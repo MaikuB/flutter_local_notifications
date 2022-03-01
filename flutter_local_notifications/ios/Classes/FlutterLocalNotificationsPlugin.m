@@ -399,7 +399,8 @@ static FlutterError *getFlutterError(NSError *error) {
     requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
   }
   if ([self containsKey:REQUEST_CRITICAL_PERMISSION forDictionary:arguments]) {
-    requestedCriticalPermission = [arguments[REQUEST_CRITICAL_PERMISSION] boolValue];
+    requestedCriticalPermission =
+        [arguments[REQUEST_CRITICAL_PERMISSION] boolValue];
   }
 
   if ([self containsKey:@"dispatcher_handle" forDictionary:arguments] &&
@@ -454,7 +455,8 @@ static FlutterError *getFlutterError(NSError *error) {
                badgePermission:(bool)badgePermission
             criticalPermission:(bool)criticalPermission
                         result:(FlutterResult _Nonnull)result {
-  if (!soundPermission && !alertPermission && !badgePermission && !criticalPermission) {
+  if (!soundPermission && !alertPermission && !badgePermission &&
+      !criticalPermission) {
     result(@NO);
     return;
   }
@@ -874,7 +876,8 @@ static FlutterError *getFlutterError(NSError *error) {
       content.subtitle = platformSpecifics[SUBTITLE];
     }
     if (@available(iOS 15.0, *)) {
-      if ([self containsKey:INTERRUPTION_LEVEL forDictionary:platformSpecifics]) {
+      if ([self containsKey:INTERRUPTION_LEVEL
+              forDictionary:platformSpecifics]) {
         NSNumber *interruptionLevel = platformSpecifics[INTERRUPTION_LEVEL];
 
         if (interruptionLevel != nil) {
