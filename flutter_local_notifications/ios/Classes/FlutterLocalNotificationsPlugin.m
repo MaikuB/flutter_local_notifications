@@ -1081,10 +1081,12 @@ static FlutterError *getFlutterError(NSError *error) {
     didReceiveNotificationResponse:(UNNotificationResponse *)response
              withCompletionHandler:(void (^)(void))completionHandler
     NS_AVAILABLE_IOS(10.0) {
+  if (![self isAFlutterLocalNotification:response.notification.request.content
+                                             .userInfo]) {
+    return;
+  }
   if ([response.actionIdentifier
-          isEqualToString:UNNotificationDefaultActionIdentifier] &&
-      [self isAFlutterLocalNotification:response.notification.request.content
-                                            .userInfo]) {
+          isEqualToString:UNNotificationDefaultActionIdentifier]) {
     NSString *payload =
         (NSString *)response.notification.request.content.userInfo[PAYLOAD];
     if (_initialized) {

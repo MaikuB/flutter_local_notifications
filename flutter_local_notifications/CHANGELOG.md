@@ -1,3 +1,8 @@
+# [10.0.0-dev.9]
+
+* [iOS] Fixed issue [1506](https://github.com/MaikuB/flutter_local_notifications/issues/1506) where the plugin was trying to process responses to notifications created outside of the plugin (e.g. those from Firebase) and resulted in an exception
+* [macOS] **Breaking change** the `requestPermissions()` method of the `MacOSFlutterLocalNotificationsPlugin` class now only accepts non-nullable parameters that default to `false`. This makes it consistent with the iOS implementation of the plugin
+
 # [10.0.0-dev.8]
 
 * Includes fix from 9.3.2
@@ -41,6 +46,9 @@
   * `GET_ACTIVE_NOTIFICATIONS_ERROR_CODE` -> `unsupported_os_version`
   * `GET_NOTIFICATION_CHANNELS_ERROR_CODE` -> `getNotificationChannelsError`
   
+# [9.3.3]
+* [macOS] Fixed issue [1507](https://github.com/MaikuB/flutter_local_notifications/issues/1507) where calling the `requestPermissions()` method of the `MacOSFlutterLocalNotificationsPlugin` class led to a crash. This will be coalesced to assume that the `boolean` parameters around the requested permissions default to `false` to be consistent with the iOS implementation. Note that in 10.0.0 the method will have a breaking change so that these parameters are non-nullable
+
 # [9.3.2]
 
 * Fix issue [1485](https://github.com/MaikuB/flutter_local_notifications/issues/1485) where the addition of `colorized` property caused backwards compatibility issues with previously scheduled notifications as this would be null when deserialised from shared preferences
