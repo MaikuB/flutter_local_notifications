@@ -5,6 +5,7 @@
 
 #include <string>
 #include <optional>
+#include <memory>
 
 /// <summary>
 /// Contains logic for handling Registry values.
@@ -23,7 +24,7 @@ namespace PluginRegistration {
 		const std::string& appName,
 		const std::optional<std::string>& iconPath,
 		const std::optional<std::string>& iconBgColor,
-		FlutterLocalNotificationsPlugin* plugin);
+		std::shared_ptr<PluginMethodChannel> plugin);
 }
 
 #endif // !PLUGIN_REGISTRATRION_H_

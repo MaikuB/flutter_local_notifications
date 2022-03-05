@@ -37,7 +37,7 @@ const std::string CALLBACK_GUID_STR = "{68d0c89d-760f-4f79-a067-ae8d4220ccc1}";
 /// </summary>
 struct NotificationActivationCallback : winrt::implements<NotificationActivationCallback, INotificationActivationCallback>
 {
-	FlutterLocalNotificationsPlugin* plugin = nullptr;
+	std::shared_ptr<PluginMethodChannel> channel;
 
 	HRESULT __stdcall Activate(
 		LPCWSTR app,
@@ -49,10 +49,7 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
 			std::wcout << L"Example" << L" has been called back from a notification." << std::endl;
 			std::wcout << L"Value of the 'app' parameter is '" << app << L"'." << std::endl;
 			std::wcout << L"Value of the 'args' parameter is '" << args << L"'." << std::endl;
-			if (plugin) {
-				std::cout << plugin << std::endl;
-				plugin->GetPluginMethodChannel().InvokeMethod(Method::SELECT_NOTIFICATION, nullptr, nullptr);
-			}
+			channel->InvokeMethod(Method::SELECT_NOTIFICATION, nullptr, nullptr);
 			return S_OK;
 		}
 		catch (...) {
@@ -66,7 +63,7 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
 /// </summary>
 struct NotificationActivationCallbackFactory : winrt::implements<NotificationActivationCallbackFactory, IClassFactory>
 {
-	FlutterLocalNotificationsPlugin* plugin;
+	std::shared_ptr<PluginMethodChannel> channel;
 
 	HRESULT __stdcall CreateInstance(
 		IUnknown* outer,
@@ -82,9 +79,7 @@ struct NotificationActivationCallbackFactory : winrt::implements<NotificationAct
 		}
 
 		const auto cb = winrt::make_self<NotificationActivationCallback>();
-		cb.get()->plugin = plugin;
-
-		std::cout << plugin << std::endl;
+		cb.get()->channel = channel;
 
 		return cb->QueryInterface(iid, result);
 	}
@@ -245,15 +240,12 @@ void UpdateRegistry(
 /// Register the notificatio activation callback factory
 /// and the guid of the callback.
 /// </summary>
-void RegisterCallback(FlutterLocalNotificationsPlugin* plugin) {
+void RegisterCallback(std::shared_ptr<PluginMethodChannel> channel) {
 	DWORD registration{};
 
 	const auto factory_ref = winrt::make_self<NotificationActivationCallbackFactory>();
 	const auto factory = factory_ref.get();
-	factory->plugin = plugin;
-
-	std::cout << factory->plugin << std::endl;
-	std::cout << plugin << std::endl;
+	factory->channel = channel;
 
 	winrt::check_hresult(CoRegisterClassObject(
 		CALLBACK_GUID,
@@ -268,7 +260,7 @@ void PluginRegistration::RegisterApp(
 	const std::string& appName,
 	const std::optional<std::string>& iconPath,
 	const std::optional<std::string>& iconBgColor,
-	FlutterLocalNotificationsPlugin* plugin
+	std::shared_ptr<PluginMethodChannel> plugin
 ) {
 	std::cout << "register app" << std::endl;
 	UpdateRegistry(aumid, appName, iconPath, iconBgColor);
