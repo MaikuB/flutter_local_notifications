@@ -773,7 +773,8 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedElevatedButton(
-                        buttonText: 'Show notification with time sensitive interruption level',
+                        buttonText:
+                            'Show notification with time sensitive interruption level',
                         onPressed: () async {
                           await _showNotificationWithTimeSensitiveInterruptionLevel();
                         },
@@ -1989,7 +1990,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationWithTimeSensitiveInterruptionLevel() async {
     const DarwinNotificationDetails darwinNotificationDetails =
-    DarwinNotificationDetails(interruptionLevel: InterruptionLevel.timeSensitive);
+        DarwinNotificationDetails(
+            interruptionLevel: InterruptionLevel.timeSensitive);
     const NotificationDetails notificationDetails = NotificationDetails(
         iOS: darwinNotificationDetails, macOS: darwinNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
@@ -2336,6 +2338,7 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'id: ${activeNotification.id}\n'
                     'channelId: ${activeNotification.channelId}\n'
+                    'groupKey: ${activeNotification.groupKey}\n'
                     'tag: ${activeNotification.tag}\n'
                     'title: ${activeNotification.title}\n'
                     'body: ${activeNotification.body}',
