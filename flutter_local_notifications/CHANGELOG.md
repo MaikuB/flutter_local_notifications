@@ -1,3 +1,7 @@
+# [5.0.0+7]
+
+* [Android] Support for Android 12.
+
 # [5.0.0+6]
 
 * Published as `flutter_local_notifications_plus`.
