@@ -2020,6 +2020,7 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'id: ${activeNotification.id}\n'
                     'channelId: ${activeNotification.channelId}\n'
+                    'tag: ${activeNotification.tag}\n'
                     'title: ${activeNotification.title}\n'
                     'body: ${activeNotification.body}',
                   ),
