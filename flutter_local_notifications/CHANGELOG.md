@@ -1,3 +1,9 @@
+# [10.0.0-dev.11]
+
+* Includes changes from 9.4.0
+* Updated example app to display `groupKey` of an `ActiveNotification`
+* Bumped dependency to `flutter_local_notifications_platform_interface`
+
 # [10.0.0-dev.10]
 
 * [iOS][macOS] Added support for specifying interruption level of notifications and ability to request critical alert permissions. Thanks to the PR from [maprohu)](https://github.com/maprohu)

@@ -1,3 +1,6 @@
+## [6.0.0-dev.3]
+* [Android] `tag` has been added to `ActiveNotification`. This was available in version `9.4.0` of the `flutter_local_notifications` plugin but has been brought here since `ActiveNotification` is now part of this package's APIs
+
 ## [6.0.0-dev.2]
 
 * Added `NotificationActionDetails` class and `NotificationActionCallback` typedef for dealing with notification actions
