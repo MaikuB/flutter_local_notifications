@@ -81,6 +81,7 @@ class MethodChannelFlutterLocalNotificationsPlugin
                   id: p['id'],
                   channelId: p['channelId'],
                   groupKey: p['groupKey'],
+                  tag: p['tag'],
                   title: p['title'],
                   body: p['body'],
                   payload: p['payload'],

@@ -1397,6 +1397,7 @@ public class FlutterLocalNotificationsPlugin
           activeNotificationPayload.put("channelId", notification.getChannelId());
         }
 
+        activeNotificationPayload.put("tag", activeNotification.getTag());
         activeNotificationPayload.put("groupKey", notification.getGroup());
         activeNotificationPayload.put(
             "title", notification.extras.getCharSequence("android.title"));
