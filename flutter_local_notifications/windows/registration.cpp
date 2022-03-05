@@ -3,6 +3,8 @@
 // https://stackoverflow.com/questions/67005337/how-works-notifications-on-windows-registry-no-shortlink
 
 #include "registration.h"
+#include "include/flutter_local_notifications/flutter_local_notifications_plugin.h"
+#include "include/flutter_local_notifications/methods.h"
 
 #include <shlobj.h>
 #include <propvarutil.h>
@@ -35,6 +37,8 @@ const std::string CALLBACK_GUID_STR = "{68d0c89d-760f-4f79-a067-ae8d4220ccc1}";
 /// </summary>
 struct NotificationActivationCallback : winrt::implements<NotificationActivationCallback, INotificationActivationCallback>
 {
+	FlutterLocalNotificationsPlugin* plugin = nullptr;
+
 	HRESULT __stdcall Activate(
 		LPCWSTR app,
 		LPCWSTR args,
@@ -45,6 +49,10 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
 			std::wcout << L"Example" << L" has been called back from a notification." << std::endl;
 			std::wcout << L"Value of the 'app' parameter is '" << app << L"'." << std::endl;
 			std::wcout << L"Value of the 'args' parameter is '" << args << L"'." << std::endl;
+			if (plugin) {
+				std::cout << plugin << std::endl;
+				plugin->GetPluginMethodChannel().InvokeMethod(Method::SELECT_NOTIFICATION, nullptr, nullptr);
+			}
 			return S_OK;
 		}
 		catch (...) {
@@ -58,18 +66,27 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
 /// </summary>
 struct NotificationActivationCallbackFactory : winrt::implements<NotificationActivationCallbackFactory, IClassFactory>
 {
+	FlutterLocalNotificationsPlugin* plugin;
+
 	HRESULT __stdcall CreateInstance(
 		IUnknown* outer,
 		GUID const& iid,
 		void** result) noexcept final
 	{
+		std::cout << "CreateInstance" << std::endl;
+
 		*result = nullptr;
 
 		if (outer) {
 			return CLASS_E_NOAGGREGATION;
 		}
 
-		return winrt::make<NotificationActivationCallback>()->QueryInterface(iid, result);
+		const auto cb = winrt::make_self<NotificationActivationCallback>();
+		cb.get()->plugin = plugin;
+
+		std::cout << plugin << std::endl;
+
+		return cb->QueryInterface(iid, result);
 	}
 
 	HRESULT __stdcall LockServer(BOOL) noexcept final {
@@ -228,12 +245,19 @@ void UpdateRegistry(
 /// Register the notificatio activation callback factory
 /// and the guid of the callback.
 /// </summary>
-void RegisterCallback() {
+void RegisterCallback(FlutterLocalNotificationsPlugin* plugin) {
 	DWORD registration{};
+
+	const auto factory_ref = winrt::make_self<NotificationActivationCallbackFactory>();
+	const auto factory = factory_ref.get();
+	factory->plugin = plugin;
+
+	std::cout << factory->plugin << std::endl;
+	std::cout << plugin << std::endl;
 
 	winrt::check_hresult(CoRegisterClassObject(
 		CALLBACK_GUID,
-		winrt::make<NotificationActivationCallbackFactory>().get(),
+		factory,
 		CLSCTX_LOCAL_SERVER,
 		REGCLS_SINGLEUSE,
 		&registration));
@@ -243,9 +267,10 @@ void PluginRegistration::RegisterApp(
 	const std::string& aumid,
 	const std::string& appName,
 	const std::optional<std::string>& iconPath,
-	const std::optional<std::string>& iconBgColor
+	const std::optional<std::string>& iconBgColor,
+	FlutterLocalNotificationsPlugin* plugin
 ) {
 	std::cout << "register app" << std::endl;
 	UpdateRegistry(aumid, appName, iconPath, iconBgColor);
-	RegisterCallback();
+	RegisterCallback(plugin);
 }

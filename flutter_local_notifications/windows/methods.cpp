@@ -7,3 +7,4 @@ const std::string Method::SHOW = "show";
 const std::string Method::INITIALIZE = "initialize";
 const std::string Method::CANCEL = "cancel";
 const std::string Method::CANCEL_ALL = "cancelAll";
+const std::string Method::SELECT_NOTIFICATION = "selectNotification";

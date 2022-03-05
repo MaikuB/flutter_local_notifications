@@ -11,4 +11,5 @@ namespace Method
 	extern const std::string SHOW;
 	extern const std::string CANCEL;
 	extern const std::string CANCEL_ALL;
+	extern const std::string SELECT_NOTIFICATION;
 }
