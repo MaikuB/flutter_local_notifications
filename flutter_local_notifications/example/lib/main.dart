@@ -67,17 +67,19 @@ const String darwinNotificationCategoryText = 'textCategory';
 /// Defines a iOS/MacOS notification category for plain actions.
 const String iosNotificationCategoryPlain = 'plainCategory';
 
-void notificationTapBackground(NotificationActionDetails details) {
+void notificationTapBackground(NotificationResponse notificationResponse) {
   // ignore: avoid_print
-  print('notification(${details.id}) action tapped: ${details.actionId} with'
-      ' payload: ${details.payload}');
-  if (details.input?.isNotEmpty ?? false) {
+  print('notification(${notificationResponse.id}) action tapped: '
+      '${notificationResponse.actionId} with'
+      ' payload: ${notificationResponse.payload}');
+  if (notificationResponse.input?.isNotEmpty ?? false) {
     // ignore: avoid_print
-    print('notification action tapped with input: ${details.input}');
+    print(
+        'notification action tapped with input: ${notificationResponse.input}');
   }
 
   final SendPort? send = IsolateNameServer.lookupPortByName(portName);
-  send?.send(details);
+  send?.send(notificationResponse);
 }
 
 /// IMPORTANT: running the following code on its own won't work as there is
@@ -185,13 +187,21 @@ Future<void> main() async {
   );
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
-    onSelectNotification: (String? payload) async {
-      if (payload != null) {
-        debugPrint('notification payload: $payload');
+    onDidReceiveForegroundNotificationResponse:
+        (NotificationResponse notificationResponse) async {
+      switch (notificationResponse.notificationResponseType) {
+        case NotificationResponseType.selectedNotification:
+          if (notificationResponse.payload != null) {
+            debugPrint('notification payload: ${notificationResponse.payload}');
+          }
+          selectNotificationSubject.add(notificationResponse.payload);
+          break;
+        case NotificationResponseType.selectedNotificationAction:
+          // TODO: Handle this case.
+          break;
       }
-      selectNotificationSubject.add(payload);
     },
-    onSelectNotificationAction: notificationTapBackground,
+    onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
   );
   runApp(
     MaterialApp(

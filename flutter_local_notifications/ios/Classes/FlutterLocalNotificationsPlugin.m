@@ -1040,8 +1040,14 @@ static FlutterError *getFlutterError(NSError *error) {
          userInfo[PRESENT_BADGE] && userInfo[PAYLOAD];
 }
 
-- (void)handleSelectNotification:(NSString *)payload {
-  [_channel invokeMethod:@"selectNotification" arguments:payload];
+- (void)handleSelectNotification:(NSInteger )notificationId
+                         payload:(NSString *)payload {
+    NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
+    NSNumber *notificationIdNumber = [NSNumber numberWithInteger:notificationId];
+    arguments[@"notificationId"] = notificationIdNumber;
+    arguments[PAYLOAD] = payload;
+    arguments[@"notificationResponseType"] = [NSNumber numberWithInteger:0];
+  [_channel invokeMethod:@"didReceiveForegroundNotificationResponse" arguments:arguments];
 }
 
 - (BOOL)containsKey:(NSString *)key forDictionary:(NSDictionary *)dictionary {
@@ -1090,10 +1096,12 @@ static FlutterError *getFlutterError(NSError *error) {
   }
   if ([response.actionIdentifier
           isEqualToString:UNNotificationDefaultActionIdentifier]) {
+    NSString *notificationId =
+      (NSString *)response.notification.request.identifier;
     NSString *payload =
         (NSString *)response.notification.request.content.userInfo[PAYLOAD];
     if (_initialized) {
-      [self handleSelectNotification:payload];
+        [self handleSelectNotification:[notificationId integerValue] payload:payload];
     } else {
       _launchPayload = payload;
       _launchingAppFromNotification = true;
@@ -1110,7 +1118,7 @@ static FlutterError *getFlutterError(NSError *error) {
     }
 
     [actionEventSink addItem:@{
-      @"notificationId" : response.notification.request.identifier,
+      @"notificationId" : [NSNumber numberWithInteger:[response.notification.request.identifier integerValue]],
       @"actionId" : response.actionIdentifier,
       @"input" : text,
       @"payload" : response.notification.request.content.userInfo[@"payload"],

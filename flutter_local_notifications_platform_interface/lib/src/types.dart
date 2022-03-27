@@ -73,25 +73,34 @@ class ActiveNotification {
 }
 
 /// Details of a Notification Action that was triggered.
-class NotificationActionDetails {
-  /// Constructs an instance of [NotificationActionDetails]
-  NotificationActionDetails({
-    required this.id,
-    required this.actionId,
-    required this.input,
-    required this.payload,
+class NotificationResponse {
+  /// Constructs an instance of [NotificationResponse]
+  const NotificationResponse({
+    required this.notificationResponseType,
+    this.id,
+    this.actionId,
+    this.input,
+    this.payload,
   });
 
   /// The notification's id.
-  final int id;
+  final int? id;
 
   /// The id of the action that was triggered.
-  final String actionId;
+  final String? actionId;
 
   /// The value of the input field if the notification action had an input
   /// field.
   final String? input;
 
-  /// The notification's payload
+  /// The notification's payload.
   final String? payload;
+
+  /// The notification response type.
+  final NotificationResponseType notificationResponseType;
+}
+
+enum NotificationResponseType {
+  selectedNotification,
+  selectedNotificationAction,
 }

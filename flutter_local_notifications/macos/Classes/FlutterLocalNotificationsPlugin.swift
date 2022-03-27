@@ -117,7 +117,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
             let payload = response.notification.request.content.userInfo[MethodCallArguments.payload] as? String
             if initialized {
-                handleSelectNotification(payload: payload)
+                handleSelectNotification(notificationId: Int(response.notification.request.identifier)!, payload: payload)
             } else {
                 launchPayload = payload
                 launchingAppFromNotification = true
@@ -130,11 +130,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             // No isolate can be used for macOS until https://github.com/flutter/flutter/issues/65222 is resolved.
             //
             // Therefore, we call the regular method channel and let the macos plugin handle it appropriately.
-            handleSelectNotificationAction(payload: [
-                "notificationId": response.notification.request.identifier,
+            handleSelectNotificationAction(arguments: [
+                "notificationId": Int(response.notification.request.identifier)!,
                 "actionId": response.actionIdentifier,
                 "input": text,
-                "payload": response.notification.request.content.userInfo["payload"] as? String ?? ""
+                "payload": response.notification.request.content.userInfo["payload"],
+                "notificationResponseType": 1
             ])
 
             completionHandler()
@@ -143,7 +144,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     public func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
         if notification.activationType == .contentsClicked {
-            handleSelectNotification(payload: notification.userInfo![MethodCallArguments.payload] as? String)
+            handleSelectNotification(notificationId:Int(notification.identifier!)!, payload: notification.userInfo![MethodCallArguments.payload] as? String)
         }
     }
 
@@ -622,11 +623,15 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         return String(arguments[MethodCallArguments.id] as! Int)
     }
 
-    func handleSelectNotification(payload: String?) {
-        channel.invokeMethod("selectNotification", arguments: payload)
+    func handleSelectNotification(notificationId:Int, payload: String?) {
+        var arguments: [String: Any?] = [:]
+        arguments["notificationId"] = notificationId
+        arguments["payload"] = payload
+        arguments["notificationResponseType"] = 0
+        channel.invokeMethod("didReceiveForegroundNotificationResponse", arguments: arguments)
     }
 
-    func handleSelectNotificationAction(payload: [String: Any]) {
-        channel.invokeMethod("selectNotificationAction", arguments: payload)
+    func handleSelectNotificationAction(arguments: [String: Any?]) {
+        channel.invokeMethod("didReceiveForegroundNotificationResponse", arguments: arguments)
     }
 }

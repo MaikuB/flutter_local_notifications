@@ -127,6 +127,7 @@ public class FlutterLocalNotificationsPlugin
       "getNotificationAppLaunchDetails";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
   static final String PAYLOAD = "payload";
+  static final String NOTIFICATION_ID = "notificationId";
   private static final String INVALID_ICON_ERROR_CODE = "invalid_icon";
   private static final String INVALID_LARGE_ICON_ERROR_CODE = "invalid_large_icon";
   private static final String INVALID_BIG_PICTURE_ERROR_CODE = "invalid_big_picture";
@@ -196,6 +197,7 @@ public class FlutterLocalNotificationsPlugin
     }
     Intent intent = getLaunchIntent(context);
     intent.setAction(SELECT_NOTIFICATION);
+    intent.putExtra(NOTIFICATION_ID, notificationDetails.id);
     intent.putExtra(PAYLOAD, notificationDetails.payload);
     int flags = PendingIntent.FLAG_UPDATE_CURRENT;
     if (VERSION.SDK_INT >= VERSION_CODES.M) {
@@ -1641,8 +1643,14 @@ public class FlutterLocalNotificationsPlugin
 
   private Boolean sendNotificationPayloadMessage(Intent intent) {
     if (SELECT_NOTIFICATION.equals(intent.getAction())) {
-      String payload = intent.getStringExtra(PAYLOAD);
-      channel.invokeMethod("selectNotification", payload);
+      HashMap<String, Object> notificationResponse = new HashMap<>();
+      notificationResponse.put(PAYLOAD, intent.getStringExtra(PAYLOAD));
+      if (intent.hasExtra(NOTIFICATION_ID)) {
+        notificationResponse.put(NOTIFICATION_ID, intent.getIntExtra(NOTIFICATION_ID, 0));
+      }
+
+      notificationResponse.put("notificationResponseType", 0);
+      channel.invokeMethod("didReceiveForegroundNotificationResponse", notificationResponse);
       return true;
     }
     return false;
