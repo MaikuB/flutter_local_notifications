@@ -9,8 +9,6 @@
 #include <shlobj.h>
 #include <propvarutil.h>
 #include <propkey.h>
-#include <atlbase.h>
-#include <atlconv.h>
 #include <NotificationActivationCallback.h>
 #include <notificationactivationcallback.h>
 #include <winrt/Windows.UI.Notifications.h>
@@ -131,7 +129,7 @@ void UpdateRegistry(
 	RegistryKey key;
 
 	// create registry key
-	// HKEY_CURRENT_USER\Software\Microsoft\\Windows\CurrentVersion\PushNotifications\Backup
+	// HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\PushNotifications\Backup
 	winrt::check_win32(RegCreateKeyExA(
 		HKEY_CURRENT_USER,
 		notifSettingsKeyPath.c_str(),
@@ -251,7 +249,7 @@ void RegisterCallback(std::shared_ptr<PluginMethodChannel> channel) {
 		CALLBACK_GUID,
 		factory,
 		CLSCTX_LOCAL_SERVER,
-		REGCLS_SINGLEUSE,
+		REGCLS_MULTIPLEUSE,
 		&registration));
 }
 

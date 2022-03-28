@@ -855,7 +855,7 @@ class MacOSFlutterLocalNotificationsPlugin
 /// Windows implementation of the flutter_local_notifications plugin.
 class WindowsFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
-  SelectNotificationCallback? onSelectNotification;
+  SelectNotificationCallback? _onSelectNotification;
 
   /// Initializes the plugin.
   ///
@@ -870,8 +870,8 @@ class WindowsFlutterLocalNotificationsPlugin
     WindowsInitializationSettings settings, {
     SelectNotificationCallback? onSelectNotification,
   }) {
-    this.onSelectNotification = onSelectNotification;
-    _channel.setMethodCallHandler(_onMethodCallFromNative);
+    this._onSelectNotification = onSelectNotification;
+    _channel.setMethodCallHandler(_handleMethod);
 
     return _channel.invokeMethod('initialize', settings.toMap());
   }
@@ -899,11 +899,12 @@ class WindowsFlutterLocalNotificationsPlugin
         'group': group,
       });
 
-  Future<void> _onMethodCallFromNative(MethodCall call) async {
+  Future<void> _handleMethod(MethodCall call) async {
     print('call $call');
     switch (call.method) {
       case 'selectNotification':
         print('notification selected');
+        _onSelectNotification?.call(call.arguments);
         break;
     }
   }
