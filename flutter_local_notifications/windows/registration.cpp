@@ -6,11 +6,12 @@
 #include "include/flutter_local_notifications/flutter_local_notifications_plugin.h"
 #include "include/flutter_local_notifications/methods.h"
 
+#include <atlbase.h>
+#include <atlconv.h>
 #include <shlobj.h>
 #include <propvarutil.h>
 #include <propkey.h>
 #include <NotificationActivationCallback.h>
-#include <notificationactivationcallback.h>
 #include <winrt/Windows.UI.Notifications.h>
 #include <winrt/Windows.Data.Xml.Dom.h>
 
@@ -47,7 +48,8 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
 			std::wcout << L"Example" << L" has been called back from a notification." << std::endl;
 			std::wcout << L"Value of the 'app' parameter is '" << app << L"'." << std::endl;
 			std::wcout << L"Value of the 'args' parameter is '" << args << L"'." << std::endl;
-			channel->InvokeMethod(Method::SELECT_NOTIFICATION, nullptr, nullptr);
+			const std::string payload = CW2A(args);
+			channel->InvokeMethod(Method::SELECT_NOTIFICATION, std::make_unique<flutter::EncodableValue>(payload), nullptr);
 			return S_OK;
 		}
 		catch (...) {

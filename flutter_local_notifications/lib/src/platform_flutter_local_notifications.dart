@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:clock/clock.dart';
 
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
 
@@ -870,7 +869,7 @@ class WindowsFlutterLocalNotificationsPlugin
     WindowsInitializationSettings settings, {
     SelectNotificationCallback? onSelectNotification,
   }) {
-    this._onSelectNotification = onSelectNotification;
+    _onSelectNotification = onSelectNotification;
     _channel.setMethodCallHandler(_handleMethod);
 
     return _channel.invokeMethod('initialize', settings.toMap());
@@ -889,7 +888,7 @@ class WindowsFlutterLocalNotificationsPlugin
         'title': title,
         'body': body,
         'group': group,
-        'payload': payload ?? '',
+        'payload': payload,
       });
 
   @override
@@ -900,11 +899,11 @@ class WindowsFlutterLocalNotificationsPlugin
       });
 
   Future<void> _handleMethod(MethodCall call) async {
-    print('call $call');
     switch (call.method) {
       case 'selectNotification':
-        print('notification selected');
-        _onSelectNotification?.call(call.arguments);
+        if (call.arguments is String) {
+          _onSelectNotification?.call(call.arguments);
+        }
         break;
     }
   }

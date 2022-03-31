@@ -189,23 +189,45 @@ namespace {
 		const std::optional<std::string>& group
 	) {
 		// obtain a notification template with a title and a body
-		const auto doc = winrt::Windows::UI::Notifications::ToastNotificationManager::GetTemplateContent(winrt::Windows::UI::Notifications::ToastTemplateType::ToastText02);
+		//const auto doc = winrt::Windows::UI::Notifications::ToastNotificationManager::GetTemplateContent(winrt::Windows::UI::Notifications::ToastTemplateType::ToastText02);
 		// find all <text /> tags
-		const auto nodes = doc.GetElementsByTagName(L"text");
+		//const auto nodes = doc.GetElementsByTagName(L"text");
+
+		XmlDocument doc;
+		doc.LoadXml(L"\
+			<toast>\
+				<visual>\
+					<binding template=\"ToastGeneric\">\
+					</binding>\
+				</visual>\
+			</toast>");
+
+		const auto bindingNode = doc.SelectSingleNode(L"//binding[1]");
 
 		if (title.has_value()) {
 			// change the text of the first <text></text>, which will be the title
-			nodes.Item(0).AppendChild(doc.CreateTextNode(winrt::to_hstring(title.value())));
+			const auto textNode = doc.CreateElement(L"text");
+			textNode.InnerText(winrt::to_hstring(*title));
+			bindingNode.AppendChild(textNode);
 		}
 		if (body.has_value()) {
 			// change the text of the second <text></text>, which will be the body
-			nodes.Item(1).AppendChild(doc.CreateTextNode(winrt::to_hstring(body.value())));
+			//nodes.Item(1).AppendChild(doc.CreateTextNode(winrt::to_hstring(body.value())));
+			const auto textNode = doc.CreateElement(L"text");
+			textNode.InnerText(winrt::to_hstring(*body));
+			bindingNode.AppendChild(textNode);
 		}
+		if (payload.has_value()) {
+			std::cout << "payload: " << *payload << std::endl;
+			doc.DocumentElement().SetAttribute(L"launch", winrt::to_hstring(*payload));
+		}
+
+		std::cout << winrt::to_string(doc.GetXml()) << std::endl;
 
 		winrt::Windows::UI::Notifications::ToastNotification notif{ doc };
 		notif.Tag(winrt::to_hstring(id));
 		if (group.has_value()) {
-			notif.Group(winrt::to_hstring(group.value()));
+			notif.Group(winrt::to_hstring(*group));
 		}
 		else {
 			notif.Group(_aumid);

@@ -919,6 +919,7 @@ class _HomePageState extends State<HomePage> {
       );
 
   Future<void> _showNotification() async {
+    print('show notification');
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your channel description',
