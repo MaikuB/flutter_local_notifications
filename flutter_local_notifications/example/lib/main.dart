@@ -188,16 +188,16 @@ Future<void> main() async {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onDidReceiveForegroundNotificationResponse:
-        (NotificationResponse notificationResponse) async {
+        (NotificationResponse notificationResponse) {
+      selectNotificationSubject.add(notificationResponse.payload);
       switch (notificationResponse.notificationResponseType) {
         case NotificationResponseType.selectedNotification:
-          if (notificationResponse.payload != null) {
-            debugPrint('notification payload: ${notificationResponse.payload}');
-          }
           selectNotificationSubject.add(notificationResponse.payload);
           break;
         case NotificationResponseType.selectedNotificationAction:
-          // TODO: Handle this case.
+          if (notificationResponse.actionId == navigationActionId) {
+            selectNotificationSubject.add(notificationResponse.payload);
+          }
           break;
       }
     },

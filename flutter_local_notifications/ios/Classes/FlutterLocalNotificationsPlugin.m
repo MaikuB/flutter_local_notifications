@@ -14,6 +14,7 @@
   NSString *_launchPayload;
   UILocalNotification *_launchNotification;
   FlutterEngineManager *_flutterEngineManager;
+  NSMutableArray<NSString*> *_foregroundActionIdentifiers;
 }
 
 static FlutterPluginRegistrantCallback registerPlugins;
@@ -146,6 +147,7 @@ static FlutterError *getFlutterError(NSError *error) {
     _channel = channel;
     _registrar = registrar;
     _flutterEngineManager = [[FlutterEngineManager alloc] init];
+    _foregroundActionIdentifiers = [[NSMutableArray alloc] init];
   }
 
   return self;
@@ -318,6 +320,10 @@ static FlutterError *getFlutterError(NSError *error) {
           UNNotificationActionOptions options =
               [Converters parseNotificationActionOptions:action[@"options"]];
 
+            if((options & UNNotificationActionOptionForeground) != 0) {
+                [_foregroundActionIdentifiers addObject:identifier];
+            }
+            
           if ([type isEqualToString:@"plain"]) {
             [newActions
                 addObject:[UNNotificationAction actionWithIdentifier:identifier
@@ -350,8 +356,12 @@ static FlutterError *getFlutterError(NSError *error) {
             [UNUserNotificationCenter currentNotificationCenter];
         [center getNotificationCategoriesWithCompletionHandler:^(
                     NSSet<UNNotificationCategory *> *_Nonnull existing) {
+                        if (existing) {
           [center setNotificationCategories:
                       [existing setByAddingObjectsFromSet:newCategories]];
+                        } else {
+                            [center setNotificationCategories:newCategories];
+                        }
 
           completionHandler();
         }];
@@ -1094,38 +1104,48 @@ static FlutterError *getFlutterError(NSError *error) {
                                              .userInfo]) {
     return;
   }
-  if ([response.actionIdentifier
-          isEqualToString:UNNotificationDefaultActionIdentifier]) {
-    NSString *notificationId =
-      (NSString *)response.notification.request.identifier;
+
+    NSInteger notificationId =
+      [response.notification.request.identifier integerValue];
     NSString *payload =
         (NSString *)response.notification.request.content.userInfo[PAYLOAD];
+    
+  if ([response.actionIdentifier
+          isEqualToString:UNNotificationDefaultActionIdentifier]) {
     if (_initialized) {
-        [self handleSelectNotification:[notificationId integerValue] payload:payload];
+        [self handleSelectNotification:notificationId payload:payload];
     } else {
       _launchPayload = payload;
       _launchingAppFromNotification = true;
     }
     completionHandler();
   } else if (response.actionIdentifier != nil) {
+      NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
+      NSNumber *notificationIdNumber = [NSNumber numberWithInteger:notificationId];
+      arguments[@"notificationId"] = notificationIdNumber;
+      arguments[@"actionId"] = response.actionIdentifier;
+      arguments[PAYLOAD] = payload;
+      arguments[@"notificationResponseType"] = [NSNumber numberWithInteger:1];
+      if ([response respondsToSelector:@selector(userText)]) {
+        arguments[@"input"] = [(UNTextInputNotificationResponse *)response userText];
+      }
+      if (_foregroundActionIdentifiers != nil & [_foregroundActionIdentifiers indexOfObject:response.actionIdentifier] != NSNotFound) {
+          
+          [_channel invokeMethod:@"didReceiveForegroundNotificationResponse" arguments:arguments];
+      } else {
     if (!actionEventSink) {
       actionEventSink = [[ActionEventSink alloc] init];
     }
 
-    NSString *text = @"";
+    NSString *text = nil;
     if ([response respondsToSelector:@selector(userText)]) {
       text = [(UNTextInputNotificationResponse *)response userText];
     }
 
-    [actionEventSink addItem:@{
-      @"notificationId" : [NSNumber numberWithInteger:[response.notification.request.identifier integerValue]],
-      @"actionId" : response.actionIdentifier,
-      @"input" : text,
-      @"payload" : response.notification.request.content.userInfo[@"payload"],
-    }];
-
+    [actionEventSink addItem:arguments];
     [_flutterEngineManager startEngineIfNeeded:actionEventSink
                                registerPlugins:registerPlugins];
+      }
 
     completionHandler();
   }
