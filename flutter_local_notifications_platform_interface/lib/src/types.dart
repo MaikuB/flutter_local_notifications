@@ -84,6 +84,9 @@ class NotificationResponse {
   });
 
   /// The notification's id.
+  ///
+  /// This is nullable as support for this only supported for notifications
+  /// created using version 10 or newer of this plugin.
   final int? id;
 
   /// The id of the action that was triggered.
@@ -100,7 +103,26 @@ class NotificationResponse {
   final NotificationResponseType notificationResponseType;
 }
 
+/// Contains details on the notification that launched the application.
+class NotificationAppLaunchDetails {
+  /// Constructs an instance of [NotificationAppLaunchDetails].
+  const NotificationAppLaunchDetails({
+    required this.didNotificationLaunchApp,
+    this.notificationResponse,
+  });
+
+  /// Indicates if the app was launched via notification.
+  final bool didNotificationLaunchApp;
+
+  /// Contains details of the notification that launched the app.
+  final NotificationResponse? notificationResponse;
+}
+
+/// The possible notification response types
 enum NotificationResponseType {
+  /// Indicates that a user has selected a notification.
   selectedNotification,
+
+  /// Indicates the a user has selected a notification action.
   selectedNotificationAction,
 }

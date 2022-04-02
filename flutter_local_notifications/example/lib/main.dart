@@ -99,7 +99,8 @@ Future<void> main() async {
       : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   String initialRoute = HomePage.routeName;
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
-    selectedNotificationPayload = notificationAppLaunchDetails!.payload;
+    selectedNotificationPayload =
+        notificationAppLaunchDetails!.notificationResponse?.payload;
     initialRoute = SecondPage.routeName;
   }
 
@@ -189,7 +190,6 @@ Future<void> main() async {
     initializationSettings,
     onDidReceiveForegroundNotificationResponse:
         (NotificationResponse notificationResponse) {
-      selectNotificationSubject.add(notificationResponse.payload);
       switch (notificationResponse.notificationResponseType) {
         case NotificationResponseType.selectedNotification:
           selectNotificationSubject.add(notificationResponse.payload);
@@ -359,11 +359,26 @@ class _HomePageState extends State<HomePage> {
                       title: 'Did notification launch app?',
                       value: widget.didNotificationLaunchApp,
                     ),
-                    if (widget.didNotificationLaunchApp)
+                    if (widget.didNotificationLaunchApp) ...<Widget>[
+                      const Text('Launch notification details'),
                       _InfoValueString(
-                        title: 'Launch notification payload:',
-                        value: widget.notificationAppLaunchDetails!.payload,
+                          title: 'Notification id',
+                          value: widget.notificationAppLaunchDetails!
+                              .notificationResponse?.id),
+                      _InfoValueString(
+                          title: 'Action id',
+                          value: widget.notificationAppLaunchDetails!
+                              .notificationResponse?.actionId),
+                      _InfoValueString(
+                          title: 'Input',
+                          value: widget.notificationAppLaunchDetails!
+                              .notificationResponse?.input),
+                      _InfoValueString(
+                        title: 'Payload:',
+                        value: widget.notificationAppLaunchDetails!
+                            .notificationResponse?.payload,
                       ),
+                    ],
                     PaddedElevatedButton(
                       buttonText: 'Show plain notification with payload',
                       onPressed: () async {
@@ -2658,14 +2673,20 @@ class SecondPageState extends State<SecondPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Second Screen with payload: ${_payload ?? ''}'),
+          title: const Text('Second Screen'),
         ),
         body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Go back!'),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text('payload ${_payload ?? ''}'),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Go back!'),
+              ),
+            ],
           ),
         ),
       );

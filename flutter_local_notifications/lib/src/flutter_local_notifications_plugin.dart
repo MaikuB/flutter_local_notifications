@@ -194,7 +194,9 @@ class FlutterLocalNotificationsPlugin {
     } else {
       return await FlutterLocalNotificationsPlatform.instance
               .getNotificationAppLaunchDetails() ??
-          const NotificationAppLaunchDetails(false, null);
+          const NotificationAppLaunchDetails(
+            didNotificationLaunchApp: false,
+          );
     }
   }
 
