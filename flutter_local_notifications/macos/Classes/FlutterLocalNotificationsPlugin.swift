@@ -255,11 +255,11 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                     notificationCategories.insert(notificationCategory)
                 }
 
-                if (!notificationCategories.isEmpty) {
+                if !notificationCategories.isEmpty {
                     let center = UNUserNotificationCenter.current()
                     center.setNotificationCategories(notificationCategories)
                 }
-                
+
                 completionHandler()
 
             } else {
