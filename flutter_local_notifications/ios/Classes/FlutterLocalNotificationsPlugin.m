@@ -18,7 +18,8 @@
 static FlutterPluginRegistrantCallback registerPlugins;
 static ActionEventSink *actionEventSink;
 
-NSString *const FOREGROUND_ACTION_IDENTIFIERS = @"dexterous.com/flutter/local_notifications/foreground_action_identifiers";
+NSString *const FOREGROUND_ACTION_IDENTIFIERS =
+    @"dexterous.com/flutter/local_notifications/foreground_action_identifiers";
 NSString *const INITIALIZE_METHOD = @"initialize";
 NSString *const GET_CALLBACK_METHOD = @"getCallbackHandle";
 NSString *const SHOW_METHOD = @"show";
@@ -89,7 +90,6 @@ NSString *const PAYLOAD = @"payload";
 NSString *const NOTIFICATION_LAUNCHED_APP = @"notificationLaunchedApp";
 NSString *const ACTION_ID = @"actionId";
 NSString *const NOTIFICATION_RESPONSE_TYPE = @"notificationResponseType";
-
 
 NSString *const UNSUPPORTED_OS_VERSION_ERROR_CODE = @"unsupported_os_version";
 NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
@@ -182,9 +182,12 @@ static FlutterError *getFlutterError(NSError *error) {
   } else if ([GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD
                  isEqualToString:call.method]) {
 
-    NSMutableDictionary *notificationAppLaunchDetails = [[NSMutableDictionary alloc] init];
-      notificationAppLaunchDetails[NOTIFICATION_LAUNCHED_APP] = [NSNumber numberWithBool:_launchingAppFromNotification];
-    notificationAppLaunchDetails[@"notificationResponse"] = _launchNotificationResponseDict;
+    NSMutableDictionary *notificationAppLaunchDetails =
+        [[NSMutableDictionary alloc] init];
+    notificationAppLaunchDetails[NOTIFICATION_LAUNCHED_APP] =
+        [NSNumber numberWithBool:_launchingAppFromNotification];
+    notificationAppLaunchDetails[@"notificationResponse"] =
+        _launchNotificationResponseDict;
     result(notificationAppLaunchDetails);
   } else if ([PENDING_NOTIFICATIONS_REQUESTS_METHOD
                  isEqualToString:call.method]) {
@@ -302,7 +305,8 @@ static FlutterError *getFlutterError(NSError *error) {
           [NSMutableSet set];
 
       NSArray *categories = arguments[@"notificationCategories"];
-        NSMutableArray<NSString*> *foregroundActionIdentifiers = [[NSMutableArray alloc] init];
+      NSMutableArray<NSString *> *foregroundActionIdentifiers =
+          [[NSMutableArray alloc] init];
 
       for (NSDictionary *category in categories) {
         NSMutableArray<UNNotificationAction *> *newActions =
@@ -316,10 +320,10 @@ static FlutterError *getFlutterError(NSError *error) {
           UNNotificationActionOptions options =
               [Converters parseNotificationActionOptions:action[@"options"]];
 
-            if((options & UNNotificationActionOptionForeground) != 0) {
-                [foregroundActionIdentifiers addObject:identifier];
-            }
-            
+          if ((options & UNNotificationActionOptionForeground) != 0) {
+            [foregroundActionIdentifiers addObject:identifier];
+          }
+
           if ([type isEqualToString:@"plain"]) {
             [newActions
                 addObject:[UNNotificationAction actionWithIdentifier:identifier
@@ -352,13 +356,15 @@ static FlutterError *getFlutterError(NSError *error) {
             [UNUserNotificationCenter currentNotificationCenter];
         [center getNotificationCategoriesWithCompletionHandler:^(
                     NSSet<UNNotificationCategory *> *_Nonnull existing) {
-                        if (existing) {
-          [center setNotificationCategories:
-                      [existing setByAddingObjectsFromSet:newCategories]];
-                        } else {
-                            [center setNotificationCategories:newCategories];
-                        }
-                        [[NSUserDefaults standardUserDefaults] setObject:foregroundActionIdentifiers forKey:FOREGROUND_ACTION_IDENTIFIERS];
+          if (existing) {
+            [center setNotificationCategories:
+                        [existing setByAddingObjectsFromSet:newCategories]];
+          } else {
+            [center setNotificationCategories:newCategories];
+          }
+          [[NSUserDefaults standardUserDefaults]
+              setObject:foregroundActionIdentifiers
+                 forKey:FOREGROUND_ACTION_IDENTIFIERS];
           completionHandler();
         }];
       } else {
@@ -1046,14 +1052,15 @@ static FlutterError *getFlutterError(NSError *error) {
          userInfo[PRESENT_BADGE] && userInfo[PAYLOAD];
 }
 
-- (void)handleSelectNotification:(NSInteger )notificationId
+- (void)handleSelectNotification:(NSInteger)notificationId
                          payload:(NSString *)payload {
-    NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
-    NSNumber *notificationIdNumber = [NSNumber numberWithInteger:notificationId];
-    arguments[@"notificationId"] = notificationIdNumber;
-    arguments[PAYLOAD] = payload;
-    arguments[NOTIFICATION_RESPONSE_TYPE] = [NSNumber numberWithInteger:0];
-  [_channel invokeMethod:@"didReceiveForegroundNotificationResponse" arguments:arguments];
+  NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
+  NSNumber *notificationIdNumber = [NSNumber numberWithInteger:notificationId];
+  arguments[@"notificationId"] = notificationIdNumber;
+  arguments[PAYLOAD] = payload;
+  arguments[NOTIFICATION_RESPONSE_TYPE] = [NSNumber numberWithInteger:0];
+  [_channel invokeMethod:@"didReceiveForegroundNotificationResponse"
+               arguments:arguments];
 }
 
 - (BOOL)containsKey:(NSString *)key forDictionary:(NSDictionary *)dictionary {
@@ -1092,26 +1099,34 @@ static FlutterError *getFlutterError(NSError *error) {
   completionHandler(presentationOptions);
 }
 
-- (NSMutableDictionary *)extractNotificationResponseDict:(UNNotificationResponse * _Nonnull)response NS_AVAILABLE_IOS(10.0){
-    NSMutableDictionary *notitificationResponseDict = [[NSMutableDictionary alloc] init];
-    NSInteger notificationId =
+- (NSMutableDictionary *)extractNotificationResponseDict:
+    (UNNotificationResponse *_Nonnull)response NS_AVAILABLE_IOS(10.0) {
+  NSMutableDictionary *notitificationResponseDict =
+      [[NSMutableDictionary alloc] init];
+  NSInteger notificationId =
       [response.notification.request.identifier integerValue];
-    NSString *payload =
-        (NSString *)response.notification.request.content.userInfo[PAYLOAD];
-    NSNumber *notificationIdNumber = [NSNumber numberWithInteger:notificationId];
-    notitificationResponseDict[@"notificationId"] = notificationIdNumber;
-    notitificationResponseDict[PAYLOAD] = payload;
-    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
-        notitificationResponseDict[NOTIFICATION_RESPONSE_TYPE] = [NSNumber numberWithInteger:0];
-    } else if (response.actionIdentifier != nil && ![response.actionIdentifier isEqualToString:UNNotificationDismissActionIdentifier]) {
-        notitificationResponseDict[ACTION_ID] = response.actionIdentifier;
-        notitificationResponseDict[NOTIFICATION_RESPONSE_TYPE] = [NSNumber numberWithInteger:1];
-    }
+  NSString *payload =
+      (NSString *)response.notification.request.content.userInfo[PAYLOAD];
+  NSNumber *notificationIdNumber = [NSNumber numberWithInteger:notificationId];
+  notitificationResponseDict[@"notificationId"] = notificationIdNumber;
+  notitificationResponseDict[PAYLOAD] = payload;
+  if ([response.actionIdentifier
+          isEqualToString:UNNotificationDefaultActionIdentifier]) {
+    notitificationResponseDict[NOTIFICATION_RESPONSE_TYPE] =
+        [NSNumber numberWithInteger:0];
+  } else if (response.actionIdentifier != nil &&
+             ![response.actionIdentifier
+                 isEqualToString:UNNotificationDismissActionIdentifier]) {
+    notitificationResponseDict[ACTION_ID] = response.actionIdentifier;
+    notitificationResponseDict[NOTIFICATION_RESPONSE_TYPE] =
+        [NSNumber numberWithInteger:1];
+  }
 
-    if ([response respondsToSelector:@selector(userText)]) {
-        notitificationResponseDict[@"input"] = [(UNTextInputNotificationResponse *)response userText];
-    }
-    return notitificationResponseDict;
+  if ([response respondsToSelector:@selector(userText)]) {
+    notitificationResponseDict[@"input"] =
+        [(UNTextInputNotificationResponse *)response userText];
+  }
+  return notitificationResponseDict;
 }
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
@@ -1123,39 +1138,44 @@ static FlutterError *getFlutterError(NSError *error) {
     return;
   }
 
-    NSInteger notificationId =
+  NSInteger notificationId =
       [response.notification.request.identifier integerValue];
-    NSString *payload =
-        (NSString *)response.notification.request.content.userInfo[PAYLOAD];
-    
+  NSString *payload =
+      (NSString *)response.notification.request.content.userInfo[PAYLOAD];
+
   if ([response.actionIdentifier
           isEqualToString:UNNotificationDefaultActionIdentifier]) {
     if (_initialized) {
-        [self handleSelectNotification:notificationId payload:payload];
+      [self handleSelectNotification:notificationId payload:payload];
     } else {
-      _launchNotificationResponseDict = [self extractNotificationResponseDict:response];
+      _launchNotificationResponseDict =
+          [self extractNotificationResponseDict:response];
       _launchingAppFromNotification = true;
     }
     completionHandler();
-  }
-  else if (response.actionIdentifier != nil) {
-      NSMutableDictionary *notificationResponseDict = [self extractNotificationResponseDict:response];
-      NSArray<NSString *> *foregroundActionIdentifiers = [[NSUserDefaults standardUserDefaults] stringArrayForKey:FOREGROUND_ACTION_IDENTIFIERS];
-      if ([foregroundActionIdentifiers indexOfObject:response.actionIdentifier] != NSNotFound) {
-          if (_initialized) {
-          [_channel invokeMethod:@"didReceiveForegroundNotificationResponse" arguments:notificationResponseDict];
-          } else {
-              _launchNotificationResponseDict = notificationResponseDict;
-              _launchingAppFromNotification = true;
-          }
+  } else if (response.actionIdentifier != nil) {
+    NSMutableDictionary *notificationResponseDict =
+        [self extractNotificationResponseDict:response];
+    NSArray<NSString *> *foregroundActionIdentifiers =
+        [[NSUserDefaults standardUserDefaults]
+            stringArrayForKey:FOREGROUND_ACTION_IDENTIFIERS];
+    if ([foregroundActionIdentifiers indexOfObject:response.actionIdentifier] !=
+        NSNotFound) {
+      if (_initialized) {
+        [_channel invokeMethod:@"didReceiveForegroundNotificationResponse"
+                     arguments:notificationResponseDict];
       } else {
-          if (!actionEventSink) {
-              actionEventSink = [[ActionEventSink alloc] init];
-          }
+        _launchNotificationResponseDict = notificationResponseDict;
+        _launchingAppFromNotification = true;
+      }
+    } else {
+      if (!actionEventSink) {
+        actionEventSink = [[ActionEventSink alloc] init];
+      }
 
-          [actionEventSink addItem:notificationResponseDict];
-          [_flutterEngineManager startEngineIfNeeded:actionEventSink
-                               registerPlugins:registerPlugins];
+      [actionEventSink addItem:notificationResponseDict];
+      [_flutterEngineManager startEngineIfNeeded:actionEventSink
+                                 registerPlugins:registerPlugins];
     }
 
     completionHandler();
@@ -1173,10 +1193,13 @@ static FlutterError *getFlutterError(NSError *error) {
         launchNotification != nil &&
         [self isAFlutterLocalNotification:launchNotification.userInfo];
     if (_launchingAppFromNotification) {
-        _launchNotificationResponseDict = [[NSMutableDictionary alloc] init];
-        _launchNotificationResponseDict[@"notificationId"] = launchNotification.userInfo[NOTIFICATION_ID];
-        _launchNotificationResponseDict[PAYLOAD] = launchNotification.userInfo[PAYLOAD];
-        _launchNotificationResponseDict[NOTIFICATION_RESPONSE_TYPE] = [NSNumber numberWithInteger:0];
+      _launchNotificationResponseDict = [[NSMutableDictionary alloc] init];
+      _launchNotificationResponseDict[@"notificationId"] =
+          launchNotification.userInfo[NOTIFICATION_ID];
+      _launchNotificationResponseDict[PAYLOAD] =
+          launchNotification.userInfo[PAYLOAD];
+      _launchNotificationResponseDict[NOTIFICATION_RESPONSE_TYPE] =
+          [NSNumber numberWithInteger:0];
     }
   }
 
