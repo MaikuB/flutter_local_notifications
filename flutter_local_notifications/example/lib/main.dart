@@ -117,9 +117,6 @@ Future<void> main() async {
           'Action 1',
           buttonTitle: 'Send',
           placeholder: 'Placeholder',
-          options: const <DarwinNotificationActionOption>{
-            DarwinNotificationActionOption.foreground,
-          },
         ),
       ],
     ),
@@ -999,7 +996,7 @@ class _HomePageState extends State<HomePage> {
           navigationActionId,
           'Action 3',
           icon: DrawableResourceAndroidBitmap('secondary_icon'),
-
+          showsUserInterface: true,
           // By default, Android plugin will dismiss the notification when the
           // user tapped on a action (this mimics the behavior on iOS).
           cancelNotification: false,
@@ -1061,6 +1058,7 @@ class _HomePageState extends State<HomePage> {
               label: 'Enter a message',
             ),
           ],
+          showsUserInterface: true,
         ),
       ],
     );

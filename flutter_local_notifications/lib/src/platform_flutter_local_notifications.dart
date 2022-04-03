@@ -494,6 +494,7 @@ class AndroidFlutterLocalNotificationsPlugin
           NotificationResponse(
             id: call.arguments['notificationId'],
             actionId: call.arguments['actionId'],
+            input: call.arguments['input'],
             payload: call.arguments['payload'],
             notificationResponseType: NotificationResponseType
                 .values[call.arguments['notificationResponseType']],
