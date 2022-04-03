@@ -129,7 +129,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         } else if response.actionIdentifier == UNNotificationDismissActionIdentifier {
             completionHandler()
         } else {
-            if (initialized) {
+            if initialized {
                 // No isolate can be used for macOS until https://github.com/flutter/flutter/issues/65222 is resolved.
                 //
                 // Therefore, we call the regular method channel and let the macos plugin handle it appropriately.
@@ -145,7 +145,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     public func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
         if notification.activationType == .contentsClicked {
-            handleSelectNotification(notificationId:Int(notification.identifier!)!, payload: notification.userInfo![MethodCallArguments.payload] as? String)
+            handleSelectNotification(notificationId: Int(notification.identifier!)!, payload: notification.userInfo![MethodCallArguments.payload] as? String)
         }
     }
 
@@ -624,7 +624,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         return String(arguments[MethodCallArguments.id] as! Int)
     }
 
-    func handleSelectNotification(notificationId:Int, payload: String?) {
+    func handleSelectNotification(notificationId: Int, payload: String?) {
         var arguments: [String: Any?] = [:]
         arguments["notificationId"] = notificationId
         arguments["payload"] = payload
@@ -635,15 +635,14 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     func handleSelectNotificationAction(arguments: [String: Any?]) {
         channel.invokeMethod("didReceiveForegroundNotificationResponse", arguments: arguments)
     }
-    
+
     @available(macOS 10.14, *)
     func extractNotificationResponseDict(response: UNNotificationResponse) -> [String: Any?] {
-        var notificationResponseDict: [String:Any?] = [:]
+        var notificationResponseDict: [String: Any?] = [:]
         notificationResponseDict["notificationId"] = Int(response.notification.request.identifier)!
-        if (response.actionIdentifier == UNNotificationDefaultActionIdentifier) {
+        if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
             notificationResponseDict[MethodCallArguments.notificationResponseType] = 0
-        }
-        else if (response.actionIdentifier != UNNotificationDismissActionIdentifier)  {
+        } else if response.actionIdentifier != UNNotificationDismissActionIdentifier {
             notificationResponseDict[MethodCallArguments.actionId] = response.actionIdentifier
             notificationResponseDict[MethodCallArguments.notificationResponseType] = 1
         }
