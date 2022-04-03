@@ -50,7 +50,7 @@ class MethodChannelFlutterLocalNotificationsPlugin
             : null;
     return result != null
         ? NotificationAppLaunchDetails(
-            didNotificationLaunchApp: result['notificationLaunchedApp'],
+            result['notificationLaunchedApp'],
             notificationResponse: notificationResponse == null
                 ? null
                 : NotificationResponse(
