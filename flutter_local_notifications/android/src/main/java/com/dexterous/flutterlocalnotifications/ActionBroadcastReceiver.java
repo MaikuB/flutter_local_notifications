@@ -3,19 +3,16 @@ package com.dexterous.flutterlocalnotifications;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.core.app.RemoteInput;
 
 import com.dexterous.flutterlocalnotifications.isolate.IsolatePreferences;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,10 +49,12 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
 
     preferences = preferences == null ? new IsolatePreferences(context) : preferences;
 
-    final Map<String, Object> action = FlutterLocalNotificationsPlugin.extractNotificationResponseMap(intent);
+    final Map<String, Object> action =
+        FlutterLocalNotificationsPlugin.extractNotificationResponseMap(intent);
 
     if (intent.getBooleanExtra(FlutterLocalNotificationsPlugin.CANCEL_NOTIFICATION, false)) {
-      NotificationManagerCompat.from(context).cancel((int)action.get(FlutterLocalNotificationsPlugin.NOTIFICATION_ID));
+      NotificationManagerCompat.from(context)
+          .cancel((int) action.get(FlutterLocalNotificationsPlugin.NOTIFICATION_ID));
     }
 
     if (actionEventSink == null) {

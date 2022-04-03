@@ -101,7 +101,8 @@ public class FlutterLocalNotificationsPlugin
   private static final String DRAWABLE = "drawable";
   private static final String DEFAULT_ICON = "defaultIcon";
   private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
-  private static final String SELECT_FOREGROUND_NOTIFICATION_ACTION = "SELECT_FOREGROUND_NOTIFICATION";
+  private static final String SELECT_FOREGROUND_NOTIFICATION_ACTION =
+      "SELECT_FOREGROUND_NOTIFICATION";
   private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
   private static final String INITIALIZE_METHOD = "initialize";
   private static final String GET_CALLBACK_HANDLE_METHOD = "getCallbackHandle";
@@ -240,7 +241,7 @@ public class FlutterLocalNotificationsPlugin
         }
 
         Intent actionIntent;
-        if (action.showsUserInterface != null &&  action.showsUserInterface) {
+        if (action.showsUserInterface != null && action.showsUserInterface) {
           actionIntent = getLaunchIntent(context);
           actionIntent.setAction(SELECT_FOREGROUND_NOTIFICATION_ACTION);
         } else {
@@ -249,10 +250,10 @@ public class FlutterLocalNotificationsPlugin
         }
 
         actionIntent
-                .putExtra(NOTIFICATION_ID, notificationDetails.id)
-                .putExtra(ACTION_ID, action.id)
-                .putExtra(CANCEL_NOTIFICATION, action.cancelNotification)
-                .putExtra(PAYLOAD, notificationDetails.payload);
+            .putExtra(NOTIFICATION_ID, notificationDetails.id)
+            .putExtra(ACTION_ID, action.id)
+            .putExtra(CANCEL_NOTIFICATION, action.cancelNotification)
+            .putExtra(PAYLOAD, notificationDetails.payload);
         int actionFlags = PendingIntent.FLAG_UPDATE_CURRENT;
         if (action.actionInputs == null || action.actionInputs.isEmpty()) {
           if (VERSION.SDK_INT >= VERSION_CODES.M) {
@@ -265,8 +266,10 @@ public class FlutterLocalNotificationsPlugin
         }
 
         @SuppressLint("UnspecifiedImmutableFlag")
-        final PendingIntent actionPendingIntent = action.showsUserInterface != null &&  action.showsUserInterface ? PendingIntent.getActivity(context, requestCode++, actionIntent, actionFlags) :
-            PendingIntent.getBroadcast(context, requestCode++, actionIntent, actionFlags);
+        final PendingIntent actionPendingIntent =
+            action.showsUserInterface != null && action.showsUserInterface
+                ? PendingIntent.getActivity(context, requestCode++, actionIntent, actionFlags)
+                : PendingIntent.getBroadcast(context, requestCode++, actionIntent, actionFlags);
 
         final Spannable actionTitleSpannable = new SpannableString(action.title);
         if (action.titleColor != null) {
@@ -550,14 +553,14 @@ public class FlutterLocalNotificationsPlugin
     saveScheduledNotification(context, notificationDetails);
   }
 
-  static  Map<String, Object> extractNotificationResponseMap(Intent intent) {
+  static Map<String, Object> extractNotificationResponseMap(Intent intent) {
     final int notificationId = intent.getIntExtra(NOTIFICATION_ID, 0);
     final Map<String, Object> notificationResponseMap = new HashMap<>();
     notificationResponseMap.put(NOTIFICATION_ID, notificationId);
     notificationResponseMap.put(ACTION_ID, intent.getStringExtra(ACTION_ID));
     notificationResponseMap.put(
-            FlutterLocalNotificationsPlugin.PAYLOAD,
-            intent.getStringExtra(FlutterLocalNotificationsPlugin.PAYLOAD));
+        FlutterLocalNotificationsPlugin.PAYLOAD,
+        intent.getStringExtra(FlutterLocalNotificationsPlugin.PAYLOAD));
 
     Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
     if (remoteInput != null) {
@@ -1502,11 +1505,14 @@ public class FlutterLocalNotificationsPlugin
     Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
     Boolean notificationLaunchedApp =
         mainActivity != null
-            && (SELECT_NOTIFICATION.equals(mainActivity.getIntent().getAction()) || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivity.getIntent().getAction()))
+            && (SELECT_NOTIFICATION.equals(mainActivity.getIntent().getAction())
+                || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(
+                    mainActivity.getIntent().getAction()))
             && !launchedActivityFromHistory(mainActivity.getIntent());
     notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
     if (notificationLaunchedApp) {
-      notificationAppLaunchDetails.put("notificationResponse", extractNotificationResponseMap(launchIntent));
+      notificationAppLaunchDetails.put(
+          "notificationResponse", extractNotificationResponseMap(launchIntent));
     }
 
     result.success(notificationAppLaunchDetails);
@@ -1679,11 +1685,14 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private Boolean sendNotificationPayloadMessage(Intent intent) {
-    if (SELECT_NOTIFICATION.equals(intent.getAction()) ||  SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
+    if (SELECT_NOTIFICATION.equals(intent.getAction())
+        || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
       Map<String, Object> notificationResponse = extractNotificationResponseMap(intent);
       if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
         if (intent.getBooleanExtra(FlutterLocalNotificationsPlugin.CANCEL_NOTIFICATION, false)) {
-          NotificationManagerCompat.from(applicationContext).cancel((int)notificationResponse.get(FlutterLocalNotificationsPlugin.NOTIFICATION_ID));
+          NotificationManagerCompat.from(applicationContext)
+              .cancel(
+                  (int) notificationResponse.get(FlutterLocalNotificationsPlugin.NOTIFICATION_ID));
         }
       }
       channel.invokeMethod("didReceiveForegroundNotificationResponse", notificationResponse);
