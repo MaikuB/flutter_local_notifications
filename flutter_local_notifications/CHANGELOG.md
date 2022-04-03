@@ -1,3 +1,10 @@
+# [10.0.0-dev.12]
+
+* **Breaking change** callbacks have now been worked. There are now the following callbacks
+ * `onDidReceiveForegroundNotificationResponse`: invoked only when the app is running. This works for when a user has selected a notification or notification action. This replaces the `onSelectNotification` callback that existed before. For notification actions, the action needs to be configured to indicate the the app or user interface should be shown on invoking the action for this callback to be invoked i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. On macOS and Linux, as there's no support for background isolates it will always invoke this callback
+ * `onDidReceiveBackgroundNotificationResponse`: invoked on a background isolate for when a user has selected a notification action. This replaces the `onSelectNotificationAction` callback
+* **Breaking change** the `NotificationAppLaunchDetails` has been updated to contain `NotificationResponse` class with the `payload` belonging to the `NotificationResponse` class. This is to allow knowing more details about what caused the app to launch e.g. if a notification action was used to do so
+
 # [10.0.0-dev.11]
 
 * Includes changes from 9.4.0

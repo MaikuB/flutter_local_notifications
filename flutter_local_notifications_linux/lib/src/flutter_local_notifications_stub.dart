@@ -23,10 +23,11 @@ class LinuxFlutterLocalNotificationsPlugin
   @override
   Future<bool?> initialize(
     LinuxInitializationSettings initializationSettings, {
-    SelectNotificationCallback? onSelectNotification,
-    SelectNotificationActionCallback? onSelectNotificationAction,
+    DidReceiveForegroundNotificationResponseCallback?
+        onDidReceiveForegroundNotificationResponse,
   }) async {
     assert(false);
+    return null;
   }
 
   /// Errors on attempted calling of the stub. It exists only to satisfy

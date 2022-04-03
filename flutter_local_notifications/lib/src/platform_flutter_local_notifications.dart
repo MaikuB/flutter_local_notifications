@@ -44,9 +44,26 @@ class MethodChannelFlutterLocalNotificationsPlugin
       getNotificationAppLaunchDetails() async {
     final Map<dynamic, dynamic>? result =
         await _channel.invokeMethod('getNotificationAppLaunchDetails');
+    final Map<dynamic, dynamic>? notificationResponse =
+        result != null && result.containsKey('notificationResponse')
+            ? result['notificationResponse']
+            : null;
     return result != null
-        ? NotificationAppLaunchDetails(result['notificationLaunchedApp'],
-            result.containsKey('payload') ? result['payload'] : null)
+        ? NotificationAppLaunchDetails(
+            result['notificationLaunchedApp'],
+            notificationResponse: notificationResponse == null
+                ? null
+                : NotificationResponse(
+                    id: notificationResponse['notificationId'],
+                    actionId: notificationResponse['actionId'],
+                    input: notificationResponse['input'],
+                    notificationResponseType: NotificationResponseType.values[
+                        notificationResponse['notificationResponseType']],
+                    payload: notificationResponse.containsKey('payload')
+                        ? notificationResponse['payload']
+                        : null,
+                  ),
+          )
         : null;
   }
 
@@ -94,7 +111,8 @@ class MethodChannelFlutterLocalNotificationsPlugin
 /// Android implementation of the local notifications plugin.
 class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
-  SelectNotificationCallback? _onSelectNotification;
+  DidReceiveForegroundNotificationResponseCallback?
+      _ondidReceiveForegroundNotificationResponse;
 
   /// Initializes the plugin.
   ///
@@ -108,16 +126,19 @@ class AndroidFlutterLocalNotificationsPlugin
   /// notification action IDs.
   Future<bool> initialize(
     AndroidInitializationSettings initializationSettings, {
-    SelectNotificationCallback? onSelectNotification,
-    SelectNotificationActionCallback? onSelectNotificationAction,
+    DidReceiveForegroundNotificationResponseCallback?
+        onDidReceiveForegroundNotificationResponse,
+    DidReceiveBackgroundNotificationResponseCallback?
+        onDidReceiveBackgroundNotificationResponse,
   }) async {
-    _onSelectNotification = onSelectNotification;
+    _ondidReceiveForegroundNotificationResponse =
+        onDidReceiveForegroundNotificationResponse;
     _channel.setMethodCallHandler(_handleMethod);
 
     final Map<String, Object> arguments = initializationSettings.toMap();
 
-    _evaluateSelectNotificationActionCallback(
-        onSelectNotificationAction, arguments);
+    _evaluateBackgroundNotificationCallback(
+        onDidReceiveBackgroundNotificationResponse, arguments);
 
     return await _channel.invokeMethod('initialize', arguments);
   }
@@ -468,8 +489,17 @@ class AndroidFlutterLocalNotificationsPlugin
 
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
-      case 'selectNotification':
-        _onSelectNotification?.call(call.arguments);
+      case 'didReceiveForegroundNotificationResponse':
+        _ondidReceiveForegroundNotificationResponse?.call(
+          NotificationResponse(
+            id: call.arguments['notificationId'],
+            actionId: call.arguments['actionId'],
+            input: call.arguments['input'],
+            payload: call.arguments['payload'],
+            notificationResponseType: NotificationResponseType
+                .values[call.arguments['notificationResponseType']],
+          ),
+        );
         break;
       default:
         return await Future<void>.error('Method not defined');
@@ -480,8 +510,8 @@ class AndroidFlutterLocalNotificationsPlugin
 /// iOS implementation of the local notifications plugin.
 class IOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
-  SelectNotificationCallback? _onSelectNotification;
-
+  DidReceiveForegroundNotificationResponseCallback?
+      _onDidReceiveForegroundNotificationResponse;
   DidReceiveLocalNotificationCallback? _onDidReceiveLocalNotification;
 
   /// Initializes the plugin.
@@ -502,18 +532,21 @@ class IOSFlutterLocalNotificationsPlugin
   /// [getNotificationAppLaunchDetails].
   Future<bool?> initialize(
     DarwinInitializationSettings initializationSettings, {
-    SelectNotificationCallback? onSelectNotification,
-    SelectNotificationActionCallback? onSelectNotificationAction,
+    DidReceiveForegroundNotificationResponseCallback?
+        onDidReceiveForegroundNotificationResponse,
+    DidReceiveBackgroundNotificationResponseCallback?
+        onDidReceiveBackgroundNotificationResponse,
   }) async {
-    _onSelectNotification = onSelectNotification;
+    _onDidReceiveForegroundNotificationResponse =
+        onDidReceiveForegroundNotificationResponse;
     _onDidReceiveLocalNotification =
         initializationSettings.onDidReceiveLocalNotification;
     _channel.setMethodCallHandler(_handleMethod);
 
     final Map<String, Object> arguments = initializationSettings.toMap();
 
-    _evaluateSelectNotificationActionCallback(
-        onSelectNotificationAction, arguments);
+    _evaluateBackgroundNotificationCallback(
+        onDidReceiveBackgroundNotificationResponse, arguments);
 
     return await _channel.invokeMethod('initialize', arguments);
   }
@@ -699,8 +732,17 @@ class IOSFlutterLocalNotificationsPlugin
 
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
-      case 'selectNotification':
-        _onSelectNotification?.call(call.arguments);
+      case 'didReceiveForegroundNotificationResponse':
+        _onDidReceiveForegroundNotificationResponse?.call(
+          NotificationResponse(
+            id: call.arguments['notificationId'],
+            actionId: call.arguments['actionId'],
+            input: call.arguments['input'],
+            payload: call.arguments['payload'],
+            notificationResponseType: NotificationResponseType
+                .values[call.arguments['notificationResponseType']],
+          ),
+        );
         break;
       case 'didReceiveLocalNotification':
         _onDidReceiveLocalNotification!(
@@ -718,8 +760,8 @@ class IOSFlutterLocalNotificationsPlugin
 /// macOS implementation of the local notifications plugin.
 class MacOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
-  SelectNotificationCallback? _onSelectNotification;
-  SelectNotificationActionCallback? _onSelectNotificationAction;
+  DidReceiveForegroundNotificationResponseCallback?
+      _onDidReceiveForegroundNotificationResponse;
 
   /// Initializes the plugin.
   ///
@@ -742,11 +784,11 @@ class MacOSFlutterLocalNotificationsPlugin
   /// [getNotificationAppLaunchDetails].
   Future<bool?> initialize(
     DarwinInitializationSettings initializationSettings, {
-    SelectNotificationCallback? onSelectNotification,
-    SelectNotificationActionCallback? onSelectNotificationAction,
+    DidReceiveForegroundNotificationResponseCallback?
+        onDidReceiveForegroundNotificationResponse,
   }) async {
-    _onSelectNotification = onSelectNotification;
-    _onSelectNotificationAction = onSelectNotificationAction;
+    _onDidReceiveForegroundNotificationResponse =
+        onDidReceiveForegroundNotificationResponse;
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
         'initialize', initializationSettings.toMap());
@@ -843,16 +885,17 @@ class MacOSFlutterLocalNotificationsPlugin
 
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
-      case 'selectNotification':
-        _onSelectNotification?.call(call.arguments);
-        break;
-      case 'selectNotificationAction':
-        _onSelectNotificationAction?.call(NotificationActionDetails(
-          id: int.parse(call.arguments['notificationId']),
-          actionId: call.arguments['actionId'],
-          input: call.arguments['input'],
-          payload: call.arguments['payload'],
-        ));
+      case 'didReceiveForegroundNotificationResponse':
+        _onDidReceiveForegroundNotificationResponse?.call(
+          NotificationResponse(
+            id: call.arguments['notificationId'],
+            actionId: call.arguments['actionId'],
+            input: call.arguments['input'],
+            payload: call.arguments['payload'],
+            notificationResponseType: NotificationResponseType
+                .values[call.arguments['notificationResponseType']],
+          ),
+        );
         break;
       default:
         return await Future<void>.error('Method not defined');
@@ -860,20 +903,21 @@ class MacOSFlutterLocalNotificationsPlugin
   }
 }
 
-/// Checks [onSelectNotificationAction], if not `null`, for eligibility to
-/// be used as a background callback.
+/// Checks [didReceiveBackgroundNotificationResponseCallback], if not `null`,
+/// for eligibility to be used as a background callback.
 ///
 /// If the method is `null`, no further action will be taken.
 ///
 /// This will add a `dispatcher_handle` and `callback_handle` argument to the
 /// [arguments] map when the config is correct.
-void _evaluateSelectNotificationActionCallback(
-  SelectNotificationActionCallback? onSelectNotificationAction,
+void _evaluateBackgroundNotificationCallback(
+  DidReceiveBackgroundNotificationResponseCallback?
+      didReceiveBackgroundNotificationResponseCallback,
   Map<String, Object> arguments,
 ) {
-  if (onSelectNotificationAction != null) {
-    final CallbackHandle? callback =
-        PluginUtilities.getCallbackHandle(onSelectNotificationAction);
+  if (didReceiveBackgroundNotificationResponseCallback != null) {
+    final CallbackHandle? callback = PluginUtilities.getCallbackHandle(
+        didReceiveBackgroundNotificationResponseCallback);
     assert(callback != null, '''
           The backgroundHandler needs to be either a static function or a top 
           level function to be accessible as a Flutter entry point.''');

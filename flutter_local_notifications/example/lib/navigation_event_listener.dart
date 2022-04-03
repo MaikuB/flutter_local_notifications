@@ -33,7 +33,7 @@ class _NavigationEventListenerState extends State<NavigationEventListener> {
 
     // ignore: avoid_annotating_with_dynamic
     port.listen((dynamic data) async {
-      final NotificationActionDetails action = data;
+      final NotificationResponse action = data;
       if (action.actionId == urlLaunchActionId) {
         await launch('https://flutter.dev');
       }
