@@ -130,18 +130,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             completionHandler()
         } else {
             if (initialized) {
-                let text = (response as? UNTextInputNotificationResponse)?.userText
-
                 // No isolate can be used for macOS until https://github.com/flutter/flutter/issues/65222 is resolved.
                 //
                 // Therefore, we call the regular method channel and let the macos plugin handle it appropriately.
-                handleSelectNotificationAction(arguments: [
-                    "notificationId": Int(response.notification.request.identifier)!,
-                    MethodCallArguments.actionId: response.actionIdentifier,
-                    "input": text,
-                    MethodCallArguments.payload: response.notification.request.content.userInfo[MethodCallArguments.payload],
-                    MethodCallArguments.notificationResponseType: 1
-                ])
+                handleSelectNotificationAction(arguments: extractNotificationResponseDict(response: response))
             } else {
                 launchNotificationResponseDict = extractNotificationResponseDict(response: response)
                 launchingAppFromNotification = true
