@@ -37,6 +37,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let filePath = "filePath"
         static let threadIdentifier = "threadIdentifier"
         static let interruptionLevel = "interruptionLevel"
+        static let actionId = "actionId"
+        static let notificationResponseType = "notificationResponseType"
     }
 
     struct ErrorMessages {
@@ -73,7 +75,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     var defaultPresentAlert = false
     var defaultPresentSound = false
     var defaultPresentBadge = false
-    var launchPayload: String?
+    var launchNotificationResponseDict: [String: Any?]?
     var launchingAppFromNotification = false
 
     init(fromChannel channel: FlutterMethodChannel) {
@@ -119,24 +121,31 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             if initialized {
                 handleSelectNotification(notificationId: Int(response.notification.request.identifier)!, payload: payload)
             } else {
-                launchPayload = payload
+                launchNotificationResponseDict = extractNotificationResponseDict(response: response)
                 launchingAppFromNotification = true
             }
 
             completionHandler()
+        } else if response.actionIdentifier == UNNotificationDismissActionIdentifier {
+            completionHandler()
         } else {
-            let text = (response as? UNTextInputNotificationResponse)?.userText ?? ""
+            if (initialized) {
+                let text = (response as? UNTextInputNotificationResponse)?.userText
 
-            // No isolate can be used for macOS until https://github.com/flutter/flutter/issues/65222 is resolved.
-            //
-            // Therefore, we call the regular method channel and let the macos plugin handle it appropriately.
-            handleSelectNotificationAction(arguments: [
-                "notificationId": Int(response.notification.request.identifier)!,
-                "actionId": response.actionIdentifier,
-                "input": text,
-                "payload": response.notification.request.content.userInfo["payload"],
-                "notificationResponseType": 1
-            ])
+                // No isolate can be used for macOS until https://github.com/flutter/flutter/issues/65222 is resolved.
+                //
+                // Therefore, we call the regular method channel and let the macos plugin handle it appropriately.
+                handleSelectNotificationAction(arguments: [
+                    "notificationId": Int(response.notification.request.identifier)!,
+                    MethodCallArguments.actionId: response.actionIdentifier,
+                    "input": text,
+                    MethodCallArguments.payload: response.notification.request.content.userInfo[MethodCallArguments.payload],
+                    MethodCallArguments.notificationResponseType: 1
+                ])
+            } else {
+                launchNotificationResponseDict = extractNotificationResponseDict(response: response)
+                launchingAppFromNotification = true
+            }
 
             completionHandler()
         }
@@ -284,7 +293,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     func getNotificationAppLaunchDetails(_ result: @escaping FlutterResult) {
         if #available(OSX 10.14, *) {
-            let appLaunchDetails: [String: Any?] = [MethodCallArguments.notificationLaunchedApp: launchingAppFromNotification, MethodCallArguments.payload: launchPayload]
+            let appLaunchDetails: [String: Any?] = [MethodCallArguments.notificationLaunchedApp: launchingAppFromNotification, "notificationResponse": launchNotificationResponseDict]
             result(appLaunchDetails)
         } else {
             result(nil)
@@ -633,5 +642,21 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     func handleSelectNotificationAction(arguments: [String: Any?]) {
         channel.invokeMethod("didReceiveForegroundNotificationResponse", arguments: arguments)
+    }
+    
+    @available(macOS 10.14, *)
+    func extractNotificationResponseDict(response: UNNotificationResponse) -> [String: Any?] {
+        var notificationResponseDict: [String:Any?] = [:]
+        notificationResponseDict["notificationId"] = Int(response.notification.request.identifier)!
+        if (response.actionIdentifier == UNNotificationDefaultActionIdentifier) {
+            notificationResponseDict[MethodCallArguments.notificationResponseType] = 0
+        }
+        else if (response.actionIdentifier != UNNotificationDismissActionIdentifier)  {
+            notificationResponseDict[MethodCallArguments.actionId] = response.actionIdentifier
+            notificationResponseDict[MethodCallArguments.notificationResponseType] = 1
+        }
+        notificationResponseDict["input"] = (response as? UNTextInputNotificationResponse)?.userText
+        notificationResponseDict[MethodCallArguments.payload] = response.notification.request.content.userInfo[MethodCallArguments.payload]
+        return notificationResponseDict
     }
 }
