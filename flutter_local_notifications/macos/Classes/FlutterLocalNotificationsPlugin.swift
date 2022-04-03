@@ -212,7 +212,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                                          withCompletionHandler completionHandler: @escaping () -> Void) {
         if #available(OSX 10.14, *) {
             if let categories = arguments["notificationCategories"] as? [[String: AnyObject]] {
-                var newCategories = Set<UNNotificationCategory>()
+                var notificationCategories = Set<UNNotificationCategory>()
 
                 for category in categories {
                     var newActions = [UNNotificationAction]()
@@ -243,7 +243,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                         }
                     }
 
-                    let newCategory = UNNotificationCategory(
+                    let notificationCategory = UNNotificationCategory(
                         identifier: category["identifier"] as! String,
                         actions: newActions,
                         intentIdentifiers: [],
@@ -252,15 +252,15 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                         options: Converters.parseNotificationCategoryOptions(category["options"] as! [NSNumber])
                     )
 
-                    newCategories.insert(newCategory)
-
+                    notificationCategories.insert(notificationCategory)
                 }
 
-                let center = UNUserNotificationCenter.current()
-                center.getNotificationCategories { _  in
-                    center.setNotificationCategories(newCategories)
-                    completionHandler()
+                if (!notificationCategories.isEmpty) {
+                    let center = UNUserNotificationCenter.current()
+                    center.setNotificationCategories(notificationCategories)
                 }
+                
+                completionHandler()
 
             } else {
                 completionHandler()

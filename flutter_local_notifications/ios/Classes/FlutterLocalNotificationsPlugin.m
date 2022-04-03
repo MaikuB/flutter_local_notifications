@@ -301,7 +301,7 @@ static FlutterError *getFlutterError(NSError *error) {
                   withCompletionHandler:(void (^)(void))completionHandler {
   if (@available(iOS 10.0, *)) {
     if ([self containsKey:@"notificationCategories" forDictionary:arguments]) {
-      NSMutableSet<UNNotificationCategory *> *newCategories =
+      NSMutableSet<UNNotificationCategory *> *notificationCategories =
           [NSMutableSet set];
 
       NSArray *categories = arguments[@"notificationCategories"];
@@ -341,32 +341,24 @@ static FlutterError *getFlutterError(NSError *error) {
           }
         }
 
-        UNNotificationCategory *newCategory = [UNNotificationCategory
+        UNNotificationCategory *notificationCategory = [UNNotificationCategory
             categoryWithIdentifier:category[@"identifier"]
                            actions:newActions
                  intentIdentifiers:@[]
                            options:[Converters parseNotificationCategoryOptions:
                                                    category[@"options"]]];
 
-        [newCategories addObject:newCategory];
+        [notificationCategories addObject:notificationCategory];
       }
 
-      if (newCategories.count > 0) {
+      if (notificationCategories.count > 0) {
         UNUserNotificationCenter *center =
             [UNUserNotificationCenter currentNotificationCenter];
-        [center getNotificationCategoriesWithCompletionHandler:^(
-                    NSSet<UNNotificationCategory *> *_Nonnull existing) {
-          if (existing) {
-            [center setNotificationCategories:
-                        [existing setByAddingObjectsFromSet:newCategories]];
-          } else {
-            [center setNotificationCategories:newCategories];
-          }
-          [[NSUserDefaults standardUserDefaults]
-              setObject:foregroundActionIdentifiers
-                 forKey:FOREGROUND_ACTION_IDENTIFIERS];
-          completionHandler();
-        }];
+        [center setNotificationCategories:notificationCategories];
+        [[NSUserDefaults standardUserDefaults]
+            setObject:foregroundActionIdentifiers
+               forKey:FOREGROUND_ACTION_IDENTIFIERS];
+        completionHandler();
       } else {
         completionHandler();
       }
