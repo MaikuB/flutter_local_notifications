@@ -63,9 +63,9 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
         FlutterLocalNotificationsPlugin.startAlarmActivity(context, notificationDetails);
       }
 
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
-              !notificationDetails.showNotification &&
-              notificationDetails.playSound) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+          && !notificationDetails.showNotification
+          && notificationDetails.playSound) {
         FlutterLocalNotificationsPlugin.startAlarmSound(context, notificationDetails);
       }
     }

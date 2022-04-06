@@ -1179,22 +1179,22 @@ public class FlutterLocalNotificationsPlugin
   @RequiresApi(api = VERSION_CODES.P)
   static void startAlarmSound(final Context context, NotificationDetails notificationDetails) {
 
-      Ringtone r = RingtoneManager.getRingtone(context,
-              retrieveSoundResourceUri(
-                      context, notificationDetails.sound, notificationDetails.soundSource));
-      if (r != null) {
-        setRingtone(r);
-        r.setAudioAttributes(
-                new AudioAttributes.Builder()
-                        .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-                        .setUsage(AudioAttributes.USAGE_ALARM)
-                        .build()
-        );
-        setRingtoneLength(r, notificationDetails);
-        r.play();
-      }
+    Ringtone r =
+        RingtoneManager.getRingtone(
+            context,
+            retrieveSoundResourceUri(
+                context, notificationDetails.sound, notificationDetails.soundSource));
+    if (r != null) {
+      setRingtone(r);
+      r.setAudioAttributes(
+          new AudioAttributes.Builder()
+              .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+              .setUsage(AudioAttributes.USAGE_ALARM)
+              .build());
+      setRingtoneLength(r, notificationDetails);
+      r.play();
+    }
   }
-
 
   @RequiresApi(api = VERSION_CODES.P)
   private static void setRingtoneLength(Ringtone r, NotificationDetails notificationDetails) {
@@ -1203,14 +1203,14 @@ public class FlutterLocalNotificationsPlugin
         if (flag == Notification.FLAG_INSISTENT) {
           r.setLooping(true);
           new Handler(Looper.getMainLooper())
-                  .postDelayed(r::stop, notificationDetails.timeoutAfter);
+              .postDelayed(r::stop, notificationDetails.timeoutAfter);
         }
       }
     }
   }
 
   private static void stopRingtone() {
-    if (_ringtone !=null) {
+    if (_ringtone != null) {
       _ringtone.stop();
     }
   }

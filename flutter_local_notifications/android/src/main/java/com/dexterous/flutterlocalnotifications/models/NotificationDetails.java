@@ -269,7 +269,8 @@ public class NotificationDetails implements Serializable {
       notificationDetails.subText = (String) platformChannelSpecifics.get(SUB_TEXT);
       notificationDetails.startActivityClassName =
           (String) platformChannelSpecifics.get(START_ACTIVITY_CLASS_NAME);
-      notificationDetails.showNotification = (Boolean) platformChannelSpecifics.get(SHOW_NOTIFICATION);
+      notificationDetails.showNotification =
+          (Boolean) platformChannelSpecifics.get(SHOW_NOTIFICATION);
       notificationDetails.tag = (String) platformChannelSpecifics.get(TAG);
       notificationDetails.colorized = (Boolean) platformChannelSpecifics.get(COLORIZED);
     }
