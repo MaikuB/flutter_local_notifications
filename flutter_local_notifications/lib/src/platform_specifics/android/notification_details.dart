@@ -49,6 +49,7 @@ class AndroidNotificationDetails {
     this.fullScreenIntent = false,
     this.shortcutId,
     this.startActivityClassName,
+    this.showNotification = true,
     this.additionalFlags,
     this.subText,
     this.tag,
@@ -244,6 +245,9 @@ class AndroidNotificationDetails {
 
   /// The class name to start intent on lockscreen.
   final String? startActivityClassName;
+
+  /// If any notification should be shown if false only sound will play
+  final bool showNotification;
 
   /// Specifies the id of a published, long-lived sharing that the notification
   /// will be linked to.

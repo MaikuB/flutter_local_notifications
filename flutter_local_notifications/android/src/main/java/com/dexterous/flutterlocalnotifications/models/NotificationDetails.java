@@ -118,6 +118,7 @@ public class NotificationDetails implements Serializable {
   private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
   private static final String SHORTCUT_ID = "shortcutId";
   private static final String START_ACTIVITY_CLASS_NAME = "startActivityClassName";
+  private static final String SHOW_NOTIFICATION = "showNotification";
   private static final String SUB_TEXT = "subText";
   private static final String COLORIZED = "colorized";
 
@@ -178,6 +179,7 @@ public class NotificationDetails implements Serializable {
   public Boolean fullScreenIntent;
   public String shortcutId;
   public String startActivityClassName;
+  public Boolean showNotification;
   public String subText;
   public String tag;
   public Boolean colorized;
@@ -267,6 +269,7 @@ public class NotificationDetails implements Serializable {
       notificationDetails.subText = (String) platformChannelSpecifics.get(SUB_TEXT);
       notificationDetails.startActivityClassName =
           (String) platformChannelSpecifics.get(START_ACTIVITY_CLASS_NAME);
+      notificationDetails.showNotification = (Boolean) platformChannelSpecifics.get(SHOW_NOTIFICATION);
       notificationDetails.tag = (String) platformChannelSpecifics.get(TAG);
       notificationDetails.colorized = (Boolean) platformChannelSpecifics.get(COLORIZED);
     }

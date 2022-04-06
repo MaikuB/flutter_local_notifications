@@ -214,6 +214,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'fullScreenIntent': fullScreenIntent,
         'shortcutId': shortcutId,
         'startActivityClassName': startActivityClassName,
+        'showNotification': showNotification,
         'additionalFlags': additionalFlags,
         'subText': subText,
         'tag': tag,

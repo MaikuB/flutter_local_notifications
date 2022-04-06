@@ -315,6 +315,16 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedElevatedButton(
+                        buttonText:
+                            'No notification but alarm sound after 2 seconds '
+                            'based on local time zone '
+                            'with hasStartActivity '
+                            'with custom sound running 30 seconds',
+                        onPressed: () async {
+                          await _noNotificationWithStartActivity();
+                        },
+                      ),
+                      PaddedElevatedButton(
                         buttonText: 'Repeat notification every minute',
                         onPressed: () async {
                           await _repeatNotification();
@@ -971,6 +981,37 @@ class _HomePageState extends State<HomePage> {
             android: AndroidNotificationDetails(
                 'your channel id', 'your channel name',
                 channelDescription: 'your channel description')),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime);
+  }
+
+  Future<void> _noNotificationWithStartActivity() async {
+    const int insistentFlag = 4;
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        'scheduled title',
+        'scheduled body',
+        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 2)),
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            'uri channel id 2',
+            'uri channel name 2',
+            channelDescription: 'uri channel description',
+            sound: const RawResourceAndroidNotificationSound(
+              'slow_spring_board',
+            ),
+            importance: Importance.max,
+            priority: Priority.high,
+            fullScreenIntent: true,
+            additionalFlags: Int32List.fromList(<int>[insistentFlag]),
+            timeoutAfter: 30000,
+            startActivityClassName: 'com.dexterous'
+                '.flutter_local_notifications_example'
+                '.MainActivity',
+            showNotification: false,
+          ),
+        ),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);

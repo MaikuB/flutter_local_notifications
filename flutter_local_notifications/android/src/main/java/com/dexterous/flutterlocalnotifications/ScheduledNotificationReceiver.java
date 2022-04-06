@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import androidx.annotation.Keep;
 import androidx.core.app.NotificationManagerCompat;
@@ -39,7 +40,9 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       Gson gson = FlutterLocalNotificationsPlugin.buildGson();
       Type type = new TypeToken<NotificationDetails>() {}.getType();
       NotificationDetails notificationDetails = gson.fromJson(notificationDetailsJson, type);
-      FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
+      if (notificationDetails.showNotification) {
+        FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
+      }
       if (notificationDetails.scheduledNotificationRepeatFrequency != null) {
         FlutterLocalNotificationsPlugin.zonedScheduleNextNotification(context, notificationDetails);
       } else if (notificationDetails.matchDateTimeComponents != null) {
@@ -58,6 +61,12 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       boolean hasStartActivity = notificationDetails.startActivityClassName != null;
       if (hasStartActivity && (!locked || !firstAlarm)) {
         FlutterLocalNotificationsPlugin.startAlarmActivity(context, notificationDetails);
+      }
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
+              !notificationDetails.showNotification &&
+              notificationDetails.playSound) {
+        FlutterLocalNotificationsPlugin.startAlarmSound(context, notificationDetails);
       }
     }
   }

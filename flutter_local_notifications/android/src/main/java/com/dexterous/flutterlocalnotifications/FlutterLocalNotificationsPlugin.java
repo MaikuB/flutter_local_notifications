@@ -16,16 +16,20 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Handler;
+import android.os.Looper;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -143,6 +147,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String CANCEL_TAG = "tag";
   static String NOTIFICATION_DETAILS = "notificationDetails";
   static Gson gson;
+  private static Ringtone _ringtone;
   private MethodChannel channel;
   private Context applicationContext;
   private Activity mainActivity;
@@ -1171,6 +1176,50 @@ public class FlutterLocalNotificationsPlugin
     context.startActivity(intent);
   }
 
+  @RequiresApi(api = VERSION_CODES.P)
+  static void startAlarmSound(final Context context, NotificationDetails notificationDetails) {
+
+      Ringtone r = RingtoneManager.getRingtone(context,
+              retrieveSoundResourceUri(
+                      context, notificationDetails.sound, notificationDetails.soundSource));
+      if (r != null) {
+        setRingtone(r);
+        r.setAudioAttributes(
+                new AudioAttributes.Builder()
+                        .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .build()
+        );
+        setRingtoneLength(r, notificationDetails);
+        r.play();
+      }
+  }
+
+
+  @RequiresApi(api = VERSION_CODES.P)
+  private static void setRingtoneLength(Ringtone r, NotificationDetails notificationDetails) {
+    if (notificationDetails.timeoutAfter > 0) {
+      for (int flag : notificationDetails.additionalFlags) {
+        if (flag == Notification.FLAG_INSISTENT) {
+          r.setLooping(true);
+          new Handler(Looper.getMainLooper())
+                  .postDelayed(r::stop, notificationDetails.timeoutAfter);
+        }
+      }
+    }
+  }
+
+  private static void stopRingtone() {
+    if (_ringtone !=null) {
+      _ringtone.stop();
+    }
+  }
+
+  private static void setRingtone(Ringtone ringtone) {
+    stopRingtone();
+    _ringtone = ringtone;
+  }
+
   static boolean isKeyguardLocked(Context context) {
     KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
     return myKM.isKeyguardLocked();
@@ -1508,6 +1557,7 @@ public class FlutterLocalNotificationsPlugin
       notificationManager.cancel(tag, id);
     }
     removeNotificationFromCache(applicationContext, id);
+    stopRingtone();
   }
 
   private void cancelAllNotifications(Result result) {
