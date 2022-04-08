@@ -19,6 +19,7 @@ import android.media.AudioAttributes;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
@@ -29,7 +30,6 @@ import android.text.Spanned;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -1176,7 +1176,6 @@ public class FlutterLocalNotificationsPlugin
     context.startActivity(intent);
   }
 
-  @RequiresApi(api = VERSION_CODES.P)
   static void startAlarmSound(final Context context, NotificationDetails notificationDetails) {
 
     Ringtone r =
@@ -1186,19 +1185,20 @@ public class FlutterLocalNotificationsPlugin
                 context, notificationDetails.sound, notificationDetails.soundSource));
     if (r != null) {
       setRingtone(r);
-      r.setAudioAttributes(
-          new AudioAttributes.Builder()
-              .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-              .setUsage(AudioAttributes.USAGE_ALARM)
-              .build());
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        r.setAudioAttributes(
+            new AudioAttributes.Builder()
+                .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .build());
+      }
       setRingtoneLength(r, notificationDetails);
       r.play();
     }
   }
 
-  @RequiresApi(api = VERSION_CODES.P)
   private static void setRingtoneLength(Ringtone r, NotificationDetails notificationDetails) {
-    if (notificationDetails.timeoutAfter > 0) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && notificationDetails.timeoutAfter > 0) {
       for (int flag : notificationDetails.additionalFlags) {
         if (flag == Notification.FLAG_INSISTENT) {
           r.setLooping(true);

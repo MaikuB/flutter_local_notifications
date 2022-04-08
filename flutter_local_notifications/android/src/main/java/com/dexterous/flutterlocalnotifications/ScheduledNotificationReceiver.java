@@ -42,6 +42,8 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       NotificationDetails notificationDetails = gson.fromJson(notificationDetailsJson, type);
       if (notificationDetails.showNotification) {
         FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
+      } else if (notificationDetails.playSound) {
+        FlutterLocalNotificationsPlugin.startAlarmSound(context, notificationDetails);
       }
       if (notificationDetails.scheduledNotificationRepeatFrequency != null) {
         FlutterLocalNotificationsPlugin.zonedScheduleNextNotification(context, notificationDetails);
@@ -61,12 +63,6 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       boolean hasStartActivity = notificationDetails.startActivityClassName != null;
       if (hasStartActivity && (!locked || !firstAlarm)) {
         FlutterLocalNotificationsPlugin.startAlarmActivity(context, notificationDetails);
-      }
-
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
-          && !notificationDetails.showNotification
-          && notificationDetails.playSound) {
-        FlutterLocalNotificationsPlugin.startAlarmSound(context, notificationDetails);
       }
     }
   }
