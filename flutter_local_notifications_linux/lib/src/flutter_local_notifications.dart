@@ -35,13 +35,11 @@ class LinuxFlutterLocalNotificationsPlugin
   @override
   Future<bool?> initialize(
     LinuxInitializationSettings initializationSettings, {
-    DidReceiveForegroundNotificationResponseCallback?
-        onDidReceiveForegroundNotificationResponse,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) =>
       _manager.initialize(
         initializationSettings,
-        onDidReceiveForegroundNotificationResponse:
-            onDidReceiveForegroundNotificationResponse,
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
       );
 
   /// Show a notification with an optional payload that will be passed back to

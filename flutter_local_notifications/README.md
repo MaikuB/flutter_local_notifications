@@ -133,7 +133,7 @@ Capabilities depend on the system notification server implementation, therefore,
 
 Scheduled/pending notifications is currently not supported due to the lack of a scheduler API.
 
-The `onDidReceiveForegroundNotificationResponse` callback runs on the main isolate of the running application and cannot be launched in the background if the application is not running. To respond to notification after the application is terminated, your application should be registered as DBus activatable (please see [DBusApplicationLaunching](https://wiki.gnome.org/HowDoI/DBusApplicationLaunching) for more information), and register action before activating the application. This is difficult to do in a plugin because plugins instantiate during application activation, so `getNotificationAppLaunchDetails` can't be implemented without changing the main user application.
+The `onDidReceiveNotificationResponse` callback runs on the main isolate of the running application and cannot be launched in the background if the application is not running. To respond to notification after the application is terminated, your application should be registered as DBus activatable (please see [DBusApplicationLaunching](https://wiki.gnome.org/HowDoI/DBusApplicationLaunching) for more information), and register action before activating the application. This is difficult to do in a plugin because plugins instantiate during application activation, so `getNotificationAppLaunchDetails` can't be implemented without changing the main user application.
 
 ## 📷 Screenshots
 
@@ -183,7 +183,7 @@ If your application needs the ability to schedule full-screen intent notificatio
 
 For reference, the example app's `AndroidManifest.xml` file can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/AndroidManifest.xml).
 
-Note that when a full-screen intent notification actually occurs (as opposed to a heads-up notification that the system may decide should occur), the plugin will act as though the user has tapped on a notification so handle those the same way (e.g. `onDidReceiveForegroundNotificationResponse` callback) to display the appropriate page for your application.
+Note that when a full-screen intent notification actually occurs (as opposed to a heads-up notification that the system may decide should occur), the plugin will act as though the user has tapped on a notification so handle those the same way (e.g. `onDidReceiveNotificationResponse` callback) to display the appropriate page for your application.
 
 
 #### Release build configuration
@@ -240,7 +240,7 @@ final InitializationSettings initializationSettings = InitializationSettings(
     iOS: initializationSettingsDarwin,
     linux: initializationSettingsLinux);
 flutterLocalNotificationsPlugin.initialize(initializationSettings,
-    onDidReceiveForegroundNotificationResponse: onDidReceiveForegroundNotificationResponse);
+    onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
 
 ...
 
@@ -281,7 +281,7 @@ If you encounter any issues please refer to the API docs and the sample code in 
 
 ### Notification Actions
 
-Notifications can now contain actions but note that on Apple's platforms, these only on iOS 10 or newer and macOS 10.14 or newer.  On macOS and Linux (see [Linux limitations](#linux-limitations) chapter), these will only run on the main isolate by calling the `onDidReceiveForegroundNotificationResponse` callback. On iOS and Android, these will run on the main isolate by calling the `onDidReceiveForegroundNotificationResponse` callback if the configuration has specified that the app/user interface should be shown i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. If they haven't, then these actions may be selected by the user when an app is sleeping or terminated and will wake up your app. However, it may not wake up the user-visible part of your App; but only the part of it which runs in the background. This is done by spawning a background isolate.
+Notifications can now contain actions but note that on Apple's platforms, these only on iOS 10 or newer and macOS 10.14 or newer.  On macOS and Linux (see [Linux limitations](#linux-limitations) chapter), these will only run on the main isolate by calling the `onDidReceiveNotificationResponse` callback. On iOS and Android, these will run on the main isolate by calling the `onDidReceiveNotificationResponse` callback if the configuration has specified that the app/user interface should be shown i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. If they haven't, then these actions may be selected by the user when an app is sleeping or terminated and will wake up your app. However, it may not wake up the user-visible part of your App; but only the part of it which runs in the background. This is done by spawning a background isolate.
 
 This plugin contains handlers for iOS & Android to handle these background isolate cases and will allow you to specify a Dart entry point (a function).
 When the user selects a action, the plugin will start a **separate Flutter Engine** which will then invoke the `onDidReceiveBackgroundNotificationResponse` callback
@@ -379,7 +379,7 @@ Specify this function as a parameter in the `initialize` method of this plugin:
 ``` dart
 await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
-    onDidReceiveForegroundNotificationResponse: (NotificationResponse notificationResponse) async {
+    onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
         // ...
     },
     onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
@@ -451,13 +451,13 @@ final InitializationSettings initializationSettings = InitializationSettings(
     macOS: initializationSettingsDarwin,
     linux: initializationSettingsLinux);
 await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-    onDidReceiveForegroundNotificationResponse: onDidReceiveForegroundNotificationResponse);
+    onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
 ```
 
-Initialisation can be done in the `main` function of your application or can be done within the first page shown in your app. Developers can refer to the example app that has code for the initialising within the `main` function. The code above has been simplified for explaining the concepts. Here we have specified the default icon to use for notifications on Android (refer to the *Android setup* section) and designated the function (`onDidReceiveForegroundNotificationResponse`) that should fire when a notification has been tapped on via the `onDidReceiveForegroundNotificationResponse` callback. Specifying this callback is entirely optional but here it will trigger navigation to another page and display the payload associated with the notification.
+Initialisation can be done in the `main` function of your application or can be done within the first page shown in your app. Developers can refer to the example app that has code for the initialising within the `main` function. The code above has been simplified for explaining the concepts. Here we have specified the default icon to use for notifications on Android (refer to the *Android setup* section) and designated the function (`onDidReceiveNotificationResponse`) that should fire when a notification has been tapped on via the `onDidReceiveNotificationResponse` callback. Specifying this callback is entirely optional but here it will trigger navigation to another page and display the payload associated with the notification.
 
 ```dart
-void onDidReceiveForegroundNotificationResponse(NotificationResponse notificationResponse) async {
+void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) async {
     final String? payload = notificationResponse.payload;
     if (notificationResponse.payload != null) {
       debugPrint('notification payload: $payload');
@@ -473,7 +473,7 @@ In the real world, this payload could represent the id of the item you want to d
 
 The `DarwinInitializationSettings` class provides default settings on how the notification be presented when it is triggered and the application is in the foreground on iOS/macOS. There are optional named parameters that can be modified to suit your application's purposes. Here, it is omitted and the default values for these named properties is set such that all presentation options (alert, sound, badge) are enabled. 
 
-The `LinuxInitializationSettings` class requires a name for the default action that calls the `onDidReceiveForegroundNotificationResponse` callback when the notification is clicked. 
+The `LinuxInitializationSettings` class requires a name for the default action that calls the `onDidReceiveNotificationResponse` callback when the notification is clicked. 
 
 On iOS and macOS, initialisation may show a prompt to requires users to give the application permission to display notifications (note: permissions don't need to be requested on Android). Depending on when this happens, this may not be the ideal user experience for your application. If so, please refer to the next section on how to work around this.
 
@@ -510,7 +510,7 @@ The constructor for the `DarwinInitializationSettings` class  has three named pa
       macOS: initializationSettingsDarwin,
       linux: initializationSettingsLinux);
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onDidReceiveForegroundNotificationResponse: onDidReceiveForegroundNotificationResponse);
+      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
 ```
 
 Then call the `requestPermissions` method with desired permissions at the appropriate point in your application

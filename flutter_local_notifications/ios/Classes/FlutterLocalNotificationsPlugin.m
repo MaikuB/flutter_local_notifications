@@ -1051,7 +1051,7 @@ static FlutterError *getFlutterError(NSError *error) {
   arguments[@"notificationId"] = notificationIdNumber;
   arguments[PAYLOAD] = payload;
   arguments[NOTIFICATION_RESPONSE_TYPE] = [NSNumber numberWithInteger:0];
-  [_channel invokeMethod:@"didReceiveForegroundNotificationResponse"
+  [_channel invokeMethod:@"didReceiveNotificationResponse"
                arguments:arguments];
 }
 
@@ -1154,7 +1154,7 @@ static FlutterError *getFlutterError(NSError *error) {
     if ([foregroundActionIdentifiers indexOfObject:response.actionIdentifier] !=
         NSNotFound) {
       if (_initialized) {
-        [_channel invokeMethod:@"didReceiveForegroundNotificationResponse"
+        [_channel invokeMethod:@"didReceiveNotificationResponse"
                      arguments:notificationResponseDict];
       } else {
         _launchNotificationResponseDict = notificationResponseDict;

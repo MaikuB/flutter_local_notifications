@@ -185,7 +185,7 @@ Future<void> main() async {
   );
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
-    onDidReceiveForegroundNotificationResponse:
+    onDidReceiveNotificationResponse:
         (NotificationResponse notificationResponse) {
       switch (notificationResponse.notificationResponseType) {
         case NotificationResponseType.selectedNotification:

@@ -23,8 +23,7 @@ class LinuxFlutterLocalNotificationsPlugin
   @override
   Future<bool?> initialize(
     LinuxInitializationSettings initializationSettings, {
-    DidReceiveForegroundNotificationResponseCallback?
-        onDidReceiveForegroundNotificationResponse,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) async {
     assert(false);
     return null;

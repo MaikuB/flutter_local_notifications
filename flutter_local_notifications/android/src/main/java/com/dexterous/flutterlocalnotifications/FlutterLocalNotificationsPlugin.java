@@ -1695,7 +1695,7 @@ public class FlutterLocalNotificationsPlugin
                   (int) notificationResponse.get(FlutterLocalNotificationsPlugin.NOTIFICATION_ID));
         }
       }
-      channel.invokeMethod("didReceiveForegroundNotificationResponse", notificationResponse);
+      channel.invokeMethod("didReceiveNotificationResponse", notificationResponse);
       return true;
     }
 
