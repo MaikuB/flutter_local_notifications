@@ -85,6 +85,9 @@ class DarwinNotificationDetails {
   ///
   /// This must refer to a [DarwinNotificationCategory] identifier configured
   /// via [InitializationSettings].
+  ///
+  /// On iOS, this is only applicable to iOS 10 or newer.
+  /// On macOS, this is only applicable to macOS 10.14 or newer.
   final String? categoryIdentifier;
 
   /// The interruption level that indicates the priority and
