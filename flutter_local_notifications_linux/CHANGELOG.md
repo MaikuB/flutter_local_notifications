@@ -1,3 +1,8 @@
+## [0.5.0-dev.4]
+
+* **Breaking change** callbacks have now been reworked. `onDidReceiveNotificationResponse` is invoked only when the app is running. This works for when a user has selected a notification or notification action. This replaces the `onSelectNotification` callback that existed before
+* **Breaking change** the `NotificationAppLaunchDetails` has been updated to contain an instance `NotificationResponse` class with the `payload` belonging to the `NotificationResponse` class. This is to allow knowing more details about what caused the app to launch e.g. if a notification action was used to do so
+
 ## [0.5.0-dev.3]
 
 * Includes changes from 0.4.2
