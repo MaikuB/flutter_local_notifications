@@ -122,6 +122,7 @@ public class NotificationAction {
     }
 
     if (arguments.get(INPUTS) != null) {
+      @SuppressWarnings("unchecked")
       List<Map<String, Object>> inputs = (List<Map<String, Object>>) arguments.get(INPUTS);
 
       if (inputs != null) {
