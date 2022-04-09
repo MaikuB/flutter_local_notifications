@@ -35,9 +35,8 @@ void main() {
 
     setUpAll(() {
       registerFallbackValue(
-        NotificationResponse(
+        const NotificationResponse(
           id: 0,
-          payload: null,
           notificationResponseType:
               NotificationResponseType.selectedNotification,
         ),
@@ -904,19 +903,19 @@ void main() {
               ],
             ),
             'bool-hint': const DBusBoolean(true),
-            'byte-hint': DBusByte(1),
+            'byte-hint': const DBusByte(1),
             'dict-hint': DBusDict(
               DBusSignature('y'),
               DBusSignature('s'),
               <DBusValue, DBusValue>{
-                DBusByte(1): const DBusString('1'),
-                DBusByte(2): const DBusString('2'),
+                const DBusByte(1): const DBusString('1'),
+                const DBusByte(2): const DBusString('2'),
               },
             ),
             'double-hint': const DBusDouble(1.1),
-            'int16-hint': DBusInt16(1),
-            'int32-hint': DBusInt32(1),
-            'int64-hint': DBusInt64(1),
+            'int16-hint': const DBusInt16(1),
+            'int32-hint': const DBusInt32(1),
+            'int64-hint': const DBusInt64(1),
             'string-hint': const DBusString('test'),
             'struct-hint': DBusStruct(
               <DBusValue>[
@@ -924,10 +923,10 @@ void main() {
                 const DBusBoolean(true),
               ],
             ),
-            'uint16-hint': DBusUint16(1),
-            'uint32-hint': DBusUint32(1),
+            'uint16-hint': const DBusUint16(1),
+            'uint32-hint': const DBusUint32(1),
             'uint64-hint': const DBusUint64(1),
-            'variant-hint': DBusVariant(DBusByte(1)),
+            'variant-hint': const DBusVariant(DBusByte(1)),
           },
         );
 
@@ -1150,7 +1149,7 @@ void main() {
               name: 'NotificationClosed',
               values: <DBusValue>[
                 DBusUint32(notify.systemId),
-                DBusUint32(1),
+                const DBusUint32(1),
               ],
             ),
           ).then((_) {
