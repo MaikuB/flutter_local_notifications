@@ -1051,8 +1051,7 @@ static FlutterError *getFlutterError(NSError *error) {
   arguments[@"notificationId"] = notificationIdNumber;
   arguments[PAYLOAD] = payload;
   arguments[NOTIFICATION_RESPONSE_TYPE] = [NSNumber numberWithInteger:0];
-  [_channel invokeMethod:@"didReceiveNotificationResponse"
-               arguments:arguments];
+  [_channel invokeMethod:@"didReceiveNotificationResponse" arguments:arguments];
 }
 
 - (BOOL)containsKey:(NSString *)key forDictionary:(NSDictionary *)dictionary {
