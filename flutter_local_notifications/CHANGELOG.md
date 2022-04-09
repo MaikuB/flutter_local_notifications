@@ -4,6 +4,7 @@
  * `onDidReceiveForegroundNotificationResponse`: invoked only when the app is running. This works for when a user has selected a notification or notification action. This replaces the `onSelectNotification` callback that existed before. For notification actions, the action needs to be configured to indicate the the app or user interface should be shown on invoking the action for this callback to be invoked i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. On macOS and Linux, as there's no support for background isolates it will always invoke this callback
  * `onDidReceiveBackgroundNotificationResponse`: invoked on a background isolate for when a user has selected a notification action. This replaces the `onSelectNotificationAction` callback
 * **Breaking change** the `NotificationAppLaunchDetails` has been updated to contain `NotificationResponse` class with the `payload` belonging to the `NotificationResponse` class. This is to allow knowing more details about what caused the app to launch e.g. if a notification action was used to do so
+* [iOS][macOS] updated how notification categories were set behind the scenes so the categories specified. This fixes an issue where notification action may not work at all as were being appended to the list of existing categories. This could lead to issues where notification actions wouldn't work at all and potentially result in notification categories growing over time.
 
 # [10.0.0-dev.11]
 
