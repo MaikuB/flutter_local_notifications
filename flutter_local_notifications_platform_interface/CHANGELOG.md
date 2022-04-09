@@ -1,3 +1,8 @@
+## [6.0.0-dev.4]
+
+* **Breaking change** removed `NotificationActionCallback` and `SelectNotificationCallback` typedefs. The `DidReceiveNotificationResponseCallback` and `DidReceiveBackgroundNotificationResponseCallback` are the new typedefs for notification callbacks that run on the main isolate and background isolate respectively. Both of these pass an instance of the `NotificationResponse` class
+* **Breaking change** the `NotificationAppLaunchDetails` has been updated to contain an instance `NotificationResponse` class with the `payload` belonging to the `NotificationResponse` class. This is to allow knowing more details about what caused the app to launch e.g. if a notification action was used to do so
+
 ## [6.0.0-dev.3]
 * [Android] `tag` has been added to `ActiveNotification`. This was available in version `9.4.0` of the `flutter_local_notifications` plugin but has been brought here since `ActiveNotification` is now part of this package's APIs
 

@@ -2,7 +2,7 @@ export 'package:flutter_local_notifications_linux/flutter_local_notifications_li
 export 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart'
     show
         DidReceiveBackgroundNotificationResponseCallback,
-        DidReceiveForegroundNotificationResponseCallback,
+        DidReceiveNotificationResponseCallback,
         PendingNotificationRequest,
         ActiveNotification,
         RepeatInterval,

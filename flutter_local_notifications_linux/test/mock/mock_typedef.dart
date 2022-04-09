@@ -2,9 +2,9 @@ import 'package:flutter_local_notifications_platform_interface/flutter_local_not
 import 'package:mocktail/mocktail.dart';
 
 // ignore: one_member_abstracts
-abstract class _DidReceiveForegroundNotificationResponseCallback {
+abstract class _DidReceiveNotificationResponseCallback {
   Future<dynamic> call(NotificationResponse notificationResponse);
 }
 
-class MockDidReceiveForegroundNotificationResponseCallback extends Mock
-    implements _DidReceiveForegroundNotificationResponseCallback {}
+class MockDidReceiveNotificationResponseCallback extends Mock
+    implements _DidReceiveNotificationResponseCallback {}

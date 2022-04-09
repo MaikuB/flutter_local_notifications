@@ -44,8 +44,8 @@ class LinuxNotificationManager {
   final NotificationStorage _storage;
 
   late final LinuxInitializationSettings _initializationSettings;
-  late final DidReceiveForegroundNotificationResponseCallback?
-      _onDidReceiveForegroundNotificationResponse;
+  late final DidReceiveNotificationResponseCallback?
+      _onDidReceiveNotificationResponse;
   late final LinuxPlatformInfoData _platformData;
 
   bool _initialized = false;
@@ -54,16 +54,14 @@ class LinuxNotificationManager {
   /// Call this method on application before using the manager further.
   Future<bool> initialize(
     LinuxInitializationSettings initializationSettings, {
-    DidReceiveForegroundNotificationResponseCallback?
-        onDidReceiveForegroundNotificationResponse,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) async {
     if (_initialized) {
       return _initialized;
     }
     _initialized = true;
     _initializationSettings = initializationSettings;
-    _onDidReceiveForegroundNotificationResponse =
-        onDidReceiveForegroundNotificationResponse;
+    _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
     _dbus.build(
       destination: _DBusInterfaceSpec.destination,
       path: _DBusInterfaceSpec.path,
@@ -340,7 +338,7 @@ class LinuxNotificationManager {
           return;
         }
         if (actionKey == _kDefaultActionName) {
-          _onDidReceiveForegroundNotificationResponse?.call(
+          _onDidReceiveNotificationResponse?.call(
             NotificationResponse(
               id: notify.id,
               payload: notify.payload,
@@ -356,7 +354,7 @@ class LinuxNotificationManager {
           if (actionInfo == null) {
             return;
           }
-          _onDidReceiveForegroundNotificationResponse?.call(
+          _onDidReceiveNotificationResponse?.call(
             NotificationResponse(
               id: notify.id,
               actionId: actionInfo.key,

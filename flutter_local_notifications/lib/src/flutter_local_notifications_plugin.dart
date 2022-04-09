@@ -114,8 +114,7 @@ class FlutterLocalNotificationsPlugin {
   /// [getNotificationAppLaunchDetails].
   Future<bool?> initialize(
     InitializationSettings initializationSettings, {
-    DidReceiveForegroundNotificationResponseCallback?
-        onDidReceiveForegroundNotificationResponse,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
     DidReceiveBackgroundNotificationResponseCallback?
         onDidReceiveBackgroundNotificationResponse,
   }) async {
@@ -127,8 +126,7 @@ class FlutterLocalNotificationsPlugin {
               AndroidFlutterLocalNotificationsPlugin>()
           ?.initialize(
         initializationSettings.android!,
-        onDidReceiveForegroundNotificationResponse:
-            onDidReceiveForegroundNotificationResponse,
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
         onDidReceiveBackgroundNotificationResponse:
             onDidReceiveBackgroundNotificationResponse,
       );
@@ -137,8 +135,7 @@ class FlutterLocalNotificationsPlugin {
               IOSFlutterLocalNotificationsPlugin>()
           ?.initialize(
         initializationSettings.iOS!,
-        onDidReceiveForegroundNotificationResponse:
-            onDidReceiveForegroundNotificationResponse,
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
         onDidReceiveBackgroundNotificationResponse:
             onDidReceiveBackgroundNotificationResponse,
       );
@@ -147,16 +144,14 @@ class FlutterLocalNotificationsPlugin {
               MacOSFlutterLocalNotificationsPlugin>()
           ?.initialize(
         initializationSettings.macOS!,
-        onDidReceiveForegroundNotificationResponse:
-            onDidReceiveForegroundNotificationResponse,
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
       );
     } else if (defaultTargetPlatform == TargetPlatform.linux) {
       return await resolvePlatformSpecificImplementation<
               LinuxFlutterLocalNotificationsPlugin>()
           ?.initialize(
         initializationSettings.linux!,
-        onDidReceiveForegroundNotificationResponse:
-            onDidReceiveForegroundNotificationResponse,
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
       );
     }
     return true;

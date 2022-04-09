@@ -629,11 +629,11 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         arguments["notificationId"] = notificationId
         arguments["payload"] = payload
         arguments["notificationResponseType"] = 0
-        channel.invokeMethod("didReceiveForegroundNotificationResponse", arguments: arguments)
+        channel.invokeMethod("didReceiveNotificationResponse", arguments: arguments)
     }
 
     func handleSelectNotificationAction(arguments: [String: Any?]) {
-        channel.invokeMethod("didReceiveForegroundNotificationResponse", arguments: arguments)
+        channel.invokeMethod("didReceiveNotificationResponse", arguments: arguments)
     }
 
     @available(macOS 10.14, *)

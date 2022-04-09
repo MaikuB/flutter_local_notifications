@@ -14,12 +14,11 @@ abstract class FlutterLocalNotificationsPlatformLinux
   ///
   /// Call this method on application before using the plugin further.
   ///
-  /// [onDidReceiveForegroundNotificationResponse] specifies a callback handler
+  /// [onDidReceiveNotificationResponse] specifies a callback handler
   /// which receives notification action IDs.
   Future<bool?> initialize(
     LinuxInitializationSettings initializationSettings, {
-    DidReceiveForegroundNotificationResponseCallback?
-        onDidReceiveForegroundNotificationResponse,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   });
 
   /// Show a notification with an optional payload that will be passed back to

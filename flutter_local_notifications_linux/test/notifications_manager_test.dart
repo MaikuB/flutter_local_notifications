@@ -24,8 +24,8 @@ void main() {
     late final DBusRemoteObjectSignalStream mockNotifyClosedSignal;
     late final LinuxPlatformInfo mockPlatformInfo;
     late final NotificationStorage mockStorage;
-    late final DidReceiveForegroundNotificationResponseCallback
-        mockDidReceiveForegroundNotificationResponseCallback;
+    late final DidReceiveNotificationResponseCallback
+        mockDidReceiveNotificationResponseCallback;
 
     const LinuxPlatformInfoData platformInfo = LinuxPlatformInfoData(
       appName: 'Test',
@@ -48,8 +48,8 @@ void main() {
       mockNotifyClosedSignal = MockDBusRemoteObjectSignalStream();
       mockPlatformInfo = MockLinuxPlatformInfo();
       mockStorage = MockNotificationStorage();
-      mockDidReceiveForegroundNotificationResponseCallback =
-          MockDidReceiveForegroundNotificationResponseCallback();
+      mockDidReceiveNotificationResponseCallback =
+          MockDidReceiveNotificationResponseCallback();
 
       when(
         () => mockPlatformInfo.getAll(),
@@ -70,7 +70,7 @@ void main() {
         () => mockDbus.subscribeSignal('NotificationClosed'),
       ).thenAnswer((_) => mockNotifyClosedSignal);
       when(
-        () => mockDidReceiveForegroundNotificationResponseCallback.call(any()),
+        () => mockDidReceiveNotificationResponseCallback.call(any()),
       ).thenAnswer((_) async => <void>{});
     });
 
@@ -1233,8 +1233,8 @@ void main() {
 
       await manager.initialize(
         initSettings,
-        onDidReceiveForegroundNotificationResponse:
-            mockDidReceiveForegroundNotificationResponseCallback,
+        onDidReceiveNotificationResponse:
+            mockDidReceiveNotificationResponseCallback,
       );
       await Future.forEach(
         completers,
@@ -1396,8 +1396,8 @@ void main() {
 
       await manager.initialize(
         initSettings,
-        onDidReceiveForegroundNotificationResponse:
-            mockDidReceiveForegroundNotificationResponseCallback,
+        onDidReceiveNotificationResponse:
+            mockDidReceiveNotificationResponseCallback,
       );
       await Future.forEach(
         completers,
