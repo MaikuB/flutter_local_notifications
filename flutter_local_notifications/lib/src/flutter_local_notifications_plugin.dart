@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
@@ -117,6 +118,22 @@ class FlutterLocalNotificationsPlugin {
   }) async {
     if (kIsWeb) {
       return true;
+    }
+    if (Platform.isAndroid && initializationSettings.android == null) {
+      throw ArgumentError(
+          'Android settings must be set when targeting Android platform');
+    }
+    if (Platform.isIOS && initializationSettings.iOS == null) {
+      throw ArgumentError(
+          'iOS settings must be set when targeting iOS platform');
+    }
+    if (Platform.isLinux && initializationSettings.linux == null) {
+      throw ArgumentError(
+          'Linux settings must be set when targeting Linux platform');
+    }
+    if (Platform.isMacOS && initializationSettings.macOS == null) {
+      throw ArgumentError(
+          'MacOS settings must be set when targeting MacOS platform');
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       return resolvePlatformSpecificImplementation<
