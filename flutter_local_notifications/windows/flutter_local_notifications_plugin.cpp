@@ -54,7 +54,8 @@ namespace {
 		/// <param name="appName">The display name of the app.</param>
 		/// <param name="iconPath">An optional path to the icon of the app.</param>
 		/// <param name="iconBgColor">An optional background color of the icon, in AARRGGBB format.</param>
-		void Initialize(
+		/// <returns>Whether the initialization was successful.</returns>
+		bool Initialize(
 			const std::string& appName,
 			const std::string& aumid,
 			const std::optional<std::string>& iconPath,
@@ -203,7 +204,7 @@ namespace {
 		return true;
 	}
 
-	void FlutterLocalNotificationsPlugin::Initialize(
+	bool FlutterLocalNotificationsPlugin::Initialize(
 		const std::string& appName,
 		const std::string& aumid,
 		const std::optional<std::string>& iconPath,
@@ -211,7 +212,12 @@ namespace {
 	) {
 		_aumid = winrt::to_hstring(aumid);
 		PluginRegistration::RegisterApp(aumid, appName, iconPath, iconBgColor, channel);
-		if (HasIdentity())
+		
+		const auto hasIdentity = HasIdentity();
+		if (!hasIdentity.has_value())
+			return false;
+
+		if (hasIdentity.value())
 			toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier();
 		else
 			toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(winrt::to_hstring(aumid));
