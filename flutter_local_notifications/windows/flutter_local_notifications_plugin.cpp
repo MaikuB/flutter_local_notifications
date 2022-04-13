@@ -6,10 +6,13 @@
 // This must be included before many other Windows headers.
 #include <windows.h>
 #include <ShObjIdl_core.h>
+#include <VersionHelpers.h>
+#include <appmodel.h>
 #include <NotificationActivationCallback.h>
 #include <winrt/Windows.UI.Notifications.h>
 #include <winrt/Windows.UI.Notifications.Management.h>
 #include <winrt/Windows.Data.Xml.Dom.h>
+#include <winrt/Windows.ApplicationModel.h>
 
 // For getPlatformVersion; remove unless needed for your plugin implementation.
 #include <VersionHelpers.h>
@@ -82,6 +85,8 @@ namespace {
 		/// Dismisses all currently active notifications.
 		/// </summary>
 		void CancelAllNotifications();
+
+		std::optional<bool> HasIdentity();
 	};
 
 	// static
@@ -170,6 +175,34 @@ namespace {
 		}
 	}
 
+	std::optional<bool> FlutterLocalNotificationsPlugin::HasIdentity() {
+		if (!IsWindows8OrGreater()) {
+			// OS is windows 7 or lower
+			return false;
+		}
+
+		UINT32 length;
+		auto err = GetCurrentPackageFullName(&length, nullptr);
+		if (err != ERROR_INSUFFICIENT_BUFFER) {
+			if (err == APPMODEL_ERROR_NO_PACKAGE)
+				return false;
+
+			return std::nullopt;
+		}
+
+		PWSTR fullName = (PWSTR)malloc(length * sizeof(*fullName));
+		if (fullName == nullptr)
+			return std::nullopt;
+
+		err = GetCurrentPackageFullName(&length, fullName);
+		if (err != ERROR_SUCCESS)
+			return std::nullopt;
+
+		free(fullName);
+
+		return true;
+	}
+
 	void FlutterLocalNotificationsPlugin::Initialize(
 		const std::string& appName,
 		const std::string& aumid,
@@ -178,7 +211,10 @@ namespace {
 	) {
 		_aumid = winrt::to_hstring(aumid);
 		PluginRegistration::RegisterApp(aumid, appName, iconPath, iconBgColor, channel);
-		toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(winrt::to_hstring(aumid));
+		if (HasIdentity())
+			toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier();
+		else
+			toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(winrt::to_hstring(aumid));
 	}
 
 	void FlutterLocalNotificationsPlugin::ShowNotification(
