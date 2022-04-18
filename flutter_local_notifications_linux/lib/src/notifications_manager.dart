@@ -44,8 +44,8 @@ class LinuxNotificationManager {
   final NotificationStorage _storage;
 
   late final LinuxInitializationSettings _initializationSettings;
-  late final SelectNotificationCallback? _onSelectNotification;
-  late final SelectNotificationActionCallback? _onSelectNotificationAction;
+  late final DidReceiveNotificationResponseCallback?
+      _onDidReceiveNotificationResponse;
   late final LinuxPlatformInfoData _platformData;
 
   bool _initialized = false;
@@ -54,16 +54,14 @@ class LinuxNotificationManager {
   /// Call this method on application before using the manager further.
   Future<bool> initialize(
     LinuxInitializationSettings initializationSettings, {
-    SelectNotificationCallback? onSelectNotification,
-    SelectNotificationActionCallback? onSelectNotificationAction,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) async {
     if (_initialized) {
       return _initialized;
     }
     _initialized = true;
     _initializationSettings = initializationSettings;
-    _onSelectNotification = onSelectNotification;
-    _onSelectNotificationAction = onSelectNotificationAction;
+    _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
     _dbus.build(
       destination: _DBusInterfaceSpec.destination,
       path: _DBusInterfaceSpec.path,
@@ -340,7 +338,14 @@ class LinuxNotificationManager {
           return;
         }
         if (actionKey == _kDefaultActionName) {
-          _onSelectNotification?.call(notify.payload);
+          _onDidReceiveNotificationResponse?.call(
+            NotificationResponse(
+              id: notify.id,
+              payload: notify.payload,
+              notificationResponseType:
+                  NotificationResponseType.selectedNotification,
+            ),
+          );
         } else {
           final LinuxNotificationActionInfo? actionInfo =
               notify.actions.firstWhere(
@@ -349,12 +354,13 @@ class LinuxNotificationManager {
           if (actionInfo == null) {
             return;
           }
-          _onSelectNotificationAction?.call(
-            NotificationActionDetails(
+          _onDidReceiveNotificationResponse?.call(
+            NotificationResponse(
               id: notify.id,
               actionId: actionInfo.key,
-              input: null,
               payload: notify.payload,
+              notificationResponseType:
+                  NotificationResponseType.selectedNotificationAction,
             ),
           );
         }

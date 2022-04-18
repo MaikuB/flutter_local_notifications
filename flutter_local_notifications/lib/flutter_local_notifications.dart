@@ -1,12 +1,14 @@
 export 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
 export 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart'
     show
-        SelectNotificationCallback,
+        DidReceiveBackgroundNotificationResponseCallback,
+        DidReceiveNotificationResponseCallback,
         PendingNotificationRequest,
         ActiveNotification,
         RepeatInterval,
         NotificationAppLaunchDetails,
-        NotificationActionDetails;
+        NotificationResponse,
+        NotificationResponseType;
 
 export 'src/flutter_local_notifications_plugin.dart';
 export 'src/initialization_settings.dart';
@@ -32,6 +34,7 @@ export 'src/platform_specifics/android/styles/media_style_information.dart';
 export 'src/platform_specifics/android/styles/messaging_style_information.dart';
 export 'src/platform_specifics/android/styles/style_information.dart';
 export 'src/platform_specifics/darwin/initialization_settings.dart';
+export 'src/platform_specifics/darwin/interruption_level.dart';
 export 'src/platform_specifics/darwin/notification_action.dart';
 export 'src/platform_specifics/darwin/notification_action_option.dart';
 export 'src/platform_specifics/darwin/notification_attachment.dart';

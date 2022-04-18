@@ -114,8 +114,9 @@ class FlutterLocalNotificationsPlugin {
   /// [getNotificationAppLaunchDetails].
   Future<bool?> initialize(
     InitializationSettings initializationSettings, {
-    SelectNotificationCallback? onSelectNotification,
-    SelectNotificationActionCallback? onSelectNotificationAction,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
+    DidReceiveBackgroundNotificationResponseCallback?
+        onDidReceiveBackgroundNotificationResponse,
   }) async {
     if (kIsWeb) {
       return true;
@@ -123,27 +124,35 @@ class FlutterLocalNotificationsPlugin {
     if (defaultTargetPlatform == TargetPlatform.android) {
       return resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
-          ?.initialize(initializationSettings.android!,
-              onSelectNotification: onSelectNotification,
-              onSelectNotificationAction: onSelectNotificationAction);
+          ?.initialize(
+        initializationSettings.android!,
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+        onDidReceiveBackgroundNotificationResponse:
+            onDidReceiveBackgroundNotificationResponse,
+      );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       return await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
-          ?.initialize(initializationSettings.iOS!,
-              onSelectNotification: onSelectNotification,
-              onSelectNotificationAction: onSelectNotificationAction);
+          ?.initialize(
+        initializationSettings.iOS!,
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+        onDidReceiveBackgroundNotificationResponse:
+            onDidReceiveBackgroundNotificationResponse,
+      );
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       return await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
-          ?.initialize(initializationSettings.macOS!,
-              onSelectNotification: onSelectNotification,
-              onSelectNotificationAction: onSelectNotificationAction);
+          ?.initialize(
+        initializationSettings.macOS!,
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+      );
     } else if (defaultTargetPlatform == TargetPlatform.linux) {
       return await resolvePlatformSpecificImplementation<
               LinuxFlutterLocalNotificationsPlugin>()
-          ?.initialize(initializationSettings.linux!,
-              onSelectNotification: onSelectNotification,
-              onSelectNotificationAction: onSelectNotificationAction);
+          ?.initialize(
+        initializationSettings.linux!,
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+      );
     }
     return true;
   }
@@ -180,7 +189,7 @@ class FlutterLocalNotificationsPlugin {
     } else {
       return await FlutterLocalNotificationsPlatform.instance
               .getNotificationAppLaunchDetails() ??
-          const NotificationAppLaunchDetails(false, null);
+          const NotificationAppLaunchDetails(false);
     }
   }
 

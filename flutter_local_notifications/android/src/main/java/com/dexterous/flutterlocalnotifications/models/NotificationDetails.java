@@ -268,11 +268,11 @@ public class NotificationDetails implements Serializable {
       notificationDetails.colorized = (Boolean) platformChannelSpecifics.get(COLORIZED);
 
       if (platformChannelSpecifics.containsKey(ACTIONS)) {
+        @SuppressWarnings("unchecked")
         List<Map<String, Object>> inputActions =
             (List<Map<String, Object>>) platformChannelSpecifics.get(ACTIONS);
-        if (!inputActions.isEmpty()) {
+        if (inputActions != null && !inputActions.isEmpty()) {
           notificationDetails.actions = new ArrayList<>();
-
           for (Map<String, Object> input : inputActions) {
             final NotificationAction action = new NotificationAction(input);
             notificationDetails.actions.add(action);

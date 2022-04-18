@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 /// Specifies the source for a bitmap used by Android notifications.
 enum AndroidBitmapSource {

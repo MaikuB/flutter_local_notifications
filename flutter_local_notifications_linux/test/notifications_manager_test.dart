@@ -24,9 +24,8 @@ void main() {
     late final DBusRemoteObjectSignalStream mockNotifyClosedSignal;
     late final LinuxPlatformInfo mockPlatformInfo;
     late final NotificationStorage mockStorage;
-    late final SelectNotificationCallback mockSelectNotificationCallback;
-    late final SelectNotificationActionCallback
-        mockSelectNotificationActionCallback;
+    late final DidReceiveNotificationResponseCallback
+        mockDidReceiveNotificationResponseCallback;
 
     const LinuxPlatformInfoData platformInfo = LinuxPlatformInfoData(
       appName: 'Test',
@@ -36,11 +35,10 @@ void main() {
 
     setUpAll(() {
       registerFallbackValue(
-        NotificationActionDetails(
+        const NotificationResponse(
           id: 0,
-          actionId: '',
-          input: null,
-          payload: null,
+          notificationResponseType:
+              NotificationResponseType.selectedNotification,
         ),
       );
 
@@ -49,9 +47,8 @@ void main() {
       mockNotifyClosedSignal = MockDBusRemoteObjectSignalStream();
       mockPlatformInfo = MockLinuxPlatformInfo();
       mockStorage = MockNotificationStorage();
-      mockSelectNotificationCallback = MockSelectNotificationCallback();
-      mockSelectNotificationActionCallback =
-          MockSelectNotificationActionCallback();
+      mockDidReceiveNotificationResponseCallback =
+          MockDidReceiveNotificationResponseCallback();
 
       when(
         () => mockPlatformInfo.getAll(),
@@ -72,11 +69,7 @@ void main() {
         () => mockDbus.subscribeSignal('NotificationClosed'),
       ).thenAnswer((_) => mockNotifyClosedSignal);
       when(
-        () => mockSelectNotificationCallback.call(any()),
-      ).thenAnswer((_) async => <void>{});
-
-      when(
-        () => mockSelectNotificationActionCallback.call(any()),
+        () => mockDidReceiveNotificationResponseCallback.call(any()),
       ).thenAnswer((_) async => <void>{});
     });
 
@@ -208,7 +201,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -236,7 +229,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -311,7 +304,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -364,7 +357,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -398,7 +391,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -428,7 +421,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -459,7 +452,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -500,7 +493,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -536,7 +529,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -573,7 +566,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -606,7 +599,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -639,7 +632,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -672,7 +665,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -705,7 +698,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -737,7 +730,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -770,7 +763,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -804,7 +797,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -910,19 +903,19 @@ void main() {
               ],
             ),
             'bool-hint': const DBusBoolean(true),
-            'byte-hint': DBusByte(1),
+            'byte-hint': const DBusByte(1),
             'dict-hint': DBusDict(
               DBusSignature('y'),
               DBusSignature('s'),
               <DBusValue, DBusValue>{
-                DBusByte(1): const DBusString('1'),
-                DBusByte(2): const DBusString('2'),
+                const DBusByte(1): const DBusString('1'),
+                const DBusByte(2): const DBusString('2'),
               },
             ),
             'double-hint': const DBusDouble(1.1),
-            'int16-hint': DBusInt16(1),
-            'int32-hint': DBusInt32(1),
-            'int64-hint': DBusInt64(1),
+            'int16-hint': const DBusInt16(1),
+            'int32-hint': const DBusInt32(1),
+            'int64-hint': const DBusInt64(1),
             'string-hint': const DBusString('test'),
             'struct-hint': DBusStruct(
               <DBusValue>[
@@ -930,17 +923,17 @@ void main() {
                 const DBusBoolean(true),
               ],
             ),
-            'uint16-hint': DBusUint16(1),
-            'uint32-hint': DBusUint32(1),
+            'uint16-hint': const DBusUint16(1),
+            'uint32-hint': const DBusUint32(1),
             'uint64-hint': const DBusUint64(1),
-            'variant-hint': DBusVariant(DBusByte(1)),
+            'variant-hint': const DBusVariant(DBusByte(1)),
           },
         );
 
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -989,7 +982,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -1035,7 +1028,7 @@ void main() {
         mockNotifyMethod(notify.systemId);
         when(
           () => mockStorage.getById(notify.id),
-        ).thenAnswer((_) async {});
+        ).thenAnswer((_) async => null);
         when(
           () => mockStorage.insert(notify),
         ).thenAnswer((_) async => true);
@@ -1156,7 +1149,7 @@ void main() {
               name: 'NotificationClosed',
               values: <DBusValue>[
                 DBusUint32(notify.systemId),
-                DBusUint32(1),
+                const DBusUint32(1),
               ],
             ),
           ).then((_) {
@@ -1239,7 +1232,8 @@ void main() {
 
       await manager.initialize(
         initSettings,
-        onSelectNotification: mockSelectNotificationCallback,
+        onDidReceiveNotificationResponse:
+            mockDidReceiveNotificationResponseCallback,
       );
       await Future.forEach(
         completers,
@@ -1249,9 +1243,6 @@ void main() {
       for (final LinuxNotificationInfo notify in notifications) {
         verify(
           () => mockStorage.getBySystemId(notify.systemId),
-        ).called(1);
-        verify(
-          () => mockSelectNotificationCallback.call(notify.payload),
         ).called(1);
       }
     });
@@ -1404,7 +1395,8 @@ void main() {
 
       await manager.initialize(
         initSettings,
-        onSelectNotificationAction: mockSelectNotificationActionCallback,
+        onDidReceiveNotificationResponse:
+            mockDidReceiveNotificationResponseCallback,
       );
       await Future.forEach(
         completers,

@@ -2,17 +2,9 @@ import 'package:flutter_local_notifications_platform_interface/flutter_local_not
 import 'package:mocktail/mocktail.dart';
 
 // ignore: one_member_abstracts
-abstract class _SelectNotificationCallback {
-  Future<dynamic> call(String? payload);
+abstract class _DidReceiveNotificationResponseCallback {
+  Future<dynamic> call(NotificationResponse notificationResponse);
 }
 
-// ignore: one_member_abstracts
-abstract class _SelectNotificationActionCallback {
-  Future<dynamic> call(NotificationActionDetails details);
-}
-
-class MockSelectNotificationCallback extends Mock
-    implements _SelectNotificationCallback {}
-
-class MockSelectNotificationActionCallback extends Mock
-    implements _SelectNotificationActionCallback {}
+class MockDidReceiveNotificationResponseCallback extends Mock
+    implements _DidReceiveNotificationResponseCallback {}

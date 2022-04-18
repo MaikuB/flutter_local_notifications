@@ -16,11 +16,12 @@ void callbackDispatcher() {
       MethodChannel('dexterous.com/flutter/local_notifications');
 
   channel.invokeMethod<int>('getCallbackHandle').then((int? handle) {
-    final SelectNotificationActionCallback? callback = handle == null
-        ? null
-        : PluginUtilities.getCallbackFromHandle(
-                CallbackHandle.fromRawHandle(handle))
-            as SelectNotificationActionCallback?;
+    final DidReceiveBackgroundNotificationResponseCallback? callback =
+        handle == null
+            ? null
+            : PluginUtilities.getCallbackFromHandle(
+                    CallbackHandle.fromRawHandle(handle))
+                as DidReceiveBackgroundNotificationResponseCallback?;
 
     backgroundChannel
         .receiveBroadcastStream()
@@ -37,11 +38,13 @@ void callbackDispatcher() {
       } else {
         id = -1;
       }
-      callback?.call(NotificationActionDetails(
+      callback?.call(NotificationResponse(
         id: id,
         actionId: event['actionId'],
         input: event['input'],
         payload: event['payload'],
+        notificationResponseType:
+            NotificationResponseType.selectedNotificationAction,
       ));
     });
   });

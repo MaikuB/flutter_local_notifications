@@ -67,17 +67,19 @@ const String darwinNotificationCategoryText = 'textCategory';
 /// Defines a iOS/MacOS notification category for plain actions.
 const String iosNotificationCategoryPlain = 'plainCategory';
 
-void notificationTapBackground(NotificationActionDetails details) {
+void notificationTapBackground(NotificationResponse notificationResponse) {
   // ignore: avoid_print
-  print('notification(${details.id}) action tapped: ${details.actionId} with'
-      ' payload: ${details.payload}');
-  if (details.input?.isNotEmpty ?? false) {
+  print('notification(${notificationResponse.id}) action tapped: '
+      '${notificationResponse.actionId} with'
+      ' payload: ${notificationResponse.payload}');
+  if (notificationResponse.input?.isNotEmpty ?? false) {
     // ignore: avoid_print
-    print('notification action tapped with input: ${details.input}');
+    print(
+        'notification action tapped with input: ${notificationResponse.input}');
   }
 
   final SendPort? send = IsolateNameServer.lookupPortByName(portName);
-  send?.send(details);
+  send?.send(notificationResponse);
 }
 
 /// IMPORTANT: running the following code on its own won't work as there is
@@ -97,7 +99,8 @@ Future<void> main() async {
       : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   String initialRoute = HomePage.routeName;
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
-    selectedNotificationPayload = notificationAppLaunchDetails!.payload;
+    selectedNotificationPayload =
+        notificationAppLaunchDetails!.notificationResponse?.payload;
     initialRoute = SecondPage.routeName;
   }
 
@@ -127,9 +130,6 @@ Future<void> main() async {
           'Action 1',
           buttonTitle: 'Send',
           placeholder: 'Placeholder',
-          options: const <DarwinNotificationActionOption>{
-            DarwinNotificationActionOption.foreground,
-          },
         ),
       ],
     ),
@@ -198,13 +198,20 @@ Future<void> main() async {
   );
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
-    onSelectNotification: (String? payload) async {
-      if (payload != null) {
-        debugPrint('notification payload: $payload');
+    onDidReceiveNotificationResponse:
+        (NotificationResponse notificationResponse) {
+      switch (notificationResponse.notificationResponseType) {
+        case NotificationResponseType.selectedNotification:
+          selectNotificationSubject.add(notificationResponse.payload);
+          break;
+        case NotificationResponseType.selectedNotificationAction:
+          if (notificationResponse.actionId == navigationActionId) {
+            selectNotificationSubject.add(notificationResponse.payload);
+          }
+          break;
       }
-      selectNotificationSubject.add(payload);
     },
-    onSelectNotificationAction: notificationTapBackground,
+    onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
   );
   runApp(
     MaterialApp(
@@ -280,6 +287,7 @@ class _HomePageState extends State<HomePage> {
           alert: true,
           badge: true,
           sound: true,
+          critical: true,
         );
     flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -288,6 +296,7 @@ class _HomePageState extends State<HomePage> {
           alert: true,
           badge: true,
           sound: true,
+          critical: true,
         );
   }
 
@@ -360,11 +369,26 @@ class _HomePageState extends State<HomePage> {
                       title: 'Did notification launch app?',
                       value: widget.didNotificationLaunchApp,
                     ),
-                    if (widget.didNotificationLaunchApp)
+                    if (widget.didNotificationLaunchApp) ...<Widget>[
+                      const Text('Launch notification details'),
                       _InfoValueString(
-                        title: 'Launch notification payload:',
-                        value: widget.notificationAppLaunchDetails!.payload,
+                          title: 'Notification id',
+                          value: widget.notificationAppLaunchDetails!
+                              .notificationResponse?.id),
+                      _InfoValueString(
+                          title: 'Action id',
+                          value: widget.notificationAppLaunchDetails!
+                              .notificationResponse?.actionId),
+                      _InfoValueString(
+                          title: 'Input',
+                          value: widget.notificationAppLaunchDetails!
+                              .notificationResponse?.input),
+                      _InfoValueString(
+                        title: 'Payload:',
+                        value: widget.notificationAppLaunchDetails!
+                            .notificationResponse?.payload,
                       ),
+                    ],
                     PaddedElevatedButton(
                       buttonText: 'Show plain notification with payload',
                       onPressed: () async {
@@ -751,7 +775,7 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () async {
                           await _stopForegroundService();
                         },
-                      ),                      
+                      ),
                     ],
                     if (!kIsWeb &&
                         (Platform.isIOS || Platform.isMacOS)) ...<Widget>[
@@ -781,6 +805,13 @@ class _HomePageState extends State<HomePage> {
                         buttonText: 'Show notifications with thread identifier',
                         onPressed: () async {
                           await _showNotificationsWithThreadIdentifier();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText:
+                            'Show notification with time sensitive interruption level',
+                        onPressed: () async {
+                          await _showNotificationWithTimeSensitiveInterruptionLevel();
                         },
                       ),
                     ],
@@ -978,7 +1009,7 @@ class _HomePageState extends State<HomePage> {
           navigationActionId,
           'Action 3',
           icon: DrawableResourceAndroidBitmap('secondary_icon'),
-
+          showsUserInterface: true,
           // By default, Android plugin will dismiss the notification when the
           // user tapped on a action (this mimics the behavior on iOS).
           cancelNotification: false,
@@ -1040,6 +1071,7 @@ class _HomePageState extends State<HomePage> {
               label: 'Enter a message',
             ),
           ],
+          showsUserInterface: true,
         ),
       ],
     );
@@ -1992,6 +2024,20 @@ class _HomePageState extends State<HomePage> {
         'third notification', thread2PlatformChannelSpecifics);
   }
 
+  Future<void> _showNotificationWithTimeSensitiveInterruptionLevel() async {
+    const DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(
+            interruptionLevel: InterruptionLevel.timeSensitive);
+    const NotificationDetails notificationDetails = NotificationDetails(
+        iOS: darwinNotificationDetails, macOS: darwinNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        id++,
+        'title of time sensitive notification',
+        'body of time sensitive notification',
+        notificationDetails,
+        payload: 'item x');
+  }
+
   Future<void> _showNotificationWithoutTimestamp() async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
@@ -2187,8 +2233,6 @@ class _HomePageState extends State<HomePage> {
         ?.stopForegroundService();
   }
 
-  
-
   Future<void> _createNotificationChannel() async {
     const AndroidNotificationChannel androidNotificationChannel =
         AndroidNotificationChannel(
@@ -2330,6 +2374,8 @@ class _HomePageState extends State<HomePage> {
                   Text(
                     'id: ${activeNotification.id}\n'
                     'channelId: ${activeNotification.channelId}\n'
+                    'groupKey: ${activeNotification.groupKey}\n'
+                    'tag: ${activeNotification.tag}\n'
                     'title: ${activeNotification.title}\n'
                     'body: ${activeNotification.body}',
                   ),
@@ -2638,14 +2684,20 @@ class SecondPageState extends State<SecondPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Second Screen with payload: ${_payload ?? ''}'),
+          title: const Text('Second Screen'),
         ),
         body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Go back!'),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text('payload ${_payload ?? ''}'),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Go back!'),
+              ),
+            ],
           ),
         ),
       );

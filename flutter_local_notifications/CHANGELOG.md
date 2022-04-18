@@ -1,3 +1,31 @@
+# [10.0.0-dev.12]
+
+* **Breaking change** callbacks have now been reworked. There are now the following callbacks and both will pass an instance of the `NotificationResponse` class 
+ * `onDidReceiveNotificationResponse`: invoked only when the app is running. This works for when a user has selected a notification or notification action. This replaces the `onSelectNotification` callback that existed before. For notification actions, the action needs to be configured to indicate the the app or user interface should be shown on invoking the action for this callback to be invoked i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. On macOS and Linux, as there's no support for background isolates it will always invoke this callback
+ * `onDidReceiveBackgroundNotificationResponse`: invoked on a background isolate for when a user has selected a notification action. This replaces the `onSelectNotificationAction` callback
+* **Breaking change** the `NotificationAppLaunchDetails` has been updated to contain an instance `NotificationResponse` class with the `payload` belonging to the `NotificationResponse` class. This is to allow knowing more details about what caused the app to launch e.g. if a notification action was used to do so
+* [iOS][macOS] updated how notification categories were set behind the scenes so the categories specified. This fixes an issue where notification action may not work at all as were being appended to the list of existing categories. This could lead to issues where notification actions wouldn't work at all and potentially result in notification categories growing over time.
+* Updated docs to clarify that on Apple's platforms, notification actions are only supported on iOS 10 or newer and macOS 10.14 or newer
+
+# [10.0.0-dev.11]
+
+* Includes changes from 9.4.0
+* Updated example app to display `groupKey` of an `ActiveNotification`
+* Bumped dependency to `flutter_local_notifications_platform_interface`
+
+# [10.0.0-dev.10]
+
+* [iOS][macOS] Added support for specifying interruption level of notifications and ability to request critical alert permissions. Thanks to the PR from [maprohu)](https://github.com/maprohu)
+
+# [10.0.0-dev.9]
+
+* [iOS] Fixed issue [1506](https://github.com/MaikuB/flutter_local_notifications/issues/1506) where the plugin was trying to process responses to notifications created outside of the plugin (e.g. those from Firebase) and resulted in an exception
+* [macOS] **Breaking change** the `requestPermissions()` method of the `MacOSFlutterLocalNotificationsPlugin` class now only accepts non-nullable parameters that default to `false`. This makes it consistent with the iOS implementation of the plugin
+
+# [10.0.0-dev.8]
+
+* Includes fix from 9.3.2
+
 # [10.0.0-dev.7]
 
 * Includes fix from 9.3.1
@@ -37,6 +65,16 @@
   * `GET_ACTIVE_NOTIFICATIONS_ERROR_CODE` -> `unsupported_os_version`
   * `GET_NOTIFICATION_CHANNELS_ERROR_CODE` -> `getNotificationChannelsError`
   
+# [9.4.0]
+* [Android] Added `tag` to `ActiveNotification` that would allow for finding the notification's taf. Thanks to the PR from [Simon Ser](https://github.com/emersion)
+
+# [9.3.3]
+* [macOS] Fixed issue [1507](https://github.com/MaikuB/flutter_local_notifications/issues/1507) where calling the `requestPermissions()` method of the `MacOSFlutterLocalNotificationsPlugin` class led to a crash. This will be coalesced to assume that the `boolean` parameters around the requested permissions default to `false` to be consistent with the iOS implementation. Note that in 10.0.0 the method will have a breaking change so that these parameters are non-nullable
+
+# [9.3.2]
+
+* Fix issue [1485](https://github.com/MaikuB/flutter_local_notifications/issues/1485) where the addition of `colorized` property caused backwards compatibility issues with previously scheduled notifications as this would be null when deserialised from shared preferences
+
 # [9.3.1]
 
 * Fix issue [1479](https://github.com/MaikuB/flutter_local_notifications/issues/1479) that could cause compilation issue on the web by removing `dart:ffi` import

@@ -20,6 +20,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spannable;
@@ -106,6 +107,8 @@ public class FlutterLocalNotificationsPlugin
   private static final String DRAWABLE = "drawable";
   private static final String DEFAULT_ICON = "defaultIcon";
   private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
+  private static final String SELECT_FOREGROUND_NOTIFICATION_ACTION =
+      "SELECT_FOREGROUND_NOTIFICATION";
   private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
   private static final String INITIALIZE_METHOD = "initialize";
   private static final String GET_CALLBACK_HANDLE_METHOD = "getCallbackHandle";
@@ -133,6 +136,7 @@ public class FlutterLocalNotificationsPlugin
       "getNotificationAppLaunchDetails";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
   static final String PAYLOAD = "payload";
+  static final String NOTIFICATION_ID = "notificationId";
   private static final String INVALID_ICON_ERROR_CODE = "invalid_icon";
   private static final String INVALID_LARGE_ICON_ERROR_CODE = "invalid_large_icon";
   private static final String INVALID_BIG_PICTURE_ERROR_CODE = "invalid_big_picture";
@@ -156,6 +160,10 @@ public class FlutterLocalNotificationsPlugin
           + " your Android head project.";
   private static final String CANCEL_ID = "id";
   private static final String CANCEL_TAG = "tag";
+  private static final String ACTION_ID = "actionId";
+  private static final String INPUT_RESULT = "FlutterLocalNotificationsPluginInputResult";
+  private static final String INPUT = "input";
+  private static final String NOTIFICATION_RESPONSE_TYPE = "notificationResponseType";
   static String NOTIFICATION_DETAILS = "notificationDetails";
   static Gson gson;
   private MethodChannel channel;
@@ -202,6 +210,7 @@ public class FlutterLocalNotificationsPlugin
     }
     Intent intent = getLaunchIntent(context);
     intent.setAction(SELECT_NOTIFICATION);
+    intent.putExtra(NOTIFICATION_ID, notificationDetails.id);
     intent.putExtra(PAYLOAD, notificationDetails.payload);
     int flags = PendingIntent.FLAG_UPDATE_CURRENT;
     if (VERSION.SDK_INT >= VERSION_CODES.M) {
@@ -237,14 +246,21 @@ public class FlutterLocalNotificationsPlugin
           icon = getIconFromSource(context, action.icon, action.iconSource);
         }
 
-        Intent actionIntent =
-            new Intent(context, ActionBroadcastReceiver.class)
-                .setAction(ActionBroadcastReceiver.ACTION_TAPPED)
-                .putExtra(ActionBroadcastReceiver.NOTIFICATION_ID, notificationDetails.id)
-                .putExtra(ActionBroadcastReceiver.ACTION_ID, action.id)
-                .putExtra(CANCEL_NOTIFICATION, action.cancelNotification)
-                .putExtra(PAYLOAD, notificationDetails.payload);
-        int actionFlags = PendingIntent.FLAG_ONE_SHOT;
+        Intent actionIntent;
+        if (action.showsUserInterface != null && action.showsUserInterface) {
+          actionIntent = getLaunchIntent(context);
+          actionIntent.setAction(SELECT_FOREGROUND_NOTIFICATION_ACTION);
+        } else {
+          actionIntent = new Intent(context, ActionBroadcastReceiver.class);
+          actionIntent.setAction(ActionBroadcastReceiver.ACTION_TAPPED);
+        }
+
+        actionIntent
+            .putExtra(NOTIFICATION_ID, notificationDetails.id)
+            .putExtra(ACTION_ID, action.id)
+            .putExtra(CANCEL_NOTIFICATION, action.cancelNotification)
+            .putExtra(PAYLOAD, notificationDetails.payload);
+        int actionFlags = PendingIntent.FLAG_UPDATE_CURRENT;
         if (action.actionInputs == null || action.actionInputs.isEmpty()) {
           if (VERSION.SDK_INT >= VERSION_CODES.M) {
             actionFlags |= PendingIntent.FLAG_IMMUTABLE;
@@ -257,7 +273,9 @@ public class FlutterLocalNotificationsPlugin
 
         @SuppressLint("UnspecifiedImmutableFlag")
         final PendingIntent actionPendingIntent =
-            PendingIntent.getBroadcast(context, requestCode++, actionIntent, actionFlags);
+            action.showsUserInterface != null && action.showsUserInterface
+                ? PendingIntent.getActivity(context, requestCode++, actionIntent, actionFlags)
+                : PendingIntent.getBroadcast(context, requestCode++, actionIntent, actionFlags);
 
         final Spannable actionTitleSpannable = new SpannableString(action.title);
         if (action.titleColor != null) {
@@ -279,7 +297,7 @@ public class FlutterLocalNotificationsPlugin
 
         for (NotificationActionInput input : action.actionInputs) {
           RemoteInput.Builder remoteInput =
-              new RemoteInput.Builder(ActionBroadcastReceiver.INPUT_RESULT).setLabel(input.label);
+              new RemoteInput.Builder(INPUT_RESULT).setLabel(input.label);
           if (input.allowFreeFormInput != null) {
             remoteInput.setAllowFreeFormInput(input.allowFreeFormInput);
           }
@@ -306,7 +324,9 @@ public class FlutterLocalNotificationsPlugin
       builder.setColor(notificationDetails.color.intValue());
     }
 
-    builder.setColorized(notificationDetails.colorized);
+    if (notificationDetails.colorized != null) {
+      builder.setColorized(notificationDetails.colorized);
+    }
 
     if (notificationDetails.showWhen != null) {
       builder.setShowWhen(BooleanUtils.getValue(notificationDetails.showWhen));
@@ -537,6 +557,31 @@ public class FlutterLocalNotificationsPlugin
     AlarmManagerCompat.setExactAndAllowWhileIdle(
         alarmManager, AlarmManager.RTC_WAKEUP, notificationTriggerTime, pendingIntent);
     saveScheduledNotification(context, notificationDetails);
+  }
+
+  static Map<String, Object> extractNotificationResponseMap(Intent intent) {
+    final int notificationId = intent.getIntExtra(NOTIFICATION_ID, 0);
+    final Map<String, Object> notificationResponseMap = new HashMap<>();
+    notificationResponseMap.put(NOTIFICATION_ID, notificationId);
+    notificationResponseMap.put(ACTION_ID, intent.getStringExtra(ACTION_ID));
+    notificationResponseMap.put(
+        FlutterLocalNotificationsPlugin.PAYLOAD,
+        intent.getStringExtra(FlutterLocalNotificationsPlugin.PAYLOAD));
+
+    Bundle remoteInput = RemoteInput.getResultsFromIntent(intent);
+    if (remoteInput != null) {
+      notificationResponseMap.put(INPUT, remoteInput.getString(INPUT_RESULT));
+    }
+
+    if (SELECT_NOTIFICATION.equals(intent.getAction())) {
+      notificationResponseMap.put(NOTIFICATION_RESPONSE_TYPE, 0);
+    }
+
+    if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
+      notificationResponseMap.put(NOTIFICATION_RESPONSE_TYPE, 1);
+    }
+
+    return notificationResponseMap;
   }
 
   private static PendingIntent getBroadcastPendingIntent(Context context, int id, Intent intent) {
@@ -1415,6 +1460,7 @@ public class FlutterLocalNotificationsPlugin
           activeNotificationPayload.put("channelId", notification.getChannelId());
         }
 
+        activeNotificationPayload.put("tag", activeNotification.getTag());
         activeNotificationPayload.put("groupKey", notification.getGroup());
         activeNotificationPayload.put(
             "title", notification.extras.getCharSequence("android.title"));
@@ -1477,16 +1523,18 @@ public class FlutterLocalNotificationsPlugin
 
   private void getNotificationAppLaunchDetails(Result result) {
     Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
-    String payload = null;
     Boolean notificationLaunchedApp =
         mainActivity != null
-            && SELECT_NOTIFICATION.equals(mainActivity.getIntent().getAction())
+            && (SELECT_NOTIFICATION.equals(mainActivity.getIntent().getAction())
+                || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(
+                    mainActivity.getIntent().getAction()))
             && !launchedActivityFromHistory(mainActivity.getIntent());
     notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
     if (notificationLaunchedApp) {
-      payload = launchIntent.getStringExtra(PAYLOAD);
+      notificationAppLaunchDetails.put(
+          "notificationResponse", extractNotificationResponseMap(launchIntent));
     }
-    notificationAppLaunchDetails.put(PAYLOAD, payload);
+
     result.success(notificationAppLaunchDetails);
   }
 
@@ -1657,11 +1705,20 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private Boolean sendNotificationPayloadMessage(Intent intent) {
-    if (SELECT_NOTIFICATION.equals(intent.getAction())) {
-      String payload = intent.getStringExtra(PAYLOAD);
-      channel.invokeMethod("selectNotification", payload);
+    if (SELECT_NOTIFICATION.equals(intent.getAction())
+        || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
+      Map<String, Object> notificationResponse = extractNotificationResponseMap(intent);
+      if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
+        if (intent.getBooleanExtra(FlutterLocalNotificationsPlugin.CANCEL_NOTIFICATION, false)) {
+          NotificationManagerCompat.from(applicationContext)
+              .cancel(
+                  (int) notificationResponse.get(FlutterLocalNotificationsPlugin.NOTIFICATION_ID));
+        }
+      }
+      channel.invokeMethod("didReceiveNotificationResponse", notificationResponse);
       return true;
     }
+
     return false;
   }
 

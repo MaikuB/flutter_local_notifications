@@ -38,6 +38,7 @@ extension DarwinInitializationSettingsMapper on DarwinInitializationSettings {
         'requestAlertPermission': requestAlertPermission,
         'requestSoundPermission': requestSoundPermission,
         'requestBadgePermission': requestBadgePermission,
+        'requestCriticalPermission': requestCriticalPermission,
         'defaultPresentAlert': defaultPresentAlert,
         'defaultPresentSound': defaultPresentSound,
         'defaultPresentBadge': defaultPresentBadge,
@@ -63,6 +64,7 @@ extension DarwinNotificationDetailsMapper on DarwinNotificationDetails {
         'sound': sound,
         'badgeNumber': badgeNumber,
         'threadIdentifier': threadIdentifier,
+        'interruptionLevel': interruptionLevel?.value,
         'attachments': attachments
             ?.map((a) => a.toMap()) // ignore: always_specify_types
             .toList(),

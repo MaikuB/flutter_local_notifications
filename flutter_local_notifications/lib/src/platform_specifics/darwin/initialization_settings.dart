@@ -9,6 +9,7 @@ class DarwinInitializationSettings {
     this.requestAlertPermission = true,
     this.requestSoundPermission = true,
     this.requestBadgePermission = true,
+    this.requestCriticalPermission = false,
     this.defaultPresentAlert = true,
     this.defaultPresentSound = true,
     this.defaultPresentBadge = true,
@@ -31,13 +32,21 @@ class DarwinInitializationSettings {
   /// Default value is true.
   final bool requestBadgePermission;
 
+  /// Request permission to show critical notifications.
+  ///
+  /// Subject to specific approval from Apple:
+  /// https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/
+  ///
+  /// Default value is 'false'.
+  final bool requestCriticalPermission;
+
   /// Configures the default setting on if an alert should be displayed when a
   /// notification is triggered while app is in the foreground.
   ///
   /// Default value is true.
   ///
   /// On iOS, this property is only applicable to iOS 10 or newer.
-  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
+  /// On macOS, this property is only applicable to macOS 10.14 or newer.
 
   final bool defaultPresentAlert;
 
@@ -46,7 +55,8 @@ class DarwinInitializationSettings {
   ///
   /// Default value is true.
   ///
-  /// This property is only applicable to iOS 10 or newer.
+  /// On iOS, this property is only applicable to iOS 10 or newer.
+  /// On macOS, this property is only applicable to macOS 10.14 or newer.
   final bool defaultPresentSound;
 
   /// Configures the default setting on if a badge value should be applied when
@@ -55,7 +65,7 @@ class DarwinInitializationSettings {
   /// Default value is true.
   ///
   /// On iOS, this property is only applicable to iOS 10 or newer.
-  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
+  /// On macOS, this property is only applicable to macOS 10.14 or newer.
   final bool defaultPresentBadge;
 
   /// Callback for handling when a notification is triggered while the app is
@@ -71,5 +81,8 @@ class DarwinInitializationSettings {
   /// them immutable while the App is installed.
   ///
   /// Notification actions are configured in each [DarwinNotificationCategory].
+  ///
+  /// On iOS, this is only applicable to iOS 10 or newer.
+  /// On macOS, this is only applicable to macOS 10.14 or newer.
   final List<DarwinNotificationCategory> notificationCategories;
 }
