@@ -35,7 +35,8 @@ void main() {
       expect(initialised, isTrue);
     });
 
-    testWidgets('initialize should throw an ArgumentError',
+    testWidgets(
+        'initialize with settings equal to null for the targeting platform should throw an ArgumentError',
         (WidgetTester tester) async {
       const InitializationSettings initializationSettings =
           InitializationSettings();
@@ -47,19 +48,19 @@ void main() {
         expect(e, isArgumentError);
         if (Platform.isAndroid) {
           expect(e.message,
-              'Android settings must be set when targeting Android platform');
+              'Android settings must be set when targeting Android platform.');
         }
         if (Platform.isIOS) {
           expect(e.message,
-              'iOS settings must be set when targeting iOS platform');
+              'iOS settings must be set when targeting iOS platform.');
         }
         if (Platform.isLinux) {
           expect(e.message,
-              'Linux settings must be set when targeting Linux platform');
+              'Linux settings must be set when targeting Linux platform.');
         }
         if (Platform.isMacOS) {
           expect(e.message,
-              'MacOS settings must be set when targeting MacOS platform');
+              'MacOS settings must be set when targeting macOS platform.');
         }
       }
     });
