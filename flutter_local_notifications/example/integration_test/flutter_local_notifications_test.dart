@@ -60,7 +60,7 @@ void main() {
         }
         if (Platform.isMacOS) {
           expect(e.message,
-              'MacOS settings must be set when targeting macOS platform.');
+              'macOS settings must be set when targeting macOS platform.');
         }
       }
     });

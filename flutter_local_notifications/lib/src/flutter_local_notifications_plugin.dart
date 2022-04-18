@@ -142,7 +142,7 @@ class FlutterLocalNotificationsPlugin {
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       if (initializationSettings.macOS == null) {
         throw ArgumentError(
-            'MacOS settings must be set when targeting macOS platform.');
+            'macOS settings must be set when targeting macOS platform.');
       }
 
       return await resolvePlatformSpecificImplementation<
