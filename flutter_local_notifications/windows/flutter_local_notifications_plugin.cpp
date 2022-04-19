@@ -129,8 +129,7 @@ namespace {
 				const auto iconPath = Utils::GetMapValue<std::string>("iconPath", args);
 				const auto iconBgColor = Utils::GetMapValue<std::string>("iconBgColor", args);
 
-				Initialize(appName, aumid, iconPath, iconBgColor);
-				result->Success(true);
+				result->Success(Initialize(appName, aumid, iconPath, iconBgColor));
 			}
 			else {
 				result->Error("INTERNAL", "flutter_local_notifications encountered an internal error.");
@@ -221,6 +220,8 @@ namespace {
 			toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier();
 		else
 			toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(winrt::to_hstring(aumid));
+
+		return true;
 	}
 
 	void FlutterLocalNotificationsPlugin::ShowNotification(
