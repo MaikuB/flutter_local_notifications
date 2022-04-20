@@ -12,7 +12,7 @@ A cross platform plugin for displaying local notifications.
    - [Compatibility with firebase_messaging](#compatibility-with-firebase_messaging)
    - [Scheduled Android notifications](#scheduled-android-notifications)
    - [iOS pending notifications limit](#ios-pending-notifications-limit)
-   - [Scheduled notifications and daylight savings](#scheduled-notifications-and-daylight-savings)
+   - [Scheduled notifications and daylight saving time](#scheduled-notifications-and-daylight-saving-time)
    - [Updating application badge](#updating-application-badge)
    - [Custom notification sounds](#custom-notification-sounds)
    - [macOS differences](#macos-differences)
@@ -110,7 +110,7 @@ It has been reported that Samsung's implementation of Android has imposed a maxi
 ##### iOS pending notifications limit
 There is a limit imposed by iOS where it will only keep 64 notifications that will fire the soonest.
 
-##### Scheduled notifications and daylight savings
+##### Scheduled notifications and daylight saving time
 The notification APIs used on iOS versions older than 10 (aka the `UILocalNotification` APIs) have limited supported for time zones.
 
 #### Updating application badge
@@ -413,7 +413,7 @@ The details specific to the Android platform are also specified. This includes t
 
 ### Scheduling a notification
 
-Starting in version 2.0 of the plugin, scheduling notifications now requires developers to specify a date and time relative to a specific time zone. This is to solve issues with daylight savings that existed in the `schedule` method that is now deprecated. A new `zonedSchedule` method is provided that expects an instance `TZDateTime` class provided by the [`timezone`](https://pub.dev/packages/timezone) package. As the `flutter_local_notifications` plugin already depends on the `timezone` package, it's not necessary for developers to add the `timezone` package as a direct dependency. In other words, the `timezone` package will be a transitive dependency after you add the `flutter_local_notifications` plugin as a dependency in your application.
+Starting in version 2.0 of the plugin, scheduling notifications now requires developers to specify a date and time relative to a specific time zone. This is to solve issues with daylight saving time that existed in the `schedule` method that is now deprecated. A new `zonedSchedule` method is provided that expects an instance `TZDateTime` class provided by the [`timezone`](https://pub.dev/packages/timezone) package. As the `flutter_local_notifications` plugin already depends on the `timezone` package, it's not necessary for developers to add the `timezone` package as a direct dependency. In other words, the `timezone` package will be a transitive dependency after you add the `flutter_local_notifications` plugin as a dependency in your application.
 
 Usage of the `timezone` package requires initialisation that is covered in the package's readme. For convenience the following are code snippets used by the example app.
 
@@ -438,7 +438,7 @@ tz.setLocalLocation(tz.getLocation(timeZoneName));
 
 The `timezone` package doesn't provide a way to obtain the current time zone on the device so developers will need to use [platform channels](https://flutter.dev/docs/development/platform-integration/platform-channels) or use other packages that may be able to provide the information. The example app uses the [`flutter_native_timezone`](https://pub.dev/packages/flutter_native_timezone) plugin.
 
-Assuming the local location has been set, the `zonedScheduled` method can then be called in a manner similar to the following code
+Assuming the local location has been set, the `zonedSchedule` method can then be called in a manner similar to the following code
 
 ```dart
 await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -457,7 +457,7 @@ await flutterLocalNotificationsPlugin.zonedSchedule(
 
 On Android, the `androidAllowWhileIdle` is used to determine if the notification should be delivered at the specified time even when the device in a low-power idle mode.
 
-The `uiLocalNotificationDateInterpretation` is required as on iOS versions older than 10 as time zone support is limited. This means it's not possible schedule a notification for another time zone and have iOS adjust the time the notification will appear when daylight savings happens. With this parameter, it is used to determine if the scheduled date should be interpreted as absolute time or wall clock time.
+The `uiLocalNotificationDateInterpretation` is required as on iOS versions older than 10 as time zone support is limited. This means it's not possible schedule a notification for another time zone and have iOS adjust the time the notification will appear when daylight saving time happens. With this parameter, it is used to determine if the scheduled date should be interpreted as absolute time or wall clock time.
 
 There is an optional `matchDateTimeComponents` parameter that can be used to schedule a notification to appear on a daily or weekly basis by telling the plugin to match on the time or a combination of day of the week and time respectively.
 
