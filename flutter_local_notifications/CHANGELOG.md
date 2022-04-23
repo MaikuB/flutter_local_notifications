@@ -1,6 +1,7 @@
 # [9.4.1]
 
 * Calling `initialize()` on a platform with passing the appropriate initialisation settings for it will now throw an `ArgumentError`. Whilst this may be technically a breaking change, it's been done as a minor change as the call was already throwing an unhandled exception in these scenarios. This change is to help provide more information on why it fails. Documentation has also been updated to provide more on information on this as the intialisation settings for each platform are nullable so developers aren't forced to provide settings for platforms they don't target. Thanks to the PR from [Zlati Pehlivanov](https://github.com/talamaska)
+* Updated docs to fix typos, adjust heading levels and use the term ["daylight saving time"](https://en.wikipedia.org/wiki/Daylight_saving_time) instead of "daylight savings". Thanks to the PR from [Ross Llewallyn](https://github.com/EnduringBeta)
 
 # [9.4.0]
 * [Android] Added `tag` to `ActiveNotification` that would allow for finding the notification's taf. Thanks to the PR from [Simon Ser](https://github.com/emersion)
