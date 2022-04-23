@@ -15,14 +15,26 @@ class InitializationSettings {
   });
 
   /// Settings for Android.
+  ///
+  /// It is nullable, because we don't want to force users to specify settings
+  /// for platforms that they don't target.
   final AndroidInitializationSettings? android;
 
   /// Settings for iOS.
+  ///
+  /// It is nullable, because we don't want to force users to specify settings
+  /// for platforms that they don't target.
   final IOSInitializationSettings? iOS;
 
   /// Settings for macOS.
+  ///
+  /// It is nullable, because we don't want to force users to specify settings
+  /// for platforms that they don't target.
   final MacOSInitializationSettings? macOS;
 
   /// Settings for Linux.
+  ///
+  /// It is nullable, because we don't want to force users to specify settings
+  /// for platforms that they don't target.
   final LinuxInitializationSettings? linux;
 }

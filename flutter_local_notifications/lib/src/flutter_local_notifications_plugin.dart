@@ -118,22 +118,43 @@ class FlutterLocalNotificationsPlugin {
     if (kIsWeb) {
       return true;
     }
+
     if (defaultTargetPlatform == TargetPlatform.android) {
+      if (initializationSettings.android == null) {
+        throw ArgumentError(
+            'Android settings must be set when targeting Android platform.');
+      }
+
       return resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.android!,
               onSelectNotification: onSelectNotification);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      if (initializationSettings.iOS == null) {
+        throw ArgumentError(
+            'iOS settings must be set when targeting iOS platform.');
+      }
+
       return await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.iOS!,
               onSelectNotification: onSelectNotification);
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
+      if (initializationSettings.macOS == null) {
+        throw ArgumentError(
+            'macOS settings must be set when targeting macOS platform.');
+      }
+
       return await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.macOS!,
               onSelectNotification: onSelectNotification);
     } else if (defaultTargetPlatform == TargetPlatform.linux) {
+      if (initializationSettings.linux == null) {
+        throw ArgumentError(
+            'Linux settings must be set when targeting Linux platform.');
+      }
+
       return await resolvePlatformSpecificImplementation<
               LinuxFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.linux!,
