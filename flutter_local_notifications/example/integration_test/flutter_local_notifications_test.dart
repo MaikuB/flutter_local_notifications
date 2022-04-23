@@ -34,6 +34,36 @@ void main() {
           .initialize(initializationSettings);
       expect(initialised, isTrue);
     });
+
+    testWidgets(
+        'initialize with settings equal to null for the targeting platform should throw an ArgumentError',
+        (WidgetTester tester) async {
+      const InitializationSettings initializationSettings =
+          InitializationSettings();
+      try {
+        await flutterLocalNotificationsPlugin
+            .initialize(initializationSettings);
+        // ignore: avoid_catches_without_on_clauses
+      } catch (e) {
+        expect(e, isArgumentError);
+        if (Platform.isAndroid) {
+          expect(e.message,
+              'Android settings must be set when targeting Android platform.');
+        }
+        if (Platform.isIOS) {
+          expect(e.message,
+              'iOS settings must be set when targeting iOS platform.');
+        }
+        if (Platform.isLinux) {
+          expect(e.message,
+              'Linux settings must be set when targeting Linux platform.');
+        }
+        if (Platform.isMacOS) {
+          expect(e.message,
+              'macOS settings must be set when targeting macOS platform.');
+        }
+      }
+    });
   });
   group('resolvePlatformSpecificImplementation()', () {
     setUpAll(() async {
