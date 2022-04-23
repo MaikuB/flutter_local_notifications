@@ -6,13 +6,14 @@
 A cross platform plugin for displaying local notifications.
 
 ## Table of contents
+
 - **[📱 Supported platforms](#-supported-platforms)**
 - **[✨ Features](#-features)**
 - **[⚠ Caveats and limitations](#-caveats-and-limitations)**
    - [Compatibility with firebase_messaging](#compatibility-with-firebase_messaging)
    - [Scheduled Android notifications](#scheduled-android-notifications)
    - [iOS pending notifications limit](#ios-pending-notifications-limit)
-   - [Scheduled notifications and daylight savings](#scheduled-notifications-and-daylight-savings)
+   - [Scheduled notifications and daylight saving time](#scheduled-notifications-and-daylight-saving-time)
    - [Updating application badge](#updating-application-badge)
    - [Custom notification sounds](#custom-notification-sounds)
    - [macOS differences](#macos-differences)
@@ -45,6 +46,7 @@ A cross platform plugin for displaying local notifications.
 - **[📈 Testing](#-testing)**
 
 ## 📱 Supported platforms
+
 * **Android 4.1+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
 * **iOS 8.0+**. On iOS versions older than 10, the plugin will use the UILocalNotification APIs. The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on iOS 10 or newer.
 * **macOS 10.11+**. On macOS versions older than 10.14, the plugin will use the [NSUserNotification APIs](https://developer.apple.com/documentation/foundation/nsusernotification). The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on macOS 10.14 or newer.
@@ -97,36 +99,42 @@ A cross platform plugin for displaying local notifications.
 * [Linux] Resident and transient notifications
 
 ## ⚠ Caveats and limitations
+
 The cross-platform facing API exposed by the `FlutterLocalNotificationsPlugin` class doesn't expose platform-specific methods as its goal is to provide an abstraction for all platforms. As such, platform-specific configuration is passed in as data. There are platform-specific implementations of the plugin that can be obtained by calling the [`resolvePlatformSpecificImplementation`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/resolvePlatformSpecificImplementation.html). An example of using this is provided in the section on requesting permissions on iOS. In spite of this, there may still be gaps that don't cover your use case and don't make sense to add as they don't fit with the plugin's architecture or goals. Developers can fork or maintain their own code for showing notifications in these situations.
 
-##### Compatibility with firebase_messaging
+### Compatibility with firebase_messaging
+
 Previously, there were issues that prevented this plugin working properly with the `firebase_messaging` plugin. This meant that callbacks from each plugin might not be invoked. This has been resolved since version 6.0.13 of the `firebase_messaging` plugin so please make sure you are using more recent versions of the  `firebase_messaging` plugin and follow the steps covered in `firebase_messaging`'s readme file located [here](https://pub.dev/packages/firebase_messaging)
 
-##### Scheduled Android notifications
+### Scheduled Android notifications
+
 Some Android OEMs have their own customised Android OS that can prevent applications from running in the background. Consequently, scheduled notifications may not work when the application is in the background on certain devices (e.g. by Xiaomi, Huawei). If you experience problems like this then this would be the reason why. As it's a restriction imposed by the OS, this is not something that can be resolved by the plugin. Some devices may have setting that lets users control which applications run in the background. The steps for these can vary but it is still up to the users of your application to do given it's a setting on the phone itself.
 
 It has been reported that Samsung's implementation of Android has imposed a maximum of 500 alarms that can be scheduled via the [Alarm Manager](https://developer.android.com/reference/android/app/AlarmManager) API and exceptions can occur when going over the limit.
 
-##### iOS pending notifications limit
+### iOS pending notifications limit
+
 There is a limit imposed by iOS where it will only keep 64 notifications that will fire the soonest.
 
-##### Scheduled notifications and daylight savings
+### Scheduled notifications and daylight saving time
+
 The notification APIs used on iOS versions older than 10 (aka the `UILocalNotification` APIs) have limited supported for time zones.
 
-#### Updating application badge
+### Updating application badge
 
 This plugin doesn't provide APIs for directly setting the badge count for your application. If you need this for your application, there are other plugins available, such as the [`flutter_app_badger`](https://pub.dev/packages/flutter_app_badger) plugin.
 
-##### Custom notification sounds
+### Custom notification sounds
+
 [iOS and macOS restrictions](https://developer.apple.com/documentation/usernotifications/unnotificationsound?language=objc) apply (e.g. supported file formats).
 
-##### macOS differences
+### macOS differences
 
 Due to limitations currently within the macOS Flutter engine, `getNotificationAppLaunchDetails` will return null on macOS versions older than 10.14. These limitations will mean that conflicts may occur when using this plugin with other notification plugins (e.g. for push notifications).
 
 The `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods that were implemented before macOS support was added and have been marked as deprecated aren't implemented on macOS.
 
-##### Linux limitations
+### Linux limitations
 
 Capabilities depend on the system notification server implementation, therefore, not all features listed in `LinuxNotificationDetails` may be supported. One of the ways to check some capabilities is to call the `LinuxFlutterLocalNotificationsPlugin.getCapabilities()` method.
 
@@ -156,7 +164,7 @@ To respond to notification after the application is terminated, your application
 
 Before proceeding, please make sure you are using the latest version of the plugin. The reason for this is that since version 3.0.1+4, the amount of setup needed has been reduced. Previously, applications needed changes done to the `AndroidManifest.xml` file and there was a bit more setup needed for release builds. If for some reason, your application still needs to use an older version of the plugin then make use of the release tags to refer back to older versions of readme.
 
-#### Custom notification icons and sounds
+### Custom notification icons and sounds
 
 Notification icons should be added as a drawable resource. The example project/code shows how to set default icon for all notifications and how to specify one for each notification. It is possible to use launcher icon/mipmap and this by default is `@mipmap/ic_launcher` in the Android manifest and can be passed `AndroidInitializationSettings` constructor. However, the offical Android guidance is that you should use drawable resources. Custom notification sounds should be added as a raw resource and the sample illustrates how to play a notification with a custom sound. Refer to the following links around Android resources and notification icons.
 
@@ -164,13 +172,11 @@ Notification icons should be added as a drawable resource. The example project/c
  * [Providing resources](https://developer.android.com/guide/topics/resources/providing-resources)
  * [Icon design status bar](https://developer.android.com/guide/practices/ui_guidelines/icon_design_status_bar)
 
-
 When specifying the large icon bitmap or big picture bitmap (associated with the big picture style), bitmaps can be either a drawable resource or file on the device. This is specified via a single property (e.g. the `largeIcon` property associated with the `AndroidNotificationDetails` class) where a value that is an instance of the `DrawableResourceAndroidBitmap` means the bitmap should be loaded from an drawable resource. If this is an instance of the `FilePathAndroidBitmap`, this indicates it should be loaded from a file referred to by a given file path.
-
 
 ⚠️ For Android 8.0+, sounds and vibrations are associated with notification channels and can only be configured when they are first created. Showing/scheduling a notification will create a channel with the specified id if it doesn't exist already. If another notification specifies the same channel id but tries to specify another sound or vibration pattern then nothing occurs.
 
-#### Full-screen intent notifications
+### Full-screen intent notifications
 
 If your application needs the ability to schedule full-screen intent notifications, add the following attributes to the activity you're opening. For a Flutter application, there is typically only one activity extends from `FlutterActivity`. These attributes ensure the screen turns on and shows when the device is locked.
 
@@ -184,19 +190,15 @@ For reference, the example app's `AndroidManifest.xml` file can be found [here](
 
 Note that when a full-screen intent notification actually occurs (as opposed to a heads-up notification that the system may decide should occur), the plugin will act as though the user has tapped on a notification so handle those the same way (e.g. `onSelectNotification` callback) to display the appropriate page for your application.
 
-
-#### Release build configuration
+### Release build configuration
 
 Before creating the release build of your app (which is the default setting when building an APK or app bundle) you will need to customise your ProGuard configuration file as per this [link](https://developer.android.com/studio/build/shrink-code#keep-code). Rules specific to the GSON dependency being used by the plugin will need to be added. These rules can be found [here](https://github.com/google/gson/blob/master/examples/android-proguard-example/proguard.cfg). The example app has a consolidated Proguard rules (`proguard-rules.pro`) file that combines these together for reference [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/proguard-rules.pro).
 
-
 ⚠️ Ensure that you have configured the resources that should be kept so that resources like your notification icons aren't discarded by the R8 compiler by following the instructions [here](https://developer.android.com/studio/build/shrink-code#keep-resources). If you fail to do this, notifications might be broken. In the worst case they will never show, instead silently failing when the system looks for a resource that has been removed. If they do still show, you might not see the icon you specified. The configuration used by the example app can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/keep.xml) where it is specifying that all drawable resources should be kept, as well as the file used to play a custom notification sound (sound file is located [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/slow_spring_board.mp3)).
-
-
 
 ## ⚙️ iOS setup
 
-#### General setup
+### General setup
 
 Add the following lines to the `didFinishLaunchingWithOptions` method in the AppDelegate.m/AppDelegate.swift file of your iOS project
 
@@ -214,7 +216,7 @@ if #available(iOS 10.0, *) {
 }
 ```
 
-#### Handling notifications whilst the app is in the foreground
+### Handling notifications whilst the app is in the foreground
 
 By design, iOS applications *do not* display notifications while the app is in the foreground unless configured to do so.
 
@@ -267,8 +269,6 @@ void onDidReceiveLocalNotification(
 }
 ```
 
-
-
 ## ❓ Usage
 
 Before going on to copy-paste the code snippets in this section, double-check you have configured your application correctly.
@@ -281,7 +281,6 @@ The [`example`](https://github.com/MaikuB/flutter_local_notifications/tree/maste
 ### API reference
 
 Checkout the lovely [API documentation](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/flutter_local_notifications-library.html) generated by pub.
-
 
 ## Initialisation
 
@@ -330,7 +329,6 @@ On iOS and macOS, initialisation may show a prompt to requires users to give the
 
 For an explanation of the `onDidReceiveLocalNotification` callback associated with the `IOSInitializationSettings` class, please read  [this](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications#handling-notifications-whilst-the-app-is-in-the-foreground).
 
-
 *Note*: from version 4.0 of the plugin, calling `initialize` will not trigger the `onSelectNotification` callback when the application was started by tapping on a notification to trigger. Use the `getNotificationAppLaunchDetails` method that is available in the plugin if you need to handle a notification triggering the launch for an app e.g. change the home route of the app for deep-linking.
 
 ### [iOS (all supported versions) and macOS 10.14+] Requesting notification permissions
@@ -363,7 +361,6 @@ The constructor for the `IOSInitializationSettings` and `MacOSInitializationSett
 ```
 
 Then call the `requestPermissions` method with desired permissions at the appropriate point in your application
-
 
 For iOS:
 
@@ -415,7 +412,7 @@ The details specific to the Android platform are also specified. This includes t
 
 ### Scheduling a notification
 
-Starting in version 2.0 of the plugin, scheduling notifications now requires developers to specify a date and time relative to a specific time zone. This is to solve issues with daylight savings that existed in the `schedule` method that is now deprecated. A new `zonedSchedule` method is provided that expects an instance `TZDateTime` class provided by the [`timezone`](https://pub.dev/packages/timezone) package. As the `flutter_local_notifications` plugin already depends on the `timezone` package, it's not necessary for developers to add the `timezone` package as a direct dependency. In other words, the `timezone` package will be a transitive dependency after you add the `flutter_local_notifications` plugin as a dependency in your application.
+Starting in version 2.0 of the plugin, scheduling notifications now requires developers to specify a date and time relative to a specific time zone. This is to solve issues with daylight saving time that existed in the `schedule` method that is now deprecated. A new `zonedSchedule` method is provided that expects an instance `TZDateTime` class provided by the [`timezone`](https://pub.dev/packages/timezone) package. As the `flutter_local_notifications` plugin already depends on the `timezone` package, it's not necessary for developers to add the `timezone` package as a direct dependency. In other words, the `timezone` package will be a transitive dependency after you add the `flutter_local_notifications` plugin as a dependency in your application.
 
 Usage of the `timezone` package requires initialisation that is covered in the package's readme. For convenience the following are code snippets used by the example app.
 
@@ -440,7 +437,7 @@ tz.setLocalLocation(tz.getLocation(timeZoneName));
 
 The `timezone` package doesn't provide a way to obtain the current time zone on the device so developers will need to use [platform channels](https://flutter.dev/docs/development/platform-integration/platform-channels) or use other packages that may be able to provide the information. The example app uses the [`flutter_native_timezone`](https://pub.dev/packages/flutter_native_timezone) plugin.
 
-Assuming the local location has been set, the `zonedScheduled` method can then be called in a manner similar to the following code
+Assuming the local location has been set, the `zonedSchedule` method can then be called in a manner similar to the following code
 
 ```dart
 await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -459,7 +456,7 @@ await flutterLocalNotificationsPlugin.zonedSchedule(
 
 On Android, the `androidAllowWhileIdle` is used to determine if the notification should be delivered at the specified time even when the device in a low-power idle mode.
 
-The `uiLocalNotificationDateInterpretation` is required as on iOS versions older than 10 as time zone support is limited. This means it's not possible schedule a notification for another time zone and have iOS adjust the time the notification will appear when daylight savings happens. With this parameter, it is used to determine if the scheduled date should be interpreted as absolute time or wall clock time.
+The `uiLocalNotificationDateInterpretation` is required as on iOS versions older than 10 as time zone support is limited. This means it's not possible schedule a notification for another time zone and have iOS adjust the time the notification will appear when daylight saving time happens. With this parameter, it is used to determine if the scheduled date should be interpreted as absolute time or wall clock time.
 
 There is an optional `matchDateTimeComponents` parameter that can be used to schedule a notification to appear on a daily or weekly basis by telling the plugin to match on the time or a combination of day of the week and time respectively.
 
@@ -578,7 +575,6 @@ await flutterLocalNotificationsPlugin.cancel(0);
 ```dart
 await flutterLocalNotificationsPlugin.cancelAll();
 ```
-
 
 ### Getting details on if the app was launched via a notification created by this plugin
 
