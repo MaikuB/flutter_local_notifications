@@ -20,12 +20,12 @@ A cross platform plugin for displaying local notifications.
    - [Linux limitations](#linux-limitations)
 - **[📷 Screenshots](#-screenshots)**
 - **[👏 Acknowledgements](#-acknowledgements)**
-- **[⚙️ Android Setup](#️-android-setup)**
+- **[🔧 Android Setup](#-android-setup)**
    - [Custom notification icons and sounds](#custom-notification-icons-and-sounds)
    - [Scheduled notifications](#scheduling-a-notification)
    - [Fullscreen intent notifications](#full-screen-intent-notifications)
    - [Release build configuration](#release-build-configuration)
-- **[⚙️ iOS setup](#️-ios-setup)**
+- **[🔧 iOS setup](#-ios-setup)**
    - [General setup](#general-setup)
    - [Handling notifications whilst the app is in the foreground](#handling-notifications-whilst-the-app-is-in-the-foreground)
 - **[❓ Usage](#-usage)**
@@ -160,7 +160,7 @@ To respond to notification after the application is terminated, your application
 * [Zhang Jing](https://github.com/byrdkm17) for adding 'ticker' support for Android notifications
 * ...and everyone else for their contributions. They are greatly appreciated
 
-## ⚙️ Android Setup
+## 🔧 Android Setup
 
 Before proceeding, please make sure you are using the latest version of the plugin. The reason for this is that since version 3.0.1+4, the amount of setup needed has been reduced. Previously, applications needed changes done to the `AndroidManifest.xml` file and there was a bit more setup needed for release builds. If for some reason, your application still needs to use an older version of the plugin then make use of the release tags to refer back to older versions of readme.
 
@@ -196,7 +196,7 @@ Before creating the release build of your app (which is the default setting when
 
 ⚠️ Ensure that you have configured the resources that should be kept so that resources like your notification icons aren't discarded by the R8 compiler by following the instructions [here](https://developer.android.com/studio/build/shrink-code#keep-resources). If you fail to do this, notifications might be broken. In the worst case they will never show, instead silently failing when the system looks for a resource that has been removed. If they do still show, you might not see the icon you specified. The configuration used by the example app can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/keep.xml) where it is specifying that all drawable resources should be kept, as well as the file used to play a custom notification sound (sound file is located [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/slow_spring_board.mp3)).
 
-## ⚙️ iOS setup
+## 🔧 iOS setup
 
 ### General setup
 
