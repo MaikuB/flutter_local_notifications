@@ -2024,6 +2024,12 @@ class _HomePageState extends State<HomePage> {
                     'title: ${activeNotification.title}\n'
                     'body: ${activeNotification.body}',
                   ),
+                  TextButton(
+                    child: const Text('Get messaging style'),
+                    onPressed: () {
+                      _getActiveNotificationMessagingStyle(activeNotification.id, activeNotification.tag);
+                    },
+                  ),
                   const Divider(color: Colors.black),
                 ],
               ),
@@ -2035,6 +2041,109 @@ class _HomePageState extends State<HomePage> {
         'code: ${error.code}\n'
         'message: ${error.message}',
       );
+    }
+  }
+
+  Future<void> _getActiveNotificationMessagingStyle(int id, String? tag) async {
+    Widget dialogContent;
+    try {
+      final messagingStyle = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .getActiveNotificationMessagingStyle(id, tag: tag);
+      if (messagingStyle == null) {
+        dialogContent = const Text('No messaging style');
+      } else {
+        dialogContent = SingleChildScrollView(child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'person: ${_formatPerson(messagingStyle.person)}\n'
+              'conversationTitle: ${messagingStyle.conversationTitle}\n'
+              'groupConversation: ${messagingStyle.groupConversation}'
+            ),
+            const Divider(color: Colors.black),
+            if (messagingStyle.messages == null)
+              const Text('No messages'),
+            if (messagingStyle.messages != null)
+              for (final msg in messagingStyle.messages!)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'text: ${msg.text}\n'
+                      'timestamp: ${msg.timestamp}\n'
+                      'person: ${_formatPerson(msg.person)}'
+                    ),
+                    const Divider(color: Colors.black),
+                  ],
+                ),
+          ],
+        ));
+      }
+    } on PlatformException catch (error) {
+      dialogContent = Text(
+        'Error calling "getActiveNotificationMessagingStyle"\n'
+        'code: ${error.code}\n'
+        'message: ${error.message}',
+      );
+    }
+
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Messaging style'),
+        content: dialogContent,
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatPerson(Person? person) {
+    if (person == null) {
+      return 'null';
+    }
+
+    List<String> attrs = [];
+    if (person.name != null) {
+      attrs.add('name: "${person.name}"');
+    }
+    if (person.uri != null) {
+      attrs.add('uri: "${person.uri}"');
+    }
+    if (person.key != null) {
+      attrs.add('key: "${person.key}"');
+    }
+    if (person.important) {
+      attrs.add('important: true');
+    }
+    if (person.bot) {
+      attrs.add('bot: true');
+    }
+    if (person.icon != null) {
+      attrs.add('icon: ${_formatAndroidIcon(person.icon)}');
+    }
+    return 'Person(${attrs.join(', ')})';
+  }
+
+  String _formatAndroidIcon(Object? icon) {
+    if (icon == null) {
+      return 'null';
+    }
+    if (icon is DrawableResourceAndroidIcon) {
+      return 'DrawableResourceAndroidIcon("${icon.data}")';
+    } else if (icon is ContentUriAndroidIcon) {
+      return 'ContentUriAndroidIcon("${icon.data}")';
+    } else {
+      return 'AndroidIcon()';
     }
   }
 
