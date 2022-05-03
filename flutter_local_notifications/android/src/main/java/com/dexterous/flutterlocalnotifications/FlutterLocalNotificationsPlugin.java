@@ -101,7 +101,8 @@ public class FlutterLocalNotificationsPlugin
   private static final String CREATE_NOTIFICATION_CHANNEL_METHOD = "createNotificationChannel";
   private static final String DELETE_NOTIFICATION_CHANNEL_METHOD = "deleteNotificationChannel";
   private static final String GET_ACTIVE_NOTIFICATIONS_METHOD = "getActiveNotifications";
-  private static final String GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_METHOD = "getActiveNotificationMessagingStyle";
+  private static final String GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_METHOD =
+      "getActiveNotificationMessagingStyle";
   private static final String GET_NOTIFICATION_CHANNELS_METHOD = "getNotificationChannels";
   private static final String START_FOREGROUND_SERVICE = "startForegroundService";
   private static final String STOP_FOREGROUND_SERVICE = "stopForegroundService";
@@ -1617,7 +1618,8 @@ public class FlutterLocalNotificationsPlugin
     if (VERSION.SDK_INT < VERSION_CODES.M) {
       result.error(
           GET_ACTIVE_MESSAGING_STYLE_ERROR_CODE,
-          "Android version must be 6.0 or newer to use getActiveNotificationMessagingStyle", null);
+          "Android version must be 6.0 or newer to use getActiveNotificationMessagingStyle",
+          null);
       return;
     }
     NotificationManager notificationManager =
@@ -1630,7 +1632,8 @@ public class FlutterLocalNotificationsPlugin
       StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
       Notification notification = null;
       for (StatusBarNotification activeNotification : activeNotifications) {
-        if (activeNotification.getId() == id && (tag == null || activeNotification.getTag() == tag)) {
+        if (activeNotification.getId() == id
+            && (tag == null || activeNotification.getTag() == tag)) {
           notification = activeNotification.getNotification();
           break;
         }
@@ -1641,7 +1644,8 @@ public class FlutterLocalNotificationsPlugin
         return;
       }
 
-      NotificationCompat.MessagingStyle messagingStyle = NotificationCompat.MessagingStyle.extractMessagingStyleFromNotification(notification);
+      NotificationCompat.MessagingStyle messagingStyle =
+          NotificationCompat.MessagingStyle.extractMessagingStyleFromNotification(notification);
       if (messagingStyle == null) {
         result.success(null);
         return;
@@ -1693,8 +1697,11 @@ public class FlutterLocalNotificationsPlugin
         source = IconSource.DrawableResource;
         int resId = icon.getResId();
         Context context = applicationContext;
-        assert(context.getResources().getResourceTypeName(resId).equals(DRAWABLE));
-        assert(context.getResources().getResourcePackageName(resId).equals(context.getPackageName()));
+        assert (context.getResources().getResourceTypeName(resId).equals(DRAWABLE));
+        assert (context
+            .getResources()
+            .getResourcePackageName(resId)
+            .equals(context.getPackageName()));
         data = context.getResources().getResourceEntryName(resId);
         break;
       case IconCompat.TYPE_URI:
