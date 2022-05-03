@@ -1,3 +1,7 @@
+# [10.0.0-dev.13]
+
+* Includes changes from 9.5.0
+
 # [10.0.0-dev.12]
 
 * **Breaking change** callbacks have now been reworked. There are now the following callbacks and both will pass an instance of the `NotificationResponse` class 
