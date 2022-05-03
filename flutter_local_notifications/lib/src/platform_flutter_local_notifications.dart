@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:clock/clock.dart';
-
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
@@ -10,8 +9,8 @@ import 'package:timezone/timezone.dart';
 import 'helpers.dart';
 import 'platform_specifics/android/active_notification.dart';
 import 'platform_specifics/android/enums.dart';
-import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/icon.dart';
+import 'platform_specifics/android/initialization_settings.dart';
 import 'platform_specifics/android/message.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
 import 'platform_specifics/android/notification_channel.dart';
@@ -20,7 +19,6 @@ import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/android/notification_sound.dart';
 import 'platform_specifics/android/person.dart';
 import 'platform_specifics/android/styles/messaging_style_information.dart';
-import 'platform_specifics/android/styles/style_information.dart';
 import 'platform_specifics/ios/enums.dart';
 import 'platform_specifics/ios/initialization_settings.dart';
 import 'platform_specifics/ios/method_channel_mappers.dart';
@@ -422,12 +420,15 @@ class AndroidFlutterLocalNotificationsPlugin
   ///
   /// Only [DrawableResourceAndroidIcon] and [ContentUriAndroidIcon] are
   /// supported for [AndroidIcon] fields.
-  Future<MessagingStyleInformation?> getActiveNotificationMessagingStyle(int id, { String? tag }) async {
-    final Map<dynamic, dynamic>? m =
-        await _channel.invokeMethod('getActiveNotificationMessagingStyle', {
-          'id': id,
-          'tag': tag,
-        });
+  Future<MessagingStyleInformation?> getActiveNotificationMessagingStyle(
+    int id, {
+    String? tag,
+  }) async {
+    final Map<dynamic, dynamic>? m = await _channel
+        .invokeMethod('getActiveNotificationMessagingStyle', <String, Object?>{
+      'id': id,
+      'tag': tag,
+    });
     if (m == null) {
       return null;
     }
@@ -436,7 +437,9 @@ class AndroidFlutterLocalNotificationsPlugin
       _personFromMap(m['person'])!,
       conversationTitle: m['conversationTitle'],
       groupConversation: m['groupConversation'],
-      messages: m['messages']?.map<Message>((m) => _messageFromMap(m))?.toList(),
+      messages:
+          // ignore: always_specify_types
+          m['messages']?.map<Message>((m) => _messageFromMap(m))?.toList(),
     );
   }
 
@@ -454,13 +457,11 @@ class AndroidFlutterLocalNotificationsPlugin
     );
   }
 
-  Message _messageFromMap(Map<dynamic, dynamic> m) {
-    return Message(
-      m['text'],
-      DateTime.fromMillisecondsSinceEpoch(m['timestamp']),
-      _personFromMap(m['person']),
-    );
-  }
+  Message _messageFromMap(Map<dynamic, dynamic> m) => Message(
+        m['text'],
+        DateTime.fromMillisecondsSinceEpoch(m['timestamp']),
+        _personFromMap(m['person']),
+      );
 
   AndroidIcon<Object>? _iconFromMap(Map<dynamic, dynamic>? m) {
     if (m == null) {

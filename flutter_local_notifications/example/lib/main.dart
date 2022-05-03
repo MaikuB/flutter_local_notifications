@@ -2027,7 +2027,8 @@ class _HomePageState extends State<HomePage> {
                   TextButton(
                     child: const Text('Get messaging style'),
                     onPressed: () {
-                      _getActiveNotificationMessagingStyle(activeNotification.id, activeNotification.tag);
+                      _getActiveNotificationMessagingStyle(
+                          activeNotification.id, activeNotification.tag);
                     },
                   ),
                   const Divider(color: Colors.black),
@@ -2054,28 +2055,24 @@ class _HomePageState extends State<HomePage> {
       if (messagingStyle == null) {
         dialogContent = const Text('No messaging style');
       } else {
-        dialogContent = SingleChildScrollView(child: Column(
+        dialogContent = SingleChildScrollView(
+            child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'person: ${_formatPerson(messagingStyle.person)}\n'
-              'conversationTitle: ${messagingStyle.conversationTitle}\n'
-              'groupConversation: ${messagingStyle.groupConversation}'
-            ),
+            Text('person: ${_formatPerson(messagingStyle.person)}\n'
+                'conversationTitle: ${messagingStyle.conversationTitle}\n'
+                'groupConversation: ${messagingStyle.groupConversation}'),
             const Divider(color: Colors.black),
-            if (messagingStyle.messages == null)
-              const Text('No messages'),
+            if (messagingStyle.messages == null) const Text('No messages'),
             if (messagingStyle.messages != null)
               for (final msg in messagingStyle.messages!)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'text: ${msg.text}\n'
-                      'timestamp: ${msg.timestamp}\n'
-                      'person: ${_formatPerson(msg.person)}'
-                    ),
+                    Text('text: ${msg.text}\n'
+                        'timestamp: ${msg.timestamp}\n'
+                        'person: ${_formatPerson(msg.person)}'),
                     const Divider(color: Colors.black),
                   ],
                 ),
@@ -2112,7 +2109,7 @@ class _HomePageState extends State<HomePage> {
       return 'null';
     }
 
-    List<String> attrs = [];
+    final List<String> attrs = <String>[];
     if (person.name != null) {
       attrs.add('name: "${person.name}"');
     }
