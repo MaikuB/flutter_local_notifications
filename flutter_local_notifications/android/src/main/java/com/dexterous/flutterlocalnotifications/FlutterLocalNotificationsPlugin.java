@@ -1758,7 +1758,7 @@ public class FlutterLocalNotificationsPlugin
   private void getActiveNotificationMessagingStyle(MethodCall call, Result result) {
     if (VERSION.SDK_INT < VERSION_CODES.M) {
       result.error(
-              UNSUPPORTED_OS_VERSION_ERROR_CODE,
+          UNSUPPORTED_OS_VERSION_ERROR_CODE,
           "Android version must be 6.0 or newer to use getActiveNotificationMessagingStyle",
           null);
       return;
@@ -1809,7 +1809,8 @@ public class FlutterLocalNotificationsPlugin
 
       result.success(stylePayload);
     } catch (Throwable e) {
-      result.error(GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE, e.getMessage(), e.getStackTrace());
+      result.error(
+          GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE, e.getMessage(), e.getStackTrace());
     }
   }
 
