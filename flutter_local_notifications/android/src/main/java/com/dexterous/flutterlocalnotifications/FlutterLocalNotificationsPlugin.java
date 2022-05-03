@@ -113,6 +113,8 @@ public class FlutterLocalNotificationsPlugin
       "deleteNotificationChannelGroup";
   private static final String CREATE_NOTIFICATION_CHANNEL_METHOD = "createNotificationChannel";
   private static final String DELETE_NOTIFICATION_CHANNEL_METHOD = "deleteNotificationChannel";
+  private static final String GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_METHOD =
+      "getActiveNotificationMessagingStyle";
   private static final String GET_NOTIFICATION_CHANNELS_METHOD = "getNotificationChannels";
   private static final String START_FOREGROUND_SERVICE = "startForegroundService";
   private static final String STOP_FOREGROUND_SERVICE = "stopForegroundService";
@@ -142,6 +144,8 @@ public class FlutterLocalNotificationsPlugin
   static final String CANCEL_NOTIFICATION = "cancelNotification";
 
   private static final String GET_NOTIFICATION_CHANNELS_ERROR_CODE = "getNotificationChannelsError";
+  private static final String GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE =
+      "GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE";
   private static final String INVALID_LED_DETAILS_ERROR_MESSAGE =
       "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of"
           + " Android before Oreo";
@@ -1372,9 +1376,6 @@ public class FlutterLocalNotificationsPlugin
       case PENDING_NOTIFICATION_REQUESTS_METHOD:
         pendingNotificationRequests(result);
         break;
-      case GET_ACTIVE_NOTIFICATIONS_METHOD:
-        getActiveNotifications(result);
-        break;
       case ARE_NOTIFICATIONS_ENABLED_METHOD:
         areNotificationsEnabled(result);
         break;
@@ -1389,6 +1390,12 @@ public class FlutterLocalNotificationsPlugin
         break;
       case DELETE_NOTIFICATION_CHANNEL_METHOD:
         deleteNotificationChannel(call, result);
+        break;
+      case GET_ACTIVE_NOTIFICATIONS_METHOD:
+        getActiveNotifications(result);
+        break;
+      case GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_METHOD:
+        getActiveNotificationMessagingStyle(call, result);
         break;
       case GET_NOTIFICATION_CHANNELS_METHOD:
         getNotificationChannels(result);
@@ -1746,6 +1753,109 @@ public class FlutterLocalNotificationsPlugin
       notificationManager.deleteNotificationChannel(channelId);
     }
     result.success(null);
+  }
+
+  private void getActiveNotificationMessagingStyle(MethodCall call, Result result) {
+    if (VERSION.SDK_INT < VERSION_CODES.M) {
+      result.error(
+              UNSUPPORTED_OS_VERSION_ERROR_CODE,
+          "Android version must be 6.0 or newer to use getActiveNotificationMessagingStyle",
+          null);
+      return;
+    }
+    NotificationManager notificationManager =
+        (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+    try {
+      Map<String, Object> arguments = call.arguments();
+      int id = (int) arguments.get("id");
+      String tag = (String) arguments.get("tag");
+
+      StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
+      Notification notification = null;
+      for (StatusBarNotification activeNotification : activeNotifications) {
+        if (activeNotification.getId() == id
+            && (tag == null || activeNotification.getTag() == tag)) {
+          notification = activeNotification.getNotification();
+          break;
+        }
+      }
+
+      if (notification == null) {
+        result.success(null);
+        return;
+      }
+
+      NotificationCompat.MessagingStyle messagingStyle =
+          NotificationCompat.MessagingStyle.extractMessagingStyleFromNotification(notification);
+      if (messagingStyle == null) {
+        result.success(null);
+        return;
+      }
+
+      HashMap<String, Object> stylePayload = new HashMap<>();
+      stylePayload.put("groupConversation", messagingStyle.isGroupConversation());
+      stylePayload.put("person", describePerson(messagingStyle.getUser()));
+      stylePayload.put("conversationTitle", messagingStyle.getConversationTitle());
+
+      List<Map<String, Object>> messagesPayload = new ArrayList<>();
+      for (NotificationCompat.MessagingStyle.Message msg : messagingStyle.getMessages()) {
+        Map<String, Object> msgPayload = new HashMap<>();
+        msgPayload.put("text", msg.getText());
+        msgPayload.put("timestamp", msg.getTimestamp());
+        msgPayload.put("person", describePerson(msg.getPerson()));
+        messagesPayload.add(msgPayload);
+      }
+      stylePayload.put("messages", messagesPayload);
+
+      result.success(stylePayload);
+    } catch (Throwable e) {
+      result.error(GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE, e.getMessage(), e.getStackTrace());
+    }
+  }
+
+  private Map<String, Object> describePerson(Person person) {
+    if (person == null) {
+      return null;
+    }
+    Map<String, Object> payload = new HashMap<>();
+    payload.put("key", person.getKey());
+    payload.put("name", person.getName());
+    payload.put("uri", person.getUri());
+    payload.put("bot", person.isBot());
+    payload.put("important", person.isImportant());
+    payload.put("icon", describeIcon(person.getIcon()));
+    return payload;
+  }
+
+  private Map<String, Object> describeIcon(IconCompat icon) {
+    if (icon == null) {
+      return null;
+    }
+    IconSource source;
+    Object data;
+    switch (icon.getType()) {
+      case IconCompat.TYPE_RESOURCE:
+        source = IconSource.DrawableResource;
+        int resId = icon.getResId();
+        Context context = applicationContext;
+        assert (context.getResources().getResourceTypeName(resId).equals(DRAWABLE));
+        assert (context
+            .getResources()
+            .getResourcePackageName(resId)
+            .equals(context.getPackageName()));
+        data = context.getResources().getResourceEntryName(resId);
+        break;
+      case IconCompat.TYPE_URI:
+        source = IconSource.ContentUri;
+        data = icon.getUri().toString();
+        break;
+      default:
+        return null;
+    }
+    Map<String, Object> payload = new HashMap<>();
+    payload.put("source", source.ordinal());
+    payload.put("data", data);
+    return payload;
   }
 
   private void getNotificationChannels(Result result) {

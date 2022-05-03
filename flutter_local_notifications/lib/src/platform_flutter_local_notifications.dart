@@ -9,12 +9,16 @@ import 'package:timezone/timezone.dart';
 import 'callback_dispatcher.dart';
 import 'helpers.dart';
 import 'platform_specifics/android/enums.dart';
+import 'platform_specifics/android/icon.dart';
 import 'platform_specifics/android/initialization_settings.dart';
+import 'platform_specifics/android/message.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
 import 'platform_specifics/android/notification_channel.dart';
 import 'platform_specifics/android/notification_channel_group.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/android/notification_sound.dart';
+import 'platform_specifics/android/person.dart';
+import 'platform_specifics/android/styles/messaging_style_information.dart';
 import 'platform_specifics/darwin/initialization_settings.dart';
 import 'platform_specifics/darwin/mappers.dart';
 import 'platform_specifics/darwin/notification_details.dart';
@@ -437,6 +441,72 @@ class AndroidFlutterLocalNotificationsPlugin
   /// This method is only applicable to Android versions 8.0 or newer.
   Future<void> deleteNotificationChannel(String channelId) =>
       _channel.invokeMethod('deleteNotificationChannel', channelId);
+
+  /// Returns the messaging style information of an active notification shown
+  /// by the application that hasn't been dismissed/removed.
+  ///
+  /// This method is only applicable to Android 6.0 or newer and will throw an
+  /// [PlatformException] when called on a device with an incompatible Android
+  /// version.
+  ///
+  /// Only [DrawableResourceAndroidIcon] and [ContentUriAndroidIcon] are
+  /// supported for [AndroidIcon] fields.
+  Future<MessagingStyleInformation?> getActiveNotificationMessagingStyle(
+    int id, {
+    String? tag,
+  }) async {
+    final Map<dynamic, dynamic>? m = await _channel
+        .invokeMethod('getActiveNotificationMessagingStyle', <String, Object?>{
+      'id': id,
+      'tag': tag,
+    });
+    if (m == null) {
+      return null;
+    }
+
+    return MessagingStyleInformation(
+      _personFromMap(m['person'])!,
+      conversationTitle: m['conversationTitle'],
+      groupConversation: m['groupConversation'],
+      messages:
+          // ignore: always_specify_types
+          m['messages']?.map<Message>((m) => _messageFromMap(m))?.toList(),
+    );
+  }
+
+  Person? _personFromMap(Map<dynamic, dynamic>? m) {
+    if (m == null) {
+      return null;
+    }
+    return Person(
+      bot: m['bot'],
+      icon: _iconFromMap(m['icon']),
+      important: m['important'],
+      key: m['key'],
+      name: m['name'],
+      uri: m['uri'],
+    );
+  }
+
+  Message _messageFromMap(Map<dynamic, dynamic> m) => Message(
+        m['text'],
+        DateTime.fromMillisecondsSinceEpoch(m['timestamp']),
+        _personFromMap(m['person']),
+      );
+
+  AndroidIcon<Object>? _iconFromMap(Map<dynamic, dynamic>? m) {
+    if (m == null) {
+      return null;
+    }
+    switch (AndroidIconSource.values[m['source']]) {
+      case AndroidIconSource.drawableResource:
+        return DrawableResourceAndroidIcon(m['data']);
+      case AndroidIconSource.contentUri:
+        return ContentUriAndroidIcon(m['data']);
+      default:
+        return null;
+    }
+  }
 
   /// Returns the list of all notification channels.
   ///
