@@ -1633,7 +1633,7 @@ public class FlutterLocalNotificationsPlugin
       Notification notification = null;
       for (StatusBarNotification activeNotification : activeNotifications) {
         if (activeNotification.getId() == id
-            && (tag == null || activeNotification.getTag() == tag)) {
+            && (tag == null || tag.equals(activeNotification.getTag()))) {
           notification = activeNotification.getNotification();
           break;
         }
