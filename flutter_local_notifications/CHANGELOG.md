@@ -1,3 +1,7 @@
+# [9.5.1]
+
+* [Android] fix issue when calling `getActiveNotificationMessagingStyle()` to get messaging style information for a notification with a tag. Thanks to PR from [Simon Ser](https://github.com/emersion)
+
 # [9.5.0]
 
 * [Android] added `getActiveNotificationMessagingStyle()` method to the `AndroidFlutterLocalNotificationsPlugin` class. This allows for getting the messaging style information of an active notification e.g. to append a message to an existing notification. Thanks to the PR from [Simon Ser](https://github.com/emersion)
