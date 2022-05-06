@@ -1,6 +1,10 @@
+# [9.5.2]
+
+* [macOS] fixed issue [1585](https://github.com/MaikuB/flutter_local_notifications/issues/1585) where plugin causes a crash when a remote/push notification (e.g. via FCM) occurs
+
 # [9.5.1]
 
-* [Android] fix issue when calling `getActiveNotificationMessagingStyle()` to get messaging style information for a notification with a tag. Thanks to PR from [Simon Ser](https://github.com/emersion)
+* [Android] fixed issue when calling `getActiveNotificationMessagingStyle()` to get messaging style information for a notification with a tag. Thanks to PR from [Simon Ser](https://github.com/emersion)
 
 # [9.5.0]
 

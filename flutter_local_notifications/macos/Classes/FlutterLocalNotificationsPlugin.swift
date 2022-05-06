@@ -83,6 +83,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     @available(OSX 10.14, *)
     public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        if !isAFlutterLocalNotification(userInfo: notification.request.content.userInfo) {
+            return
+        }
         var options: UNNotificationPresentationOptions = []
         let presentAlert = notification.request.content.userInfo[MethodCallArguments.presentAlert] as! Bool
         let presentSound = notification.request.content.userInfo[MethodCallArguments.presentSound] as! Bool
@@ -101,6 +104,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     @available(OSX 10.14, *)
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        if !isAFlutterLocalNotification(userInfo: response.notification.request.content.userInfo) {
+            return
+        }
         let payload = response.notification.request.content.userInfo[MethodCallArguments.payload] as? String
         if initialized {
             handleSelectNotification(payload: payload)
@@ -111,7 +117,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
 
     public func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
-        if notification.activationType == .contentsClicked {
+        if notification.activationType == .contentsClicked && notification.userInfo != nil && isAFlutterLocalNotification(userInfo: notification.userInfo!) {
             handleSelectNotification(payload: notification.userInfo![MethodCallArguments.payload] as? String)
         }
     }
@@ -492,5 +498,11 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     func handleSelectNotification(payload: String?) {
         channel.invokeMethod("selectNotification", arguments: payload)
+    }
+
+    func isAFlutterLocalNotification(userInfo: [AnyHashable: Any]) -> Bool {
+        return userInfo[MethodCallArguments.presentAlert] != nil &&
+        userInfo[MethodCallArguments.presentSound] != nil &&
+        userInfo[MethodCallArguments.presentBadge] != nil && userInfo[MethodCallArguments.payload] != nil
     }
 }
