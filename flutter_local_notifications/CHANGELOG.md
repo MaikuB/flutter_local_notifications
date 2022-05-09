@@ -1,10 +1,6 @@
-# [10.0.0-dev.15]
-
-* Includes changes from 9.5.2
-
 # [10.0.0-dev.14]
 
-* Includes changes from 9.5.1
+* Includes changes from 9.5.1 and 9.5.2
 
 # [10.0.0-dev.13]
 
