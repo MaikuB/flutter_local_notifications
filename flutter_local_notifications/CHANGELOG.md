@@ -1,3 +1,9 @@
+# [9.5.3+1]
+
+* Updated example app with to use updated Proguard rules for GSON
+* Update readme about GSON's Proguard rules to recommend referring to the rules on GSON's repository
+* Move note in readme about how `onSelectNotification` won't be called when an app is launched by a notification so it's more visible
+
 # [9.5.3]
 
 * [Android] bumped gson dependency to 2.8.9 that fixes [CVE-2022-25647](https://github.com/advisories/GHSA-4jrv-ppp4-jm57)
