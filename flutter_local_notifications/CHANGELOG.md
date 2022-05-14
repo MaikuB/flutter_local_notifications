@@ -1,3 +1,7 @@
+# [9.5.3]
+
+* [Android] bumped gson dependency to 2.8.9 that fixes [CVE-2022-25647](https://github.com/advisories/GHSA-4jrv-ppp4-jm57)
+
 # [9.5.2]
 
 * [macOS] fixed issue [1585](https://github.com/MaikuB/flutter_local_notifications/issues/1585) where plugin causes a crash when a remote/push notification (e.g. via FCM) occurs
