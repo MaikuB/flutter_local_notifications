@@ -28,6 +28,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.core.app.AlarmManagerCompat;
@@ -38,6 +39,7 @@ import androidx.core.app.Person;
 import androidx.core.app.RemoteInput;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
+
 import com.dexterous.flutterlocalnotifications.isolate.IsolatePreferences;
 import com.dexterous.flutterlocalnotifications.models.BitmapSource;
 import com.dexterous.flutterlocalnotifications.models.DateTimeComponents;
@@ -63,18 +65,7 @@ import com.dexterous.flutterlocalnotifications.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.jakewharton.threetenabp.AndroidThreeTen;
-import io.flutter.FlutterInjector;
-import io.flutter.embedding.engine.loader.FlutterLoader;
-import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.embedding.engine.plugins.activity.ActivityAware;
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -90,11 +81,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import io.flutter.FlutterInjector;
+import io.flutter.embedding.engine.loader.FlutterLoader;
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
+import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.PluginRegistry;
+
 /** FlutterLocalNotificationsPlugin */
 @Keep
 public class FlutterLocalNotificationsPlugin
     implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
 
+  static final String PAYLOAD = "payload";
+  static final String NOTIFICATION_ID = "notificationId";
+  static final String CANCEL_NOTIFICATION = "cancelNotification";
   private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
   private static final String DISPATCHER_HANDLE = "dispatcher_handle";
   private static final String CALLBACK_HANDLE = "callback_handle";
@@ -131,8 +137,6 @@ public class FlutterLocalNotificationsPlugin
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
-  static final String PAYLOAD = "payload";
-  static final String NOTIFICATION_ID = "notificationId";
   private static final String INVALID_ICON_ERROR_CODE = "invalid_icon";
   private static final String INVALID_LARGE_ICON_ERROR_CODE = "invalid_large_icon";
   private static final String INVALID_BIG_PICTURE_ERROR_CODE = "invalid_big_picture";
@@ -141,8 +145,6 @@ public class FlutterLocalNotificationsPlugin
   private static final String UNSUPPORTED_OS_VERSION_ERROR_CODE = "unsupported_os_version";
   private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
       "Android version must be 6.0 or newer to use getActiveNotifications";
-  static final String CANCEL_NOTIFICATION = "cancelNotification";
-
   private static final String GET_NOTIFICATION_CHANNELS_ERROR_CODE = "getNotificationChannelsError";
   private static final String GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE =
       "GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE";
@@ -178,7 +180,6 @@ public class FlutterLocalNotificationsPlugin
   }
 
   static void rescheduleNotifications(Context context) {
-    initAndroidThreeTen(context);
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
     for (NotificationDetails scheduledNotification : scheduledNotifications) {
       if (scheduledNotification.repeatInterval == null) {
@@ -190,12 +191,6 @@ public class FlutterLocalNotificationsPlugin
       } else {
         repeatNotification(context, scheduledNotification, false);
       }
-    }
-  }
-
-  private static void initAndroidThreeTen(Context context) {
-    if (VERSION.SDK_INT < VERSION_CODES.O) {
-      AndroidThreeTen.init(context);
     }
   }
 
@@ -517,17 +512,12 @@ public class FlutterLocalNotificationsPlugin
         getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
     AlarmManager alarmManager = getAlarmManager(context);
     long epochMilli =
-        VERSION.SDK_INT >= VERSION_CODES.O
-            ? ZonedDateTime.of(
-                    LocalDateTime.parse(notificationDetails.scheduledDateTime),
-                    ZoneId.of(notificationDetails.timeZoneName))
-                .toInstant()
-                .toEpochMilli()
-            : org.threeten.bp.ZonedDateTime.of(
-                    org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime),
-                    org.threeten.bp.ZoneId.of(notificationDetails.timeZoneName))
-                .toInstant()
-                .toEpochMilli();
+        ZonedDateTime.of(
+                LocalDateTime.parse(notificationDetails.scheduledDateTime),
+                ZoneId.of(notificationDetails.timeZoneName))
+            .toInstant()
+            .toEpochMilli();
+
     if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
       AlarmManagerCompat.setExactAndAllowWhileIdle(
           alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
@@ -1138,7 +1128,6 @@ public class FlutterLocalNotificationsPlugin
 
   static void zonedScheduleNextNotification(
       Context context, NotificationDetails notificationDetails) {
-    initAndroidThreeTen(context);
     String nextFireDate = getNextFireDate(notificationDetails);
     if (nextFireDate == null) {
       return;
@@ -1149,7 +1138,6 @@ public class FlutterLocalNotificationsPlugin
 
   static void zonedScheduleNextNotificationMatchingDateComponents(
       Context context, NotificationDetails notificationDetails) {
-    initAndroidThreeTen(context);
     String nextFireDate = getNextFireDateMatchingDateTimeComponents(notificationDetails);
     if (nextFireDate == null) {
       return;
@@ -1159,116 +1147,58 @@ public class FlutterLocalNotificationsPlugin
   }
 
   static String getNextFireDate(NotificationDetails notificationDetails) {
-    if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      if (notificationDetails.scheduledNotificationRepeatFrequency
-          == ScheduledNotificationRepeatFrequency.Daily) {
-        LocalDateTime localDateTime =
-            LocalDateTime.parse(notificationDetails.scheduledDateTime).plusDays(1);
-        return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
-      } else if (notificationDetails.scheduledNotificationRepeatFrequency
-          == ScheduledNotificationRepeatFrequency.Weekly) {
-        LocalDateTime localDateTime =
-            LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
-        return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
-      }
-    } else {
-      if (notificationDetails.scheduledNotificationRepeatFrequency
-          == ScheduledNotificationRepeatFrequency.Daily) {
-        org.threeten.bp.LocalDateTime localDateTime =
-            org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).plusDays(1);
-        return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
-      } else if (notificationDetails.scheduledNotificationRepeatFrequency
-          == ScheduledNotificationRepeatFrequency.Weekly) {
-        org.threeten.bp.LocalDateTime localDateTime =
-            org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
-        return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
-      }
+    if (notificationDetails.scheduledNotificationRepeatFrequency
+        == ScheduledNotificationRepeatFrequency.Daily) {
+      LocalDateTime localDateTime =
+          LocalDateTime.parse(notificationDetails.scheduledDateTime).plusDays(1);
+      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+    } else if (notificationDetails.scheduledNotificationRepeatFrequency
+        == ScheduledNotificationRepeatFrequency.Weekly) {
+      LocalDateTime localDateTime =
+          LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
+      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
     }
     return null;
   }
 
   static String getNextFireDateMatchingDateTimeComponents(NotificationDetails notificationDetails) {
-    if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
-      ZonedDateTime scheduledDateTime =
-          ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
-      ZonedDateTime now = ZonedDateTime.now(zoneId);
-      ZonedDateTime nextFireDate =
-          ZonedDateTime.of(
-              now.getYear(),
-              now.getMonthValue(),
-              now.getDayOfMonth(),
-              scheduledDateTime.getHour(),
-              scheduledDateTime.getMinute(),
-              scheduledDateTime.getSecond(),
-              scheduledDateTime.getNano(),
-              zoneId);
-      while (nextFireDate.isBefore(now)) {
-        // adjust to be a date in the future that matches the time
+    ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
+    ZonedDateTime scheduledDateTime =
+        ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
+    ZonedDateTime now = ZonedDateTime.now(zoneId);
+    ZonedDateTime nextFireDate =
+        ZonedDateTime.of(
+            now.getYear(),
+            now.getMonthValue(),
+            now.getDayOfMonth(),
+            scheduledDateTime.getHour(),
+            scheduledDateTime.getMinute(),
+            scheduledDateTime.getSecond(),
+            scheduledDateTime.getNano(),
+            zoneId);
+    while (nextFireDate.isBefore(now)) {
+      // adjust to be a date in the future that matches the time
+      nextFireDate = nextFireDate.plusDays(1);
+    }
+    if (notificationDetails.matchDateTimeComponents == DateTimeComponents.Time) {
+      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+    } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DayOfWeekAndTime) {
+      while (nextFireDate.getDayOfWeek() != scheduledDateTime.getDayOfWeek()) {
         nextFireDate = nextFireDate.plusDays(1);
       }
-      if (notificationDetails.matchDateTimeComponents == DateTimeComponents.Time) {
-        return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
-      } else if (notificationDetails.matchDateTimeComponents
-          == DateTimeComponents.DayOfWeekAndTime) {
-        while (nextFireDate.getDayOfWeek() != scheduledDateTime.getDayOfWeek()) {
-          nextFireDate = nextFireDate.plusDays(1);
-        }
-        return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
-      } else if (notificationDetails.matchDateTimeComponents
-          == DateTimeComponents.DayOfMonthAndTime) {
-        while (nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
-          nextFireDate = nextFireDate.plusDays(1);
-        }
-        return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
-      } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DateAndTime) {
-        while (nextFireDate.getMonthValue() != scheduledDateTime.getMonthValue()
-            || nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
-          nextFireDate = nextFireDate.plusDays(1);
-        }
-        return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
-      }
-    } else {
-      org.threeten.bp.ZoneId zoneId = org.threeten.bp.ZoneId.of(notificationDetails.timeZoneName);
-      org.threeten.bp.ZonedDateTime scheduledDateTime =
-          org.threeten.bp.ZonedDateTime.of(
-              org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
-      org.threeten.bp.ZonedDateTime now = org.threeten.bp.ZonedDateTime.now(zoneId);
-      org.threeten.bp.ZonedDateTime nextFireDate =
-          org.threeten.bp.ZonedDateTime.of(
-              now.getYear(),
-              now.getMonthValue(),
-              now.getDayOfMonth(),
-              scheduledDateTime.getHour(),
-              scheduledDateTime.getMinute(),
-              scheduledDateTime.getSecond(),
-              scheduledDateTime.getNano(),
-              zoneId);
-      while (nextFireDate.isBefore(now)) {
-        // adjust to be a date in the future that matches the time
+      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+    } else if (notificationDetails.matchDateTimeComponents
+        == DateTimeComponents.DayOfMonthAndTime) {
+      while (nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
         nextFireDate = nextFireDate.plusDays(1);
       }
-      if (notificationDetails.matchDateTimeComponents == DateTimeComponents.Time) {
-        return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
-      } else if (notificationDetails.matchDateTimeComponents
-          == DateTimeComponents.DayOfWeekAndTime) {
-        while (nextFireDate.getDayOfWeek() != scheduledDateTime.getDayOfWeek()) {
-          nextFireDate = nextFireDate.plusDays(1);
-        }
-        return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
-      } else if (notificationDetails.matchDateTimeComponents
-          == DateTimeComponents.DayOfMonthAndTime) {
-        while (nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
-          nextFireDate = nextFireDate.plusDays(1);
-        }
-        return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
-      } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DateAndTime) {
-        while (nextFireDate.getMonthValue() != scheduledDateTime.getMonthValue()
-            || nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
-          nextFireDate = nextFireDate.plusDays(1);
-        }
-        return org.threeten.bp.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+    } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DateAndTime) {
+      while (nextFireDate.getMonthValue() != scheduledDateTime.getMonthValue()
+          || nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
+        nextFireDate = nextFireDate.plusDays(1);
       }
+      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
     }
     return null;
   }
@@ -1538,8 +1468,6 @@ public class FlutterLocalNotificationsPlugin
     if (dispatcherHandle != null && callbackHandle != null) {
       new IsolatePreferences(applicationContext).saveCallbackKeys(dispatcherHandle, callbackHandle);
     }
-
-    initAndroidThreeTen(applicationContext);
 
     SharedPreferences sharedPreferences =
         applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
