@@ -35,7 +35,7 @@ class _NavigationEventListenerState extends State<NavigationEventListener> {
     port.listen((dynamic data) async {
       final NotificationResponse action = data;
       if (action.actionId == urlLaunchActionId) {
-        await launch('https://flutter.dev');
+        await launchUrl(Uri.parse('https://flutter.dev'));
       }
       if (action.actionId == navigationActionId) {
         await Navigator.of(context).push(MaterialPageRoute<void>(
