@@ -1,3 +1,7 @@
+# [10.0.0-dev.15]
+
+* **Breaking change** [Android] `zonedSchedule()`'s implementation has switched to using [desugaring](https://developer.android.com/studio/releases/gradle-plugin#j8-library-desugaring) instead of the [ThreeTen Android Backport library](https://github.com/JakeWharton/ThreeTenABP). This required the plugin to update to using Android Gradle plugin 4.2.2 and applications may need to bump their Android Gradle plugin dependency to at least 4.2.2 as a result. Added a "Gradle setup" section underneath "Android setup" with details on the extra setup needed
+
 # [10.0.0-dev.14]
 
 * Includes changes from 9.5.1 and 9.5.2
