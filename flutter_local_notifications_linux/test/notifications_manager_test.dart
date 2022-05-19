@@ -933,6 +933,40 @@ void main() {
 
         verifyNotifyMethod(values).called(1);
       });
+
+      test('File path details icon', () async {
+        final LinuxInitializationSettings initSettings =
+            LinuxInitializationSettings(
+          defaultActionName: kDefaultActionName,
+          defaultIcon: FilePathLinuxIcon('/foo/bar/icon.png'),
+        );
+
+        final LinuxNotificationDetails details = LinuxNotificationDetails(
+          icon: FilePathLinuxIcon('/foo/bar/icon.png'),
+        );
+
+        const LinuxNotificationInfo notify = LinuxNotificationInfo(
+          id: 0,
+          systemId: 1,
+        );
+
+        final List<DBusValue> values = buildNotifyMethodValues(
+          appIcon: '/foo/bar/icon.png'
+        );
+
+        mockNotifyMethod(notify.systemId);
+        when(
+          () => mockStorage.getById(notify.id),
+        ).thenAnswer((_) async => null);
+        when(
+          () => mockStorage.insert(notify),
+        ).thenAnswer((_) async => true);
+
+        await manager.initialize(initSettings);
+        await manager.show(notify.id, null, null, details: details);
+
+        verifyNotifyMethod(values).called(1);
+      });
     });
 
     test('Cancel', () async {
