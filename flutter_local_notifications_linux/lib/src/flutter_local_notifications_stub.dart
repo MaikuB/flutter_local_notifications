@@ -26,6 +26,7 @@ class LinuxFlutterLocalNotificationsPlugin
     SelectNotificationCallback? onSelectNotification,
   }) async {
     assert(false);
+    return null;
   }
 
   /// Errors on attempted calling of the stub. It exists only to satisfy
