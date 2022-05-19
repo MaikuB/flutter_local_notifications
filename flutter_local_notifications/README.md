@@ -21,6 +21,7 @@ A cross platform plugin for displaying local notifications.
 - **[📷 Screenshots](#-screenshots)**
 - **[👏 Acknowledgements](#-acknowledgements)**
 - **[🔧 Android Setup](#-android-setup)**
+   - [Gradle setup](#gradle-setup)
    - [Custom notification icons and sounds](#custom-notification-icons-and-sounds)
    - [Scheduled notifications](#scheduling-a-notification)
    - [Fullscreen intent notifications](#full-screen-intent-notifications)
