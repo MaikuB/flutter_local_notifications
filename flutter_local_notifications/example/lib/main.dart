@@ -1877,6 +1877,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showProgressNotification() async {
+    id++;
+    final int progressId = id;
     const int maxProgress = 5;
     for (int i = 0; i <= maxProgress; i++) {
       await Future<void>.delayed(const Duration(seconds: 1), () async {
@@ -1893,7 +1895,7 @@ class _HomePageState extends State<HomePage> {
         final NotificationDetails notificationDetails =
             NotificationDetails(android: androidNotificationDetails);
         await flutterLocalNotificationsPlugin.show(
-            id++,
+            progressId,
             'progress notification title',
             'progress notification body',
             notificationDetails,
