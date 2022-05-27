@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'bitmap.dart';
+import 'categories.dart';
 import 'enums.dart';
 import 'notification_sound.dart';
 import 'styles/style_information.dart';
@@ -316,9 +317,7 @@ class AndroidNotificationDetails {
   final int? timeoutAfter;
 
   /// The notification category.
-  ///
-  /// Refer to Android notification API documentation at https://developer.android.com/reference/androidx/core/app/NotificationCompat.html#constants_2 for the available categories
-  final String? category;
+  final AndroidNotificationCategory? category;
 
   /// Specifies whether the notification should launch a full-screen intent as
   /// soon as it triggers.
