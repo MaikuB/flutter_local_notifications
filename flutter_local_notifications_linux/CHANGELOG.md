@@ -1,3 +1,7 @@
+## [0.5.0]
+
+* Added support for icons to be specified via file path. Thanks to PR from [Yaroslav Pronin](https://github.com/proninyaroslav)
+
 ## [0.4.2]
 
 * Bumped dependencies. Thanks to PR from [Guy Luz](https://github.com/guyluz11)
