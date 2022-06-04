@@ -12,6 +12,8 @@ abstract class LinuxNotificationIcon {
 }
 
 /// Represents an icon from the Flutter Assets directory.
+/// Currently the assets directory is `data/flutter_assets`
+/// which is located on the path relative to the executable file.
 class AssetsLinuxIcon extends LinuxNotificationIcon {
   /// Constructs an instance of [AssetsLinuxIcon].
   AssetsLinuxIcon(this.relativePath);
@@ -91,4 +93,22 @@ class LinuxRawIconData {
 
   /// Determines if the image has an alpha channel
   final bool hasAlpha;
+}
+
+/// Represents an icon located at the path in the file system.
+/// It сan be either an absolute UNIX path or a file:// URI scheme, for example:
+///  * file:///usr/share/icons/my_icon.png
+///  * /usr/share/icons/my_icon.png
+class FilePathLinuxIcon extends LinuxNotificationIcon {
+  /// Constructs an instance of [FilePathLinuxIcon].
+  FilePathLinuxIcon(this.path);
+
+  @override
+  Object get content => path;
+
+  @override
+  LinuxIconType get type => LinuxIconType.filePath;
+
+  /// Path to the icon
+  final String path;
 }
