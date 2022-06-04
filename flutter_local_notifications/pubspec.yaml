@@ -19,7 +19,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.0.8
-  plugin_platform_interface: ^2.0.0
+  plugin_platform_interface: ^2.0.0 
 
 flutter:
   plugin:
