@@ -1,3 +1,7 @@
+# [9.6.0]
+
+* [Linux] Bumped dependency on `flutter_local_notifications_linux` to `^0.5.0+1` where support for icons to be specified via a file path was added by [Yaroslav Pronin](https://github.com/proninyaroslav)
+
 # [9.5.3+1]
 
 * Updated example app with to use updated Proguard rules for GSON
