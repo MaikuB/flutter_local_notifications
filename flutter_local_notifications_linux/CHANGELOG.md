@@ -1,3 +1,8 @@
+## [1.0.0-dev.1]
+
+* Changes there were in the 0.5.0 pre-releases are now part of the 1.0.0 pre-releases
+* Includes changes from the 0.5.0 stable release
+
 ## [0.5.0+1]
 
 * Added a note to 0.5.0 changelog to make it clear that the 0.5.0 stable release doesn't have changes from the 0.5.0 pre-releases
