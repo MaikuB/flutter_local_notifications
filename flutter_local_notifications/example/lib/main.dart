@@ -258,6 +258,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final TextEditingController _linuxIconPathController =
+      TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -897,6 +900,39 @@ class _HomePageState extends State<HomePage> {
                         onPressed: () async {
                           await _showLinuxNotificationWithByteDataIcon();
                         },
+                      ),
+                      Builder(
+                        builder: (BuildContext context) => PaddedElevatedButton(
+                          buttonText: 'Show notification with file path icon',
+                          onPressed: () async {
+                            final String path = _linuxIconPathController.text;
+                            if (path.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Please enter the icon path'),
+                                ),
+                              );
+                              return;
+                            }
+                            await _showLinuxNotificationWithPathIcon(path);
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                        child: TextField(
+                          controller: _linuxIconPathController,
+                          decoration: InputDecoration(
+                            hintText: 'Enter the icon path',
+                            constraints: const BoxConstraints.tightFor(
+                              width: 300,
+                            ),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () => _linuxIconPathController.clear(),
+                            ),
+                          ),
+                        ),
                       ),
                       PaddedElevatedButton(
                         buttonText: 'Show notification with theme icon',
@@ -2616,6 +2652,20 @@ Future<void> _showLinuxNotificationWithByteDataIcon() async {
     'notification with byte data icon',
     null,
     notificationDetails,
+  );
+}
+
+Future<void> _showLinuxNotificationWithPathIcon(String path) async {
+  final LinuxNotificationDetails linuxPlatformChannelSpecifics =
+      LinuxNotificationDetails(icon: FilePathLinuxIcon(path));
+  final NotificationDetails platformChannelSpecifics = NotificationDetails(
+    linux: linuxPlatformChannelSpecifics,
+  );
+  await flutterLocalNotificationsPlugin.show(
+    0,
+    'notification with file path icon',
+    null,
+    platformChannelSpecifics,
   );
 }
 

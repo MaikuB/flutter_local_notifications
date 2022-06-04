@@ -319,6 +319,8 @@ class LinuxNotificationManager {
         return null;
       case LinuxIconType.theme:
         return icon.content as String;
+      case LinuxIconType.filePath:
+        return icon.content as String;
     }
   }
 
