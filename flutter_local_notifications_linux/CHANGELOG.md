@@ -1,6 +1,11 @@
+## [0.5.0+1]
+
+* Added a note to 0.5.0 changelog to make it clear that the 0.5.0 stable release doesn't have changes from the 0.5.0 pre-releases
+
 ## [0.5.0]
 
 * Added support for icons to be specified via file path. Thanks to PR from [Yaroslav Pronin](https://github.com/proninyaroslav)
+* **Note**: the 0.5.0 release *does not* have the same as what was on the 0.5.0 pre-releases. Those pre-releases are more closely related to changes being done for the 10.0.0 pre-release of `flutter_local_notifications`. What was in the 0.5.0 pre-releases will be shifted to a 1.0.0 pre-release of `flutter_local_notifications_linux`
 
 ## [0.4.2]
 
