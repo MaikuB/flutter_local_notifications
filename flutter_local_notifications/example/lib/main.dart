@@ -1628,7 +1628,7 @@ class _HomePageState extends State<HomePage> {
     final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('message channel id', 'message channel name',
             channelDescription: 'message channel description',
-            category: AndroidNotificationCategory.message(),
+            category: AndroidNotificationCategory.message,
             styleInformation: messagingStyle);
     final NotificationDetails notificationDetails =
         NotificationDetails(android: androidNotificationDetails);

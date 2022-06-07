@@ -8,90 +8,90 @@ class AndroidNotificationCategory {
   const AndroidNotificationCategory(this.name);
 
   /// Alarm or timer.
-  factory AndroidNotificationCategory.alarm() =>
-      const AndroidNotificationCategory('alarm');
+  static const AndroidNotificationCategory alarm =
+      AndroidNotificationCategory('alarm');
 
-  /// Incoming call (voice or video) or similar 
+  /// Incoming call (voice or video) or similar
   /// synchronous communication request.
-  factory AndroidNotificationCategory.call() =>
-      const AndroidNotificationCategory('call');
+  static const AndroidNotificationCategory call =
+      AndroidNotificationCategory('call');
 
   /// Asynchronous bulk message (email).
-  factory AndroidNotificationCategory.email() =>
-      const AndroidNotificationCategory('email');
+  static const AndroidNotificationCategory email =
+      AndroidNotificationCategory('email');
 
   /// Error in background operation or authentication status.
-  factory AndroidNotificationCategory.error() =>
-      const AndroidNotificationCategory('err');
+  static const AndroidNotificationCategory error =
+      AndroidNotificationCategory('err');
 
   /// Calendar event.
-  factory AndroidNotificationCategory.event() =>
-      const AndroidNotificationCategory('event');
+  static const AndroidNotificationCategory event =
+      AndroidNotificationCategory('event');
 
   /// Temporarily sharing location.
-  factory AndroidNotificationCategory.locationSharing() =>
-      const AndroidNotificationCategory('location_sharing');
+  static const AndroidNotificationCategory locationSharing =
+      AndroidNotificationCategory('location_sharing');
 
   /// Incoming direct message like SMS and instant message.
-  factory AndroidNotificationCategory.message() =>
-      const AndroidNotificationCategory('msg');
+  static const AndroidNotificationCategory message =
+      AndroidNotificationCategory('msg');
 
   /// Missed call.
-  factory AndroidNotificationCategory.missedCall() =>
-      const AndroidNotificationCategory('missed_call');
+  static const AndroidNotificationCategory missedCall =
+      AndroidNotificationCategory('missed_call');
 
   /// Map turn-by-turn navigation.
-  factory AndroidNotificationCategory.navigation() =>
-      const AndroidNotificationCategory('navigation');
+  static const AndroidNotificationCategory navigation =
+      AndroidNotificationCategory('navigation');
 
   /// Progress of a long-running background operation.
-  factory AndroidNotificationCategory.progress() =>
-      const AndroidNotificationCategory('progress');
+  static const AndroidNotificationCategory progress =
+      AndroidNotificationCategory('progress');
 
   /// Promotion or advertisement.
-  factory AndroidNotificationCategory.promo() =>
-      const AndroidNotificationCategory('promo');
+  static const AndroidNotificationCategory promo =
+      AndroidNotificationCategory('promo');
 
   /// A specific, timely recommendation for a single thing.
   ///
   /// For example, a news app might want to recommend a
   /// news story it believes the user will want to read next.
-  factory AndroidNotificationCategory.recommendation() =>
-      const AndroidNotificationCategory('recommendation');
+  static const AndroidNotificationCategory recommendation =
+      AndroidNotificationCategory('recommendation');
 
   /// User-scheduled reminder.
-  factory AndroidNotificationCategory.reminder() =>
-      const AndroidNotificationCategory('reminder');
+  static const AndroidNotificationCategory reminder =
+      AndroidNotificationCategory('reminder');
 
   /// Indication of running background service.
-  factory AndroidNotificationCategory.service() =>
-      const AndroidNotificationCategory('service');
+  static const AndroidNotificationCategory service =
+      AndroidNotificationCategory('service');
 
   /// Social network or sharing update.
-  factory AndroidNotificationCategory.social() =>
-      const AndroidNotificationCategory('social');
+  static const AndroidNotificationCategory social =
+      AndroidNotificationCategory('social');
 
   /// Ongoing information about device or contextual status.
-  factory AndroidNotificationCategory.status() =>
-      const AndroidNotificationCategory('status');
+  static const AndroidNotificationCategory status =
+      AndroidNotificationCategory('status');
 
   /// Running stopwatch.
-  factory AndroidNotificationCategory.stopwatch() =>
-      const AndroidNotificationCategory('stopwatch');
+  static const AndroidNotificationCategory stopwatch =
+      AndroidNotificationCategory('stopwatch');
 
   /// System or device status update.
   ///
   /// Reserved for system use.
-  factory AndroidNotificationCategory.system() =>
-      const AndroidNotificationCategory('sys');
+  static const AndroidNotificationCategory system =
+      AndroidNotificationCategory('sys');
 
   /// Media transport control for playback.
-  factory AndroidNotificationCategory.transport() =>
-      const AndroidNotificationCategory('transport');
+  static const AndroidNotificationCategory transport =
+      AndroidNotificationCategory('transport');
 
   /// Tracking a user's workout.
-  factory AndroidNotificationCategory.workout() =>
-      const AndroidNotificationCategory('workout');
+  static const AndroidNotificationCategory workout =
+      AndroidNotificationCategory('workout');
 
   /// Name of category.
   final String name;
