@@ -6,6 +6,7 @@ class AndroidNotificationCategory {
   /// Constructs an instance of [AndroidNotificationCategory]
   /// with a given [name] of category.
   const AndroidNotificationCategory(this.name);
+
   /// Alarm or timer.
   ///
   /// Corresponds to [`NotificationCompat.CATEGORY_ALARM`](https://developer.android.com/reference/androidx/core/app/NotificationCompat#CATEGORY_ALARM%28%29).
