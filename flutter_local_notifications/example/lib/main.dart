@@ -2609,11 +2609,11 @@ Future<void> _showLinuxNotificationWithBodyMarkup() async {
 }
 
 Future<void> _showLinuxNotificationWithCategory() async {
-  final LinuxNotificationDetails linuxPlatformChannelSpecifics =
+  const LinuxNotificationDetails linuxPlatformChannelSpecifics =
       LinuxNotificationDetails(
-    category: LinuxNotificationCategory.emailArrived(),
+    category: LinuxNotificationCategory.emailArrived,
   );
-  final NotificationDetails notificationDetails = NotificationDetails(
+  const NotificationDetails notificationDetails = NotificationDetails(
     linux: linuxPlatformChannelSpecifics,
   );
   await flutterLocalNotificationsPlugin.show(
