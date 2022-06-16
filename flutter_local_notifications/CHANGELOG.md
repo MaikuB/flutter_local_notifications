@@ -1,3 +1,9 @@
+# [10.0.0-dev.16]
+
+* Includes changes from 9.6.1
+* [Android] **Breaking change** the `category` of the `AndroidNotificationDetails` now requires an instance of the newly added `AndroidNotificationCategory` class instead of a string. This was to improve the discoverability of the APIs and improve the semantics as the category can specified in a similar fashion to using an enum value
+* [Linux] **Breaking change** the linux notification categories defined by `LinuxNotificationCategory` no longer has factory constructors but has static constant fields instead to make the semantics more similar to access enum values
+
 # [10.0.0-dev.15]
 
 * Includes changes from 9.6.0
