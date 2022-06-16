@@ -47,6 +47,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     enum DateTimeComponents: Int {
         case time
         case dayOfWeekAndTime
+        case dayOfMonthAndTime
+        case dateAndTime
     }
 
     enum RepeatInterval: Int {
@@ -298,6 +300,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                     notification.deliveryRepeatInterval = DateComponents.init(day: 1)
                 case .dayOfWeekAndTime:
                     notification.deliveryRepeatInterval = DateComponents.init(weekOfYear: 1)
+                case .dayOfMonthAndTime:
+                    notification.deliveryRepeatInterval = DateComponents.init(month: 1)
+                case .dateAndTime:
+                    notification.deliveryRepeatInterval = DateComponents.init(year: 1)
                 }
             }
             NSUserNotificationCenter.default.scheduleNotification(notification)
@@ -417,6 +423,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
             case .dayOfWeekAndTime:
                 let dateComponents = calendar.dateComponents([ .weekday, .hour, .minute, .second, .timeZone], from: date)
+                return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
+            case .dayOfMonthAndTime:
+                let dateComponents = calendar.dateComponents([ .day, .hour, .minute, .second, .timeZone], from: date)
+                return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
+            case .dateAndTime:
+                let dateComponents = calendar.dateComponents([ .day, .month, .hour, .minute, .second, .timeZone], from: date)
                 return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
             }
         }
