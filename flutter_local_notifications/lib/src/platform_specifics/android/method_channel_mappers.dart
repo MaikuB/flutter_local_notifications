@@ -210,7 +210,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'ticker': ticker,
         'visibility': visibility?.index,
         'timeoutAfter': timeoutAfter,
-        'category': category,
+        'category': category?.name,
         'fullScreenIntent': fullScreenIntent,
         'shortcutId': shortcutId,
         'additionalFlags': additionalFlags,
