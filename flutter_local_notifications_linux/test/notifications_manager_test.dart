@@ -586,8 +586,8 @@ void main() {
           systemId: 1,
         );
 
-        final LinuxNotificationDetails details = LinuxNotificationDetails(
-          category: LinuxNotificationCategory.email(),
+        const LinuxNotificationDetails details = LinuxNotificationDetails(
+          category: LinuxNotificationCategory.email,
         );
 
         final List<DBusValue> values = buildNotifyMethodValues(
