@@ -1,3 +1,7 @@
+# [9.6.1]
+
+* [macOS] fixed issue [1623](https://github.com/MaikuB/flutter_local_notifications/issues/1623) where calling `zonedSchedule` with `matchDateTimeComponents` set to `dayOfMonthAndTime` or `dateAndTime` led to an error
+
 # [9.6.0]
 
 * [Linux] Bumped dependency on `flutter_local_notifications_linux` to `^0.5.0+1` where support for icons to be specified via a file path was added by [Yaroslav Pronin](https://github.com/proninyaroslav)
