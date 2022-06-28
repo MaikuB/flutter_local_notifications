@@ -303,10 +303,13 @@ public class FlutterLocalNotificationsPlugin
           context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
       String defaultIcon = sharedPreferences.getString(DEFAULT_ICON, null);
       if (StringUtils.isNullOrEmpty(defaultIcon)) {
-        // for backwards compatibility: this is for handling the old way references to the icon used
-        // to be kept but should be removed in future
-        builder.setSmallIcon(notificationDetails.iconResourceId);
-
+        if (notificationDetails.iconResourceId == null || notificationDetails.iconResourceId == 0) {
+          builder.setSmallIcon(context.getApplicationInfo().icon);
+        } else {
+          // for backwards compatibility: this is for handling the old way references to the icon used
+          // to be kept but should be removed in future
+          builder.setSmallIcon(notificationDetails.iconResourceId);
+        }
       } else {
         builder.setSmallIcon(getDrawableResourceId(context, defaultIcon));
       }
