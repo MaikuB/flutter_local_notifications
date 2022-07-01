@@ -252,6 +252,10 @@ public class FlutterLocalNotificationsPlugin
       builder.setSubText(notificationDetails.subText);
     }
 
+    if (notificationDetails.number != null) {
+      builder.setNumber(notificationDetails.number);
+    }
+
     setVisibility(notificationDetails, builder);
     applyGrouping(notificationDetails, builder);
     setSound(context, notificationDetails, builder);
