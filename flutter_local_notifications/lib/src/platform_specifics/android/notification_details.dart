@@ -52,6 +52,7 @@ class AndroidNotificationDetails {
     this.subText,
     this.tag,
     this.colorized = false,
+    this.number = 1,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -291,4 +292,6 @@ class AndroidNotificationDetails {
   /// For most styles, the colouring will only be applied if the notification is
   /// for a foreground service notification.
   final bool colorized;
+
+  final int number;
 }

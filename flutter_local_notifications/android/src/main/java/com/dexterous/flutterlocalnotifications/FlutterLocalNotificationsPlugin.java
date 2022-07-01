@@ -210,7 +210,8 @@ public class FlutterLocalNotificationsPlugin
             .setContentIntent(pendingIntent)
             .setPriority(notificationDetails.priority)
             .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
-            .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
+            .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce)
+            .setNumber(notificationDetails.number));
 
     setSmallIcon(context, notificationDetails, builder);
     builder.setLargeIcon(
