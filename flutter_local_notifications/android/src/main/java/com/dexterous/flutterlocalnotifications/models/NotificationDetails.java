@@ -180,7 +180,7 @@ public class NotificationDetails implements Serializable {
   public String subText;
   public String tag;
   public Boolean colorized;
-  public Integer number;
+  public Integer badgeNumber;
 
   // Note: this is set on the Android to save details about the icon that should be used when
   // re-hydrating scheduled notifications when a device has been restarted.
@@ -267,7 +267,7 @@ public class NotificationDetails implements Serializable {
       notificationDetails.subText = (String) platformChannelSpecifics.get(SUB_TEXT);
       notificationDetails.tag = (String) platformChannelSpecifics.get(TAG);
       notificationDetails.colorized = (Boolean) platformChannelSpecifics.get(COLORIZED);
-      notificationDetails.number = (Integer) platformChannelSpecifics.get(NUMBER);
+      notificationDetails.badgeNumber = (Integer) platformChannelSpecifics.get(NUMBER);
     }
   }
 
