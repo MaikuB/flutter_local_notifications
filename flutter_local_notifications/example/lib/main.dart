@@ -308,17 +308,6 @@ class _HomePageState extends State<HomePage> {
                         await _showNotificationCustomSound();
                       },
                     ),
-                    if (!kIsWeb &&
-                        (Platform.isIOS ||
-                            Platform.isMacOS ||
-                            Platform.isAndroid)) ...<Widget>[
-                      PaddedElevatedButton(
-                        buttonText: 'Show notification with icon badge',
-                        onPressed: () async {
-                          await _showNotificationWithIconBadge();
-                        },
-                      ),
-                    ],
                     if (kIsWeb || !Platform.isLinux) ...<Widget>[
                       PaddedElevatedButton(
                         buttonText:
@@ -655,6 +644,12 @@ class _HomePageState extends State<HomePage> {
                         buttonText: 'Show notification with subtitle',
                         onPressed: () async {
                           await _showNotificationWithSubtitle();
+                        },
+                      ),
+                      PaddedElevatedButton(
+                        buttonText: 'Show notification with icon badge',
+                        onPressed: () async {
+                          await _showNotificationWithIconBadge();
                         },
                       ),
                       PaddedElevatedButton(
@@ -1687,19 +1682,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showNotificationWithIconBadge() async {
-    const String groupChannelId = 'grouped channel id';
-    const String groupChannelName = 'grouped channel name';
     const IOSNotificationDetails iOSPlatformChannelSpecifics =
         IOSNotificationDetails(badgeNumber: 1);
     const MacOSNotificationDetails macOSPlatformChannelSpecifics =
         MacOSNotificationDetails(badgeNumber: 1);
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(groupChannelId, groupChannelName,
-            badgeNumber: 1);
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
-        iOS: iOSPlatformChannelSpecifics,
-        macOS: macOSPlatformChannelSpecifics,
-        android: androidPlatformChannelSpecifics);
+        iOS: iOSPlatformChannelSpecifics, macOS: macOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'icon badge title', 'icon badge body', platformChannelSpecifics,
         payload: 'item x');
