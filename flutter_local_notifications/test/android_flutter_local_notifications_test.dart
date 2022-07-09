@@ -147,7 +147,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -228,7 +228,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -310,7 +310,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -393,7 +393,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -480,7 +480,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -566,7 +566,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -651,7 +651,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -745,7 +745,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -849,7 +849,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -943,7 +943,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -1047,7 +1047,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -1138,7 +1138,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -1236,7 +1236,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -1319,7 +1319,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -1405,7 +1405,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -1516,7 +1516,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -1640,7 +1640,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
-              'badgeNumber': null,
+              'number': null,
             },
           }));
     });
@@ -1730,7 +1730,7 @@ void main() {
                     },
                     'tag': null,
                     'colorized': false,
-                    'badgeNumber': null,
+                    'number': null,
                   },
                 }));
           });
@@ -1824,7 +1824,7 @@ void main() {
                 },
                 'tag': null,
                 'colorized': false,
-                'badgeNumber': null,
+                'number': null,
               },
             }));
       });
@@ -1917,7 +1917,7 @@ void main() {
                 },
                 'tag': null,
                 'colorized': false,
-                'badgeNumber': null,
+                'number': null,
               },
             }));
       });
@@ -2011,7 +2011,7 @@ void main() {
                 },
                 'tag': null,
                 'colorized': false,
-                'badgeNumber': null,
+                'number': null,
               },
             }));
       });
@@ -2316,7 +2316,7 @@ void main() {
                   },
                   'tag': null,
                   'colorized': true,
-                  'badgeNumber': null,
+                  'number': null,
                 },
               },
               'startType': AndroidServiceStartType.startSticky.value,

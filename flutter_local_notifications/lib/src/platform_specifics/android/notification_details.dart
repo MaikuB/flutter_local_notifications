@@ -52,7 +52,7 @@ class AndroidNotificationDetails {
     this.subText,
     this.tag,
     this.colorized = false,
-    this.badgeNumber,
+    this.number,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -295,5 +295,5 @@ class AndroidNotificationDetails {
 
   /// Set custom notification count.
   /// Only displayed in compatible home app.
-  final int? badgeNumber;
+  final int? number;
 }

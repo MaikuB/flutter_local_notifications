@@ -252,8 +252,8 @@ public class FlutterLocalNotificationsPlugin
       builder.setSubText(notificationDetails.subText);
     }
 
-    if (notificationDetails.badgeNumber != null) {
-      builder.setNumber(notificationDetails.badgeNumber);
+    if (notificationDetails.number != null) {
+      builder.setNumber(notificationDetails.number);
     }
 
     setVisibility(notificationDetails, builder);
