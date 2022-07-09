@@ -579,6 +579,13 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedElevatedButton(
+                        buttonText:
+                            'Show notification with number if the launcher supports',
+                        onPressed: () async {
+                          await _showNotificationWithNumber();
+                        },
+                      ),
+                      PaddedElevatedButton(
                         buttonText: 'Create grouped notification channels',
                         onPressed: () async {
                           await _createNotificationChannelGroup();
@@ -2248,6 +2255,20 @@ class _HomePageState extends State<HomePage> {
         'message: ${error.message}',
       );
     }
+  }
+
+  Future<void> _showNotificationWithNumber() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            number: 1);
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'icon badge title', 'icon badge body', platformChannelSpecifics,
+        payload: 'item x');
   }
 }
 
