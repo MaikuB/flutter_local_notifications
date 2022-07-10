@@ -172,6 +172,7 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
               'actions': <Map<String, Object>>[
                 <String, Object>{
                   'id': 'action1',
