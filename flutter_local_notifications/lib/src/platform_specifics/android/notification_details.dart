@@ -295,7 +295,6 @@ class AndroidNotificationDetails {
 
   /// Set custom notification count.
   ///
-  /// For Android 8.0 or newer,
   /// Numbers are only displayed if the launcher application supports the display of badges and numbers.
   /// If not supported, this value is ignored.
   /// See https://developer.android.com/training/notify-user/badges#set_custom_notification_count
