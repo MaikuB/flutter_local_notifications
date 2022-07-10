@@ -143,6 +143,7 @@ class AndroidNotificationDetails {
     this.tag,
     this.actions,
     this.colorized = false,
+    this.number,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -381,4 +382,11 @@ class AndroidNotificationDetails {
   /// Specify coloring background should be enabled, if false, color will be applied to app icon.
   /// For most styles, the coloring will only be applied if the notification is for a foreground service notification.
   final bool colorized;
+
+  /// Set custom notification count.
+  ///
+  /// Numbers are only displayed if the launcher application supports the display of badges and numbers.
+  /// If not supported, this value is ignored.
+  /// See https://developer.android.com/training/notify-user/badges#set_custom_notification_count
+  final int? number;
 }
