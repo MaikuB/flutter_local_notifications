@@ -1,3 +1,8 @@
+# [9.7.0]
+
+* [Android] added support to specify notification count via the `number` property that has been added to the `AndroidNotificationDetails` class. Thanks to the PR from [Katsuya Kato](https://github.com/katsuyax)
+* Updated readme so that link to icon design guidance points to the archived version as the original link is now returning 404 not found. Thanks to the PR from [Zaldy Pagaduan Jr.](https://github.com/zopagaduanjr)
+
 # [9.6.1]
 
 * [macOS] fixed issue [1623](https://github.com/MaikuB/flutter_local_notifications/issues/1623) where calling `zonedSchedule` with `matchDateTimeComponents` set to `dayOfMonthAndTime` or `dateAndTime` led to an error
