@@ -618,6 +618,14 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                       PaddedElevatedButton(
+                        buttonText:
+                            'Show notification with sound controlled by '
+                            'alarm volume',
+                        onPressed: () async {
+                          await _showNotificationWithAudioAttributeAlarm();
+                        },
+                      ),
+                      PaddedElevatedButton(
                         buttonText: 'Create grouped notification channels',
                         onPressed: () async {
                           await _createNotificationChannelGroup();
@@ -2306,6 +2314,26 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.show(
         0, 'icon badge title', 'icon badge body', platformChannelSpecifics,
         payload: 'item x');
+  }
+
+  Future<void> _showNotificationWithAudioAttributeAlarm() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'your alarm channel id',
+      'your alarm channel name',
+      channelDescription: 'your alarm channel description',
+      importance: Importance.max,
+      priority: Priority.high,
+      audioAttributesUsage: AudioAttributesUsage.alarm,
+    );
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'notification sound controlled by alarm volume',
+      'alarm notification sound body',
+      platformChannelSpecifics,
+    );
   }
 }
 
