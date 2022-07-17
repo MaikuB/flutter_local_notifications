@@ -97,8 +97,8 @@ NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
 
 typedef NS_ENUM(NSInteger, RepeatInterval) {
   EveryMinute = 60,
-  Hourly = 3600, // 60 * 60
-  Daily = 86400, // 60 * 60 * 24
+  Hourly = 3600,  // 60 * 60
+  Daily = 86400,  // 60 * 60 * 24
   Weekly = 604800 // 60 * 60 * 24 * 7
 };
 
@@ -681,7 +681,8 @@ static FlutterError *getFlutterError(NSError *error) {
   } else {
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
-    NSTimeInterval timeInterval = (double) [arguments[REPEAT_INTERVAL] integerValue];
+    NSTimeInterval timeInterval =
+        (double)[arguments[REPEAT_INTERVAL] integerValue];
     switch ([arguments[REPEAT_INTERVAL] integerValue]) {
     case EveryMinute:
       notification.repeatInterval = NSCalendarUnitMinute;
@@ -975,7 +976,8 @@ static FlutterError *getFlutterError(NSError *error) {
 
 - (UNTimeIntervalNotificationTrigger *)buildUserNotificationTimeIntervalTrigger:
     (id)arguments API_AVAILABLE(ios(10.0)) {
-  NSTimeInterval timeInterval = (double) [arguments[REPEAT_INTERVAL] integerValue];
+  NSTimeInterval timeInterval =
+      (double)[arguments[REPEAT_INTERVAL] integerValue];
   return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:timeInterval
                                                             repeats:YES];
 }
