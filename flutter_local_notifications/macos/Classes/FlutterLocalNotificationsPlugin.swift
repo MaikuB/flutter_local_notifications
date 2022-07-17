@@ -66,10 +66,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
 
     enum RepeatInterval: Int {
-        case everyMinute
-        case hourly
-        case daily
-        case weekly
+        case everyMinute = 60
+        case hourly = 3600 // 60 * 60
+        case daily = 86400 // 60 * 60 * 24
+        case weekly = 604800 // 60 * 60 * 24 * 7
     }
 
     var channel: FlutterMethodChannel
@@ -450,19 +450,16 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let arguments = call.arguments as! [String: AnyObject]
             let notification = buildNSUserNotification(fromArguments: arguments)
             let rawRepeatInterval = arguments[MethodCallArguments.repeatInterval] as! Int
+            notification.deliveryDate = Date.init(timeIntervalSinceNow: Double(rawRepeatInterval))
             let repeatInterval = RepeatInterval.init(rawValue: rawRepeatInterval)!
             switch repeatInterval {
             case .everyMinute:
-                notification.deliveryDate = Date.init(timeIntervalSinceNow: 60)
                 notification.deliveryRepeatInterval = DateComponents.init(minute: 1)
             case .hourly:
-                notification.deliveryDate = Date.init(timeIntervalSinceNow: 60 * 60)
                 notification.deliveryRepeatInterval = DateComponents.init(hour: 1)
             case .daily:
-                notification.deliveryDate = Date.init(timeIntervalSinceNow: 60 * 60 * 24)
                 notification.deliveryRepeatInterval = DateComponents.init(day: 1)
             case .weekly:
-                notification.deliveryDate = Date.init(timeIntervalSinceNow: 60 * 60 * 24 * 7)
                 notification.deliveryRepeatInterval = DateComponents.init(weekOfYear: 1)
             }
             NSUserNotificationCenter.default.scheduleNotification(notification)
@@ -568,19 +565,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     @available(OSX 10.14, *)
     func buildUserNotificationTimeIntervalTrigger(fromArguments arguments: [String: AnyObject]) -> UNTimeIntervalNotificationTrigger {
-        let rawRepeatInterval = arguments[MethodCallArguments.repeatInterval] as! Int
-        let repeatInterval = RepeatInterval.init(rawValue: rawRepeatInterval)!
-        switch repeatInterval {
-        case .everyMinute:
-            return UNTimeIntervalNotificationTrigger.init(timeInterval: 60, repeats: true)
-        case .hourly:
-            return UNTimeIntervalNotificationTrigger.init(timeInterval: 60 * 60, repeats: true)
-        case .daily:
-            return UNTimeIntervalNotificationTrigger.init(timeInterval: 60 * 60 * 24, repeats: true)
-        case .weekly:
-            return UNTimeIntervalNotificationTrigger.init(timeInterval: 60 * 60 * 24 * 7, repeats: true)
-        }
-
+        let repeatInterval = Double(arguments[MethodCallArguments.repeatInterval] as! Int)
+        return UNTimeIntervalNotificationTrigger.init(timeInterval: repeatInterval, repeats: true)
     }
 
     @available(OSX 10.14, *)

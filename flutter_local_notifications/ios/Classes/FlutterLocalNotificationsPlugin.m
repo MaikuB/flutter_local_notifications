@@ -96,10 +96,10 @@ NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
     @"iOS version must be 10.0 or newer to use getActiveNotifications";
 
 typedef NS_ENUM(NSInteger, RepeatInterval) {
-  EveryMinute,
-  Hourly,
-  Daily,
-  Weekly
+  EveryMinute = 60,
+  Hourly = 3600, // 60 * 60
+  Daily = 86400, // 60 * 60 * 24
+  Weekly = 604800 // 60 * 60 * 24 * 7
 };
 
 typedef NS_ENUM(NSInteger, DateTimeComponents) {
@@ -681,22 +681,18 @@ static FlutterError *getFlutterError(NSError *error) {
   } else {
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
-    NSTimeInterval timeInterval = 0;
+    NSTimeInterval timeInterval = (double) [arguments[REPEAT_INTERVAL] integerValue];
     switch ([arguments[REPEAT_INTERVAL] integerValue]) {
     case EveryMinute:
-      timeInterval = 60;
       notification.repeatInterval = NSCalendarUnitMinute;
       break;
     case Hourly:
-      timeInterval = 60 * 60;
       notification.repeatInterval = NSCalendarUnitHour;
       break;
     case Daily:
-      timeInterval = 60 * 60 * 24;
       notification.repeatInterval = NSCalendarUnitDay;
       break;
     case Weekly:
-      timeInterval = 60 * 60 * 24 * 7;
       notification.repeatInterval = NSCalendarUnitWeekOfYear;
       break;
     }
@@ -979,24 +975,9 @@ static FlutterError *getFlutterError(NSError *error) {
 
 - (UNTimeIntervalNotificationTrigger *)buildUserNotificationTimeIntervalTrigger:
     (id)arguments API_AVAILABLE(ios(10.0)) {
-  switch ([arguments[REPEAT_INTERVAL] integerValue]) {
-  case EveryMinute:
-    return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:60
-                                                              repeats:YES];
-  case Hourly:
-    return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:60 * 60
-                                                              repeats:YES];
-  case Daily:
-    return
-        [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:60 * 60 * 24
-                                                           repeats:YES];
-    break;
-  case Weekly:
-    return [UNTimeIntervalNotificationTrigger
-        triggerWithTimeInterval:60 * 60 * 24 * 7
-                        repeats:YES];
-  }
-  return nil;
+  NSTimeInterval timeInterval = (double) [arguments[REPEAT_INTERVAL] integerValue];
+  return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:timeInterval
+                                                            repeats:YES];
 }
 
 - (NSDictionary *)buildUserDict:(NSNumber *)id

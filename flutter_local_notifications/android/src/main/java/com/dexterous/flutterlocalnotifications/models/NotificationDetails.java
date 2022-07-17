@@ -6,7 +6,6 @@ import android.os.Build.VERSION_CODES;
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
-import com.dexterous.flutterlocalnotifications.RepeatInterval;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
@@ -138,7 +137,7 @@ public class NotificationDetails implements Serializable {
   public long[] vibrationPattern;
   public NotificationStyle style;
   public StyleInformation styleInformation;
-  public RepeatInterval repeatInterval;
+  public Integer repeatInterval;
   public Time repeatTime;
   public Long millisecondsSinceEpoch;
   public Long calledAt;
@@ -211,8 +210,7 @@ public class NotificationDetails implements Serializable {
       notificationDetails.calledAt = (Long) arguments.get(CALLED_AT);
     }
     if (arguments.containsKey(REPEAT_INTERVAL)) {
-      notificationDetails.repeatInterval =
-          RepeatInterval.values()[(Integer) arguments.get(REPEAT_INTERVAL)];
+      notificationDetails.repeatInterval = (Integer) arguments.get(REPEAT_INTERVAL) * 1000;
     }
     if (arguments.containsKey(REPEAT_TIME)) {
       @SuppressWarnings("unchecked")

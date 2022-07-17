@@ -536,7 +536,7 @@ public class FlutterLocalNotificationsPlugin
 
   static void scheduleNextRepeatingNotification(
       Context context, NotificationDetails notificationDetails) {
-    long repeatInterval = calculateRepeatIntervalMilliseconds(notificationDetails);
+    long repeatInterval = notificationDetails.repeatInterval;
     long notificationTriggerTime =
         calculateNextNotificationTrigger(notificationDetails.calledAt, repeatInterval);
     Gson gson = buildGson();
@@ -588,7 +588,7 @@ public class FlutterLocalNotificationsPlugin
       Context context,
       NotificationDetails notificationDetails,
       Boolean updateScheduledNotificationsCache) {
-    long repeatInterval = calculateRepeatIntervalMilliseconds(notificationDetails);
+    long repeatInterval = notificationDetails.repeatInterval;
 
     long notificationTriggerTime = notificationDetails.calledAt;
     if (notificationDetails.repeatTime != null) {
@@ -635,27 +635,6 @@ public class FlutterLocalNotificationsPlugin
       notificationTriggerTime += repeatInterval;
     }
     return notificationTriggerTime;
-  }
-
-  private static long calculateRepeatIntervalMilliseconds(NotificationDetails notificationDetails) {
-    long repeatInterval = 0;
-    switch (notificationDetails.repeatInterval) {
-      case EveryMinute:
-        repeatInterval = 60000;
-        break;
-      case Hourly:
-        repeatInterval = 60000 * 60;
-        break;
-      case Daily:
-        repeatInterval = 60000 * 60 * 24;
-        break;
-      case Weekly:
-        repeatInterval = 60000 * 60 * 24 * 7;
-        break;
-      default:
-        break;
-    }
-    return repeatInterval;
   }
 
   private static void saveScheduledNotification(

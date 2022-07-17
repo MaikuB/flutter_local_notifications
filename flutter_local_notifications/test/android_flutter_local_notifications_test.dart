@@ -1791,7 +1791,7 @@ void main() {
 
     group('periodicallyShow', () {
       final DateTime now = DateTime(2020, 10, 9);
-      for (final RepeatInterval repeatInterval in RepeatInterval.values) {
+      for (final Duration repeatInterval in RepeatInterval.values) {
         test('$repeatInterval', () async {
           await withClock(Clock.fixed(now), () async {
             const AndroidInitializationSettings androidInitializationSettings =
@@ -1820,7 +1820,7 @@ void main() {
                   'body': 'notification body',
                   'payload': '',
                   'calledAt': now.millisecondsSinceEpoch,
-                  'repeatInterval': repeatInterval.index,
+                  'repeatInterval': repeatInterval.inSeconds,
                   'platformSpecifics': <String, Object?>{
                     'allowWhileIdle': false,
                     'icon': null,

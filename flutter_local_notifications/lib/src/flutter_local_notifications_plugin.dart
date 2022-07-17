@@ -408,7 +408,7 @@ class FlutterLocalNotificationsPlugin {
     int id,
     String? title,
     String? body,
-    RepeatInterval repeatInterval,
+    Duration repeatInterval,
     NotificationDetails notificationDetails, {
     String? payload,
     bool androidAllowWhileIdle = false,

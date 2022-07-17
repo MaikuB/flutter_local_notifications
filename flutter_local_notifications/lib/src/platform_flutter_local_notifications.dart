@@ -226,7 +226,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'title': title,
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatInterval': RepeatInterval.daily.index,
+      'repeatInterval': const Duration(days: 1).inSeconds,
       'repeatTime': notificationTime.toMap(),
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
@@ -252,7 +252,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'title': title,
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatInterval': RepeatInterval.weekly.index,
+      'repeatInterval': const Duration(days: 7).inSeconds,
       'repeatTime': notificationTime.toMap(),
       'day': day.value,
       'platformSpecifics': notificationDetails?.toMap(),
@@ -375,7 +375,7 @@ class AndroidFlutterLocalNotificationsPlugin
     int id,
     String? title,
     String? body,
-    RepeatInterval repeatInterval, {
+    Duration repeatInterval, {
     AndroidNotificationDetails? notificationDetails,
     String? payload,
     bool androidAllowWhileIdle = false,
@@ -389,7 +389,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'title': title,
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatInterval': repeatInterval.index,
+      'repeatInterval': repeatInterval.inSeconds,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? '',
     });
@@ -719,7 +719,7 @@ class IOSFlutterLocalNotificationsPlugin
       'title': title,
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatInterval': RepeatInterval.daily.index,
+      'repeatInterval': const Duration(days: 1).inSeconds,
       'repeatTime': notificationTime.toMap(),
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
@@ -744,7 +744,7 @@ class IOSFlutterLocalNotificationsPlugin
       'title': title,
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatInterval': RepeatInterval.weekly.index,
+      'repeatInterval': const Duration(days: 7).inSeconds,
       'repeatTime': notificationTime.toMap(),
       'day': day.value,
       'platformSpecifics': notificationDetails?.toMap(),
@@ -778,7 +778,7 @@ class IOSFlutterLocalNotificationsPlugin
     int id,
     String? title,
     String? body,
-    RepeatInterval repeatInterval, {
+    Duration repeatInterval, {
     DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) async {
@@ -788,7 +788,7 @@ class IOSFlutterLocalNotificationsPlugin
       'title': title,
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatInterval': repeatInterval.index,
+      'repeatInterval': repeatInterval.inSeconds,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
@@ -928,7 +928,7 @@ class MacOSFlutterLocalNotificationsPlugin
     int id,
     String? title,
     String? body,
-    RepeatInterval repeatInterval, {
+    Duration repeatInterval, {
     DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) async {
@@ -938,7 +938,7 @@ class MacOSFlutterLocalNotificationsPlugin
       'title': title,
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatInterval': repeatInterval.index,
+      'repeatInterval': repeatInterval.inSeconds,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });

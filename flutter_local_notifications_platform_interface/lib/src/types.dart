@@ -1,16 +1,24 @@
 /// The available intervals for periodically showing notifications.
-enum RepeatInterval {
+extension RepeatInterval on Duration {
   /// An interval for every minute.
-  everyMinute,
+  static const Duration everyMinute = Duration(minutes: 1);
 
   /// Hourly interval.
-  hourly,
+  static const Duration hourly = Duration(hours: 1);
 
   /// Daily interval.
-  daily,
+  static const Duration daily = Duration(days: 1);
 
   /// Weekly interval.
-  weekly
+  static const Duration weekly = Duration(days: 7);
+
+  /// All pre-defined intervals guaranteed to work with older OS versions
+  static const List<Duration> values = <Duration>[
+    everyMinute,
+    hourly,
+    daily,
+    weekly
+  ];
 }
 
 /// Details of a pending notification that has not been delivered.
