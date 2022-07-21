@@ -131,15 +131,18 @@ class AndroidFlutterLocalNotificationsPlugin
     TZDateTime scheduledDate,
     AndroidNotificationDetails? notificationDetails, {
     required bool androidAllowWhileIdle,
+    required bool androidUseInexactMode,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
     ArgumentError.checkNotNull(androidAllowWhileIdle, 'androidAllowWhileIdle');
+    ArgumentError.checkNotNull(androidUseInexactMode, 'androidUseInexactMode');
     final Map<String, Object?> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
     serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
+    serializedPlatformSpecifics['useInexactMode'] = androidUseInexactMode;
     await _channel.invokeMethod(
         'zonedSchedule',
         <String, Object?>{
@@ -327,11 +330,13 @@ class AndroidFlutterLocalNotificationsPlugin
     AndroidNotificationDetails? notificationDetails,
     String? payload,
     bool androidAllowWhileIdle = false,
+    bool androidUseInexactMode = false,
   }) async {
     validateId(id);
     final Map<String, Object?> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
     serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
+    serializedPlatformSpecifics['useInexactMode'] = androidUseInexactMode;
     await _channel.invokeMethod('periodicallyShow', <String, Object?>{
       'id': id,
       'title': title,

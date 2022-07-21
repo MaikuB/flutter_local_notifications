@@ -342,6 +342,7 @@ class FlutterLocalNotificationsPlugin {
     required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
     required bool androidAllowWhileIdle,
+    bool androidUseInexactMode = false,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
@@ -355,6 +356,7 @@ class FlutterLocalNotificationsPlugin {
               id, title, body, scheduledDate, notificationDetails.android,
               payload: payload,
               androidAllowWhileIdle: androidAllowWhileIdle,
+              androidUseInexactMode: androidUseInexactMode,
               matchDateTimeComponents: matchDateTimeComponents);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
@@ -397,6 +399,7 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     String? payload,
     bool androidAllowWhileIdle = false,
+    bool androidUseInexactMode = false,
   }) async {
     if (kIsWeb) {
       return;

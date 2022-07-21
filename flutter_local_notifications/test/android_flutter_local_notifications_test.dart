@@ -1679,6 +1679,7 @@ void main() {
                   'repeatInterval': repeatInterval.index,
                   'platformSpecifics': <String, Object?>{
                     'allowWhileIdle': false,
+                    'useInexactMode': false,
                     'icon': null,
                     'channelId': 'channelId',
                     'channelName': 'channelName',
@@ -1760,6 +1761,7 @@ void main() {
             scheduledDate,
             const NotificationDetails(android: androidNotificationDetails),
             androidAllowWhileIdle: true,
+            androidUseInexactMode: true,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime);
         expect(
@@ -1773,6 +1775,7 @@ void main() {
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
               'platformSpecifics': <String, Object?>{
                 'allowWhileIdle': true,
+                'useInexactMode': true,
                 'icon': null,
                 'channelId': 'channelId',
                 'channelName': 'channelName',
@@ -1851,6 +1854,7 @@ void main() {
             scheduledDate,
             const NotificationDetails(android: androidNotificationDetails),
             androidAllowWhileIdle: true,
+            androidUseInexactMode: false,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.time);
@@ -1866,6 +1870,7 @@ void main() {
               'matchDateTimeComponents': DateTimeComponents.time.index,
               'platformSpecifics': <String, Object?>{
                 'allowWhileIdle': true,
+                'useInexactMode': false,
                 'icon': null,
                 'channelId': 'channelId',
                 'channelName': 'channelName',
@@ -1960,6 +1965,7 @@ void main() {
                   DateTimeComponents.dayOfWeekAndTime.index,
               'platformSpecifics': <String, Object?>{
                 'allowWhileIdle': true,
+                'useInexactMode': false,
                 'icon': null,
                 'channelId': 'channelId',
                 'channelName': 'channelName',

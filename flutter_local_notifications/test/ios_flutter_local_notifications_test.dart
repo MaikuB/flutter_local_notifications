@@ -236,6 +236,7 @@ void main() {
             scheduledDate,
             notificationDetails,
             androidAllowWhileIdle: true,
+            androidUseInexactMode: true,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime);
 
@@ -298,6 +299,7 @@ void main() {
             scheduledDate,
             notificationDetails,
             androidAllowWhileIdle: true,
+            androidUseInexactMode: true,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.time);
@@ -362,6 +364,7 @@ void main() {
             scheduledDate,
             notificationDetails,
             androidAllowWhileIdle: true,
+            androidUseInexactMode: true,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);

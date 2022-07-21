@@ -120,6 +120,7 @@ public class NotificationDetails implements Serializable {
   private static final String SUB_TEXT = "subText";
   private static final String COLORIZED = "colorized";
   private static final String NUMBER = "number";
+  private static final String USE_INEXACT_MODE = "useInexactMode";
 
   public Integer id;
   public String title;
@@ -165,6 +166,7 @@ public class NotificationDetails implements Serializable {
   public String ticker;
   public Integer visibility;
   public Boolean allowWhileIdle;
+  public Boolean useInexactMode;
   public Long timeoutAfter;
   public String category;
   public int[] additionalFlags;
@@ -258,6 +260,7 @@ public class NotificationDetails implements Serializable {
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
       notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
+      notificationDetails.useInexactMode = (Boolean) platformChannelSpecifics.get(USE_INEXACT_MODE);
       notificationDetails.timeoutAfter = parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
       notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
       notificationDetails.fullScreenIntent =
