@@ -288,22 +288,24 @@ public class FlutterLocalNotificationsPlugin
           actionBuilder.setAllowGeneratedReplies(action.allowGeneratedReplies);
         }
 
-        for (NotificationActionInput input : action.actionInputs) {
-          RemoteInput.Builder remoteInput =
-              new RemoteInput.Builder(INPUT_RESULT).setLabel(input.label);
-          if (input.allowFreeFormInput != null) {
-            remoteInput.setAllowFreeFormInput(input.allowFreeFormInput);
-          }
-
-          if (input.allowedMimeTypes != null) {
-            for (String mimeType : input.allowedMimeTypes) {
-              remoteInput.setAllowDataType(mimeType, true);
+        if(action.actionInputs != null) {
+          for (NotificationActionInput input : action.actionInputs) {
+            RemoteInput.Builder remoteInput =
+                    new RemoteInput.Builder(INPUT_RESULT).setLabel(input.label);
+            if (input.allowFreeFormInput != null) {
+              remoteInput.setAllowFreeFormInput(input.allowFreeFormInput);
             }
+
+            if (input.allowedMimeTypes != null) {
+              for (String mimeType : input.allowedMimeTypes) {
+                remoteInput.setAllowDataType(mimeType, true);
+              }
+            }
+            if (input.choices != null) {
+              remoteInput.setChoices(input.choices.toArray(new CharSequence[] {}));
+            }
+            actionBuilder.addRemoteInput(remoteInput.build());
           }
-          if (input.choices != null) {
-            remoteInput.setChoices(input.choices.toArray(new CharSequence[] {}));
-          }
-          actionBuilder.addRemoteInput(remoteInput.build());
         }
         builder.addAction(actionBuilder.build());
       }
