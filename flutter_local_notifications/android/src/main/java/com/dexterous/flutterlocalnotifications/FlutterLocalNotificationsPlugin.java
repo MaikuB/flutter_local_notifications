@@ -288,10 +288,10 @@ public class FlutterLocalNotificationsPlugin
           actionBuilder.setAllowGeneratedReplies(action.allowGeneratedReplies);
         }
 
-        if(action.actionInputs != null) {
+        if (action.actionInputs != null) {
           for (NotificationActionInput input : action.actionInputs) {
             RemoteInput.Builder remoteInput =
-                    new RemoteInput.Builder(INPUT_RESULT).setLabel(input.label);
+                new RemoteInput.Builder(INPUT_RESULT).setLabel(input.label);
             if (input.allowFreeFormInput != null) {
               remoteInput.setAllowFreeFormInput(input.allowFreeFormInput);
             }
