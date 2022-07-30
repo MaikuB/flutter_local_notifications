@@ -1236,44 +1236,31 @@ public class FlutterLocalNotificationsPlugin
   public void onMethodCall(MethodCall call, Result result) {
     switch (call.method) {
       case INITIALIZE_METHOD:
-        {
-          initialize(call, result);
-          break;
-        }
+        initialize(call, result);
+        break;
       case GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD:
-        {
-          getNotificationAppLaunchDetails(result);
-          break;
-        }
+        getNotificationAppLaunchDetails(result);
+        break;
       case SHOW_METHOD:
-        {
-          show(call, result);
-          break;
-        }
+        show(call, result);
+        break;
       case SCHEDULE_METHOD:
-        {
-          schedule(call, result);
-          break;
-        }
+        schedule(call, result);
+        break;
       case ZONED_SCHEDULE_METHOD:
-        {
-          zonedSchedule(call, result);
-          break;
-        }
-      case REQUEST_PERMISSION_METHOD: {
+        zonedSchedule(call, result);
+        break;
+      case REQUEST_PERMISSION_METHOD:
         requestPermission(result);
         break;
-      }
       case IS_PERMISSION_GRANTED_METHOD:
         isPermissionGranted(result);
         break;
       case PERIODICALLY_SHOW_METHOD:
       case SHOW_DAILY_AT_TIME_METHOD:
       case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD:
-        {
-          repeat(call, result);
-          break;
-        }
+        repeat(call, result);
+        break;
       case CANCEL_METHOD:
         cancel(call, result);
         break;
