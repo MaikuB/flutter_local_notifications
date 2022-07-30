@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
@@ -183,12 +182,12 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _requestPermissions();
+    //_requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
   }
 
-  void _requestPermissions() {
+  void _requestIOSPermissions() {
     flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin>()
@@ -205,6 +204,13 @@ class _HomePageState extends State<HomePage> {
           badge: true,
           sound: true,
         );
+  }
+
+  void _requestAndroidPermissions() {
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestPermission();
   }
 
   void _configureDidReceiveLocalNotificationSubject() {
@@ -405,6 +411,10 @@ class _HomePageState extends State<HomePage> {
                         buttonText:
                             'Check if notifications are enabled for this app',
                         onPressed: _areNotifcationsEnabledOnAndroid,
+                      ),
+                      PaddedElevatedButton(
+                        buttonText: 'Request permission (API 33+)',
+                        onPressed: _requestAndroidPermissions,
                       ),
                       PaddedElevatedButton(
                         buttonText:
@@ -647,6 +657,9 @@ class _HomePageState extends State<HomePage> {
                         'iOS and macOS-specific examples',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
+                      PaddedElevatedButton(
+                          buttonText: 'Request permission',
+                          onPressed: _requestIOSPermissions),
                       PaddedElevatedButton(
                         buttonText: 'Show notification with subtitle',
                         onPressed: () async {
@@ -2091,10 +2104,11 @@ class _HomePageState extends State<HomePage> {
   Future<void> _getActiveNotificationMessagingStyle(int id, String? tag) async {
     Widget dialogContent;
     try {
-      final messagingStyle = await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()!
-          .getActiveNotificationMessagingStyle(id, tag: tag);
+      final MessagingStyleInformation? messagingStyle =
+          await flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()!
+              .getActiveNotificationMessagingStyle(id, tag: tag);
       if (messagingStyle == null) {
         dialogContent = const Text('No messaging style');
       } else {
@@ -2109,7 +2123,7 @@ class _HomePageState extends State<HomePage> {
             const Divider(color: Colors.black),
             if (messagingStyle.messages == null) const Text('No messages'),
             if (messagingStyle.messages != null)
-              for (final msg in messagingStyle.messages!)
+              for (final Message msg in messagingStyle.messages!)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
