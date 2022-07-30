@@ -51,9 +51,11 @@ android {
     }
 
     // Temporary workaround as per https://issuetracker.google.com/issues/158060799
-    lintOptions {
+    lint {
         checkReleaseBuilds false
     }
+
+    namespace 'com.dexterous.flutter_local_notifications_example'
 }
 
 flutter {
@@ -62,9 +64,9 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.jakewharton.threetenabp:threetenabp:1.2.3"
+    implementation "com.jakewharton.threetenabp:threetenabp:1.4.0"
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
