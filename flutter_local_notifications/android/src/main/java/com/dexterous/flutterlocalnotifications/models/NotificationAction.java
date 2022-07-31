@@ -92,6 +92,7 @@ public class NotificationAction {
   @Nullable public final Boolean showsUserInterface;
   @Nullable public final Boolean allowGeneratedReplies;
   @Nullable public final IconSource iconSource;
+  // actionInputs is annotated as nullable as the Flutter API use to allow this to be nullable before null-safety was added in
   @Nullable public final List<NotificationActionInput> actionInputs = new ArrayList<>();
 
   public NotificationAction(Map<String, Object> arguments) {
