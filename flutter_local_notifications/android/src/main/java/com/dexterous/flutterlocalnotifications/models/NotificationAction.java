@@ -92,7 +92,7 @@ public class NotificationAction {
   @Nullable public final Boolean showsUserInterface;
   @Nullable public final Boolean allowGeneratedReplies;
   @Nullable public final IconSource iconSource;
-  public final List<NotificationActionInput> actionInputs = new ArrayList<>();
+  @Nullable public final List<NotificationActionInput> actionInputs = new ArrayList<>();
 
   public NotificationAction(Map<String, Object> arguments) {
     id = (String) arguments.get(ID);
