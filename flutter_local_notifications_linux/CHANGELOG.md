@@ -1,3 +1,7 @@
+## [1.0.0-dev.3]
+
+* Includes changes from the 0.5.1 stable release
+
 ## [1.0.0-dev.2]
 
 * **Breaking change** The linux notification categories defined by `LinuxNotificationCategory` no longer has factory constructors but has static constant fields instead to make the semantics more similar to access enum values
