@@ -7,6 +7,10 @@
 * Changes there were in the 0.5.0 pre-releases are now part of the 1.0.0 pre-releases
 * Includes changes from the 0.5.0 stable release
 
+## [0.5.1]
+
+* Fixes issue [1656](https://github.com/MaikuB/flutter_local_notifications/issues/1656) where a version constraint issue occurred with the `path` package. The version constraint has been lowered to resolve the issue
+
 ## [0.5.0+1]
 
 * Added a note to 0.5.0 changelog to make it clear that the 0.5.0 stable release doesn't have changes from the 0.5.0 pre-releases
