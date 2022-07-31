@@ -118,7 +118,6 @@ public class FlutterLocalNotificationsPlugin
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
   private static final String REQUEST_PERMISSION_METHOD = "requestPermission";
-  private static final String IS_PERMISSION_GRANTED_METHOD = "isPermissionGranted";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
   private static final String PAYLOAD = "payload";
   private static final String INVALID_ICON_ERROR_CODE = "INVALID_ICON";
@@ -1253,9 +1252,6 @@ public class FlutterLocalNotificationsPlugin
       case REQUEST_PERMISSION_METHOD:
         requestPermission(result);
         break;
-      case IS_PERMISSION_GRANTED_METHOD:
-        isPermissionGranted(result);
-        break;
       case PERIODICALLY_SHOW_METHOD:
       case SHOW_DAILY_AT_TIME_METHOD:
       case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD:
@@ -1416,18 +1412,6 @@ public class FlutterLocalNotificationsPlugin
 
       result.success(null);
     }
-  }
-
-  private void isPermissionGranted(Result result) {
-    if (Build.VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-      String permission = Manifest.permission.POST_NOTIFICATIONS;
-      boolean permissionGranted = ContextCompat.checkSelfPermission(applicationContext,
-              permission) == PackageManager.PERMISSION_GRANTED;
-
-      result.success(permissionGranted);
-    }
-
-    result.success(true);
   }
 
   /// Extracts the details of the notifications passed from the Flutter side and also validates that
