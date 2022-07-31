@@ -92,7 +92,8 @@ class AndroidFlutterLocalNotificationsPlugin
         'initialize', initializationSettings.toMap());
   }
 
-  /// Requests the permission for sending notifications.
+  /// Requests the permission for sending notifications. Returns whether the
+  /// permission was granted.
   ///
   /// Requests the `POST_NOTIFICATIONS` permission on Android 13 Tiramisu (API
   /// level 33) and newer. On older versions, it is a no-op.
@@ -100,9 +101,8 @@ class AndroidFlutterLocalNotificationsPlugin
   /// See also:
   ///
   ///  * https://developer.android.com/about/versions/13/changes/notification-permission
-  Future<void> requestPermission() async {
-    await _channel.invokeMethod('requestPermission');
-  }
+  Future<bool?> requestPermission() async =>
+      _channel.invokeMethod<bool>('requestPermission');
 
   /// Schedules a notification to be shown at the specified date and time.
   ///

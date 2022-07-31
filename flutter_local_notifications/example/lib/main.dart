@@ -182,7 +182,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    //_requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
   }
@@ -206,11 +205,21 @@ class _HomePageState extends State<HomePage> {
         );
   }
 
-  void _requestAndroidPermissions() {
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestPermission();
+  Future<void> _requestAndroidPermissions() async {
+    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+        flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+
+    debugPrint('before request');
+    final bool? granted = await androidImplementation?.requestPermission();
+
+    debugPrint('after request, granted: $granted');
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text('Permission granted: $granted'),
+      ),
+    );
   }
 
   void _configureDidReceiveLocalNotificationSubject() {
@@ -414,7 +423,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                       PaddedElevatedButton(
                         buttonText: 'Request permission (API 33+)',
-                        onPressed: _requestAndroidPermissions,
+                        onPressed: () async {
+                          await _requestAndroidPermissions();
+                        },
                       ),
                       PaddedElevatedButton(
                         buttonText:
