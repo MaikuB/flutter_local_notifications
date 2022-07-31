@@ -1,3 +1,7 @@
+# [10.0.0-dev.18]
+
+* [Android] added null checks around notification action inputs
+
 # [10.0.0-dev.17]
 
 * Includes changes from 9.7.0
