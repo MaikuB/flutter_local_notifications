@@ -210,10 +210,8 @@ class _HomePageState extends State<HomePage> {
         flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
 
-    debugPrint('before request');
     final bool? granted = await androidImplementation?.requestPermission();
 
-    debugPrint('after request, granted: $granted');
     await showDialog<void>(
       context: context,
       builder: (BuildContext context) => AlertDialog(

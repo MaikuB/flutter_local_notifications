@@ -158,7 +158,6 @@ public class FlutterLocalNotificationsPlugin
   private Intent launchIntent;
   static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
   private PermissionRequestListener callback;
-  private boolean ongoing;
 
   @SuppressWarnings("deprecation")
   public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
@@ -166,7 +165,6 @@ public class FlutterLocalNotificationsPlugin
     plugin.setActivity(registrar.activity());
     registrar.addNewIntentListener(plugin);
     registrar.addRequestPermissionsResultListener(plugin);
-    Log.d("LocalNotificationPlugin", "Registered!");
     plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
   }
 
@@ -1248,11 +1246,7 @@ public class FlutterLocalNotificationsPlugin
         zonedSchedule(call, result);
         break;
       case REQUEST_PERMISSION_METHOD:
-        requestPermission(granted -> {
-          Log.d("LocalNotificatiosPlugin", "granted: " + granted);
-          result.success(granted);
-        });
-        Log.d("LocalNotificatiosPlugin", "requestedPermissions");
+        requestPermission(result::success);
         break;
       case PERIODICALLY_SHOW_METHOD:
       case SHOW_DAILY_AT_TIME_METHOD:
@@ -1529,49 +1523,33 @@ public class FlutterLocalNotificationsPlugin
     result.success(null);
   }
 
-  public void requestPermission(@NonNull  PermissionRequestListener callback) {
-    if (ongoing) {
-      Log.w("PermissionHandler", "Permission request is in progress");
-      return;
-    }
-
-    ongoing = true;
+  public void requestPermission(@NonNull PermissionRequestListener callback) {
     this.callback = callback;
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      Log.d("PermissionHandler", "requestPermission()");
-
       String permission = Manifest.permission.POST_NOTIFICATIONS;
       boolean permissionGranted = ContextCompat.checkSelfPermission(mainActivity,
               permission) == PackageManager.PERMISSION_GRANTED;
 
       if (!permissionGranted) {
-        ActivityCompat.requestPermissions(mainActivity,
-                new String[]{permission},
-                NOTIFICATION_PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(mainActivity, new String[]{permission}, NOTIFICATION_PERMISSION_REQUEST_CODE);
       } else {
-        ongoing = false;
         this.callback.complete(true);
       }
     } else {
       NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mainActivity);
       this.callback.complete(notificationManager.areNotificationsEnabled());
-      ongoing = false;
     }
   }
 
 
   @Override
   public boolean onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    Log.d("PermissionHandler", "HERE 1");
     if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
-      Log.d("PermissionHandler", "HERE 2");
       boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
       callback.complete(granted);
-      ongoing = false;
       return granted;
     } else {
-      ongoing = false;
       return false;
     }
   }
