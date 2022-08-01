@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
@@ -20,15 +21,19 @@ public class PermissionHandler implements PluginRegistry.RequestPermissionsResul
 
   static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
 
-  private final Activity activity;
-  private final PermissionRequestListener callback;
+  private PermissionRequestListener callback;
 
-  public PermissionHandler(Activity activity, PermissionRequestListener callback) {
-    this.activity = activity;
+  private boolean ongoing;
+
+  public void requestPermission(Activity activity, @NonNull  PermissionRequestListener callback) {
+    if (ongoing) {
+      Log.w("PermissionHandler", "Permission request is in progress");
+      return;
+    }
+
+    ongoing = true;
     this.callback = callback;
-  }
 
-  public void requestPermission() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
       Log.d("PermissionHandler", "requestPermission()");
 
@@ -41,11 +46,13 @@ public class PermissionHandler implements PluginRegistry.RequestPermissionsResul
                 new String[]{permission},
                 NOTIFICATION_PERMISSION_REQUEST_CODE);
       } else {
-        callback.complete(true);
+        ongoing = false;
+        this.callback.complete(true);
       }
     } else {
       NotificationManagerCompat notificationManager = NotificationManagerCompat.from(activity);
-      callback.complete(notificationManager.areNotificationsEnabled());
+      this.callback.complete(notificationManager.areNotificationsEnabled());
+      ongoing = false;
     }
   }
 
@@ -57,8 +64,10 @@ public class PermissionHandler implements PluginRegistry.RequestPermissionsResul
       Log.d("PermissionHandler", "HERE 2");
       boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
       callback.complete(granted);
+      ongoing = false;
       return granted;
     } else {
+      ongoing = false;
       return false;
     }
   }

@@ -151,6 +151,11 @@ public class FlutterLocalNotificationsPlugin
   private Context applicationContext;
   private Activity mainActivity;
   private Intent launchIntent;
+  private final PermissionHandler permissionHandler;
+
+  public FlutterLocalNotificationsPlugin() {
+    this.permissionHandler = new PermissionHandler();
+  }
 
   @SuppressWarnings("deprecation")
   public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
@@ -1218,7 +1223,7 @@ public class FlutterLocalNotificationsPlugin
   }
 
   @Override
-  public void onMethodCall(MethodCall call, Result result) {
+  public void onMethodCall(MethodCall call, @NonNull final Result result) {
     switch (call.method) {
       case INITIALIZE_METHOD:
         initialize(call, result);
@@ -1236,16 +1241,11 @@ public class FlutterLocalNotificationsPlugin
         zonedSchedule(call, result);
         break;
       case REQUEST_PERMISSION_METHOD:
-        final Result finalResult = result;
-        PermissionHandler permissionHandler = new PermissionHandler(mainActivity, new PermissionRequestListener() {
-          @Override
-          public void complete(boolean granted) {
-            Log.d("HERE -1", "granted: " + granted );
-            finalResult.success(granted);
-          }
+        permissionHandler.requestPermission(mainActivity, granted -> {
+          Log.d("LocalNotificatiosPlugin", "granted: " + granted);
+          result.success(granted);
         });
-        permissionHandler.requestPermission();
-        Log.d("HERE -1", "requestedPermissions");
+        Log.d("LocalNotificatiosPlugin", "requestedPermissions");
         break;
       case PERIODICALLY_SHOW_METHOD:
       case SHOW_DAILY_AT_TIME_METHOD:
