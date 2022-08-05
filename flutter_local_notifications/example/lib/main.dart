@@ -179,45 +179,59 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _linuxIconPathController =
       TextEditingController();
 
+  bool _notificationsEnabled = false;
+
   @override
   void initState() {
     super.initState();
+    _isAndroidPermissionGranted();
+    _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
   }
 
-  void _requestIOSPermissions() {
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            MacOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
+  Future<void> _isAndroidPermissionGranted() async {
+    if (Platform.isAndroid) {
+      final bool granted = await flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()
+              ?.areNotificationsEnabled() ??
+          false;
+
+      setState(() {
+        _notificationsEnabled = granted;
+      });
+    }
   }
 
-  Future<void> _requestAndroidPermissions() async {
-    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-        flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+  Future<void> _requestPermissions() async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+    } else if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
 
-    final bool? granted = await androidImplementation?.requestPermission();
-
-    await showDialog<void>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: Text('Permission granted: $granted'),
-      ),
-    );
+      final bool? granted = await androidImplementation?.requestPermission();
+      setState(() {
+        _notificationsEnabled = granted ?? false;
+      });
+    }
   }
 
   void _configureDidReceiveLocalNotificationSubject() {
@@ -414,6 +428,7 @@ class _HomePageState extends State<HomePage> {
                         'Android-specific examples',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
+                      Text('notifications enabled: $_notificationsEnabled'),
                       PaddedElevatedButton(
                         buttonText:
                             'Check if notifications are enabled for this app',
@@ -421,9 +436,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       PaddedElevatedButton(
                         buttonText: 'Request permission (API 33+)',
-                        onPressed: () async {
-                          await _requestAndroidPermissions();
-                        },
+                        onPressed: () => _requestPermissions(),
                       ),
                       PaddedElevatedButton(
                         buttonText:
@@ -667,8 +680,9 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       PaddedElevatedButton(
-                          buttonText: 'Request permission',
-                          onPressed: _requestIOSPermissions),
+                        buttonText: 'Request permission',
+                        onPressed: _requestPermissions,
+                      ),
                       PaddedElevatedButton(
                         buttonText: 'Show notification with subtitle',
                         onPressed: () async {
