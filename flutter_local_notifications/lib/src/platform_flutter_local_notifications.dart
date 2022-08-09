@@ -324,6 +324,7 @@ class AndroidFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     RepeatInterval repeatInterval, {
+    int? calledAt,
     AndroidNotificationDetails? notificationDetails,
     String? payload,
     bool androidAllowWhileIdle = false,
@@ -336,7 +337,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': clock.now().millisecondsSinceEpoch,
+      'calledAt': calledAt ?? clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? '',
@@ -731,6 +732,7 @@ class IOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     RepeatInterval repeatInterval, {
+    int? calledAt,
     IOSNotificationDetails? notificationDetails,
     String? payload,
   }) async {
@@ -739,7 +741,7 @@ class IOSFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': clock.now().millisecondsSinceEpoch,
+      'calledAt': calledAt ?? clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
@@ -870,6 +872,7 @@ class MacOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     RepeatInterval repeatInterval, {
+    int? calledAt,
     MacOSNotificationDetails? notificationDetails,
     String? payload,
   }) async {
@@ -878,7 +881,7 @@ class MacOSFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': clock.now().millisecondsSinceEpoch,
+      'calledAt': calledAt ?? clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''

@@ -395,6 +395,7 @@ class FlutterLocalNotificationsPlugin {
     String? body,
     RepeatInterval repeatInterval,
     NotificationDetails notificationDetails, {
+    int? calledAt,
     String? payload,
     bool androidAllowWhileIdle = false,
   }) async {
@@ -404,7 +405,8 @@ class FlutterLocalNotificationsPlugin {
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
-          ?.periodicallyShow(id, title, body, repeatInterval,
+          ?.periodicallyShow(id, title, body, repeatInterval, 
+              calledAt: calledAt,
               notificationDetails: notificationDetails.android,
               payload: payload,
               androidAllowWhileIdle: androidAllowWhileIdle);
@@ -412,11 +414,13 @@ class FlutterLocalNotificationsPlugin {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.periodicallyShow(id, title, body, repeatInterval,
+              calledAt: calledAt,
               notificationDetails: notificationDetails.iOS, payload: payload);
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
           ?.periodicallyShow(id, title, body, repeatInterval,
+              calledAt: calledAt,
               notificationDetails: notificationDetails.macOS, payload: payload);
     } else {
       await FlutterLocalNotificationsPlatform.instance
