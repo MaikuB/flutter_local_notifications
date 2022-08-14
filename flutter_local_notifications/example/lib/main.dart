@@ -227,22 +227,10 @@ class _HomePageState extends State<HomePage> {
           flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
 
-      unawaited(
-          androidImplementation?.requestPermission().then((bool? granted) {
-        setState(() {
-          _notificationsEnabled = granted ?? false;
-        });
-      }));
-      unawaited(
-          androidImplementation?.requestPermission().then((bool? granted) {
-        setState(() {
-          _notificationsEnabled = granted ?? false;
-        });
-      }));
-      // final bool? granted = await androidImplementation?.requestPermission();
-      // setState(() {
-      //   _notificationsEnabled = granted ?? false;
-      // });
+      final bool? granted = await androidImplementation?.requestPermission();
+      setState(() {
+        _notificationsEnabled = granted ?? false;
+      });
     }
   }
 
