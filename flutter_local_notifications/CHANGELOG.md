@@ -1,3 +1,7 @@
+# [10.0.0-dev.19]
+
+* Includes changes from 9.7.1 that fixes a crash around calling `getNotificationAppLaunchDetails` on Android
+
 # [10.0.0-dev.18]
 
 * [Android] added null checks around notification action inputs
