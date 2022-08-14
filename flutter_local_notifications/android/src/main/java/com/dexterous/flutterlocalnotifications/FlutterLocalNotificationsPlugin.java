@@ -169,7 +169,6 @@ public class FlutterLocalNotificationsPlugin
   private MethodChannel channel;
   private Context applicationContext;
   private Activity mainActivity;
-  private Intent launchIntent;
 
   @SuppressWarnings("deprecation")
   public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
@@ -1221,9 +1220,6 @@ public class FlutterLocalNotificationsPlugin
 
   private void setActivity(Activity flutterActivity) {
     this.mainActivity = flutterActivity;
-    if (mainActivity != null) {
-      launchIntent = mainActivity.getIntent();
-    }
   }
 
   private void onAttachedToEngine(Context context, BinaryMessenger binaryMessenger) {
@@ -1244,7 +1240,6 @@ public class FlutterLocalNotificationsPlugin
   public void onAttachedToActivity(ActivityPluginBinding binding) {
     binding.addOnNewIntentListener(this);
     mainActivity = binding.getActivity();
-    launchIntent = mainActivity.getIntent();
   }
 
   @Override
@@ -1456,8 +1451,22 @@ public class FlutterLocalNotificationsPlugin
     if (notificationLaunchedApp) {
       notificationAppLaunchDetails.put(
           "notificationResponse", extractNotificationResponseMap(launchIntent));
+    Boolean notificationLaunchedApp = false;
+    if (mainActivity != null) {
+      Intent launchIntent = mainActivity.getIntent();
+      notificationLaunchedApp =
+              launchIntent != null
+                      && (SELECT_NOTIFICATION.equals(launchIntent.getAction())
+                      || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(
+                      launchIntent.getAction()))
+                      && !launchedActivityFromHistory(launchIntent);
+      if (notificationLaunchedApp) {
+        notificationAppLaunchDetails.put(
+                "notificationResponse", extractNotificationResponseMap(launchIntent));
+      }
     }
 
+    notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
     result.success(notificationAppLaunchDetails);
   }
 
