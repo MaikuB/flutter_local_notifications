@@ -1183,9 +1183,6 @@ public class FlutterLocalNotificationsPlugin
 
   private void setActivity(Activity flutterActivity) {
     this.mainActivity = flutterActivity;
-    if (mainActivity != null) {
-      launchIntent = mainActivity.getIntent();
-    }
   }
 
   private void onAttachedToEngine(Context context, BinaryMessenger binaryMessenger) {
@@ -1207,7 +1204,6 @@ public class FlutterLocalNotificationsPlugin
     binding.addOnNewIntentListener(this);
     binding.addRequestPermissionsResultListener(this);
     mainActivity = binding.getActivity();
-    launchIntent = mainActivity.getIntent();
   }
 
   @Override
@@ -1365,14 +1361,18 @@ public class FlutterLocalNotificationsPlugin
   private void getNotificationAppLaunchDetails(Result result) {
     Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
     String payload = null;
-    Boolean notificationLaunchedApp =
-        mainActivity != null
-            && SELECT_NOTIFICATION.equals(mainActivity.getIntent().getAction())
-            && !launchedActivityFromHistory(mainActivity.getIntent());
-    notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
-    if (notificationLaunchedApp) {
-      payload = launchIntent.getStringExtra(PAYLOAD);
+    Boolean notificationLaunchedApp = false;
+    if (mainActivity != null) {
+      Intent launchIntent = mainActivity.getIntent();
+      notificationLaunchedApp =
+          launchIntent != null
+              && SELECT_NOTIFICATION.equals(launchIntent.getAction())
+              && !launchedActivityFromHistory(launchIntent);
+      if (notificationLaunchedApp) {
+        payload = launchIntent.getStringExtra(PAYLOAD);
+      }
     }
+    notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
     notificationAppLaunchDetails.put(PAYLOAD, payload);
     result.success(notificationAppLaunchDetails);
   }

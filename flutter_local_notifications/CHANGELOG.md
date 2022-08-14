@@ -1,3 +1,7 @@
+# [9.7.1]
+
+* [Android] updated how launch intent is read on Android for the `getNotificationAppLaunchDetails` method
+
 # [9.7.0]
 
 * [Android] added support to specify notification count via the `number` property that has been added to the `AndroidNotificationDetails` class. Thanks to the PR from [Katsuya Kato](https://github.com/katsuyax)
