@@ -25,7 +25,6 @@ import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
 
-import android.util.Log;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.core.app.*;
@@ -158,6 +157,7 @@ public class FlutterLocalNotificationsPlugin
   private Intent launchIntent;
   static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
   private PermissionRequestListener callback;
+  private boolean permissionRequestInProgress = false;
 
   @SuppressWarnings("deprecation")
   public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
@@ -1524,6 +1524,11 @@ public class FlutterLocalNotificationsPlugin
   }
 
   public void requestPermission(@NonNull PermissionRequestListener callback) {
+    if (permissionRequestInProgress) {
+      callback.complete(false);
+      return;
+    }
+
     this.callback = callback;
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -1532,9 +1537,11 @@ public class FlutterLocalNotificationsPlugin
               permission) == PackageManager.PERMISSION_GRANTED;
 
       if (!permissionGranted) {
+        permissionRequestInProgress = true;
         ActivityCompat.requestPermissions(mainActivity, new String[]{permission}, NOTIFICATION_PERMISSION_REQUEST_CODE);
       } else {
         this.callback.complete(true);
+        permissionRequestInProgress = false;
       }
     } else {
       NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mainActivity);
@@ -1542,12 +1549,12 @@ public class FlutterLocalNotificationsPlugin
     }
   }
 
-
   @Override
   public boolean onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
     if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
       boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
       callback.complete(granted);
+      permissionRequestInProgress = false;
       return granted;
     } else {
       return false;
