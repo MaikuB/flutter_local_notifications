@@ -84,6 +84,8 @@ import io.flutter.plugin.common.PluginRegistry;
 
 interface PermissionRequestListener {
   void complete(boolean granted);
+
+  void fail(String message);
 }
 
 
@@ -1242,7 +1244,17 @@ public class FlutterLocalNotificationsPlugin
         zonedSchedule(call, result);
         break;
       case REQUEST_PERMISSION_METHOD:
-        requestPermission(result::success);
+        requestPermission(new PermissionRequestListener() {
+          @Override
+          public void complete(boolean granted) {
+            result.success(granted);
+          }
+
+          @Override
+          public void fail(String message) {
+            result.error("PERMISSION_REQUEST_IN_PROGRESS", message, null);
+          }
+        });
         break;
       case PERIODICALLY_SHOW_METHOD:
       case SHOW_DAILY_AT_TIME_METHOD:
@@ -1525,7 +1537,7 @@ public class FlutterLocalNotificationsPlugin
 
   public void requestPermission(@NonNull PermissionRequestListener callback) {
     if (permissionRequestInProgress) {
-      callback.complete(false);
+      callback.fail("Another permission request in already in progress");
       return;
     }
 
