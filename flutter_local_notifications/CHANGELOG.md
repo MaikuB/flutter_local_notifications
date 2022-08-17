@@ -1,3 +1,7 @@
+# [9.8.0]
+
+* [Android] added `requestPermission` method to the `AndroidFlutterLocalNotificationsPlugin` class. This make use of the new feature added to Android 13 where an app can request permissions to show notifications. This isn't a breaking change but requires the Android 13 SDK installed and only apps targeting Android 13 can request the permission. The latter can be done by updating the targetSdkVersion in an app's `build.gradle` file to `33`. Thanks to the PR from [Bartek Pacia](https://github.com/bartekpacia). **Note**: the ability to request the permission as part of calling `initialize` will be added later on
+
 # [9.7.1]
 
 * [Android] updated how launch intent is read on Android for the `getNotificationAppLaunchDetails` method
