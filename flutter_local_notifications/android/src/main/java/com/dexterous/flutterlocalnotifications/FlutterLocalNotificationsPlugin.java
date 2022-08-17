@@ -105,7 +105,11 @@ interface PermissionRequestListener {
 /** FlutterLocalNotificationsPlugin */
 @Keep
 public class FlutterLocalNotificationsPlugin
-    implements MethodCallHandler, PluginRegistry.NewIntentListener, PluginRegistry.RequestPermissionsResultListener, FlutterPlugin, ActivityAware {
+    implements MethodCallHandler,
+        PluginRegistry.NewIntentListener,
+        PluginRegistry.RequestPermissionsResultListener,
+        FlutterPlugin,
+        ActivityAware {
 
   static final String PAYLOAD = "payload";
   static final String NOTIFICATION_ID = "notificationId";
@@ -168,8 +172,10 @@ public class FlutterLocalNotificationsPlugin
   private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE =
       "The resource %s could not be found. Please make sure it has been added as a raw resource to"
           + " your Android head project.";
-  private static final String PERMISSION_REQUEST_IN_PROGRESS_ERROR_CODE = "permissionRequestInProgress";
-  private static final String PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE = "Another permission request is already in progress";
+  private static final String PERMISSION_REQUEST_IN_PROGRESS_ERROR_CODE =
+      "permissionRequestInProgress";
+  private static final String PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE =
+      "Another permission request is already in progress";
   private static final String CANCEL_ID = "id";
   private static final String CANCEL_TAG = "tag";
   private static final String ACTION_ID = "actionId";
