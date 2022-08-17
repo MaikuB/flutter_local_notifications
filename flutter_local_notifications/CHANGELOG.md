@@ -1,6 +1,10 @@
+# [9.8.0+1]
+
+* Added more details to 9.8.0 changelog entry to mention that apps will need to change `compileSdkVersion` to 33 and also updated readme to mention this
+
 # [9.8.0]
 
-* [Android] added `requestPermission` method to the `AndroidFlutterLocalNotificationsPlugin` class. This make use of the new feature added to Android 13 where an app can request permissions to show notifications. This isn't a breaking change but requires the Android 13 SDK installed and only apps targeting Android 13 can request the permission. The latter can be done by updating the targetSdkVersion in an app's `build.gradle` file to `33`. Thanks to the PR from [Bartek Pacia](https://github.com/bartekpacia). **Note**: the ability to request the permission as part of calling `initialize` will be added later on
+* [Android] added `requestPermission` method to the `AndroidFlutterLocalNotificationsPlugin` class. This make use of the new feature added to Android 13 where an app can request permissions to show notifications. As the plugin's APIs don't have breaking changes, this is released a minor release. It does however, require the Android 13 SDK to be install installed and for apps to change the `compileSdkVersion` in their app's `build.gradle` to 33 as the plugin's `compileSdkVersion` is now 33. Only apps targeting Android 13 can request the permission as well. The latter can be done by updating the `targetSdkVersion` in an app's `build.gradle` file to `33`. Thanks to the PR from [Bartek Pacia](https://github.com/bartekpacia). **Note**: the ability to request the permission as part of calling `initialize` will be added later on
 
 # [9.7.1]
 
