@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
@@ -180,31 +179,59 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _linuxIconPathController =
       TextEditingController();
 
+  bool _notificationsEnabled = false;
+
   @override
   void initState() {
     super.initState();
+    _isAndroidPermissionGranted();
     _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
   }
 
-  void _requestPermissions() {
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            MacOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
+  Future<void> _isAndroidPermissionGranted() async {
+    if (Platform.isAndroid) {
+      final bool granted = await flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()
+              ?.areNotificationsEnabled() ??
+          false;
+
+      setState(() {
+        _notificationsEnabled = granted;
+      });
+    }
+  }
+
+  Future<void> _requestPermissions() async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+    } else if (Platform.isAndroid) {
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+
+      final bool? granted = await androidImplementation?.requestPermission();
+      setState(() {
+        _notificationsEnabled = granted ?? false;
+      });
+    }
   }
 
   void _configureDidReceiveLocalNotificationSubject() {
@@ -401,10 +428,15 @@ class _HomePageState extends State<HomePage> {
                         'Android-specific examples',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
+                      Text('notifications enabled: $_notificationsEnabled'),
                       PaddedElevatedButton(
                         buttonText:
                             'Check if notifications are enabled for this app',
                         onPressed: _areNotifcationsEnabledOnAndroid,
+                      ),
+                      PaddedElevatedButton(
+                        buttonText: 'Request permission (API 33+)',
+                        onPressed: () => _requestPermissions(),
                       ),
                       PaddedElevatedButton(
                         buttonText:
@@ -646,6 +678,10 @@ class _HomePageState extends State<HomePage> {
                       const Text(
                         'iOS and macOS-specific examples',
                         style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      PaddedElevatedButton(
+                        buttonText: 'Request permission',
+                        onPressed: _requestPermissions,
                       ),
                       PaddedElevatedButton(
                         buttonText: 'Show notification with subtitle',
@@ -2091,10 +2127,11 @@ class _HomePageState extends State<HomePage> {
   Future<void> _getActiveNotificationMessagingStyle(int id, String? tag) async {
     Widget dialogContent;
     try {
-      final messagingStyle = await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()!
-          .getActiveNotificationMessagingStyle(id, tag: tag);
+      final MessagingStyleInformation? messagingStyle =
+          await flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                  AndroidFlutterLocalNotificationsPlugin>()!
+              .getActiveNotificationMessagingStyle(id, tag: tag);
       if (messagingStyle == null) {
         dialogContent = const Text('No messaging style');
       } else {
@@ -2109,7 +2146,7 @@ class _HomePageState extends State<HomePage> {
             const Divider(color: Colors.black),
             if (messagingStyle.messages == null) const Text('No messages'),
             if (messagingStyle.messages != null)
-              for (final msg in messagingStyle.messages!)
+              for (final Message msg in messagingStyle.messages!)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -1,5 +1,6 @@
 package com.dexterous.flutterlocalnotifications;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -17,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.service.notification.StatusBarNotification;
@@ -25,10 +27,7 @@ import android.text.Spanned;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
-import androidx.core.app.AlarmManagerCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.app.Person;
+import androidx.core.app.*;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
@@ -83,10 +82,17 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
 
+interface PermissionRequestListener {
+  void complete(boolean granted);
+
+  void fail(String message);
+}
+
+
 /** FlutterLocalNotificationsPlugin */
 @Keep
 public class FlutterLocalNotificationsPlugin
-    implements MethodCallHandler, PluginRegistry.NewIntentListener, FlutterPlugin, ActivityAware {
+    implements MethodCallHandler, PluginRegistry.NewIntentListener, PluginRegistry.RequestPermissionsResultListener, FlutterPlugin, ActivityAware {
   private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
   private static final String DRAWABLE = "drawable";
   private static final String DEFAULT_ICON = "defaultIcon";
@@ -117,6 +123,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = "showWeeklyAtDayAndTime";
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
+  private static final String REQUEST_PERMISSION_METHOD = "requestPermission";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
   private static final String PAYLOAD = "payload";
   private static final String INVALID_ICON_ERROR_CODE = "INVALID_ICON";
@@ -149,12 +156,17 @@ public class FlutterLocalNotificationsPlugin
   private MethodChannel channel;
   private Context applicationContext;
   private Activity mainActivity;
+  private Intent launchIntent;
+  static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
+  private PermissionRequestListener callback;
+  private boolean permissionRequestInProgress = false;
 
   @SuppressWarnings("deprecation")
   public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
     FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
     plugin.setActivity(registrar.activity());
     registrar.addNewIntentListener(plugin);
+    registrar.addRequestPermissionsResultListener(plugin);
     plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
   }
 
@@ -1192,6 +1204,7 @@ public class FlutterLocalNotificationsPlugin
   @Override
   public void onAttachedToActivity(ActivityPluginBinding binding) {
     binding.addOnNewIntentListener(this);
+    binding.addRequestPermissionsResultListener(this);
     mainActivity = binding.getActivity();
   }
 
@@ -1203,6 +1216,7 @@ public class FlutterLocalNotificationsPlugin
   @Override
   public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
     binding.addOnNewIntentListener(this);
+    binding.addRequestPermissionsResultListener(this);
     mainActivity = binding.getActivity();
   }
 
@@ -1212,40 +1226,41 @@ public class FlutterLocalNotificationsPlugin
   }
 
   @Override
-  public void onMethodCall(MethodCall call, Result result) {
+  public void onMethodCall(MethodCall call, @NonNull final Result result) {
     switch (call.method) {
       case INITIALIZE_METHOD:
-        {
-          initialize(call, result);
-          break;
-        }
+        initialize(call, result);
+        break;
       case GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD:
-        {
-          getNotificationAppLaunchDetails(result);
-          break;
-        }
+        getNotificationAppLaunchDetails(result);
+        break;
       case SHOW_METHOD:
-        {
-          show(call, result);
-          break;
-        }
+        show(call, result);
+        break;
       case SCHEDULE_METHOD:
-        {
-          schedule(call, result);
-          break;
-        }
+        schedule(call, result);
+        break;
       case ZONED_SCHEDULE_METHOD:
-        {
-          zonedSchedule(call, result);
-          break;
-        }
+        zonedSchedule(call, result);
+        break;
+      case REQUEST_PERMISSION_METHOD:
+        requestPermission(new PermissionRequestListener() {
+          @Override
+          public void complete(boolean granted) {
+            result.success(granted);
+          }
+
+          @Override
+          public void fail(String message) {
+            result.error("PERMISSION_REQUEST_IN_PROGRESS", message, null);
+          }
+        });
+        break;
       case PERIODICALLY_SHOW_METHOD:
       case SHOW_DAILY_AT_TIME_METHOD:
       case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD:
-        {
-          repeat(call, result);
-          break;
-        }
+        repeat(call, result);
+        break;
       case CANCEL_METHOD:
         cancel(call, result);
         break;
@@ -1518,6 +1533,44 @@ public class FlutterLocalNotificationsPlugin
 
     saveScheduledNotifications(applicationContext, new ArrayList<NotificationDetails>());
     result.success(null);
+  }
+
+  public void requestPermission(@NonNull PermissionRequestListener callback) {
+    if (permissionRequestInProgress) {
+      callback.fail("Another permission request is already in progress");
+      return;
+    }
+
+    this.callback = callback;
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      String permission = Manifest.permission.POST_NOTIFICATIONS;
+      boolean permissionGranted = ContextCompat.checkSelfPermission(mainActivity,
+              permission) == PackageManager.PERMISSION_GRANTED;
+
+      if (!permissionGranted) {
+        permissionRequestInProgress = true;
+        ActivityCompat.requestPermissions(mainActivity, new String[]{permission}, NOTIFICATION_PERMISSION_REQUEST_CODE);
+      } else {
+        this.callback.complete(true);
+        permissionRequestInProgress = false;
+      }
+    } else {
+      NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mainActivity);
+      this.callback.complete(notificationManager.areNotificationsEnabled());
+    }
+  }
+
+  @Override
+  public boolean onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+      boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+      callback.complete(granted);
+      permissionRequestInProgress = false;
+      return granted;
+    } else {
+      return false;
+    }
   }
 
   @Override
