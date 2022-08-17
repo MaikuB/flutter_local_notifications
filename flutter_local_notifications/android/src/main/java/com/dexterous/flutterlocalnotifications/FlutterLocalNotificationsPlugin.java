@@ -88,11 +88,14 @@ interface PermissionRequestListener {
   void fail(String message);
 }
 
-
 /** FlutterLocalNotificationsPlugin */
 @Keep
 public class FlutterLocalNotificationsPlugin
-    implements MethodCallHandler, PluginRegistry.NewIntentListener, PluginRegistry.RequestPermissionsResultListener, FlutterPlugin, ActivityAware {
+    implements MethodCallHandler,
+        PluginRegistry.NewIntentListener,
+        PluginRegistry.RequestPermissionsResultListener,
+        FlutterPlugin,
+        ActivityAware {
   private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
   private static final String DRAWABLE = "drawable";
   private static final String DEFAULT_ICON = "defaultIcon";
@@ -1244,17 +1247,18 @@ public class FlutterLocalNotificationsPlugin
         zonedSchedule(call, result);
         break;
       case REQUEST_PERMISSION_METHOD:
-        requestPermission(new PermissionRequestListener() {
-          @Override
-          public void complete(boolean granted) {
-            result.success(granted);
-          }
+        requestPermission(
+            new PermissionRequestListener() {
+              @Override
+              public void complete(boolean granted) {
+                result.success(granted);
+              }
 
-          @Override
-          public void fail(String message) {
-            result.error("PERMISSION_REQUEST_IN_PROGRESS", message, null);
-          }
-        });
+              @Override
+              public void fail(String message) {
+                result.error("PERMISSION_REQUEST_IN_PROGRESS", message, null);
+              }
+            });
         break;
       case PERIODICALLY_SHOW_METHOD:
       case SHOW_DAILY_AT_TIME_METHOD:
@@ -1545,12 +1549,14 @@ public class FlutterLocalNotificationsPlugin
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
       String permission = Manifest.permission.POST_NOTIFICATIONS;
-      boolean permissionGranted = ContextCompat.checkSelfPermission(mainActivity,
-              permission) == PackageManager.PERMISSION_GRANTED;
+      boolean permissionGranted =
+          ContextCompat.checkSelfPermission(mainActivity, permission)
+              == PackageManager.PERMISSION_GRANTED;
 
       if (!permissionGranted) {
         permissionRequestInProgress = true;
-        ActivityCompat.requestPermissions(mainActivity, new String[]{permission}, NOTIFICATION_PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(
+            mainActivity, new String[] {permission}, NOTIFICATION_PERMISSION_REQUEST_CODE);
       } else {
         this.callback.complete(true);
         permissionRequestInProgress = false;
@@ -1562,9 +1568,11 @@ public class FlutterLocalNotificationsPlugin
   }
 
   @Override
-  public boolean onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+  public boolean onRequestPermissionsResult(
+      int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
     if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
-      boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+      boolean granted =
+          grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
       callback.complete(granted);
       permissionRequestInProgress = false;
       return granted;
