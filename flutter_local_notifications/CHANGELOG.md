@@ -1,3 +1,10 @@
+# [10.0.0-dev.20]
+
+* Includes changes from 9.8.0
+* [Android] **Breaking change** the following error codes included in `PlatformException`s that can occur on Android have been updated
+ * `GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE` -> `getActiveNotificationMessagingStyle`
+ * `PERMISSION_REQUEST_IN_PROGRESS` -> `permissionRequestInProgress`
+
 # [10.0.0-dev.19]
 
 * Includes changes from 9.7.1 that fixes a crash around calling `getNotificationAppLaunchDetails` on Android

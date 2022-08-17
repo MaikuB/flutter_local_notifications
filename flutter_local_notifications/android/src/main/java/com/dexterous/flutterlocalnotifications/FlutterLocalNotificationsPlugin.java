@@ -1,7 +1,7 @@
 package com.dexterous.flutterlocalnotifications;
 
-import android.annotation.SuppressLint;
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -40,9 +40,6 @@ import androidx.core.app.NotificationCompat.Action.Builder;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.app.Person;
 import androidx.core.app.RemoteInput;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.IconCompat;
-
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
@@ -160,7 +157,7 @@ public class FlutterLocalNotificationsPlugin
       "Android version must be 6.0 or newer to use getActiveNotifications";
   private static final String GET_NOTIFICATION_CHANNELS_ERROR_CODE = "getNotificationChannelsError";
   private static final String GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE =
-      "GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE";
+      "getActiveNotificationMessagingStyleError";
   private static final String INVALID_LED_DETAILS_ERROR_MESSAGE =
       "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of"
           + " Android before Oreo";
@@ -171,6 +168,8 @@ public class FlutterLocalNotificationsPlugin
   private static final String INVALID_RAW_RESOURCE_ERROR_MESSAGE =
       "The resource %s could not be found. Please make sure it has been added as a raw resource to"
           + " your Android head project.";
+  private static final String PERMISSION_REQUEST_IN_PROGRESS_ERROR_CODE = "permissionRequestInProgress";
+  private static final String PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE = "Another permission request is already in progress";
   private static final String CANCEL_ID = "id";
   private static final String CANCEL_TAG = "tag";
   private static final String ACTION_ID = "actionId";
@@ -182,7 +181,6 @@ public class FlutterLocalNotificationsPlugin
   private MethodChannel channel;
   private Context applicationContext;
   private Activity mainActivity;
-  private Intent launchIntent;
   static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
   private PermissionRequestListener callback;
   private boolean permissionRequestInProgress = false;
@@ -1309,7 +1307,7 @@ public class FlutterLocalNotificationsPlugin
 
               @Override
               public void fail(String message) {
-                result.error("PERMISSION_REQUEST_IN_PROGRESS", message, null);
+                result.error(PERMISSION_REQUEST_IN_PROGRESS_ERROR_CODE, message, null);
               }
             });
         break;
