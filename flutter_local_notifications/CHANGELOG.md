@@ -1,3 +1,28 @@
+# [9.8.0+1]
+
+* Added more details to 9.8.0 changelog entry to mention that apps will need to change `compileSdkVersion` to 33 and also updated readme to mention this
+
+# [9.8.0]
+
+* [Android] added `requestPermission` method to the `AndroidFlutterLocalNotificationsPlugin` class. This make use of the new feature added to Android 13 where an app can request permissions to show notifications. As the plugin's APIs don't have breaking changes, this is released a minor release. It does however, require the Android 13 SDK to be install installed and for apps to change the `compileSdkVersion` in their app's `build.gradle` to 33 as the plugin's `compileSdkVersion` is now 33. Only apps targeting Android 13 can request the permission as well. The latter can be done by updating the `targetSdkVersion` in an app's `build.gradle` file to `33`. Thanks to the PR from [Bartek Pacia](https://github.com/bartekpacia). **Note**: the ability to request the permission as part of calling `initialize` will be added later on
+
+# [9.7.1]
+
+* [Android] updated how launch intent is read on Android for the `getNotificationAppLaunchDetails` method
+
+# [9.7.0]
+
+* [Android] added support to specify notification count via the `number` property that has been added to the `AndroidNotificationDetails` class. Thanks to the PR from [Katsuya Kato](https://github.com/katsuyax)
+* Updated readme so that link to icon design guidance points to the archived version as the original link is now returning 404 not found. Thanks to the PR from [Zaldy Pagaduan Jr.](https://github.com/zopagaduanjr)
+
+# [9.6.1]
+
+* [macOS] fixed issue [1623](https://github.com/MaikuB/flutter_local_notifications/issues/1623) where calling `zonedSchedule` with `matchDateTimeComponents` set to `dayOfMonthAndTime` or `dateAndTime` led to an error
+
+# [9.6.0]
+
+* [Linux] Bumped dependency on `flutter_local_notifications_linux` to `^0.5.0+1` where support for icons to be specified via a file path was added by [Yaroslav Pronin](https://github.com/proninyaroslav)
+
 # [9.5.3+1]
 
 * Updated example app with to use updated Proguard rules for GSON
