@@ -326,6 +326,7 @@ class AudioAttributesUsage {
         media,
         notification,
         notificationEvent,
+        notificationRingtone,
         unknown,
         voiceCommunication,
         voiceCommunicationSignalling,
