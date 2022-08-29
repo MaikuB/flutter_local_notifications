@@ -173,6 +173,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
               'actions': <Map<String, Object>>[
                 <String, Object>{
                   'id': 'action1',
