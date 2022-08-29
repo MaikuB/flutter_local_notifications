@@ -971,8 +971,11 @@ public class FlutterLocalNotificationsPlugin
       notificationChannel.setDescription(notificationChannelDetails.description);
       notificationChannel.setGroup(notificationChannelDetails.groupId);
       if (notificationChannelDetails.playSound) {
+        Integer audioAttributesUsage = notificationChannelDetails.audioAttributesUsage != null
+                ? notificationChannelDetails.audioAttributesUsage
+                : AudioAttributes.USAGE_NOTIFICATION;
         AudioAttributes audioAttributes =
-            new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build();
+                new AudioAttributes.Builder().setUsage(audioAttributesUsage).build();
         Uri uri =
             retrieveSoundResourceUri(
                 context, notificationChannelDetails.sound, notificationChannelDetails.soundSource);

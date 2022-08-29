@@ -53,6 +53,7 @@ class AndroidNotificationDetails {
     this.tag,
     this.colorized = false,
     this.number,
+    this.audioAttributesUsage = AudioAttributesUsage.notification,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -299,4 +300,9 @@ class AndroidNotificationDetails {
   /// If not supported, this value is ignored.
   /// See https://developer.android.com/training/notify-user/badges#set_custom_notification_count
   final int? number;
+
+  /// The attribute describing what is the intended use of the audio signal,
+  /// such as alarm or ringtone set in [`AudioAttributes.Builder`](https://developer.android.com/reference/android/media/AudioAttributes.Builder#setUsage(int))
+  /// https://developer.android.com/reference/android/media/AudioAttributes
+  final AudioAttributesUsage audioAttributesUsage;
 }
