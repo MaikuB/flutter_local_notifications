@@ -218,6 +218,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'tag': tag,
         'colorized': colorized,
         'number': number,
+        'audioAttributesUsage': audioAttributesUsage.value,
       }
         ..addAll(_convertActionsToMap(actions))
         ..addAll(_convertStyleInformationToMap())
