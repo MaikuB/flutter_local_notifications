@@ -270,7 +270,8 @@ public class NotificationDetails implements Serializable {
       notificationDetails.tag = (String) platformChannelSpecifics.get(TAG);
       notificationDetails.colorized = (Boolean) platformChannelSpecifics.get(COLORIZED);
       notificationDetails.number = (Integer) platformChannelSpecifics.get(NUMBER);
-      notificationDetails.audioAttributesUsage = (Integer) platformChannelSpecifics.get(AUDIO_ATTRIBUTES_USAGE);
+      notificationDetails.audioAttributesUsage =
+          (Integer) platformChannelSpecifics.get(AUDIO_ATTRIBUTES_USAGE);
     }
   }
 
