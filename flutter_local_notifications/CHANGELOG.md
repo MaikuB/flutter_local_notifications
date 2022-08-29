@@ -104,6 +104,10 @@
   * `GET_ACTIVE_NOTIFICATIONS_ERROR_CODE` -> `unsupported_os_version`
   * `GET_NOTIFICATION_CHANNELS_ERROR_CODE` -> `getNotificationChannelsError`
 
+# [9.9.0]
+
+* [Android] added the ability to specify audio attributes of a notification channel via the `audioAttributesUsage` property belonging to the `AndroidNotificationChannel` and `AndroidNotificationDetails` classes. Thanks to the PR from [Jonas Bornold](https://github.com/bornold)
+
 # [9.8.0+1]
 
 * Added more details to 9.8.0 changelog entry to mention that apps will need to change `compileSdkVersion` to 33 and also updated readme to mention this
