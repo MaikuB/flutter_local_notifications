@@ -262,3 +262,83 @@ enum NotificationVisibility {
   /// Do not reveal any part of this notification on a secure lockscreen.
   secret,
 }
+
+/// The available audio attributes usages for an Android service.
+@immutable
+class AudioAttributesUsage {
+  /// Constructs an instance of [AudioAttributesUsage].
+  const AudioAttributesUsage._(this.value);
+
+  /// Corresponds to [`AudioAttributes.USAGE_ALARM`](https://developer.android.com/reference/android/media/AudioAttributes#USAGE_ALARM).
+  static const AudioAttributesUsage alarm = AudioAttributesUsage._(4);
+
+  /// Corresponds to [`AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY`](https://developer.android.com/reference/android/media/AudioAttributes#USAGE_ASSISTANCE_ACCESSIBILITY).
+  static const AudioAttributesUsage assistanceAccessibility =
+      AudioAttributesUsage._(11);
+
+  /// Corresponds to [`AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE`](https://developer.android.com/reference/android/media/AudioAttributes#USAGE_ASSISTANCE_NAVIGATION_GUIDANCE).
+  static const AudioAttributesUsage assistanceNavigationGuidance =
+      AudioAttributesUsage._(12);
+
+  /// Corresponds to [`AudioAttributes.USAGE_ASSISTANCE_SONIFICATION`](https://developer.android.com/reference/android/media/AudioAttributes#USAGE_ASSISTANCE_SONIFICATION).
+  static const AudioAttributesUsage assistanceSonification =
+      AudioAttributesUsage._(13);
+
+  /// Corresponds to [`AudioAttributes.USAGE_ASSISTANT`](https://developer.android.com/reference/android/media/AudioAttributes#USAGE_ASSISTANT).
+  static const AudioAttributesUsage assistant = AudioAttributesUsage._(16);
+
+  /// Corresponds to [`AudioAttributes.USAGE_GAME`](https://developer.android.com/reference/android/media/AudioAttributes#USAGE_GAME).
+  static const AudioAttributesUsage game = AudioAttributesUsage._(14);
+
+  /// Corresponds to [`AudioAttributes.USAGE_MEDIA`](https://developer.android.com/reference/android/media/AudioAttributes#USAGE_MEDIA).
+  static const AudioAttributesUsage media = AudioAttributesUsage._(1);
+
+  /// Corresponds to [`AudioAttributes.USAGE_NOTIFICATION`](https://developer.android.com/reference/android/media/AudioAttributes#USAGE_NOTIFICATION).
+  static const AudioAttributesUsage notification = AudioAttributesUsage._(5);
+
+  /// Corresponds to [`AudioAttributes.USAGE_NOTIFICATION_EVENT`](https://developer.android.com/reference/android/media/AudioAttributes#USAGE_NOTIFICATION_EVENT).
+  static const AudioAttributesUsage notificationEvent =
+      AudioAttributesUsage._(10);
+
+  /// Corresponds to [`AudioAttributes.USAGE_NOTIFICATION_RINGTONE`](https://developer.android.com/reference/android/media/AudioAttributes#USAGE_NOTIFICATION_RINGTONE).
+  static const AudioAttributesUsage notificationRingtone =
+      AudioAttributesUsage._(6);
+
+  /// Corresponds to [`AudioAttributes.USAGE_UNKNOWN`](https://developer.android.com/reference/android/media/AudioAttributes#USAGE_UNKNOWN).
+  static const AudioAttributesUsage unknown = AudioAttributesUsage._(0);
+
+  /// Corresponds to [`AudioAttributes.USAGE_VOICE_COMMUNICATION`](https://developer.android.com/reference/android/media/AudioAttributes#USAGE_VOICE_COMMUNICATION).
+  static const AudioAttributesUsage voiceCommunication =
+      AudioAttributesUsage._(2);
+
+  /// Corresponds to [`AudioAttributes.USAGE_VOICE_COMMUNICATION_SIGNALLING`](https://developer.android.com/reference/android/media/AudioAttributes#USAGE_VOICE_COMMUNICATION_SIGNALLING).
+  static const AudioAttributesUsage voiceCommunicationSignalling =
+      AudioAttributesUsage._(3);
+
+  /// All the possible values for the [AudioAttributesUsage] enumeration.
+  static List<AudioAttributesUsage> get values => <AudioAttributesUsage>[
+        alarm,
+        assistanceAccessibility,
+        assistanceNavigationGuidance,
+        assistanceSonification,
+        assistant,
+        game,
+        media,
+        notification,
+        notificationEvent,
+        notificationRingtone,
+        unknown,
+        voiceCommunication,
+        voiceCommunicationSignalling,
+      ];
+
+  /// The integer representation.
+  final int value;
+
+  @override
+  int get hashCode => value;
+
+  @override
+  bool operator ==(Object other) =>
+      other is AudioAttributesUsage && other.value == value;
+}

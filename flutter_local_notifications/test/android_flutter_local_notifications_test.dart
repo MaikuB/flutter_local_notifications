@@ -148,6 +148,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -229,6 +230,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -311,6 +313,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -394,6 +397,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -481,6 +485,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -567,6 +572,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -652,6 +658,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -746,6 +753,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -850,6 +858,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -944,6 +953,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1048,6 +1058,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1139,6 +1150,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1237,6 +1249,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1320,6 +1333,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1406,6 +1420,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1517,6 +1532,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1641,6 +1657,7 @@ void main() {
               'tag': null,
               'colorized': false,
               'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1732,6 +1749,7 @@ void main() {
                     'tag': null,
                     'colorized': false,
                     'number': null,
+                    'audioAttributesUsage': 5,
                   },
                 }));
           });
@@ -1828,6 +1846,7 @@ void main() {
                 'tag': null,
                 'colorized': false,
                 'number': null,
+                'audioAttributesUsage': 5,
               },
             }));
       });
@@ -1923,6 +1942,7 @@ void main() {
                 'tag': null,
                 'colorized': false,
                 'number': null,
+                'audioAttributesUsage': 5,
               },
             }));
       });
@@ -2018,6 +2038,7 @@ void main() {
                 'tag': null,
                 'colorized': false,
                 'number': null,
+                'audioAttributesUsage': 5,
               },
             }));
       });
@@ -2323,6 +2344,7 @@ void main() {
                   'tag': null,
                   'colorized': true,
                   'number': null,
+                  'audioAttributesUsage': 5,
                 },
               },
               'startType': AndroidServiceStartType.startSticky.value,
