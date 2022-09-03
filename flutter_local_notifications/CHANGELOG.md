@@ -1,6 +1,6 @@
 # [10.0.0-dev.22]
 
-* Updated minimum Flutter version to 2.8 as that aligns with the minimum Dart SDK version of 2.1.5 required by one of `flutter_local_notifications_linux`'s dependencies (dbus)
+* Updated minimum Flutter version to 2.8 as that aligns with the minimum Dart SDK version of 2.1.5 required by one of `flutter_local_notifications_linux`'s dependencies (`dbus`)
 * Includes changes from 9.9.1
 
 # [10.0.0-dev.21]
