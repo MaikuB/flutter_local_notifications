@@ -372,6 +372,7 @@ class FlutterLocalNotificationsPlugin {
     required String? body,
     required NotificationDetails notificationDetails,
     required ScheduleNotificationRequest scheduleNotificationRequest,
+    String? payload,
   }) async {
     if (kIsWeb) {
       return;
@@ -385,7 +386,7 @@ class FlutterLocalNotificationsPlugin {
               body,
               scheduleNotificationRequest.scheduledDate,
               notificationDetails.android,
-              payload: scheduleNotificationRequest.payload,
+              payload: payload,
               androidAllowWhileIdle:
                   scheduleNotificationRequest.androidScheduleType ==
                       ScheduleType.allowIdle,
@@ -405,7 +406,7 @@ class FlutterLocalNotificationsPlugin {
               notificationDetails.iOS,
               uiLocalNotificationDateInterpretation: scheduleNotificationRequest
                   .uiLocalNotificationDateInterpretation,
-              payload: scheduleNotificationRequest.payload,
+              payload: payload,
               matchDateTimeComponents:
                   scheduleNotificationRequest.matchDateTimeComponents);
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
@@ -417,7 +418,7 @@ class FlutterLocalNotificationsPlugin {
               body,
               scheduleNotificationRequest.scheduledDate,
               notificationDetails.macOS,
-              payload: scheduleNotificationRequest.payload,
+              payload: payload,
               matchDateTimeComponents:
                   scheduleNotificationRequest.matchDateTimeComponents);
     }
