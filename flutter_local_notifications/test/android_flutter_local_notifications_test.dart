@@ -1,11 +1,15 @@
 import 'dart:typed_data';
 import 'dart:ui';
+
 import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_local_notifications/src/notification_schedule_request.dart';
 import 'package:flutter_local_notifications/src/platform_specifics/android/enums.dart';
+import 'package:flutter_local_notifications/src/schedule_accuracy.dart';
+import 'package:flutter_local_notifications/src/schedule_type.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -1696,7 +1700,7 @@ void main() {
                   'repeatInterval': repeatInterval.index,
                   'platformSpecifics': <String, Object?>{
                     'allowWhileIdle': false,
-                    'useInexactMode': false,
+                    'useInexactMode': true,
                     'icon': null,
                     'channelId': 'channelId',
                     'channelName': 'channelName',
@@ -1772,16 +1776,21 @@ void main() {
         const AndroidNotificationDetails androidNotificationDetails =
             AndroidNotificationDetails('channelId', 'channelName',
                 channelDescription: 'channelDescription');
-        await flutterLocalNotificationsPlugin.zonedSchedule(
-            1,
-            'notification title',
-            'notification body',
-            scheduledDate,
-            const NotificationDetails(android: androidNotificationDetails),
-            androidAllowWhileIdle: true,
-            androidUseInexactMode: true,
+        await flutterLocalNotificationsPlugin.scheduleNotification(
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails),
+          scheduleNotificationRequest: ScheduleNotificationRequest(
+            matchDateTimeComponents: null,
+            scheduledDate: scheduledDate,
+            androidScheduleAccuracy: ScheduleAccuracy.regular,
+            androidScheduleType: ScheduleType.allowIdle,
             uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime);
+                UILocalNotificationDateInterpretation.absoluteTime,
+          ),
+        );
         expect(
             log.last,
             isMethodCall('zonedSchedule', arguments: <String, Object>{
@@ -1866,17 +1875,21 @@ void main() {
         const AndroidNotificationDetails androidNotificationDetails =
             AndroidNotificationDetails('channelId', 'channelName',
                 channelDescription: 'channelDescription');
-        await flutterLocalNotificationsPlugin.zonedSchedule(
-            1,
-            'notification title',
-            'notification body',
-            scheduledDate,
-            const NotificationDetails(android: androidNotificationDetails),
-            androidAllowWhileIdle: true,
-            androidUseInexactMode: false,
+        await flutterLocalNotificationsPlugin.scheduleNotification(
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+          const NotificationDetails(android: androidNotificationDetails),
+          scheduleNotificationRequest: ScheduleNotificationRequest(
+            matchDateTimeComponents: DateTimeComponents.time,
+            scheduledDate: scheduledDate,
+            androidScheduleAccuracy: ScheduleAccuracy.exact,
+            androidScheduleType: ScheduleType.allowIdle,
             uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
-            matchDateTimeComponents: DateTimeComponents.time);
+            UILocalNotificationDateInterpretation.absoluteTime,
+          ),
+        );
         expect(
             log.last,
             isMethodCall('zonedSchedule', arguments: <String, Object>{
@@ -1962,16 +1975,21 @@ void main() {
         const AndroidNotificationDetails androidNotificationDetails =
             AndroidNotificationDetails('channelId', 'channelName',
                 channelDescription: 'channelDescription');
-        await flutterLocalNotificationsPlugin.zonedSchedule(
-            1,
-            'notification title',
-            'notification body',
-            scheduledDate,
-            const NotificationDetails(android: androidNotificationDetails),
-            androidAllowWhileIdle: true,
+        await flutterLocalNotificationsPlugin.scheduleNotification(
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+          const NotificationDetails(android: androidNotificationDetails),
+          scheduleNotificationRequest: ScheduleNotificationRequest(
+            matchDateTimeComponents:  DateTimeComponents.dayOfWeekAndTime,
+            scheduledDate: scheduledDate,
+            androidScheduleAccuracy: ScheduleAccuracy.exact,
+            androidScheduleType: ScheduleType.allowIdle,
             uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
-            matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+            UILocalNotificationDateInterpretation.absoluteTime,
+          ),
+        );
         expect(
             log.last,
             isMethodCall('zonedSchedule', arguments: <String, Object>{

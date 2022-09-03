@@ -342,7 +342,7 @@ class AndroidFlutterLocalNotificationsPlugin
     AndroidNotificationDetails? notificationDetails,
     String? payload,
     bool androidAllowWhileIdle = false,
-    bool androidUseInexactMode = false,
+    bool androidUseInexactMode = true,
   }) async {
     validateId(id);
     final Map<String, Object?> serializedPlatformSpecifics =

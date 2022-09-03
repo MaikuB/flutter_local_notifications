@@ -7,8 +7,11 @@ import 'package:timezone/timezone.dart';
 
 import 'initialization_settings.dart';
 import 'notification_details.dart';
+import 'notification_schedule_request.dart';
 import 'platform_flutter_local_notifications.dart';
 import 'platform_specifics/ios/enums.dart';
+import 'schedule_accuracy.dart';
+import 'schedule_type.dart';
 import 'types.dart';
 
 /// Provides cross-platform functionality for displaying local notifications.
@@ -333,6 +336,8 @@ class FlutterLocalNotificationsPlugin {
   /// 10:00 and the value of the [matchDateTimeComponents] is
   /// [DateTimeComponents.time], then the next time a notification will
   /// appear is 2020-10-20 10:00.
+  @Deprecated('Deprecated due to problems with time zones. Use scheduleNotification '
+      'instead.')
   Future<void> zonedSchedule(
     int id,
     String? title,
@@ -342,9 +347,31 @@ class FlutterLocalNotificationsPlugin {
     required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
     required bool androidAllowWhileIdle,
-    bool androidUseInexactMode = false,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
+  }) =>
+      scheduleNotification(
+        id: id,
+        title: title,
+        body: body,
+        notificationDetails: notificationDetails,
+        scheduleNotificationRequest: ScheduleNotificationRequest(
+          matchDateTimeComponents: matchDateTimeComponents,
+          scheduledDate: scheduledDate,
+          androidScheduleType: androidAllowWhileIdle
+              ? ScheduleType.allowIdle
+              : ScheduleType.regular,
+          uiLocalNotificationDateInterpretation:
+              uiLocalNotificationDateInterpretation,
+        ),
+      );
+
+  Future<void> scheduleNotification({
+    required int id,
+    required String? title,
+    required String? body,
+    required NotificationDetails notificationDetails,
+    required ScheduleNotificationRequest scheduleNotificationRequest,
   }) async {
     if (kIsWeb) {
       return;
@@ -353,27 +380,46 @@ class FlutterLocalNotificationsPlugin {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()!
           .zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails.android,
-              payload: payload,
-              androidAllowWhileIdle: androidAllowWhileIdle,
-              androidUseInexactMode: androidUseInexactMode,
-              matchDateTimeComponents: matchDateTimeComponents);
+              id,
+              title,
+              body,
+              scheduleNotificationRequest.scheduledDate,
+              notificationDetails.android,
+              payload: scheduleNotificationRequest.payload,
+              androidAllowWhileIdle:
+                  scheduleNotificationRequest.androidScheduleType ==
+                      ScheduleType.allowIdle,
+              androidUseInexactMode:
+                  scheduleNotificationRequest.androidScheduleAccuracy ==
+                      ScheduleAccuracy.regular,
+              matchDateTimeComponents:
+                  scheduleNotificationRequest.matchDateTimeComponents);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails.iOS,
-              uiLocalNotificationDateInterpretation:
-                  uiLocalNotificationDateInterpretation,
-              payload: payload,
-              matchDateTimeComponents: matchDateTimeComponents);
+              id,
+              title,
+              body,
+              scheduleNotificationRequest.scheduledDate,
+              notificationDetails.iOS,
+              uiLocalNotificationDateInterpretation: scheduleNotificationRequest
+                  .uiLocalNotificationDateInterpretation,
+              payload: scheduleNotificationRequest.payload,
+              matchDateTimeComponents:
+                  scheduleNotificationRequest.matchDateTimeComponents);
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
           ?.zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails.macOS,
-              payload: payload,
-              matchDateTimeComponents: matchDateTimeComponents);
+              id,
+              title,
+              body,
+              scheduleNotificationRequest.scheduledDate,
+              notificationDetails.macOS,
+              payload: scheduleNotificationRequest.payload,
+              matchDateTimeComponents:
+                  scheduleNotificationRequest.matchDateTimeComponents);
     }
   }
 
@@ -399,7 +445,6 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     String? payload,
     bool androidAllowWhileIdle = false,
-    bool androidUseInexactMode = false,
   }) async {
     if (kIsWeb) {
       return;
