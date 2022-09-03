@@ -1,3 +1,7 @@
+# [9.9.1]
+
+* [Android] plugin has been updated to minimise clashing with other plugins that handle permission requests. Thanks to the PR from [Tiernan](https://github.com/nvx)
+
 # [9.9.0]
 
 * [Android] added the ability to specify audio attributes of a notification channel via the `audioAttributesUsage` property belonging to the `AndroidNotificationChannel` and `AndroidNotificationDetails` classes. Thanks to the PR from [Jonas Bornold](https://github.com/bornold)
