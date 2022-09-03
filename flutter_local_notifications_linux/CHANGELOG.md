@@ -1,3 +1,7 @@
+## [1.0.0-dev.4]
+
+* Updated minimum Flutter version to 2.8 to align with the minimum Dart SDK version of 2.1.5 required by dbus
+
 ## [1.0.0-dev.3]
 
 * Includes changes from the 0.5.1 stable release
