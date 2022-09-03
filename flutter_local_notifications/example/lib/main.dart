@@ -341,7 +341,7 @@ class _HomePageState extends State<HomePage> {
                             'Schedule notification to appear in 5 seconds '
                             'based on local time zone',
                         onPressed: () async {
-                          await _zonedScheduleNotification();
+                          await _scheduleNotification();
                         },
                       ),
                       PaddedElevatedButton(
@@ -926,22 +926,24 @@ class _HomePageState extends State<HomePage> {
           ),
           TextButton(
             onPressed: () async {
-              await flutterLocalNotificationsPlugin.zonedSchedule(
-                  0,
-                  'scheduled title',
-                  'scheduled body',
-                  tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
-                  const NotificationDetails(
-                      android: AndroidNotificationDetails(
-                          'full screen channel id', 'full screen channel name',
-                          channelDescription: 'full screen channel description',
-                          priority: Priority.high,
-                          importance: Importance.high,
-                          fullScreenIntent: true)),
-                  androidAllowWhileIdle: true,
+              await flutterLocalNotificationsPlugin.scheduleNotification(
+                id: 0,
+                title: 'scheduled title',
+                body: 'scheduled body',
+                notificationDetails: const NotificationDetails(
+                    android: AndroidNotificationDetails(
+                        'full screen channel id', 'full screen channel name',
+                        channelDescription: 'full screen channel description',
+                        priority: Priority.high,
+                        importance: Importance.high,
+                        fullScreenIntent: true)),
+                scheduleNotificationRequest: ScheduleNotificationRequest(
+                  scheduledDate: tz.TZDateTime.now(tz.local)
+                      .add(const Duration(seconds: 5)),
                   uiLocalNotificationDateInterpretation:
-                      UILocalNotificationDateInterpretation.absoluteTime);
-
+                      UILocalNotificationDateInterpretation.absoluteTime,
+                ),
+              );
               Navigator.pop(context);
             },
             child: const Text('OK'),
@@ -1048,19 +1050,22 @@ class _HomePageState extends State<HomePage> {
         platformChannelSpecifics);
   }
 
-  Future<void> _zonedScheduleNotification() async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'scheduled title',
-        'scheduled body',
-        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
-        const NotificationDetails(
-            android: AndroidNotificationDetails(
-                'your channel id', 'your channel name',
-                channelDescription: 'your channel description')),
-        androidAllowWhileIdle: true,
+  Future<void> _scheduleNotification() async {
+    await flutterLocalNotificationsPlugin.scheduleNotification(
+      id: 0,
+      title: 'scheduled title',
+      body: 'scheduled body',
+      notificationDetails: const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'your channel id', 'your channel name',
+              channelDescription: 'your channel description')),
+      scheduleNotificationRequest: ScheduleNotificationRequest(
+        scheduledDate:
+            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
         uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
+            UILocalNotificationDateInterpretation.absoluteTime,
+      ),
+    );
   }
 
   Future<void> _showNotificationWithNoSound() async {
@@ -1498,106 +1503,118 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _scheduleDailyTenAMNotification() async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'daily scheduled notification title',
-        'daily scheduled notification body',
-        _nextInstanceOfTenAM(),
-        const NotificationDetails(
-          android: AndroidNotificationDetails('daily notification channel id',
-              'daily notification channel name',
-              channelDescription: 'daily notification description'),
-        ),
-        androidAllowWhileIdle: true,
+    await flutterLocalNotificationsPlugin.scheduleNotification(
+      id: 0,
+      title: 'daily scheduled notification title',
+      body: 'daily scheduled notification body',
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails('daily notification channel id',
+            'daily notification channel name',
+            channelDescription: 'daily notification description'),
+      ),
+      scheduleNotificationRequest: ScheduleNotificationRequest(
+        scheduledDate: _nextInstanceOfTenAM(),
+        matchDateTimeComponents: DateTimeComponents.time,
         uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time);
+        UILocalNotificationDateInterpretation.absoluteTime,
+      ),
+    );
   }
 
   /// To test we don't validate past dates when using `matchDateTimeComponents`
   Future<void> _scheduleDailyTenAMLastYearNotification() async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'daily scheduled notification title',
-        'daily scheduled notification body',
-        _nextInstanceOfTenAMLastYear(),
-        const NotificationDetails(
-          android: AndroidNotificationDetails('daily notification channel id',
-              'daily notification channel name',
-              channelDescription: 'daily notification description'),
-        ),
-        androidAllowWhileIdle: true,
+    await flutterLocalNotificationsPlugin.scheduleNotification(
+      id: 0,
+      title: 'daily scheduled notification title',
+      body: 'daily scheduled notification body',
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails('daily notification channel id',
+            'daily notification channel name',
+            channelDescription: 'daily notification description'),
+      ),
+      scheduleNotificationRequest: ScheduleNotificationRequest(
+        scheduledDate: _nextInstanceOfTenAMLastYear(),
+        matchDateTimeComponents: DateTimeComponents.time,
         uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time);
+        UILocalNotificationDateInterpretation.absoluteTime,
+      ),
+    );
   }
 
   Future<void> _scheduleWeeklyTenAMNotification() async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'weekly scheduled notification title',
-        'weekly scheduled notification body',
-        _nextInstanceOfTenAM(),
-        const NotificationDetails(
-          android: AndroidNotificationDetails('weekly notification channel id',
-              'weekly notification channel name',
-              channelDescription: 'weekly notificationdescription'),
-        ),
-        androidAllowWhileIdle: true,
+    await flutterLocalNotificationsPlugin.scheduleNotification(
+      id: 0,
+      title: 'weekly scheduled notification title',
+      body: 'weekly scheduled notification body',
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails('weekly notification channel id',
+            'weekly notification channel name',
+            channelDescription: 'weekly notification description'),
+      ),
+      scheduleNotificationRequest: ScheduleNotificationRequest(
+        scheduledDate: _nextInstanceOfTenAM(),
+        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
         uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+        UILocalNotificationDateInterpretation.absoluteTime,
+      ),
+    );
   }
 
   Future<void> _scheduleWeeklyMondayTenAMNotification() async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'weekly scheduled notification title',
-        'weekly scheduled notification body',
-        _nextInstanceOfMondayTenAM(),
-        const NotificationDetails(
-          android: AndroidNotificationDetails('weekly notification channel id',
-              'weekly notification channel name',
-              channelDescription: 'weekly notificationdescription'),
-        ),
-        androidAllowWhileIdle: true,
+    await flutterLocalNotificationsPlugin.scheduleNotification(
+      id: 0,
+      title: 'weekly scheduled notification title',
+      body: 'weekly scheduled notification body',
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails('weekly notification channel id',
+            'weekly notification channel name',
+            channelDescription: 'weekly notification description'),
+      ),
+      scheduleNotificationRequest: ScheduleNotificationRequest(
+        scheduledDate: _nextInstanceOfMondayTenAM(),
+        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
         uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+        UILocalNotificationDateInterpretation.absoluteTime,
+      ),
+    );
   }
 
   Future<void> _scheduleMonthlyMondayTenAMNotification() async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'monthly scheduled notification title',
-        'monthly scheduled notification body',
-        _nextInstanceOfMondayTenAM(),
-        const NotificationDetails(
-          android: AndroidNotificationDetails('monthly notification channel id',
-              'monthly notification channel name',
-              channelDescription: 'monthly notificationdescription'),
-        ),
-        androidAllowWhileIdle: true,
+    await flutterLocalNotificationsPlugin.scheduleNotification(
+      id: 0,
+      title: 'monthly scheduled notification title',
+      body: 'monthly scheduled notification body',
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails('monthly notification channel id',
+            'monthly notification channel name',
+            channelDescription: 'monthly notification description'),
+      ),
+      scheduleNotificationRequest: ScheduleNotificationRequest(
+        scheduledDate: _nextInstanceOfMondayTenAM(),
+        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
         uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.dayOfMonthAndTime);
+        UILocalNotificationDateInterpretation.absoluteTime,
+      ),
+    );
   }
 
   Future<void> _scheduleYearlyMondayTenAMNotification() async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
-        'yearly scheduled notification title',
-        'yearly scheduled notification body',
-        _nextInstanceOfMondayTenAM(),
-        const NotificationDetails(
-          android: AndroidNotificationDetails('yearly notification channel id',
-              'yearly notification channel name',
-              channelDescription: 'yearly notification description'),
-        ),
-        androidAllowWhileIdle: true,
+    await flutterLocalNotificationsPlugin.scheduleNotification(
+      id: 0,
+      title: 'yearly scheduled notification title',
+      body: 'yearly scheduled notification body',
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails('yearly notification channel id',
+            'yearly notification channel name',
+            channelDescription: 'yearly notification description'),
+      ),
+      scheduleNotificationRequest: ScheduleNotificationRequest(
+        scheduledDate: _nextInstanceOfMondayTenAM(),
+        matchDateTimeComponents: DateTimeComponents.dateAndTime,
         uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.dateAndTime);
+        UILocalNotificationDateInterpretation.absoluteTime,
+      ),
+    );
   }
 
   tz.TZDateTime _nextInstanceOfTenAM() {
@@ -2381,7 +2398,8 @@ Future<void> _showLinuxNotificationWithByteDataIcon() async {
         data: iconBytes,
         width: iconData.width,
         height: iconData.height,
-        channels: 4, // The icon has an alpha channel
+        channels: 4,
+        // The icon has an alpha channel
         hasAlpha: true,
       ),
     ),

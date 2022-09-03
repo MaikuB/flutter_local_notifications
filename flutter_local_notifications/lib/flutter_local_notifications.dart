@@ -9,6 +9,7 @@ export 'package:flutter_local_notifications_platform_interface/flutter_local_not
 export 'src/flutter_local_notifications_plugin.dart';
 export 'src/initialization_settings.dart';
 export 'src/notification_details.dart';
+export 'src/notification_schedule_request.dart';
 export 'src/platform_flutter_local_notifications.dart'
     hide MethodChannelFlutterLocalNotificationsPlugin;
 export 'src/platform_specifics/android/active_notification.dart';

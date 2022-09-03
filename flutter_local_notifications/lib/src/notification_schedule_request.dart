@@ -6,9 +6,9 @@ import 'package:timezone/timezone.dart';
 /// Specify the request params to schedule a notification.
 class ScheduleNotificationRequest {
   ScheduleNotificationRequest({
-    required this.matchDateTimeComponents,
     required this.scheduledDate,
     required this.uiLocalNotificationDateInterpretation,
+    this.matchDateTimeComponents,
     this.androidScheduleType = ScheduleType.allowIdle,
     this.androidScheduleAccuracy = ScheduleAccuracy.regular,
   });
