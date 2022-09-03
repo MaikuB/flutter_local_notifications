@@ -1574,7 +1574,7 @@ public class FlutterLocalNotificationsPlugin
   @Override
   public boolean onRequestPermissionsResult(
       int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+    if (permissionRequestInProgress && requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
       boolean granted =
           grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
       callback.complete(granted);
