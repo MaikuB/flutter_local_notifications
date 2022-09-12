@@ -434,7 +434,7 @@ await flutterLocalNotificationsPlugin.initialize(
 );
 ```
 
-Remember this function runs (except Linux) in a separate isolate! You will need to use a different mechanism (e.g. [`IsolateNameServer` APIs](https://api.flutter.dev/flutter/dart-ui/IsolateNameServer-class.html)) to communicate with the main isolate that the app will run from. This function also requires the `@pragma('vm:entry-point')` annotation to ensure that tree-shaking doesn't remove the code since it would be invoked on the native side. See [here](https://github.com/dart-lang/sdk/blob/master/runtime/docs/compiler/aot/entry_point_pragma.md) for official documentation on the annotation.
+Remember this function runs (except Linux) in a separate isolate! This function also requires the `@pragma('vm:entry-point')` annotation to ensure that tree-shaking doesn't remove the code since it would be invoked on the native side. See [here](https://github.com/dart-lang/sdk/blob/master/runtime/docs/compiler/aot/entry_point_pragma.md) for official documentation on the annotation.
 
 Developers should also note that whilst accessing plugins will work, on Android there is **no** access to the `Activity` context. This means some plugins (like `url_launcher`) will require additional flags to start the main `Activity` again.
 
