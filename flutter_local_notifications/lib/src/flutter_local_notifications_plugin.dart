@@ -112,6 +112,10 @@ class FlutterLocalNotificationsPlugin {
   ///
   /// To handle when a notification launched an application, use
   /// [getNotificationAppLaunchDetails].
+  ///
+  /// Functions passed to the [onDidReceiveBackgroundNotificationResponse]
+  /// callback need to be annotated with the `@pragma('vm:entry-point')`
+  /// annotation to ensure they are not stripped out by the Dart compiler.
   Future<bool?> initialize(
     InitializationSettings initializationSettings, {
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
