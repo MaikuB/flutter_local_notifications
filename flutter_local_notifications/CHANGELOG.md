@@ -1,3 +1,7 @@
+# [10.0.0-dev.23]
+
+* Fixed issue [1694](https://github.com/MaikuB/flutter_local_notifications/issues/1694) where tree-shaking was removing code related to background isolates and thereby preventing notification actions from firing. Readme has also been updated as applications will need to annotate functions invoked by the `onDidReceiveBackgroundNotificationResponse` callback with the `@pragma('vm:entry-point')` annotation as well
+
 # [10.0.0-dev.22]
 
 * Updated minimum Flutter version to 2.8 as that aligns with the minimum Dart SDK version of 2.1.5 required by one of `flutter_local_notifications_linux`'s dependencies (`dbus`)

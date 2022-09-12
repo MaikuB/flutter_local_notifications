@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 
 // ignore_for_file: public_member_api_docs, avoid_annotating_with_dynamic
-
+@pragma('vm:entry-point')
 void callbackDispatcher() {
   WidgetsFlutterBinding.ensureInitialized();
 
