@@ -30,7 +30,6 @@
 * Example app has been updated so that each notification has its own notification ID. Previously, they were all given a notification ID of `0`
 * Updated Android setup docs to mention setting up `compileSdkVersion`
 
-
 # [9.9.1]
 
 * [Android] plugin has been updated to minimise clashing with other plugins that handle permission requests. Thanks to the PR from [Tiernan](https://github.com/nvx)
