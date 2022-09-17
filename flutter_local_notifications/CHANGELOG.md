@@ -28,9 +28,10 @@
   * the ability to specify the interruption level of a notification. This is only applicable to iOS 15.0 and macOS 12.0 or newer.
 * Updated minimum Flutter version to 2.8 as that aligns with the minimum Dart SDK version of 2.1.5 required by one of `flutter_local_notifications_linux`'s dependencies (`dbus`)
 * Example app has been updated so that each notification has its own notification ID. Previously, they were all given a notification ID of `0`
+* Updated Android setup docs to mention setting up `compileSdkVersion`
 
 
-  # [9.9.1]
+# [9.9.1]
 
 * [Android] plugin has been updated to minimise clashing with other plugins that handle permission requests. Thanks to the PR from [Tiernan](https://github.com/nvx)
 
