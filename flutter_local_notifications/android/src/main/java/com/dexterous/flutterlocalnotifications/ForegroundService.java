@@ -14,10 +14,14 @@ public class ForegroundService extends Service {
   public int onStartCommand(Intent intent, int flags, int startId) {
     ForegroundServiceStartParameter parameter;
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-      parameter = (ForegroundServiceStartParameter)
-          intent.getSerializableExtra(ForegroundServiceStartParameter.EXTRA, ForegroundServiceStartParameter.class);
+      parameter =
+          (ForegroundServiceStartParameter)
+              intent.getSerializableExtra(
+                  ForegroundServiceStartParameter.EXTRA, ForegroundServiceStartParameter.class);
     } else {
-      parameter = (ForegroundServiceStartParameter) intent.getSerializableExtra(ForegroundServiceStartParameter.EXTRA);
+      parameter =
+          (ForegroundServiceStartParameter)
+              intent.getSerializableExtra(ForegroundServiceStartParameter.EXTRA);
     }
 
     Notification notification =
