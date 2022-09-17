@@ -21,6 +21,7 @@
 * Added support for notification actions. Massive thanks to [Sebastian Roth](https://github.com/ened), [Pieter van Loon](https://github.com/Kavantix) and [Yaroslav Pronin](https://github.com/proninyaroslav) for their work on this. Note that on Apple's platforms, notification actions are only supported on iOS 10 or newer and macOS 10.14 or newer
 * [Linux] **Breaking change** the linux notification categories defined by `LinuxNotificationCategory` no longer has factory constructors but has static constant fields instead to make the semantics more similar to access enum values
 * [Android] Updated how scheduled notifications are saved to shared preferences so it is done in the background. This is to fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where `pendingNotificationRequests` method may not report the correct number of scheduled notifications if it is invoked before the data had been saved to shared preferences
+* [Android] fixed issue [1702](https://github.com/MaikuB/flutter_local_notifications/issues/1702) by handling deprecation warnings using specific Android Intent APIs on Android 13 (API level 33) or newer
 * [iOS] `getActiveNotifications()` is now supported for iOS versions 10.0 or newer
 * [macOS] `getActiveNotifications()` is now supported for macOS versions 10.14 or newer
 * [iOS][macOS] thanks to the PR from [maprohu](https://github.com/maprohu), the following features are now available
