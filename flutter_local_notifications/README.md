@@ -18,6 +18,7 @@ A cross platform plugin for displaying local notifications.
    - [Custom notification sounds](#custom-notification-sounds)
    - [macOS differences](#macos-differences)
    - [Linux limitations](#linux-limitations)
+   - [Notification payload](#notification-payload)
 - **[📷 Screenshots](#-screenshots)**
 - **[👏 Acknowledgements](#-acknowledgements)**
 - **[🔧 Android Setup](#-android-setup)**
@@ -145,6 +146,10 @@ Capabilities depend on the system notification server implementation, therefore,
 Scheduled/pending notifications is currently not supported due to the lack of a scheduler API.
 
 The `onDidReceiveNotificationResponse` callback runs on the main isolate of the running application and cannot be launched in the background if the application is not running. To respond to notification after the application is terminated, your application should be registered as DBus activatable (please see [DBusApplicationLaunching](https://wiki.gnome.org/HowDoI/DBusApplicationLaunching) for more information), and register action before activating the application. This is difficult to do in a plugin because plugins instantiate during application activation, so `getNotificationAppLaunchDetails` can't be implemented without changing the main user application.
+
+### Notification payload
+
+Due to some limitations on iOS with how it treats null values in dictionaries, a null notification payload is coalesced to an empty string behind the scenes on all platforms for consistency.
 
 ## 📷 Screenshots
 
