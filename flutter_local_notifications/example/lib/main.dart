@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
@@ -60,7 +61,7 @@ const String navigationActionId = 'id_3';
 const String darwinNotificationCategoryText = 'textCategory';
 
 /// Defines a iOS/MacOS notification category for plain actions.
-const String iosNotificationCategoryPlain = 'plainCategory';
+const String darwinNotificationCategoryPlain = 'plainCategory';
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
@@ -114,7 +115,7 @@ Future<void> main() async {
       ],
     ),
     DarwinNotificationCategory(
-      iosNotificationCategoryPlain,
+      darwinNotificationCategoryPlain,
       actions: <DarwinNotificationAction>[
         DarwinNotificationAction.plain('id_1', 'Action 1'),
         DarwinNotificationAction.plain(
@@ -541,7 +542,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   if (!Platform.isLinux)
                     PaddedElevatedButton(
-                      buttonText: 'Show notification with text actions',
+                      buttonText: 'Show notification with text action',
                       onPressed: () async {
                         await _showNotificationWithTextAction();
                       },
@@ -742,7 +743,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     PaddedElevatedButton(
                       buttonText:
-                          'Show notification with number if the launcher supports',
+                          'Show notification with number if the launcher '
+                          'supports',
                       onPressed: () async {
                         await _showNotificationWithNumber();
                       },
@@ -792,7 +794,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     PaddedElevatedButton(
                       buttonText:
-                          'Start foreground service with blue background notification',
+                          'Start foreground service with blue background '
+                          'notification',
                       onPressed: () async {
                         await _startForegroundServiceWithBlueBackgroundNotification();
                       },
@@ -840,7 +843,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     PaddedElevatedButton(
                       buttonText:
-                          'Show notification with time sensitive interruption level',
+                          'Show notification with time sensitive interruption '
+                          'level',
                       onPressed: () async {
                         await _showNotificationWithTimeSensitiveInterruptionLevel();
                       },
@@ -1082,12 +1086,12 @@ class _HomePageState extends State<HomePage> {
 
     const DarwinNotificationDetails iosNotificationDetails =
         DarwinNotificationDetails(
-      categoryIdentifier: iosNotificationCategoryPlain,
+      categoryIdentifier: darwinNotificationCategoryPlain,
     );
 
     const DarwinNotificationDetails macOSNotificationDetails =
         DarwinNotificationDetails(
-      categoryIdentifier: iosNotificationCategoryPlain,
+      categoryIdentifier: darwinNotificationCategoryPlain,
     );
 
     const LinuxNotificationDetails linuxNotificationDetails =
@@ -1134,7 +1138,6 @@ class _HomePageState extends State<HomePage> {
               label: 'Enter a message',
             ),
           ],
-          showsUserInterface: true,
         ),
       ],
     );
@@ -1153,13 +1156,6 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.show(id++, 'Text Input Notification',
         'Expand to see input action', notificationDetails,
         payload: 'item x');
-
-    // await flutterLocalNotificationsPlugin
-    //     .resolvePlatformSpecificImplementation<
-    //         AndroidFlutterLocalNotificationsPlugin>()
-    //     ?.startForegroundService(1, 'big text title', 'silent body',
-    //         notificationDetails: androidPlatformChannelSpecifics,
-    //         payload: 'item x');
   }
 
   Future<void> _showNotificationWithIconAction() async {
@@ -2480,7 +2476,7 @@ class _HomePageState extends State<HomePage> {
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: <Widget>[
             Text('person: ${_formatPerson(messagingStyle.person)}\n'
                 'conversationTitle: ${messagingStyle.conversationTitle}\n'
                 'groupConversation: ${messagingStyle.groupConversation}'),
@@ -2490,7 +2486,7 @@ class _HomePageState extends State<HomePage> {
               for (final Message msg in messagingStyle.messages!)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     Text('text: ${msg.text}\n'
                         'timestamp: ${msg.timestamp}\n'
                         'person: ${_formatPerson(msg.person)}'),
