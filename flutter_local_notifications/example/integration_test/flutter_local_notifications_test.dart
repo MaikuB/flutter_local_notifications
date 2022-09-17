@@ -36,8 +36,8 @@ void main() {
     });
 
     testWidgets(
-        'initialize with settings equal to null for the targeting platform should throw an ArgumentError',
-        (WidgetTester tester) async {
+        'initialize with settings equal to null for the targeting platform '
+        'should throw an ArgumentError', (WidgetTester tester) async {
       const InitializationSettings initializationSettings =
           InitializationSettings();
       try {

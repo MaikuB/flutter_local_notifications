@@ -2412,7 +2412,7 @@ void main() {
           isMethodCall(
             'startForegroundService',
             arguments: <String, Object?>{
-              'notificationData': {
+              'notificationData': <String, Object?>{
                 'id': 1,
                 'title': 'colored background notification title',
                 'body': 'colored background notification body',

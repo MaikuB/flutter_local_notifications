@@ -380,14 +380,17 @@ class AndroidNotificationDetails {
   /// the id to uniquely identify alarms.
   final String? tag;
 
-  /// Specify coloring background should be enabled, if false, color will be applied to app icon.
-  /// For most styles, the coloring will only be applied if the notification is for a foreground service notification.
+  /// Specify coloring background should be enabled, if false, color will be
+  /// applied to app icon.
+  ///
+  /// For most styles, the coloring will only be applied if the notification is
+  /// or a foreground service notification.
   final bool colorized;
 
   /// Set custom notification count.
   ///
-  /// Numbers are only displayed if the launcher application supports the display of badges and numbers.
-  /// If not supported, this value is ignored.
+  /// Numbers are only displayed if the launcher application supports the
+  /// display of badges and numbers. If not supported, this value is ignored.
   /// See https://developer.android.com/training/notify-user/badges#set_custom_notification_count
   final int? number;
 
