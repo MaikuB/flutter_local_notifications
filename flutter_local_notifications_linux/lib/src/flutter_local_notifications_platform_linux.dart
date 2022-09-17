@@ -14,8 +14,8 @@ abstract class FlutterLocalNotificationsPlatformLinux
   ///
   /// Call this method on application before using the plugin further.
   ///
-  /// [onDidReceiveNotificationResponse] specifies a callback handler
-  /// which receives notification action IDs.
+  /// The [onDidReceiveNotificationResponse] callback is fired when the user
+  /// selects a notification or notification action.
   Future<bool?> initialize(
     LinuxInitializationSettings initializationSettings, {
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
