@@ -65,6 +65,8 @@ class ActiveNotification {
   final String? body;
 
   /// The notification's payload.
+  ///
+  /// Returned only on iOS and macOS.
   final String? payload;
 
   /// The notification's tag.

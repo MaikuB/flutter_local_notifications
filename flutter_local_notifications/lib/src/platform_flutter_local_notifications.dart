@@ -86,12 +86,13 @@ class MethodChannelFlutterLocalNotificationsPlugin
   /// Returns the list of active notifications shown by the application that
   /// haven't been dismissed/removed.
   ///
-  /// This method is only applicable to Android 6.0 or newer and will throw an
-  /// [PlatformException] when called on a device with an incompatible Android
-  /// version.
+  /// The supported OS versions are
+  /// - Android: Android 6.0 or newer
+  /// - iOS: iOS 10.0 or newer
+  /// - macOS: macOS 10.14 or newer
   ///
-  /// This method is only applicable to iOS 10.0 or newer and will return an
-  /// empty list when called on a device with an incompatible iOS version.
+  /// Throws a [PlatformException] with an `unsupported_os_version` error code
+  /// on older OS versions. On Linux it will throw an [UnimplementedError].
   @override
   Future<List<ActiveNotification>> getActiveNotifications() async {
     final List<Map<dynamic, dynamic>>? activeNotifications =
