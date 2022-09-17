@@ -210,7 +210,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'ticker': ticker,
         'visibility': visibility?.index,
         'timeoutAfter': timeoutAfter,
-        'category': category,
+        'category': category?.name,
         'fullScreenIntent': fullScreenIntent,
         'shortcutId': shortcutId,
         'additionalFlags': additionalFlags,
@@ -220,6 +220,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'number': number,
         'audioAttributesUsage': audioAttributesUsage.value,
       }
+        ..addAll(_convertActionsToMap(actions))
         ..addAll(_convertStyleInformationToMap())
         ..addAll(_convertNotificationSoundToMap(sound))
         ..addAll(_convertLargeIconToMap());
@@ -278,4 +279,46 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
       'largeIconBitmapSource': largeIcon!.source.index,
     };
   }
+
+  Map<String, Object> _convertActionsToMap(
+      List<AndroidNotificationAction>? actions) {
+    if (actions == null) {
+      return <String, Object>{};
+    }
+    return <String, Object>{
+      'actions': actions
+          .map(
+            (AndroidNotificationAction e) => <String, dynamic>{
+              'id': e.id,
+              'title': e.title,
+              'titleColorAlpha': e.titleColor?.alpha,
+              'titleColorRed': e.titleColor?.red,
+              'titleColorGreen': e.titleColor?.green,
+              'titleColorBlue': e.titleColor?.blue,
+              if (e.icon != null) ...<String, Object>{
+                'icon': e.icon!.data,
+                'iconBitmapSource': e.icon!.source.index,
+              },
+              'contextual': e.contextual,
+              'showsUserInterface': e.showsUserInterface,
+              'allowGeneratedReplies': e.allowGeneratedReplies,
+              'inputs': e.inputs
+                  .map((AndroidNotificationActionInput input) =>
+                      _convertInputToMap(input))
+                  .toList(),
+              'cancelNotification': e.cancelNotification,
+            },
+          )
+          .toList(),
+    };
+  }
+
+  Map<String, dynamic> _convertInputToMap(
+          AndroidNotificationActionInput input) =>
+      <String, dynamic>{
+        'choices': input.choices,
+        'allowFreeFormInput': input.allowFreeFormInput,
+        'label': input.label,
+        'allowedMimeType': input.allowedMimeTypes.toList(),
+      };
 }

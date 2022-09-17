@@ -25,17 +25,21 @@ class LinuxFlutterLocalNotificationsPlugin
   /// Initializes the plugin.
   ///
   /// Call this method on application before using the plugin further.
+  ///
   /// This should only be done once. When a notification created by this plugin
-  /// was used to launch the app, calling `initialize` is what will trigger to
-  /// the `onSelectNotification` callback to be fire.
+  /// was used to launch the app, calling [initialize] is what will trigger to
+  /// the [onSelectNotification] callback to be fire.
+  ///
+  /// [onSelectNotificationAction] specifies a callback handler which receives
+  /// notification action IDs.
   @override
   Future<bool?> initialize(
     LinuxInitializationSettings initializationSettings, {
-    SelectNotificationCallback? onSelectNotification,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) =>
       _manager.initialize(
         initializationSettings,
-        onSelectNotification: onSelectNotification,
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
       );
 
   /// Show a notification with an optional payload that will be passed back to
