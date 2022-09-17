@@ -40,5 +40,5 @@ flutter:
     - sound/
 
 environment:
-  sdk: ">=2.12.0-0 <3.0.0"
-  flutter: ">=1.26.0-0" # allows for using integration_test from SDK
+  sdk: ">=2.15.0 <3.0.0"
+  flutter: ">=2.8.0"
