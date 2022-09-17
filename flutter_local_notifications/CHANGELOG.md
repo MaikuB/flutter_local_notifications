@@ -23,6 +23,9 @@
 * [Android] Updated how scheduled notifications are saved to shared preferences so it is done in the background. This is to fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where `pendingNotificationRequests` method may not report the correct number of scheduled notifications if it is invoked before the data had been saved to shared preferences
 * [iOS] `getActiveNotifications()` is now supported for iOS versions 10.0 or newer
 * [macOS] `getActiveNotifications()` is now supported for macOS versions 10.14 or newer
+* [iOS][macOS] thanks to the PR from [maprohu](https://github.com/maprohu), the following features are now available
+  * the ability to request permissions to show critical notifications
+  * the ability to specify the interruption level of a notification. This is only applicable to iOS 15.0 and macOS 12.0 or newer.
 * Updated minimum Flutter version to 2.8 as that aligns with the minimum Dart SDK version of 2.1.5 required by one of `flutter_local_notifications_linux`'s dependencies (`dbus`)
 
 
