@@ -1,113 +1,6 @@
-# [10.0.0-dev.23]
+# [10.0.0]
 
-* Fixed issue [1694](https://github.com/MaikuB/flutter_local_notifications/issues/1694) where tree-shaking was removing code related to background isolates and thereby preventing notification actions from firing. Readme has also been updated as applications will need to annotate functions invoked by the `onDidReceiveBackgroundNotificationResponse` callback with the `@pragma('vm:entry-point')` annotation as well. The example and docs have been updated to remove usages of the `IsolateNameServer` APIs due to issues in release builds. If anyone knows how to get these working then please submit a PR
-
-# [10.0.0-dev.22]
-
-* Updated minimum Flutter version to 2.8 as that aligns with the minimum Dart SDK version of 2.1.5 required by one of `flutter_local_notifications_linux`'s dependencies (`dbus`)
-* Includes changes from 9.9.1
-
-# [10.0.0-dev.21]
-
-* Includes changes from 9.9.0
-
-# [10.0.0-dev.20]
-
-* Includes changes from 9.8.0
-* [Android] **Breaking change** the following error codes included in `PlatformException`s that can occur on Android have been updated
- * `GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE` -> `getActiveNotificationMessagingStyle`
- * `PERMISSION_REQUEST_IN_PROGRESS` -> `permissionRequestInProgress`
-
-# [10.0.0-dev.19]
-
-* Includes changes from 9.7.1 that fixes a crash around calling `getNotificationAppLaunchDetails` on Android
-
-# [10.0.0-dev.18]
-
-* [Android] added null checks around notification action inputs
-
-# [10.0.0-dev.17]
-
-* Includes changes from 9.7.0
-
-# [10.0.0-dev.16]
-
-* Includes changes from 9.6.1
-* [Android] **Breaking change** the `category` of the `AndroidNotificationDetails` now requires an instance of the newly added `AndroidNotificationCategory` class instead of a string. This was to improve the discoverability of the APIs and improve the semantics as the category can specified in a similar fashion to using an enum value
-* [Linux] **Breaking change** the linux notification categories defined by `LinuxNotificationCategory` no longer has factory constructors but has static constant fields instead to make the semantics more similar to access enum values
-
-# [10.0.0-dev.15]
-
-* Includes changes from 9.6.0
-
-# [10.0.0-dev.14]
-
-* Includes changes from 9.5.1 to 9.5.3+1
 * **Breaking change** [Android] `zonedSchedule()`'s implementation has switched to using [desugaring](https://developer.android.com/studio/releases/gradle-plugin#j8-library-desugaring) instead of the [ThreeTen Android Backport library](https://github.com/JakeWharton/ThreeTenABP). This required the plugin to update to using Android Gradle plugin 4.2.2 and applications may need to bump their Android Gradle plugin dependency to at least 4.2.2 as a result. Added a "Gradle setup" section underneath "Android setup" with details on the extra setup needed
-* Fixed progress notification example where the progress bar wasn't updating. Thanks to the PR from [Lucas Ribolli](https://github.com/lucasribolli)
-
-# [10.0.0-dev.13]
-
-* Includes changes from 9.5.0
-
-# [10.0.0-dev.12]
-
-* **Breaking change** callbacks have now been reworked. There are now the following callbacks and both will pass an instance of the `NotificationResponse` class 
- * `onDidReceiveNotificationResponse`: invoked only when the app is running. This works for when a user has selected a notification or notification action. This replaces the `onSelectNotification` callback that existed before. For notification actions, the action needs to be configured to indicate the the app or user interface should be shown on invoking the action for this callback to be invoked i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. On macOS and Linux, as there's no support for background isolates it will always invoke this callback
- * `onDidReceiveBackgroundNotificationResponse`: invoked on a background isolate for when a user has selected a notification action. This replaces the `onSelectNotificationAction` callback
-* **Breaking change** the `NotificationAppLaunchDetails` has been updated to contain an instance `NotificationResponse` class with the `payload` belonging to the `NotificationResponse` class. This is to allow knowing more details about what caused the app to launch e.g. if a notification action was used to do so
-* [iOS][macOS] updated how notification categories were set behind the scenes so the categories specified. This fixes an issue where notification action may not work at all as were being appended to the list of existing categories. This could lead to issues where notification actions wouldn't work at all and potentially result in notification categories growing over time.
-* Updated docs to clarify that on Apple's platforms, notification actions are only supported on iOS 10 or newer and macOS 10.14 or newer
-
-# [10.0.0-dev.11]
-
-* Includes changes from 9.4.0
-* Updated example app to display `groupKey` of an `ActiveNotification`
-* Bumped dependency to `flutter_local_notifications_platform_interface`
-
-# [10.0.0-dev.10]
-
-* [iOS][macOS] Added support for specifying interruption level of notifications and ability to request critical alert permissions. Thanks to the PR from [maprohu)](https://github.com/maprohu)
-
-# [10.0.0-dev.9]
-
-* [iOS] Fixed issue [1506](https://github.com/MaikuB/flutter_local_notifications/issues/1506) where the plugin was trying to process responses to notifications created outside of the plugin (e.g. those from Firebase) and resulted in an exception
-* [macOS] **Breaking change** the `requestPermissions()` method of the `MacOSFlutterLocalNotificationsPlugin` class now only accepts non-nullable parameters that default to `false`. This makes it consistent with the iOS implementation of the plugin
-
-# [10.0.0-dev.8]
-
-* Includes fix from 9.3.2
-
-# [10.0.0-dev.7]
-
-* Includes fix from 9.3.1
-
-# [10.0.0-dev.6]
-
-* [Android] Fixed issue [1476](https://github.com/MaikuB/flutter_local_notifications/issues/1476) where crash can occur on Android 12 as mutability flags weren't being applied to intents associated with notification actions
-
-# [10.0.0-dev.5]
-
-* [Android] Fixed error where plugin was lookup to the notification action callback and failed to find it as it was doing before the Flutter engine was initialised
-
-# [10.0.0-dev.4]
-
-* [Android] Fixed Android 12 specific issue related to notification actions by adding exported flag to the receiver used to process actions
-
-# [10.0.0-dev.3]
-
-* [Linux] Added support for notification actions. Thanks to the PR from [Yaroslav Pronin](https://github.com/proninyaroslav)
-
-# [10.0.0-dev.2]
-
-* [iOS][macOS] **Breaking changes** iOS and macOS classes have been renamed and refactored as they are based on the same operating system and share the same notification APIs. Rather than having a prefix of either `IOS` or `MacOS`, these are now replaced by classes with a `Darwin` prefix. For example, `IOSInitializationSettings` can be replaced with `DarwinInitializationSettings`
-* [Android][iOS][macOS] Added support for notification actions. Massive thanks to [Sebastian Roth](https://github.com/ened) and [Pieter van Loon](https://github.com/Kavantix) for their work on this
-* [Android] Updated how scheduled notifications are saved to shared preferences so it is done in the background. This is to fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where `pendingNotificationRequests` method may not report the correct number of scheduled notifications if it is invoked before the data had been saved to shared preferences
-
-# [10.0.0-dev.1]
-
-* [iOS] `getActiveNotifications()` is now supported for iOS versions 10.0 or newer
-* [macOS] `getActiveNotifications()` is now supported for macOS versions 10.14 or newer
 * [Android] **Breaking change** the following error codes included in `PlatformException`s that can occur on Android have been updated
   * `INVALID_ICON` -> `invalid_icon`
   * `INVALID_LARGE_ICON` -> `invalid_large_icon`
@@ -116,6 +9,22 @@
   * `INVALID_LED_DETAILS` -> `invalid_led_details`
   * `GET_ACTIVE_NOTIFICATIONS_ERROR_CODE` -> `unsupported_os_version`
   * `GET_NOTIFICATION_CHANNELS_ERROR_CODE` -> `getNotificationChannelsError`
+  * `GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE` -> `getActiveNotificationMessagingStyle`
+  * `PERMISSION_REQUEST_IN_PROGRESS` -> `permissionRequestInProgress`
+* [Android] **Breaking change** the `category` of the `AndroidNotificationDetails` now requires an instance of the newly added `AndroidNotificationCategory` class instead of a string. This was to improve the discoverability of the APIs and improve the semantics as the category can specified in a similar fashion to using an enum value
+* **Breaking change** callbacks have now been reworked. There are now the following callbacks and both will pass an instance of the `NotificationResponse` class 
+  * `onDidReceiveNotificationResponse`: invoked only when the app is running. This works for when a user has selected a notification or notification action. This replaces the `onSelectNotification` callback that existed before. For notification actions, the action needs to be configured to indicate the the app or user interface should be shown on invoking the action for this callback to be invoked i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. On macOS and Linux, as there's no support for background isolates it will always invoke this callback
+  * `onDidReceiveBackgroundNotificationResponse`: invoked on a background isolate for when a user has selected a notification action. This replaces the `onSelectNotificationAction` callback
+* **Breaking change** the `NotificationAppLaunchDetails` has been updated to contain an instance `NotificationResponse` class with the `payload` belonging to the `NotificationResponse` class. This is to allow knowing more details about what caused the app to launch e.g. if a notification action was used to do so
+* [iOS][macOS] **Breaking changes** iOS and macOS classes have been renamed and refactored as they are based on the same operating system and share the same notification APIs. Rather than having a prefix of either `IOS` or `MacOS`, these are now replaced by classes with a `Darwin` prefix. For example, `IOSInitializationSettings` can be replaced with `DarwinInitializationSettings`
+* [macOS] **Breaking change** the `requestPermissions()` method of the `MacOSFlutterLocalNotificationsPlugin` class now only accepts non-nullable parameters that default to `false`. This makes it consistent with the iOS implementation of the plugin
+* Added support for notification actions. Massive thanks to [Sebastian Roth](https://github.com/ened), [Pieter van Loon](https://github.com/Kavantix) and [Yaroslav Pronin](https://github.com/proninyaroslav) for their work on this. Note that on Apple's platforms, notification actions are only supported on iOS 10 or newer and macOS 10.14 or newer
+* [Linux] **Breaking change** the linux notification categories defined by `LinuxNotificationCategory` no longer has factory constructors but has static constant fields instead to make the semantics more similar to access enum values
+* [Android] Updated how scheduled notifications are saved to shared preferences so it is done in the background. This is to fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where `pendingNotificationRequests` method may not report the correct number of scheduled notifications if it is invoked before the data had been saved to shared preferences
+* [iOS] `getActiveNotifications()` is now supported for iOS versions 10.0 or newer
+* [macOS] `getActiveNotifications()` is now supported for macOS versions 10.14 or newer
+* Updated minimum Flutter version to 2.8 as that aligns with the minimum Dart SDK version of 2.1.5 required by one of `flutter_local_notifications_linux`'s dependencies (`dbus`)
+
 
   # [9.9.1]
 

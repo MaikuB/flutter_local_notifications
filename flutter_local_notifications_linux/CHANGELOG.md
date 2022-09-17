@@ -1,19 +1,8 @@
-## [1.0.0-dev.4]
-
-* Updated minimum Flutter version to 2.8 to align with the minimum Dart SDK version of 2.1.5 required by the `dbus` package
-
-## [1.0.0-dev.3]
-
-* Includes changes from the 0.5.1 stable release
-
-## [1.0.0-dev.2]
+## [1.0.0]
 
 * **Breaking change** The linux notification categories defined by `LinuxNotificationCategory` no longer has factory constructors but has static constant fields instead to make the semantics more similar to access enum values
+* Updated minimum Flutter version to 2.8 to align with the minimum Dart SDK version of 2.1.5 required by the `dbus` package
 
-## [1.0.0-dev.1]
-
-* Changes there were in the 0.5.0 pre-releases are now part of the 1.0.0 pre-releases
-* Includes changes from the 0.5.0 stable release
 
 ## [0.5.1]
 
