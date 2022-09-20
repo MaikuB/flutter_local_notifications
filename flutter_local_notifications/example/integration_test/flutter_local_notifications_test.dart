@@ -10,10 +10,10 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('app_icon');
-  const IOSInitializationSettings initializationSettingsIOS =
-      IOSInitializationSettings();
-  const MacOSInitializationSettings initializationSettingsMacOS =
-      MacOSInitializationSettings();
+  const DarwinInitializationSettings initializationSettingsIOS =
+      DarwinInitializationSettings();
+  const DarwinInitializationSettings initializationSettingsMacOS =
+      DarwinInitializationSettings();
   final LinuxInitializationSettings initializationSettingsLinux =
       LinuxInitializationSettings(
     defaultActionName: 'Open notification',
@@ -36,8 +36,8 @@ void main() {
     });
 
     testWidgets(
-        'initialize with settings equal to null for the targeting platform should throw an ArgumentError',
-        (WidgetTester tester) async {
+        'initialize with settings equal to null for the targeting platform '
+        'should throw an ArgumentError', (WidgetTester tester) async {
       const InitializationSettings initializationSettings =
           InitializationSettings();
       try {

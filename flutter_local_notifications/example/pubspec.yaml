@@ -4,7 +4,7 @@ publish_to: none
 
 dependencies:
   cupertino_icons: ^1.0.2
-  device_info: ^2.0.2
+  device_info_plus: ^3.2.3
   flutter:
     sdk: flutter
   flutter_local_notifications:
@@ -24,6 +24,14 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
+# The following overrides exist to ensure the example app builds with the latest code
+# of these packages as part of CI
+dependency_overrides:
+  flutter_local_notifications_linux:
+    path: ../../flutter_local_notifications_linux
+  flutter_local_notifications_platform_interface:
+    path: ../../flutter_local_notifications_platform_interface
+
 flutter:
   uses-material-design: true
   assets:
@@ -31,5 +39,5 @@ flutter:
     - sound/
 
 environment:
-  sdk: '>=2.12.0-0 <3.0.0'
-  flutter: '>=1.26.0-0' # allows for using integration_test from SDK
+  sdk: ">=2.15.0 <3.0.0"
+  flutter: ">=2.8.0"
