@@ -31,7 +31,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.widget.Toast;
-import org.threeten.bp.LocalDateTime;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -1378,22 +1377,14 @@ public class FlutterLocalNotificationsPlugin
         loadScheduledNotifications(applicationContext);
     for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
       NotificationDetails notificationDetails = it.next();
-      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
         LocalDateTime localDateTime =
                 LocalDateTime.parse(notificationDetails.scheduledDateTime);
         if (localDateTime.compareTo(LocalDateTime.now())==-1) {
           it.remove();
           cancelNotification(notificationDetails.id,notificationDetails.tag);
         }
-      }
-      else {
-        org.threeten.bp.LocalDateTime localDateTime =
-                org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime);
-        if (localDateTime.compareTo(org.threeten.bp.LocalDateTime.now())==-1) {
-          it.remove();
-          cancelNotification(notificationDetails.id,notificationDetails.tag);
-        }
-      }
+
+
 
     }
     List<Map<String, Object>> pendingNotifications = new ArrayList<>();
