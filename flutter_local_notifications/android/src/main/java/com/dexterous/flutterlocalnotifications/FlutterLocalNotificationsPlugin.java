@@ -451,7 +451,6 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private static ArrayList<NotificationDetails> loadScheduledNotifications(Context context) {
-    Toast.makeText(context, "loaded", Toast.LENGTH_SHORT).show();
 
     ArrayList<NotificationDetails> scheduledNotifications = new ArrayList<>();
     SharedPreferences sharedPreferences =
@@ -1375,7 +1374,6 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private void pendingNotificationRequests(Result result) {
-    Toast.makeText(applicationContext.getApplicationContext(), "pending", Toast.LENGTH_SHORT).show();
     ArrayList<NotificationDetails> scheduledNotifications =
         loadScheduledNotifications(applicationContext);
     for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
@@ -1383,7 +1381,6 @@ public class FlutterLocalNotificationsPlugin
         LocalDateTime localDateTime =
                 LocalDateTime.parse(notificationDetails.scheduledDateTime);
         if (localDateTime.compareTo(LocalDateTime.now())==-1) {
-          Toast.makeText(applicationContext.getApplicationContext(), "canceled "+notificationDetails.id, Toast.LENGTH_SHORT).show();
           it.remove();
           cancelNotification(notificationDetails.id,notificationDetails.tag);
         }
