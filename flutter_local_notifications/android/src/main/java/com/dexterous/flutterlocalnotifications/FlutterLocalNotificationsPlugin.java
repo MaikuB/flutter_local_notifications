@@ -30,7 +30,6 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.widget.Toast;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -202,7 +201,6 @@ public class FlutterLocalNotificationsPlugin
   }
 
   public void rescheduleNotifications(Context context) {
-    Toast.makeText(context, "reschedule", Toast.LENGTH_SHORT).show();
 
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
     for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
@@ -212,18 +210,9 @@ public class FlutterLocalNotificationsPlugin
       ZonedDateTime scheduledDateTime =
               ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
       ZonedDateTime now = ZonedDateTime.now(zoneId);
-//        LocalDateTime localDateTime =
-//                LocalDateTime.parse(notificationDetails.scheduledDateTime);
-      Toast.makeText(applicationContext.getApplicationContext(), "p  "+scheduledDateTime, Toast.LENGTH_SHORT).show();
-      Toast.makeText(applicationContext.getApplicationContext(), "z  "+now, Toast.LENGTH_SHORT).show();
-      Toast.makeText(applicationContext.getApplicationContext(), "c  "+scheduledDateTime.isBefore(now), Toast.LENGTH_SHORT).show();
-
-
       if (scheduledDateTime.isBefore(now)) {
         it.remove();
         cancelNotification(notificationDetails.id,notificationDetails.tag);
-        Toast.makeText(applicationContext.getApplicationContext(), "canceled "+notificationDetails.id, Toast.LENGTH_SHORT).show();
-
       }
     }
     for (NotificationDetails scheduledNotification : scheduledNotifications) {
@@ -1397,7 +1386,6 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private void pendingNotificationRequests(Result result) {
-    Toast.makeText(applicationContext.getApplicationContext(), "pending not ", Toast.LENGTH_SHORT).show();
 
     ArrayList<NotificationDetails> scheduledNotifications =
         loadScheduledNotifications(applicationContext);
@@ -1408,18 +1396,10 @@ public class FlutterLocalNotificationsPlugin
       ZonedDateTime scheduledDateTime =
               ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
       ZonedDateTime now = ZonedDateTime.now(zoneId);
-//        LocalDateTime localDateTime =
-//                LocalDateTime.parse(notificationDetails.scheduledDateTime);
-      Toast.makeText(applicationContext.getApplicationContext(), "p  "+scheduledDateTime, Toast.LENGTH_SHORT).show();
-      Toast.makeText(applicationContext.getApplicationContext(), "z  "+now, Toast.LENGTH_SHORT).show();
-      Toast.makeText(applicationContext.getApplicationContext(), "c  "+scheduledDateTime.isBefore(now), Toast.LENGTH_SHORT).show();
-
 
       if (scheduledDateTime.isBefore(now)) {
           it.remove();
           cancelNotification(notificationDetails.id,notificationDetails.tag);
-          Toast.makeText(applicationContext.getApplicationContext(), "canceled "+notificationDetails.id, Toast.LENGTH_SHORT).show();
-
         }
     }
     List<Map<String, Object>> pendingNotifications = new ArrayList<>();
