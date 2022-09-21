@@ -1397,7 +1397,7 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private void pendingNotificationRequests(Result result) {
-    Toast.makeText(applicationContext.getApplicationContext(), "pending ", Toast.LENGTH_SHORT).show();
+    Toast.makeText(applicationContext.getApplicationContext(), "pending not ", Toast.LENGTH_SHORT).show();
 
     ArrayList<NotificationDetails> scheduledNotifications =
         loadScheduledNotifications(applicationContext);
