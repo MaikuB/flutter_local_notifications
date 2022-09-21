@@ -1397,6 +1397,7 @@ public class FlutterLocalNotificationsPlugin
       Toast.makeText(applicationContext.getApplicationContext(), "n  "+LocalDateTime.now(), Toast.LENGTH_SHORT).show();
       Toast.makeText(applicationContext.getApplicationContext(), "c  "+localDateTime.compareTo(LocalDateTime.now()), Toast.LENGTH_SHORT).show();
 
+      
       if (localDateTime.compareTo(LocalDateTime.now())<0) {
           it.remove();
           cancelNotification(notificationDetails.id,notificationDetails.tag);
