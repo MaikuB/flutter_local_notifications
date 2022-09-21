@@ -203,6 +203,7 @@ public class FlutterLocalNotificationsPlugin
 
   static void rescheduleNotifications(Context context) {
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
+
     for (NotificationDetails scheduledNotification : scheduledNotifications) {
       if (scheduledNotification.repeatInterval == null) {
         if (scheduledNotification.timeZoneName == null) {
@@ -1380,7 +1381,7 @@ public class FlutterLocalNotificationsPlugin
       NotificationDetails notificationDetails = it.next();
         LocalDateTime localDateTime =
                 LocalDateTime.parse(notificationDetails.scheduledDateTime);
-        if (localDateTime.compareTo(LocalDateTime.now())==-1) {
+        if (localDateTime.compareTo(LocalDateTime.now())<0) {
           it.remove();
           cancelNotification(notificationDetails.id,notificationDetails.tag);
         }
