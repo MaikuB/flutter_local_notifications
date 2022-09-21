@@ -201,7 +201,7 @@ public class FlutterLocalNotificationsPlugin
     plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
   }
 
-  static void rescheduleNotifications(Context context) {
+  public void rescheduleNotifications(Context context) {
     Toast.makeText(context, "reschedule", Toast.LENGTH_SHORT).show();
 
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
@@ -211,7 +211,7 @@ public class FlutterLocalNotificationsPlugin
               LocalDateTime.parse(notificationDetails.scheduledDateTime);
       if (localDateTime.compareTo(LocalDateTime.now())<0) {
         it.remove();
-//        cancelNotification(notificationDetails.id,notificationDetails.tag);
+        cancelNotification(notificationDetails.id,notificationDetails.tag);
       }
     }
     for (NotificationDetails scheduledNotification : scheduledNotifications) {
@@ -1385,6 +1385,8 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private void pendingNotificationRequests(Result result) {
+    Toast.makeText(applicationContext.getApplicationContext(), "pending ", Toast.LENGTH_SHORT).show();
+
     ArrayList<NotificationDetails> scheduledNotifications =
         loadScheduledNotifications(applicationContext);
     for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
