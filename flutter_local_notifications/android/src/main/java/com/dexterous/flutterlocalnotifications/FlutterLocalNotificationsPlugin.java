@@ -207,11 +207,23 @@ public class FlutterLocalNotificationsPlugin
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
     for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
       NotificationDetails notificationDetails = it.next();
-      LocalDateTime localDateTime =
-              LocalDateTime.parse(notificationDetails.scheduledDateTime);
-      if (localDateTime.compareTo(LocalDateTime.now())<0) {
+
+      ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
+      ZonedDateTime scheduledDateTime =
+              ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
+      ZonedDateTime now = ZonedDateTime.now(zoneId);
+//        LocalDateTime localDateTime =
+//                LocalDateTime.parse(notificationDetails.scheduledDateTime);
+      Toast.makeText(applicationContext.getApplicationContext(), "p  "+scheduledDateTime, Toast.LENGTH_SHORT).show();
+      Toast.makeText(applicationContext.getApplicationContext(), "n  "+LocalDateTime.now(), Toast.LENGTH_SHORT).show();
+      Toast.makeText(applicationContext.getApplicationContext(), "c  "+scheduledDateTime.isBefore(now), Toast.LENGTH_SHORT).show();
+
+
+      if (scheduledDateTime.isBefore(now)) {
         it.remove();
         cancelNotification(notificationDetails.id,notificationDetails.tag);
+        Toast.makeText(applicationContext.getApplicationContext(), "canceled "+notificationDetails.id, Toast.LENGTH_SHORT).show();
+
       }
     }
     for (NotificationDetails scheduledNotification : scheduledNotifications) {
@@ -1391,14 +1403,19 @@ public class FlutterLocalNotificationsPlugin
         loadScheduledNotifications(applicationContext);
     for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
       NotificationDetails notificationDetails = it.next();
-        LocalDateTime localDateTime =
-                LocalDateTime.parse(notificationDetails.scheduledDateTime);
-      Toast.makeText(applicationContext.getApplicationContext(), "b  "+localDateTime, Toast.LENGTH_SHORT).show();
-      Toast.makeText(applicationContext.getApplicationContext(), "n  "+LocalDateTime.now(), Toast.LENGTH_SHORT).show();
-      Toast.makeText(applicationContext.getApplicationContext(), "c  "+localDateTime.compareTo(LocalDateTime.now()), Toast.LENGTH_SHORT).show();
 
-      
-      if (localDateTime.compareTo(LocalDateTime.now())<0) {
+      ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
+      ZonedDateTime scheduledDateTime =
+              ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
+      ZonedDateTime now = ZonedDateTime.now(zoneId);
+//        LocalDateTime localDateTime =
+//                LocalDateTime.parse(notificationDetails.scheduledDateTime);
+      Toast.makeText(applicationContext.getApplicationContext(), "p  "+scheduledDateTime, Toast.LENGTH_SHORT).show();
+      Toast.makeText(applicationContext.getApplicationContext(), "n  "+LocalDateTime.now(), Toast.LENGTH_SHORT).show();
+      Toast.makeText(applicationContext.getApplicationContext(), "c  "+scheduledDateTime.isBefore(now), Toast.LENGTH_SHORT).show();
+
+
+      if (scheduledDateTime.isBefore(now)) {
           it.remove();
           cancelNotification(notificationDetails.id,notificationDetails.tag);
           Toast.makeText(applicationContext.getApplicationContext(), "canceled "+notificationDetails.id, Toast.LENGTH_SHORT).show();
