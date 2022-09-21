@@ -215,7 +215,7 @@ public class FlutterLocalNotificationsPlugin
 //        LocalDateTime localDateTime =
 //                LocalDateTime.parse(notificationDetails.scheduledDateTime);
       Toast.makeText(applicationContext.getApplicationContext(), "p  "+scheduledDateTime, Toast.LENGTH_SHORT).show();
-      Toast.makeText(applicationContext.getApplicationContext(), "n  "+LocalDateTime.now(), Toast.LENGTH_SHORT).show();
+      Toast.makeText(applicationContext.getApplicationContext(), "z  "+now, Toast.LENGTH_SHORT).show();
       Toast.makeText(applicationContext.getApplicationContext(), "c  "+scheduledDateTime.isBefore(now), Toast.LENGTH_SHORT).show();
 
 
@@ -1411,7 +1411,7 @@ public class FlutterLocalNotificationsPlugin
 //        LocalDateTime localDateTime =
 //                LocalDateTime.parse(notificationDetails.scheduledDateTime);
       Toast.makeText(applicationContext.getApplicationContext(), "p  "+scheduledDateTime, Toast.LENGTH_SHORT).show();
-      Toast.makeText(applicationContext.getApplicationContext(), "n  "+LocalDateTime.now(), Toast.LENGTH_SHORT).show();
+      Toast.makeText(applicationContext.getApplicationContext(), "z  "+now, Toast.LENGTH_SHORT).show();
       Toast.makeText(applicationContext.getApplicationContext(), "c  "+scheduledDateTime.isBefore(now), Toast.LENGTH_SHORT).show();
 
 
