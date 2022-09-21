@@ -200,8 +200,10 @@ public class FlutterLocalNotificationsPlugin
     plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
   }
 
-  static void rescheduleNotifications(Context context) {
+  public void rescheduleNotifications(Context context) {
+
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
+    deletePreviousNotifications(scheduledNotifications);
     for (NotificationDetails scheduledNotification : scheduledNotifications) {
       if (scheduledNotification.repeatInterval == null) {
         if (scheduledNotification.timeZoneName == null) {
@@ -450,6 +452,7 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private static ArrayList<NotificationDetails> loadScheduledNotifications(Context context) {
+
     ArrayList<NotificationDetails> scheduledNotifications = new ArrayList<>();
     SharedPreferences sharedPreferences =
         context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
@@ -1370,12 +1373,25 @@ public class FlutterLocalNotificationsPlugin
         break;
     }
   }
-
+  private void deletePreviousNotifications(ArrayList<NotificationDetails> scheduledNotifications){
+    for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
+      NotificationDetails notificationDetails = it.next();
+      ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
+      ZonedDateTime scheduledDateTime =
+              ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
+      ZonedDateTime now = ZonedDateTime.now(zoneId);
+      if (scheduledDateTime.isBefore(now)) {
+        it.remove();
+        cancelNotification(notificationDetails.id,notificationDetails.tag);
+      }
+    }
+  }
   private void pendingNotificationRequests(Result result) {
     ArrayList<NotificationDetails> scheduledNotifications =
         loadScheduledNotifications(applicationContext);
-    List<Map<String, Object>> pendingNotifications = new ArrayList<>();
+    deletePreviousNotifications(scheduledNotifications);
 
+    List<Map<String, Object>> pendingNotifications = new ArrayList<>();
     for (NotificationDetails scheduledNotification : scheduledNotifications) {
       HashMap<String, Object> pendingNotification = new HashMap<>();
       pendingNotification.put("id", scheduledNotification.id);
