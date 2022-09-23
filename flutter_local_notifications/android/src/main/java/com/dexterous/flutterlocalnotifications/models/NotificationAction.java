@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 @Keep
-public class NotificationAction {
-  public static class NotificationActionInput {
+public class NotificationAction implements Serializable {
+  public static class NotificationActionInput implements Serializable {
 
     public NotificationActionInput(
         @Nullable List<String> choices,
