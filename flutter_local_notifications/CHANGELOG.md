@@ -3,6 +3,7 @@
 * [Android] fixed crash when using notification actions with a foreground service. Thanks to the PR from [Arnold Laishram](https://github.com/arnoldlaishram)
 * Fixed typo in readme around Darwin (iOS/macOS) initialisation settings
 * Added a link to an issue with using Flutter apps with desugaring enabled where crashes could occur on foldable Android devices. Link to this is https://github.com/flutter/flutter/issues/110658 so those experience the problem can follow the issue and try out the solutions there as this isn't specific to the plugin
+* Replaced usage of rxDart in example app use `StreamController` instead to minimise use of dependencies and removed unused `shared_preferences` dependency
 
 # [11.0.0]
 
