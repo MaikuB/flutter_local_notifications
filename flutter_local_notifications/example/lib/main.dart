@@ -13,7 +13,6 @@ import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as image;
 import 'package:path_provider/path_provider.dart';
-import 'package:rxdart/subjects.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -24,11 +23,11 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 /// Streams are created so that app can respond to notification-related events
 /// since the plugin is initialised in the `main` function
-final BehaviorSubject<ReceivedNotification> didReceiveLocalNotificationSubject =
-    BehaviorSubject<ReceivedNotification>();
+final StreamController<ReceivedNotification> didReceiveLocalNotificationStream =
+    StreamController<ReceivedNotification>.broadcast();
 
-final BehaviorSubject<String?> selectNotificationSubject =
-    BehaviorSubject<String?>();
+final StreamController<String?> selectNotificationStream =
+    StreamController<String?>.broadcast();
 
 const MethodChannel platform =
     MethodChannel('dexterx.dev/flutter_local_notifications_example');
@@ -155,7 +154,7 @@ Future<void> main() async {
     requestSoundPermission: false,
     onDidReceiveLocalNotification:
         (int id, String? title, String? body, String? payload) async {
-      didReceiveLocalNotificationSubject.add(
+      didReceiveLocalNotificationStream.add(
         ReceivedNotification(
           id: id,
           title: title,
@@ -183,11 +182,11 @@ Future<void> main() async {
         (NotificationResponse notificationResponse) {
       switch (notificationResponse.notificationResponseType) {
         case NotificationResponseType.selectedNotification:
-          selectNotificationSubject.add(notificationResponse.payload);
+          selectNotificationStream.add(notificationResponse.payload);
           break;
         case NotificationResponseType.selectedNotificationAction:
           if (notificationResponse.actionId == navigationActionId) {
-            selectNotificationSubject.add(notificationResponse.payload);
+            selectNotificationStream.add(notificationResponse.payload);
           }
           break;
       }
@@ -313,7 +312,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _configureDidReceiveLocalNotificationSubject() {
-    didReceiveLocalNotificationSubject.stream
+    didReceiveLocalNotificationStream.stream
         .listen((ReceivedNotification receivedNotification) async {
       await showDialog(
         context: context,
@@ -345,7 +344,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _configureSelectNotificationSubject() {
-    selectNotificationSubject.stream.listen((String? payload) async {
+    selectNotificationStream.stream.listen((String? payload) async {
       await Navigator.of(context).push(MaterialPageRoute<void>(
         builder: (BuildContext context) => SecondPage(payload),
       ));
@@ -354,8 +353,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    didReceiveLocalNotificationSubject.close();
-    selectNotificationSubject.close();
+    didReceiveLocalNotificationStream.close();
+    selectNotificationStream.close();
     super.dispose();
   }
 
