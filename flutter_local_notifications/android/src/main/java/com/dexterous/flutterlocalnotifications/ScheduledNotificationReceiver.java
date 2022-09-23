@@ -20,6 +20,7 @@ import java.lang.reflect.Type;
 public class ScheduledNotificationReceiver extends BroadcastReceiver {
 
   @Override
+  @SuppressWarnings("deprecation")
   public void onReceive(final Context context, Intent intent) {
     String notificationDetailsJson =
         intent.getStringExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_DETAILS);
