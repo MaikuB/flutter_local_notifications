@@ -1,3 +1,9 @@
+# [11.0.1]
+
+* [Android] fixed crash when using notification actions with a foreground service. Thanks to the PR from [Arnold Laishram](https://github.com/arnoldlaishram)
+* Fixed typo in readme around Darwin (iOS/macOS) initialisation settings
+* Added a link to an issue with using Flutter apps with desugaring enabled where crashes could occur on foldable Android devices. Link to this is https://github.com/flutter/flutter/issues/110658 so those experience the problem can follow the issue and try out the solutions there as this isn't specific to the plugin
+
 # [11.0.0]
 
 * Bumped `timezone` dependency. To err on the safe when it comes to dependency version conflicts, this is being published as major release as the updated `timezone` package was published as a major release. Thanks to the PR from [Joachim Nohl](https://github.com/nohli)
