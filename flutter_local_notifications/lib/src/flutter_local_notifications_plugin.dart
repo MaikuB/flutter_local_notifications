@@ -190,7 +190,8 @@ class FlutterLocalNotificationsPlugin {
       return await resolvePlatformSpecificImplementation<
               WindowsFlutterLocalNotificationsPlugin>()
           ?.initialize(initializationSettings.windows!,
-              onSelectNotification: onDidReceiveNotificationResponse);
+              onDidReceiveNotificationResponse:
+                  onDidReceiveNotificationResponse);
     }
     return true;
   }
