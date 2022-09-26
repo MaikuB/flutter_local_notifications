@@ -58,6 +58,7 @@ namespace {
 		bool Initialize(
 			const std::string& appName,
 			const std::string& aumid,
+			const std::string& guid,
 			const std::optional<std::string>& iconPath,
 			const std::optional<std::string>& iconBgColor);
 
@@ -124,12 +125,19 @@ namespace {
 		else if (method_name == Method::INITIALIZE) {
 			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
 			if (args != nullptr) {
-				const auto appName = Utils::GetMapValue<std::string>("appName", args).value();
-				const auto aumid = Utils::GetMapValue<std::string>("aumid", args).value();
-				const auto iconPath = Utils::GetMapValue<std::string>("iconPath", args);
-				const auto iconBgColor = Utils::GetMapValue<std::string>("iconBgColor", args);
+				try {
+					const auto appName = Utils::GetMapValue<std::string>("appName", args).value();
+					const auto aumid = Utils::GetMapValue<std::string>("aumid", args).value();
+					const auto guid = Utils::GetMapValue<std::string>("guid", args).value();
+					const auto iconPath = Utils::GetMapValue<std::string>("iconPath", args);
+					const auto iconBgColor = Utils::GetMapValue<std::string>("iconBgColor", args);
 
-				result->Success(Initialize(appName, aumid, iconPath, iconBgColor));
+					result->Success(Initialize(appName, aumid, guid, iconPath, iconBgColor));
+				}
+				// handle exception when user provide a invalid guid.
+				catch (std::invalid_argument err) {
+					result->Error("INVALID_ARGUMENT", err.what());
+				}
 			}
 			else {
 				result->Error("INTERNAL", "flutter_local_notifications encountered an internal error.");
@@ -186,7 +194,7 @@ namespace {
 		if (err != ERROR_INSUFFICIENT_BUFFER) {
 			if (err == APPMODEL_ERROR_NO_PACKAGE)
 				return false;
-			
+
 			return false;
 		}
 
@@ -206,12 +214,13 @@ namespace {
 	bool FlutterLocalNotificationsPlugin::Initialize(
 		const std::string& appName,
 		const std::string& aumid,
+		const std::string& guid,
 		const std::optional<std::string>& iconPath,
 		const std::optional<std::string>& iconBgColor
 	) {
 		_aumid = winrt::to_hstring(aumid);
-		PluginRegistration::RegisterApp(aumid, appName, iconPath, iconBgColor, channel);
-		
+		PluginRegistration::RegisterApp(aumid, appName, guid, iconPath, iconBgColor, channel);
+
 		const auto hasIdentity = HasIdentity();
 		if (!hasIdentity.has_value())
 			return false;

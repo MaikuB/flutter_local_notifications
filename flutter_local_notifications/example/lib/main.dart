@@ -175,6 +175,7 @@ Future<void> main() async {
       WindowsInitializationSettings(
     appName: 'Flutter Local Notifications Example',
     appUserModelId: 'Com.Dexterous.FlutterLocalNotificationsExample',
+    guid: '68d0c89d-760f-4f79-a067-ae8d4220ccc1',
   );
   final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,

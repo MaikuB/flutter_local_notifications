@@ -19,19 +19,6 @@
 #include <sstream>
 
 /// <summary>
-/// The GUID that identifies the notification activation callback.
-/// 68d0c89d-760f-4f79-a067-ae8d4220ccc1
-/// </summary>
-static constexpr winrt::guid CALLBACK_GUID{
-	0x68d0c89d, 0x760f, 0x4f79, {0xa0, 0x67, 0xae, 0x8d, 0x42, 0x20, 0xcc, 0xc1}
-};
-
-/// <summary>
-/// String representation of the callback GUID.
-/// </summary>
-const std::string CALLBACK_GUID_STR = "{68d0c89d-760f-4f79-a067-ae8d4220ccc1}";
-
-/// <summary>
 /// This callback will be called when a notification sent by this plugin is clicked on.
 /// </summary>
 struct NotificationActivationCallback : winrt::implements<NotificationActivationCallback, INotificationActivationCallback>
@@ -122,6 +109,7 @@ using RegistryKey = winrt::handle_type<RegistryHandle>;
 void UpdateRegistry(
 	const std::string& aumid,
 	const std::string& appName,
+	const std::string& guid,
 	const std::optional<std::string>& iconPath,
 	const std::optional<std::string>& iconBgColor
 ) {
@@ -226,29 +214,36 @@ void UpdateRegistry(
 			static_cast<uint32_t>(v.size() + 1 * sizeof(char))));
 	}
 
+	// combine guid to class id
+	ss.clear();
+	ss.str(std::string());
+	ss << '{' << guid << '}';
+	const auto clsid = ss.str();
+
 	// register the guid of the notification activation callback
 	winrt::check_win32(RegSetValueExA(
 		appInfoKey.get(),
 		"CustomActivator",
 		0,
 		REG_SZ,
-		reinterpret_cast<const BYTE*>(CALLBACK_GUID_STR.c_str()),
-		static_cast<uint32_t>(CALLBACK_GUID_STR.size() + 1 * sizeof(char))));
+		reinterpret_cast<const BYTE*>(clsid.c_str()),
+		static_cast<uint32_t>(clsid.size() + 1 * sizeof(char))));
 }
 
 /// <summary>
 /// Register the notificatio activation callback factory
 /// and the guid of the callback.
 /// </summary>
-void RegisterCallback(std::shared_ptr<PluginMethodChannel> channel) {
+void RegisterCallback(std::shared_ptr<PluginMethodChannel> channel, const std::string& guid) {
 	DWORD registration{};
 
 	const auto factory_ref = winrt::make_self<NotificationActivationCallbackFactory>();
 	const auto factory = factory_ref.get();
+	winrt::guid rclsid(guid);
 	factory->channel = channel;
 
 	winrt::check_hresult(CoRegisterClassObject(
-		CALLBACK_GUID,
+		rclsid,
 		factory,
 		CLSCTX_LOCAL_SERVER,
 		REGCLS_MULTIPLEUSE,
@@ -258,11 +253,12 @@ void RegisterCallback(std::shared_ptr<PluginMethodChannel> channel) {
 void PluginRegistration::RegisterApp(
 	const std::string& aumid,
 	const std::string& appName,
+	const std::string& guid,
 	const std::optional<std::string>& iconPath,
 	const std::optional<std::string>& iconBgColor,
 	std::shared_ptr<PluginMethodChannel> plugin
 ) {
 	std::cout << "register app" << std::endl;
-	UpdateRegistry(aumid, appName, iconPath, iconBgColor);
-	RegisterCallback(plugin);
+	UpdateRegistry(aumid, appName, guid, iconPath, iconBgColor);
+	RegisterCallback(plugin, guid);
 }
