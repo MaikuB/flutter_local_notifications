@@ -1,4 +1,4 @@
-import 'darwin_notification_action_option.dart';
+import 'notification_action_option.dart';
 
 /// Describes the notification action type.
 ///

@@ -1,10 +1,8 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'src/notification_app_launch_details.dart';
 import 'src/types.dart';
 
 export 'src/helpers.dart';
-export 'src/notification_app_launch_details.dart';
 export 'src/typedefs.dart';
 export 'src/types.dart';
 
@@ -69,5 +67,11 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() {
     throw UnimplementedError(
         'pendingNotificationRequest() has not been implemented');
+  }
+
+  /// Returns a list of notifications already delivered
+  Future<List<ActiveNotification>> getActiveNotifications() {
+    throw UnimplementedError(
+        'getActiveNotifications() has not been implemented');
   }
 }

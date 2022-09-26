@@ -4,8 +4,6 @@ import 'initialization_settings.dart';
 import 'notification_details.dart';
 import 'sound.dart';
 
-// TODO(proninyaroslav): add actions
-
 /// Represents capabilities, implemented by the Linux notification server.
 @immutable
 class LinuxServerCapabilities {
@@ -20,6 +18,8 @@ class LinuxServerCapabilities {
     required this.iconStatic,
     required this.persistence,
     required this.sound,
+    required this.actions,
+    required this.actionIcons,
   });
 
   /// Set of unknown capabilities.
@@ -71,6 +71,16 @@ class LinuxServerCapabilities {
   /// and [LinuxInitializationSettings.defaultSuppressSound].
   final bool sound;
 
+  /// The server will provide the specified actions to the user.
+  /// Even if this capability is missing, actions may still be specified by the
+  /// client, however the server is free to ignore them.
+  final bool actions;
+
+  /// Supports using icons instead of text for displaying actions.
+  /// Using icons for actions must be enabled on a per-notification basis using
+  /// [LinuxNotificationDetails.actionKeyAsIconName].
+  final bool actionIcons;
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) {
@@ -86,7 +96,9 @@ class LinuxServerCapabilities {
         other.iconMulti == iconMulti &&
         other.iconStatic == iconStatic &&
         other.persistence == persistence &&
-        other.sound == sound;
+        other.sound == sound &&
+        other.actions == actions &&
+        other.actionIcons == actionIcons;
   }
 
   @override
@@ -99,7 +111,9 @@ class LinuxServerCapabilities {
       iconMulti.hashCode ^
       iconStatic.hashCode ^
       persistence.hashCode ^
-      sound.hashCode;
+      sound.hashCode ^
+      actions.hashCode ^
+      actionIcons.hashCode;
 
   /// Creates a copy of this object,
   /// but with the given fields replaced with the new values.
@@ -113,6 +127,8 @@ class LinuxServerCapabilities {
     bool? iconStatic,
     bool? persistence,
     bool? sound,
+    bool? actions,
+    bool? actionIcons,
   }) =>
       LinuxServerCapabilities(
         otherCapabilities: otherCapabilities ?? this.otherCapabilities,
@@ -124,6 +140,8 @@ class LinuxServerCapabilities {
         iconStatic: iconStatic ?? this.iconStatic,
         persistence: persistence ?? this.persistence,
         sound: sound ?? this.sound,
+        actions: actions ?? this.actions,
+        actionIcons: actionIcons ?? this.actionIcons,
       );
 
   @override
@@ -131,5 +149,6 @@ class LinuxServerCapabilities {
       '$otherCapabilities, body: $body, bodyHyperlinks: $bodyHyperlinks, '
       'bodyImages: $bodyImages, bodyMarkup: $bodyMarkup, '
       'iconMulti: $iconMulti, iconStatic: $iconStatic, '
-      'persistence: $persistence, sound: $sound)';
+      'persistence: $persistence, sound: $sound, actions: $actions, '
+      'actionIcons: $actionIcons)';
 }

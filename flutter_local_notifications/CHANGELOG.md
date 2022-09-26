@@ -1,3 +1,120 @@
+# [11.0.0]
+
+* Bumped `timezone` dependency. To err on the safe when it comes to dependency version conflicts, this is being published as major release as the updated `timezone` package was published as a major release. Thanks to the PR from [Joachim Nohl](https://github.com/nohli)
+
+# [10.0.0]
+
+* **Breaking change** [Android] `zonedSchedule()`'s implementation has switched to using [desugaring](https://developer.android.com/studio/releases/gradle-plugin#j8-library-desugaring) instead of the [ThreeTen Android Backport library](https://github.com/JakeWharton/ThreeTenABP). This required the plugin to update to using Android Gradle plugin 4.2.2 and applications may need to bump their Android Gradle plugin dependency to at least 4.2.2 as a result. Added a "Gradle setup" section underneath "Android setup" with details on the extra setup needed
+* [Android] **Breaking change** the following error codes included in `PlatformException`s that can occur on Android have been updated
+  * `INVALID_ICON` -> `invalid_icon`
+  * `INVALID_LARGE_ICON` -> `invalid_large_icon`
+  * `INVALID_BIG_PICTURE` -> `invalid_big_picture`
+  * `INVALID_SOUND` -> `invalid_sound`
+  * `INVALID_LED_DETAILS` -> `invalid_led_details`
+  * `GET_ACTIVE_NOTIFICATIONS_ERROR_CODE` -> `unsupported_os_version`
+  * `GET_NOTIFICATION_CHANNELS_ERROR_CODE` -> `getNotificationChannelsError`
+  * `GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE` -> `getActiveNotificationMessagingStyle`
+  * `PERMISSION_REQUEST_IN_PROGRESS` -> `permissionRequestInProgress`
+* [Android] **Breaking change** the `category` of the `AndroidNotificationDetails` now requires an instance of the newly added `AndroidNotificationCategory` class instead of a string. This was to improve the discoverability of the APIs and improve the semantics as the category can specified in a similar fashion to using an enum value
+* **Breaking change** callbacks have now been reworked. There are now the following callbacks and both will pass an instance of the `NotificationResponse` class 
+  * `onDidReceiveNotificationResponse`: invoked only when the app is running. This works for when a user has selected a notification or notification action. This replaces the `onSelectNotification` callback that existed before. For notification actions, the action needs to be configured to indicate the the app or user interface should be shown on invoking the action for this callback to be invoked i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. On macOS and Linux, as there's no support for background isolates it will always invoke this callback
+  * `onDidReceiveBackgroundNotificationResponse`: invoked on a background isolate for when a user has selected a notification action. This replaces the `onSelectNotificationAction` callback
+* **Breaking change** the `NotificationAppLaunchDetails` has been updated to contain an instance `NotificationResponse` class with the `payload` belonging to the `NotificationResponse` class. This is to allow knowing more details about what caused the app to launch e.g. if a notification action was used to do so
+* [iOS][macOS] **Breaking changes** iOS and macOS classes have been renamed and refactored as they are based on the same operating system and share the same notification APIs. Rather than having a prefix of either `IOS` or `MacOS`, these are now replaced by classes with a `Darwin` prefix. For example, `IOSInitializationSettings` can be replaced with `DarwinInitializationSettings`
+* [macOS] **Breaking change** the `requestPermissions()` method of the `MacOSFlutterLocalNotificationsPlugin` class now only accepts non-nullable parameters that default to `false`. This makes it consistent with the iOS implementation of the plugin
+* Added support for notification actions. Massive thanks to [Sebastian Roth](https://github.com/ened), [Pieter van Loon](https://github.com/Kavantix) and [Yaroslav Pronin](https://github.com/proninyaroslav) for their work on this. Note that on Apple's platforms, notification actions are only supported on iOS 10 or newer and macOS 10.14 or newer
+* [Linux] **Breaking change** the linux notification categories defined by `LinuxNotificationCategory` no longer has factory constructors but has static constant fields instead to make the semantics more similar to access enum values
+* [Android] Updated how scheduled notifications are saved to shared preferences so it is done in the background. This is to fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where `pendingNotificationRequests` method may not report the correct number of scheduled notifications if it is invoked before the data had been saved to shared preferences
+* [Android] fixed issue [1702](https://github.com/MaikuB/flutter_local_notifications/issues/1702) by handling deprecation warnings using specific Android Intent APIs on Android 13 (API level 33) or newer
+* [iOS] `getActiveNotifications()` is now supported for iOS versions 10.0 or newer
+* [macOS] `getActiveNotifications()` is now supported for macOS versions 10.14 or newer
+* [iOS][macOS] thanks to the PR from [maprohu](https://github.com/maprohu), the following features are now available
+  * the ability to request permissions to show critical notifications
+  * the ability to specify the interruption level of a notification. This is only applicable to iOS 15.0 and macOS 12.0 or newer.
+* Updated minimum Flutter version to 2.8 as that aligns with the minimum Dart SDK version of 2.1.5 required by one of `flutter_local_notifications_linux`'s dependencies (`dbus`)
+* Example app has been updated so that each notification has its own notification ID. Previously, they were all given a notification ID of `0`
+* Updated Android setup docs to mention setting up `compileSdkVersion`
+
+# [9.9.1]
+
+* [Android] plugin has been updated to minimise clashing with other plugins that handle permission requests. Thanks to the PR from [Tiernan](https://github.com/nvx)
+
+# [9.9.0]
+
+* [Android] added the ability to specify audio attributes of a notification channel via the `audioAttributesUsage` property belonging to the `AndroidNotificationChannel` and `AndroidNotificationDetails` classes. Thanks to the PR from [Jonas Bornold](https://github.com/bornold)
+
+# [9.8.0+1]
+
+* Added more details to 9.8.0 changelog entry to mention that apps will need to change `compileSdkVersion` to 33 and also updated readme to mention this
+
+# [9.8.0]
+
+* [Android] added `requestPermission` method to the `AndroidFlutterLocalNotificationsPlugin` class. This make use of the new feature added to Android 13 where an app can request permissions to show notifications. As the plugin's APIs don't have breaking changes, this is released a minor release. It does however, require the Android 13 SDK to be install installed and for apps to change the `compileSdkVersion` in their app's `build.gradle` to 33 as the plugin's `compileSdkVersion` is now 33. Only apps targeting Android 13 can request the permission as well. The latter can be done by updating the `targetSdkVersion` in an app's `build.gradle` file to `33`. Thanks to the PR from [Bartek Pacia](https://github.com/bartekpacia). **Note**: the ability to request the permission as part of calling `initialize` will be added later on
+
+# [9.7.1]
+
+* [Android] updated how launch intent is read on Android for the `getNotificationAppLaunchDetails` method
+
+# [9.7.0]
+
+* [Android] added support to specify notification count via the `number` property that has been added to the `AndroidNotificationDetails` class. Thanks to the PR from [Katsuya Kato](https://github.com/katsuyax)
+* Updated readme so that link to icon design guidance points to the archived version as the original link is now returning 404 not found. Thanks to the PR from [Zaldy Pagaduan Jr.](https://github.com/zopagaduanjr)
+
+# [9.6.1]
+
+* [macOS] fixed issue [1623](https://github.com/MaikuB/flutter_local_notifications/issues/1623) where calling `zonedSchedule` with `matchDateTimeComponents` set to `dayOfMonthAndTime` or `dateAndTime` led to an error
+
+# [9.6.0]
+
+* [Linux] Bumped dependency on `flutter_local_notifications_linux` to `^0.5.0+1` where support for icons to be specified via a file path was added by [Yaroslav Pronin](https://github.com/proninyaroslav)
+
+# [9.5.3+1]
+
+* Updated example app with to use updated Proguard rules for GSON
+* Update readme about GSON's Proguard rules to recommend referring to the rules on GSON's repository
+* Move note in readme about how `onSelectNotification` won't be called when an app is launched by a notification so it's more visible
+
+# [9.5.3]
+
+* [Android] bumped gson dependency to 2.8.9 that fixes [CVE-2022-25647](https://github.com/advisories/GHSA-4jrv-ppp4-jm57)
+
+# [9.5.2]
+
+* [macOS] fixed issue [1585](https://github.com/MaikuB/flutter_local_notifications/issues/1585) where plugin causes a crash when a remote/push notification (e.g. via FCM) occurs
+
+# [9.5.1]
+
+* [Android] fixed issue when calling `getActiveNotificationMessagingStyle()` to get messaging style information for a notification with a tag. Thanks to PR from [Simon Ser](https://github.com/emersion)
+
+# [9.5.0]
+
+* [Android] added `getActiveNotificationMessagingStyle()` method to the `AndroidFlutterLocalNotificationsPlugin` class. This allows for getting the messaging style information of an active notification e.g. to append a message to an existing notification. Thanks to the PR from [Simon Ser](https://github.com/emersion)
+* Updated readme to fix an issue where clicking on the Android setup and iOS setup sections from table of contents wouldn't go the appropriate section. Thanks to the PR from [HendrikF](https://github.com/HendrikF)
+
+# [9.4.1]
+
+* Calling `initialize()` on a platform with passing the appropriate initialisation settings for it will now throw an `ArgumentError`. Whilst this may be technically a breaking change, it's been done as a minor change as the call was already throwing an unhandled exception in these scenarios. This change is to help provide more information on why it fails. Documentation has also been updated to provide more on information on this as the intialisation settings for each platform are nullable so developers aren't forced to provide settings for platforms they don't target. Thanks to the PR from [Zlati Pehlivanov](https://github.com/talamaska)
+* Updated docs to fix typos, adjust heading levels and use the term ["daylight saving time"](https://en.wikipedia.org/wiki/Daylight_saving_time) instead of "daylight savings". Thanks to the PR from [Ross Llewallyn](https://github.com/EnduringBeta)
+
+# [9.4.0]
+* [Android] Added `tag` to `ActiveNotification` that would allow for finding the notification's tag. Thanks to the PR from [Simon Ser](https://github.com/emersion)
+
+# [9.3.3]
+* [macOS] Fixed issue [1507](https://github.com/MaikuB/flutter_local_notifications/issues/1507) where calling the `requestPermissions()` method of the `MacOSFlutterLocalNotificationsPlugin` class led to a crash. This will be coalesced to assume that the `boolean` parameters around the requested permissions default to `false` to be consistent with the iOS implementation. Note that in 10.0.0 the method will have a breaking change so that these parameters are non-nullable
+
+# [9.3.2]
+
+* Fix issue [1485](https://github.com/MaikuB/flutter_local_notifications/issues/1485) where the addition of `colorized` property caused backwards compatibility issues with previously scheduled notifications as this would be null when deserialised from shared preferences
+
+# [9.3.1]
+
+* Fix issue [1479](https://github.com/MaikuB/flutter_local_notifications/issues/1479) that could cause compilation issue on the web by removing `dart:ffi` import
+
+# [9.3.0]
+
+* [Android] Updated how scheduled notifications are saved to shared preferences so it is done in the background. This is to fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where `pendingNotificationRequests` method may not report the correct number of scheduled notifications if it is invoked before the data had been saved to shared preferences
+* [Android] Added `colorized` property to `AndroidNotificationDetails` class. This can be used to apply a background colour to the notification but for most styles, this only works if a foreground service was used. Example app has been updated to demonstrate its usage. Thanks to the PR from [benechiu](https://github.com/benechiu)
+
 # [9.2.0]
 
 * [Android] Added `areNotificationsEnabled()` method to `AndroidFlutterLocalNotificationsPlugin`. This allows querying if notifications are enabled for the app calling the method. Thanks to the PR from [Konstantin Pelz](https://github.com/komape)
@@ -929,57 +1046,3 @@ Please note that there are a number of breaking changes in this release to impro
 ## [0.0.1]
 
 *  Initial release
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

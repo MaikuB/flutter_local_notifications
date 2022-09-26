@@ -23,6 +23,8 @@ class LinuxNotificationDetails {
     this.location,
     this.defaultActionName,
     this.customHints,
+    this.actions = const <LinuxNotificationAction>[],
+    this.actionKeyAsIconName = false,
   });
 
   /// Specifies the notification icon.
@@ -76,6 +78,44 @@ class LinuxNotificationDetails {
 
   /// Custom hints list to provide extra data to a notification server that
   /// the server may be able to make use of. Before using, make sure that
-  /// the server supports this capability, see [LinuxServerCapabilities].
+  /// the server supports this capability, please see [LinuxServerCapabilities].
   final List<LinuxNotificationCustomHint>? customHints;
+
+  /// Specify a list of actions associated with this notifications.
+  final List<LinuxNotificationAction> actions;
+
+  /// If `true`, the server will attempt to interpret
+  /// [LinuxNotificationAction.key] as a named icon.
+  /// [LinuxNotificationAction.label] will be used to annotate the icon for
+  /// accessibility purposes. The icon name should be compliant with the
+  /// Freedesktop.org Icon Naming Specification https://specifications.freedesktop.org/icon-naming-spec/latest/
+  ///
+  /// Note: before using, make sure that the server supports this capability,
+  /// please see [LinuxServerCapabilities].
+  final bool actionKeyAsIconName;
+}
+
+/// Represents an action, that send a request message back to the notification
+/// client when invoked. This functionality may not be implemented by the
+/// notification server, conforming clients should check if it's available using
+/// [LinuxServerCapabilities].
+/// For more information, please see Desktop Notifications Specification https://specifications.freedesktop.org/notification-spec/latest/ar01s02.html
+class LinuxNotificationAction {
+  /// Constructs a [LinuxNotificationAction] object.
+  const LinuxNotificationAction({
+    required this.key,
+    required this.label,
+  });
+
+  /// Unique ID for this action. This ID will be sent back in the action handler
+  /// defined in [FlutterLocalNotificationsPlugin].
+  ///
+  /// If [LinuxNotificationDetails.keyAsIconName] is `true`,
+  /// the server will attempt to interpret [key] as a named icon.
+  /// [label] will be used to annotate the icon for accessibility purposes.
+  /// The icon name should be compliant with the Freedesktop.org Icon Naming Specification https://specifications.freedesktop.org/icon-naming-spec/latest/
+  final String key;
+
+  /// Label to show to the user.
+  final String label;
 }

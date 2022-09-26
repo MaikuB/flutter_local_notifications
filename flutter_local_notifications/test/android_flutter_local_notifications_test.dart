@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'dart:ui';
 import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -31,10 +30,10 @@ void main() {
           return true;
         } else if (methodCall.method == 'pendingNotificationRequests') {
           return <Map<String, Object?>>[];
-        } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
-          return null;
         } else if (methodCall.method == 'getActiveNotifications') {
           return <Map<String, Object?>>[];
+        } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
+          return null;
         }
       });
     });
@@ -173,6 +172,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
               'actions': <Map<String, Object>>[
                 <String, Object>{
                   'id': 'action1',
@@ -291,6 +292,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -371,6 +374,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -452,6 +457,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -534,6 +541,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -620,6 +629,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -705,6 +716,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -789,6 +802,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -882,6 +897,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -985,6 +1002,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1078,6 +1097,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1181,6 +1202,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1271,6 +1294,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1368,6 +1393,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1450,6 +1477,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1535,6 +1564,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1645,6 +1676,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1768,6 +1801,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1857,6 +1892,8 @@ void main() {
                     },
                     'tag': null,
                     'colorized': false,
+                    'number': null,
+                    'audioAttributesUsage': 5,
                   },
                 }));
           });
@@ -1950,6 +1987,8 @@ void main() {
                 },
                 'tag': null,
                 'colorized': false,
+                'number': null,
+                'audioAttributesUsage': 5,
               },
             }));
       });
@@ -2042,6 +2081,8 @@ void main() {
                 },
                 'tag': null,
                 'colorized': false,
+                'number': null,
+                'audioAttributesUsage': 5,
               },
             }));
       });
@@ -2135,6 +2176,8 @@ void main() {
                 },
                 'tag': null,
                 'colorized': false,
+                'number': null,
+                'audioAttributesUsage': 5,
               },
             }));
       });
@@ -2251,15 +2294,6 @@ void main() {
       ]);
     });
 
-    test('getActiveNotifications', () async {
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()!
-          .getActiveNotifications();
-      expect(log,
-          <Matcher>[isMethodCall('getActiveNotifications', arguments: null)]);
-    });
-
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
       expect(log, <Matcher>[
@@ -2293,11 +2327,7 @@ void main() {
     });
 
     test('getActiveNotifications', () async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()!
-          .getActiveNotifications();
+      await flutterLocalNotificationsPlugin.getActiveNotifications();
       expect(log,
           <Matcher>[isMethodCall('getActiveNotifications', arguments: null)]);
     });
@@ -2382,7 +2412,7 @@ void main() {
           isMethodCall(
             'startForegroundService',
             arguments: <String, Object?>{
-              'notificationData': {
+              'notificationData': <String, Object?>{
                 'id': 1,
                 'title': 'colored background notification title',
                 'body': 'colored background notification body',
@@ -2439,6 +2469,8 @@ void main() {
                   },
                   'tag': null,
                   'colorized': true,
+                  'number': null,
+                  'audioAttributesUsage': 5,
                 },
               },
               'startType': AndroidServiceStartType.startSticky.value,

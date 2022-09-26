@@ -2,28 +2,27 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:clock/clock.dart';
-
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
 
 import 'callback_dispatcher.dart';
 import 'helpers.dart';
-import 'platform_specifics/android/active_notification.dart';
 import 'platform_specifics/android/enums.dart';
+import 'platform_specifics/android/icon.dart';
 import 'platform_specifics/android/initialization_settings.dart';
+import 'platform_specifics/android/message.dart';
 import 'platform_specifics/android/method_channel_mappers.dart';
 import 'platform_specifics/android/notification_channel.dart';
 import 'platform_specifics/android/notification_channel_group.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/android/notification_sound.dart';
+import 'platform_specifics/android/person.dart';
+import 'platform_specifics/android/styles/messaging_style_information.dart';
+import 'platform_specifics/darwin/initialization_settings.dart';
+import 'platform_specifics/darwin/mappers.dart';
+import 'platform_specifics/darwin/notification_details.dart';
 import 'platform_specifics/ios/enums.dart';
-import 'platform_specifics/ios/initialization_settings.dart';
-import 'platform_specifics/ios/method_channel_mappers.dart';
-import 'platform_specifics/ios/notification_details.dart';
-import 'platform_specifics/macos/initialization_settings.dart';
-import 'platform_specifics/macos/method_channel_mappers.dart';
-import 'platform_specifics/macos/notification_details.dart';
 import 'platform_specifics/windows/initialization_settings.dart';
 import 'platform_specifics/windows/method_channel_mappers.dart';
 import 'type_mappers.dart';
@@ -51,9 +50,26 @@ class MethodChannelFlutterLocalNotificationsPlugin
       getNotificationAppLaunchDetails() async {
     final Map<dynamic, dynamic>? result =
         await _channel.invokeMethod('getNotificationAppLaunchDetails');
+    final Map<dynamic, dynamic>? notificationResponse =
+        result != null && result.containsKey('notificationResponse')
+            ? result['notificationResponse']
+            : null;
     return result != null
-        ? NotificationAppLaunchDetails(result['notificationLaunchedApp'],
-            result.containsKey('payload') ? result['payload'] : null)
+        ? NotificationAppLaunchDetails(
+            result['notificationLaunchedApp'],
+            notificationResponse: notificationResponse == null
+                ? null
+                : NotificationResponse(
+                    id: notificationResponse['notificationId'],
+                    actionId: notificationResponse['actionId'],
+                    input: notificationResponse['input'],
+                    notificationResponseType: NotificationResponseType.values[
+                        notificationResponse['notificationResponseType']],
+                    payload: notificationResponse.containsKey('payload')
+                        ? notificationResponse['payload']
+                        : null,
+                  ),
+          )
         : null;
   }
 
@@ -68,37 +84,86 @@ class MethodChannelFlutterLocalNotificationsPlugin
             .toList() ??
         <PendingNotificationRequest>[];
   }
+
+  /// Returns the list of active notifications shown by the application that
+  /// haven't been dismissed/removed.
+  ///
+  /// The supported OS versions are
+  /// - Android: Android 6.0 or newer
+  /// - iOS: iOS 10.0 or newer
+  /// - macOS: macOS 10.14 or newer
+  ///
+  /// Throws a [PlatformException] with an `unsupported_os_version` error code
+  /// on older OS versions. On Linux it will throw an [UnimplementedError].
+  @override
+  Future<List<ActiveNotification>> getActiveNotifications() async {
+    final List<Map<dynamic, dynamic>>? activeNotifications =
+        await _channel.invokeListMethod('getActiveNotifications');
+    return activeNotifications
+            // ignore: always_specify_types
+            ?.map((p) => ActiveNotification(
+                  id: p['id'],
+                  channelId: p['channelId'],
+                  groupKey: p['groupKey'],
+                  tag: p['tag'],
+                  title: p['title'],
+                  body: p['body'],
+                  payload: p['payload'],
+                ))
+            .toList() ??
+        <ActiveNotification>[];
+  }
 }
 
 /// Android implementation of the local notifications plugin.
 class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
-  SelectNotificationCallback? _onSelectNotification;
+  DidReceiveNotificationResponseCallback? _ondidReceiveNotificationResponse;
 
   /// Initializes the plugin.
   ///
   /// Call this method on application before using the
   /// plugin further.
   ///
-  /// To handle when a notification launched an application, use
-  /// [getNotificationAppLaunchDetails].
-  ///
-  /// [backgroundHandler] specifies a callback handler which receives
-  /// notification action IDs.
+  /// The [onDidReceiveNotificationResponse] callback is fired when the user
+  /// selects a notification or notification action that should show the
+  /// application/user interface.
+  /// application was running. To handle when a notification launched an
+  /// application, use [getNotificationAppLaunchDetails]. For notification
+  /// actions that don't show the application/user interface, the
+  /// [onDidReceiveBackgroundNotificationResponse] callback is invoked on
+  /// a background isolate. Functions passed to the
+  /// [onDidReceiveBackgroundNotificationResponse]
+  /// callback need to be annotated with the `@pragma('vm:entry-point')`
+  /// annotation to ensure they are not stripped out by the Dart compiler.
   Future<bool> initialize(
     AndroidInitializationSettings initializationSettings, {
-    SelectNotificationCallback? onSelectNotification,
-    NotificationActionCallback? backgroundHandler,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
+    DidReceiveBackgroundNotificationResponseCallback?
+        onDidReceiveBackgroundNotificationResponse,
   }) async {
-    _onSelectNotification = onSelectNotification;
+    _ondidReceiveNotificationResponse = onDidReceiveNotificationResponse;
     _channel.setMethodCallHandler(_handleMethod);
 
     final Map<String, Object> arguments = initializationSettings.toMap();
 
-    _evaluateBackgroundHandler(backgroundHandler, arguments);
+    _evaluateBackgroundNotificationCallback(
+        onDidReceiveBackgroundNotificationResponse, arguments);
 
     return await _channel.invokeMethod('initialize', arguments);
   }
+
+  /// Requests the permission for sending notifications. Returns whether the
+  /// permission was granted.
+  ///
+  /// Requests the `POST_NOTIFICATIONS` permission on Android 13 Tiramisu (API
+  /// level 33) and newer. On older versions, it is a no-op.
+  ///
+  /// See also:
+  ///
+  ///  * https://developer.android.com/about/versions/13/changes/notification-permission
+  Future<bool?> requestPermission() async =>
+      _channel.invokeMethod<bool>('requestPermission');
 
   /// Schedules a notification to be shown at the specified date and time.
   ///
@@ -398,24 +463,70 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<void> deleteNotificationChannel(String channelId) =>
       _channel.invokeMethod('deleteNotificationChannel', channelId);
 
-  /// Returns the list of active notifications shown by the application that
-  /// haven't been dismissed/removed.
+  /// Returns the messaging style information of an active notification shown
+  /// by the application that hasn't been dismissed/removed.
   ///
   /// This method is only applicable to Android 6.0 or newer and will throw an
   /// [PlatformException] when called on a device with an incompatible Android
   /// version.
-  Future<List<ActiveNotification>?> getActiveNotifications() async {
-    final List<Map<dynamic, dynamic>>? activeNotifications =
-        await _channel.invokeListMethod('getActiveNotifications');
-    return activeNotifications
-        // ignore: always_specify_types
-        ?.map((a) => ActiveNotification(
-              a['id'],
-              a['channelId'],
-              a['title'],
-              a['body'],
-            ))
-        .toList();
+  ///
+  /// Only [DrawableResourceAndroidIcon] and [ContentUriAndroidIcon] are
+  /// supported for [AndroidIcon] fields.
+  Future<MessagingStyleInformation?> getActiveNotificationMessagingStyle(
+    int id, {
+    String? tag,
+  }) async {
+    final Map<dynamic, dynamic>? m = await _channel
+        .invokeMethod('getActiveNotificationMessagingStyle', <String, Object?>{
+      'id': id,
+      'tag': tag,
+    });
+    if (m == null) {
+      return null;
+    }
+
+    return MessagingStyleInformation(
+      _personFromMap(m['person'])!,
+      conversationTitle: m['conversationTitle'],
+      groupConversation: m['groupConversation'],
+      messages:
+          // ignore: always_specify_types
+          m['messages']?.map<Message>((m) => _messageFromMap(m))?.toList(),
+    );
+  }
+
+  Person? _personFromMap(Map<dynamic, dynamic>? m) {
+    if (m == null) {
+      return null;
+    }
+    return Person(
+      bot: m['bot'],
+      icon: _iconFromMap(m['icon']),
+      important: m['important'],
+      key: m['key'],
+      name: m['name'],
+      uri: m['uri'],
+    );
+  }
+
+  Message _messageFromMap(Map<dynamic, dynamic> m) => Message(
+        m['text'],
+        DateTime.fromMillisecondsSinceEpoch(m['timestamp']),
+        _personFromMap(m['person']),
+      );
+
+  AndroidIcon<Object>? _iconFromMap(Map<dynamic, dynamic>? m) {
+    if (m == null) {
+      return null;
+    }
+    switch (AndroidIconSource.values[m['source']]) {
+      case AndroidIconSource.drawableResource:
+        return DrawableResourceAndroidIcon(m['data']);
+      case AndroidIconSource.contentUri:
+        return ContentUriAndroidIcon(m['data']);
+      default:
+        return null;
+    }
   }
 
   /// Returns the list of all notification channels.
@@ -445,7 +556,15 @@ class AndroidFlutterLocalNotificationsPlugin
         .toList();
   }
 
-  /// Returns whether notifications from the calling package are not blocked.
+  /// Returns whether the app can post notifications.
+  ///
+  /// On Android 13 Tiramisu (API level 33) and newer, this returns whether the
+  /// `POST_NOTIFICATIONS` permission is granted. On older versions, it returns
+  /// whether the notifications are enabled (which they are by default).
+  ///
+  /// See also:
+  ///
+  ///  * https://developer.android.com/about/versions/13/changes/notification-permission
   Future<bool?> areNotificationsEnabled() async =>
       await _channel.invokeMethod<bool>('areNotificationsEnabled');
 
@@ -466,8 +585,17 @@ class AndroidFlutterLocalNotificationsPlugin
 
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
-      case 'selectNotification':
-        _onSelectNotification?.call(call.arguments);
+      case 'didReceiveNotificationResponse':
+        _ondidReceiveNotificationResponse?.call(
+          NotificationResponse(
+            id: call.arguments['notificationId'],
+            actionId: call.arguments['actionId'],
+            input: call.arguments['input'],
+            payload: call.arguments['payload'],
+            notificationResponseType: NotificationResponseType
+                .values[call.arguments['notificationResponseType']],
+          ),
+        );
         break;
       default:
         return await Future<void>.error('Method not defined');
@@ -478,8 +606,7 @@ class AndroidFlutterLocalNotificationsPlugin
 /// iOS implementation of the local notifications plugin.
 class IOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
-  SelectNotificationCallback? _onSelectNotification;
-
+  DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
   DidReceiveLocalNotificationCallback? _onDidReceiveLocalNotification;
 
   /// Initializes the plugin.
@@ -490,27 +617,38 @@ class IOSFlutterLocalNotificationsPlugin
   /// see a permissions prompt. This may be fine in cases where it's acceptable
   /// to do this when the application runs for the first time. However, if your
   /// applicationn needs to do this at a later point in time, set the
-  /// [IOSInitializationSettings.requestAlertPermission],
-  /// [IOSInitializationSettings.requestBadgePermission] and
-  /// [IOSInitializationSettings.requestSoundPermission] values to false.
+  /// [DarwinInitializationSettings.requestAlertPermission],
+  /// [DarwinInitializationSettings.requestBadgePermission] and
+  /// [DarwinInitializationSettings.requestSoundPermission] values to false.
   /// [requestPermissions] can then be called to request permissions when
   /// needed.
   ///
-  /// To handle when a notification launched an application, use
-  /// [getNotificationAppLaunchDetails].
+  /// The [onDidReceiveNotificationResponse] callback is fired when the user
+  /// selects a notification or notification action that should show the
+  /// application/user interface.
+  /// application was running. To handle when a notification launched an
+  /// application, use [getNotificationAppLaunchDetails]. For notification
+  /// actions that don't show the application/user interface, the
+  /// [onDidReceiveBackgroundNotificationResponse] callback is invoked on
+  /// a background isolate. Functions passed to the
+  /// [onDidReceiveBackgroundNotificationResponse]
+  /// callback need to be annotated with the `@pragma('vm:entry-point')`
+  /// annotation to ensure they are not stripped out by the Dart compiler.
   Future<bool?> initialize(
-    IOSInitializationSettings initializationSettings, {
-    SelectNotificationCallback? onSelectNotification,
-    NotificationActionCallback? backgroundHandler,
+    DarwinInitializationSettings initializationSettings, {
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
+    DidReceiveBackgroundNotificationResponseCallback?
+        onDidReceiveBackgroundNotificationResponse,
   }) async {
-    _onSelectNotification = onSelectNotification;
+    _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
     _onDidReceiveLocalNotification =
         initializationSettings.onDidReceiveLocalNotification;
     _channel.setMethodCallHandler(_handleMethod);
 
     final Map<String, Object> arguments = initializationSettings.toMap();
 
-    _evaluateBackgroundHandler(backgroundHandler, arguments);
+    _evaluateBackgroundNotificationCallback(
+        onDidReceiveBackgroundNotificationResponse, arguments);
 
     return await _channel.invokeMethod('initialize', arguments);
   }
@@ -521,11 +659,13 @@ class IOSFlutterLocalNotificationsPlugin
     bool sound = false,
     bool alert = false,
     bool badge = false,
+    bool critical = false,
   }) =>
       _channel.invokeMethod<bool?>('requestPermissions', <String, bool>{
         'sound': sound,
         'alert': alert,
         'badge': badge,
+        'critical': critical,
       });
 
   /// Schedules a notification to be shown at the specified date and time with
@@ -537,7 +677,7 @@ class IOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     DateTime scheduledDate,
-    IOSNotificationDetails? notificationDetails, {
+    DarwinNotificationDetails? notificationDetails, {
     String? payload,
   }) async {
     validateId(id);
@@ -560,7 +700,7 @@ class IOSFlutterLocalNotificationsPlugin
   /// [scheduledDate] is interpreted. See official docs at
   /// https://developer.apple.com/documentation/uikit/uilocalnotification/1616659-timezone
   /// for more details. Note that due to this limited support, it's likely that
-  /// on older iOS devices, there will still be issues with daylight savings
+  /// on older iOS devices, there will still be issues with daylight saving time
   /// except for when the time zone used in the [scheduledDate] matches the
   /// device's time zone and [uiLocalNotificationDateInterpretation] is set to
   /// [UILocalNotificationDateInterpretation.wallClockTime].
@@ -569,7 +709,7 @@ class IOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     TZDateTime scheduledDate,
-    IOSNotificationDetails? notificationDetails, {
+    DarwinNotificationDetails? notificationDetails, {
     required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
     String? payload,
@@ -608,7 +748,7 @@ class IOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     Time notificationTime,
-    IOSNotificationDetails? notificationDetails, {
+    DarwinNotificationDetails? notificationDetails, {
     String? payload,
   }) async {
     validateId(id);
@@ -633,7 +773,7 @@ class IOSFlutterLocalNotificationsPlugin
     String? body,
     Day day,
     Time notificationTime,
-    IOSNotificationDetails? notificationDetails, {
+    DarwinNotificationDetails? notificationDetails, {
     String? payload,
   }) async {
     validateId(id);
@@ -655,7 +795,7 @@ class IOSFlutterLocalNotificationsPlugin
     int id,
     String? title,
     String? body, {
-    IOSNotificationDetails? notificationDetails,
+    DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) {
     validateId(id);
@@ -677,7 +817,7 @@ class IOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     RepeatInterval repeatInterval, {
-    IOSNotificationDetails? notificationDetails,
+    DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) async {
     validateId(id);
@@ -694,8 +834,17 @@ class IOSFlutterLocalNotificationsPlugin
 
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
-      case 'selectNotification':
-        _onSelectNotification?.call(call.arguments);
+      case 'didReceiveNotificationResponse':
+        _onDidReceiveNotificationResponse?.call(
+          NotificationResponse(
+            id: call.arguments['notificationId'],
+            actionId: call.arguments['actionId'],
+            input: call.arguments['input'],
+            payload: call.arguments['payload'],
+            notificationResponseType: NotificationResponseType
+                .values[call.arguments['notificationResponseType']],
+          ),
+        );
         break;
       case 'didReceiveLocalNotification':
         _onDidReceiveLocalNotification!(
@@ -713,33 +862,32 @@ class IOSFlutterLocalNotificationsPlugin
 /// macOS implementation of the local notifications plugin.
 class MacOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
-  SelectNotificationCallback? _onSelectNotification;
-  NotificationActionCallback? _onNotificationActionSelected;
+  DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
 
   /// Initializes the plugin.
   ///
   /// Call this method on application before using the plugin further.
-  /// This should only be done once. When a notification created by this plugin
-  /// was used to launch the app, calling `initialize` is what will trigger to
-  /// the `onSelectNotification` callback to be fire.
+  /// This should only be done once.
   ///
   /// Initialisation may also request notification permissions where users will
   /// see a permissions prompt. This may be fine in cases where it's acceptable
   /// to do this when the application runs for the first time. However, if your
   /// applicationn needs to do this at a later point in time, set the
-  /// [MacOSInitializationSettings.requestAlertPermission],
-  /// [MacOSInitializationSettings.requestBadgePermission] and
-  /// [MacOSInitializationSettings.requestSoundPermission] values to false.
+  /// [DarwinInitializationSettings.requestAlertPermission],
+  /// [DarwinInitializationSettings.requestBadgePermission] and
+  /// [DarwinInitializationSettings.requestSoundPermission] values to false.
   /// [requestPermissions] can then be called to request permissions when
   /// needed.
   ///
-  /// To handle when a notification launched an application, use
-  /// [getNotificationAppLaunchDetails].
-  Future<bool?> initialize(MacOSInitializationSettings initializationSettings,
-      {SelectNotificationCallback? onSelectNotification,
-      NotificationActionCallback? onNotificationActionSelected}) async {
-    _onSelectNotification = onSelectNotification;
-    _onNotificationActionSelected = onNotificationActionSelected;
+  /// The [onDidReceiveNotificationResponse] callback is fired when the user
+  /// interacts with a notification that was displayed by the plugin and the
+  /// application was running. To handle when a notification launched an
+  /// application, use [getNotificationAppLaunchDetails].
+  Future<bool?> initialize(
+    DarwinInitializationSettings initializationSettings, {
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
+  }) async {
+    _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
     _channel.setMethodCallHandler(_handleMethod);
     return await _channel.invokeMethod(
         'initialize', initializationSettings.toMap());
@@ -748,14 +896,16 @@ class MacOSFlutterLocalNotificationsPlugin
   /// Requests the specified permission(s) from user and returns current
   /// permission status.
   Future<bool?> requestPermissions({
-    bool? sound,
-    bool? alert,
-    bool? badge,
+    bool sound = false,
+    bool alert = false,
+    bool badge = false,
+    bool critical = false,
   }) =>
       _channel.invokeMethod<bool>('requestPermissions', <String, bool?>{
         'sound': sound,
         'alert': alert,
         'badge': badge,
+        'critical': critical,
       });
 
   /// Schedules a notification to be shown at the specified date and time
@@ -765,7 +915,7 @@ class MacOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     TZDateTime scheduledDate,
-    MacOSNotificationDetails? notificationDetails, {
+    DarwinNotificationDetails? notificationDetails, {
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
@@ -795,7 +945,7 @@ class MacOSFlutterLocalNotificationsPlugin
     int id,
     String? title,
     String? body, {
-    MacOSNotificationDetails? notificationDetails,
+    DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) {
     validateId(id);
@@ -817,7 +967,7 @@ class MacOSFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     RepeatInterval repeatInterval, {
-    MacOSNotificationDetails? notificationDetails,
+    DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) async {
     validateId(id);
@@ -834,16 +984,17 @@ class MacOSFlutterLocalNotificationsPlugin
 
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
-      case 'selectNotification':
-        _onSelectNotification?.call(call.arguments);
-        break;
-      case 'actionTapped':
-        _onNotificationActionSelected?.call(NotificationActionDetails(
-          id: int.parse(call.arguments['notificationId']),
-          actionId: call.arguments['actionId'],
-          input: call.arguments['input'],
-          payload: call.arguments['payload'],
-        ));
+      case 'didReceiveNotificationResponse':
+        _onDidReceiveNotificationResponse?.call(
+          NotificationResponse(
+            id: call.arguments['notificationId'],
+            actionId: call.arguments['actionId'],
+            input: call.arguments['input'],
+            payload: call.arguments['payload'],
+            notificationResponseType: NotificationResponseType
+                .values[call.arguments['notificationResponseType']],
+          ),
+        );
         break;
       default:
         return await Future<void>.error('Method not defined');
@@ -854,22 +1005,24 @@ class MacOSFlutterLocalNotificationsPlugin
 /// Windows implementation of the flutter_local_notifications plugin.
 class WindowsFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
-  SelectNotificationCallback? _onSelectNotification;
+  DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
 
   /// Initializes the plugin.
   ///
-  /// Call this method on application before using the plugin further.
+  /// Call this method on application before using
+  /// the plugin further.
+  ///
   /// This should only be done once. When a notification created by this plugin
   /// was used to launch the app, calling [initialize] is what will trigger to
-  /// the [onSelectNotification] callback to be fire.
+  /// the [onDidReceiveNotificationResponse] callback to be fire.
   ///
   /// To handle when a notification launched an application, use
   /// [getNotificationAppLaunchDetails].
   Future<bool?> initialize(
     WindowsInitializationSettings settings, {
-    SelectNotificationCallback? onSelectNotification,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) {
-    _onSelectNotification = onSelectNotification;
+    _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
     _channel.setMethodCallHandler(_handleMethod);
 
     return _channel.invokeMethod('initialize', settings.toMap());
@@ -902,27 +1055,31 @@ class WindowsFlutterLocalNotificationsPlugin
     switch (call.method) {
       case 'selectNotification':
         if (call.arguments is String) {
-          _onSelectNotification?.call(call.arguments);
+          _onDidReceiveNotificationResponse?.call(NotificationResponse(
+              notificationResponseType:
+                  NotificationResponseType.selectedNotification,
+              payload: call.arguments));
         }
         break;
     }
   }
 }
 
-/// Checks [backgroundHandler] method, if not `null`, for eligibility to
-/// be used as a background callback.
+/// Checks [didReceiveBackgroundNotificationResponseCallback], if not `null`,
+/// for eligibility to be used as a background callback.
 ///
 /// If the method is `null`, no further action will be taken.
 ///
 /// This will add a `dispatcher_handle` and `callback_handle` argument to the
 /// [arguments] map when the config is correct.
-void _evaluateBackgroundHandler(
-  NotificationActionCallback? backgroundHandler,
+void _evaluateBackgroundNotificationCallback(
+  DidReceiveBackgroundNotificationResponseCallback?
+      didReceiveBackgroundNotificationResponseCallback,
   Map<String, Object> arguments,
 ) {
-  if (backgroundHandler != null) {
-    final CallbackHandle? callback =
-        PluginUtilities.getCallbackHandle(backgroundHandler);
+  if (didReceiveBackgroundNotificationResponseCallback != null) {
+    final CallbackHandle? callback = PluginUtilities.getCallbackHandle(
+        didReceiveBackgroundNotificationResponseCallback);
     assert(callback != null, '''
           The backgroundHandler needs to be either a static function or a top 
           level function to be accessible as a Flutter entry point.''');

@@ -67,4 +67,9 @@ scripts:
       dir-exists:
         - linux
       scope: "*example*"
+
+  clean:
+    run: git clean -x -d -f -q
+    description: Runs git clean as though repo was just checked out
+
   format: dart format -o write .

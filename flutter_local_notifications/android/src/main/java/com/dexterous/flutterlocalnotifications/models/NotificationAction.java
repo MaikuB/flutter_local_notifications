@@ -1,15 +1,19 @@
 package com.dexterous.flutterlocalnotifications.models;
 
 import android.graphics.Color;
+
+import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class NotificationAction {
-  public static class NotificationActionInput {
+@Keep
+public class NotificationAction implements Serializable {
+  public static class NotificationActionInput implements Serializable {
 
     public NotificationActionInput(
         @Nullable List<String> choices,
@@ -89,7 +93,9 @@ public class NotificationAction {
   @Nullable public final Boolean showsUserInterface;
   @Nullable public final Boolean allowGeneratedReplies;
   @Nullable public final IconSource iconSource;
-  public final List<NotificationActionInput> actionInputs = new ArrayList<>();
+  // actionInputs is annotated as nullable as the Flutter API use to allow this to be nullable
+  // before null-safety was added in
+  @Nullable public final List<NotificationActionInput> actionInputs = new ArrayList<>();
 
   public NotificationAction(Map<String, Object> arguments) {
     id = (String) arguments.get(ID);
@@ -119,6 +125,7 @@ public class NotificationAction {
     }
 
     if (arguments.get(INPUTS) != null) {
+      @SuppressWarnings("unchecked")
       List<Map<String, Object>> inputs = (List<Map<String, Object>>) arguments.get(INPUTS);
 
       if (inputs != null) {

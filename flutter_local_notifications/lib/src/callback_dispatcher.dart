@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 
-// ignore_for_file: public_member_api_docs
-
+// ignore_for_file: public_member_api_docs, avoid_annotating_with_dynamic
+@pragma('vm:entry-point')
 void callbackDispatcher() {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -15,16 +15,17 @@ void callbackDispatcher() {
   const MethodChannel channel =
       MethodChannel('dexterous.com/flutter/local_notifications');
 
-  channel.invokeMethod<int>('getCallbackHandle').then((handle) {
-    final NotificationActionCallback? callback = handle == null
-        ? null
-        : PluginUtilities.getCallbackFromHandle(
-                CallbackHandle.fromRawHandle(handle))
-            as NotificationActionCallback?;
+  channel.invokeMethod<int>('getCallbackHandle').then((int? handle) {
+    final DidReceiveBackgroundNotificationResponseCallback? callback =
+        handle == null
+            ? null
+            : PluginUtilities.getCallbackFromHandle(
+                    CallbackHandle.fromRawHandle(handle))
+                as DidReceiveBackgroundNotificationResponseCallback?;
 
     backgroundChannel
         .receiveBroadcastStream()
-        .map<Map<dynamic, dynamic>>((event) => event)
+        .map<Map<dynamic, dynamic>>((dynamic event) => event)
         .map<Map<String, dynamic>>(
             (Map<dynamic, dynamic> event) => Map.castFrom(event))
         .listen((Map<String, dynamic> event) {
@@ -37,11 +38,13 @@ void callbackDispatcher() {
       } else {
         id = -1;
       }
-      callback?.call(NotificationActionDetails(
+      callback?.call(NotificationResponse(
         id: id,
         actionId: event['actionId'],
         input: event['input'],
         payload: event['payload'],
+        notificationResponseType:
+            NotificationResponseType.selectedNotificationAction,
       ));
     });
   });

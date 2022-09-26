@@ -32,6 +32,9 @@ enum LinuxIconType {
 
   /// System theme icon, see [ThemeLinuxIcon].
   theme,
+
+  /// Icon located at the path in the file system, see [FilePathLinuxIcon].
+  filePath,
 }
 
 /// Specifies the Linux notification sound type.
