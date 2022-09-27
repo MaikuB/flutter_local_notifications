@@ -189,13 +189,13 @@ namespace {
 			return false;
 		}
 
-		UINT32 length;
+		UINT32 length = 0;
 		auto err = GetCurrentPackageFullName(&length, NULL);
 		if (err != ERROR_INSUFFICIENT_BUFFER) {
 			if (err == APPMODEL_ERROR_NO_PACKAGE)
 				return false;
 
-			return false;
+			return std::nullopt;
 		}
 
 		PWSTR fullName = (PWSTR)malloc(length * sizeof(*fullName));
