@@ -25,6 +25,7 @@ import 'platform_specifics/darwin/notification_details.dart';
 import 'platform_specifics/ios/enums.dart';
 import 'platform_specifics/windows/initialization_settings.dart';
 import 'platform_specifics/windows/method_channel_mappers.dart';
+import 'platform_specifics/windows/notification_details.dart';
 import 'type_mappers.dart';
 import 'typedefs.dart';
 import 'types.dart';
@@ -1035,6 +1036,7 @@ class WindowsFlutterLocalNotificationsPlugin
     String? body, {
     String? payload,
     String? group,
+    WindowsNotificationDetails? notificationDetails,
   }) =>
       _channel.invokeMethod('show', <String, dynamic>{
         'id': id,
@@ -1042,6 +1044,7 @@ class WindowsFlutterLocalNotificationsPlugin
         'body': body,
         'group': group,
         'payload': payload,
+        'platformSpecifics': notificationDetails?.toMap(),
       });
 
   @override
@@ -1053,12 +1056,12 @@ class WindowsFlutterLocalNotificationsPlugin
 
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
-      case 'selectNotification':
-        if (call.arguments is String) {
+      case 'didReceiveNotificationResponse':
+        if (call.arguments is Map) {
           _onDidReceiveNotificationResponse?.call(NotificationResponse(
               notificationResponseType:
                   NotificationResponseType.selectedNotification,
-              payload: call.arguments));
+              payload: call.arguments['payload']));
         }
         break;
     }

@@ -274,7 +274,9 @@ class FlutterLocalNotificationsPlugin {
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       await resolvePlatformSpecificImplementation<
               WindowsFlutterLocalNotificationsPlugin>()
-          ?.show(id, title, body, payload: payload);
+          ?.show(id, title, body,
+              notificationDetails: notificationDetails?.windows,
+              payload: payload);
     } else {
       await FlutterLocalNotificationsPlatform.instance.show(id, title, body);
     }

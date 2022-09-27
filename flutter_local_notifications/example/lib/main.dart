@@ -262,6 +262,9 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _linuxIconPathController =
       TextEditingController();
 
+  final TextEditingController _windowsRawXmlController =
+      TextEditingController();
+
   bool _notificationsEnabled = false;
 
   @override
@@ -1033,6 +1036,35 @@ class _HomePageState extends State<HomePage> {
                           'different screen location',
                       onPressed: () async {
                         await _showLinuxNotificationDifferentLocation();
+                      },
+                    ),
+                  ],
+                  if (!kIsWeb && Platform.isWindows) ...<Widget>[
+                    const Text(
+                      'Windows-specific examples',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+                      child: TextField(
+                        maxLines: 20,
+                        style: const TextStyle(fontFamily: 'RobotoMono'),
+                        controller: _windowsRawXmlController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter the raw xml',
+                          constraints: const BoxConstraints.tightFor(
+                              width: 600, height: 480),
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () => _windowsRawXmlController.clear(),
+                          ),
+                        ),
+                      ),
+                    ),
+                    PaddedElevatedButton(
+                      buttonText: 'Show notification with raw XML',
+                      onPressed: () async {
+                        await _showWindowsNotificationWithRawXml();
                       },
                     ),
                   ],
@@ -2670,6 +2702,16 @@ class _HomePageState extends State<HomePage> {
       'alarm notification sound body',
       platformChannelSpecifics,
     );
+  }
+
+  Future<void> _showWindowsNotificationWithRawXml() async {
+    final WindowsNotificationDetails windowsPlatformChannelSpecifics =
+        WindowsNotificationDetails(rawXml: _windowsRawXmlController.text);
+
+    final NotificationDetails platformChannelSpecifics =
+        NotificationDetails(windows: windowsPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        id++, 'plain title', 'plain body', platformChannelSpecifics);
   }
 }
 

@@ -28,15 +28,30 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
 	HRESULT __stdcall Activate(
 		LPCWSTR app,
 		LPCWSTR args,
-		[[maybe_unused]] NOTIFICATION_USER_INPUT_DATA const* data,
-		[[maybe_unused]] ULONG count) noexcept final
+		NOTIFICATION_USER_INPUT_DATA const* data,
+		ULONG count) noexcept final
 	{
 		try {
 			std::wcout << L"Example" << L" has been called back from a notification." << std::endl;
 			std::wcout << L"Value of the 'app' parameter is '" << app << L"'." << std::endl;
 			std::wcout << L"Value of the 'args' parameter is '" << args << L"'." << std::endl;
+			std::wcout << L"Value of the 'count' is " << count << std::endl;
+			std::wcout << L"Value of the 'data' is:" << std::endl;
+			flutter::EncodableMap inputData;
+			for (ULONG i = 0; i < count; i++) {
+				auto item = data[i];
+				std::wcout << L"  Key: '" << item.Key << L"', Value: '" << item.Value << "'." << std::endl;
+				inputData[std::string(CW2A(item.Key))] = std::string(CW2A(item.Value));
+			}
 			const std::string payload = CW2A(args);
-			channel->InvokeMethod(Method::SELECT_NOTIFICATION, std::make_unique<flutter::EncodableValue>(payload), nullptr);
+			flutter::EncodableMap response;
+			response[std::string("payload")] = flutter::EncodableValue(payload);
+			response[std::string("data")] = flutter::EncodableValue(inputData);
+			channel->InvokeMethod(
+				Method::DID_RECEIVE_NOTIFICATION_RESPONSE,
+				std::make_unique<flutter::EncodableValue>(response),
+				nullptr
+			);
 			return S_OK;
 		}
 		catch (...) {

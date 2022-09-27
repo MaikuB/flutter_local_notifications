@@ -74,7 +74,8 @@ namespace {
 			const std::optional<std::string>& title,
 			const std::optional<std::string>& body,
 			const std::optional<std::string>& payload,
-			const std::optional<std::string>& group);
+			const std::optional<std::string>& group,
+			const std::optional<flutter::EncodableMap>& platformSpecifics);
 
 		/// <summary>
 		/// Dismisses the notification that has the given ID.
@@ -144,8 +145,6 @@ namespace {
 			}
 		}
 		else if (method_name == Method::SHOW) {
-			channel->InvokeMethod("test", nullptr);
-
 			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
 			if (args != nullptr && toastNotifier.has_value()) {
 				const auto id = Utils::GetMapValue<int>("id", args).value();
@@ -153,8 +152,9 @@ namespace {
 				const auto body = Utils::GetMapValue<std::string>("body", args);
 				const auto payload = Utils::GetMapValue<std::string>("payload", args);
 				const auto group = Utils::GetMapValue<std::string>("group", args);
+				const auto platformSpecifics = Utils::GetMapValue<flutter::EncodableMap>("platformSpecifics", args);
 
-				ShowNotification(id, title, body, payload, group);
+				ShowNotification(id, title, body, payload, group, platformSpecifics);
 				result->Success();
 			}
 			else {
@@ -238,15 +238,21 @@ namespace {
 		const std::optional<std::string>& title,
 		const std::optional<std::string>& body,
 		const std::optional<std::string>& payload,
-		const std::optional<std::string>& group
+		const std::optional<std::string>& group,
+		const std::optional<flutter::EncodableMap>& platformSpecifics
 	) {
 		// obtain a notification template with a title and a body
 		//const auto doc = winrt::Windows::UI::Notifications::ToastNotificationManager::GetTemplateContent(winrt::Windows::UI::Notifications::ToastTemplateType::ToastText02);
 		// find all <text /> tags
 		//const auto nodes = doc.GetElementsByTagName(L"text");
 
+		auto rawXml = platformSpecifics.has_value() ?
+			Utils::GetMapValue<std::string>("rawXml", &platformSpecifics.value()) :
+			std::nullopt;
+
 		XmlDocument doc;
-		doc.LoadXml(L"\
+		if (!rawXml.has_value()) {
+			doc.LoadXml(L"\
 			<toast>\
 				<visual>\
 					<binding template=\"ToastGeneric\">\
@@ -254,24 +260,28 @@ namespace {
 				</visual>\
 			</toast>");
 
-		const auto bindingNode = doc.SelectSingleNode(L"//binding[1]");
+			const auto bindingNode = doc.SelectSingleNode(L"//binding[1]");
 
-		if (title.has_value()) {
-			// change the text of the first <text></text>, which will be the title
-			const auto textNode = doc.CreateElement(L"text");
-			textNode.InnerText(winrt::to_hstring(*title));
-			bindingNode.AppendChild(textNode);
+			if (title.has_value()) {
+				// change the text of the first <text></text>, which will be the title
+				const auto textNode = doc.CreateElement(L"text");
+				textNode.InnerText(winrt::to_hstring(*title));
+				bindingNode.AppendChild(textNode);
+			}
+			if (body.has_value()) {
+				// change the text of the second <text></text>, which will be the body
+				//nodes.Item(1).AppendChild(doc.CreateTextNode(winrt::to_hstring(body.value())));
+				const auto textNode = doc.CreateElement(L"text");
+				textNode.InnerText(winrt::to_hstring(*body));
+				bindingNode.AppendChild(textNode);
+			}
+			if (payload.has_value()) {
+				std::cout << "payload: " << *payload << std::endl;
+				doc.DocumentElement().SetAttribute(L"launch", winrt::to_hstring(*payload));
+			}
 		}
-		if (body.has_value()) {
-			// change the text of the second <text></text>, which will be the body
-			//nodes.Item(1).AppendChild(doc.CreateTextNode(winrt::to_hstring(body.value())));
-			const auto textNode = doc.CreateElement(L"text");
-			textNode.InnerText(winrt::to_hstring(*body));
-			bindingNode.AppendChild(textNode);
-		}
-		if (payload.has_value()) {
-			std::cout << "payload: " << *payload << std::endl;
-			doc.DocumentElement().SetAttribute(L"launch", winrt::to_hstring(*payload));
+		else {
+			doc.LoadXml(winrt::to_hstring(rawXml.value()));
 		}
 
 		std::cout << winrt::to_string(doc.GetXml()) << std::endl;
