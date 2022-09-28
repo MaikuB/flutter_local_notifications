@@ -1152,7 +1152,7 @@ public class FlutterLocalNotificationsPlugin
   static void showNotification(Context context, NotificationDetails notificationDetails) {
     Notification notification = createNotification(context, notificationDetails);
     NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
-    Toast.makeText(context, "static show", Toast.LENGTH_SHORT).show();
+//    Toast.makeText(context, "static show", Toast.LENGTH_SHORT).show();
 
     if (notificationDetails.tag != null) {
       notificationManagerCompat.notify(
