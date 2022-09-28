@@ -30,6 +30,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.widget.Toast;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -1151,6 +1152,7 @@ public class FlutterLocalNotificationsPlugin
   static void showNotification(Context context, NotificationDetails notificationDetails) {
     Notification notification = createNotification(context, notificationDetails);
     NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
+    Toast.makeText(context, "static show", Toast.LENGTH_SHORT).show();
 
     if (notificationDetails.tag != null) {
       notificationManagerCompat.notify(
@@ -1475,6 +1477,7 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private void show(MethodCall call, Result result) {
+    Toast.makeText(applicationContext, "plugin show", Toast.LENGTH_SHORT).show();
     Map<String, Object> arguments = call.arguments();
     NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
     if (notificationDetails != null) {
