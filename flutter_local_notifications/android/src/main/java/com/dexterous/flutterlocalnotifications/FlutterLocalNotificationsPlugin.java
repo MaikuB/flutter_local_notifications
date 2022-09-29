@@ -1152,14 +1152,11 @@ public class FlutterLocalNotificationsPlugin
    void showNotification(Context context, NotificationDetails notificationDetails) {
     Notification notification = createNotification(context, notificationDetails);
     NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
-    Toast.makeText(context, "static show", Toast.LENGTH_SHORT).show();
     ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
     ZonedDateTime scheduledDateTime =
             ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
     ZonedDateTime now = ZonedDateTime.now(zoneId).minusMinutes(5);
     if (!scheduledDateTime.isBefore(now)) {
-      Toast.makeText(context, " show notification", Toast.LENGTH_SHORT).show();
-
       if (notificationDetails.tag != null) {
       notificationManagerCompat.notify(
               notificationDetails.tag, notificationDetails.id, notification);
@@ -1169,7 +1166,7 @@ public class FlutterLocalNotificationsPlugin
   }
     else{
         cancelNotification(notificationDetails.id,notificationDetails.tag);
-      
+
     }
 
   }
