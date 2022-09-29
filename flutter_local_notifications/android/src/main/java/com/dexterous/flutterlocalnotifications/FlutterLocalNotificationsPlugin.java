@@ -1149,7 +1149,7 @@ public class FlutterLocalNotificationsPlugin
     return true;
   }
 
-  static void showNotification(Context context, NotificationDetails notificationDetails) {
+   void showNotification(Context context, NotificationDetails notificationDetails) {
     Notification notification = createNotification(context, notificationDetails);
     NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
     Toast.makeText(context, "static show", Toast.LENGTH_SHORT).show();
@@ -1167,6 +1167,12 @@ public class FlutterLocalNotificationsPlugin
       notificationManagerCompat.notify(notificationDetails.id, notification);
     }
   }
+    else{
+      if(notificationDetails.id==11){
+        cancelNotification(notificationDetails.id,notificationDetails.tag);
+      }
+    }
+
   }
 
   static void zonedScheduleNextNotification(
