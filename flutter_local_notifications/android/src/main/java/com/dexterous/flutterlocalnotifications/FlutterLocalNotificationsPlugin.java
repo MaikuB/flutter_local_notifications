@@ -1168,9 +1168,8 @@ public class FlutterLocalNotificationsPlugin
     }
   }
     else{
-      if(notificationDetails.id==11){
         cancelNotification(notificationDetails.id,notificationDetails.tag);
-      }
+      
     }
 
   }
