@@ -1148,16 +1148,26 @@ public class FlutterLocalNotificationsPlugin
     return true;
   }
 
-  static void showNotification(Context context, NotificationDetails notificationDetails) {
+   void showNotification(Context context, NotificationDetails notificationDetails) {
     Notification notification = createNotification(context, notificationDetails);
     NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
-
-    if (notificationDetails.tag != null) {
+    ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
+    ZonedDateTime scheduledDateTime =
+            ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
+    ZonedDateTime now = ZonedDateTime.now(zoneId).minusMinutes(5);
+    if (!scheduledDateTime.isBefore(now)) {
+      if (notificationDetails.tag != null) {
       notificationManagerCompat.notify(
-          notificationDetails.tag, notificationDetails.id, notification);
+              notificationDetails.tag, notificationDetails.id, notification);
     } else {
       notificationManagerCompat.notify(notificationDetails.id, notification);
     }
+  }
+    else{
+        cancelNotification(notificationDetails.id,notificationDetails.tag);
+
+    }
+
   }
 
   static void zonedScheduleNextNotification(
