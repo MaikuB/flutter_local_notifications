@@ -209,7 +209,7 @@ buildscript {
     }
 ```
 
-The plugin also requires that the `compileSdkVersion` in their application's Gradle file  is set to 33
+There have been reports that enabling desugaring may result in a Flutter apps crashing on foldable devices. This would be an issue with Flutter itself, not the plugin. Please see [this link](https://github.com/flutter/flutter/issues/110658) for details to try out the solutions there. The plugin also requires that the `compileSdkVersion` in their application's Gradle file  is set to 33
 
 ```gradle
 android {
