@@ -1,3 +1,7 @@
+## [2.0.0]
+
+* Bumped `dbus` dependency
+
 ## [1.0.0]
 
 * **Breaking change** The linux notification categories defined by `LinuxNotificationCategory` no longer has factory constructors but has static constant fields instead to make the semantics more similar to access enum values
