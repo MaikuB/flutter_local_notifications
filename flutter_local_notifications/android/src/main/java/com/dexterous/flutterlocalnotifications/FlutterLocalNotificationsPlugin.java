@@ -200,8 +200,9 @@ public class FlutterLocalNotificationsPlugin
     plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
   }
 
-  static void rescheduleNotifications(Context context) {
+    public void rescheduleNotifications(Context context) {
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
+    deletePreviousNotifications(scheduledNotifications);
     for (NotificationDetails scheduledNotification : scheduledNotifications) {
       if (scheduledNotification.repeatInterval == null) {
         if (scheduledNotification.timeZoneName == null) {
@@ -1371,7 +1372,7 @@ public class FlutterLocalNotificationsPlugin
         break;
     }
   }
-  private void deletePreviousNotifications(ArrayList<NotificationDetails> scheduledNotifications){
+  private  void deletePreviousNotifications(ArrayList<NotificationDetails> scheduledNotifications){
     for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
       NotificationDetails notificationDetails = it.next();
       ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
