@@ -1377,7 +1377,7 @@ public class FlutterLocalNotificationsPlugin
       ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
       ZonedDateTime scheduledDateTime =
               ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
-      ZonedDateTime now = ZonedDateTime.now(zoneId).minusMinutes(2);
+      ZonedDateTime now = ZonedDateTime.now(zoneId).minusMinutes(1);
       if (scheduledDateTime.isBefore(now)) {
         it.remove();
         cancelNotification(notificationDetails.id,notificationDetails.tag);
