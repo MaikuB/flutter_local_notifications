@@ -1,3 +1,7 @@
+# [12.0.0]
+
+* Bumped `dbus` dependency via `flutter_local_notifications_linux`
+
 # [11.0.1]
 
 * [Android] fixed crash when using notification actions with a foreground service. Thanks to the PR from [Arnold Laishram](https://github.com/arnoldlaishram)
