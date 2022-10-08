@@ -1,6 +1,7 @@
 # [12.0.1]
 
 * [Android][iOS] fixed issue [1721](https://github.com/MaikuB/flutter_local_notifications/issues/1721) where a crash occurs upon tapping on a notification action fbut the `onDidReceiveBackgroundNotificationResponse` optional callback hasn't been specified. 
+* [iOS] suppressed deprecation warnings where plugin was Apple's old notification APIs to support older iOS devices
 
 # [12.0.0]
 

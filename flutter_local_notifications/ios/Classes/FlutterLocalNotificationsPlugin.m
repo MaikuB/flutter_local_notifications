@@ -259,6 +259,8 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)pendingLocalNotificationRequests:(FlutterResult _Nonnull)result {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
   NSArray *notifications =
       [UIApplication sharedApplication].scheduledLocalNotifications;
   NSMutableArray<NSDictionary<NSString *, NSObject *> *>
@@ -266,6 +268,7 @@ static FlutterError *getFlutterError(NSError *error) {
           [[NSMutableArray alloc] initWithCapacity:[notifications count]];
   for (int i = 0; i < [notifications count]; i++) {
     UILocalNotification *localNotification = [notifications objectAtIndex:i];
+#pragma clang diagnostic pop
     NSMutableDictionary *pendingNotificationRequest =
         [[NSMutableDictionary alloc] init];
     pendingNotificationRequest[ID] =
@@ -489,6 +492,8 @@ static FlutterError *getFlutterError(NSError *error) {
                             result(@(granted));
                           }];
   } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     UIUserNotificationType notificationTypes = 0;
     if (soundPermission) {
       notificationTypes |= UIUserNotificationTypeSound;
@@ -504,13 +509,17 @@ static FlutterError *getFlutterError(NSError *error) {
                                           categories:nil];
     [[UIApplication sharedApplication]
         registerUserNotificationSettings:settings];
+#pragma clang diagnostic pop
     result(@YES);
   }
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (UILocalNotification *)buildStandardUILocalNotification:
     (NSDictionary *)arguments {
   UILocalNotification *notification = [[UILocalNotification alloc] init];
+#pragma clang diagnostic pop
   if ([self containsKey:BODY forDictionary:arguments]) {
     notification.alertBody = arguments[BODY];
   }
@@ -550,7 +559,10 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 
   if (presentSound && notification.soundName == nil) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     notification.soundName = UILocalNotificationDefaultSoundName;
+#pragma clang diagnostic pop
   }
 
   notification.userInfo = [self buildUserDict:arguments[ID]
@@ -576,10 +588,13 @@ static FlutterError *getFlutterError(NSError *error) {
                           result:result
                          trigger:nil];
   } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
     [[UIApplication sharedApplication]
         presentLocalNotificationNow:notification];
+#pragma clang diagnostic pop
     result(nil);
   }
 }
@@ -597,8 +612,11 @@ static FlutterError *getFlutterError(NSError *error) {
                          trigger:trigger];
 
   } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
+#pragma clang diagnostic pop
     NSString *scheduledDateTime = arguments[SCHEDULED_DATE_TIME];
     NSString *timeZoneName = arguments[TIME_ZONE_NAME];
     NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
@@ -630,7 +648,10 @@ static FlutterError *getFlutterError(NSError *error) {
         notification.repeatInterval = NSCalendarUnitYear;
       }
     }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+#pragma clang diagnostic pop
     result(nil);
   }
 }
@@ -658,11 +679,17 @@ static FlutterError *getFlutterError(NSError *error) {
                           result:result
                          trigger:trigger];
   } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
+#pragma clang diagnostic pop
     notification.fireDate = [NSDate
         dateWithTimeIntervalSince1970:[secondsSinceEpoch longLongValue]];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+#pragma clang diagnostic pop
     result(nil);
   }
 }
@@ -679,8 +706,11 @@ static FlutterError *getFlutterError(NSError *error) {
                           result:result
                          trigger:trigger];
   } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
+#pragma clang diagnostic pop
     NSTimeInterval timeInterval = 0;
     switch ([arguments[REPEAT_INTERVAL] integerValue]) {
     case EveryMinute:
@@ -701,7 +731,10 @@ static FlutterError *getFlutterError(NSError *error) {
       break;
     }
     notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:timeInterval];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+#pragma clang diagnostic pop
     result(nil);
   }
 }
@@ -727,8 +760,11 @@ static FlutterError *getFlutterError(NSError *error) {
                           result:result
                          trigger:trigger];
   } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
+#pragma clang diagnostic pop
     notification.repeatInterval = NSCalendarUnitDay;
     NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
     [dateComponents setHour:[hourComponent integerValue]];
@@ -736,7 +772,10 @@ static FlutterError *getFlutterError(NSError *error) {
     [dateComponents setSecond:[secondsComponent integerValue]];
     NSCalendar *calendar = [NSCalendar currentCalendar];
     notification.fireDate = [calendar dateFromComponents:dateComponents];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+#pragma clang diagnostic pop
     result(nil);
   }
 }
@@ -764,8 +803,11 @@ static FlutterError *getFlutterError(NSError *error) {
                           result:result
                          trigger:trigger];
   } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     UILocalNotification *notification =
         [self buildStandardUILocalNotification:arguments];
+#pragma clang diagnostic pop
     notification.repeatInterval = NSCalendarUnitWeekOfYear;
     NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
     [dateComponents setHour:[hourComponent integerValue]];
@@ -774,7 +816,10 @@ static FlutterError *getFlutterError(NSError *error) {
     [dateComponents setWeekday:[dayOfWeekComponent integerValue]];
     NSCalendar *calendar = [NSCalendar currentCalendar];
     notification.fireDate = [calendar dateFromComponents:dateComponents];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+#pragma clang diagnostic pop
     result(nil);
   }
 }
@@ -788,15 +833,24 @@ static FlutterError *getFlutterError(NSError *error) {
     [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
     [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
   } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSArray *notifications =
         [UIApplication sharedApplication].scheduledLocalNotifications;
+#pragma clang diagnostic pop
     for (int i = 0; i < [notifications count]; i++) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
       UILocalNotification *localNotification = [notifications objectAtIndex:i];
+#pragma clang diagnostic pop
       NSNumber *userInfoNotificationId =
           localNotification.userInfo[NOTIFICATION_ID];
       if ([userInfoNotificationId longValue] == [id longValue]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [[UIApplication sharedApplication]
             cancelLocalNotification:localNotification];
+#pragma clang diagnostic pop
         break;
       }
     }
@@ -811,7 +865,10 @@ static FlutterError *getFlutterError(NSError *error) {
     [center removeAllPendingNotificationRequests];
     [center removeAllDeliveredNotifications];
   } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[UIApplication sharedApplication] cancelAllLocalNotifications];
+#pragma clang diagnostic pop
   }
   result(nil);
 }
@@ -1177,9 +1234,12 @@ static FlutterError *getFlutterError(NSError *error) {
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   if (launchOptions != nil) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     UILocalNotification *launchNotification =
         (UILocalNotification *)[launchOptions
             objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+#pragma clang diagnostic pop
     _launchingAppFromNotification =
         launchNotification != nil &&
         [self isAFlutterLocalNotification:launchNotification.userInfo];
@@ -1197,8 +1257,12 @@ static FlutterError *getFlutterError(NSError *error) {
   return YES;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (void)application:(UIApplication *)application
     didReceiveLocalNotification:(UILocalNotification *)notification {
+#pragma clang diagnostic pop
   if (@available(iOS 10.0, *)) {
     return;
   }
