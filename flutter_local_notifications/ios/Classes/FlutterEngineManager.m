@@ -45,7 +45,6 @@ static FlutterEngine *backgroundEngine;
   NSNumber *dispatcherHandle =
       [_persistentState objectForKey:@"dispatcher_handle"];
 
-
   FlutterCallbackInformation *info = [FlutterCallbackCache
       lookupCallbackInformation:[dispatcherHandle longValue]];
 
@@ -58,10 +57,10 @@ static FlutterEngine *backgroundEngine;
   NSString *uri = info.callbackLibraryPath;
 
   backgroundEngine =
-    [[FlutterEngine alloc] initWithName:@"FlutterLocalNotificationsIsolate"
-                                project:nil
-                allowHeadlessExecution:true];
-                
+      [[FlutterEngine alloc] initWithName:@"FlutterLocalNotificationsIsolate"
+                                  project:nil
+                   allowHeadlessExecution:true];
+
   dispatch_async(dispatch_get_main_queue(), ^{
     FlutterEventChannel *channel = [FlutterEventChannel
         eventChannelWithName:
