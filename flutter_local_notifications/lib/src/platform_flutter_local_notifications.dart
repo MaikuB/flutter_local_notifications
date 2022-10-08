@@ -140,8 +140,10 @@ class AndroidFlutterLocalNotificationsPlugin
     DidReceiveBackgroundNotificationResponseCallback?
         onDidReceiveBackgroundNotificationResponse,
   }) async {
-    _ondidReceiveNotificationResponse = onDidReceiveNotificationResponse;
-    _channel.setMethodCallHandler(_handleMethod);
+    if (onDidReceiveNotificationResponse != null) {
+      _ondidReceiveNotificationResponse = onDidReceiveNotificationResponse;
+      _channel.setMethodCallHandler(_handleMethod);
+    }
 
     final Map<String, Object> arguments = initializationSettings.toMap();
 
