@@ -71,6 +71,12 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
       return;
     }
 
+    FlutterCallbackInformation dispatcherHandle = preferences.lookupDispatcherHandle();
+    if (dispatcherHandle == null) {
+      Log.w(TAG, "Callback information could not be retrieved");
+      return;
+    }
+
     FlutterInjector injector = FlutterInjector.instance();
     FlutterLoader loader = injector.flutterLoader();
 
@@ -80,7 +86,6 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
     engine = new FlutterEngine(context);
     DartExecutor dartExecutor = engine.getDartExecutor();
 
-    FlutterCallbackInformation dispatcherHandle = preferences.lookupDispatcherHandle();
     initializeEventChannel(dartExecutor);
 
     String dartBundlePath = loader.findAppBundlePath();
