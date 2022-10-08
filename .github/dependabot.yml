@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: "pub"
+    directory: "/flutter_local_notifications_platform_interface"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/flutter_local_notifications_linux"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
+    directory: "/flutter_local_notifications"
+    schedule:
+      interval: "daily"
