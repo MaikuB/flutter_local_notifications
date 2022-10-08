@@ -1,3 +1,7 @@
+# [12.0.1+1]
+
+* Bumped dependency on `flutter_local_notification_linux` that was meant to be done in 12.0.0
+
 # [12.0.1]
 
 * [Android][iOS] fixed issue [1721](https://github.com/MaikuB/flutter_local_notifications/issues/1721) where a crash occurs upon tapping on a notification action fbut the `onDidReceiveBackgroundNotificationResponse` optional callback hasn't been specified. 
