@@ -1644,7 +1644,7 @@ public class FlutterLocalNotificationsPlugin
 
   public void requestPermission(@NonNull PermissionRequestListener callback) {
     if (permissionRequestInProgress) {
-      callback.fail("Another permission request is already in progress");
+      callback.fail(PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE);
       return;
     }
 
