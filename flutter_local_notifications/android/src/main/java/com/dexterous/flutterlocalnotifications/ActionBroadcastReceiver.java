@@ -79,7 +79,8 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
 
     engine = new FlutterEngine(context);
 
-    /// This lookup needs to be done after creating an instance of `FlutterEngine` or lookup may fail
+    /// This lookup needs to be done after creating an instance of `FlutterEngine` or lookup may
+    // fail
     FlutterCallbackInformation dispatcherHandle = preferences.lookupDispatcherHandle();
     if (dispatcherHandle == null) {
       Log.w(TAG, "Callback information could not be retrieved");
