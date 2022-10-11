@@ -71,12 +71,6 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
       return;
     }
 
-    FlutterCallbackInformation dispatcherHandle = preferences.lookupDispatcherHandle();
-    if (dispatcherHandle == null) {
-      Log.w(TAG, "Callback information could not be retrieved");
-      return;
-    }
-
     FlutterInjector injector = FlutterInjector.instance();
     FlutterLoader loader = injector.flutterLoader();
 
@@ -84,6 +78,15 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
     loader.ensureInitializationComplete(context, null);
 
     engine = new FlutterEngine(context);
+
+    /// This lookup needs to be done after creating an instance of `FlutterEngine` or lookup may
+    // fail
+    FlutterCallbackInformation dispatcherHandle = preferences.lookupDispatcherHandle();
+    if (dispatcherHandle == null) {
+      Log.w(TAG, "Callback information could not be retrieved");
+      return;
+    }
+
     DartExecutor dartExecutor = engine.getDartExecutor();
 
     initializeEventChannel(dartExecutor);
