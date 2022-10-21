@@ -25,12 +25,16 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.VibrationAttributes;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spanned;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.*;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
@@ -1206,28 +1210,56 @@ public class FlutterLocalNotificationsPlugin
                 context, notificationDetails.sound, notificationDetails.soundSource));
     if (r != null) {
       setRingtone(r);
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+      if (VERSION.SDK_INT >= VERSION_CODES.P) {
         r.setAudioAttributes(
             new AudioAttributes.Builder()
                 .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
                 .setUsage(AudioAttributes.USAGE_ALARM)
                 .build());
       }
-      setRingtoneLength(r, notificationDetails);
+      if (shouldLoop(notificationDetails)) {
+        setRingtoneLength(r, notificationDetails);
+      }
       r.play();
+    }
+
+    if (!notificationDetails.enableVibration) return;
+    Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+    if (v == null || !v.hasVibrator()) return;
+
+    if (shouldLoop(notificationDetails)) {
+      if (VERSION.SDK_INT >= 33) {
+        v.vibrate(VibrationEffect.createWaveform(notificationDetails.vibrationPattern, -1),
+                VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM));
+      } else {
+        v.vibrate(notificationDetails.vibrationPattern, 0);
+      }
+      new Handler(Looper.getMainLooper())
+            .postDelayed(v::cancel, notificationDetails.timeoutAfter);
+      return;
+    }
+
+    if (Build.VERSION.SDK_INT >= 26) {
+      v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+    } else {
+      v.vibrate(500);
     }
   }
 
   private static void setRingtoneLength(Ringtone r, NotificationDetails notificationDetails) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && notificationDetails.timeoutAfter > 0) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return;
+    r.setLooping(true);
+    new Handler(Looper.getMainLooper())
+        .postDelayed(r::stop, notificationDetails.timeoutAfter);
+  }
+
+  private static boolean shouldLoop( NotificationDetails notificationDetails) {
+    if ( notificationDetails.timeoutAfter > 0) {
       for (int flag : notificationDetails.additionalFlags) {
-        if (flag == Notification.FLAG_INSISTENT) {
-          r.setLooping(true);
-          new Handler(Looper.getMainLooper())
-              .postDelayed(r::stop, notificationDetails.timeoutAfter);
-        }
+        if (flag == Notification.FLAG_INSISTENT) return true;
       }
     }
+    return false;
   }
 
   private static void stopRingtone() {
