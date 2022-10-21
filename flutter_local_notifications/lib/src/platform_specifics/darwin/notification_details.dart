@@ -1,9 +1,11 @@
+import 'interruption_level.dart';
 import 'notification_attachment.dart';
 
-/// Configures notification details specific to iOS.
-class IOSNotificationDetails {
-  /// Constructs an instance of [IOSNotificationDetails].
-  const IOSNotificationDetails({
+/// Configures notification details specific to Darwin-based operation systems
+/// such as iOS and macOS
+class DarwinNotificationDetails {
+  /// Constructs an instance of [DarwinNotificationDetails].
+  const DarwinNotificationDetails({
     this.presentAlert,
     this.presentBadge,
     this.presentSound,
@@ -12,6 +14,8 @@ class IOSNotificationDetails {
     this.attachments,
     this.subtitle,
     this.threadIdentifier,
+    this.categoryIdentifier,
+    this.interruptionLevel,
   });
 
   /// Display an alert when the notification is triggered while app is
@@ -20,7 +24,8 @@ class IOSNotificationDetails {
   /// When this is set to `null`, it will use the default setting given
   /// to [IOSInitializationSettings.defaultPresentAlert].
   ///
-  /// This property is only applicable to iOS 10 or newer.
+  /// On iOS, this property is only applicable to iOS 10 or newer.
+  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
   final bool? presentAlert;
 
   /// Play a sound when the notification is triggered while app is in
@@ -38,7 +43,8 @@ class IOSNotificationDetails {
   /// When this is set to `null`, it will use the default setting given to
   /// [IOSInitializationSettings.defaultPresentBadge].
   ///
-  /// This property is only applicable to iOS 10 or newer.
+  /// On iOS, this property is only applicable to iOS 10 or newer.
+  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
   final bool? presentBadge;
 
   /// Specifies the name of the file to play for the notification.
@@ -58,17 +64,36 @@ class IOSNotificationDetails {
 
   /// Specifies the list of attachments included with the notification.
   ///
-  /// This property is only applicable to iOS 10 or newer.
-  final List<IOSNotificationAttachment>? attachments;
+  /// On iOS, this property is only applicable to iOS 10 or newer.
+  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
+  final List<DarwinNotificationAttachment>? attachments;
 
   /// Specifies the secondary description.
   ///
-  /// This property is only applicable to iOS 10 or newer.
+  /// On iOS, this property is only applicable to iOS 10 or newer.
+  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
   final String? subtitle;
 
   /// Specifies the thread identifier that can be used to group
   /// notifications together.
   ///
-  /// This property is only applicable to iOS 10 or newer.
+  /// On iOS, this property is only applicable to iOS 10 or newer.
+  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
   final String? threadIdentifier;
+
+  /// The identifier of the app-defined category object.
+  ///
+  /// This must refer to a [DarwinNotificationCategory] identifier configured
+  /// via [InitializationSettings].
+  ///
+  /// On iOS, this is only applicable to iOS 10 or newer.
+  /// On macOS, this is only applicable to macOS 10.14 or newer.
+  final String? categoryIdentifier;
+
+  /// The interruption level that indicates the priority and
+  /// delivery timing of a notification.
+  ///
+  /// This property is only applicable to iOS 15.0 and macOS 12.0 or newer.
+  /// https://developer.apple.com/documentation/usernotifications/unnotificationcontent/3747256-interruptionlevel
+  final InterruptionLevel? interruptionLevel;
 }

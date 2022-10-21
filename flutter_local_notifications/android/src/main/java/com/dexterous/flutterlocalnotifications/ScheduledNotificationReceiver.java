@@ -22,12 +22,18 @@ import java.time.LocalDateTime;
 public class ScheduledNotificationReceiver extends BroadcastReceiver {
 
   @Override
+  @SuppressWarnings("deprecation")
   public void onReceive(final Context context, Intent intent) {
     String notificationDetailsJson =
         intent.getStringExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_DETAILS);
     if (StringUtils.isNullOrEmpty(notificationDetailsJson)) {
       // This logic is needed for apps that used the plugin prior to 0.3.4
-      Notification notification = intent.getParcelableExtra("notification");
+      Notification notification;
+      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+        notification = intent.getParcelableExtra("notification", Notification.class);
+      } else {
+        notification = intent.getParcelableExtra("notification");
+      }
       notification.when = System.currentTimeMillis();
       int notificationId = intent.getIntExtra("notification_id", 0);
       NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
@@ -68,11 +74,6 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
   }
 
   boolean firstAlarm(NotificationDetails notificationDetails) {
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
       return LocalDateTime.parse(notificationDetails.scheduledDateTime).getSecond() == 0;
-    } else {
-      return org.threeten.bp.LocalDateTime.parse(notificationDetails.scheduledDateTime).getSecond()
-          == 0;
-    }
   }
 }

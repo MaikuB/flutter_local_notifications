@@ -23,7 +23,7 @@ class LinuxFlutterLocalNotificationsPlugin
   @override
   Future<bool?> initialize(
     LinuxInitializationSettings initializationSettings, {
-    SelectNotificationCallback? onSelectNotification,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) async {
     assert(false);
     return null;
