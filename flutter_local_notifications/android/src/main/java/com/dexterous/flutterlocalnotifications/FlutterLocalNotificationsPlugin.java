@@ -191,15 +191,6 @@ public class FlutterLocalNotificationsPlugin
   private PermissionRequestListener callback;
   private boolean permissionRequestInProgress = false;
 
-  @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
-    plugin.setActivity(registrar.activity());
-    registrar.addNewIntentListener(plugin);
-    registrar.addRequestPermissionsResultListener(plugin);
-    plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
-  }
-
   static void rescheduleNotifications(Context context) {
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
     for (NotificationDetails scheduledNotification : scheduledNotifications) {
@@ -1248,15 +1239,11 @@ public class FlutterLocalNotificationsPlugin
     this.mainActivity = flutterActivity;
   }
 
-  private void onAttachedToEngine(Context context, BinaryMessenger binaryMessenger) {
-    this.applicationContext = context;
-    this.channel = new MethodChannel(binaryMessenger, METHOD_CHANNEL);
-    this.channel.setMethodCallHandler(this);
-  }
-
   @Override
   public void onAttachedToEngine(FlutterPluginBinding binding) {
-    onAttachedToEngine(binding.getApplicationContext(), binding.getBinaryMessenger());
+    this.applicationContext = binding.getApplicationContext();
+    this.channel = new MethodChannel(binding.getBinaryMessenger(), METHOD_CHANNEL);
+    this.channel.setMethodCallHandler(this);
   }
 
   @Override
