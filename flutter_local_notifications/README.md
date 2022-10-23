@@ -223,6 +223,8 @@ android {
 From Android 13 (API level 33) onwards, apps now have the ability to display a prompt where users can decide if they want to grant an app permission to show notifications. For further reading on this matter read https://developer.android.com/guide/topics/ui/notifiers/notification-permission. To support this applications need target their application to Android 13 or higher and the compile SDK version needs to be at least 33 (Android 13). For example, to target Android 13, update your app's `build.gradle` file to have a `targetSdkVersion` of `33`. Applications can then call the following code to request the permission where the `requestPermission` method is associated with the `AndroidFlutterLocalNotificationsPlugin` class (i.e. the Android implementation of the plugin)
 
 ```
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
 flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
     AndroidFlutterLocalNotificationsPlugin>().requestPermission();
 ```
