@@ -18,17 +18,11 @@ import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioAttributes;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.VibrationAttributes;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
@@ -191,7 +185,6 @@ public class FlutterLocalNotificationsPlugin
   private static final String NOTIFICATION_RESPONSE_TYPE = "notificationResponseType";
   static String NOTIFICATION_DETAILS = "notificationDetails";
   static Gson gson;
-  private static Ringtone _ringtone;
   private MethodChannel channel;
   private Context applicationContext;
   private Activity mainActivity;
@@ -1129,7 +1122,7 @@ public class FlutterLocalNotificationsPlugin
     }
   }
 
-  private static Uri retrieveSoundResourceUri(
+  protected static Uri retrieveSoundResourceUri(
       Context context, String sound, SoundSource soundSource) {
     Uri uri = null;
     if (StringUtils.isNullOrEmpty(sound)) {
@@ -1256,78 +1249,6 @@ public class FlutterLocalNotificationsPlugin
     intent.addFlags(Intent.FLAG_FROM_BACKGROUND);
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     context.startActivity(intent);
-  }
-
-  static void startAlarmSound(final Context context, NotificationDetails notificationDetails) {
-
-    Ringtone r =
-        RingtoneManager.getRingtone(
-            context,
-            retrieveSoundResourceUri(
-                context, notificationDetails.sound, notificationDetails.soundSource));
-    if (r != null) {
-      setRingtone(r);
-      if (VERSION.SDK_INT >= VERSION_CODES.P) {
-        r.setAudioAttributes(
-            new AudioAttributes.Builder()
-                .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-                .setUsage(AudioAttributes.USAGE_ALARM)
-                .build());
-      }
-      if (shouldLoop(notificationDetails)) {
-        setRingtoneLength(r, notificationDetails);
-      }
-      r.play();
-    }
-
-    if (!notificationDetails.enableVibration) return;
-    Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-    if (v == null || !v.hasVibrator()) return;
-
-    if (shouldLoop(notificationDetails)) {
-      if (VERSION.SDK_INT >= 33) {
-        v.vibrate(VibrationEffect.createWaveform(notificationDetails.vibrationPattern, -1),
-                VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM));
-      } else {
-        v.vibrate(notificationDetails.vibrationPattern, 0);
-      }
-      new Handler(Looper.getMainLooper())
-            .postDelayed(v::cancel, notificationDetails.timeoutAfter);
-      return;
-    }
-
-    if (Build.VERSION.SDK_INT >= 26) {
-      v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-    } else {
-      v.vibrate(500);
-    }
-  }
-
-  private static void setRingtoneLength(Ringtone r, NotificationDetails notificationDetails) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return;
-    r.setLooping(true);
-    new Handler(Looper.getMainLooper())
-        .postDelayed(r::stop, notificationDetails.timeoutAfter);
-  }
-
-  private static boolean shouldLoop( NotificationDetails notificationDetails) {
-    if ( notificationDetails.timeoutAfter > 0) {
-      for (int flag : notificationDetails.additionalFlags) {
-        if (flag == Notification.FLAG_INSISTENT) return true;
-      }
-    }
-    return false;
-  }
-
-  private static void stopRingtone() {
-    if (_ringtone != null) {
-      _ringtone.stop();
-    }
-  }
-
-  private static void setRingtone(Ringtone ringtone) {
-    stopRingtone();
-    _ringtone = ringtone;
   }
 
   static boolean isKeyguardLocked(Context context) {
@@ -1723,7 +1644,7 @@ public class FlutterLocalNotificationsPlugin
       notificationManager.cancel(tag, id);
     }
     removeNotificationFromCache(applicationContext, id);
-    stopRingtone();
+    BackgroundAlarm.stop();
   }
 
   private void cancelAllNotifications(Result result) {
