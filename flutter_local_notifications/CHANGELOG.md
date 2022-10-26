@@ -1,7 +1,7 @@
 # [12.0.3]
 
-* [Android] removed reference to Android V1 embedding
-* Updated code snippet in readme around requesting notification permissions on Android
+* [Android] removed reference to Android V1 embedding. Thanks to PR from [Simon Ser](https://github.com/emersion)
+* Updated code snippet in readme around requesting notification permissions on Android. Thanks to PR from [Leo](https://github.com/rignaneseleo)
 
 # [12.0.2]
 
