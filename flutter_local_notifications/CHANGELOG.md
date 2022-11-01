@@ -1,3 +1,7 @@
+## [5.0.0+8]
+
+* Migrate to mavenCentral
+
 # [5.0.0+7]
 
 * [Android] Support for Android 12.
