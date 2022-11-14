@@ -152,10 +152,12 @@ void main() {
               'sound': 'sound.mp3',
               'badgeNumber': 1,
               'threadIdentifier': 'thread',
-              'attachments': <Map<String, Object>>[
-                <String, Object>{
+              'attachments': <Map<String, Object?>>[
+                <String, Object?>{
                   'filePath': 'video.mp4',
                   'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                  'hideThumbnail': null,
+                  'thumbnailClippingRect': null,
                 }
               ],
               'categoryIdentifier': 'category1',
@@ -219,10 +221,12 @@ void main() {
                     'sound': 'sound.mp3',
                     'badgeNumber': 1,
                     'threadIdentifier': null,
-                    'attachments': <Map<String, Object>>[
-                      <String, Object>{
+                    'attachments': <Map<String, Object?>>[
+                      <String, Object?>{
                         'filePath': 'video.mp4',
                         'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                        'hideThumbnail': null,
+                        'thumbnailClippingRect': null,
                       }
                     ],
                     'categoryIdentifier': null,
@@ -288,10 +292,12 @@ void main() {
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,
-                'attachments': <Map<String, Object>>[
-                  <String, Object>{
+                'attachments': <Map<String, Object?>>[
+                  <String, Object?>{
                     'filePath': 'video.mp4',
                     'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                    'hideThumbnail': null,
+                    'thumbnailClippingRect': null,
                   }
                 ],
                 'categoryIdentifier': null,
@@ -357,10 +363,12 @@ void main() {
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,
-                'attachments': <Map<String, Object>>[
-                  <String, Object>{
+                'attachments': <Map<String, Object?>>[
+                  <String, Object?>{
                     'filePath': 'video.mp4',
                     'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                    'hideThumbnail': null,
+                    'thumbnailClippingRect': null,
                   }
                 ],
                 'categoryIdentifier': null,
@@ -429,10 +437,12 @@ void main() {
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,
-                'attachments': <Map<String, Object>>[
-                  <String, Object>{
+                'attachments': <Map<String, Object?>>[
+                  <String, Object?>{
                     'filePath': 'video.mp4',
                     'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                    'hideThumbnail': null,
+                    'thumbnailClippingRect': null,
                   }
                 ],
                 'categoryIdentifier': null,
