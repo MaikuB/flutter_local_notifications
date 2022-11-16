@@ -277,7 +277,7 @@ class AndroidNotificationDetails {
 
   /// Sets the Chronometer to count down instead of counting up.
   ///
-  /// This property is only applicable to Android versions older than 7.0.
+  /// This property is only applicable to Android 7.0 and newer versions.
   final bool chronometerCountDown;
 
   /// Specifies if the notification will be used to show progress.
