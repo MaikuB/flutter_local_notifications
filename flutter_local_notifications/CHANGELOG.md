@@ -1,3 +1,8 @@
+# [12.0.3+1]
+
+* Updated Kotlin version used in example app
+* Updated code snippets in readme to add missing import statements around the iOS setup related to notification actions. Thanks to PR from [som-R91](https://github.com/som-R91)
+
 # [12.0.3]
 
 * [Android] removed reference to Android V1 embedding. Thanks to PR from [Simon Ser](https://github.com/emersion)
