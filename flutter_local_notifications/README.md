@@ -360,6 +360,10 @@ Adjust `AppDelegate.m` and set the plugin registrant callback:
 
 If you're using Objective-C, add this function anywhere in AppDelegate.m:
 ``` objc
+// This is required for calling FlutterLocalNotificationsPlugin.setPluginRegistrantCallback method.
+#import <FlutterLocalNotificationsPlugin.h>
+...
+...
 void registerPlugins(NSObject<FlutterPluginRegistry>* registry) {
     [GeneratedPluginRegistrant registerWithRegistry:registry];
 }
@@ -380,6 +384,12 @@ For Swift, open the `AppDelegate.swift` and update the `didFinishLaunchingWithOp
 where the commented code indicates the code to add in and why
 
 ```swift
+import UIKit
+import Flutter
+// This is required for calling FlutterLocalNotificationsPlugin.setPluginRegistrantCallback method.
+import flutter_local_notifications
+
+@UIApplicationMain
 override func application(
   _ application: UIApplication,
   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
