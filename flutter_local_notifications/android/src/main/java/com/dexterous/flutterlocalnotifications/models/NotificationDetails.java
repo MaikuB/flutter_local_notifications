@@ -263,7 +263,8 @@ public class NotificationDetails implements Serializable {
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
       notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
-      notificationDetails.timeoutAfter = LongUtils.parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
+      notificationDetails.timeoutAfter =
+          LongUtils.parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
       notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
       notificationDetails.fullScreenIntent =
           (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
