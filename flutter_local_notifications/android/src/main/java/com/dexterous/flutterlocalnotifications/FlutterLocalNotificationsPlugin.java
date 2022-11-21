@@ -64,6 +64,7 @@ import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformati
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 import com.dexterous.flutterlocalnotifications.utils.BooleanUtils;
+import com.dexterous.flutterlocalnotifications.utils.LongUtils;
 import com.dexterous.flutterlocalnotifications.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -1485,8 +1486,8 @@ public class FlutterLocalNotificationsPlugin
       return;
     }
 
-    Long dispatcherHandle = call.argument(DISPATCHER_HANDLE);
-    Long callbackHandle = call.argument(CALLBACK_HANDLE);
+    Long dispatcherHandle = LongUtils.parseLong(call.argument(DISPATCHER_HANDLE));
+    Long callbackHandle = LongUtils.parseLong(call.argument(CALLBACK_HANDLE));
     if (dispatcherHandle != null && callbackHandle != null) {
       new IsolatePreferences(applicationContext).saveCallbackKeys(dispatcherHandle, callbackHandle);
     }

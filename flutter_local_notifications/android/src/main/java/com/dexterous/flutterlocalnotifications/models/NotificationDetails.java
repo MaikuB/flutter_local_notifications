@@ -13,6 +13,8 @@ import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInforma
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
+import com.dexterous.flutterlocalnotifications.utils.LongUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -250,7 +252,7 @@ public class NotificationDetails implements Serializable {
       readGroupingInformation(notificationDetails, platformChannelSpecifics);
       notificationDetails.onlyAlertOnce = (Boolean) platformChannelSpecifics.get(ONLY_ALERT_ONCE);
       notificationDetails.showWhen = (Boolean) platformChannelSpecifics.get(SHOW_WHEN);
-      notificationDetails.when = parseLong(platformChannelSpecifics.get(WHEN));
+      notificationDetails.when = LongUtils.parseLong(platformChannelSpecifics.get(WHEN));
       notificationDetails.usesChronometer =
           (Boolean) platformChannelSpecifics.get(USES_CHRONOMETER);
       readProgressInformation(notificationDetails, platformChannelSpecifics);
@@ -261,7 +263,8 @@ public class NotificationDetails implements Serializable {
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
       notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
-      notificationDetails.timeoutAfter = parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
+      notificationDetails.timeoutAfter =
+          LongUtils.parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
       notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
       notificationDetails.fullScreenIntent =
           (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
@@ -287,16 +290,6 @@ public class NotificationDetails implements Serializable {
         }
       }
     }
-  }
-
-  private static Long parseLong(Object object) {
-    if (object instanceof Integer) {
-      return ((Integer) object).longValue();
-    }
-    if (object instanceof Long) {
-      return (Long) object;
-    }
-    return null;
   }
 
   private static void readProgressInformation(

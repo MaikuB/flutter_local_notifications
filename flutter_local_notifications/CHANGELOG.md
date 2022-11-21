@@ -1,3 +1,7 @@
+# [12.0.4]
+
+* Fixed issue [1796](https://github.com/MaikuB/flutter_local_notifications/issues/1796) where a `java.lang.ClassCastException` may be thrown on some Android devices when the `onDidReceiveBackgroundNotificationResponse` has been specified when calling `initialize()` 
+
 # [12.0.3+1]
 
 * Updated Kotlin version used in example app
