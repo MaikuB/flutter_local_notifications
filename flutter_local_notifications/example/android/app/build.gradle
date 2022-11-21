@@ -56,11 +56,6 @@ android {
         }
     }
 
-    // Temporary workaround as per https://issuetracker.google.com/issues/158060799
-    lint {
-        checkReleaseBuilds false
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
