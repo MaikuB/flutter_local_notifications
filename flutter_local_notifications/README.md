@@ -209,7 +209,19 @@ buildscript {
     }
 ```
 
-There have been reports that enabling desugaring may result in a Flutter apps crashing on foldable devices. This would be an issue with Flutter itself, not the plugin. Please see [this link](https://github.com/flutter/flutter/issues/110658) for details to try out the solutions there. The plugin also requires that the `compileSdkVersion` in their application's Gradle file  is set to 33
+There have been reports that enabling desugaring may result in a Flutter apps crashing on Android 12L and above. This would be an issue with Flutter itself, not the plugin. One possible fix is adding the [WindowManager library](https://developer.android.com/jetpack/androidx/releases/window) as a dependency:
+
+```gradle
+dependencies {
+    implementation 'androidx.window:window:1.0.0'
+    implementation 'androidx.window:window-java:1.0.0'
+    ...
+}
+```
+
+More information and other proposed solutions can be found in [Flutter issue #110658](https://github.com/flutter/flutter/issues/110658).
+
+The plugin also requires that the `compileSdkVersion` in your application's Gradle file is set to 33:
 
 ```gradle
 android {
