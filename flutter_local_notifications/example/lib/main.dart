@@ -287,7 +287,6 @@ class _HomePageState extends State<HomePage> {
             alert: true,
             badge: true,
             sound: true,
-            critical: true,
           );
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -296,7 +295,6 @@ class _HomePageState extends State<HomePage> {
             alert: true,
             badge: true,
             sound: true,
-            critical: true,
           );
     } else if (Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
