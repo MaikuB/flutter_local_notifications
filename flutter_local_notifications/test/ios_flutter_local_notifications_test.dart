@@ -163,7 +163,6 @@ void main() {
               requestAlertPermission: false,
               requestBadgePermission: false,
               requestSoundPermission: false,
-              requestCriticalPermission: false,
               defaultPresentAlert: false,
               defaultPresentBadge: false,
               defaultPresentSound: false);
