@@ -302,6 +302,7 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     String? payload,
     bool androidAllowWhileIdle = false,
+    bool androidUseInexactMode = true,
   }) async {
     if (kIsWeb) {
       return;
@@ -310,7 +311,7 @@ class FlutterLocalNotificationsPlugin {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()!
           .schedule(id, title, body, scheduledDate, notificationDetails.android,
-              payload: payload, androidAllowWhileIdle: androidAllowWhileIdle);
+              payload: payload, allowWhileIdle: androidAllowWhileIdle);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
@@ -360,7 +361,8 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
-    required bool androidAllowWhileIdle,
+    bool androidAllowWhileIdle = false,
+    bool androidUseInexactMode = true,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
@@ -373,7 +375,8 @@ class FlutterLocalNotificationsPlugin {
           .zonedSchedule(
               id, title, body, scheduledDate, notificationDetails.android,
               payload: payload,
-              androidAllowWhileIdle: androidAllowWhileIdle,
+              allowWhileIdle: androidAllowWhileIdle,
+              useInexactMode: androidUseInexactMode,
               matchDateTimeComponents: matchDateTimeComponents);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
@@ -426,7 +429,7 @@ class FlutterLocalNotificationsPlugin {
           ?.periodicallyShow(id, title, body, repeatInterval,
               notificationDetails: notificationDetails.android,
               payload: payload,
-              androidAllowWhileIdle: androidAllowWhileIdle);
+              allowWhileIdle: androidAllowWhileIdle);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()

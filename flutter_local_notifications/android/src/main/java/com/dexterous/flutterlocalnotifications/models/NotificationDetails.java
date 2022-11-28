@@ -103,6 +103,7 @@ public class NotificationDetails implements Serializable {
 
   private static final String TICKER = "ticker";
   private static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
+  private static final String USE_INEXACT_MODE = "useInexactMode";
   private static final String CATEGORY = "category";
   private static final String TIMEOUT_AFTER = "timeoutAfter";
   private static final String SHOW_WHEN = "showWhen";
@@ -168,6 +169,7 @@ public class NotificationDetails implements Serializable {
   public String ticker;
   public Integer visibility;
   public Boolean allowWhileIdle;
+  public Boolean useInexactMode;
   public Long timeoutAfter;
   public String category;
   public int[] additionalFlags;
@@ -263,6 +265,7 @@ public class NotificationDetails implements Serializable {
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
       notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
+      notificationDetails.useInexactMode = (Boolean) platformChannelSpecifics.get(USE_INEXACT_MODE);
       notificationDetails.timeoutAfter =
           LongUtils.parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
       notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);

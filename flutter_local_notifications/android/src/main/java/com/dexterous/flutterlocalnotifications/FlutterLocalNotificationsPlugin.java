@@ -499,19 +499,8 @@ public class FlutterLocalNotificationsPlugin
         getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
 
     AlarmManager alarmManager = getAlarmManager(context);
-    if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
-      AlarmManagerCompat.setExactAndAllowWhileIdle(
-          alarmManager,
-          AlarmManager.RTC_WAKEUP,
-          notificationDetails.millisecondsSinceEpoch,
-          pendingIntent);
-    } else {
-      AlarmManagerCompat.setExact(
-          alarmManager,
-          AlarmManager.RTC_WAKEUP,
-          notificationDetails.millisecondsSinceEpoch,
-          pendingIntent);
-    }
+    setupAlarm(notificationDetails, alarmManager,
+            notificationDetails.millisecondsSinceEpoch, pendingIntent);
 
     if (updateScheduledNotificationsCache) {
       saveScheduledNotification(context, notificationDetails);
@@ -536,12 +525,7 @@ public class FlutterLocalNotificationsPlugin
             .toInstant()
             .toEpochMilli();
 
-    if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
-      AlarmManagerCompat.setExactAndAllowWhileIdle(
-          alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
-    } else {
-      AlarmManagerCompat.setExact(alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
-    }
+    setupAlarm(notificationDetails, alarmManager, epochMilli, pendingIntent);
 
     if (updateScheduledNotificationsCache) {
       saveScheduledNotification(context, notificationDetails);
@@ -560,8 +544,10 @@ public class FlutterLocalNotificationsPlugin
     PendingIntent pendingIntent =
         getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
     AlarmManager alarmManager = getAlarmManager(context);
-    AlarmManagerCompat.setExactAndAllowWhileIdle(
-        alarmManager, AlarmManager.RTC_WAKEUP, notificationTriggerTime, pendingIntent);
+
+    setupAllowWhileIdleAlarm(notificationDetails, alarmManager,
+            notificationTriggerTime, pendingIntent);
+
     saveScheduledNotification(context, notificationDetails);
   }
 
@@ -630,14 +616,42 @@ public class FlutterLocalNotificationsPlugin
     AlarmManager alarmManager = getAlarmManager(context);
 
     if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
-      AlarmManagerCompat.setExactAndAllowWhileIdle(
-          alarmManager, AlarmManager.RTC_WAKEUP, notificationTriggerTime, pendingIntent);
+      setupAllowWhileIdleAlarm(notificationDetails, alarmManager,
+              notificationTriggerTime, pendingIntent);
     } else {
       alarmManager.setInexactRepeating(
           AlarmManager.RTC_WAKEUP, notificationTriggerTime, repeatInterval, pendingIntent);
     }
+
     if (updateScheduledNotificationsCache) {
       saveScheduledNotification(context, notificationDetails);
+    }
+  }
+
+  private static void setupAlarm(
+          NotificationDetails notificationDetails, AlarmManager alarmManager,
+          long epochMilli, PendingIntent pendingIntent) {
+    if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
+      setupAllowWhileIdleAlarm(notificationDetails, alarmManager, epochMilli, pendingIntent);
+    } else {
+      if (BooleanUtils.getValue(notificationDetails.useInexactMode)) {
+        alarmManager.set(AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+      } else {
+        AlarmManagerCompat.setExact(alarmManager, AlarmManager.RTC_WAKEUP,
+                epochMilli, pendingIntent);
+      }
+    }
+  }
+
+  private static void setupAllowWhileIdleAlarm(
+          NotificationDetails notificationDetails, AlarmManager alarmManager,
+          long epochMilli, PendingIntent pendingIntent) {
+    if (BooleanUtils.getValue(notificationDetails.useInexactMode)){
+      AlarmManagerCompat.setAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP,
+              epochMilli, pendingIntent);
+    } else {
+      AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP,
+              epochMilli, pendingIntent);
     }
   }
 

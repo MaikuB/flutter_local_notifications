@@ -165,7 +165,7 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified date and time.
   ///
-  /// The [androidAllowWhileIdle] parameter determines if the notification
+  /// The [allowWhileIdle] parameter determines if the notification
   /// should still be shown at the exact time when the device is in a low-power
   /// idle mode.
   @Deprecated(
@@ -177,18 +177,17 @@ class AndroidFlutterLocalNotificationsPlugin
     DateTime scheduledDate,
     AndroidNotificationDetails? notificationDetails, {
     String? payload,
-    bool androidAllowWhileIdle = false,
+    bool allowWhileIdle = false,
+    bool useInexactMode = true,
   }) async {
     validateId(id);
-    final Map<String, Object?> serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? <String, Object>{};
-    serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
     await _channel.invokeMethod('schedule', <String, Object?>{
       'id': id,
       'title': title,
       'body': body,
       'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
-      'platformSpecifics': serializedPlatformSpecifics,
+      'platformSpecifics': _buildPlatformSpecifics(
+          notificationDetails, allowWhileIdle, useInexactMode),
       'payload': payload ?? ''
     });
   }
@@ -201,31 +200,28 @@ class AndroidFlutterLocalNotificationsPlugin
     String? body,
     TZDateTime scheduledDate,
     AndroidNotificationDetails? notificationDetails, {
-    required bool androidAllowWhileIdle,
+    required bool allowWhileIdle,
+    required bool useInexactMode,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
-    ArgumentError.checkNotNull(androidAllowWhileIdle, 'androidAllowWhileIdle');
-    final Map<String, Object?> serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? <String, Object>{};
-    serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
+
     await _channel.invokeMethod(
-        'zonedSchedule',
-        <String, Object?>{
-          'id': id,
-          'title': title,
-          'body': body,
-          'platformSpecifics': serializedPlatformSpecifics,
-          'payload': payload ?? ''
-        }
-          ..addAll(scheduledDate.toMap())
-          ..addAll(matchDateTimeComponents == null
-              ? <String, Object>{}
-              : <String, Object>{
-                  'matchDateTimeComponents': matchDateTimeComponents.index
-                }));
+      'zonedSchedule',
+      <String, Object?>{
+        'id': id,
+        'title': title,
+        'body': body,
+        'platformSpecifics': _buildPlatformSpecifics(
+            notificationDetails, allowWhileIdle, useInexactMode),
+        'payload': payload ?? '',
+        ...scheduledDate.toMap(),
+        if (matchDateTimeComponents != null)
+          'matchDateTimeComponents': matchDateTimeComponents.index
+      },
+    );
   }
 
   /// Shows a notification on a daily interval at the specified time.
@@ -397,22 +393,32 @@ class AndroidFlutterLocalNotificationsPlugin
     RepeatInterval repeatInterval, {
     AndroidNotificationDetails? notificationDetails,
     String? payload,
-    bool androidAllowWhileIdle = false,
+    bool allowWhileIdle = false,
+    bool useInexactMode = true,
   }) async {
     validateId(id);
-    final Map<String, Object?> serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? <String, Object>{};
-    serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
     await _channel.invokeMethod('periodicallyShow', <String, Object?>{
       'id': id,
       'title': title,
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
-      'platformSpecifics': serializedPlatformSpecifics,
+      'platformSpecifics': _buildPlatformSpecifics(
+          notificationDetails, allowWhileIdle, useInexactMode),
       'payload': payload ?? '',
     });
   }
+
+  Map<String, Object?> _buildPlatformSpecifics(
+    AndroidNotificationDetails? notificationDetails,
+    bool allowWhileIdle,
+    bool useInexactMode,
+  ) =>
+      <String, Object?>{
+        if (notificationDetails != null) ...notificationDetails.toMap(),
+        'allowWhileIdle': allowWhileIdle,
+        'useInexactMode': useInexactMode,
+      };
 
   /// Cancel/remove the notification with the specified id.
   ///
