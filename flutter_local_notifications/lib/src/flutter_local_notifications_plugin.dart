@@ -302,7 +302,7 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     String? payload,
     bool androidAllowWhileIdle = false,
-    bool androidUseInexactMode = true,
+    bool androidUseInexactMode = false,
   }) async {
     if (kIsWeb) {
       return;
@@ -362,7 +362,7 @@ class FlutterLocalNotificationsPlugin {
     required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
     bool androidAllowWhileIdle = false,
-    bool androidUseInexactMode = true,
+    bool androidUseInexactMode = false,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
