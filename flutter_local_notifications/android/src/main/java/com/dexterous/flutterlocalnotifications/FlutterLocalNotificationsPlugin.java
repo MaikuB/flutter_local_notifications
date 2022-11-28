@@ -499,8 +499,11 @@ public class FlutterLocalNotificationsPlugin
         getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
 
     AlarmManager alarmManager = getAlarmManager(context);
-    setupAlarm(notificationDetails, alarmManager,
-            notificationDetails.millisecondsSinceEpoch, pendingIntent);
+    setupAlarm(
+        notificationDetails,
+        alarmManager,
+        notificationDetails.millisecondsSinceEpoch,
+        pendingIntent);
 
     if (updateScheduledNotificationsCache) {
       saveScheduledNotification(context, notificationDetails);
@@ -545,8 +548,8 @@ public class FlutterLocalNotificationsPlugin
         getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
     AlarmManager alarmManager = getAlarmManager(context);
 
-    setupAllowWhileIdleAlarm(notificationDetails, alarmManager,
-            notificationTriggerTime, pendingIntent);
+    setupAllowWhileIdleAlarm(
+        notificationDetails, alarmManager, notificationTriggerTime, pendingIntent);
 
     saveScheduledNotification(context, notificationDetails);
   }
@@ -616,8 +619,8 @@ public class FlutterLocalNotificationsPlugin
     AlarmManager alarmManager = getAlarmManager(context);
 
     if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
-      setupAllowWhileIdleAlarm(notificationDetails, alarmManager,
-              notificationTriggerTime, pendingIntent);
+      setupAllowWhileIdleAlarm(
+          notificationDetails, alarmManager, notificationTriggerTime, pendingIntent);
     } else {
       alarmManager.setInexactRepeating(
           AlarmManager.RTC_WAKEUP, notificationTriggerTime, repeatInterval, pendingIntent);
@@ -629,29 +632,33 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private static void setupAlarm(
-          NotificationDetails notificationDetails, AlarmManager alarmManager,
-          long epochMilli, PendingIntent pendingIntent) {
+      NotificationDetails notificationDetails,
+      AlarmManager alarmManager,
+      long epochMilli,
+      PendingIntent pendingIntent) {
     if (BooleanUtils.getValue(notificationDetails.allowWhileIdle)) {
       setupAllowWhileIdleAlarm(notificationDetails, alarmManager, epochMilli, pendingIntent);
     } else {
       if (BooleanUtils.getValue(notificationDetails.useInexactMode)) {
         alarmManager.set(AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
       } else {
-        AlarmManagerCompat.setExact(alarmManager, AlarmManager.RTC_WAKEUP,
-                epochMilli, pendingIntent);
+        AlarmManagerCompat.setExact(
+            alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
       }
     }
   }
 
   private static void setupAllowWhileIdleAlarm(
-          NotificationDetails notificationDetails, AlarmManager alarmManager,
-          long epochMilli, PendingIntent pendingIntent) {
-    if (BooleanUtils.getValue(notificationDetails.useInexactMode)){
-      AlarmManagerCompat.setAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP,
-              epochMilli, pendingIntent);
+      NotificationDetails notificationDetails,
+      AlarmManager alarmManager,
+      long epochMilli,
+      PendingIntent pendingIntent) {
+    if (BooleanUtils.getValue(notificationDetails.useInexactMode)) {
+      AlarmManagerCompat.setAndAllowWhileIdle(
+          alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
     } else {
-      AlarmManagerCompat.setExactAndAllowWhileIdle(alarmManager, AlarmManager.RTC_WAKEUP,
-              epochMilli, pendingIntent);
+      AlarmManagerCompat.setExactAndAllowWhileIdle(
+          alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
     }
   }
 
