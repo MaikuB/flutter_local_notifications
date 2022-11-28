@@ -1,3 +1,8 @@
+## [3.0.0]
+
+* Updated minimum Flutter version to 3.0.0. Note that technically this was already a requirement by `flutter_local_notifications_linux` 2.0.0 as `ffi` 2.0.0 requires Dart 2.17 at a minimum and that shipped with Flutter 3.0.0
+* Added explicit `ffi` dependency that plugin was already using
+
 ## [2.0.0]
 
 * Bumped `dbus` dependency
