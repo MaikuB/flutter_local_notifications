@@ -1842,6 +1842,7 @@ void main() {
                   'repeatInterval': repeatInterval.index,
                   'platformSpecifics': <String, Object?>{
                     'allowWhileIdle': false,
+                    'useInexactMode': false,
                     'icon': null,
                     'channelId': 'channelId',
                     'channelName': 'channelName',
@@ -1937,6 +1938,7 @@ void main() {
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
               'platformSpecifics': <String, Object?>{
                 'allowWhileIdle': true,
+                'useInexactMode': false,
                 'icon': null,
                 'channelId': 'channelId',
                 'channelName': 'channelName',
@@ -2031,6 +2033,7 @@ void main() {
               'matchDateTimeComponents': DateTimeComponents.time.index,
               'platformSpecifics': <String, Object?>{
                 'allowWhileIdle': true,
+                'useInexactMode': false,
                 'icon': null,
                 'channelId': 'channelId',
                 'channelName': 'channelName',
@@ -2126,6 +2129,7 @@ void main() {
                   DateTimeComponents.dayOfWeekAndTime.index,
               'platformSpecifics': <String, Object?>{
                 'allowWhileIdle': true,
+                'useInexactMode': false,
                 'icon': null,
                 'channelId': 'channelId',
                 'channelName': 'channelName',

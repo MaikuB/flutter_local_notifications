@@ -419,6 +419,7 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     String? payload,
     bool androidAllowWhileIdle = false,
+    bool androidUseInexactMode = false,
   }) async {
     if (kIsWeb) {
       return;
@@ -429,7 +430,8 @@ class FlutterLocalNotificationsPlugin {
           ?.periodicallyShow(id, title, body, repeatInterval,
               notificationDetails: notificationDetails.android,
               payload: payload,
-              allowWhileIdle: androidAllowWhileIdle);
+              allowWhileIdle: androidAllowWhileIdle,
+              useInexactMode: androidUseInexactMode);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()

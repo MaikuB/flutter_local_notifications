@@ -394,7 +394,7 @@ class AndroidFlutterLocalNotificationsPlugin
     AndroidNotificationDetails? notificationDetails,
     String? payload,
     bool allowWhileIdle = false,
-    bool useInexactMode = true,
+    bool useInexactMode = false,
   }) async {
     validateId(id);
     await _channel.invokeMethod('periodicallyShow', <String, Object?>{
