@@ -827,9 +827,26 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedElevatedButton(
-                      buttonText: 'Show notification with attachment',
+                      buttonText:
+                          'Show notification with attachment (with thumbnail)',
                       onPressed: () async {
-                        await _showNotificationWithAttachment();
+                        await _showNotificationWithAttachment(
+                            hideThumbnail: false);
+                      },
+                    ),
+                    PaddedElevatedButton(
+                      buttonText:
+                          'Show notification with attachment (no thumbnail)',
+                      onPressed: () async {
+                        await _showNotificationWithAttachment(
+                            hideThumbnail: true);
+                      },
+                    ),
+                    PaddedElevatedButton(
+                      buttonText:
+                          'Show notification with attachment (clipped thumbnail)',
+                      onPressed: () async {
+                        await _showNotificationWithClippedThumbnailAttachment();
                       },
                     ),
                     PaddedElevatedButton(
@@ -2163,12 +2180,43 @@ class _HomePageState extends State<HomePage> {
         payload: 'item x');
   }
 
-  Future<void> _showNotificationWithAttachment() async {
+  Future<void> _showNotificationWithAttachment({
+    required bool hideThumbnail,
+  }) async {
     final String bigPicturePath = await _downloadAndSaveFile(
         'https://via.placeholder.com/600x200', 'bigPicture.jpg');
     final DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(attachments: <DarwinNotificationAttachment>[
-      DarwinNotificationAttachment(bigPicturePath)
+      DarwinNotificationAttachment(
+        bigPicturePath,
+        hideThumbnail: hideThumbnail,
+      )
+    ]);
+    final NotificationDetails notificationDetails = NotificationDetails(
+        iOS: darwinNotificationDetails, macOS: darwinNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        id++,
+        'notification with attachment title',
+        'notification with attachment body',
+        notificationDetails);
+  }
+
+  Future<void> _showNotificationWithClippedThumbnailAttachment() async {
+    final String bigPicturePath = await _downloadAndSaveFile(
+        'https://via.placeholder.com/600x200', 'bigPicture.jpg');
+    final DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(attachments: <DarwinNotificationAttachment>[
+      DarwinNotificationAttachment(
+        bigPicturePath,
+        thumbnailClippingRect:
+            // lower right quadrant of the attachment
+            const DarwinNotificationAttachmentThumbnailClippingRect(
+          x: 0.5,
+          y: 0.5,
+          height: 0.5,
+          width: 0.5,
+        ),
+      )
     ]);
     final NotificationDetails notificationDetails = NotificationDetails(
         iOS: darwinNotificationDetails, macOS: darwinNotificationDetails);
