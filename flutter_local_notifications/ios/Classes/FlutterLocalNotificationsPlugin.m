@@ -67,6 +67,8 @@ NSString *const SOUND = @"sound";
 NSString *const ATTACHMENTS = @"attachments";
 NSString *const ATTACHMENT_IDENTIFIER = @"identifier";
 NSString *const ATTACHMENT_FILE_PATH = @"filePath";
+NSString *const ATTACHMENT_HIDE_THUMBNAIL = @"hideThumbnail";
+NSString *const ATTACHMENT_THUMBNAIL_CLIPPING_RECT = @"thumbnailClippingRect";
 NSString *const INTERRUPTION_LEVEL = @"interruptionLevel";
 NSString *const THREAD_IDENTIFIER = @"threadIdentifier";
 NSString *const PRESENT_ALERT = @"presentAlert";
@@ -912,6 +914,32 @@ static FlutterError *getFlutterError(NSError *error) {
             [NSMutableArray arrayWithCapacity:attachments.count];
         for (NSDictionary *attachment in attachments) {
           NSError *error;
+
+          NSMutableDictionary *options = [[NSMutableDictionary alloc] init];
+          if ([self containsKey:ATTACHMENT_HIDE_THUMBNAIL
+                  forDictionary:attachment]) {
+            NSNumber *hideThumbnail = attachment[ATTACHMENT_HIDE_THUMBNAIL];
+            [options
+                setObject:hideThumbnail
+                   forKey:UNNotificationAttachmentOptionsThumbnailHiddenKey];
+          }
+          if ([self containsKey:ATTACHMENT_THUMBNAIL_CLIPPING_RECT
+                  forDictionary:attachment]) {
+            NSDictionary *thumbnailClippingRect =
+                attachment[ATTACHMENT_THUMBNAIL_CLIPPING_RECT];
+            CGRect rect =
+                CGRectMake([thumbnailClippingRect[@"x"] doubleValue],
+                           [thumbnailClippingRect[@"y"] doubleValue],
+                           [thumbnailClippingRect[@"width"] doubleValue],
+                           [thumbnailClippingRect[@"height"] doubleValue]);
+            NSDictionary *rectDict =
+                CFBridgingRelease(CGRectCreateDictionaryRepresentation(rect));
+            [options
+                setObject:rectDict
+                   forKey:
+                       UNNotificationAttachmentOptionsThumbnailClippingRectKey];
+          }
+
           UNNotificationAttachment *notificationAttachment =
               [UNNotificationAttachment
                   attachmentWithIdentifier:attachment[ATTACHMENT_IDENTIFIER]
@@ -919,7 +947,7 @@ static FlutterError *getFlutterError(NSError *error) {
                                                fileURLWithPath:
                                                    attachment
                                                        [ATTACHMENT_FILE_PATH]]
-                                   options:nil
+                                   options:options
                                      error:&error];
           if (error) {
             result(getFlutterError(error));

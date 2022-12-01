@@ -35,6 +35,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let attachments = "attachments"
         static let identifier = "identifier"
         static let filePath = "filePath"
+        static let hideThumbnail = "hideThumbnail"
+        static let attachmentThumbnailClippingRect = "thumbnailClippingRect"
         static let threadIdentifier = "threadIdentifier"
         static let interruptionLevel = "interruptionLevel"
         static let actionId = "actionId"
@@ -517,7 +519,19 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 for attachment in attachments {
                     let identifier = attachment[MethodCallArguments.identifier] as! String
                     let filePath = attachment[MethodCallArguments.filePath] as! String
-                    let notificationAttachment = try UNNotificationAttachment.init(identifier: identifier, url: URL.init(fileURLWithPath: filePath))
+                    var options: [String: Any] = [:]
+                    if let hideThumbnail = attachment[MethodCallArguments.hideThumbnail] as? NSNumber {
+                        options[UNNotificationAttachmentOptionsThumbnailHiddenKey] = hideThumbnail
+                    }
+                    if let thumbnailClippingRect = attachment[MethodCallArguments.attachmentThumbnailClippingRect] as? [String: Any] {
+                        let rect = CGRect(x: thumbnailClippingRect["x"] as! Double, y: thumbnailClippingRect["y"] as! Double, width: thumbnailClippingRect["width"] as! Double, height: thumbnailClippingRect["height"] as! Double)
+                        options[UNNotificationAttachmentOptionsThumbnailClippingRectKey] = rect.dictionaryRepresentation
+                    }
+                    let notificationAttachment = try UNNotificationAttachment.init(
+                        identifier: identifier,
+                        url: URL.init(fileURLWithPath: filePath),
+                        options: options
+                    )
                     content.attachments.append(notificationAttachment)
                 }
             }

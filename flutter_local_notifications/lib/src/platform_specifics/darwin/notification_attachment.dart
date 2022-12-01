@@ -5,6 +5,8 @@ class DarwinNotificationAttachment {
   const DarwinNotificationAttachment(
     this.filePath, {
     this.identifier,
+    this.hideThumbnail,
+    this.thumbnailClippingRect,
   });
 
   /// The local file path to the attachment.
@@ -18,4 +20,43 @@ class DarwinNotificationAttachment {
   /// When left empty, the platform's native APIs will generate a unique
   /// identifier
   final String? identifier;
+
+  /// Should the attachment be considered for the notification thumbnail?
+  final bool? hideThumbnail;
+
+  /// The clipping rectangle for the thumbnail image.
+  final DarwinNotificationAttachmentThumbnailClippingRect?
+      thumbnailClippingRect;
+}
+
+/// Represents the clipping rectangle used for the thumbnail image.
+class DarwinNotificationAttachmentThumbnailClippingRect {
+  /// Constructs an instance of
+  /// [DarwinNotificationAttachmentThumbnailClippingRect].
+  const DarwinNotificationAttachmentThumbnailClippingRect({
+    required this.x,
+    required this.y,
+    required this.width,
+    required this.height,
+  });
+
+  /// Horizontal offset of the rectangle as proportion of the original image.
+  ///
+  /// Value in the range from 0.0 to 1.0.
+  final double x;
+
+  /// Vertical offset of the rectangle as proportion of the original image.
+  ///
+  /// Value in the range from 0.0 to 1.0.
+  final double y;
+
+  /// Width of the rectangle as proportion of the original image.
+  ///
+  /// Value in the range from 0.0 to 1.0.
+  final double width;
+
+  /// Height of the rectangle as proportion of the original image.
+  ///
+  /// Value in the range from 0.0 to 1.0.
+  final double height;
 }
