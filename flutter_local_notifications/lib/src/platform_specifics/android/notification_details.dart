@@ -275,7 +275,7 @@ class AndroidNotificationDetails {
   /// Useful when showing an elapsed time (like an ongoing phone call).
   final bool usesChronometer;
 
-  /// Sets the Chronometer to count down instead of counting up.
+  /// Sets the chronometer to count down instead of counting up.
   ///
   /// This property is only applicable to Android 7.0 and newer versions.
   final bool chronometerCountDown;
