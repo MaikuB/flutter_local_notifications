@@ -258,7 +258,7 @@ public class NotificationDetails implements Serializable {
       notificationDetails.usesChronometer =
           (Boolean) platformChannelSpecifics.get(USES_CHRONOMETER);
       notificationDetails.chronometerCountDown =
-              (Boolean) platformChannelSpecifics.get(CHRONOMETER_COUNT_DOWN);
+          (Boolean) platformChannelSpecifics.get(CHRONOMETER_COUNT_DOWN);
       readProgressInformation(notificationDetails, platformChannelSpecifics);
       readColor(notificationDetails, platformChannelSpecifics);
       readChannelInformation(notificationDetails, platformChannelSpecifics);
