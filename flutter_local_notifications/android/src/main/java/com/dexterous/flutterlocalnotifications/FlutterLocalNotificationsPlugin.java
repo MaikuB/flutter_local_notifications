@@ -347,6 +347,12 @@ public class FlutterLocalNotificationsPlugin
       builder.setUsesChronometer(notificationDetails.usesChronometer);
     }
 
+    if (notificationDetails.chronometerCountDown != null) {
+      if (VERSION.SDK_INT >= VERSION_CODES.N) {
+        builder.setChronometerCountDown(notificationDetails.chronometerCountDown);
+      }
+    }
+
     if (BooleanUtils.getValue(notificationDetails.fullScreenIntent)) {
       builder.setFullScreenIntent(pendingIntent, true);
     }

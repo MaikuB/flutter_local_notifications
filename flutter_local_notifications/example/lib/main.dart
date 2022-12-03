@@ -2172,6 +2172,7 @@ class _HomePageState extends State<HomePage> {
       priority: Priority.high,
       when: DateTime.now().millisecondsSinceEpoch - 120 * 1000,
       usesChronometer: true,
+      chronometerCountDown: true,
     );
     final NotificationDetails notificationDetails =
         NotificationDetails(android: androidNotificationDetails);

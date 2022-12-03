@@ -108,6 +108,7 @@ public class NotificationDetails implements Serializable {
   private static final String SHOW_WHEN = "showWhen";
   private static final String WHEN = "when";
   private static final String USES_CHRONOMETER = "usesChronometer";
+  private static final String CHRONOMETER_COUNT_DOWN = "chronometerCountDown";
   private static final String ADDITIONAL_FLAGS = "additionalFlags";
 
   private static final String SCHEDULED_DATE_TIME = "scheduledDateTime";
@@ -173,6 +174,7 @@ public class NotificationDetails implements Serializable {
   public int[] additionalFlags;
   public Boolean showWhen;
   public Boolean usesChronometer;
+  public Boolean chronometerCountDown;
   public String scheduledDateTime;
   public String timeZoneName;
   public ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency;
@@ -255,6 +257,8 @@ public class NotificationDetails implements Serializable {
       notificationDetails.when = LongUtils.parseLong(platformChannelSpecifics.get(WHEN));
       notificationDetails.usesChronometer =
           (Boolean) platformChannelSpecifics.get(USES_CHRONOMETER);
+      notificationDetails.chronometerCountDown =
+              (Boolean) platformChannelSpecifics.get(CHRONOMETER_COUNT_DOWN);
       readProgressInformation(notificationDetails, platformChannelSpecifics);
       readColor(notificationDetails, platformChannelSpecifics);
       readChannelInformation(notificationDetails, platformChannelSpecifics);
