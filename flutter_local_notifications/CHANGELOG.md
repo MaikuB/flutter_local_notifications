@@ -1,4 +1,8 @@
-## [5.0.0+8]
+# [5.0.0+9]
+
+* Small fix and additional log for error when receiving notification.
+
+# [5.0.0+8]
 
 * Migrate to mavenCentral
 
