@@ -14,6 +14,8 @@ import com.dexterous.flutterlocalnotifications.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Type;
 
 /**
@@ -94,10 +96,16 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
         StringBuilder msg = new StringBuilder(message);
         msg.append("\n");
         if (e != null) {
-            msg.append("Exception: ").append(e.toString()).append("\n");
+            msg.append("Exception: ").append(e).append("\n");
         }
         msg.append("Intent extras: ");
         msg.append(sb);
+
+        if (e != null) {
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            msg.append("\n").append("Exception Stack trace:\n").append(errors);
+        }
 
         throw new RuntimeException(msg.toString());
     }
