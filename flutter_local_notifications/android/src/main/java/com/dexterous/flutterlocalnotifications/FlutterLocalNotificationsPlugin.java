@@ -187,8 +187,10 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
             builder.setLargeIcon(getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
         }
-        if (notificationDetails.color != null) {
-            builder.setColor(notificationDetails.color.intValue());
+
+        Integer color = notificationDetails.color;
+        if (color != null) {
+            builder.setColor(color);
         }
 
         if (notificationDetails.showWhen != null) {
