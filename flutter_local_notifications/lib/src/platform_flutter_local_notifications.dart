@@ -18,6 +18,7 @@ import 'platform_specifics/android/notification_channel_group.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/android/notification_sound.dart';
 import 'platform_specifics/android/person.dart';
+import 'platform_specifics/android/schedule_type.dart';
 import 'platform_specifics/android/styles/messaging_style_information.dart';
 import 'platform_specifics/darwin/initialization_settings.dart';
 import 'platform_specifics/darwin/mappers.dart';
@@ -177,8 +178,7 @@ class AndroidFlutterLocalNotificationsPlugin
     DateTime scheduledDate,
     AndroidNotificationDetails? notificationDetails, {
     String? payload,
-    bool allowWhileIdle = false,
-    bool useInexactMode = true,
+    AndroidScheduleType scheduleType = AndroidScheduleType.exact,
   }) async {
     validateId(id);
     await _channel.invokeMethod('schedule', <String, Object?>{
@@ -186,8 +186,8 @@ class AndroidFlutterLocalNotificationsPlugin
       'title': title,
       'body': body,
       'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
-      'platformSpecifics': _buildPlatformSpecifics(
-          notificationDetails, allowWhileIdle, useInexactMode),
+      'platformSpecifics':
+          _buildPlatformSpecifics(notificationDetails, scheduleType),
       'payload': payload ?? ''
     });
   }
@@ -200,8 +200,7 @@ class AndroidFlutterLocalNotificationsPlugin
     String? body,
     TZDateTime scheduledDate,
     AndroidNotificationDetails? notificationDetails, {
-    required bool allowWhileIdle,
-    required bool useInexactMode,
+    required AndroidScheduleType scheduleType,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
@@ -214,8 +213,8 @@ class AndroidFlutterLocalNotificationsPlugin
         'id': id,
         'title': title,
         'body': body,
-        'platformSpecifics': _buildPlatformSpecifics(
-            notificationDetails, allowWhileIdle, useInexactMode),
+        'platformSpecifics':
+            _buildPlatformSpecifics(notificationDetails, scheduleType),
         'payload': payload ?? '',
         ...scheduledDate.toMap(),
         if (matchDateTimeComponents != null)
@@ -393,8 +392,7 @@ class AndroidFlutterLocalNotificationsPlugin
     RepeatInterval repeatInterval, {
     AndroidNotificationDetails? notificationDetails,
     String? payload,
-    bool allowWhileIdle = false,
-    bool useInexactMode = false,
+    AndroidScheduleType scheduleType = AndroidScheduleType.exact,
   }) async {
     validateId(id);
     await _channel.invokeMethod('periodicallyShow', <String, Object?>{
@@ -403,21 +401,19 @@ class AndroidFlutterLocalNotificationsPlugin
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
-      'platformSpecifics': _buildPlatformSpecifics(
-          notificationDetails, allowWhileIdle, useInexactMode),
+      'platformSpecifics':
+          _buildPlatformSpecifics(notificationDetails, scheduleType),
       'payload': payload ?? '',
     });
   }
 
   Map<String, Object?> _buildPlatformSpecifics(
     AndroidNotificationDetails? notificationDetails,
-    bool allowWhileIdle,
-    bool useInexactMode,
+    AndroidScheduleType scheduleType,
   ) =>
       <String, Object?>{
         if (notificationDetails != null) ...notificationDetails.toMap(),
-        'allowWhileIdle': allowWhileIdle,
-        'useInexactMode': useInexactMode,
+        'scheduleType': scheduleType.name,
       };
 
   /// Cancel/remove the notification with the specified id.

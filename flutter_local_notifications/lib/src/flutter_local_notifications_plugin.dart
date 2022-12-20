@@ -8,6 +8,7 @@ import 'package:timezone/timezone.dart';
 import 'initialization_settings.dart';
 import 'notification_details.dart';
 import 'platform_flutter_local_notifications.dart';
+import 'platform_specifics/android/schedule_type.dart';
 import 'platform_specifics/ios/enums.dart';
 import 'types.dart';
 
@@ -301,8 +302,9 @@ class FlutterLocalNotificationsPlugin {
     DateTime scheduledDate,
     NotificationDetails notificationDetails, {
     String? payload,
-    bool androidAllowWhileIdle = false,
-    bool androidUseInexactMode = false,
+    @Deprecated('Deprecated in favor of the androidScheduleType parameter')
+        bool androidAllowWhileIdle = false,
+    AndroidScheduleType? androidScheduleType,
   }) async {
     if (kIsWeb) {
       return;
@@ -311,7 +313,11 @@ class FlutterLocalNotificationsPlugin {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()!
           .schedule(id, title, body, scheduledDate, notificationDetails.android,
-              payload: payload, allowWhileIdle: androidAllowWhileIdle);
+              payload: payload,
+              scheduleType: androidScheduleType ??
+                  (androidAllowWhileIdle
+                      ? AndroidScheduleType.exact
+                      : AndroidScheduleType.exactAllowWhileIdle));
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
@@ -361,8 +367,9 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
-    bool androidAllowWhileIdle = false,
-    bool androidUseInexactMode = false,
+    @Deprecated('Deprecated in favor of the androidScheduleType parameter')
+        bool androidAllowWhileIdle = false,
+    AndroidScheduleType? androidScheduleType,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
@@ -375,8 +382,10 @@ class FlutterLocalNotificationsPlugin {
           .zonedSchedule(
               id, title, body, scheduledDate, notificationDetails.android,
               payload: payload,
-              allowWhileIdle: androidAllowWhileIdle,
-              useInexactMode: androidUseInexactMode,
+              scheduleType: androidScheduleType ??
+                  (androidAllowWhileIdle
+                      ? AndroidScheduleType.exact
+                      : AndroidScheduleType.exactAllowWhileIdle),
               matchDateTimeComponents: matchDateTimeComponents);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
@@ -418,8 +427,9 @@ class FlutterLocalNotificationsPlugin {
     RepeatInterval repeatInterval,
     NotificationDetails notificationDetails, {
     String? payload,
-    bool androidAllowWhileIdle = false,
-    bool androidUseInexactMode = false,
+    @Deprecated('Deprecated in favor of the androidScheduleType parameter')
+        bool androidAllowWhileIdle = false,
+    AndroidScheduleType? androidScheduleType,
   }) async {
     if (kIsWeb) {
       return;
@@ -430,8 +440,10 @@ class FlutterLocalNotificationsPlugin {
           ?.periodicallyShow(id, title, body, repeatInterval,
               notificationDetails: notificationDetails.android,
               payload: payload,
-              allowWhileIdle: androidAllowWhileIdle,
-              useInexactMode: androidUseInexactMode);
+              scheduleType: androidScheduleType ??
+                  (androidAllowWhileIdle
+                      ? AndroidScheduleType.inexact
+                      : AndroidScheduleType.inexactAllowWhileIdle));
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()

@@ -5,8 +5,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
-import com.dexterous.flutterlocalnotifications.NotificationStyle;
-import com.dexterous.flutterlocalnotifications.RepeatInterval;
+
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
@@ -14,8 +13,15 @@ import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformati
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 import com.dexterous.flutterlocalnotifications.utils.LongUtils;
+import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -103,7 +109,7 @@ public class NotificationDetails implements Serializable {
 
   private static final String TICKER = "ticker";
   private static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
-  private static final String USE_INEXACT_MODE = "useInexactMode";
+  private static final String SCHEDULE_TYPE = "scheduleType";
   private static final String CATEGORY = "category";
   private static final String TIMEOUT_AFTER = "timeoutAfter";
   private static final String SHOW_WHEN = "showWhen";
@@ -168,8 +174,7 @@ public class NotificationDetails implements Serializable {
   public Integer ledOffMs;
   public String ticker;
   public Integer visibility;
-  public Boolean allowWhileIdle;
-  public Boolean useInexactMode;
+  public ScheduleType scheduleType;
   public Long timeoutAfter;
   public String category;
   public int[] additionalFlags;
@@ -264,8 +269,8 @@ public class NotificationDetails implements Serializable {
       readLargeIconInformation(notificationDetails, platformChannelSpecifics);
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
-      notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
-      notificationDetails.useInexactMode = (Boolean) platformChannelSpecifics.get(USE_INEXACT_MODE);
+      notificationDetails.scheduleType =
+          ScheduleType.valueOf((String)platformChannelSpecifics.get(SCHEDULE_TYPE));
       notificationDetails.timeoutAfter =
           LongUtils.parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
       notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
@@ -541,5 +546,28 @@ public class NotificationDetails implements Serializable {
     Boolean htmlFormatTitle = (Boolean) styleInformation.get(HTML_FORMAT_TITLE);
     Boolean htmlFormatBody = (Boolean) styleInformation.get(HTML_FORMAT_CONTENT);
     return new DefaultStyleInformation(htmlFormatTitle, htmlFormatBody);
+  }
+
+  public static class Deserializer implements JsonDeserializer<NotificationDetails> {
+
+    @Override
+    public NotificationDetails deserialize(
+            JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
+      JsonObject object = json.getAsJsonObject();
+      NotificationDetails details = context.deserialize(object, NotificationDetails.class);
+
+      if (details.scheduleType == null) {
+        JsonElement allowWhileIdleField = object.get(ALLOW_WHILE_IDLE);
+        if (allowWhileIdleField != null) {
+          boolean allowWhileIde = allowWhileIdleField.getAsBoolean();
+          details.scheduleType = allowWhileIde ? ScheduleType.exactAllowWhileIdle : ScheduleType.exact;
+        } else {
+          details.scheduleType = ScheduleType.exact;
+        }
+      }
+
+      return details;
+    }
   }
 }
