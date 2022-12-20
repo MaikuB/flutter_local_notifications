@@ -30,7 +30,7 @@ public enum ScheduleMode {
             try {
                 return ScheduleMode.valueOf(json.getAsString());
             } catch (Exception e) {
-                return json.getAsBoolean() ? ScheduleMode.exactAllowWhileIdle : ScheduleMode.inexact;
+                return json.getAsBoolean() ? ScheduleMode.exactAllowWhileIdle : ScheduleMode.exact;
             }
         }
     }
