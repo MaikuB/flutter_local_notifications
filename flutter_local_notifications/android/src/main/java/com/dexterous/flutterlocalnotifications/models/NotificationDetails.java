@@ -3,6 +3,8 @@ package com.dexterous.flutterlocalnotifications.models;
 import android.graphics.Color;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.util.Log;
+
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
 
@@ -557,11 +559,12 @@ public class NotificationDetails implements Serializable {
       JsonObject object = json.getAsJsonObject();
       NotificationDetails details = context.deserialize(object, NotificationDetails.class);
 
+      Log.d("notification", "---------> deserialize notification " + details.scheduleType);
       if (details.scheduleType == null) {
         JsonElement allowWhileIdleField = object.get(ALLOW_WHILE_IDLE);
         if (allowWhileIdleField != null) {
-          boolean allowWhileIde = allowWhileIdleField.getAsBoolean();
-          details.scheduleType = allowWhileIde ? ScheduleType.exactAllowWhileIdle : ScheduleType.exact;
+          details.scheduleType = allowWhileIdleField.getAsBoolean()
+              ? ScheduleType.exactAllowWhileIdle : ScheduleType.exact;
         } else {
           details.scheduleType = ScheduleType.exact;
         }
