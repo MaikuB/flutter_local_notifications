@@ -56,7 +56,7 @@ import com.dexterous.flutterlocalnotifications.models.NotificationChannelGroupDe
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.models.PersonDetails;
-import com.dexterous.flutterlocalnotifications.models.ScheduleType;
+import com.dexterous.flutterlocalnotifications.models.ScheduleMode;
 import com.dexterous.flutterlocalnotifications.models.ScheduledNotificationRepeatFrequency;
 import com.dexterous.flutterlocalnotifications.models.SoundSource;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
@@ -439,7 +439,7 @@ public class FlutterLocalNotificationsPlugin
               .registerSubtype(InboxStyleInformation.class)
               .registerSubtype(MessagingStyleInformation.class);
       GsonBuilder builder = new GsonBuilder()
-              .registerTypeAdapter(ScheduleType.class, new ScheduleType.Deserializer())
+              .registerTypeAdapter(ScheduleMode.class, new ScheduleMode.Deserializer())
               .registerTypeAdapterFactory(styleInformationAdapter);
       gson = builder.create();
     }
@@ -624,7 +624,7 @@ public class FlutterLocalNotificationsPlugin
         getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
     AlarmManager alarmManager = getAlarmManager(context);
 
-    if (notificationDetails.scheduleType.useAllowWhileIdle()) {
+    if (notificationDetails.scheduleMode.useAllowWhileIdle()) {
       setupAllowWhileIdleAlarm(
           notificationDetails, alarmManager, notificationTriggerTime, pendingIntent);
     } else {
@@ -642,10 +642,10 @@ public class FlutterLocalNotificationsPlugin
       AlarmManager alarmManager,
       long epochMilli,
       PendingIntent pendingIntent) {
-    if (notificationDetails.scheduleType.useAllowWhileIdle()) {
+    if (notificationDetails.scheduleMode.useAllowWhileIdle()) {
       setupAllowWhileIdleAlarm(notificationDetails, alarmManager, epochMilli, pendingIntent);
     } else {
-      if (notificationDetails.scheduleType.useExactAlarm()) {
+      if (notificationDetails.scheduleMode.useExactAlarm()) {
         AlarmManagerCompat.setExact(
                 alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
       } else {
@@ -659,7 +659,7 @@ public class FlutterLocalNotificationsPlugin
       AlarmManager alarmManager,
       long epochMilli,
       PendingIntent pendingIntent) {
-    if (notificationDetails.scheduleType.useExactAlarm()) {
+    if (notificationDetails.scheduleMode.useExactAlarm()) {
       AlarmManagerCompat.setExactAndAllowWhileIdle(
               alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
     } else {

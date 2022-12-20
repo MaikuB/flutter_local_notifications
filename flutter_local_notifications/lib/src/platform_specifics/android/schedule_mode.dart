@@ -1,4 +1,4 @@
-enum AndroidScheduleType {
+enum AndroidScheduleMode {
   exact,
   exactAllowWhileIdle,
   inexact,

@@ -8,7 +8,7 @@ import com.google.gson.*;
 import java.lang.reflect.Type;
 
 @Keep
-public enum ScheduleType {
+public enum ScheduleMode {
     exact,
     exactAllowWhileIdle,
     inexact,
@@ -22,15 +22,15 @@ public enum ScheduleType {
         return this == exact || this == exactAllowWhileIdle;
     }
 
-    public static class Deserializer implements JsonDeserializer<ScheduleType> {
+    public static class Deserializer implements JsonDeserializer<ScheduleMode> {
         @Override
-        public ScheduleType deserialize(
+        public ScheduleMode deserialize(
                 JsonElement json, Type typeOfT, JsonDeserializationContext context)
                 throws JsonParseException {
             try {
-                return ScheduleType.valueOf(json.getAsString());
+                return ScheduleMode.valueOf(json.getAsString());
             } catch (Exception e) {
-                return json.getAsBoolean() ? ScheduleType.exactAllowWhileIdle : ScheduleType.inexact;
+                return json.getAsBoolean() ? ScheduleMode.exactAllowWhileIdle : ScheduleMode.inexact;
             }
         }
     }
