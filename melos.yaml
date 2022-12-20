@@ -6,6 +6,10 @@ packages:
   - flutter_local_notifications_platform_interface/*
   - "**/example/*"
 
+command:
+  bootstrap:
+    usePubspecOverrides: true
+
 ide:
   intellij: false
 
