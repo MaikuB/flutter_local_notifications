@@ -302,7 +302,7 @@ class FlutterLocalNotificationsPlugin {
     DateTime scheduledDate,
     NotificationDetails notificationDetails, {
     String? payload,
-    @Deprecated('Deprecated in favor of the androidScheduleType parameter')
+    @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
         bool androidAllowWhileIdle = false,
     AndroidScheduleMode? androidScheduleMode,
   }) async {
@@ -314,10 +314,8 @@ class FlutterLocalNotificationsPlugin {
               AndroidFlutterLocalNotificationsPlugin>()!
           .schedule(id, title, body, scheduledDate, notificationDetails.android,
               payload: payload,
-              scheduleMode: androidScheduleMode ??
-                  (androidAllowWhileIdle
-                      ? AndroidScheduleMode.exact
-                      : AndroidScheduleMode.exactAllowWhileIdle));
+              scheduleMode: _chooseScheduleMode(
+                  androidScheduleMode, androidAllowWhileIdle));
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
@@ -367,7 +365,7 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
-    @Deprecated('Deprecated in favor of the androidScheduleType parameter')
+    @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
         bool androidAllowWhileIdle = false,
     AndroidScheduleMode? androidScheduleMode,
     String? payload,
@@ -380,12 +378,14 @@ class FlutterLocalNotificationsPlugin {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()!
           .zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails.android,
+              id,
+              title,
+              body,
+              scheduledDate,
+              notificationDetails.android,
               payload: payload,
-              scheduleMode: androidScheduleMode ??
-                  (androidAllowWhileIdle
-                      ? AndroidScheduleMode.exact
-                      : AndroidScheduleMode.exactAllowWhileIdle),
+              scheduleMode: _chooseScheduleMode(
+                  androidScheduleMode, androidAllowWhileIdle),
               matchDateTimeComponents: matchDateTimeComponents);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
@@ -427,7 +427,7 @@ class FlutterLocalNotificationsPlugin {
     RepeatInterval repeatInterval,
     NotificationDetails notificationDetails, {
     String? payload,
-    @Deprecated('Deprecated in favor of the androidScheduleType parameter')
+    @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
         bool androidAllowWhileIdle = false,
     AndroidScheduleMode? androidScheduleMode,
   }) async {
@@ -440,10 +440,8 @@ class FlutterLocalNotificationsPlugin {
           ?.periodicallyShow(id, title, body, repeatInterval,
               notificationDetails: notificationDetails.android,
               payload: payload,
-              scheduleMode: androidScheduleMode ??
-                  (androidAllowWhileIdle
-                      ? AndroidScheduleMode.exact
-                      : AndroidScheduleMode.exactAllowWhileIdle));
+              scheduleMode: _chooseScheduleMode(
+                  androidScheduleMode, androidAllowWhileIdle));
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
@@ -459,6 +457,13 @@ class FlutterLocalNotificationsPlugin {
           .periodicallyShow(id, title, body, repeatInterval);
     }
   }
+
+  AndroidScheduleMode _chooseScheduleMode(
+          AndroidScheduleMode? scheduleMode, bool allowWhileIdle) =>
+      scheduleMode ??
+      (allowWhileIdle
+          ? AndroidScheduleMode.exactAllowWhileIdle
+          : AndroidScheduleMode.exact);
 
   /// Shows a notification on a daily interval at the specified time.
   @Deprecated(
