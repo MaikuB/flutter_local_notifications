@@ -568,6 +568,10 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<bool?> areNotificationsEnabled() async =>
       await _channel.invokeMethod<bool>('areNotificationsEnabled');
 
+  /// Returns whether the app can schedule exact notifications.
+  Future<bool?> canScheduleExactNotifications() async =>
+      await _channel.invokeMethod<bool>('canScheduleExactNotifications');
+
   AndroidNotificationSound? _getNotificationChannelSound(
       Map<dynamic, dynamic> channelMap) {
     final int? soundSourceIndex = channelMap['soundSource'];

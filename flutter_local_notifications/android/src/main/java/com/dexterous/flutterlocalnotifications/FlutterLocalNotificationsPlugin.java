@@ -127,6 +127,8 @@ public class FlutterLocalNotificationsPlugin
   private static final String INITIALIZE_METHOD = "initialize";
   private static final String GET_CALLBACK_HANDLE_METHOD = "getCallbackHandle";
   private static final String ARE_NOTIFICATIONS_ENABLED_METHOD = "areNotificationsEnabled";
+  private static final String CAN_SCHEDULE_EXACT_NOTIFICATIONS_METHOD = 
+      "canScheduleExactNotifications";
   private static final String CREATE_NOTIFICATION_CHANNEL_GROUP_METHOD =
       "createNotificationChannelGroup";
   private static final String DELETE_NOTIFICATION_CHANNEL_GROUP_METHOD =
@@ -1353,6 +1355,9 @@ public class FlutterLocalNotificationsPlugin
       case ARE_NOTIFICATIONS_ENABLED_METHOD:
         areNotificationsEnabled(result);
         break;
+      case CAN_SCHEDULE_EXACT_NOTIFICATIONS_METHOD:
+        setCanScheduleExactNotifications(result);
+        break;
       case CREATE_NOTIFICATION_CHANNEL_GROUP_METHOD:
         createNotificationChannelGroup(call, result);
         break;
@@ -1987,5 +1992,14 @@ public class FlutterLocalNotificationsPlugin
   private void areNotificationsEnabled(Result result) {
     NotificationManagerCompat notificationManager = getNotificationManager(applicationContext);
     result.success(notificationManager.areNotificationsEnabled());
+  }
+
+  private void setCanScheduleExactNotifications(Result result) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+      result.success(true);
+    } else {
+      AlarmManager alarmManager = getAlarmManager(applicationContext);
+      result.success(alarmManager.canScheduleExactAlarms());
+    }
   }
 }
