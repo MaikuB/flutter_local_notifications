@@ -168,8 +168,10 @@ public class NotificationDetails implements Serializable {
   public Integer ledOffMs;
   public String ticker;
   public Integer visibility;
-  @SerializedName(value="scheduleMode", alternate = "allowWhileIdle")
+
+  @SerializedName(value = "scheduleMode", alternate = "allowWhileIdle")
   public ScheduleMode scheduleMode;
+
   public Long timeoutAfter;
   public String category;
   public int[] additionalFlags;
@@ -265,7 +267,7 @@ public class NotificationDetails implements Serializable {
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
       notificationDetails.scheduleMode =
-          ScheduleMode.valueOf((String)platformChannelSpecifics.get(SCHEDULE_MODE));
+          ScheduleMode.valueOf((String) platformChannelSpecifics.get(SCHEDULE_MODE));
       notificationDetails.timeoutAfter =
           LongUtils.parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
       notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);

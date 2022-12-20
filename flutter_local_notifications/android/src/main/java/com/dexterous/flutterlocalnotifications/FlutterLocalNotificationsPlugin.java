@@ -93,7 +93,6 @@ import io.flutter.embedding.engine.loader.FlutterLoader;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.plugin.common.FlutterException;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -130,7 +129,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String INITIALIZE_METHOD = "initialize";
   private static final String GET_CALLBACK_HANDLE_METHOD = "getCallbackHandle";
   private static final String ARE_NOTIFICATIONS_ENABLED_METHOD = "areNotificationsEnabled";
-  private static final String CAN_SCHEDULE_EXACT_NOTIFICATIONS_METHOD = 
+  private static final String CAN_SCHEDULE_EXACT_NOTIFICATIONS_METHOD =
       "canScheduleExactNotifications";
   private static final String CREATE_NOTIFICATION_CHANNEL_GROUP_METHOD =
       "createNotificationChannelGroup";
@@ -461,7 +460,8 @@ public class FlutterLocalNotificationsPlugin
               .registerSubtype(BigPictureStyleInformation.class)
               .registerSubtype(InboxStyleInformation.class)
               .registerSubtype(MessagingStyleInformation.class);
-      GsonBuilder builder = new GsonBuilder()
+      GsonBuilder builder =
+          new GsonBuilder()
               .registerTypeAdapter(ScheduleMode.class, new ScheduleMode.Deserializer())
               .registerTypeAdapterFactory(styleInformationAdapter);
       gson = builder.create();
@@ -671,7 +671,7 @@ public class FlutterLocalNotificationsPlugin
       if (notificationDetails.scheduleMode.useExactAlarm()) {
         checkCanScheduleExactAlarms(alarmManager);
         AlarmManagerCompat.setExact(
-                alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+            alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
       } else {
         alarmManager.set(AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
       }
@@ -686,10 +686,10 @@ public class FlutterLocalNotificationsPlugin
     if (notificationDetails.scheduleMode.useExactAlarm()) {
       checkCanScheduleExactAlarms(alarmManager);
       AlarmManagerCompat.setExactAndAllowWhileIdle(
-              alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+          alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
     } else {
       AlarmManagerCompat.setAndAllowWhileIdle(
-              alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+          alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
     }
   }
 
@@ -1241,7 +1241,8 @@ public class FlutterLocalNotificationsPlugin
     return null;
   }
 
-  private static String getNextFireDateMatchingDateTimeComponents(NotificationDetails notificationDetails) {
+  private static String getNextFireDateMatchingDateTimeComponents(
+      NotificationDetails notificationDetails) {
     ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
     ZonedDateTime scheduledDateTime =
         ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
@@ -2046,6 +2047,7 @@ public class FlutterLocalNotificationsPlugin
 
   private static class PluginException extends RuntimeException {
     public final String code;
+
     PluginException(String code, String message) {
       super(message);
       this.code = code;

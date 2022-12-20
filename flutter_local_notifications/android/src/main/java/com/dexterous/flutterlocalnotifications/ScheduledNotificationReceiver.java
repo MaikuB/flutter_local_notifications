@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import androidx.annotation.Keep;
 import androidx.core.app.NotificationManagerCompat;
