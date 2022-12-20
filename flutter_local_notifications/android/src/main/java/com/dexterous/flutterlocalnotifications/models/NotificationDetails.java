@@ -21,6 +21,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -176,6 +177,7 @@ public class NotificationDetails implements Serializable {
   public Integer ledOffMs;
   public String ticker;
   public Integer visibility;
+  @SerializedName(alternate = "allowWhileIdle")
   public ScheduleType scheduleType;
   public Long timeoutAfter;
   public String category;
@@ -548,29 +550,5 @@ public class NotificationDetails implements Serializable {
     Boolean htmlFormatTitle = (Boolean) styleInformation.get(HTML_FORMAT_TITLE);
     Boolean htmlFormatBody = (Boolean) styleInformation.get(HTML_FORMAT_CONTENT);
     return new DefaultStyleInformation(htmlFormatTitle, htmlFormatBody);
-  }
-
-  public static class Deserializer implements JsonDeserializer<NotificationDetails> {
-
-    @Override
-    public NotificationDetails deserialize(
-            JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
-      JsonObject object = json.getAsJsonObject();
-      NotificationDetails details = context.deserialize(object, NotificationDetails.class);
-
-      Log.d("notification", "---------> deserialize notification " + details.scheduleType);
-      if (details.scheduleType == null) {
-        JsonElement allowWhileIdleField = object.get(ALLOW_WHILE_IDLE);
-        if (allowWhileIdleField != null) {
-          details.scheduleType = allowWhileIdleField.getAsBoolean()
-              ? ScheduleType.exactAllowWhileIdle : ScheduleType.exact;
-        } else {
-          details.scheduleType = ScheduleType.exact;
-        }
-      }
-
-      return details;
-    }
   }
 }

@@ -56,6 +56,7 @@ import com.dexterous.flutterlocalnotifications.models.NotificationChannelGroupDe
 import com.dexterous.flutterlocalnotifications.models.NotificationDetails;
 import com.dexterous.flutterlocalnotifications.models.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.models.PersonDetails;
+import com.dexterous.flutterlocalnotifications.models.ScheduleType;
 import com.dexterous.flutterlocalnotifications.models.ScheduledNotificationRepeatFrequency;
 import com.dexterous.flutterlocalnotifications.models.SoundSource;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
@@ -438,7 +439,7 @@ public class FlutterLocalNotificationsPlugin
               .registerSubtype(InboxStyleInformation.class)
               .registerSubtype(MessagingStyleInformation.class);
       GsonBuilder builder = new GsonBuilder()
-              .registerTypeAdapter(NotificationDetails.class, new NotificationDetails.Deserializer())
+              .registerTypeAdapter(ScheduleType.class, new ScheduleType.Deserializer())
               .registerTypeAdapterFactory(styleInformationAdapter);
       gson = builder.create();
     }
