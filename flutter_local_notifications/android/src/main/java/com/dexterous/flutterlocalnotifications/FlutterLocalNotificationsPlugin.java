@@ -92,6 +92,7 @@ import io.flutter.embedding.engine.loader.FlutterLoader;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+import io.flutter.plugin.common.FlutterException;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -646,6 +647,7 @@ public class FlutterLocalNotificationsPlugin
       setupAllowWhileIdleAlarm(notificationDetails, alarmManager, epochMilli, pendingIntent);
     } else {
       if (notificationDetails.scheduleMode.useExactAlarm()) {
+        checkCanScheduleExactAlarms(alarmManager);
         AlarmManagerCompat.setExact(
                 alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
       } else {
@@ -660,11 +662,18 @@ public class FlutterLocalNotificationsPlugin
       long epochMilli,
       PendingIntent pendingIntent) {
     if (notificationDetails.scheduleMode.useExactAlarm()) {
+      checkCanScheduleExactAlarms(alarmManager);
       AlarmManagerCompat.setExactAndAllowWhileIdle(
               alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
     } else {
       AlarmManagerCompat.setAndAllowWhileIdle(
               alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
+    }
+  }
+
+  private static void checkCanScheduleExactAlarms(AlarmManager alarmManager) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+      throw new ExactAlarmPermissionException();
     }
   }
 
@@ -2001,6 +2010,12 @@ public class FlutterLocalNotificationsPlugin
     } else {
       AlarmManager alarmManager = getAlarmManager(applicationContext);
       result.success(alarmManager.canScheduleExactAlarms());
+    }
+  }
+
+  private class ExactAlarmPermissionException extends FlutterException {
+    ExactAlarmPermissionException() {
+      super("exact_alarms_not_permitted", "Exact alarms are not permitted", null);
     }
   }
 }
