@@ -20,12 +20,18 @@ import java.lang.reflect.Type;
 public class ScheduledNotificationReceiver extends BroadcastReceiver {
 
   @Override
+  @SuppressWarnings("deprecation")
   public void onReceive(final Context context, Intent intent) {
     String notificationDetailsJson =
         intent.getStringExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_DETAILS);
     if (StringUtils.isNullOrEmpty(notificationDetailsJson)) {
       // This logic is needed for apps that used the plugin prior to 0.3.4
-      Notification notification = intent.getParcelableExtra("notification");
+      Notification notification;
+      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+        notification = intent.getParcelableExtra("notification", Notification.class);
+      } else {
+        notification = intent.getParcelableExtra("notification");
+      }
       notification.when = System.currentTimeMillis();
       int notificationId = intent.getIntExtra("notification_id", 0);
       NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);

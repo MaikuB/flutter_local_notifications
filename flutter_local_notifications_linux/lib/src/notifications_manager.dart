@@ -44,7 +44,8 @@ class LinuxNotificationManager {
   final NotificationStorage _storage;
 
   late final LinuxInitializationSettings _initializationSettings;
-  late final SelectNotificationCallback? _onSelectNotification;
+  late final DidReceiveNotificationResponseCallback?
+      _onDidReceiveNotificationResponse;
   late final LinuxPlatformInfoData _platformData;
 
   bool _initialized = false;
@@ -53,14 +54,14 @@ class LinuxNotificationManager {
   /// Call this method on application before using the manager further.
   Future<bool> initialize(
     LinuxInitializationSettings initializationSettings, {
-    SelectNotificationCallback? onSelectNotification,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) async {
     if (_initialized) {
       return _initialized;
     }
     _initialized = true;
     _initializationSettings = initializationSettings;
-    _onSelectNotification = onSelectNotification;
+    _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
     _dbus.build(
       destination: _DBusInterfaceSpec.destination,
       path: _DBusInterfaceSpec.path,
@@ -110,16 +111,25 @@ class LinuxNotificationManager {
       ],
       replySignature: DBusSignature('u'),
     );
+    final List<LinuxNotificationActionInfo>? actionsInfo = details?.actions
+        .map(
+          (LinuxNotificationAction action) => LinuxNotificationActionInfo(
+            key: action.key,
+          ),
+        )
+        .toList();
 
     final int systemId = (result.returnValues[0] as DBusUint32).value;
     final LinuxNotificationInfo notify = prevNotify?.copyWith(
           systemId: systemId,
           payload: payload,
+          actions: actionsInfo,
         ) ??
         LinuxNotificationInfo(
           id: id,
           systemId: systemId,
           payload: payload,
+          actions: actionsInfo ?? <LinuxNotificationActionInfo>[],
         );
     await _storage.insert(notify);
   }
@@ -184,6 +194,9 @@ class LinuxNotificationManager {
       hints['x'] = DBusByte(location.x);
       hints['y'] = DBusByte(location.y);
     }
+    if (details?.actionKeyAsIconName ?? false) {
+      hints['action-icons'] = const DBusBoolean(true);
+    }
     if (details?.customHints != null) {
       hints.addAll(_buildCustomHints(details!.customHints!));
     }
@@ -203,16 +216,24 @@ class LinuxNotificationManager {
         ),
       );
 
-  // TODO(proninyaroslav): add actions
   List<String> _buildActions(
     LinuxNotificationDetails? details,
     LinuxInitializationSettings initSettings,
-  ) =>
-      // Add default action, which is triggered when the notification is clicked
-      <String>[
-        _kDefaultActionName,
-        details?.defaultActionName ?? initSettings.defaultActionName,
-      ];
+  ) {
+    // Add default action, which is triggered when the notification is clicked
+    final List<String> actions = <String>[
+      _kDefaultActionName,
+      details?.defaultActionName ?? initSettings.defaultActionName,
+    ];
+    if (details != null) {
+      for (final LinuxNotificationAction action in details.actions) {
+        actions
+          ..add(action.key)
+          ..add(action.label);
+      }
+    }
+    return actions;
+  }
 
   /// Cancel notification with the given [id].
   Future<void> cancel(int id) async {
@@ -257,6 +278,8 @@ class LinuxNotificationManager {
       iconStatic: capsSet.remove('icon-static'),
       persistence: capsSet.remove('persistence'),
       sound: capsSet.remove('sound'),
+      actions: capsSet.remove('actions'),
+      actionIcons: capsSet.remove('action-icons'),
     );
     return capabilities.copyWith(otherCapabilities: capsSet);
   }
@@ -311,11 +334,37 @@ class LinuxNotificationManager {
 
         final int systemId = (s.values[0] as DBusUint32).value;
         final String actionKey = (s.values[1] as DBusString).value;
-        // TODO(proninyaroslav): add actions
+        final LinuxNotificationInfo? notify =
+            await _storage.getBySystemId(systemId);
+        if (notify == null) {
+          return;
+        }
         if (actionKey == _kDefaultActionName) {
-          final LinuxNotificationInfo? notify =
-              await _storage.getBySystemId(systemId);
-          _onSelectNotification?.call(notify?.payload);
+          _onDidReceiveNotificationResponse?.call(
+            NotificationResponse(
+              id: notify.id,
+              payload: notify.payload,
+              notificationResponseType:
+                  NotificationResponseType.selectedNotification,
+            ),
+          );
+        } else {
+          final LinuxNotificationActionInfo? actionInfo =
+              notify.actions.firstWhere(
+            (LinuxNotificationActionInfo a) => a.key == actionKey,
+          );
+          if (actionInfo == null) {
+            return;
+          }
+          _onDidReceiveNotificationResponse?.call(
+            NotificationResponse(
+              id: notify.id,
+              actionId: actionInfo.key,
+              payload: notify.payload,
+              notificationResponseType:
+                  NotificationResponseType.selectedNotificationAction,
+            ),
+          );
         }
       },
     );

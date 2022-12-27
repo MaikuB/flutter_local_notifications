@@ -1,3 +1,119 @@
+# [13.0.0]
+
+* [Android] Bumped Android Gradle plugin to 7.3.1. Thanks to the PR from [Rexios](https://github.com/Rexios80)
+* * Updated minimum Flutter version to 3.0.0. Note that technically this was already a requirement by `flutter_local_notifications_linux` 2.0.0 as `ffi` 2.0.0 requires Dart 2.17 at a minimum and that shipped with Flutter 3.0.0
+* Added explicit `ffi` dependency that Linux implementation of the plugin was already using
+* Updated site used by example app to display dummy/placeholder images
+* Updated readme to warn developers that choose not to follow the official Android guidance around notification icons that using the `@mipmap/ic_launcher` resource requires additional release build configuration. Thanks to the PR from [Daniel Arndt](https://github.com/DanielArndt)
+* Updated readme to add note about how Flutter has an issue with apps running with desugaring on Android 12L and above. Thanks to the PR from [Mirek Mazel](https://github.com/12people) See https://github.com/flutter/flutter/issues/110658. One potential fix added to the readme is for apps to add the [WindowManager library](https://developer.android.com/jetpack/androidx/releases/window) as a dependency:
+
+ ```gradle
+ dependencies {
+     implementation 'androidx.window:window:1.0.0'
+     implementation 'androidx.window:window-java:1.0.0'
+     ...
+ }
+ ```
+ 
+# [12.0.4]
+
+* Fixed issue [1796](https://github.com/MaikuB/flutter_local_notifications/issues/1796) where a `java.lang.ClassCastException` may be thrown on some Android devices when the `onDidReceiveBackgroundNotificationResponse` has been specified when calling `initialize()` 
+
+# [12.0.3+1]
+
+* Updated Kotlin version used in example app
+* Updated code snippets in readme to add missing import statements around the iOS setup related to notification actions. Thanks to PR from [som-R91](https://github.com/som-R91)
+
+# [12.0.3]
+
+* [Android] removed reference to Android V1 embedding. Thanks to PR from [Simon Ser](https://github.com/emersion)
+* Updated code snippet in readme around requesting notification permissions on Android. Thanks to PR from [Leo](https://github.com/rignaneseleo)
+
+# [12.0.2]
+
+* [Android] changed callback lookup for notification actions to take place after Flutter engine to ensure callback cache has been initialised to find the callback. This is a follow-up to changes done in 12.0.1 in trying to address issue [1721](https://github.com/MaikuB/flutter_local_notifications/issues/1721)
+* [Android] updated plugin to clean up resources after it is detached from Flutter engine. Thanks to PR from [Simon Ser](https://github.com/emersion)
+
+# [12.0.1+1]
+
+* Updated readme to indicate that the `timezone` package should be added as a direct dependency according to [this official lint rule](https://dart-lang.github.io/linter/lints/depend_on_referenced_packages.html)
+* Bumped dependency constraints on `flutter_local_notification_linux` that was meant to be done in 12.0.0
+
+# [12.0.1]
+
+* [Android][iOS] fixed issue [1721](https://github.com/MaikuB/flutter_local_notifications/issues/1721) where a crash occurs upon tapping on a notification action fbut the `onDidReceiveBackgroundNotificationResponse` optional callback hasn't been specified. 
+* [iOS] suppressed deprecation warnings where plugin was Apple's old notification APIs to support older iOS devices
+
+# [12.0.0]
+
+* Bumped `dbus` dependency via `flutter_local_notifications_linux`
+
+# [11.0.1]
+
+* [Android] fixed crash when using notification actions with a foreground service. Thanks to the PR from [Arnold Laishram](https://github.com/arnoldlaishram)
+* [Android] Suppressed deprecation warning on calling the [`getParcelableExtra`](https://developer.android.com/reference/android/content/Intent#getParcelableExtra(java.lang.String)) Intent API
+* Fixed typo in readme around Darwin (iOS/macOS) initialisation settings
+* Added a link to an issue with using Flutter apps with desugaring enabled where crashes could occur on foldable Android devices. Link to this is https://github.com/flutter/flutter/issues/110658 so those experience the problem can follow the issue and try out the solutions there as this isn't specific to the plugin
+* Replaced usage of rxDart in example app use `StreamController` instead to minimise use of dependencies and removed unused `shared_preferences` dependency
+
+
+# [11.0.0]
+
+* Bumped `timezone` dependency. To err on the safe when it comes to dependency version conflicts, this is being published as major release as the updated `timezone` package was published as a major release. Thanks to the PR from [Joachim Nohl](https://github.com/nohli)
+
+# [10.0.0]
+
+* **Breaking change** [Android] `zonedSchedule()`'s implementation has switched to using [desugaring](https://developer.android.com/studio/releases/gradle-plugin#j8-library-desugaring) instead of the [ThreeTen Android Backport library](https://github.com/JakeWharton/ThreeTenABP). This required the plugin to update to using Android Gradle plugin 4.2.2 and applications may need to bump their Android Gradle plugin dependency to at least 4.2.2 as a result. Added a "Gradle setup" section underneath "Android setup" with details on the extra setup needed
+* [Android] **Breaking change** the following error codes included in `PlatformException`s that can occur on Android have been updated
+  * `INVALID_ICON` -> `invalid_icon`
+  * `INVALID_LARGE_ICON` -> `invalid_large_icon`
+  * `INVALID_BIG_PICTURE` -> `invalid_big_picture`
+  * `INVALID_SOUND` -> `invalid_sound`
+  * `INVALID_LED_DETAILS` -> `invalid_led_details`
+  * `GET_ACTIVE_NOTIFICATIONS_ERROR_CODE` -> `unsupported_os_version`
+  * `GET_NOTIFICATION_CHANNELS_ERROR_CODE` -> `getNotificationChannelsError`
+  * `GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE` -> `getActiveNotificationMessagingStyle`
+  * `PERMISSION_REQUEST_IN_PROGRESS` -> `permissionRequestInProgress`
+* [Android] **Breaking change** the `category` of the `AndroidNotificationDetails` now requires an instance of the newly added `AndroidNotificationCategory` class instead of a string. This was to improve the discoverability of the APIs and improve the semantics as the category can specified in a similar fashion to using an enum value
+* **Breaking change** callbacks have now been reworked. There are now the following callbacks and both will pass an instance of the `NotificationResponse` class 
+  * `onDidReceiveNotificationResponse`: invoked only when the app is running. This works for when a user has selected a notification or notification action. This replaces the `onSelectNotification` callback that existed before. For notification actions, the action needs to be configured to indicate the the app or user interface should be shown on invoking the action for this callback to be invoked i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. On macOS and Linux, as there's no support for background isolates it will always invoke this callback
+  * `onDidReceiveBackgroundNotificationResponse`: invoked on a background isolate for when a user has selected a notification action. This replaces the `onSelectNotificationAction` callback
+* **Breaking change** the `NotificationAppLaunchDetails` has been updated to contain an instance `NotificationResponse` class with the `payload` belonging to the `NotificationResponse` class. This is to allow knowing more details about what caused the app to launch e.g. if a notification action was used to do so
+* [iOS][macOS] **Breaking changes** iOS and macOS classes have been renamed and refactored as they are based on the same operating system and share the same notification APIs. Rather than having a prefix of either `IOS` or `MacOS`, these are now replaced by classes with a `Darwin` prefix. For example, `IOSInitializationSettings` can be replaced with `DarwinInitializationSettings`
+* [macOS] **Breaking change** the `requestPermissions()` method of the `MacOSFlutterLocalNotificationsPlugin` class now only accepts non-nullable parameters that default to `false`. This makes it consistent with the iOS implementation of the plugin
+* Added support for notification actions. Massive thanks to [Sebastian Roth](https://github.com/ened), [Pieter van Loon](https://github.com/Kavantix) and [Yaroslav Pronin](https://github.com/proninyaroslav) for their work on this. Note that on Apple's platforms, notification actions are only supported on iOS 10 or newer and macOS 10.14 or newer
+* [Linux] **Breaking change** the linux notification categories defined by `LinuxNotificationCategory` no longer has factory constructors but has static constant fields instead to make the semantics more similar to access enum values
+* [Android] Updated how scheduled notifications are saved to shared preferences so it is done in the background. This is to fix issue [1378](https://github.com/MaikuB/flutter_local_notifications/issues/1378) where `pendingNotificationRequests` method may not report the correct number of scheduled notifications if it is invoked before the data had been saved to shared preferences
+* [Android] fixed issue [1702](https://github.com/MaikuB/flutter_local_notifications/issues/1702) by handling deprecation warnings using specific Android Intent APIs on Android 13 (API level 33) or newer
+* [iOS] `getActiveNotifications()` is now supported for iOS versions 10.0 or newer
+* [macOS] `getActiveNotifications()` is now supported for macOS versions 10.14 or newer
+* [iOS][macOS] thanks to the PR from [maprohu](https://github.com/maprohu), the following features are now available
+  * the ability to request permissions to show critical notifications
+  * the ability to specify the interruption level of a notification. This is only applicable to iOS 15.0 and macOS 12.0 or newer.
+* Updated minimum Flutter version to 2.8 as that aligns with the minimum Dart SDK version of 2.1.5 required by one of `flutter_local_notifications_linux`'s dependencies (`dbus`)
+* Example app has been updated so that each notification has its own notification ID. Previously, they were all given a notification ID of `0`
+* Updated Android setup docs to mention setting up `compileSdkVersion`
+
+# [9.9.1]
+
+* [Android] plugin has been updated to minimise clashing with other plugins that handle permission requests. Thanks to the PR from [Tiernan](https://github.com/nvx)
+
+# [9.9.0]
+
+* [Android] added the ability to specify audio attributes of a notification channel via the `audioAttributesUsage` property belonging to the `AndroidNotificationChannel` and `AndroidNotificationDetails` classes. Thanks to the PR from [Jonas Bornold](https://github.com/bornold)
+
+# [9.8.0+1]
+
+* Added more details to 9.8.0 changelog entry to mention that apps will need to change `compileSdkVersion` to 33 and also updated readme to mention this
+
+# [9.8.0]
+
+* [Android] added `requestPermission` method to the `AndroidFlutterLocalNotificationsPlugin` class. This make use of the new feature added to Android 13 where an app can request permissions to show notifications. As the plugin's APIs don't have breaking changes, this is released a minor release. It does however, require the Android 13 SDK to be install installed and for apps to change the `compileSdkVersion` in their app's `build.gradle` to 33 as the plugin's `compileSdkVersion` is now 33. Only apps targeting Android 13 can request the permission as well. The latter can be done by updating the `targetSdkVersion` in an app's `build.gradle` file to `33`. Thanks to the PR from [Bartek Pacia](https://github.com/bartekpacia). **Note**: the ability to request the permission as part of calling `initialize` will be added later on
+
+# [9.7.1]
+
+* [Android] updated how launch intent is read on Android for the `getNotificationAppLaunchDetails` method
+
 # [9.7.0]
 
 * [Android] added support to specify notification count via the `number` property that has been added to the `AndroidNotificationDetails` class. Thanks to the PR from [Katsuya Kato](https://github.com/katsuyax)
@@ -989,57 +1105,3 @@ Please note that there are a number of breaking changes in this release to impro
 ## [0.0.1]
 
 *  Initial release
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -3,9 +3,8 @@ package com.dexterous.flutterlocalnotifications.models;
 import android.graphics.Color;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-
 import androidx.annotation.Keep;
-
+import androidx.annotation.Nullable;
 import com.dexterous.flutterlocalnotifications.NotificationStyle;
 import com.dexterous.flutterlocalnotifications.RepeatInterval;
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
@@ -14,9 +13,11 @@ import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInforma
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
+import com.dexterous.flutterlocalnotifications.utils.LongUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Keep
@@ -107,6 +108,7 @@ public class NotificationDetails implements Serializable {
   private static final String SHOW_WHEN = "showWhen";
   private static final String WHEN = "when";
   private static final String USES_CHRONOMETER = "usesChronometer";
+  private static final String CHRONOMETER_COUNT_DOWN = "chronometerCountDown";
   private static final String ADDITIONAL_FLAGS = "additionalFlags";
 
   private static final String SCHEDULED_DATE_TIME = "scheduledDateTime";
@@ -118,8 +120,10 @@ public class NotificationDetails implements Serializable {
   private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
   private static final String SHORTCUT_ID = "shortcutId";
   private static final String SUB_TEXT = "subText";
+  private static final String ACTIONS = "actions";
   private static final String COLORIZED = "colorized";
   private static final String NUMBER = "number";
+  private static final String AUDIO_ATTRIBUTES_USAGE = "audioAttributesUsage";
 
   public Integer id;
   public String title;
@@ -170,6 +174,7 @@ public class NotificationDetails implements Serializable {
   public int[] additionalFlags;
   public Boolean showWhen;
   public Boolean usesChronometer;
+  public Boolean chronometerCountDown;
   public String scheduledDateTime;
   public String timeZoneName;
   public ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency;
@@ -178,9 +183,11 @@ public class NotificationDetails implements Serializable {
   public Boolean fullScreenIntent;
   public String shortcutId;
   public String subText;
+  public @Nullable List<NotificationAction> actions;
   public String tag;
   public Boolean colorized;
   public Integer number;
+  public Integer audioAttributesUsage;
 
   // Note: this is set on the Android to save details about the icon that should be used when
   // re-hydrating scheduled notifications when a device has been restarted.
@@ -247,9 +254,11 @@ public class NotificationDetails implements Serializable {
       readGroupingInformation(notificationDetails, platformChannelSpecifics);
       notificationDetails.onlyAlertOnce = (Boolean) platformChannelSpecifics.get(ONLY_ALERT_ONCE);
       notificationDetails.showWhen = (Boolean) platformChannelSpecifics.get(SHOW_WHEN);
-      notificationDetails.when = parseLong(platformChannelSpecifics.get(WHEN));
+      notificationDetails.when = LongUtils.parseLong(platformChannelSpecifics.get(WHEN));
       notificationDetails.usesChronometer =
           (Boolean) platformChannelSpecifics.get(USES_CHRONOMETER);
+      notificationDetails.chronometerCountDown =
+          (Boolean) platformChannelSpecifics.get(CHRONOMETER_COUNT_DOWN);
       readProgressInformation(notificationDetails, platformChannelSpecifics);
       readColor(notificationDetails, platformChannelSpecifics);
       readChannelInformation(notificationDetails, platformChannelSpecifics);
@@ -258,7 +267,8 @@ public class NotificationDetails implements Serializable {
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
       notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
-      notificationDetails.timeoutAfter = parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
+      notificationDetails.timeoutAfter =
+          LongUtils.parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
       notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
       notificationDetails.fullScreenIntent =
           (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
@@ -268,17 +278,22 @@ public class NotificationDetails implements Serializable {
       notificationDetails.tag = (String) platformChannelSpecifics.get(TAG);
       notificationDetails.colorized = (Boolean) platformChannelSpecifics.get(COLORIZED);
       notificationDetails.number = (Integer) platformChannelSpecifics.get(NUMBER);
-    }
-  }
+      notificationDetails.audioAttributesUsage =
+          (Integer) platformChannelSpecifics.get(AUDIO_ATTRIBUTES_USAGE);
 
-  private static Long parseLong(Object object) {
-    if (object instanceof Integer) {
-      return ((Integer) object).longValue();
+      if (platformChannelSpecifics.containsKey(ACTIONS)) {
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> inputActions =
+            (List<Map<String, Object>>) platformChannelSpecifics.get(ACTIONS);
+        if (inputActions != null && !inputActions.isEmpty()) {
+          notificationDetails.actions = new ArrayList<>();
+          for (Map<String, Object> input : inputActions) {
+            final NotificationAction action = new NotificationAction(input);
+            notificationDetails.actions.add(action);
+          }
+        }
+      }
     }
-    if (object instanceof Long) {
-      return (Long) object;
-    }
-    return null;
   }
 
   private static void readProgressInformation(
