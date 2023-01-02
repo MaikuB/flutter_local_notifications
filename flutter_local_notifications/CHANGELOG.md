@@ -1,3 +1,7 @@
+# [13.0.1]
+
+* Bumped `timezone` dependency to 0.9.1 to include time zone database updates 2022d, 2022e, 2022f, and 2022g.
+
 # [13.0.0]
 
 * [Android] Bumped Android Gradle plugin to 7.3.1. Thanks to the PR from [Rexios](https://github.com/Rexios80)
