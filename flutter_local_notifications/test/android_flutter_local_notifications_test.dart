@@ -1859,7 +1859,7 @@ void main() {
                   'calledAt': now.millisecondsSinceEpoch,
                   'repeatInterval': repeatInterval.index,
                   'platformSpecifics': <String, Object?>{
-                    'allowWhileIdle': false,
+                    'scheduleMode': 'exact',
                     'icon': null,
                     'channelId': 'channelId',
                     'channelName': 'channelName',
@@ -1955,7 +1955,7 @@ void main() {
               'timeZoneName': 'Australia/Sydney',
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
               'platformSpecifics': <String, Object?>{
-                'allowWhileIdle': true,
+                'scheduleMode': 'exactAllowWhileIdle',
                 'icon': null,
                 'channelId': 'channelId',
                 'channelName': 'channelName',
@@ -2050,7 +2050,7 @@ void main() {
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
               'matchDateTimeComponents': DateTimeComponents.time.index,
               'platformSpecifics': <String, Object?>{
-                'allowWhileIdle': true,
+                'scheduleMode': 'exactAllowWhileIdle',
                 'icon': null,
                 'channelId': 'channelId',
                 'channelName': 'channelName',
@@ -2146,7 +2146,7 @@ void main() {
               'matchDateTimeComponents':
                   DateTimeComponents.dayOfWeekAndTime.index,
               'platformSpecifics': <String, Object?>{
-                'allowWhileIdle': true,
+                'scheduleMode': 'exactAllowWhileIdle',
                 'icon': null,
                 'channelId': 'channelId',
                 'channelName': 'channelName',
