@@ -8,7 +8,6 @@ import 'package:timezone/timezone.dart';
 import 'initialization_settings.dart';
 import 'notification_details.dart';
 import 'platform_flutter_local_notifications.dart';
-import 'platform_specifics/android/schedule_mode.dart';
 import 'platform_specifics/ios/enums.dart';
 import 'types.dart';
 
@@ -307,9 +306,7 @@ class FlutterLocalNotificationsPlugin {
     DateTime scheduledDate,
     NotificationDetails notificationDetails, {
     String? payload,
-    @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
-        bool androidAllowWhileIdle = false,
-    AndroidScheduleMode? androidScheduleMode,
+    bool androidAllowWhileIdle = false,
   }) async {
     if (kIsWeb) {
       return;
@@ -318,9 +315,7 @@ class FlutterLocalNotificationsPlugin {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()!
           .schedule(id, title, body, scheduledDate, notificationDetails.android,
-              payload: payload,
-              scheduleMode: _chooseScheduleMode(
-                  androidScheduleMode, androidAllowWhileIdle));
+              payload: payload, androidAllowWhileIdle: androidAllowWhileIdle);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
@@ -370,9 +365,7 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
-    @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
-        bool androidAllowWhileIdle = false,
-    AndroidScheduleMode? androidScheduleMode,
+    required bool androidAllowWhileIdle,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
@@ -383,14 +376,9 @@ class FlutterLocalNotificationsPlugin {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()!
           .zonedSchedule(
-              id,
-              title,
-              body,
-              scheduledDate,
-              notificationDetails.android,
+              id, title, body, scheduledDate, notificationDetails.android,
               payload: payload,
-              scheduleMode: _chooseScheduleMode(
-                  androidScheduleMode, androidAllowWhileIdle),
+              androidAllowWhileIdle: androidAllowWhileIdle,
               matchDateTimeComponents: matchDateTimeComponents);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
@@ -432,9 +420,7 @@ class FlutterLocalNotificationsPlugin {
     RepeatInterval repeatInterval,
     NotificationDetails notificationDetails, {
     String? payload,
-    @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
-        bool androidAllowWhileIdle = false,
-    AndroidScheduleMode? androidScheduleMode,
+    bool androidAllowWhileIdle = false,
   }) async {
     if (kIsWeb) {
       return;
@@ -445,8 +431,7 @@ class FlutterLocalNotificationsPlugin {
           ?.periodicallyShow(id, title, body, repeatInterval,
               notificationDetails: notificationDetails.android,
               payload: payload,
-              scheduleMode: _chooseScheduleMode(
-                  androidScheduleMode, androidAllowWhileIdle));
+              androidAllowWhileIdle: androidAllowWhileIdle);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
@@ -462,13 +447,6 @@ class FlutterLocalNotificationsPlugin {
           .periodicallyShow(id, title, body, repeatInterval);
     }
   }
-
-  AndroidScheduleMode _chooseScheduleMode(
-          AndroidScheduleMode? scheduleMode, bool allowWhileIdle) =>
-      scheduleMode ??
-      (allowWhileIdle
-          ? AndroidScheduleMode.exactAllowWhileIdle
-          : AndroidScheduleMode.exact);
 
   /// Shows a notification on a daily interval at the specified time.
   @Deprecated(
