@@ -675,7 +675,7 @@ Once the time zone database has been initialised, developers may optionally want
 tz.setLocalLocation(tz.getLocation(timeZoneName));
 ```
 
-The `timezone` package doesn't provide a way to obtain the current time zone on the device so developers will need to use [platform channels](https://flutter.dev/docs/development/platform-integration/platform-channels) or use other packages that may be able to provide the information. The example app uses the [`flutter_native_timezone`](https://pub.dev/packages/flutter_native_timezone) plugin.
+The `timezone` package doesn't provide a way to obtain the current time zone on the device so developers will need to use [platform channels](https://flutter.dev/docs/development/platform-integration/platform-channels) or use other packages that may be able to provide the information. [`flutter_timezone`](https://pub.dev/packages/flutter_timezone) is the current version of the original `flutter_native_timezone` plugin used in the example app.
 
 Assuming the local location has been set, the `zonedSchedule` method can then be called in a manner similar to the following code
 
