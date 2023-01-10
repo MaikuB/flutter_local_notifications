@@ -168,7 +168,7 @@ task:
     - xcrun simctl list devicetypes
     - xcrun simctl list runtimes
     # create simulator
-    - udid=$(xcrun simctl create "iPhone 13" com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-15-4)
+    - udid=$(xcrun simctl create "iPhone 13" com.apple.CoreSimulator.SimDeviceType.iPhone-13 com.apple.CoreSimulator.SimRuntime.iOS-16-2)
     # boot simulator
     - xcrun simctl boot $udid
     # enable notifications permissions via AppleSimulatorUtils
