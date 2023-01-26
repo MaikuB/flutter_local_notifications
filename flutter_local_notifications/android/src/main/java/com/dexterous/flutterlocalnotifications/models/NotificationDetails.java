@@ -272,7 +272,7 @@ public class NotificationDetails implements Serializable {
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
       if (platformChannelSpecifics.containsKey(SCHEDULE_MODE)) {
         notificationDetails.scheduleMode =
-          ScheduleMode.valueOf((String) platformChannelSpecifics.get(SCHEDULE_MODE));
+            ScheduleMode.valueOf((String) platformChannelSpecifics.get(SCHEDULE_MODE));
       }
       notificationDetails.timeoutAfter =
           LongUtils.parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
