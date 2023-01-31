@@ -270,8 +270,10 @@ public class NotificationDetails implements Serializable {
       readLargeIconInformation(notificationDetails, platformChannelSpecifics);
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
-      notificationDetails.scheduleMode =
-          ScheduleMode.valueOf((String) platformChannelSpecifics.get(SCHEDULE_MODE));
+      if (platformChannelSpecifics.containsKey(SCHEDULE_MODE)) {
+        notificationDetails.scheduleMode =
+            ScheduleMode.valueOf((String) platformChannelSpecifics.get(SCHEDULE_MODE));
+      }
       notificationDetails.timeoutAfter =
           LongUtils.parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
       notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
