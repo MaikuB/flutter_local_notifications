@@ -120,7 +120,8 @@ public class NotificationDetails {
     private static final String SUB_TEXT = "subText";
 
     private static final String CUSTOM_LAYOUT_NAME = "customLayoutName";
-
+    private static final String CUSTOM_LAYOUT_COLLAPSED_NAME = "customLayoutCollapsedName";
+    private static final String CUSTOM_LAYOUT_EXPANDED_NAME = "customLayoutExpandedName";
 
     public Integer id;
     public String title;
@@ -181,7 +182,8 @@ public class NotificationDetails {
     public String customLayoutName;
     public String subText;
     public String tag;
-
+    public String customLayoutCollapsedName;
+    public String customLayoutExpandedName;
 
 
     // Note: this is set on the Android to save details about the icon that should be used when re-hydrating scheduled notifications when a device has been restarted.
@@ -257,6 +259,8 @@ public class NotificationDetails {
             notificationDetails.customLayoutName = (String) platformChannelSpecifics.get(CUSTOM_LAYOUT_NAME);
             notificationDetails.subText = (String) platformChannelSpecifics.get(SUB_TEXT);
             notificationDetails.tag = (String) platformChannelSpecifics.get(TAG);
+            notificationDetails.customLayoutCollapsedName =  (String) platformChannelSpecifics.get(CUSTOM_LAYOUT_COLLAPSED_NAME);
+            notificationDetails.customLayoutExpandedName =  (String) platformChannelSpecifics.get(CUSTOM_LAYOUT_EXPANDED_NAME);
         }
     }
 

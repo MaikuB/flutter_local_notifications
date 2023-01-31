@@ -52,6 +52,8 @@ class AndroidNotificationDetails {
     this.customLayoutName,
     this.subText,
     this.tag,
+    this.customLayoutCollapsedName,
+    this.customLayoutExpandedName,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -262,6 +264,7 @@ class AndroidNotificationDetails {
   /// The widget id containing the title must be named `push_title`.
   /// The widget id containing the text must be named `push_text`.
   /// The widget id containing the image must be named `push_image`.
+  /// Use with versions SDK prior to S (31).
   final String? customLayoutName;
 
   /// Provides some additional information that is displayed in the
@@ -285,4 +288,24 @@ class AndroidNotificationDetails {
   /// Showing notification with the same (tag, id) pair as a currently visible
   /// notification will replace the old notification with the new one.
   final String? tag;
+
+  /// Specifies the custom notification layout for collapsed view.
+  ///
+  /// Use when to need a custom notification layout.
+  /// The layout located in the `android/app/main/res/layout` directory of the android application.
+  /// The widget id containing the title must be named `push_title`.
+  /// The widget id containing the text must be named `push_text`.
+  /// The widget id containing the image must be named `push_image`.
+  /// Use with versions SDK since S (31).
+  final String? customLayoutCollapsedName;
+
+  /// Specifies the custom notification layout for expanded view.
+  ///
+  /// Use when to need a custom notification layout.
+  /// The layout located in the `android/app/main/res/layout` directory of the android application.
+  /// The widget id containing the title must be named `push_title`.
+  /// The widget id containing the text must be named `push_text`.
+  /// The widget id containing the image must be named `push_image`.
+  /// Use with versions SDK since S (31).
+  final String? customLayoutExpandedName;
 }

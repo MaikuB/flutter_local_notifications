@@ -213,43 +213,31 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             builder.setShortcutId(notificationDetails.shortcutId);
         }
 
-        if (!StringUtils.isNullOrEmpty(notificationDetails.customLayoutName)) {
-
+        if (checkIfUseCustomLayouts(notificationDetails)) {
             String packageName = context.getPackageName();
 
-            if (!StringUtils.isNullOrEmpty(packageName))
-            {
+            if (!StringUtils.isNullOrEmpty(packageName)) {
                 try {
-                    String customLayoutName = notificationDetails.customLayoutName;
                     PackageManager manager = context.getPackageManager();
                     Resources resources = null;
                     resources = manager.getResourcesForApplication(packageName);
 
-                    int layoutId = resources.getIdentifier(customLayoutName, "layout", packageName);
-                    int titleId = resources.getIdentifier("push_title", "id", packageName);
-                    int textId = resources.getIdentifier("push_text", "id", packageName);
-                    int imageId = resources.getIdentifier("push_image", "id", packageName);
-                    RemoteViews contentViewSmall = new RemoteViews(packageName, layoutId);
-
-                    if (!StringUtils.isNullOrEmpty(notificationDetails.title)) {
-                        contentViewSmall.setTextViewText(titleId, notificationDetails.title);
+                    if (VERSION.SDK_INT < VERSION_CODES.S) {
+                        RemoteViews contentView = setCustomContentView(context, resources, notificationDetails, notificationDetails.customLayoutName, packageName);
+                        builder.setCustomContentView(contentView);
                     } else {
-                        contentViewSmall.setViewVisibility(titleId, View.GONE);
-                    }
+                        String customLayoutCollapsedName = notificationDetails.customLayoutCollapsedName;
+                        if (!StringUtils.isNullOrEmpty(customLayoutCollapsedName)) {
+                            RemoteViews contentView = setCustomContentView(context, resources, notificationDetails, customLayoutCollapsedName, packageName);
+                            builder.setCustomContentView(contentView);
+                        }
 
-                    if (!StringUtils.isNullOrEmpty(notificationDetails.body)) {
-                        contentViewSmall.setTextViewText(textId, notificationDetails.body);
-                    } else {
-                        contentViewSmall.setViewVisibility(textId, View.GONE);
+                        String customLayoutExpandedName = notificationDetails.customLayoutExpandedName;
+                        if (!StringUtils.isNullOrEmpty(customLayoutExpandedName)) {
+                            RemoteViews contentView = setCustomContentView(context, resources, notificationDetails, customLayoutExpandedName, packageName);
+                            builder.setCustomBigContentView(contentView);
+                        }
                     }
-
-                    if (!StringUtils.isNullOrEmpty(notificationDetails.largeIcon)) {
-                        contentViewSmall.setImageViewBitmap(imageId, getBitmapFromSource(context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
-                    } else {
-                        contentViewSmall.setViewVisibility(imageId, View.GONE);
-                    }
-                    builder.setCustomContentView(contentViewSmall);
-
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -277,6 +265,42 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             }
         }
         return notification;
+    }
+
+    private static boolean checkIfUseCustomLayouts(NotificationDetails notificationDetails) {
+        if (VERSION.SDK_INT < VERSION_CODES.S) {
+            return !StringUtils.isNullOrEmpty(notificationDetails.customLayoutName);
+        } else {
+            return !StringUtils.isNullOrEmpty(notificationDetails.customLayoutCollapsedName) ||
+                    !StringUtils.isNullOrEmpty(notificationDetails.customLayoutExpandedName);
+        }
+    }
+
+    private static RemoteViews setCustomContentView(Context context, Resources resources, NotificationDetails notificationDetails, String layoutName, String packageName) {
+        int layoutId = resources.getIdentifier(layoutName, "layout", packageName);
+        RemoteViews contentView = new RemoteViews(packageName, layoutId);
+        setCustomContentViewField(contentView, resources, notificationDetails.title, "push_title", packageName);
+        setCustomContentViewField(contentView, resources, notificationDetails.body, "push_text", packageName);
+        setCustomContentViewImage(context, contentView, resources, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource, "push_image", packageName);
+        return contentView;
+    }
+
+    private static void setCustomContentViewField(RemoteViews contentView, Resources resources, String value, String name, String packageName) {
+        int id = resources.getIdentifier(name, "id", packageName);
+        if (!StringUtils.isNullOrEmpty(value)) {
+            contentView.setTextViewText(id, value);
+        } else {
+            contentView.setViewVisibility(id, View.GONE);
+        }
+    }
+
+    private static void setCustomContentViewImage(Context context, RemoteViews contentView, Resources resources, String icon, BitmapSource source, String name, String packageName) {
+        int imageId = resources.getIdentifier(name, "id", packageName);
+        if (!StringUtils.isNullOrEmpty(icon)) {
+            contentView.setImageViewBitmap(imageId, getBitmapFromSource(context, icon, source));
+        } else {
+            contentView.setViewVisibility(imageId, View.GONE);
+        }
     }
 
     private static void setSmallIcon(Context context, NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
