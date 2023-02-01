@@ -64,6 +64,8 @@ NSString *const TITLE = @"title";
 NSString *const SUBTITLE = @"subtitle";
 NSString *const BODY = @"body";
 NSString *const SOUND = @"sound";
+NSString *const IDENTIFIER = @"identifier";
+NSString *const TARGET_CONTENT_ID = @"targetContentId";
 NSString *const ATTACHMENTS = @"attachments";
 NSString *const ATTACHMENT_IDENTIFIER = @"identifier";
 NSString *const ATTACHMENT_FILE_PATH = @"filePath";
@@ -178,7 +180,7 @@ static FlutterError *getFlutterError(NSError *error) {
   } else if ([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
     [self requestPermissions:call.arguments result:result];
   } else if ([CANCEL_METHOD isEqualToString:call.method]) {
-    [self cancel:((NSNumber *)call.arguments) result:result];
+    [self cancel:call.arguments result:result];
   } else if ([CANCEL_ALL_METHOD isEqualToString:call.method]) {
     [self cancelAll:result];
   } else if ([GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD
@@ -244,6 +246,14 @@ static FlutterError *getFlutterError(NSError *error) {
           [[NSMutableDictionary alloc] init];
       activeNotification[ID] =
           notification.request.content.userInfo[NOTIFICATION_ID];
+        
+      if (notification.request.identifier != nil) {
+        activeNotification[IDENTIFIER] = notification.request.identifier;
+      }
+      if (notification.request.content.targetContentIdentifier != nil) {
+        activeNotification[TARGET_CONTENT_ID] = notification.request.content.targetContentIdentifier;
+      }
+
       if (notification.request.content.title != nil) {
         activeNotification[TITLE] = notification.request.content.title;
       }
@@ -275,6 +285,7 @@ static FlutterError *getFlutterError(NSError *error) {
         [[NSMutableDictionary alloc] init];
     pendingNotificationRequest[ID] =
         localNotification.userInfo[NOTIFICATION_ID];
+      
     if (localNotification.userInfo[TITLE] != [NSNull null]) {
       pendingNotificationRequest[TITLE] = localNotification.userInfo[TITLE];
     }
@@ -826,12 +837,18 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
-- (void)cancel:(NSNumber *)id result:(FlutterResult _Nonnull)result {
+- (void)cancel:(NSDictionary *_Nonnull)arguments result:(FlutterResult _Nonnull)result {
+  NSNumber *id = [NSNumber numberWithInt:[arguments[ID] intValue]];
   if (@available(iOS 10.0, *)) {
     UNUserNotificationCenter *center =
         [UNUserNotificationCenter currentNotificationCenter];
-    NSArray *idsToRemove =
-        [[NSArray alloc] initWithObjects:[id stringValue], nil];
+    NSString *identifier = arguments[IDENTIFIER] ;
+    NSMutableArray *idsToRemove = [[NSMutableArray alloc] initWithObjects:[id stringValue], nil];
+    
+    if(identifier != nil) {
+        [idsToRemove addObject:identifier];
+    }
+      
     [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
     [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
   } else {

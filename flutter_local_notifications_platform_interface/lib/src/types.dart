@@ -43,6 +43,8 @@ class ActiveNotification {
     this.body,
     this.payload,
     this.tag,
+    this.targetContentId,
+    this.identifier
   });
 
   /// The notification's id.
@@ -72,6 +74,12 @@ class ActiveNotification {
   /// The notification's tag.
   /// Returned only on Android.
   final String? tag;
+
+  /// Returned only on IOS.
+  final String? identifier;
+
+  /// Returned only on IOS.
+  final String? targetContentId;
 }
 
 /// Details of a Notification Action that was triggered.
