@@ -1,3 +1,8 @@
+# [14.0.0-dev.1]
+
+* [Android] added support for scheduling inexact notifications. The corresponding APIs for scheduling notifications now have a new `AndroidScheduleMode` to allow for configuring this if required. The `androidAllowWhileIdle` argument is now deprecated and will be removed in the future. Thanks to the PR from [Joachim Böhmer](https://github.com/kaptnkoala)
+* Fixed readme that was reference old classes with `IOS` as part of the name instead of the newer classes that have the `Darwin` prefix
+
 # [13.0.0]
 
 * [Android] Bumped Android Gradle plugin to 7.3.1. Thanks to the PR from [Rexios](https://github.com/Rexios80)
