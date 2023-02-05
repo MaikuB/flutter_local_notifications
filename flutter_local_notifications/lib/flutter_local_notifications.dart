@@ -27,6 +27,7 @@ export 'src/platform_specifics/android/notification_channel_group.dart';
 export 'src/platform_specifics/android/notification_details.dart';
 export 'src/platform_specifics/android/notification_sound.dart';
 export 'src/platform_specifics/android/person.dart';
+export 'src/platform_specifics/android/schedule_mode.dart';
 export 'src/platform_specifics/android/styles/big_picture_style_information.dart';
 export 'src/platform_specifics/android/styles/big_text_style_information.dart';
 export 'src/platform_specifics/android/styles/default_style_information.dart';

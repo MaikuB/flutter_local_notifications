@@ -3,10 +3,10 @@ package com.dexterous.flutterlocalnotifications.models;
 import android.graphics.Color;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
-import com.dexterous.flutterlocalnotifications.NotificationStyle;
-import com.dexterous.flutterlocalnotifications.RepeatInterval;
+
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
@@ -14,6 +14,7 @@ import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformati
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 import com.dexterous.flutterlocalnotifications.utils.LongUtils;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -102,7 +103,7 @@ public class NotificationDetails implements Serializable {
   private static final String VISIBILITY = "visibility";
 
   private static final String TICKER = "ticker";
-  private static final String ALLOW_WHILE_IDLE = "allowWhileIdle";
+  private static final String SCHEDULE_MODE = "scheduleMode";
   private static final String CATEGORY = "category";
   private static final String TIMEOUT_AFTER = "timeoutAfter";
   private static final String SHOW_WHEN = "showWhen";
@@ -168,7 +169,10 @@ public class NotificationDetails implements Serializable {
   public Integer ledOffMs;
   public String ticker;
   public Integer visibility;
-  public Boolean allowWhileIdle;
+
+  @SerializedName(value = "scheduleMode", alternate = "allowWhileIdle")
+  public ScheduleMode scheduleMode;
+
   public Long timeoutAfter;
   public String category;
   public int[] additionalFlags;
@@ -266,7 +270,10 @@ public class NotificationDetails implements Serializable {
       readLargeIconInformation(notificationDetails, platformChannelSpecifics);
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
-      notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
+      if (platformChannelSpecifics.containsKey(SCHEDULE_MODE)) {
+        notificationDetails.scheduleMode =
+            ScheduleMode.valueOf((String) platformChannelSpecifics.get(SCHEDULE_MODE));
+      }
       notificationDetails.timeoutAfter =
           LongUtils.parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
       notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
