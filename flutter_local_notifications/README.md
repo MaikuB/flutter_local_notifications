@@ -425,8 +425,8 @@ final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitiali
     const DarwinNotificationCategory(
         'demoCategory',
         <DarwinNotificationAction>[
-            IOSNotificationAction('id_1', 'Action 1'),
-            IOSNotificationAction(
+            DarwinNotificationAction('id_1', 'Action 1'),
+            DarwinNotificationAction(
             'id_2',
             'Action 2',
             options: <DarwinNotificationActionOption>{
@@ -737,11 +737,11 @@ final List<ActiveNotification> activeNotifications =
 
 #### iOS
 
-For iOS, you can specify `threadIdentifier` in `IOSNotificationDetails`. Notifications with the same `threadIdentifier` will get grouped together automatically.
+For iOS, you can specify `threadIdentifier` in `DarwinNotificationDetails`. Notifications with the same `threadIdentifier` will get grouped together automatically.
 
 ```dart
-const IOSNotificationDetails iOSPlatformChannelSpecifics =
-    IOSNotificationDetails(threadIdentifier: 'thread_id');
+const DarwinNotificationDetails iOSPlatformChannelSpecifics =
+    DarwinNotificationDetails(threadIdentifier: 'thread_id');
 ```
 
 #### Android
