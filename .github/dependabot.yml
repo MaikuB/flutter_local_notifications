@@ -1,4 +1,6 @@
 version: 2
+enable-beta-ecosystems: true
+
 updates:
   - package-ecosystem: "pub"
     directory: "/flutter_local_notifications_platform_interface"
