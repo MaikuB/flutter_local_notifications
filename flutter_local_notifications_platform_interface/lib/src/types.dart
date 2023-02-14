@@ -36,7 +36,7 @@ class PendingNotificationRequest {
 class ActiveNotification {
   /// Constructs an instance of [ActiveNotification].
   const ActiveNotification({
-    required this.id,
+    this.id,
     this.groupKey,
     this.channelId,
     this.title,
@@ -46,7 +46,7 @@ class ActiveNotification {
   });
 
   /// The notification's id.
-  final int id;
+  final int? id;
 
   /// The notification's channel id.
   ///
