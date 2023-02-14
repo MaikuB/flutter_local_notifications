@@ -2507,14 +2507,14 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _getActiveNotificationMessagingStyle(int id, String? tag) async {
+  Future<void> _getActiveNotificationMessagingStyle(int? id, String? tag) async {
     Widget dialogContent;
     try {
       final MessagingStyleInformation? messagingStyle =
           await flutterLocalNotificationsPlugin
               .resolvePlatformSpecificImplementation<
                   AndroidFlutterLocalNotificationsPlugin>()!
-              .getActiveNotificationMessagingStyle(id, tag: tag);
+              .getActiveNotificationMessagingStyle(id: id, tag: tag);
       if (messagingStyle == null) {
         dialogContent = const Text('No messaging style');
       } else {
