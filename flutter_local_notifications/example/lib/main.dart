@@ -2507,8 +2507,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _getActiveNotificationMessagingStyle(
-      int? id, String? tag) async {
+  Future<void> _getActiveNotificationMessagingStyle(int? id, String? tag) async {
     Widget dialogContent;
     try {
       // On Android, the id cannot be null, so we can safely apply a null check
