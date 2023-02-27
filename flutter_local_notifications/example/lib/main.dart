@@ -2507,14 +2507,16 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _getActiveNotificationMessagingStyle(int? id, String? tag) async {
+  Future<void> _getActiveNotificationMessagingStyle(
+      int? id, String? tag) async {
     Widget dialogContent;
     try {
+      // On Android, the id cannot be null, so we can safely apply a null check
       final MessagingStyleInformation? messagingStyle =
           await flutterLocalNotificationsPlugin
               .resolvePlatformSpecificImplementation<
                   AndroidFlutterLocalNotificationsPlugin>()!
-              .getActiveNotificationMessagingStyle(id: id, tag: tag);
+              .getActiveNotificationMessagingStyle(id!, tag: tag);
       if (messagingStyle == null) {
         dialogContent = const Text('No messaging style');
       } else {

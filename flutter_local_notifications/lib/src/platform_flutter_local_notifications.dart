@@ -473,7 +473,7 @@ class AndroidFlutterLocalNotificationsPlugin
   /// Only [DrawableResourceAndroidIcon] and [ContentUriAndroidIcon] are
   /// supported for [AndroidIcon] fields.
   Future<MessagingStyleInformation?> getActiveNotificationMessagingStyle(
-  {int? id,
+    int id, {
     String? tag,
   }) async {
     final Map<dynamic, dynamic>? m = await _channel
