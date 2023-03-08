@@ -46,6 +46,9 @@ class ActiveNotification {
   });
 
   /// The notification's id.
+  ///
+  /// This will be null if the notification was outsided of the plugin's
+  /// control e.g. on iOS and via Firebase Cloud Messaging.
   final int? id;
 
   /// The notification's channel id.
@@ -70,6 +73,7 @@ class ActiveNotification {
   final String? payload;
 
   /// The notification's tag.
+  ///
   /// Returned only on Android.
   final String? tag;
 }
