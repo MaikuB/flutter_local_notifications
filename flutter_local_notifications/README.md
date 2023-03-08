@@ -41,7 +41,7 @@ A cross platform plugin for displaying local notifications.
    - [Scheduling a notification](#scheduling-a-notification)
    - [Periodically show a notification with a specified interval](#periodically-show-a-notification-with-a-specified-interval)
    - [Retrieving pending notification requests](#retrieving-pending-notification-requests)
-   - [[Android only] Retrieving active notifications](#android-only-retrieving-active-notifications)
+   - [[Selected OS versions] Retrieving active notifications](#android-only-retrieving-active-notifications)
    - [Grouping notifications](#grouping-notifications)
    - [Cancelling/deleting a notification](#cancellingdeleting-a-notification)
    - [Cancelling/deleting all notifications](#cancellingdeleting-all-notifications)
@@ -723,15 +723,20 @@ final List<PendingNotificationRequest> pendingNotificationRequests =
     await flutterLocalNotificationsPlugin.pendingNotificationRequests();
 ```
 
-### [Android only] Retrieving active notifications
+### Retrieving active notifications
+
+
+
 
 ```dart
 final List<ActiveNotification> activeNotifications =
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.getActiveNotifications();
+    await flutterLocalNotificationsPlugin.getActiveNotifications();
 ```
+
+**Note**: The API only works for the following operating systems and versions
+- Android 6.0 or newer
+- iOS 10.0 or newer
+- macOS 10.14 or newer
 
 ### Grouping notifications
 
