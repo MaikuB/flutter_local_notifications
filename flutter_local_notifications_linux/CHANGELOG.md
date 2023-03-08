@@ -1,3 +1,7 @@
+## [3.0.0+1]
+
+* Bumped `xdg_directories` dependency constraints
+
 ## [3.0.0]
 
 * Updated minimum Flutter version to 3.0.0. Note that technically this was already a requirement by `flutter_local_notifications_linux` 2.0.0 as `ffi` 2.0.0 requires Dart 2.17 at a minimum and that shipped with Flutter 3.0.0

@@ -146,6 +146,7 @@ task:
   install_melos_script:
     - dart pub global activate melos
   install_images_script: sdkmanager "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
+  install_emulator_script: sdkmanager emulator
   create_device_script:
     echo no | avdmanager create avd --force -n test -k "system-images;android-$EMULATOR_API_LEVEL;$ANDROID_ABI"
   start_emulator_background_script:

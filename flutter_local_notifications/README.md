@@ -819,7 +819,7 @@ await flutterLocalNotificationsPlugin.cancelAll();
 ### Getting details on if the app was launched via a notification created by this plugin
 
 ```dart
-final NotificationAppLaunchDetails notificationAppLaunchDetails =
+final NotificationAppLaunchDetails? notificationAppLaunchDetails =
     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 ```
 
