@@ -543,7 +543,15 @@ class FlutterLocalNotificationsPlugin {
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() =>
       FlutterLocalNotificationsPlatform.instance.pendingNotificationRequests();
 
-  /// Returns a list of notifications that are already delivered/shown.
+  /// Returns the list of active notifications shown by the application that
+  /// haven't been dismissed/removed.
+  ///
+  /// The supported OS versions are
+  /// - Android: Android 6.0 or newer
+  /// - iOS: iOS 10.0 or newer
+  /// - macOS: macOS 10.14 or newer
+  ///
+  /// On Linux it will throw an [UnimplementedError].
   Future<List<ActiveNotification>> getActiveNotifications() =>
       FlutterLocalNotificationsPlatform.instance.getActiveNotifications();
 }

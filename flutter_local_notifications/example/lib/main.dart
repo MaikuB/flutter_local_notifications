@@ -2486,13 +2486,14 @@ class _HomePageState extends State<HomePage> {
                     'title: ${activeNotification.title}\n'
                     'body: ${activeNotification.body}',
                   ),
-                  TextButton(
-                    child: const Text('Get messaging style'),
-                    onPressed: () {
-                      _getActiveNotificationMessagingStyle(
-                          activeNotification.id, activeNotification.tag);
-                    },
-                  ),
+                  if (Platform.isAndroid && activeNotification.id != null)
+                    TextButton(
+                      child: const Text('Get messaging style'),
+                      onPressed: () {
+                        _getActiveNotificationMessagingStyle(
+                            activeNotification.id!, activeNotification.tag);
+                      },
+                    ),
                   const Divider(color: Colors.black),
                 ],
               ),
