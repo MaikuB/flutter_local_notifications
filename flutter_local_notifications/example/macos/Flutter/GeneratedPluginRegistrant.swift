@@ -8,7 +8,7 @@ import Foundation
 import device_info_plus
 import flutter_local_notifications
 import flutter_timezone
-import path_provider_foundation
+import path_provider_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   DeviceInfoPlusMacosPlugin.register(with: registry.registrar(forPlugin: "DeviceInfoPlusMacosPlugin"))
