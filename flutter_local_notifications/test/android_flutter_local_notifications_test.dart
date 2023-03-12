@@ -1,3 +1,4 @@
+// ignore: unnecessary_import
 import 'dart:typed_data';
 
 import 'package:clock/clock.dart';
