@@ -1,3 +1,4 @@
+// ignore: unnecessary_import
 import 'dart:typed_data';
 
 import 'package:clock/clock.dart';
@@ -1942,7 +1943,7 @@ void main() {
             'notification body',
             scheduledDate,
             const NotificationDetails(android: androidNotificationDetails),
-            androidAllowWhileIdle: true,
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime);
         expect(
@@ -2035,7 +2036,7 @@ void main() {
             'notification body',
             scheduledDate,
             const NotificationDetails(android: androidNotificationDetails),
-            androidAllowWhileIdle: true,
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.time);
@@ -2130,7 +2131,7 @@ void main() {
             'notification body',
             scheduledDate,
             const NotificationDetails(android: androidNotificationDetails),
-            androidAllowWhileIdle: true,
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);

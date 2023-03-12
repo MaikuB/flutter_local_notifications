@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+// ignore: unnecessary_import
 import 'dart:typed_data';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -1260,7 +1261,7 @@ class _HomePageState extends State<HomePage> {
                           priority: Priority.high,
                           importance: Importance.high,
                           fullScreenIntent: true)),
-                  androidAllowWhileIdle: true,
+                  androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
                   uiLocalNotificationDateInterpretation:
                       UILocalNotificationDateInterpretation.absoluteTime);
 
@@ -1377,7 +1378,7 @@ class _HomePageState extends State<HomePage> {
             android: AndroidNotificationDetails(
                 'your channel id', 'your channel name',
                 channelDescription: 'your channel description')),
-        androidAllowWhileIdle: true,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);
   }
@@ -1813,12 +1814,13 @@ class _HomePageState extends State<HomePage> {
     const NotificationDetails notificationDetails =
         NotificationDetails(android: androidNotificationDetails);
     await flutterLocalNotificationsPlugin.periodicallyShow(
-        id++,
-        'repeating title',
-        'repeating body',
-        RepeatInterval.everyMinute,
-        notificationDetails,
-        androidAllowWhileIdle: true);
+      id++,
+      'repeating title',
+      'repeating body',
+      RepeatInterval.everyMinute,
+      notificationDetails,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
   }
 
   Future<void> _scheduleDailyTenAMNotification() async {
@@ -1832,7 +1834,7 @@ class _HomePageState extends State<HomePage> {
               'daily notification channel name',
               channelDescription: 'daily notification description'),
         ),
-        androidAllowWhileIdle: true,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.time);
@@ -1850,7 +1852,7 @@ class _HomePageState extends State<HomePage> {
               'daily notification channel name',
               channelDescription: 'daily notification description'),
         ),
-        androidAllowWhileIdle: true,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.time);
@@ -1867,7 +1869,7 @@ class _HomePageState extends State<HomePage> {
               'weekly notification channel name',
               channelDescription: 'weekly notificationdescription'),
         ),
-        androidAllowWhileIdle: true,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
@@ -1884,7 +1886,7 @@ class _HomePageState extends State<HomePage> {
               'weekly notification channel name',
               channelDescription: 'weekly notificationdescription'),
         ),
-        androidAllowWhileIdle: true,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
@@ -1901,7 +1903,7 @@ class _HomePageState extends State<HomePage> {
               'monthly notification channel name',
               channelDescription: 'monthly notificationdescription'),
         ),
-        androidAllowWhileIdle: true,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.dayOfMonthAndTime);
@@ -1918,7 +1920,7 @@ class _HomePageState extends State<HomePage> {
               'yearly notification channel name',
               channelDescription: 'yearly notification description'),
         ),
-        androidAllowWhileIdle: true,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.dateAndTime);
