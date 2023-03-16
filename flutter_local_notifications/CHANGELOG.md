@@ -1,3 +1,7 @@
+# [14.0.0-dev.3]
+
+* Align Dart SDK constraint with minimum Flutter version (i.e. 3.0)
+
 # [14.0.0-dev.2]
 
 * **Breaking change** the `id` property of the `ActiveNotification` class is now nullable to help indicate that the notification may not have been created by the plugin e.g. it was from Firebase Cloud Messaging. Thanks to the PR from [frankvollebregt](https://github.com/frankvollebregt)
