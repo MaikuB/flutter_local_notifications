@@ -271,14 +271,14 @@ class FlutterLocalNotificationsPlugin {
   /// The `tag` parameter specifies the Android tag. If it is provided,
   /// then the notification that matches both the id and the tag will
   /// be canceled. `tag` has no effect on other platforms.
-  Future<void> cancel(int id, {String? tag}) async {
+  Future<void> cancel(Object id, {String? tag}) async {
     if (kIsWeb) {
       return;
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
-          ?.cancel(id, tag: tag);
+          ?.cancel(id is String ? int.tryParse(id) ?? 0 : id as int, tag: tag);
     } else {
       await FlutterLocalNotificationsPlatform.instance.cancel(id);
     }
