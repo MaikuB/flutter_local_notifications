@@ -834,28 +834,6 @@ static FlutterError *getFlutterError(NSError *error) {
         [[NSArray alloc] initWithObjects:id, nil];
     [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
     [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSArray *notifications =
-        [UIApplication sharedApplication].scheduledLocalNotifications;
-#pragma clang diagnostic pop
-    for (int i = 0; i < [notifications count]; i++) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-      UILocalNotification *localNotification = [notifications objectAtIndex:i];
-#pragma clang diagnostic pop
-      NSNumber *userInfoNotificationId =
-          localNotification.userInfo[NOTIFICATION_ID];
-      if ([userInfoNotificationId longValue] == [id longValue]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [[UIApplication sharedApplication]
-            cancelLocalNotification:localNotification];
-#pragma clang diagnostic pop
-        break;
-      }
-    }
   }
   result(nil);
 }
