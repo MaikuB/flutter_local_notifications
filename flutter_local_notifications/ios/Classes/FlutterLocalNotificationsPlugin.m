@@ -826,12 +826,12 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
-- (void)cancel:(NSNumber *)id result:(FlutterResult _Nonnull)result {
+- (void)cancel:(NSString *)id result:(FlutterResult _Nonnull)result {
   if (@available(iOS 10.0, *)) {
     UNUserNotificationCenter *center =
         [UNUserNotificationCenter currentNotificationCenter];
     NSArray *idsToRemove =
-        [[NSArray alloc] initWithObjects:[id stringValue], nil];
+        [[NSArray alloc] initWithObjects:id, nil];
     [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
     [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
   } else {

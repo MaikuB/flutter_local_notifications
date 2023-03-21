@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:clock/clock.dart';
@@ -35,9 +36,16 @@ const MethodChannel _channel =
 class MethodChannelFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
   @override
-  Future<void> cancel(int id) {
-    validateId(id);
-    return _channel.invokeMethod('cancel', id);
+  Future<void> cancel(Object id) {
+    final parsedId;
+    if(id is String && Platform.isAndroid) {
+      parsedId = int.tryParse(id);
+    } else if(id is int && Platform.isIOS) {
+      parsedId = id.toString();
+    } else {
+      parsedId = id;
+    }
+    return _channel.invokeMethod('cancel', parsedId);
   }
 
   @override
