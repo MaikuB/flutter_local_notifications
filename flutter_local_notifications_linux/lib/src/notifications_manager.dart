@@ -236,9 +236,9 @@ class LinuxNotificationManager {
   }
 
   /// Cancel notification with the given [id].
-  Future<void> cancel(int id) async {
-    final LinuxNotificationInfo? notify = await _storage.getById(id);
-    await _storage.removeById(id);
+  Future<void> cancel(Object id) async {
+    final LinuxNotificationInfo? notify = await _storage.getById(id is String ? int.tryParse(id)! : id as int);
+    await _storage.removeById(id is String ? int.tryParse(id)! : id as int);
     if (notify != null) {
       await _dbusCancel(notify.systemId);
     }

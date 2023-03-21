@@ -39,7 +39,7 @@ class MethodChannelFlutterLocalNotificationsPlugin
   Future<void> cancel(Object id) {
     final parsedId;
     if(id is String && Platform.isAndroid) {
-      parsedId = int.tryParse(id);
+      parsedId = int.tryParse(id)!;
     } else if(id is int && Platform.isIOS) {
       parsedId = id.toString();
     } else {

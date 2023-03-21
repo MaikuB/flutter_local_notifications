@@ -178,7 +178,7 @@ static FlutterError *getFlutterError(NSError *error) {
   } else if ([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
     [self requestPermissions:call.arguments result:result];
   } else if ([CANCEL_METHOD isEqualToString:call.method]) {
-    [self cancel:((NSNumber *)call.arguments) result:result];
+    [self cancel:((NSString *)call.arguments) result:result];
   } else if ([CANCEL_ALL_METHOD isEqualToString:call.method]) {
     [self cancelAll:result];
   } else if ([GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD

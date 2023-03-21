@@ -63,9 +63,8 @@ class LinuxFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> cancel(int id) {
-    validateId(id);
-    return _manager.cancel(id);
+  Future<void> cancel(Object id) {
+    return _manager.cancel(id is String ? int.tryParse(id)! : id as int);
   }
 
   @override
