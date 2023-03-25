@@ -887,7 +887,7 @@ class _HomePageState extends State<HomePage> {
                                   'Capabilities of the current system:',
                                   style: Theme.of(context)
                                       .textTheme
-                                      .subtitle1!
+                                      .titleMedium!
                                       .copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 8),
