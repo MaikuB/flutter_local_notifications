@@ -138,6 +138,7 @@ class AndroidNotificationDetails {
     this.timeoutAfter,
     this.category,
     this.fullScreenIntent = false,
+    this.fullScreenIntentClass,
     this.shortcutId,
     this.additionalFlags,
     this.subText,
@@ -337,6 +338,10 @@ class AndroidNotificationDetails {
   /// (e.g. via `onSelectNotification` callback) to display the appropriate
   /// page for your application.
   final bool fullScreenIntent;
+
+  /// Specifies the fully qualified class name for the activity that is to be
+  /// invoked as full screen intent by the notification.
+  final String? fullScreenIntentClass;
 
   /// Specifies the id of a published, long-lived sharing that the notification
   /// will be linked to.
