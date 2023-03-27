@@ -187,7 +187,7 @@ public class FlutterLocalNotificationsPlugin
   private MethodChannel channel;
   private Context applicationContext;
   private Activity mainActivity;
-  static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
+  static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 99;
   private PermissionRequestListener callback;
   private boolean permissionRequestInProgress = false;
 
