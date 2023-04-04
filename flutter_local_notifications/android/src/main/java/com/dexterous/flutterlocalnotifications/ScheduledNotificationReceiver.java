@@ -26,14 +26,23 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
         intent.getStringExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_DETAILS);
     if (StringUtils.isNullOrEmpty(notificationDetailsJson)) {
       // This logic is needed for apps that used the plugin prior to 0.3.4
+
       Notification notification;
+      int notificationId = intent.getIntExtra("notification_id", 0);
+
       if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
         notification = intent.getParcelableExtra("notification", Notification.class);
       } else {
         notification = intent.getParcelableExtra("notification");
       }
+
+      if (notification == null){
+        // this means the notification is corrupt, so we remove it
+        FlutterLocalNotificationsPlugin.removeNotificationFromCache(context, notificationId);
+        return;
+      }
+
       notification.when = System.currentTimeMillis();
-      int notificationId = intent.getIntExtra("notification_id", 0);
       NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
       notificationManager.notify(notificationId, notification);
       boolean repeat = intent.getBooleanExtra("repeat", false);
