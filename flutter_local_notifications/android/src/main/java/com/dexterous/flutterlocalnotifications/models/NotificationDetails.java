@@ -13,6 +13,8 @@ import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInforma
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
+import com.dexterous.flutterlocalnotifications.utils.LongUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,6 +108,7 @@ public class NotificationDetails implements Serializable {
   private static final String SHOW_WHEN = "showWhen";
   private static final String WHEN = "when";
   private static final String USES_CHRONOMETER = "usesChronometer";
+  private static final String CHRONOMETER_COUNT_DOWN = "chronometerCountDown";
   private static final String ADDITIONAL_FLAGS = "additionalFlags";
 
   private static final String SCHEDULED_DATE_TIME = "scheduledDateTime";
@@ -171,6 +174,7 @@ public class NotificationDetails implements Serializable {
   public int[] additionalFlags;
   public Boolean showWhen;
   public Boolean usesChronometer;
+  public Boolean chronometerCountDown;
   public String scheduledDateTime;
   public String timeZoneName;
   public ScheduledNotificationRepeatFrequency scheduledNotificationRepeatFrequency;
@@ -250,9 +254,11 @@ public class NotificationDetails implements Serializable {
       readGroupingInformation(notificationDetails, platformChannelSpecifics);
       notificationDetails.onlyAlertOnce = (Boolean) platformChannelSpecifics.get(ONLY_ALERT_ONCE);
       notificationDetails.showWhen = (Boolean) platformChannelSpecifics.get(SHOW_WHEN);
-      notificationDetails.when = parseLong(platformChannelSpecifics.get(WHEN));
+      notificationDetails.when = LongUtils.parseLong(platformChannelSpecifics.get(WHEN));
       notificationDetails.usesChronometer =
           (Boolean) platformChannelSpecifics.get(USES_CHRONOMETER);
+      notificationDetails.chronometerCountDown =
+          (Boolean) platformChannelSpecifics.get(CHRONOMETER_COUNT_DOWN);
       readProgressInformation(notificationDetails, platformChannelSpecifics);
       readColor(notificationDetails, platformChannelSpecifics);
       readChannelInformation(notificationDetails, platformChannelSpecifics);
@@ -261,7 +267,8 @@ public class NotificationDetails implements Serializable {
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
       notificationDetails.allowWhileIdle = (Boolean) platformChannelSpecifics.get(ALLOW_WHILE_IDLE);
-      notificationDetails.timeoutAfter = parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
+      notificationDetails.timeoutAfter =
+          LongUtils.parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
       notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
       notificationDetails.fullScreenIntent =
           (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
@@ -287,16 +294,6 @@ public class NotificationDetails implements Serializable {
         }
       }
     }
-  }
-
-  private static Long parseLong(Object object) {
-    if (object instanceof Integer) {
-      return ((Integer) object).longValue();
-    }
-    if (object instanceof Long) {
-      return (Long) object;
-    }
-    return null;
   }
 
   private static void readProgressInformation(

@@ -122,6 +122,7 @@ class AndroidNotificationDetails {
     this.showWhen = true,
     this.when,
     this.usesChronometer = false,
+    this.chronometerCountDown = false,
     this.channelShowBadge = true,
     this.showProgress = false,
     this.maxProgress = 0,
@@ -273,6 +274,11 @@ class AndroidNotificationDetails {
   /// automatically updating display of the minutes and seconds since [when].
   /// Useful when showing an elapsed time (like an ongoing phone call).
   final bool usesChronometer;
+
+  /// Sets the chronometer to count down instead of counting up.
+  ///
+  /// This property is only applicable to Android 7.0 and newer versions.
+  final bool chronometerCountDown;
 
   /// Specifies if the notification will be used to show progress.
   final bool showProgress;

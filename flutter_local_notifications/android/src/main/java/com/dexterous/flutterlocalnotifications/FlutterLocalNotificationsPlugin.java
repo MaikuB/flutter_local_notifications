@@ -64,6 +64,7 @@ import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformati
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 import com.dexterous.flutterlocalnotifications.utils.BooleanUtils;
+import com.dexterous.flutterlocalnotifications.utils.LongUtils;
 import com.dexterous.flutterlocalnotifications.utils.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -89,7 +90,6 @@ import io.flutter.embedding.engine.loader.FlutterLoader;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -190,15 +190,6 @@ public class FlutterLocalNotificationsPlugin
   static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
   private PermissionRequestListener callback;
   private boolean permissionRequestInProgress = false;
-
-  @SuppressWarnings("deprecation")
-  public static void registerWith(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    FlutterLocalNotificationsPlugin plugin = new FlutterLocalNotificationsPlugin();
-    plugin.setActivity(registrar.activity());
-    registrar.addNewIntentListener(plugin);
-    registrar.addRequestPermissionsResultListener(plugin);
-    plugin.onAttachedToEngine(registrar.context(), registrar.messenger());
-  }
 
   static void rescheduleNotifications(Context context) {
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
@@ -354,6 +345,12 @@ public class FlutterLocalNotificationsPlugin
 
     if (notificationDetails.usesChronometer != null) {
       builder.setUsesChronometer(notificationDetails.usesChronometer);
+    }
+
+    if (notificationDetails.chronometerCountDown != null) {
+      if (VERSION.SDK_INT >= VERSION_CODES.N) {
+        builder.setChronometerCountDown(notificationDetails.chronometerCountDown);
+      }
     }
 
     if (BooleanUtils.getValue(notificationDetails.fullScreenIntent)) {
@@ -1248,15 +1245,11 @@ public class FlutterLocalNotificationsPlugin
     this.mainActivity = flutterActivity;
   }
 
-  private void onAttachedToEngine(Context context, BinaryMessenger binaryMessenger) {
-    this.applicationContext = context;
-    this.channel = new MethodChannel(binaryMessenger, METHOD_CHANNEL);
-    this.channel.setMethodCallHandler(this);
-  }
-
   @Override
   public void onAttachedToEngine(FlutterPluginBinding binding) {
-    onAttachedToEngine(binding.getApplicationContext(), binding.getBinaryMessenger());
+    this.applicationContext = binding.getApplicationContext();
+    this.channel = new MethodChannel(binding.getBinaryMessenger(), METHOD_CHANNEL);
+    this.channel.setMethodCallHandler(this);
   }
 
   @Override
@@ -1499,8 +1492,8 @@ public class FlutterLocalNotificationsPlugin
       return;
     }
 
-    Long dispatcherHandle = call.argument(DISPATCHER_HANDLE);
-    Long callbackHandle = call.argument(CALLBACK_HANDLE);
+    Long dispatcherHandle = LongUtils.parseLong(call.argument(DISPATCHER_HANDLE));
+    Long callbackHandle = LongUtils.parseLong(call.argument(CALLBACK_HANDLE));
     if (dispatcherHandle != null && callbackHandle != null) {
       new IsolatePreferences(applicationContext).saveCallbackKeys(dispatcherHandle, callbackHandle);
     }

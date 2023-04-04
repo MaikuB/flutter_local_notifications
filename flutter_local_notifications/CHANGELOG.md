@@ -1,3 +1,34 @@
+# [13.0.0]
+
+* [Android] Bumped Android Gradle plugin to 7.3.1. Thanks to the PR from [Rexios](https://github.com/Rexios80)
+* * Updated minimum Flutter version to 3.0.0. Note that technically this was already a requirement by `flutter_local_notifications_linux` 2.0.0 as `ffi` 2.0.0 requires Dart 2.17 at a minimum and that shipped with Flutter 3.0.0
+* Added explicit `ffi` dependency that Linux implementation of the plugin was already using
+* Updated site used by example app to display dummy/placeholder images
+* Updated readme to warn developers that choose not to follow the official Android guidance around notification icons that using the `@mipmap/ic_launcher` resource requires additional release build configuration. Thanks to the PR from [Daniel Arndt](https://github.com/DanielArndt)
+* Updated readme to add note about how Flutter has an issue with apps running with desugaring on Android 12L and above. Thanks to the PR from [Mirek Mazel](https://github.com/12people) See https://github.com/flutter/flutter/issues/110658. One potential fix added to the readme is for apps to add the [WindowManager library](https://developer.android.com/jetpack/androidx/releases/window) as a dependency:
+
+ ```gradle
+ dependencies {
+     implementation 'androidx.window:window:1.0.0'
+     implementation 'androidx.window:window-java:1.0.0'
+     ...
+ }
+ ```
+ 
+# [12.0.4]
+
+* Fixed issue [1796](https://github.com/MaikuB/flutter_local_notifications/issues/1796) where a `java.lang.ClassCastException` may be thrown on some Android devices when the `onDidReceiveBackgroundNotificationResponse` has been specified when calling `initialize()` 
+
+# [12.0.3+1]
+
+* Updated Kotlin version used in example app
+* Updated code snippets in readme to add missing import statements around the iOS setup related to notification actions. Thanks to PR from [som-R91](https://github.com/som-R91)
+
+# [12.0.3]
+
+* [Android] removed reference to Android V1 embedding. Thanks to PR from [Simon Ser](https://github.com/emersion)
+* Updated code snippet in readme around requesting notification permissions on Android. Thanks to PR from [Leo](https://github.com/rignaneseleo)
+
 # [12.0.2]
 
 * [Android] changed callback lookup for notification actions to take place after Flutter engine to ensure callback cache has been initialised to find the callback. This is a follow-up to changes done in 12.0.1 in trying to address issue [1721](https://github.com/MaikuB/flutter_local_notifications/issues/1721)

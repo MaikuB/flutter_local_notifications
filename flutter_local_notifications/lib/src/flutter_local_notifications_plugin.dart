@@ -110,10 +110,15 @@ class FlutterLocalNotificationsPlugin {
   /// [IOSFlutterLocalNotificationsPlugin.requestPermissions] can then be called
   /// to request permissions when needed.
   ///
-  /// To handle when a notification launched an application, use
-  /// [getNotificationAppLaunchDetails].
-  ///
-  /// Functions passed to the [onDidReceiveBackgroundNotificationResponse]
+  /// The [onDidReceiveNotificationResponse] callback is fired when the user
+  /// selects a notification or notification action that should show the
+  /// application/user interface.
+  /// application was running. To handle when a notification launched an
+  /// application, use [getNotificationAppLaunchDetails]. For notification
+  /// actions that don't show the application/user interface, the
+  /// [onDidReceiveBackgroundNotificationResponse] callback is invoked on
+  /// a background isolate. Functions passed to the
+  /// [onDidReceiveBackgroundNotificationResponse]
   /// callback need to be annotated with the `@pragma('vm:entry-point')`
   /// annotation to ensure they are not stripped out by the Dart compiler.
   Future<bool?> initialize(

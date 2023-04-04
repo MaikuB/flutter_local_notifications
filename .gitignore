@@ -2,3 +2,6 @@ pubspec.lock
 .vscode
 *.idea
 *.DS_Store
+
+# Melos
+pubspec_overrides.yaml

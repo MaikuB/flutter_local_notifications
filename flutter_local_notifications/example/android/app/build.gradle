@@ -60,11 +60,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    // Temporary workaround as per https://issuetracker.google.com/issues/158060799
-    lintOptions {
-        checkReleaseBuilds false
-    }
 }
 
 flutter {

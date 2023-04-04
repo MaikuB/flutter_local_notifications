@@ -196,6 +196,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'showWhen': showWhen,
         'when': when,
         'usesChronometer': usesChronometer,
+        'chronometerCountDown': chronometerCountDown,
         'showProgress': showProgress,
         'maxProgress': maxProgress,
         'progress': progress,
