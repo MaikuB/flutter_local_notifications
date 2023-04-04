@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as image;
 import 'package:path_provider/path_provider.dart';
@@ -209,7 +209,7 @@ Future<void> _configureLocalTimeZone() async {
     return;
   }
   tz.initializeTimeZones();
-  final String? timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+  final String? timeZoneName = await FlutterTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZoneName!));
 }
 
@@ -288,7 +288,6 @@ class _HomePageState extends State<HomePage> {
             alert: true,
             badge: true,
             sound: true,
-            critical: true,
           );
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -297,7 +296,6 @@ class _HomePageState extends State<HomePage> {
             alert: true,
             badge: true,
             sound: true,
-            critical: true,
           );
     } else if (Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
@@ -839,9 +837,26 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedElevatedButton(
-                      buttonText: 'Show notification with attachment',
+                      buttonText:
+                          'Show notification with attachment (with thumbnail)',
                       onPressed: () async {
-                        await _showNotificationWithAttachment();
+                        await _showNotificationWithAttachment(
+                            hideThumbnail: false);
+                      },
+                    ),
+                    PaddedElevatedButton(
+                      buttonText:
+                          'Show notification with attachment (no thumbnail)',
+                      onPressed: () async {
+                        await _showNotificationWithAttachment(
+                            hideThumbnail: true);
+                      },
+                    ),
+                    PaddedElevatedButton(
+                      buttonText:
+                          'Show notification with attachment (clipped thumbnail)',
+                      onPressed: () async {
+                        await _showNotificationWithClippedThumbnailAttachment();
                       },
                     ),
                     PaddedElevatedButton(
@@ -1450,10 +1465,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showBigPictureNotification() async {
-    final String largeIconPath = await _downloadAndSaveFile(
-        'https://via.placeholder.com/48x48', 'largeIcon');
+    final String largeIconPath =
+        await _downloadAndSaveFile('https://dummyimage.com/48x48', 'largeIcon');
     final String bigPicturePath = await _downloadAndSaveFile(
-        'https://via.placeholder.com/400x800', 'bigPicture');
+        'https://dummyimage.com/400x800', 'bigPicture');
     final BigPictureStyleInformation bigPictureStyleInformation =
         BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath),
             largeIcon: FilePathAndroidBitmap(largeIconPath),
@@ -1480,9 +1495,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showBigPictureNotificationBase64() async {
     final String largeIcon =
-        await _base64encodedImage('https://via.placeholder.com/48x48');
+        await _base64encodedImage('https://dummyimage.com/48x48');
     final String bigPicture =
-        await _base64encodedImage('https://via.placeholder.com/400x800');
+        await _base64encodedImage('https://dummyimage.com/400x800');
 
     final BigPictureStyleInformation bigPictureStyleInformation =
         BigPictureStyleInformation(
@@ -1511,9 +1526,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showBigPictureNotificationURL() async {
     final ByteArrayAndroidBitmap largeIcon = ByteArrayAndroidBitmap(
-        await _getByteArrayFromUrl('https://via.placeholder.com/48x48'));
+        await _getByteArrayFromUrl('https://dummyimage.com/48x48'));
     final ByteArrayAndroidBitmap bigPicture = ByteArrayAndroidBitmap(
-        await _getByteArrayFromUrl('https://via.placeholder.com/400x800'));
+        await _getByteArrayFromUrl('https://dummyimage.com/400x800'));
 
     final BigPictureStyleInformation bigPictureStyleInformation =
         BigPictureStyleInformation(bigPicture,
@@ -1534,10 +1549,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showBigPictureNotificationHiddenLargeIcon() async {
-    final String largeIconPath = await _downloadAndSaveFile(
-        'https://via.placeholder.com/48x48', 'largeIcon');
+    final String largeIconPath =
+        await _downloadAndSaveFile('https://dummyimage.com/48x48', 'largeIcon');
     final String bigPicturePath = await _downloadAndSaveFile(
-        'https://via.placeholder.com/400x800', 'bigPicture');
+        'https://dummyimage.com/400x800', 'bigPicture');
     final BigPictureStyleInformation bigPictureStyleInformation =
         BigPictureStyleInformation(FilePathAndroidBitmap(bigPicturePath),
             hideExpandedLargeIcon: true,
@@ -1559,7 +1574,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationMediaStyle() async {
     final String largeIconPath = await _downloadAndSaveFile(
-        'https://via.placeholder.com/128x128/00FF00/000000', 'largeIcon');
+        'https://dummyimage.com/128x128/00FF00/000000', 'largeIcon');
     final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
       'media channel id',
@@ -1636,8 +1651,8 @@ class _HomePageState extends State<HomePage> {
       icon: FlutterBitmapAssetAndroidIcon('icons/coworker.png'),
     );
     // download the icon that would be use for the lunch bot person
-    final String largeIconPath = await _downloadAndSaveFile(
-        'https://via.placeholder.com/48x48', 'largeIcon');
+    final String largeIconPath =
+        await _downloadAndSaveFile('https://dummyimage.com/48x48', 'largeIcon');
     // this person object will use an icon that was downloaded
     final Person lunchBot = Person(
       name: 'Lunch bot',
@@ -2167,6 +2182,7 @@ class _HomePageState extends State<HomePage> {
       priority: Priority.high,
       when: DateTime.now().millisecondsSinceEpoch - 120 * 1000,
       usesChronometer: true,
+      chronometerCountDown: true,
     );
     final NotificationDetails notificationDetails =
         NotificationDetails(android: androidNotificationDetails);
@@ -2175,12 +2191,43 @@ class _HomePageState extends State<HomePage> {
         payload: 'item x');
   }
 
-  Future<void> _showNotificationWithAttachment() async {
+  Future<void> _showNotificationWithAttachment({
+    required bool hideThumbnail,
+  }) async {
     final String bigPicturePath = await _downloadAndSaveFile(
-        'https://via.placeholder.com/600x200', 'bigPicture.jpg');
+        'https://dummyimage.com/600x200', 'bigPicture.jpg');
     final DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(attachments: <DarwinNotificationAttachment>[
-      DarwinNotificationAttachment(bigPicturePath)
+      DarwinNotificationAttachment(
+        bigPicturePath,
+        hideThumbnail: hideThumbnail,
+      )
+    ]);
+    final NotificationDetails notificationDetails = NotificationDetails(
+        iOS: darwinNotificationDetails, macOS: darwinNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        id++,
+        'notification with attachment title',
+        'notification with attachment body',
+        notificationDetails);
+  }
+
+  Future<void> _showNotificationWithClippedThumbnailAttachment() async {
+    final String bigPicturePath = await _downloadAndSaveFile(
+        'https://dummyimage.com/600x200', 'bigPicture.jpg');
+    final DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(attachments: <DarwinNotificationAttachment>[
+      DarwinNotificationAttachment(
+        bigPicturePath,
+        thumbnailClippingRect:
+            // lower right quadrant of the attachment
+            const DarwinNotificationAttachmentThumbnailClippingRect(
+          x: 0.5,
+          y: 0.5,
+          height: 0.5,
+          width: 0.5,
+        ),
+      )
     ]);
     final NotificationDetails notificationDetails = NotificationDetails(
         iOS: darwinNotificationDetails, macOS: darwinNotificationDetails);
@@ -2436,7 +2483,7 @@ class _HomePageState extends State<HomePage> {
     if (Platform.isAndroid) {
       final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      if (androidInfo.version.sdkInt! < 23) {
+      if (androidInfo.version.sdkInt < 23) {
         return const Text(
           '"getActiveNotifications" is available only for Android 6.0 or newer',
         );
