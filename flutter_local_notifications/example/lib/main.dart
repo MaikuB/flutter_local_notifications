@@ -560,6 +560,16 @@ class _HomePageState extends State<HomePage> {
                     Text('notifications enabled: $_notificationsEnabled'),
                     PaddedElevatedButton(
                       buttonText:
+                          'No notification but alarm sound after 2 seconds '
+                          'based on local time zone '
+                          'with hasStartActivity '
+                          'with custom sound running 30 seconds',
+                      onPressed: () async {
+                        await _noNotificationWithStartActivity();
+                      },
+                    ),
+                    PaddedElevatedButton(
+                      buttonText:
                           'Check if notifications are enabled for this app',
                       onPressed: _areNotifcationsEnabledOnAndroid,
                     ),
@@ -2367,6 +2377,40 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ));
+  }
+
+  Future<void> _noNotificationWithStartActivity() async {
+    const int insistentFlag = 4;
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      'does not matter title',
+      'does not matter body',
+      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 2)),
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'uri channel id 2',
+          'uri channel name 2',
+          channelDescription: 'uri channel description',
+          groupKey: 'groupKey',
+          sound: const RawResourceAndroidNotificationSound('slow_spring_board'),
+          importance: Importance.max,
+          priority: Priority.high,
+          fullScreenIntent: true,
+          additionalFlags: Int32List.fromList(<int>[insistentFlag]),
+          timeoutAfter: 30000,
+          startActivityClassName: 'com.dexterous'
+              '.flutter_local_notifications_example'
+              '.MainActivity',
+          showNotification: false,
+          audioAttributesUsage: AudioAttributesUsage.alarm,
+          category: AndroidNotificationCategory.alarm,
+        ),
+      ),
+      payload: 'long payload',
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.wallClockTime,
+    );
   }
 
   Future<void> _areNotifcationsEnabledOnAndroid() async {

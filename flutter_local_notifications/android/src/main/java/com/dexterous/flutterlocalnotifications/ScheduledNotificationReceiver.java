@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.time.LocalDateTime;
 
 /** Created by michaelbui on 24/3/18. */
 @Keep
@@ -44,7 +45,11 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       Gson gson = FlutterLocalNotificationsPlugin.buildGson();
       Type type = new TypeToken<NotificationDetails>() {}.getType();
       NotificationDetails notificationDetails = gson.fromJson(notificationDetailsJson, type);
-      FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
+      if (notificationDetails.showNotification) {
+        FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
+      } else {
+        BackgroundAlarm.start(context, notificationDetails);
+      }
       if (notificationDetails.scheduledNotificationRepeatFrequency != null) {
         FlutterLocalNotificationsPlugin.zonedScheduleNextNotification(context, notificationDetails);
       } else if (notificationDetails.matchDateTimeComponents != null) {
@@ -56,6 +61,14 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       } else {
         FlutterLocalNotificationsPlugin.removeNotificationFromCache(
             context, notificationDetails.id);
+      }
+
+      boolean locked = FlutterLocalNotificationsPlugin.isKeyguardLocked(context);
+      boolean firstAlarm =
+          LocalDateTime.parse(notificationDetails.scheduledDateTime).getSecond() == 0;
+      boolean hasStartActivity = notificationDetails.startActivityClassName != null;
+      if (hasStartActivity && (!locked || !firstAlarm)) {
+        FlutterLocalNotificationsPlugin.startAlarmActivity(context, notificationDetails);
       }
     }
   }

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
@@ -213,7 +214,7 @@ public class FlutterLocalNotificationsPlugin
     if (canCreateNotificationChannel(context, notificationChannelDetails)) {
       setupNotificationChannel(context, notificationChannelDetails);
     }
-    Intent intent = getLaunchIntent(context);
+    Intent intent = getLaunchIntent(context, notificationDetails);
     intent.setAction(SELECT_NOTIFICATION);
     intent.putExtra(NOTIFICATION_ID, notificationDetails.id);
     intent.putExtra(PAYLOAD, notificationDetails.payload);
@@ -253,7 +254,7 @@ public class FlutterLocalNotificationsPlugin
 
         Intent actionIntent;
         if (action.showsUserInterface != null && action.showsUserInterface) {
-          actionIntent = getLaunchIntent(context);
+          actionIntent = getLaunchIntent(context, notificationDetails);
           actionIntent.setAction(SELECT_FOREGROUND_NOTIFICATION_ACTION);
         } else {
           actionIntent = new Intent(context, ActionBroadcastReceiver.class);
@@ -864,7 +865,14 @@ public class FlutterLocalNotificationsPlugin
     builder.setTimeoutAfter(notificationDetails.timeoutAfter);
   }
 
-  private static Intent getLaunchIntent(Context context) {
+  private static Intent getLaunchIntent(Context context, NotificationDetails notificationDetails) {
+    if (isKeyguardLocked(context) && notificationDetails.startActivityClassName != null) {
+      try {
+        return new Intent(context, Class.forName(notificationDetails.startActivityClassName));
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }
+    }
     String packageName = context.getPackageName();
     PackageManager packageManager = context.getPackageManager();
     return packageManager.getLaunchIntentForPackage(packageName);
@@ -1111,7 +1119,7 @@ public class FlutterLocalNotificationsPlugin
     }
   }
 
-  private static Uri retrieveSoundResourceUri(
+  protected static Uri retrieveSoundResourceUri(
       Context context, String sound, SoundSource soundSource) {
     Uri uri = null;
     if (StringUtils.isNullOrEmpty(sound)) {
@@ -1229,6 +1237,20 @@ public class FlutterLocalNotificationsPlugin
       return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
     }
     return null;
+  }
+
+  static void startAlarmActivity(final Context context, NotificationDetails notificationDetails) {
+    Intent intent = getLaunchIntent(context, notificationDetails);
+    intent.setAction(SELECT_NOTIFICATION);
+    intent.putExtra(PAYLOAD, notificationDetails.payload);
+    intent.addFlags(Intent.FLAG_FROM_BACKGROUND);
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    context.startActivity(intent);
+  }
+
+  static boolean isKeyguardLocked(Context context) {
+    KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+    return myKM.isKeyguardLocked();
   }
 
   private static NotificationManagerCompat getNotificationManager(Context context) {
@@ -1615,6 +1637,7 @@ public class FlutterLocalNotificationsPlugin
       notificationManager.cancel(tag, id);
     }
     removeNotificationFromCache(applicationContext, id);
+    BackgroundAlarm.stop();
   }
 
   private void cancelAllNotifications(Result result) {
