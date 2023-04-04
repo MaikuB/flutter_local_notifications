@@ -45,7 +45,7 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       Gson gson = FlutterLocalNotificationsPlugin.buildGson();
       Type type = new TypeToken<NotificationDetails>() {}.getType();
       NotificationDetails notificationDetails = gson.fromJson(notificationDetailsJson, type);
-      if (notificationDetails.showNotification) {
+      if (notificationDetails.showNotification == null || notificationDetails.showNotification) {
         FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
       } else {
         BackgroundAlarm.start(context, notificationDetails);
