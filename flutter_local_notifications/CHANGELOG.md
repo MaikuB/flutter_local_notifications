@@ -1,6 +1,7 @@
 # [14.0.0-dev.4]
 
 * [iOS][macOS] fixed issue [1950](https://github.com/MaikuB/flutter_local_notifications/issues/1950) where a crash occurs when calling `zonedSchedule` whilst specifying a date and time value when daylight savings occurs when time gets adjusted. A `PlatformException` will now be thrown when this happens with an error code of `invalid_date`. This allows apps to catch the exception and specify a date and time value after the adjustment has happened for Apple's APIs to work. For example, in the Africa/Cairo timezone, at 12:00AM on 28th of April 2023, the clock will move forward an hour to 1:00AM. If `zonedSchedule` is called specifying Africa/Cairo as the timezone and a date and time value of 12:00AM on 28th of April 2023, the plugin will throw the aforementioned exception. This allows apps to trap the exception and give the opportunity to specify 1:00AM instead
+* The minimum iOS version for the example app is now iOS 11 that aligns with the minimum iOS version supported by Flutter
 
 # [14.0.0-dev.3]
 
