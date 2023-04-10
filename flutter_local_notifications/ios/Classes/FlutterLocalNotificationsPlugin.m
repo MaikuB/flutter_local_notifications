@@ -123,6 +123,10 @@ static FlutterError *getFlutterError(NSError *error) {
             details:error.domain];
 }
 
+static FlutterError *getInvalidDateFlutterError(void) {
+   return [FlutterError errorWithCode:@"invalid_date" message:@"Apple's APIs cannot parse this date. Please check to see if daylight savings is taking on this time and adjust the date you want to specify accordingly." details:nil];
+}
+
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:CHANNEL
@@ -608,6 +612,11 @@ static FlutterError *getFlutterError(NSError *error) {
         [self buildStandardNotificationContent:arguments result:result];
     UNCalendarNotificationTrigger *trigger =
         [self buildUserNotificationCalendarTrigger:arguments];
+    if (!trigger) {
+       result(getInvalidDateFlutterError());
+       return;
+    }
+
     [self addNotificationRequest:[self getIdentifier:arguments]
                          content:content
                           result:result
@@ -629,6 +638,10 @@ static FlutterError *getFlutterError(NSError *error) {
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
     [dateFormatter setTimeZone:timezone];
     NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
+    if (!date) {
+      result(getInvalidDateFlutterError());
+       return;
+    }
     notification.fireDate = date;
     if (uiLocalNotificationDateInterpretation != nil) {
       if ([uiLocalNotificationDateInterpretation integerValue] ==
@@ -1010,7 +1023,9 @@ static FlutterError *getFlutterError(NSError *error) {
   [dateFormatter setLocale:posix];
 
   NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
-
+  if (!date) {
+    return nil;
+  }
   calendar.timeZone = timezone;
   if (matchDateComponents != nil) {
     if ([matchDateComponents integerValue] == Time) {

@@ -334,8 +334,18 @@ class FlutterLocalNotificationsPlugin {
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
   ///
+  /// Throws a [PlatformException] with an error code of `invalid_date`
+  /// on iOS and macOS when Apple's API cannot handle the date and time.
+  /// In these situations, it's likely that daylight savings will take
+  /// effect that Apple requires the date and time value to be the value
+  /// after the transition. An example of this is 28th of April 2023
+  /// 12:00AM in the Africa/Cairo time zone where the time will be
+  /// moved forward one hour to 1:00AM. The plugin throw an exception
+  /// if the date and time value is 28th of April 2023 12:00AM but
+  /// will work if the date and time value is 28th of April 2023 1:00AM.
+  ///
   /// Note that to get the appropriate representation of the time at the native
-  /// level (i.e. Android/iOS), the plugin needs to pass the time over the
+  /// level (i.e. Android/iOS/macOS), the plugin needs to pass the time over the
   /// platform channel in yyyy-mm-dd hh:mm:ss format. Therefore, the precision
   /// is at the best to the second.
   ///

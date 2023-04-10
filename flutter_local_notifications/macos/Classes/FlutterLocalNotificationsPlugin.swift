@@ -49,6 +49,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     struct ErrorCodes {
         static let unsupportedOSVersion = "unsupported_os_version"
+        static let invalidDate = "invalid_date";
     }
 
     struct DateFormatStrings {
@@ -81,6 +82,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     var defaultPresentBadge = false
     var launchNotificationResponseDict: [String: Any?]?
     var launchingAppFromNotification = false
+    let invalidDateFlutterError = FlutterError.init(code: "invalid_date", message: "Apple's APIs cannot parse this date. Please check to see if daylight savings is taking on this time and adjust the date you want to specify accordingly", details: nil)
 
     init(fromChannel channel: FlutterMethodChannel) {
         self.channel = channel
@@ -399,6 +401,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 let arguments = call.arguments as! [String: AnyObject]
                 let content = try buildUserNotificationContent(fromArguments: arguments)
                 let trigger = buildUserNotificationCalendarTrigger(fromArguments: arguments)
+                if (trigger == nil) {
+                    result(invalidDateFlutterError)
+                    return;
+                }
                 let center = UNUserNotificationCenter.current()
                 let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: trigger)
                 center.add(request)
@@ -414,8 +420,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let timeZone = TimeZone.init(identifier: timeZoneName)
             let dateFormatter = DateFormatter.init()
             dateFormatter.dateFormat = DateFormatStrings.isoFormat
-            let date = dateFormatter.date(from: scheduledDateTime)!
-            notification.deliveryDate = date
+            let date = dateFormatter.date(from: scheduledDateTime)
+            if (date == nil) {
+                result(invalidDateFlutterError)
+                return
+            }
+            notification.deliveryDate = date!
             notification.deliveryTimeZone = timeZone
             if let rawDateTimeComponents = arguments[MethodCallArguments.matchDateTimeComponents] as? Int {
                 let dateTimeComponents = DateTimeComponents.init(rawValue: rawDateTimeComponents)!
@@ -548,7 +558,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
 
     @available(OSX 10.14, *)
-    func buildUserNotificationCalendarTrigger(fromArguments arguments: [String: AnyObject]) -> UNCalendarNotificationTrigger {
+    func buildUserNotificationCalendarTrigger(fromArguments arguments: [String: AnyObject]) -> UNCalendarNotificationTrigger? {
         let scheduledDateTime = arguments[MethodCallArguments.scheduledDateTime] as! String
         let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String
         let timeZone = TimeZone.init(identifier: timeZoneName)
@@ -556,27 +566,30 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = DateFormatStrings.isoFormat
         dateFormatter.timeZone = timeZone
-        let date = dateFormatter.date(from: scheduledDateTime)!
+        let date = dateFormatter.date(from: scheduledDateTime)
+        if (date == nil) {
+            return nil
+        }
         var calendar = Calendar.current
         calendar.timeZone = timeZone!
         if let rawDateTimeComponents = arguments[MethodCallArguments.matchDateTimeComponents] as? Int {
             let dateTimeComponents = DateTimeComponents.init(rawValue: rawDateTimeComponents)!
             switch dateTimeComponents {
             case .time:
-                let dateComponents = calendar.dateComponents([.day, .hour, .minute, .second, .timeZone], from: date)
+                let dateComponents = calendar.dateComponents([.day, .hour, .minute, .second, .timeZone], from: date!)
                 return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
             case .dayOfWeekAndTime:
-                let dateComponents = calendar.dateComponents([ .weekday, .hour, .minute, .second, .timeZone], from: date)
+                let dateComponents = calendar.dateComponents([ .weekday, .hour, .minute, .second, .timeZone], from: date!)
                 return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
             case .dayOfMonthAndTime:
-                let dateComponents = calendar.dateComponents([ .day, .hour, .minute, .second, .timeZone], from: date)
+                let dateComponents = calendar.dateComponents([ .day, .hour, .minute, .second, .timeZone], from: date!)
                 return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
             case .dateAndTime:
-                let dateComponents = calendar.dateComponents([ .day, .month, .hour, .minute, .second, .timeZone], from: date)
+                let dateComponents = calendar.dateComponents([ .day, .month, .hour, .minute, .second, .timeZone], from: date!)
                 return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
             }
         }
-        let dateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second, .timeZone], from: date)
+        let dateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second, .timeZone], from: date!)
         return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: false)
     }
 
