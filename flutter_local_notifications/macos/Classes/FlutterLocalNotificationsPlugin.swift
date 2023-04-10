@@ -49,7 +49,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     struct ErrorCodes {
         static let unsupportedOSVersion = "unsupported_os_version"
-        static let invalidDate = "invalid_date";
+        static let invalidDate = "invalid_date"
     }
 
     struct DateFormatStrings {
@@ -401,9 +401,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 let arguments = call.arguments as! [String: AnyObject]
                 let content = try buildUserNotificationContent(fromArguments: arguments)
                 let trigger = buildUserNotificationCalendarTrigger(fromArguments: arguments)
-                if (trigger == nil) {
+                if trigger == nil {
                     result(invalidDateFlutterError)
-                    return;
+                    return
                 }
                 let center = UNUserNotificationCenter.current()
                 let request = UNNotificationRequest(identifier: getIdentifier(fromArguments: arguments), content: content, trigger: trigger)
@@ -421,7 +421,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let dateFormatter = DateFormatter.init()
             dateFormatter.dateFormat = DateFormatStrings.isoFormat
             let date = dateFormatter.date(from: scheduledDateTime)
-            if (date == nil) {
+            if date == nil {
                 result(invalidDateFlutterError)
                 return
             }
@@ -567,7 +567,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         dateFormatter.dateFormat = DateFormatStrings.isoFormat
         dateFormatter.timeZone = timeZone
         let date = dateFormatter.date(from: scheduledDateTime)
-        if (date == nil) {
+        if date == nil {
             return nil
         }
         var calendar = Calendar.current
