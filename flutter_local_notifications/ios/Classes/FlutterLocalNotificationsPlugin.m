@@ -625,9 +625,9 @@ static FlutterError *getFlutterError(NSError *error) {
     NSNumber *uiLocalNotificationDateInterpretation =
         arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION];
     NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
+    NSISO8601DateFormatter *dateFormatter =  [[NSISO8601DateFormatter alloc] init];
     [dateFormatter setTimeZone:timezone];
+    dateFormatter.formatOptions = NSISO8601DateFormatWithFractionalSeconds | NSISO8601DateFormatWithInternetDateTime;
     NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
     notification.fireDate = date;
     if (uiLocalNotificationDateInterpretation != nil) {
