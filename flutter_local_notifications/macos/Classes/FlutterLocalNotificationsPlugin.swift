@@ -26,7 +26,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let subtitle = "subtitle"
         static let categoryIdentifier = "categoryIdentifier"
         static let body = "body"
-        static let scheduledDateTime = "scheduledDateTime"
+        static let scheduledDateTime = "scheduledDateTimeISO8601"
         static let timeZoneName = "timeZoneName"
         static let matchDateTimeComponents = "matchDateTimeComponents"
         static let platformSpecifics = "platformSpecifics"
