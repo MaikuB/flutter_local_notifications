@@ -82,7 +82,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     var defaultPresentBadge = false
     var launchNotificationResponseDict: [String: Any?]?
     var launchingAppFromNotification = false
-    let invalidDateFlutterError = FlutterError.init(code: "invalid_date", message: "Apple's APIs cannot parse this date. Please check to see if daylight savings is taking on this time and adjust the date you want to specify accordingly", details: nil)
+    let invalidDateFlutterError = FlutterError.init(code: "invalid_date", message: "Apple's APIs cannot parse this date. Please check to see if daylight savings is taking place on this time and adjust the date you want to specify accordingly", details: nil)
 
     init(fromChannel channel: FlutterMethodChannel) {
         self.channel = channel
