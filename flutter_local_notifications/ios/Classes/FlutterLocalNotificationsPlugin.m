@@ -126,9 +126,10 @@ static FlutterError *getFlutterError(NSError *error) {
 static FlutterError *getInvalidDateFlutterError(void) {
   return [FlutterError
       errorWithCode:@"invalid_date"
-            message:@"Apple's APIs cannot parse this date. Please check to see "
-                    @"if daylight savings is taking place on this time and adjust "
-                    @"the date you want to specify accordingly."
+            message:
+                @"Apple's APIs cannot parse this date. Please check to see "
+                @"if daylight savings is taking place on this time and adjust "
+                @"the date you want to specify accordingly."
             details:nil];
 }
 
