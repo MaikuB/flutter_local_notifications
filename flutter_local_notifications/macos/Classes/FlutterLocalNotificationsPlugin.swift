@@ -82,6 +82,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     var launchNotificationResponseDict: [String: Any?]?
     var launchingAppFromNotification = false
 
+    // MARK: - FlutterPlugin initialization and registration
+
     init(fromChannel channel: FlutterMethodChannel) {
         self.channel = channel
     }
@@ -98,6 +100,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         }
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
+
+    // MARK: - UNUserNotificationCenterDelegate
 
     @available(OSX 10.14, *)
     public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
@@ -152,6 +156,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         }
     }
 
+    // MARK: - NSUserNotificationCenterDelegate
+
     public func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
         if notification.activationType == .contentsClicked && notification.userInfo != nil && isAFlutterLocalNotification(userInfo: notification.userInfo!) {
             handleSelectNotification(notificationId: Int(notification.identifier!)!, payload: notification.userInfo![MethodCallArguments.payload] as? String)
@@ -161,6 +167,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     public func userNotificationCenter(_ center: NSUserNotificationCenter, shouldPresent notification: NSUserNotification) -> Bool {
         return true
     }
+
+    // MARK: - FlutterPlugin implementation
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
