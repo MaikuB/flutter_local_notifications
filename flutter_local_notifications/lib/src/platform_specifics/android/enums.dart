@@ -116,6 +116,26 @@ class AndroidServiceForegroundType {
   static const AndroidServiceForegroundType foregroundServiceTypeMicrophone =
       AndroidServiceForegroundType(128);
 
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_HEALTH).
+  static const AndroidServiceForegroundType foregroundServiceTypeHealth =
+      AndroidServiceForegroundType(256);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING).
+  static const AndroidServiceForegroundType
+      foregroundServiceTypeRemoteMessaging = AndroidServiceForegroundType(512);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED).
+  static const AndroidServiceForegroundType
+      foregroundServiceTypeSystemExempted = AndroidServiceForegroundType(1024);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_SHORT_SERVICE).
+  static const AndroidServiceForegroundType foregroundServiceTypeShortService =
+      AndroidServiceForegroundType(2048);
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_SPECIAL_USE).
+  static const AndroidServiceForegroundType foregroundServiceTypeSpecialUse =
+      AndroidServiceForegroundType(1073741824);
+
   /// The integer representation.
   final int value;
 
