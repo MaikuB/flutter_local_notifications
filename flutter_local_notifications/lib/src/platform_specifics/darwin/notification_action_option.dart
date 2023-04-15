@@ -16,7 +16,7 @@ enum DarwinNotificationActionOption {
 
   /// The action causes the app to launch in the foreground.
   ///
-  /// Corresponds to [`UNNotificationActionOptions.destructive`](https://developer.apple.com/documentation/usernotifications/unnotificationactionoptions/1648199-destructive)
+  /// Corresponds to [`UNNotificationActionOptions.foreground`](https://developer.apple.com/documentation/usernotifications/unnotificationactionoptions/1648192-foreground)
 
   foreground,
 }
