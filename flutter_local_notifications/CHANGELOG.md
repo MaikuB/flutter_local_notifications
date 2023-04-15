@@ -2,6 +2,7 @@
 
 * **Breaking change** the following classes are now enums
   * `AndroidServiceForegroundType`
+  * `AndroidServiceStartType`
   * `Day`
   * `LinuxNotificationCategory`
   * `LinuxNotificationUrgency`

@@ -127,35 +127,18 @@ enum AndroidServiceForegroundType {
 }
 
 /// The available start types for an Android service.
-@immutable
-class AndroidServiceStartType {
-  /// Constructs an instance of [AndroidServiceStartType].
-  const AndroidServiceStartType(this.value);
-
+enum AndroidServiceStartType {
   /// Corresponds to [`Service.START_STICKY_COMPATIBILITY`](https://developer.android.com/reference/android/app/Service#START_STICKY_COMPATIBILITY).
-  static const AndroidServiceStartType startStickyCompatibility =
-      AndroidServiceStartType(0);
+  startStickyCompatibility,
 
   /// Corresponds to [`Service.START_STICKY`](https://developer.android.com/reference/android/app/Service#START_STICKY).
-  static const AndroidServiceStartType startSticky = AndroidServiceStartType(1);
+  startSticky,
 
   /// Corresponds to [`Service.START_NOT_STICKY`](https://developer.android.com/reference/android/app/Service#START_NOT_STICKY).
-  static const AndroidServiceStartType startNotSticky =
-      AndroidServiceStartType(2);
+  startNotSticky,
 
   /// Corresponds to [`Service.START_REDELIVER_INTENT`](https://developer.android.com/reference/android/app/Service#START_REDELIVER_INTENT).
-  static const AndroidServiceStartType startRedeliverIntent =
-      AndroidServiceStartType(3);
-
-  /// The integer representation.
-  final int value;
-
-  @override
-  int get hashCode => value;
-
-  @override
-  bool operator ==(Object other) =>
-      other is AndroidServiceStartType && other.value == value;
+  startRedeliverIntent
 }
 
 /// The available importance levels for Android notifications.
