@@ -3,6 +3,7 @@
 * **Breaking change** the following classes are now enums
   * `AndroidServiceForegroundType`
   * `AndroidServiceStartType`
+  * `AudioAttributesUsage`
   * `Day`
   * `InterruptionLevel`
   * `LinuxNotificationCategory`
