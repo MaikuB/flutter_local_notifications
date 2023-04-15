@@ -174,38 +174,27 @@ enum Importance {
 }
 
 /// Priority for notifications on Android 7.1 and lower.
-@immutable
-class Priority {
+enum Priority {
+  /// Corresponds to [`NotificationCompat.PRIORITY_MIN`](https://developer.android.com/reference/androidx/core/app/NotificationCompat#PRIORITY_MIN()).
+  min(-2),
+
+  /// Corresponds to [`NotificationCompat.PRIORITY_LOW()`](https://developer.android.com/reference/androidx/core/app/NotificationCompat#PRIORITY_LOW()).
+  low(-1),
+
+  /// Corresponds to [`NotificationCompat.PRIORITY_DEFAULT`](https://developer.android.com/reference/androidx/core/app/NotificationCompat#PRIORITY_DEFAULT()).
+  defaultPriority(0),
+
+  /// Corresponds to [`NotificationCompat.PRIORITY_HIGH`](https://developer.android.com/reference/androidx/core/app/NotificationCompat#PRIORITY_HIGH()).
+  high(1),
+
+  /// Corresponds to [`NotificationCompat.PRIORITY_MAX`](https://developer.android.com/reference/androidx/core/app/NotificationCompat#PRIORITY_MAX()).
+  max(2);
+
   /// Constructs an instance of [Priority].
   const Priority(this.value);
 
-  /// Min.
-  static const Priority min = Priority(-2);
-
-  /// Low.
-  static const Priority low = Priority(-1);
-
-  /// Default.
-  static const Priority defaultPriority = Priority(0);
-
-  /// High.
-  static const Priority high = Priority(1);
-
-  /// Max.
-  static const Priority max = Priority(2);
-
-  /// All the possible values for the [Priority] enumeration.
-  static List<Priority> get values =>
-      <Priority>[min, low, defaultPriority, high, max];
-
-  /// The integer representation.
+  /// The integer representation of [Priority].
   final int value;
-
-  @override
-  int get hashCode => value;
-
-  @override
-  bool operator ==(Object other) => other is Priority && other.value == value;
 }
 
 /// The available alert behaviours for grouped notifications.
