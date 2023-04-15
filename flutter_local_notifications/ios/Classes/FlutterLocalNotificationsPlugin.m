@@ -81,7 +81,7 @@ NSString *const REPEAT_TIME = @"repeatTime";
 NSString *const HOUR = @"hour";
 NSString *const MINUTE = @"minute";
 NSString *const SECOND = @"second";
-NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTime";
+NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTimeISO8601";
 NSString *const TIME_ZONE_NAME = @"timeZoneName";
 NSString *const MATCH_DATE_TIME_COMPONENTS = @"matchDateTimeComponents";
 NSString *const UILOCALNOTIFICATION_DATE_INTERPRETATION =
@@ -625,9 +625,9 @@ static FlutterError *getFlutterError(NSError *error) {
     NSNumber *uiLocalNotificationDateInterpretation =
         arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION];
     NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
+    NSISO8601DateFormatter *dateFormatter =  [[NSISO8601DateFormatter alloc] init];
     [dateFormatter setTimeZone:timezone];
+    dateFormatter.formatOptions = NSISO8601DateFormatWithFractionalSeconds | NSISO8601DateFormatWithInternetDateTime;
     NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
     notification.fireDate = date;
     if (uiLocalNotificationDateInterpretation != nil) {
@@ -1000,15 +1000,9 @@ static FlutterError *getFlutterError(NSError *error) {
   NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
   NSCalendar *calendar = [NSCalendar currentCalendar];
   NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
-  NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-
-  // Needed for some countries, when phone DateTime format is 12H
-  NSLocale *posix = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
-
-  [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
+  NSISO8601DateFormatter *dateFormatter =  [[NSISO8601DateFormatter alloc] init];
   [dateFormatter setTimeZone:timezone];
-  [dateFormatter setLocale:posix];
-
+  dateFormatter.formatOptions = NSISO8601DateFormatWithFractionalSeconds | NSISO8601DateFormatWithInternetDateTime;
   NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
 
   calendar.timeZone = timezone;

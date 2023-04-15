@@ -26,7 +26,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let subtitle = "subtitle"
         static let categoryIdentifier = "categoryIdentifier"
         static let body = "body"
-        static let scheduledDateTime = "scheduledDateTime"
+        static let scheduledDateTime = "scheduledDateTimeISO8601"
         static let timeZoneName = "timeZoneName"
         static let matchDateTimeComponents = "matchDateTimeComponents"
         static let platformSpecifics = "platformSpecifics"
@@ -412,8 +412,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let scheduledDateTime = arguments[MethodCallArguments.scheduledDateTime] as! String
             let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String
             let timeZone = TimeZone.init(identifier: timeZoneName)
-            let dateFormatter = DateFormatter.init()
-            dateFormatter.dateFormat = DateFormatStrings.isoFormat
+            let dateFormatter = ISO8601DateFormatter()
+            dateFormatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime];
             let date = dateFormatter.date(from: scheduledDateTime)!
             notification.deliveryDate = date
             notification.deliveryTimeZone = timeZone
@@ -552,9 +552,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         let scheduledDateTime = arguments[MethodCallArguments.scheduledDateTime] as! String
         let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String
         let timeZone = TimeZone.init(identifier: timeZoneName)
-        let dateFormatter = DateFormatter.init()
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = DateFormatStrings.isoFormat
+        let dateFormatter = ISO8601DateFormatter()
+        dateFormatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime];
         dateFormatter.timeZone = timeZone
         let date = dateFormatter.date(from: scheduledDateTime)!
         var calendar = Calendar.current
