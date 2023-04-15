@@ -180,7 +180,7 @@ task:
     - flutter channel stable
     - flutter upgrade
   install_melos_script:
-    - dart pub global activate melos
+    - dart pub global activate melos 2.9.0
   test_script:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
