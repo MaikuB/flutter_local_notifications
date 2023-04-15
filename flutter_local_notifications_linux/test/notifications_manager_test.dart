@@ -635,7 +635,7 @@ void main() {
 
         final List<DBusValue> values = buildNotifyMethodValues(
           hints: <String, DBusValue>{
-            'urgency': DBusByte(details.urgency!.value),
+            'urgency': DBusByte(details.urgency!.index),
           },
         );
 

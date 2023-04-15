@@ -1,5 +1,8 @@
 ## [4.0.0-dev.2]
 
+* **Breaking change** the following classes are now enums
+    * `LinuxNotificationCategory`
+    * `LinuxNotificationUrgency`
 * Switched from using `mocktail` to `mockito` for consistency and with it getting more updates as a first-party package
 
 ## [4.0.0-dev.1]
