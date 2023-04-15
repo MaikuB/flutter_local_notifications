@@ -21,10 +21,6 @@ scripts:
     description: Run unit tests in a specific package.
     run: melos exec --fail-fast -- "flutter test"
     packageFilters:
-      scope:
-        - "flutter_local_notifications"
-        - "flutter_local_notifications_linux"
-        - "flutter_local_notifications_platform_interface"
       dirExists:
         - test
       ignore:
