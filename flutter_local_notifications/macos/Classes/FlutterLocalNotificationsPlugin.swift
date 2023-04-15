@@ -413,7 +413,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String
             let timeZone = TimeZone.init(identifier: timeZoneName)
             let dateFormatter = ISO8601DateFormatter()
-            dateFormatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime];
+            dateFormatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime]
             let date = dateFormatter.date(from: scheduledDateTime)!
             notification.deliveryDate = date
             notification.deliveryTimeZone = timeZone
@@ -553,7 +553,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         let timeZoneName = arguments[MethodCallArguments.timeZoneName] as! String
         let timeZone = TimeZone.init(identifier: timeZoneName)
         let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime];
+        dateFormatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime]
         dateFormatter.timeZone = timeZone
         let date = dateFormatter.date(from: scheduledDateTime)!
         var calendar = Calendar.current
