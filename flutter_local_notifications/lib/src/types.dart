@@ -24,7 +24,7 @@ enum Day {
   /// Constructs an instance of [Day].
   const Day(this.value);
 
-  /// The integer representation of the day.
+  /// The integer representation of [Day].
   final int value;
 }
 
