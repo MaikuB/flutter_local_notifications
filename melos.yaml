@@ -19,10 +19,12 @@ scripts:
     description: Run dart analyzer in a specific package.
   test:unit:
     description: Run unit tests in a specific package.
-    run: melos exec --concurrency=1 --ignore="*example*" -- "flutter test"
+    run: melos exec --fail-fast -- "flutter test"
     packageFilters:
       dirExists:
         - test
+      ignore:
+        - "*example*"
   test:unit:android:
     description: Runs java unit tests
     run: melos exec -c 1 -- "flutter build apk --debug && cd android && ./gradlew flutter_local_notifications:testDebug"
