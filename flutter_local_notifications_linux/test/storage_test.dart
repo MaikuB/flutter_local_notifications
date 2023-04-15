@@ -6,17 +6,23 @@ import 'package:flutter_local_notifications_linux/src/notification_info.dart';
 import 'package:flutter_local_notifications_linux/src/platform_info.dart';
 import 'package:flutter_local_notifications_linux/src/storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as path;
 
-import 'mock/mock.dart';
+@GenerateNiceMocks(<MockSpec<Object>>[
+  MockSpec<LinuxPlatformInfo>(),
+  MockSpec<FileSystem>(),
+  MockSpec<File>(),
+])
+import 'storage_test.mocks.dart';
 
 void main() {
   group('Notification storage |', () {
     late NotificationStorage storage;
-    late final LinuxPlatformInfo mockPlatformInfo;
-    late final FileSystem mockFs;
-    late final File mockStorageFile;
+    late final MockLinuxPlatformInfo mockPlatformInfo;
+    late final MockFileSystem mockFs;
+    late final MockFile mockStorageFile;
 
     const LinuxPlatformInfoData platformInfo = LinuxPlatformInfoData(
       appName: 'Test',
@@ -35,9 +41,9 @@ void main() {
       mockStorageFile = MockFile();
 
       when(
-        () => mockPlatformInfo.getAll(),
+        mockPlatformInfo.getAll(),
       ).thenAnswer((_) async => platformInfo);
-      when(() => mockFs.open(fileStoragePath)).thenReturn(mockStorageFile);
+      when(mockFs.open(fileStoragePath)).thenReturn(mockStorageFile);
     });
 
     setUp(() {
@@ -66,29 +72,29 @@ void main() {
         ),
       ];
 
-      when(() => mockStorageFile.existsSync()).thenReturn(false);
+      when(mockStorageFile.existsSync()).thenReturn(false);
       when(
-        () => mockStorageFile.createSync(recursive: true),
+        mockStorageFile.createSync(recursive: true),
       ).thenAnswer((_) => <void>{});
       when(
-        () => mockStorageFile.writeAsStringSync(any()),
+        mockStorageFile.writeAsStringSync(any),
       ).thenAnswer((_) => <void>{});
-      when(() => mockStorageFile.readAsStringSync()).thenReturn('');
+      when(mockStorageFile.readAsStringSync()).thenReturn('');
 
       expect(await storage.insert(notifications[0]), isTrue);
       expect(await storage.insert(notifications[1]), isTrue);
       expect(await storage.insert(notifications[2]), isTrue);
 
       verify(
-        () => mockStorageFile.createSync(recursive: true),
+        mockStorageFile.createSync(recursive: true),
       ).called(3);
       verify(
-        () => mockStorageFile.writeAsStringSync(
+        mockStorageFile.writeAsStringSync(
           jsonEncode(<LinuxNotificationInfo>[notifications[0]]),
         ),
       ).called(1);
       verify(
-        () => mockStorageFile.writeAsStringSync(jsonEncode(notifications)),
+        mockStorageFile.writeAsStringSync(jsonEncode(notifications)),
       ).called(1);
     });
 
@@ -102,11 +108,11 @@ void main() {
         ),
       ];
 
-      when(() => mockStorageFile.existsSync()).thenReturn(true);
+      when(mockStorageFile.existsSync()).thenReturn(true);
       when(
-        () => mockStorageFile.writeAsStringSync(any()),
+        mockStorageFile.writeAsStringSync(any),
       ).thenAnswer((_) => <void>{});
-      when(() => mockStorageFile.readAsStringSync()).thenReturn('');
+      when(mockStorageFile.readAsStringSync()).thenReturn('');
 
       await storage.insert(notifications[0]);
       await storage.insert(notifications[1]);
@@ -115,12 +121,12 @@ void main() {
       expect(await storage.removeById(notifications[1].id), isTrue);
 
       verify(
-        () => mockStorageFile.writeAsStringSync(
+        mockStorageFile.writeAsStringSync(
           jsonEncode(<LinuxNotificationInfo>[notifications[1]]),
         ),
       ).called(1);
       verify(
-        () => mockStorageFile.writeAsStringSync(
+        mockStorageFile.writeAsStringSync(
           jsonEncode(<LinuxNotificationInfo>[]),
         ),
       ).called(1);
@@ -144,21 +150,21 @@ void main() {
             ]),
       ];
 
-      when(() => mockStorageFile.existsSync()).thenReturn(true);
+      when(mockStorageFile.existsSync()).thenReturn(true);
       when(
-        () => mockStorageFile.writeAsStringSync(any()),
+        mockStorageFile.writeAsStringSync(any),
       ).thenAnswer((_) => <void>{});
 
-      when(() => mockStorageFile.readAsStringSync()).thenReturn('');
+      when(mockStorageFile.readAsStringSync()).thenReturn('');
       expect(await storage.getAll(), <LinuxNotificationInfo>[]);
 
       when(
-        () => mockStorageFile.readAsStringSync(),
+        mockStorageFile.readAsStringSync(),
       ).thenReturn(jsonEncode(<LinuxNotificationInfo>[]));
       expect(await storage.getAll(), <LinuxNotificationInfo>[]);
 
       when(
-        () => mockStorageFile.readAsStringSync(),
+        mockStorageFile.readAsStringSync(),
       ).thenReturn(jsonEncode(notifications));
       await storage.insert(notifications[0]);
       await storage.insert(notifications[1]);
@@ -176,21 +182,21 @@ void main() {
         systemId: 1,
       );
 
-      when(() => mockStorageFile.existsSync()).thenReturn(true);
+      when(mockStorageFile.existsSync()).thenReturn(true);
       when(
-        () => mockStorageFile.writeAsStringSync(any()),
+        mockStorageFile.writeAsStringSync(any),
       ).thenAnswer((_) => <void>{});
 
-      when(() => mockStorageFile.readAsStringSync()).thenReturn('');
+      when(mockStorageFile.readAsStringSync()).thenReturn('');
       expect(await storage.getAll(), <LinuxNotificationInfo>[]);
 
       when(
-        () => mockStorageFile.readAsStringSync(),
+        mockStorageFile.readAsStringSync(),
       ).thenReturn(jsonEncode(<LinuxNotificationInfo>[]));
       expect(await storage.getAll(), <LinuxNotificationInfo>[]);
 
       when(
-        () => mockStorageFile.readAsStringSync(),
+        mockStorageFile.readAsStringSync(),
       ).thenReturn(jsonEncode(notification));
       await storage.insert(notification);
 
@@ -204,13 +210,13 @@ void main() {
         systemId: 2,
       );
 
-      when(() => mockStorageFile.existsSync()).thenReturn(true);
+      when(mockStorageFile.existsSync()).thenReturn(true);
       when(
-        () => mockStorageFile.writeAsStringSync(any()),
+        mockStorageFile.writeAsStringSync(any),
       ).thenAnswer((_) => <void>{});
 
       when(
-        () => mockStorageFile.readAsStringSync(),
+        mockStorageFile.readAsStringSync(),
       ).thenReturn(jsonEncode(notification));
       await storage.insert(notification);
 
@@ -218,7 +224,7 @@ void main() {
     });
 
     test('Get all, file does not exist', () async {
-      when(() => mockStorageFile.existsSync()).thenReturn(false);
+      when(mockStorageFile.existsSync()).thenReturn(false);
       expect(await storage.getAll(), <LinuxNotificationInfo>[]);
     });
 
@@ -232,11 +238,11 @@ void main() {
         ),
       ];
 
-      when(() => mockStorageFile.existsSync()).thenReturn(true);
+      when(mockStorageFile.existsSync()).thenReturn(true);
       when(
-        () => mockStorageFile.writeAsStringSync(any()),
+        mockStorageFile.writeAsStringSync(any),
       ).thenAnswer((_) => <void>{});
-      when(() => mockStorageFile.readAsStringSync()).thenReturn('');
+      when(mockStorageFile.readAsStringSync()).thenReturn('');
 
       await storage.insert(notifications[0]);
       await storage.insert(notifications[1]);
@@ -250,7 +256,7 @@ void main() {
       expect(await storage.getAll(), <LinuxNotificationInfo>[]);
 
       verify(
-        () => mockStorageFile.writeAsStringSync(
+        mockStorageFile.writeAsStringSync(
           jsonEncode(<LinuxNotificationInfo>[]),
         ),
       ).called(1);
@@ -262,18 +268,18 @@ void main() {
         systemId: 2,
       );
 
-      when(() => mockStorageFile.existsSync()).thenReturn(true);
+      when(mockStorageFile.existsSync()).thenReturn(true);
       when(
-        () => mockStorageFile.writeAsStringSync(any()),
+        mockStorageFile.writeAsStringSync(any),
       ).thenAnswer((_) => <void>{});
-      when(() => mockStorageFile.readAsStringSync()).thenReturn('');
+      when(mockStorageFile.readAsStringSync()).thenReturn('');
 
       await storage.insert(notification);
 
       expect(await storage.removeBySystemId(notification.systemId), isTrue);
 
       verify(
-        () => mockStorageFile.writeAsStringSync(
+        mockStorageFile.writeAsStringSync(
           jsonEncode(<LinuxNotificationInfo>[]),
         ),
       ).called(1);
