@@ -144,44 +144,33 @@ enum AndroidServiceStartType {
 /// The available importance levels for Android notifications.
 ///
 /// Required for Android 8.0 or newer.
-@immutable
-class Importance {
+enum Importance {
+  /// Corresponds to [`NotificationManagerCompat.IMPORTANCE_UNSPECIFIED`](https://developer.android.com/reference/androidx/core/app/NotificationManagerCompat#IMPORTANCE_UNSPECIFIED()).
+  unspecified(-1000),
+
+  /// Corresponds to [`NotificationManagerCompat.IMPORTANCE_NONE](https://developer.android.com/reference/androidx/core/app/NotificationManagerCompat#IMPORTANCE_NONE()).
+  none(0),
+
+  /// Corresponds to [`NotificationManagerCompat.IMPORTANCE_MIN`](https://developer.android.com/reference/androidx/core/app/NotificationManagerCompat#IMPORTANCE_MIN()).
+  min(1),
+
+  /// Corresponds to [`NotificationManagerCompat#IMPORTANCE_LOW`](https://developer.android.com/reference/androidx/core/app/NotificationManagerCompat#IMPORTANCE_LOW()).
+  low(2),
+
+  /// Corresponds to [`NotificationManagerCompat.IMPORTANCE_DEFAULT](https://developer.android.com/reference/androidx/core/app/NotificationManagerCompat#IMPORTANCE_DEFAULT()).
+  defaultImportance(3),
+
+  /// Corresponds to [`NotificationManagerCompat.IMPORTANCE_HIGH`](https://developer.android.com/reference/androidx/core/app/NotificationManagerCompat#IMPORTANCE_HIGH()).
+  high(4),
+
+  /// Corresponds to [`NotificationManagerCompat.IMPORTANCE_MAX](https://developer.android.com/reference/androidx/core/app/NotificationManagerCompat#IMPORTANCE_MAX()).
+  max(5);
+
   /// Constructs an instance of [Importance].
   const Importance(this.value);
 
-  /// Unspecified
-  static const Importance unspecified = Importance(-1000);
-
-  /// None.
-  static const Importance none = Importance(0);
-
-  /// Min.
-  static const Importance min = Importance(1);
-
-  /// Low.
-  static const Importance low = Importance(2);
-
-  /// Default.
-  static const Importance defaultImportance = Importance(3);
-
-  /// High.
-  static const Importance high = Importance(4);
-
-  /// Max.
-  static const Importance max = Importance(5);
-
-  /// All the possible values for the [Importance] enumeration.
-  static List<Importance> get values =>
-      <Importance>[unspecified, none, min, low, defaultImportance, high, max];
-
-  /// The integer representation.
+  /// The integer representation of [Importance].
   final int value;
-
-  @override
-  int get hashCode => value;
-
-  @override
-  bool operator ==(Object other) => other is Importance && other.value == value;
 }
 
 /// Priority for notifications on Android 7.1 and lower.
