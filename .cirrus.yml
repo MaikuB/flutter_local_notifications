@@ -128,8 +128,6 @@ task:
     - dart pub global activate melos
   test_script:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
-    # added to help debug
-    - pwd
     - melos bootstrap
     - melos run test:unit:android
 
