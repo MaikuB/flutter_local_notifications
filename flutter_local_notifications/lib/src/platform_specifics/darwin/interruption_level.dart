@@ -1,18 +1,17 @@
 /// Type used to indicate the importance and delivery timing of a notification.
 ///
-/// This mirrors the following Apple API
-/// https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel
+/// Corresponds to [UNNotificationInterruptionLevel](https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel).
 enum InterruptionLevel {
   /// The system adds the notification to the notification
   /// list without lighting up the screen or playing a sound.
   ///
-  /// https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel/passive
+  /// Corresponds to [`UNNotificationInterruptionLevel.passive`](https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel/passive).
   passive,
 
   /// The system presents the notification immediately,
   /// lights up the screen, and can play a sound.
   ///
-  /// https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel/active
+  /// Corresponds to [`UNNotificationInterruptionLevel.active`](https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel/active).
   active,
 
   /// The system presents the notification immediately,
@@ -23,7 +22,7 @@ enum InterruptionLevel {
   /// capability needs to be added to the iOS project.
   /// See https://help.apple.com/xcode/mac/current/#/dev88ff319e7
   ///
-  /// https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel/timesensitive
+  /// Corresponds to [`UNNotificationInterruptionLevel.timeSensitive`](https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel/timesensitive).
   timeSensitive,
 
   /// The system presents the notification immediately,
@@ -32,6 +31,6 @@ enum InterruptionLevel {
   /// Subject to specific approval from Apple:
   /// https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/
   ///
-  /// https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel/critical
+  /// Corresponds to [`UNNotificationInterruptionLevel.critical`](https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel/critical).
   critical
 }
