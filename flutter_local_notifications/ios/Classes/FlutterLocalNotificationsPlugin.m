@@ -625,9 +625,11 @@ static FlutterError *getFlutterError(NSError *error) {
     NSNumber *uiLocalNotificationDateInterpretation =
         arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION];
     NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
-    NSISO8601DateFormatter *dateFormatter =  [[NSISO8601DateFormatter alloc] init];
+    NSISO8601DateFormatter *dateFormatter =
+        [[NSISO8601DateFormatter alloc] init];
     [dateFormatter setTimeZone:timezone];
-    dateFormatter.formatOptions = NSISO8601DateFormatWithFractionalSeconds | NSISO8601DateFormatWithInternetDateTime;
+    dateFormatter.formatOptions = NSISO8601DateFormatWithFractionalSeconds |
+                                  NSISO8601DateFormatWithInternetDateTime;
     NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
     notification.fireDate = date;
     if (uiLocalNotificationDateInterpretation != nil) {
@@ -1000,9 +1002,10 @@ static FlutterError *getFlutterError(NSError *error) {
   NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
   NSCalendar *calendar = [NSCalendar currentCalendar];
   NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
-  NSISO8601DateFormatter *dateFormatter =  [[NSISO8601DateFormatter alloc] init];
+  NSISO8601DateFormatter *dateFormatter = [[NSISO8601DateFormatter alloc] init];
   [dateFormatter setTimeZone:timezone];
-  dateFormatter.formatOptions = NSISO8601DateFormatWithFractionalSeconds | NSISO8601DateFormatWithInternetDateTime;
+  dateFormatter.formatOptions = NSISO8601DateFormatWithFractionalSeconds |
+                                NSISO8601DateFormatWithInternetDateTime;
   NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
 
   calendar.timeZone = timezone;
