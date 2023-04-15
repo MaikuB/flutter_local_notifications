@@ -1,3 +1,7 @@
+## [7.0.0-dev.3]
+
+* Bumped `mockito` dev dependency
+
 ## [7.0.0-dev.2]
 
 ** Updated minimum Flutter SDK constraint to 3.0 and minimum Dart SDK constraint to 2.17 to align with versions used by actual plugin implementation
