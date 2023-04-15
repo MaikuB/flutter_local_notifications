@@ -1,5 +1,15 @@
 # [14.0.0-dev.4]
 
+* **Breaking change** the following classes are now enums
+  * `AndroidNotificationCategory`
+  * `AndroidServiceForegroundType`
+  * `AndroidServiceStartType`
+  * `AudioAttributesUsage`
+  * `Day`
+  * `InterruptionLevel`
+  * `LinuxNotificationCategory`
+  * `LinuxNotificationUrgency`
+  * `Priority`
 * [iOS][macOS] fixed issue [1950](https://github.com/MaikuB/flutter_local_notifications/issues/1950) where plugin would crash when calling `zonedSchedule()` with a date/time value that is exactly when daylight savings occurs and the APIs from Apple weren't able to resolve what the actual date/time is meant to be
 * [Android] updated `AndroidServiceForegroundType` values to align with new additions that are part of Android 14. Thanks to the PR from [Rexios](https://github.com/Rexios80)
 * Bumped `mockito` dev dependency

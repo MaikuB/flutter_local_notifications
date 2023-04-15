@@ -2386,7 +2386,7 @@ void main() {
               'payload': '',
               'platformSpecifics': null,
             },
-            'startType': AndroidServiceStartType.startSticky.value,
+            'startType': AndroidServiceStartType.startSticky.index,
             'foregroundServiceTypes': null
           }));
     });
@@ -2501,7 +2501,7 @@ void main() {
                   'audioAttributesUsage': 5,
                 },
               },
-              'startType': AndroidServiceStartType.startSticky.value,
+              'startType': AndroidServiceStartType.startSticky.index,
               'foregroundServiceTypes': null
             },
           ));
