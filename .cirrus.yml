@@ -118,7 +118,7 @@ task:
   test_script:
     - export PATH="$PATH":"$HOME/.pub-cache/bin"
     - melos bootstrap
-    - melos run test:unit
+    - melos run test:unit --no-select
 
 task:
   name: Run all unit tests (Android)
