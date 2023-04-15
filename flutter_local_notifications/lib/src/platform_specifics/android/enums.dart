@@ -71,80 +71,59 @@ enum AndroidNotificationChannelAction {
 }
 
 /// The available foreground types for an Android service.
-@immutable
-class AndroidServiceForegroundType {
+
+enum AndroidServiceForegroundType {
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_MANIFEST`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_MANIFEST).
+  foregroundServiceTypeManifest(-1),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_NONE).
+  foregroundServiceTypeNone(0),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_DATA_SYNC).
+  foregroundServiceTypeDataSync(1),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK).
+  foregroundServiceTypeMediaPlayback(2),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_PHONE_CALL).
+  foregroundServiceTypePhoneCall(4),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_LOCATION).
+  foregroundServiceTypeLocation(8),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE).
+  foregroundServiceTypeConnectedDevice(16),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION).
+  foregroundServiceTypeMediaProjection(32),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_CAMERA).
+  foregroundServiceTypeCamera(64),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_MICROPHONE).
+  foregroundServiceTypeMicrophone(128),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_HEALTH).
+  foregroundServiceTypeHealth(256),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING).
+
+  foregroundServiceTypeRemoteMessaging(512),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED).
+  foregroundServiceTypeSystemExempted(1024),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_SHORT_SERVICE).
+  foregroundServiceTypeShortService(2048),
+
+  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_SPECIAL_USE).
+  foregroundServiceTypeSpecialUse(1073741824);
+
   /// Constructs an instance of [AndroidServiceForegroundType].
   const AndroidServiceForegroundType(this.value);
 
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_MANIFEST`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_MANIFEST).
-  static const AndroidServiceForegroundType foregroundServiceTypeManifest =
-      AndroidServiceForegroundType(-1);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_NONE).
-  static const AndroidServiceForegroundType foregroundServiceTypeNone =
-      AndroidServiceForegroundType(0);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_DATA_SYNC).
-  static const AndroidServiceForegroundType foregroundServiceTypeDataSync =
-      AndroidServiceForegroundType(1);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK).
-  static const AndroidServiceForegroundType foregroundServiceTypeMediaPlayback =
-      AndroidServiceForegroundType(2);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_PHONE_CALL).
-  static const AndroidServiceForegroundType foregroundServiceTypePhoneCall =
-      AndroidServiceForegroundType(4);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_LOCATION).
-  static const AndroidServiceForegroundType foregroundServiceTypeLocation =
-      AndroidServiceForegroundType(8);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE).
-  static const AndroidServiceForegroundType
-      foregroundServiceTypeConnectedDevice = AndroidServiceForegroundType(16);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION).
-  static const AndroidServiceForegroundType
-      foregroundServiceTypeMediaProjection = AndroidServiceForegroundType(32);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_CAMERA).
-  static const AndroidServiceForegroundType foregroundServiceTypeCamera =
-      AndroidServiceForegroundType(64);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_MICROPHONE).
-  static const AndroidServiceForegroundType foregroundServiceTypeMicrophone =
-      AndroidServiceForegroundType(128);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_HEALTH).
-  static const AndroidServiceForegroundType foregroundServiceTypeHealth =
-      AndroidServiceForegroundType(256);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_REMOTE_MESSAGING).
-  static const AndroidServiceForegroundType
-      foregroundServiceTypeRemoteMessaging = AndroidServiceForegroundType(512);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED).
-  static const AndroidServiceForegroundType
-      foregroundServiceTypeSystemExempted = AndroidServiceForegroundType(1024);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_SHORT_SERVICE).
-  static const AndroidServiceForegroundType foregroundServiceTypeShortService =
-      AndroidServiceForegroundType(2048);
-
-  /// Corresponds to [`ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE`](https://developer.android.com/reference/android/content/pm/ServiceInfo#FOREGROUND_SERVICE_TYPE_SPECIAL_USE).
-  static const AndroidServiceForegroundType foregroundServiceTypeSpecialUse =
-      AndroidServiceForegroundType(1073741824);
-
-  /// The integer representation.
+  /// The integer representation of [AndroidServiceForegroundType].
   final int value;
-
-  @override
-  int get hashCode => value;
-
-  @override
-  bool operator ==(Object other) =>
-      other is AndroidServiceForegroundType && other.value == value;
 }
 
 /// The available start types for an Android service.

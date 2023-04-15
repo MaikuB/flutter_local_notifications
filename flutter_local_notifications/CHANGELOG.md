@@ -1,6 +1,7 @@
 # [14.0.0-dev.4]
 
 * **Breaking change** the following classes are now enums
+  * `AndroidServiceForegroundType`
   * `Day`
   * `LinuxNotificationCategory`
   * `LinuxNotificationUrgency`
