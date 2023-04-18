@@ -158,14 +158,14 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     // MARK: - NSUserNotificationCenterDelegate
 
-    @available(OSX, deprecated: 10.14)
+    @available(macOS, introduced: 10.8, deprecated: 11.0)
     public func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
         if notification.activationType == .contentsClicked && notification.userInfo != nil && isAFlutterLocalNotification(userInfo: notification.userInfo!) {
             handleSelectNotification(notificationId: Int(notification.identifier!)!, payload: notification.userInfo![MethodCallArguments.payload] as? String)
         }
     }
 
-    @available(OSX, deprecated: 10.14)
+    @available(macOS, introduced: 10.8, deprecated: 11.0)
     public func userNotificationCenter(_ center: NSUserNotificationCenter, shouldPresent notification: NSUserNotification) -> Bool {
         return true
     }
@@ -630,7 +630,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         }
     }
 
-    @available(OSX, deprecated: 10.14)
+    @available(macOS, introduced: 10.8, deprecated: 11.0)
     func buildNSUserNotification(fromArguments arguments: [String: AnyObject]) -> NSUserNotification {
         let notification = NSUserNotification.init()
         notification.identifier = getIdentifier(fromArguments: arguments)
