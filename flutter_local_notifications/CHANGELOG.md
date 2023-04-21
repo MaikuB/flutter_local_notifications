@@ -1,3 +1,7 @@
+# [14.0.0-dev.5]
+
+* [macOS] fixed issue [1858](https://github.com/MaikuB/flutter_local_notifications/issues/1858) where macOS app builds were showing deprecation warnings. Thanks to the PR from [Steve Kohls](https://github.com/stevekohls)
+
 # [14.0.0-dev.4]
 
 * **Breaking change** the following classes are now enums
