@@ -247,7 +247,7 @@ Notification icons should be added as a drawable resource. The example project/c
 
  * [Notifications](https://developer.android.com/studio/write/image-asset-studio#notification)
  * [Providing resources](https://developer.android.com/guide/topics/resources/providing-resources)
- * [Icon design status bar](https://android-doc.github.io/guide/practices/ui_guidelines/icon_design_status_bar.html) (archived)
+ * [Creating notification icon with Image Asset Studio](https://developer.android.com/studio/write/create-app-icons#create-notification)
 
 When specifying the large icon bitmap or big picture bitmap (associated with the big picture style), bitmaps can be either a drawable resource or file on the device. This is specified via a single property (e.g. the `largeIcon` property associated with the `AndroidNotificationDetails` class) where a value that is an instance of the `DrawableResourceAndroidBitmap` means the bitmap should be loaded from an drawable resource. If this is an instance of the `FilePathAndroidBitmap`, this indicates it should be loaded from a file referred to by a given file path.
 

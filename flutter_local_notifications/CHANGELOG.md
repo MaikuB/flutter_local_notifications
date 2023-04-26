@@ -1,9 +1,6 @@
-# [14.0.0-dev.5]
+# [14.0.0]
 
-* [macOS] fixed issue [1858](https://github.com/MaikuB/flutter_local_notifications/issues/1858) where macOS app builds were showing deprecation warnings. Thanks to the PR from [Steve Kohls](https://github.com/stevekohls)
-
-# [14.0.0-dev.4]
-
+* **Breaking change** the `id` property of the `ActiveNotification` class is now nullable to help indicate that the notification may not have been created by the plugin e.g. it was from Firebase Cloud Messaging. Thanks to the PR from [frankvollebregt](https://github.com/frankvollebregt)
 * **Breaking change** the following classes are now enums
   * `AndroidNotificationCategory`
   * `AndroidServiceForegroundType`
@@ -14,22 +11,16 @@
   * `LinuxNotificationCategory`
   * `LinuxNotificationUrgency`
   * `Priority`
+* [Android] added support for scheduling inexact notifications. The corresponding APIs for scheduling notifications now have a new `AndroidScheduleMode` to allow for configuring this if required. The `androidAllowWhileIdle` argument is now deprecated and will be removed in the future. Thanks to the PR from [Joachim Böhmer](https://github.com/kaptnkoala)
+* [Android] adds a namespace for compatibility with AGP (Android Gradle plugin) 8.0. Thanks to the PR from [asaarnak](https://github.com/asaarnak)
 * [iOS][macOS] fixed issue [1950](https://github.com/MaikuB/flutter_local_notifications/issues/1950) where plugin would crash when calling `zonedSchedule()` with a date/time value that is exactly when daylight savings occurs and the APIs from Apple weren't able to resolve what the actual date/time is meant to be
 * [Android] updated `AndroidServiceForegroundType` values to align with new additions that are part of Android 14. Thanks to the PR from [Rexios](https://github.com/Rexios80)
+* [macOS] fixed issue [1858](https://github.com/MaikuB/flutter_local_notifications/issues/1858) where macOS app builds were showing deprecation warnings. Thanks to the PR from [Steve Kohls](https://github.com/stevekohls)
 * Bumped `mockito` dev dependency
-
-# [14.0.0-dev.3]
-
 * Align Dart SDK constraint with minimum Flutter version (i.e. 3.0)
-
-# [14.0.0-dev.2]
-
-* **Breaking change** the `id` property of the `ActiveNotification` class is now nullable to help indicate that the notification may not have been created by the plugin e.g. it was from Firebase Cloud Messaging. Thanks to the PR from [frankvollebregt](https://github.com/frankvollebregt)
-
-# [14.0.0-dev.1]
-
-* [Android] added support for scheduling inexact notifications. The corresponding APIs for scheduling notifications now have a new `AndroidScheduleMode` to allow for configuring this if required. The `androidAllowWhileIdle` argument is now deprecated and will be removed in the future. Thanks to the PR from [Joachim Böhmer](https://github.com/kaptnkoala)
 * Fixed readme that was reference old classes with `IOS` as part of the name instead of the newer classes that have the `Darwin` prefix
+* Removed dead link that had archived official documentation around guidance on creating the appropriate Android icons that would help with creating notification icons. Now replaced with a link to using [Image Asset Studio](https://developer.android.com/studio/write/create-app-icons#create-notification) to create notification icons
+
 
 # [13.0.0]
 
