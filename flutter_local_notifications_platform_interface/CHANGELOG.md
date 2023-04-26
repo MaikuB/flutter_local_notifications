@@ -1,14 +1,8 @@
-## [7.0.0-dev.3]
-
-* Bumped `mockito` dev dependency
-
-## [7.0.0-dev.2]
-
-** Updated minimum Flutter SDK constraint to 3.0 and minimum Dart SDK constraint to 2.17 to align with versions used by actual plugin implementation
-
-## [7.0.0-dev.1]
+## [7.0.0]
 
 * **Breaking change** the `id` property of the `ActiveNotification` class is now nullable to help indicate that the notification may not have been created by the plugin e.g. it was from Firebase Cloud Messaging. Thanks to the PR from [frankvollebregt](https://github.com/frankvollebregt)
+* Updated minimum Flutter SDK constraint to 3.0 and minimum Dart SDK constraint to 2.17 to align with versions used by actual plugin implementation
+* Bumped `mockito` dev dependency
 
 ## [6.0.0]
 
