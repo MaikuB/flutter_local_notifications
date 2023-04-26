@@ -19,6 +19,7 @@
 * Bumped `mockito` dev dependency
 * Align Dart SDK constraint with minimum Flutter version (i.e. 3.0)
 * Fixed readme that was reference old classes with `IOS` as part of the name instead of the newer classes that have the `Darwin` prefix
+* Removed dead link that had archived official documentation around guidance on creating the appropriate Android icons that would help with creating notification icons. Now replaced with a link to using [Image Asset Studio](https://developer.android.com/studio/write/create-app-icons#create-notification) to create notification icons
 
 
 # [13.0.0]
