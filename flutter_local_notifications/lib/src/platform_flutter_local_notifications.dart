@@ -156,9 +156,8 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified date and time.
   ///
-  /// The [allowWhileIdle] parameter determines if the notification
-  /// should still be shown at the exact time when the device is in a low-power
-  /// idle mode.
+  /// The [scheduleMode] parameter defines the precision of the timing for the
+  /// notification to be appear.
   @Deprecated(
       'Deprecated due to problems with time zones. Use zonedSchedule instead.')
   Future<void> schedule(
@@ -184,6 +183,9 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
+  ///
+  /// The [scheduleMode] parameter defines the precision of the timing for the
+  /// notification to be appear.
   Future<void> zonedSchedule(
     int id,
     String? title,

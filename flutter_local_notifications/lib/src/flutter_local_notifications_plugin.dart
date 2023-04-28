@@ -341,7 +341,10 @@ class FlutterLocalNotificationsPlugin {
   ///
   /// The [androidAllowWhileIdle] parameter determines if the notification
   /// should still be shown at the exact time even when the device is in a
-  /// low-power idle mode.
+  /// low-power idle mode. This parameter has been deprecated and will removed
+  /// in a future major release in favour of the [androidScheduledMode]
+  /// parameter that provides the same functionality in addition to being able
+  /// to schedule notifications with inexact timings.
   ///
   /// The [uiLocalNotificationDateInterpretation] is for iOS versions older
   /// than 10 as the APIs have limited support for time zones. With this
@@ -424,7 +427,10 @@ class FlutterLocalNotificationsPlugin {
   /// Android `AlarmManager` APIs are used to schedule a single notification
   /// to be shown at the exact time even when the device is in a low-power idle
   /// mode. After it is shown, the next one would be scheduled and this would
-  /// repeat.
+  /// repeat. Note that this parameter has been deprecated and will removed in
+  /// future majorrelease in favour of the [androidScheduledMode] parameter that
+  /// provides the same functionality in addition to being able to schedule
+  /// notifications with inexact timings.
   Future<void> periodicallyShow(
     int id,
     String? title,
