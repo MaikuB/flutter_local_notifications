@@ -1,7 +1,7 @@
 # [14.0.0+1]
 
 * Updated cavaet on scheduling Android notifications where a link to https://dontkillmyapp.com has been added as it contains instructions on how to configure various devices to bypass the battery optimisations that prevent background processes from working e.g. scheduled notifications
-* Added missing note on a breaking change to the `AndroidFlutterLocalNotificationsPlugin` APIs where the `allowWhileIdle` has been removed and replaced by a `scheduleMode` parameter that allows for scheduling inexact notifications
+* Added missing note to the 14.0.0 release notes on a breaking change  the `AndroidFlutterLocalNotificationsPlugin` APIs around scheduling notifications where the `allowWhileIdle` has been removed and replaced by a `scheduleMode` parameter that allows for scheduling inexact notifications
 * Updated docs to explain that if a notification was scheduled on Android with exact timing via the `AndroidScheduleMode` enum but the exact alarm permissions had been revoked, an error log message will be written and notification will no longer be scheduled. This means recurring notifications would no longer be scheduled as well given the permission had been revoked
 * Retro
 
