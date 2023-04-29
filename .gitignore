@@ -1,4 +1,7 @@
 pubspec.lock
+#Allow workspace pubspec for melos
+!/pubspec.lock
+
 .vscode
 *.idea
 *.DS_Store
