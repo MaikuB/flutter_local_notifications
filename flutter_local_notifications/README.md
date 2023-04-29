@@ -689,12 +689,12 @@ await flutterLocalNotificationsPlugin.zonedSchedule(
         android: AndroidNotificationDetails(
             'your channel id', 'your channel name',
             channelDescription: 'your channel description')),
-    androidAllowWhileIdle: true,
+    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime);
 ```
 
-On Android, the `androidAllowWhileIdle` is used to determine if the notification should be delivered at the specified time even when the device in a low-power idle mode.
+On Android, the `androidScheduleMode` is used to determine the precision on when the notification would be delivered. In this example, it's been specified that it should appear at the exact time even when the device has entered a low-powered idle mode. Note that this requires that the exact alarm permission has been granted. If it's been revoked then the plugin will log an error message. Note that if the notification was scheduled to be recurring one but the permission had been revoked then it will no be scheduled as well. In either case, this is where developers may choose to schedule inexact notifications instead via the `androidScheduleMode` parameter.
 
 The `uiLocalNotificationDateInterpretation` is required as on iOS versions older than 10 as time zone support is limited. This means it's not possible schedule a notification for another time zone and have iOS adjust the time the notification will appear when daylight saving time happens. With this parameter, it is used to determine if the scheduled date should be interpreted as absolute time or wall clock time.
 
