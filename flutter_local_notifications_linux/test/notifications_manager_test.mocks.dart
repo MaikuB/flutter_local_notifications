@@ -5,18 +5,17 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:dbus/dbus.dart' as _i2;
-import 'package:flutter_local_notifications_linux/src/dbus_wrapper.dart' as _i5;
 import 'package:flutter_local_notifications_linux/src/notification_info.dart'
-    as _i7;
+    as _i5;
 import 'package:flutter_local_notifications_linux/src/platform_info.dart'
-    as _i4;
-import 'package:flutter_local_notifications_linux/src/storage.dart' as _i6;
+    as _i2;
+import 'package:flutter_local_notifications_linux/src/storage.dart' as _i4;
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart'
-    as _i9;
+    as _i7;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:xdg_desktop_portal/xdg_desktop_portal.dart' as _i8;
 
-import 'notifications_manager_test.dart' as _i8;
+import 'notifications_manager_test.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -29,795 +28,76 @@ import 'notifications_manager_test.dart' as _i8;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeDBusMethodSuccessResponse_0 extends _i1.SmartFake
-    implements _i2.DBusMethodSuccessResponse {
-  _FakeDBusMethodSuccessResponse_0(
+class _FakeLinuxPlatformInfoData_0 extends _i1.SmartFake
+    implements _i2.LinuxPlatformInfoData {
+  _FakeLinuxPlatformInfoData_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
           parent,
           parentInvocation,
         );
-}
-
-class _FakeDBusRemoteObjectSignalStream_1 extends _i1.SmartFake
-    implements _i2.DBusRemoteObjectSignalStream {
-  _FakeDBusRemoteObjectSignalStream_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeDBusSignal_2 extends _i1.SmartFake implements _i2.DBusSignal {
-  _FakeDBusSignal_2(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeStreamSubscription_3<T> extends _i1.SmartFake
-    implements _i3.StreamSubscription<T> {
-  _FakeStreamSubscription_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeFuture_4<T> extends _i1.SmartFake implements _i3.Future<T> {
-  _FakeFuture_4(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeLinuxPlatformInfoData_5 extends _i1.SmartFake
-    implements _i4.LinuxPlatformInfoData {
-  _FakeLinuxPlatformInfoData_5(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-/// A class which mocks [DBusWrapper].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockDBusWrapper extends _i1.Mock implements _i5.DBusWrapper {
-  @override
-  void build({
-    required String? destination,
-    required String? path,
-  }) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #build,
-          [],
-          {
-            #destination: destination,
-            #path: path,
-          },
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  _i3.Future<_i2.DBusMethodSuccessResponse> callMethod(
-    String? interface,
-    String? name,
-    Iterable<_i2.DBusValue>? values, {
-    _i2.DBusSignature? replySignature,
-    bool? noReplyExpected = false,
-    bool? noAutoStart = false,
-    bool? allowInteractiveAuthorization = false,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #callMethod,
-          [
-            interface,
-            name,
-            values,
-          ],
-          {
-            #replySignature: replySignature,
-            #noReplyExpected: noReplyExpected,
-            #noAutoStart: noAutoStart,
-            #allowInteractiveAuthorization: allowInteractiveAuthorization,
-          },
-        ),
-        returnValue: _i3.Future<_i2.DBusMethodSuccessResponse>.value(
-            _FakeDBusMethodSuccessResponse_0(
-          this,
-          Invocation.method(
-            #callMethod,
-            [
-              interface,
-              name,
-              values,
-            ],
-            {
-              #replySignature: replySignature,
-              #noReplyExpected: noReplyExpected,
-              #noAutoStart: noAutoStart,
-              #allowInteractiveAuthorization: allowInteractiveAuthorization,
-            },
-          ),
-        )),
-        returnValueForMissingStub:
-            _i3.Future<_i2.DBusMethodSuccessResponse>.value(
-                _FakeDBusMethodSuccessResponse_0(
-          this,
-          Invocation.method(
-            #callMethod,
-            [
-              interface,
-              name,
-              values,
-            ],
-            {
-              #replySignature: replySignature,
-              #noReplyExpected: noReplyExpected,
-              #noAutoStart: noAutoStart,
-              #allowInteractiveAuthorization: allowInteractiveAuthorization,
-            },
-          ),
-        )),
-      ) as _i3.Future<_i2.DBusMethodSuccessResponse>);
-  @override
-  _i2.DBusRemoteObjectSignalStream subscribeSignal(String? name) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #subscribeSignal,
-          [name],
-        ),
-        returnValue: _FakeDBusRemoteObjectSignalStream_1(
-          this,
-          Invocation.method(
-            #subscribeSignal,
-            [name],
-          ),
-        ),
-        returnValueForMissingStub: _FakeDBusRemoteObjectSignalStream_1(
-          this,
-          Invocation.method(
-            #subscribeSignal,
-            [name],
-          ),
-        ),
-      ) as _i2.DBusRemoteObjectSignalStream);
-}
-
-/// A class which mocks [DBusRemoteObjectSignalStream].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockDBusRemoteObjectSignalStream extends _i1.Mock
-    implements _i2.DBusRemoteObjectSignalStream {
-  @override
-  bool get isBroadcast => (super.noSuchMethod(
-        Invocation.getter(#isBroadcast),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
-  @override
-  _i3.Future<int> get length => (super.noSuchMethod(
-        Invocation.getter(#length),
-        returnValue: _i3.Future<int>.value(0),
-        returnValueForMissingStub: _i3.Future<int>.value(0),
-      ) as _i3.Future<int>);
-  @override
-  _i3.Future<bool> get isEmpty => (super.noSuchMethod(
-        Invocation.getter(#isEmpty),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-  @override
-  _i3.Future<_i2.DBusSignal> get first => (super.noSuchMethod(
-        Invocation.getter(#first),
-        returnValue: _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.getter(#first),
-        )),
-        returnValueForMissingStub:
-            _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.getter(#first),
-        )),
-      ) as _i3.Future<_i2.DBusSignal>);
-  @override
-  _i3.Future<_i2.DBusSignal> get last => (super.noSuchMethod(
-        Invocation.getter(#last),
-        returnValue: _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.getter(#last),
-        )),
-        returnValueForMissingStub:
-            _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.getter(#last),
-        )),
-      ) as _i3.Future<_i2.DBusSignal>);
-  @override
-  _i3.Future<_i2.DBusSignal> get single => (super.noSuchMethod(
-        Invocation.getter(#single),
-        returnValue: _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.getter(#single),
-        )),
-        returnValueForMissingStub:
-            _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.getter(#single),
-        )),
-      ) as _i3.Future<_i2.DBusSignal>);
-  @override
-  _i3.StreamSubscription<_i2.DBusSignal> listen(
-    void Function(_i2.DBusSignal)? onData, {
-    Function? onError,
-    void Function()? onDone,
-    bool? cancelOnError,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #listen,
-          [onData],
-          {
-            #onError: onError,
-            #onDone: onDone,
-            #cancelOnError: cancelOnError,
-          },
-        ),
-        returnValue: _FakeStreamSubscription_3<_i2.DBusSignal>(
-          this,
-          Invocation.method(
-            #listen,
-            [onData],
-            {
-              #onError: onError,
-              #onDone: onDone,
-              #cancelOnError: cancelOnError,
-            },
-          ),
-        ),
-        returnValueForMissingStub: _FakeStreamSubscription_3<_i2.DBusSignal>(
-          this,
-          Invocation.method(
-            #listen,
-            [onData],
-            {
-              #onError: onError,
-              #onDone: onDone,
-              #cancelOnError: cancelOnError,
-            },
-          ),
-        ),
-      ) as _i3.StreamSubscription<_i2.DBusSignal>);
-  @override
-  _i3.Stream<_i2.DBusSignal> asBroadcastStream({
-    void Function(_i3.StreamSubscription<_i2.DBusSignal>)? onListen,
-    void Function(_i3.StreamSubscription<_i2.DBusSignal>)? onCancel,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #asBroadcastStream,
-          [],
-          {
-            #onListen: onListen,
-            #onCancel: onCancel,
-          },
-        ),
-        returnValue: _i3.Stream<_i2.DBusSignal>.empty(),
-        returnValueForMissingStub: _i3.Stream<_i2.DBusSignal>.empty(),
-      ) as _i3.Stream<_i2.DBusSignal>);
-  @override
-  _i3.Stream<_i2.DBusSignal> where(bool Function(_i2.DBusSignal)? test) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #where,
-          [test],
-        ),
-        returnValue: _i3.Stream<_i2.DBusSignal>.empty(),
-        returnValueForMissingStub: _i3.Stream<_i2.DBusSignal>.empty(),
-      ) as _i3.Stream<_i2.DBusSignal>);
-  @override
-  _i3.Stream<S> map<S>(S Function(_i2.DBusSignal)? convert) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #map,
-          [convert],
-        ),
-        returnValue: _i3.Stream<S>.empty(),
-        returnValueForMissingStub: _i3.Stream<S>.empty(),
-      ) as _i3.Stream<S>);
-  @override
-  _i3.Stream<E> asyncMap<E>(
-          _i3.FutureOr<E> Function(_i2.DBusSignal)? convert) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #asyncMap,
-          [convert],
-        ),
-        returnValue: _i3.Stream<E>.empty(),
-        returnValueForMissingStub: _i3.Stream<E>.empty(),
-      ) as _i3.Stream<E>);
-  @override
-  _i3.Stream<E> asyncExpand<E>(
-          _i3.Stream<E>? Function(_i2.DBusSignal)? convert) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #asyncExpand,
-          [convert],
-        ),
-        returnValue: _i3.Stream<E>.empty(),
-        returnValueForMissingStub: _i3.Stream<E>.empty(),
-      ) as _i3.Stream<E>);
-  @override
-  _i3.Stream<_i2.DBusSignal> handleError(
-    Function? onError, {
-    bool Function(dynamic)? test,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #handleError,
-          [onError],
-          {#test: test},
-        ),
-        returnValue: _i3.Stream<_i2.DBusSignal>.empty(),
-        returnValueForMissingStub: _i3.Stream<_i2.DBusSignal>.empty(),
-      ) as _i3.Stream<_i2.DBusSignal>);
-  @override
-  _i3.Stream<S> expand<S>(Iterable<S> Function(_i2.DBusSignal)? convert) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #expand,
-          [convert],
-        ),
-        returnValue: _i3.Stream<S>.empty(),
-        returnValueForMissingStub: _i3.Stream<S>.empty(),
-      ) as _i3.Stream<S>);
-  @override
-  _i3.Future<dynamic> pipe(
-          _i3.StreamConsumer<_i2.DBusSignal>? streamConsumer) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #pipe,
-          [streamConsumer],
-        ),
-        returnValue: _i3.Future<dynamic>.value(),
-        returnValueForMissingStub: _i3.Future<dynamic>.value(),
-      ) as _i3.Future<dynamic>);
-  @override
-  _i3.Stream<S> transform<S>(
-          _i3.StreamTransformer<_i2.DBusSignal, S>? streamTransformer) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #transform,
-          [streamTransformer],
-        ),
-        returnValue: _i3.Stream<S>.empty(),
-        returnValueForMissingStub: _i3.Stream<S>.empty(),
-      ) as _i3.Stream<S>);
-  @override
-  _i3.Future<_i2.DBusSignal> reduce(
-          _i2.DBusSignal Function(
-            _i2.DBusSignal,
-            _i2.DBusSignal,
-          )? combine) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #reduce,
-          [combine],
-        ),
-        returnValue: _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.method(
-            #reduce,
-            [combine],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.method(
-            #reduce,
-            [combine],
-          ),
-        )),
-      ) as _i3.Future<_i2.DBusSignal>);
-  @override
-  _i3.Future<S> fold<S>(
-    S? initialValue,
-    S Function(
-      S,
-      _i2.DBusSignal,
-    )? combine,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #fold,
-          [
-            initialValue,
-            combine,
-          ],
-        ),
-        returnValue: _FakeFuture_4<S>(
-          this,
-          Invocation.method(
-            #fold,
-            [
-              initialValue,
-              combine,
-            ],
-          ),
-        ),
-        returnValueForMissingStub: _FakeFuture_4<S>(
-          this,
-          Invocation.method(
-            #fold,
-            [
-              initialValue,
-              combine,
-            ],
-          ),
-        ),
-      ) as _i3.Future<S>);
-  @override
-  _i3.Future<String> join([String? separator = r'']) => (super.noSuchMethod(
-        Invocation.method(
-          #join,
-          [separator],
-        ),
-        returnValue: _i3.Future<String>.value(''),
-        returnValueForMissingStub: _i3.Future<String>.value(''),
-      ) as _i3.Future<String>);
-  @override
-  _i3.Future<bool> contains(Object? needle) => (super.noSuchMethod(
-        Invocation.method(
-          #contains,
-          [needle],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-  @override
-  _i3.Future<dynamic> forEach(void Function(_i2.DBusSignal)? action) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #forEach,
-          [action],
-        ),
-        returnValue: _i3.Future<dynamic>.value(),
-        returnValueForMissingStub: _i3.Future<dynamic>.value(),
-      ) as _i3.Future<dynamic>);
-  @override
-  _i3.Future<bool> every(bool Function(_i2.DBusSignal)? test) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #every,
-          [test],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-  @override
-  _i3.Future<bool> any(bool Function(_i2.DBusSignal)? test) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #any,
-          [test],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-  @override
-  _i3.Stream<R> cast<R>() => (super.noSuchMethod(
-        Invocation.method(
-          #cast,
-          [],
-        ),
-        returnValue: _i3.Stream<R>.empty(),
-        returnValueForMissingStub: _i3.Stream<R>.empty(),
-      ) as _i3.Stream<R>);
-  @override
-  _i3.Future<List<_i2.DBusSignal>> toList() => (super.noSuchMethod(
-        Invocation.method(
-          #toList,
-          [],
-        ),
-        returnValue: _i3.Future<List<_i2.DBusSignal>>.value(<_i2.DBusSignal>[]),
-        returnValueForMissingStub:
-            _i3.Future<List<_i2.DBusSignal>>.value(<_i2.DBusSignal>[]),
-      ) as _i3.Future<List<_i2.DBusSignal>>);
-  @override
-  _i3.Future<Set<_i2.DBusSignal>> toSet() => (super.noSuchMethod(
-        Invocation.method(
-          #toSet,
-          [],
-        ),
-        returnValue: _i3.Future<Set<_i2.DBusSignal>>.value(<_i2.DBusSignal>{}),
-        returnValueForMissingStub:
-            _i3.Future<Set<_i2.DBusSignal>>.value(<_i2.DBusSignal>{}),
-      ) as _i3.Future<Set<_i2.DBusSignal>>);
-  @override
-  _i3.Future<E> drain<E>([E? futureValue]) => (super.noSuchMethod(
-        Invocation.method(
-          #drain,
-          [futureValue],
-        ),
-        returnValue: _FakeFuture_4<E>(
-          this,
-          Invocation.method(
-            #drain,
-            [futureValue],
-          ),
-        ),
-        returnValueForMissingStub: _FakeFuture_4<E>(
-          this,
-          Invocation.method(
-            #drain,
-            [futureValue],
-          ),
-        ),
-      ) as _i3.Future<E>);
-  @override
-  _i3.Stream<_i2.DBusSignal> take(int? count) => (super.noSuchMethod(
-        Invocation.method(
-          #take,
-          [count],
-        ),
-        returnValue: _i3.Stream<_i2.DBusSignal>.empty(),
-        returnValueForMissingStub: _i3.Stream<_i2.DBusSignal>.empty(),
-      ) as _i3.Stream<_i2.DBusSignal>);
-  @override
-  _i3.Stream<_i2.DBusSignal> takeWhile(bool Function(_i2.DBusSignal)? test) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #takeWhile,
-          [test],
-        ),
-        returnValue: _i3.Stream<_i2.DBusSignal>.empty(),
-        returnValueForMissingStub: _i3.Stream<_i2.DBusSignal>.empty(),
-      ) as _i3.Stream<_i2.DBusSignal>);
-  @override
-  _i3.Stream<_i2.DBusSignal> skip(int? count) => (super.noSuchMethod(
-        Invocation.method(
-          #skip,
-          [count],
-        ),
-        returnValue: _i3.Stream<_i2.DBusSignal>.empty(),
-        returnValueForMissingStub: _i3.Stream<_i2.DBusSignal>.empty(),
-      ) as _i3.Stream<_i2.DBusSignal>);
-  @override
-  _i3.Stream<_i2.DBusSignal> skipWhile(bool Function(_i2.DBusSignal)? test) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #skipWhile,
-          [test],
-        ),
-        returnValue: _i3.Stream<_i2.DBusSignal>.empty(),
-        returnValueForMissingStub: _i3.Stream<_i2.DBusSignal>.empty(),
-      ) as _i3.Stream<_i2.DBusSignal>);
-  @override
-  _i3.Stream<_i2.DBusSignal> distinct(
-          [bool Function(
-            _i2.DBusSignal,
-            _i2.DBusSignal,
-          )? equals]) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #distinct,
-          [equals],
-        ),
-        returnValue: _i3.Stream<_i2.DBusSignal>.empty(),
-        returnValueForMissingStub: _i3.Stream<_i2.DBusSignal>.empty(),
-      ) as _i3.Stream<_i2.DBusSignal>);
-  @override
-  _i3.Future<_i2.DBusSignal> firstWhere(
-    bool Function(_i2.DBusSignal)? test, {
-    _i2.DBusSignal Function()? orElse,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #firstWhere,
-          [test],
-          {#orElse: orElse},
-        ),
-        returnValue: _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.method(
-            #firstWhere,
-            [test],
-            {#orElse: orElse},
-          ),
-        )),
-        returnValueForMissingStub:
-            _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.method(
-            #firstWhere,
-            [test],
-            {#orElse: orElse},
-          ),
-        )),
-      ) as _i3.Future<_i2.DBusSignal>);
-  @override
-  _i3.Future<_i2.DBusSignal> lastWhere(
-    bool Function(_i2.DBusSignal)? test, {
-    _i2.DBusSignal Function()? orElse,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #lastWhere,
-          [test],
-          {#orElse: orElse},
-        ),
-        returnValue: _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.method(
-            #lastWhere,
-            [test],
-            {#orElse: orElse},
-          ),
-        )),
-        returnValueForMissingStub:
-            _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.method(
-            #lastWhere,
-            [test],
-            {#orElse: orElse},
-          ),
-        )),
-      ) as _i3.Future<_i2.DBusSignal>);
-  @override
-  _i3.Future<_i2.DBusSignal> singleWhere(
-    bool Function(_i2.DBusSignal)? test, {
-    _i2.DBusSignal Function()? orElse,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #singleWhere,
-          [test],
-          {#orElse: orElse},
-        ),
-        returnValue: _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.method(
-            #singleWhere,
-            [test],
-            {#orElse: orElse},
-          ),
-        )),
-        returnValueForMissingStub:
-            _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.method(
-            #singleWhere,
-            [test],
-            {#orElse: orElse},
-          ),
-        )),
-      ) as _i3.Future<_i2.DBusSignal>);
-  @override
-  _i3.Future<_i2.DBusSignal> elementAt(int? index) => (super.noSuchMethod(
-        Invocation.method(
-          #elementAt,
-          [index],
-        ),
-        returnValue: _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.method(
-            #elementAt,
-            [index],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i3.Future<_i2.DBusSignal>.value(_FakeDBusSignal_2(
-          this,
-          Invocation.method(
-            #elementAt,
-            [index],
-          ),
-        )),
-      ) as _i3.Future<_i2.DBusSignal>);
-  @override
-  _i3.Stream<_i2.DBusSignal> timeout(
-    Duration? timeLimit, {
-    void Function(_i3.EventSink<_i2.DBusSignal>)? onTimeout,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #timeout,
-          [timeLimit],
-          {#onTimeout: onTimeout},
-        ),
-        returnValue: _i3.Stream<_i2.DBusSignal>.empty(),
-        returnValueForMissingStub: _i3.Stream<_i2.DBusSignal>.empty(),
-      ) as _i3.Stream<_i2.DBusSignal>);
 }
 
 /// A class which mocks [LinuxPlatformInfo].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockLinuxPlatformInfo extends _i1.Mock implements _i4.LinuxPlatformInfo {
+class MockLinuxPlatformInfo extends _i1.Mock implements _i2.LinuxPlatformInfo {
   @override
-  _i3.Future<_i4.LinuxPlatformInfoData> getAll() => (super.noSuchMethod(
+  _i3.Future<_i2.LinuxPlatformInfoData> getAll() => (super.noSuchMethod(
         Invocation.method(
           #getAll,
           [],
         ),
-        returnValue: _i3.Future<_i4.LinuxPlatformInfoData>.value(
-            _FakeLinuxPlatformInfoData_5(
+        returnValue: _i3.Future<_i2.LinuxPlatformInfoData>.value(
+            _FakeLinuxPlatformInfoData_0(
           this,
           Invocation.method(
             #getAll,
             [],
           ),
         )),
-        returnValueForMissingStub: _i3.Future<_i4.LinuxPlatformInfoData>.value(
-            _FakeLinuxPlatformInfoData_5(
+        returnValueForMissingStub: _i3.Future<_i2.LinuxPlatformInfoData>.value(
+            _FakeLinuxPlatformInfoData_0(
           this,
           Invocation.method(
             #getAll,
             [],
           ),
         )),
-      ) as _i3.Future<_i4.LinuxPlatformInfoData>);
+      ) as _i3.Future<_i2.LinuxPlatformInfoData>);
 }
 
 /// A class which mocks [NotificationStorage].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockNotificationStorage extends _i1.Mock
-    implements _i6.NotificationStorage {
+    implements _i4.NotificationStorage {
   @override
-  _i3.Future<List<_i7.LinuxNotificationInfo>> getAll() => (super.noSuchMethod(
+  _i3.Future<List<_i5.LinuxNotificationInfo>> getAll() => (super.noSuchMethod(
         Invocation.method(
           #getAll,
           [],
         ),
-        returnValue: _i3.Future<List<_i7.LinuxNotificationInfo>>.value(
-            <_i7.LinuxNotificationInfo>[]),
+        returnValue: _i3.Future<List<_i5.LinuxNotificationInfo>>.value(
+            <_i5.LinuxNotificationInfo>[]),
         returnValueForMissingStub:
-            _i3.Future<List<_i7.LinuxNotificationInfo>>.value(
-                <_i7.LinuxNotificationInfo>[]),
-      ) as _i3.Future<List<_i7.LinuxNotificationInfo>>);
+            _i3.Future<List<_i5.LinuxNotificationInfo>>.value(
+                <_i5.LinuxNotificationInfo>[]),
+      ) as _i3.Future<List<_i5.LinuxNotificationInfo>>);
   @override
-  _i3.Future<_i7.LinuxNotificationInfo?> getBySystemId(int? systemId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getBySystemId,
-          [systemId],
-        ),
-        returnValue: _i3.Future<_i7.LinuxNotificationInfo?>.value(),
-        returnValueForMissingStub:
-            _i3.Future<_i7.LinuxNotificationInfo?>.value(),
-      ) as _i3.Future<_i7.LinuxNotificationInfo?>);
-  @override
-  _i3.Future<_i7.LinuxNotificationInfo?> getById(int? id) =>
+  _i3.Future<_i5.LinuxNotificationInfo?> getById(int? id) =>
       (super.noSuchMethod(
         Invocation.method(
           #getById,
           [id],
         ),
-        returnValue: _i3.Future<_i7.LinuxNotificationInfo?>.value(),
+        returnValue: _i3.Future<_i5.LinuxNotificationInfo?>.value(),
         returnValueForMissingStub:
-            _i3.Future<_i7.LinuxNotificationInfo?>.value(),
-      ) as _i3.Future<_i7.LinuxNotificationInfo?>);
+            _i3.Future<_i5.LinuxNotificationInfo?>.value(),
+      ) as _i3.Future<_i5.LinuxNotificationInfo?>);
   @override
-  _i3.Future<bool> insert(_i7.LinuxNotificationInfo? notification) =>
+  _i3.Future<bool> insert(_i5.LinuxNotificationInfo? notification) =>
       (super.noSuchMethod(
         Invocation.method(
           #insert,
@@ -831,15 +111,6 @@ class MockNotificationStorage extends _i1.Mock
         Invocation.method(
           #removeById,
           [id],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-  @override
-  _i3.Future<bool> removeBySystemId(int? systemId) => (super.noSuchMethod(
-        Invocation.method(
-          #removeBySystemId,
-          [systemId],
         ),
         returnValue: _i3.Future<bool>.value(false),
         returnValueForMissingStub: _i3.Future<bool>.value(false),
@@ -868,9 +139,9 @@ class MockNotificationStorage extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockDidReceiveNotificationResponseCallback extends _i1.Mock
-    implements _i8.DidReceiveNotificationResponseCallback {
+    implements _i6.DidReceiveNotificationResponseCallback {
   @override
-  _i3.Future<dynamic> call(_i9.NotificationResponse? notificationResponse) =>
+  _i3.Future<dynamic> call(_i7.NotificationResponse? notificationResponse) =>
       (super.noSuchMethod(
         Invocation.method(
           #call,
@@ -879,4 +150,63 @@ class MockDidReceiveNotificationResponseCallback extends _i1.Mock
         returnValue: _i3.Future<dynamic>.value(),
         returnValueForMissingStub: _i3.Future<dynamic>.value(),
       ) as _i3.Future<dynamic>);
+}
+
+/// A class which mocks [XdgNotificationPortal].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockXdgNotificationPortal extends _i1.Mock
+    implements _i8.XdgNotificationPortal {
+  @override
+  _i3.Stream<_i8.XdgNotificationActionInvokedEvent> get actionInvoked =>
+      (super.noSuchMethod(
+        Invocation.getter(#actionInvoked),
+        returnValue: _i3.Stream<_i8.XdgNotificationActionInvokedEvent>.empty(),
+        returnValueForMissingStub:
+            _i3.Stream<_i8.XdgNotificationActionInvokedEvent>.empty(),
+      ) as _i3.Stream<_i8.XdgNotificationActionInvokedEvent>);
+  @override
+  _i3.Future<int> getVersion() => (super.noSuchMethod(
+        Invocation.method(
+          #getVersion,
+          [],
+        ),
+        returnValue: _i3.Future<int>.value(0),
+        returnValueForMissingStub: _i3.Future<int>.value(0),
+      ) as _i3.Future<int>);
+  @override
+  _i3.Future<void> addNotification(
+    String? id, {
+    String? title,
+    String? body,
+    _i8.XdgNotificationIcon? icon,
+    _i8.XdgNotificationPriority? priority,
+    String? defaultAction,
+    List<_i8.XdgNotificationButton>? buttons = const [],
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addNotification,
+          [id],
+          {
+            #title: title,
+            #body: body,
+            #icon: icon,
+            #priority: priority,
+            #defaultAction: defaultAction,
+            #buttons: buttons,
+          },
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+  @override
+  _i3.Future<void> removeNotification(String? id) => (super.noSuchMethod(
+        Invocation.method(
+          #removeNotification,
+          [id],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }

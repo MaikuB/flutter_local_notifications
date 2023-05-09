@@ -32,12 +32,6 @@ class NotificationStorage {
     return cache.toImmutableMap().values.toList();
   }
 
-  /// Get notification by [LinuxNotificationInfo.id].
-  Future<LinuxNotificationInfo?> getBySystemId(int systemId) async {
-    final _Cache cache = await _readInfoMap();
-    return cache.getBySystemId(systemId);
-  }
-
   /// Get notification by [LinuxNotificationInfo.systemId].
   Future<LinuxNotificationInfo?> getById(int id) async {
     final _Cache cache = await _readInfoMap();
@@ -57,17 +51,6 @@ class NotificationStorage {
   Future<bool> removeById(int id) async {
     final _Cache cache = await _readInfoMap();
     cache.removeById(id);
-    return _writeInfoList(cache.values.toList());
-  }
-
-  /// Remove notification from the storage by [LinuxNotificationInfo.systemId].
-  /// Returns `true` if the operation succeeded.
-  Future<bool> removeBySystemId(int systemId) async {
-    final _Cache cache = await _readInfoMap();
-    final LinuxNotificationInfo? info = cache.getBySystemId(systemId);
-    if (info != null) {
-      cache.removeById(info.id);
-    }
     return _writeInfoList(cache.values.toList());
   }
 
@@ -148,28 +131,15 @@ class NotificationStorage {
 }
 
 class _Cache {
-  _Cache()
-      : _infoMap = <int, LinuxNotificationInfo>{},
-        _systemIdMap = <int, int>{};
+  _Cache() : _infoMap = <int, LinuxNotificationInfo>{};
 
   final Map<int, LinuxNotificationInfo> _infoMap;
 
-  /// System ID to ID map.
-  final Map<int, int> _systemIdMap;
-
   LinuxNotificationInfo? getById(int? id) => _infoMap[id];
 
-  LinuxNotificationInfo? getBySystemId(int? id) => _infoMap[_systemIdMap[id]];
+  void insert(LinuxNotificationInfo info) => _infoMap[info.id] = info;
 
-  void insert(LinuxNotificationInfo info) {
-    _infoMap[info.id] = info;
-    _systemIdMap[info.systemId] = info.id;
-  }
-
-  void removeById(int id) {
-    final LinuxNotificationInfo? info = _infoMap.remove(id);
-    _systemIdMap.remove(info?.systemId);
-  }
+  void removeById(int id) => _infoMap.remove(id);
 
   Iterable<LinuxNotificationInfo> get values => _infoMap.values;
 

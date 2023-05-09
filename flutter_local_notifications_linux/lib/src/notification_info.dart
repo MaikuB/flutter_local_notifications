@@ -6,7 +6,6 @@ class LinuxNotificationInfo {
   /// Constructs an instance of [LinuxPlatformInfoData].
   const LinuxNotificationInfo({
     required this.id,
-    required this.systemId,
     this.payload,
     this.actions = const <LinuxNotificationActionInfo>[],
   });
@@ -21,7 +20,6 @@ class LinuxNotificationInfo {
         .toList();
     return LinuxNotificationInfo(
       id: json['id'] as int,
-      systemId: json['systemId'] as int,
       payload: json['payload'] as String?,
       actions: actions ?? <LinuxNotificationActionInfo>[],
     );
@@ -29,10 +27,6 @@ class LinuxNotificationInfo {
 
   /// Notification id
   final int id;
-
-  /// Notification id, which is returned by the system,
-  /// see Desktop Notifications Specification https://specifications.freedesktop.org/notification-spec/latest/
-  final int systemId;
 
   /// Notification payload, that will be passed back to the app
   /// when a notification is tapped on.
@@ -44,7 +38,6 @@ class LinuxNotificationInfo {
   /// Returns the object as a key-value map
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
-        'systemId': systemId,
         'payload': payload,
         'actions':
             actions.map((LinuxNotificationActionInfo a) => a.toJson()).toList(),
@@ -60,7 +53,6 @@ class LinuxNotificationInfo {
   }) =>
       LinuxNotificationInfo(
         id: id ?? this.id,
-        systemId: systemId ?? this.systemId,
         payload: payload ?? this.payload,
         actions: actions ?? this.actions,
       );
@@ -73,14 +65,12 @@ class LinuxNotificationInfo {
 
     return other is LinuxNotificationInfo &&
         other.id == id &&
-        other.systemId == systemId &&
         other.payload == payload &&
         listEquals(other.actions, actions);
   }
 
   @override
-  int get hashCode =>
-      id.hashCode ^ systemId.hashCode ^ payload.hashCode ^ actions.hashCode;
+  int get hashCode => id.hashCode ^ payload.hashCode ^ actions.hashCode;
 }
 
 /// Represents a Linux notification action information

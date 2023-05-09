@@ -55,15 +55,10 @@ void main() {
 
     test('Insert', () async {
       const List<LinuxNotificationInfo> notifications = <LinuxNotificationInfo>[
-        LinuxNotificationInfo(id: 1, systemId: 1),
-        LinuxNotificationInfo(
-          id: 2,
-          systemId: 2,
-          payload: 'test',
-        ),
+        LinuxNotificationInfo(id: 1),
+        LinuxNotificationInfo(id: 2, payload: 'test'),
         LinuxNotificationInfo(
           id: 3,
-          systemId: 3,
           payload: 'test',
           actions: <LinuxNotificationActionInfo>[
             LinuxNotificationActionInfo(key: '1'),
@@ -100,12 +95,8 @@ void main() {
 
     test('Remove', () async {
       const List<LinuxNotificationInfo> notifications = <LinuxNotificationInfo>[
-        LinuxNotificationInfo(id: 1, systemId: 1),
-        LinuxNotificationInfo(
-          id: 2,
-          systemId: 2,
-          payload: 'test',
-        ),
+        LinuxNotificationInfo(id: 1),
+        LinuxNotificationInfo(id: 2, payload: 'test'),
       ];
 
       when(mockStorageFile.existsSync()).thenReturn(true);
@@ -134,15 +125,10 @@ void main() {
 
     test('Get all', () async {
       const List<LinuxNotificationInfo> notifications = <LinuxNotificationInfo>[
-        LinuxNotificationInfo(id: 1, systemId: 1),
-        LinuxNotificationInfo(
-          id: 2,
-          systemId: 2,
-          payload: 'test',
-        ),
+        LinuxNotificationInfo(id: 1),
+        LinuxNotificationInfo(id: 2, payload: 'test'),
         LinuxNotificationInfo(
             id: 3,
-            systemId: 3,
             payload: 'test',
             actions: <LinuxNotificationActionInfo>[
               LinuxNotificationActionInfo(key: '1'),
@@ -179,7 +165,6 @@ void main() {
     test('Get by ID', () async {
       const LinuxNotificationInfo notification = LinuxNotificationInfo(
         id: 1,
-        systemId: 1,
       );
 
       when(mockStorageFile.existsSync()).thenReturn(true);
@@ -204,25 +189,6 @@ void main() {
       expect(await storage.getById(notification.id), notification);
     });
 
-    test('Get by system ID', () async {
-      const LinuxNotificationInfo notification = LinuxNotificationInfo(
-        id: 1,
-        systemId: 2,
-      );
-
-      when(mockStorageFile.existsSync()).thenReturn(true);
-      when(
-        mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) => <void>{});
-
-      when(
-        mockStorageFile.readAsStringSync(),
-      ).thenReturn(jsonEncode(notification));
-      await storage.insert(notification);
-
-      expect(await storage.getBySystemId(notification.systemId), notification);
-    });
-
     test('Get all, file does not exist', () async {
       when(mockStorageFile.existsSync()).thenReturn(false);
       expect(await storage.getAll(), <LinuxNotificationInfo>[]);
@@ -230,12 +196,8 @@ void main() {
 
     test('Remove by ID list', () async {
       const List<LinuxNotificationInfo> notifications = <LinuxNotificationInfo>[
-        LinuxNotificationInfo(id: 1, systemId: 1),
-        LinuxNotificationInfo(
-          id: 2,
-          systemId: 2,
-          payload: 'test',
-        ),
+        LinuxNotificationInfo(id: 1),
+        LinuxNotificationInfo(id: 2, payload: 'test'),
       ];
 
       when(mockStorageFile.existsSync()).thenReturn(true);
@@ -254,29 +216,6 @@ void main() {
         isTrue,
       );
       expect(await storage.getAll(), <LinuxNotificationInfo>[]);
-
-      verify(
-        mockStorageFile.writeAsStringSync(
-          jsonEncode(<LinuxNotificationInfo>[]),
-        ),
-      ).called(1);
-    });
-
-    test('Remove by system ID', () async {
-      const LinuxNotificationInfo notification = LinuxNotificationInfo(
-        id: 1,
-        systemId: 2,
-      );
-
-      when(mockStorageFile.existsSync()).thenReturn(true);
-      when(
-        mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) => <void>{});
-      when(mockStorageFile.readAsStringSync()).thenReturn('');
-
-      await storage.insert(notification);
-
-      expect(await storage.removeBySystemId(notification.systemId), isTrue);
 
       verify(
         mockStorageFile.writeAsStringSync(

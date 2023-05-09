@@ -1,7 +1,7 @@
 /// The Linux implementation of `flutter_local_notifications`.
 library flutter_local_notifications_linux;
 
-// flutter_local_notifications_linux depends on dbus and posix
+// flutter_local_notifications_linux depends on posix
 // which uses FFI internally; export a stub for platforms that don't
 // support FFI (e.g., web) to avoid having transitive dependencies
 // break web compilation.

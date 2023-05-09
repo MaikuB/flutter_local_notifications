@@ -4,13 +4,20 @@ version: 4.0.0+1
 homepage: https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications
 
 dependencies:
-  dbus: ^0.7.8
   ffi: ^2.0.1
   flutter:
     sdk: flutter
   flutter_local_notifications_platform_interface: ^7.0.0
   path: ^1.8.0
+  xdg_desktop_portal: ^0.1.12
   xdg_directories: ">=0.2.0+1 <2.0.0"
+
+dependency_overrides:
+  # Temporarily use a fork of xdg_desktop_portal to support the ActionInvoked signal
+  xdg_desktop_portal:
+    git:
+      url: https://github.com/Merrit/xdg_desktop_portal.dart.git
+      ref: 8d18d560ba3388627c998011a0803defc0e84c30
 
 dev_dependencies:
   build_runner: ^2.3.3
