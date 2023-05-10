@@ -1,5 +1,9 @@
 import 'dart:async';
 import 'dart:io';
+// dart:typed_data is needed for Uint8List, until the project's minimum
+// Flutter SDK constraint is updated beyond 3.0.
+// ignore: unnecessary_import
+import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
