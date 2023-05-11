@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = flutter_local_notifications_example
+PRODUCT_NAME = example
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.dexterous.flutterLocalNotificationsExample
+PRODUCT_BUNDLE_IDENTIFIER = com.dexterous.example
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2021 com.dexterous. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2023 com.dexterous. All rights reserved.
