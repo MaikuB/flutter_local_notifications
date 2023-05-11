@@ -1,7 +1,8 @@
 # [14.0.0+2]
 
 * Bumped maximum Dart SDK constraint
-* Updated example app to have minimum iOS version of 11
+* Recreated iOS and macOS side of the example app so they would build and run with Flutter 3.10 having landed on stable channel
+
 
 # [14.0.0+1]
 
