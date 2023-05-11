@@ -1,6 +1,7 @@
 # [14.0.0+2]
 
 * Bumped maximum Dart SDK constraint
+* Updated example app to have minimum iOS version of 11
 
 # [14.0.0+1]
 
