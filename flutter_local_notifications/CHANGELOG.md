@@ -1,3 +1,7 @@
+# [14.0.0+2]
+
+* Bumped maximum Dart SDK constraint
+
 # [14.0.0+1]
 
 * Updated cavaet on scheduling Android notifications where a link to https://dontkillmyapp.com has been added as it contains instructions on how to configure various devices to bypass the battery optimisations that prevent background processes from working e.g. scheduled notifications
