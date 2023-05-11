@@ -1,3 +1,9 @@
+# [14.0.0+2]
+
+* Bumped maximum Dart SDK constraint
+* Recreated iOS and macOS side of the example app so they would build and run with Flutter 3.10 having landed on stable channel
+
+
 # [14.0.0+1]
 
 * Updated cavaet on scheduling Android notifications where a link to https://dontkillmyapp.com has been added as it contains instructions on how to configure various devices to bypass the battery optimisations that prevent background processes from working e.g. scheduled notifications

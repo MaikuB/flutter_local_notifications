@@ -1,3 +1,7 @@
+## [4.0.0+1]
+
+* Bumped maximum Dart SDK constraint
+
 ## [4.0.0]
 
 * **Breaking change** the `id` property of the `ActiveNotification` class is now nullable to help indicate that the notification may not have been created by the plugin e.g. it was from Firebase Cloud Messaging. Thanks to the PR from [frankvollebregt](https://github.com/frankvollebregt)
