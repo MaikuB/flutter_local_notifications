@@ -1326,7 +1326,8 @@ public class FlutterLocalNotificationsPlugin
     Intent mainActivityIntent = mainActivity.getIntent();
     if (!launchedActivityFromHistory(mainActivityIntent)) {
       if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.getAction())) {
-        Map<String, Object> notificationResponse = extractNotificationResponseMap(mainActivityIntent);
+        Map<String, Object> notificationResponse =
+            extractNotificationResponseMap(mainActivityIntent);
         processForegroundNotificationAction(mainActivityIntent, notificationResponse);
       }
     }
@@ -1783,11 +1784,11 @@ public class FlutterLocalNotificationsPlugin
     return false;
   }
 
-  private void processForegroundNotificationAction(Intent intent, Map<String, Object> notificationResponse) {
+  private void processForegroundNotificationAction(
+      Intent intent, Map<String, Object> notificationResponse) {
     if (intent.getBooleanExtra(FlutterLocalNotificationsPlugin.CANCEL_NOTIFICATION, false)) {
       NotificationManagerCompat.from(applicationContext)
-          .cancel(
-              (int) notificationResponse.get(FlutterLocalNotificationsPlugin.NOTIFICATION_ID));
+          .cancel((int) notificationResponse.get(FlutterLocalNotificationsPlugin.NOTIFICATION_ID));
     }
   }
 
