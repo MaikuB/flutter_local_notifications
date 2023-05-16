@@ -1,3 +1,7 @@
+# [14.0.1]
+
+* [Android] fixed issue [1991](https://github.com/MaikuB/flutter_local_notifications/issues/1991) where tapping on a notification action with `showUserInterface` set to true whilst app is terminated wouldn't dismiss/cancel notification
+
 # [14.0.0+2]
 
 * Bumped maximum Dart SDK constraint
