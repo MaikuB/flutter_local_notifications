@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import androidx.annotation.CallSuper;
 import androidx.annotation.Keep;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -24,6 +25,7 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
 
   @Override
   @SuppressWarnings("deprecation")
+  @CallSuper
   public void onReceive(final Context context, Intent intent) {
     String notificationDetailsJson =
         intent.getStringExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_DETAILS);
