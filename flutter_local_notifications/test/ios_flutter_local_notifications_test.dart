@@ -360,7 +360,7 @@ void main() {
             'notification body',
             scheduledDate,
             notificationDetails,
-            androidAllowWhileIdle: true,
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime);
 
@@ -374,6 +374,7 @@ void main() {
               'uiLocalNotificationDateInterpretation':
                   UILocalNotificationDateInterpretation.absoluteTime.index,
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
+              'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'timeZoneName': 'Australia/Sydney',
               'platformSpecifics': <String, Object?>{
                 'presentAlert': true,
@@ -426,7 +427,7 @@ void main() {
             'notification body',
             scheduledDate,
             notificationDetails,
-            androidAllowWhileIdle: true,
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.time);
@@ -441,6 +442,7 @@ void main() {
               'uiLocalNotificationDateInterpretation':
                   UILocalNotificationDateInterpretation.absoluteTime.index,
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
+              'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'timeZoneName': 'Australia/Sydney',
               'matchDateTimeComponents': DateTimeComponents.time.index,
               'platformSpecifics': <String, Object?>{
@@ -494,7 +496,7 @@ void main() {
             'notification body',
             scheduledDate,
             notificationDetails,
-            androidAllowWhileIdle: true,
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
@@ -509,6 +511,7 @@ void main() {
               'uiLocalNotificationDateInterpretation':
                   UILocalNotificationDateInterpretation.absoluteTime.index,
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
+              'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'timeZoneName': 'Australia/Sydney',
               'matchDateTimeComponents':
                   DateTimeComponents.dayOfWeekAndTime.index,

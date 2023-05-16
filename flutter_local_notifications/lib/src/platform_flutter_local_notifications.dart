@@ -18,6 +18,7 @@ import 'platform_specifics/android/notification_channel_group.dart';
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/android/notification_sound.dart';
 import 'platform_specifics/android/person.dart';
+import 'platform_specifics/android/schedule_mode.dart';
 import 'platform_specifics/android/styles/messaging_style_information.dart';
 import 'platform_specifics/darwin/initialization_settings.dart';
 import 'platform_specifics/darwin/mappers.dart';
@@ -83,16 +84,6 @@ class MethodChannelFlutterLocalNotificationsPlugin
         <PendingNotificationRequest>[];
   }
 
-  /// Returns the list of active notifications shown by the application that
-  /// haven't been dismissed/removed.
-  ///
-  /// The supported OS versions are
-  /// - Android: Android 6.0 or newer
-  /// - iOS: iOS 10.0 or newer
-  /// - macOS: macOS 10.14 or newer
-  ///
-  /// Throws a [PlatformException] with an `unsupported_os_version` error code
-  /// on older OS versions. On Linux it will throw an [UnimplementedError].
   @override
   Future<List<ActiveNotification>> getActiveNotifications() async {
     final List<Map<dynamic, dynamic>>? activeNotifications =
@@ -165,9 +156,8 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified date and time.
   ///
-  /// The [androidAllowWhileIdle] parameter determines if the notification
-  /// should still be shown at the exact time when the device is in a low-power
-  /// idle mode.
+  /// The [scheduleMode] parameter defines the precision of the timing for the
+  /// notification to be appear.
   @Deprecated(
       'Deprecated due to problems with time zones. Use zonedSchedule instead.')
   Future<void> schedule(
@@ -177,55 +167,52 @@ class AndroidFlutterLocalNotificationsPlugin
     DateTime scheduledDate,
     AndroidNotificationDetails? notificationDetails, {
     String? payload,
-    bool androidAllowWhileIdle = false,
+    AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
   }) async {
     validateId(id);
-    final Map<String, Object?> serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? <String, Object>{};
-    serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
     await _channel.invokeMethod('schedule', <String, Object?>{
       'id': id,
       'title': title,
       'body': body,
       'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
-      'platformSpecifics': serializedPlatformSpecifics,
+      'platformSpecifics':
+          _buildPlatformSpecifics(notificationDetails, scheduleMode),
       'payload': payload ?? ''
     });
   }
 
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
+  ///
+  /// The [scheduleMode] parameter defines the precision of the timing for the
+  /// notification to be appear.
   Future<void> zonedSchedule(
     int id,
     String? title,
     String? body,
     TZDateTime scheduledDate,
     AndroidNotificationDetails? notificationDetails, {
-    required bool androidAllowWhileIdle,
+    required AndroidScheduleMode scheduleMode,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
-    ArgumentError.checkNotNull(androidAllowWhileIdle, 'androidAllowWhileIdle');
-    final Map<String, Object?> serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? <String, Object>{};
-    serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
+
     await _channel.invokeMethod(
-        'zonedSchedule',
-        <String, Object?>{
-          'id': id,
-          'title': title,
-          'body': body,
-          'platformSpecifics': serializedPlatformSpecifics,
-          'payload': payload ?? ''
-        }
-          ..addAll(scheduledDate.toMap())
-          ..addAll(matchDateTimeComponents == null
-              ? <String, Object>{}
-              : <String, Object>{
-                  'matchDateTimeComponents': matchDateTimeComponents.index
-                }));
+      'zonedSchedule',
+      <String, Object?>{
+        'id': id,
+        'title': title,
+        'body': body,
+        'platformSpecifics':
+            _buildPlatformSpecifics(notificationDetails, scheduleMode),
+        'payload': payload ?? '',
+        ...scheduledDate.toMap(),
+        if (matchDateTimeComponents != null)
+          'matchDateTimeComponents': matchDateTimeComponents.index
+      },
+    );
   }
 
   /// Shows a notification on a daily interval at the specified time.
@@ -350,7 +337,7 @@ class AndroidFlutterLocalNotificationsPlugin
         'payload': payload ?? '',
         'platformSpecifics': notificationDetails?.toMap(),
       },
-      'startType': startType.value,
+      'startType': startType.index,
       'foregroundServiceTypes': foregroundServiceTypes
           ?.map((AndroidServiceForegroundType type) => type.value)
           .toList()
@@ -397,22 +384,29 @@ class AndroidFlutterLocalNotificationsPlugin
     RepeatInterval repeatInterval, {
     AndroidNotificationDetails? notificationDetails,
     String? payload,
-    bool androidAllowWhileIdle = false,
+    AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
   }) async {
     validateId(id);
-    final Map<String, Object?> serializedPlatformSpecifics =
-        notificationDetails?.toMap() ?? <String, Object>{};
-    serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
     await _channel.invokeMethod('periodicallyShow', <String, Object?>{
       'id': id,
       'title': title,
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
-      'platformSpecifics': serializedPlatformSpecifics,
+      'platformSpecifics':
+          _buildPlatformSpecifics(notificationDetails, scheduleMode),
       'payload': payload ?? '',
     });
   }
+
+  Map<String, Object?> _buildPlatformSpecifics(
+    AndroidNotificationDetails? notificationDetails,
+    AndroidScheduleMode scheduleMode,
+  ) =>
+      <String, Object?>{
+        if (notificationDetails != null) ...notificationDetails.toMap(),
+        'scheduleMode': scheduleMode.name,
+      };
 
   /// Cancel/remove the notification with the specified id.
   ///
@@ -543,7 +537,7 @@ class AndroidFlutterLocalNotificationsPlugin
               description: a['description'],
               groupId: a['groupId'],
               showBadge: a['showBadge'],
-              importance: Importance(a['importance']),
+              importance: Importance.values[a['importance']],
               playSound: a['playSound'],
               sound: _getNotificationChannelSound(a),
               enableLights: a['enableLights'],
@@ -565,6 +559,10 @@ class AndroidFlutterLocalNotificationsPlugin
   ///  * https://developer.android.com/about/versions/13/changes/notification-permission
   Future<bool?> areNotificationsEnabled() async =>
       await _channel.invokeMethod<bool>('areNotificationsEnabled');
+
+  /// Returns whether the app can schedule exact notifications.
+  Future<bool?> canScheduleExactNotifications() async =>
+      await _channel.invokeMethod<bool>('canScheduleExactNotifications');
 
   AndroidNotificationSound? _getNotificationChannelSound(
       Map<dynamic, dynamic> channelMap) {

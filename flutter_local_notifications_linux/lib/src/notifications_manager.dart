@@ -176,7 +176,7 @@ class LinuxNotificationManager {
       hints['category'] = DBusString(details!.category!.name);
     }
     if (details?.urgency != null) {
-      hints['urgency'] = DBusByte(details!.urgency!.value);
+      hints['urgency'] = DBusByte(details!.urgency!.index);
     }
     if (details?.resident ?? false) {
       hints['resident'] = const DBusBoolean(true);
