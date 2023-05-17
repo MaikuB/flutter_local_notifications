@@ -46,7 +46,7 @@ void main() {
 
     test('initialize', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -59,7 +59,7 @@ void main() {
 
     test('show without Android-specific details', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -220,7 +220,7 @@ void main() {
 
     test('show with default Android-specific details', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -305,7 +305,7 @@ void main() {
     test('show with default Android-specific details and additional flags',
         () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -389,7 +389,7 @@ void main() {
         'show with default Android-specific details with a timestamp specified',
         () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -472,7 +472,7 @@ void main() {
     test('show with default Android-specific details with a chronometer',
         () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -558,7 +558,7 @@ void main() {
         'show with default Android-specific details and custom sound from raw '
         'resource', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -646,7 +646,7 @@ void main() {
     test('show with default Android-specific details and custom sound from uri',
         () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -735,7 +735,7 @@ void main() {
         'show with default Android-specific details and html formatted title and content/body',
         () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -822,7 +822,7 @@ void main() {
         'show with default Android big picture style settings using a drawable '
         'resource', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -918,7 +918,7 @@ void main() {
         'show with non-default Android big picture style settings using a '
         'drawable resource', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -1024,7 +1024,7 @@ void main() {
         'show with default Android big picture style settings using a file '
         'path', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -1120,7 +1120,7 @@ void main() {
         'show with non-default Android big picture style settings using a file '
         'path', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -1224,7 +1224,7 @@ void main() {
 
     test('show with default Android inbox style settings', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -1317,7 +1317,7 @@ void main() {
 
     test('show with non-default Android inbox style settings', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -1417,7 +1417,7 @@ void main() {
 
     test('show with default Android media style settings', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -1502,7 +1502,7 @@ void main() {
 
     test('show with non-default Android media style settings', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -1591,7 +1591,7 @@ void main() {
     test('show with default Android messaging style settings', () async {
       final DateTime messageDateTime = clock.now();
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -1704,7 +1704,7 @@ void main() {
     test('show with non-default Android messaging style settings', () async {
       final DateTime messageDateTime = clock.now();
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -1833,7 +1833,7 @@ void main() {
         test('$repeatInterval', () async {
           await withClock(Clock.fixed(now), () async {
             const AndroidInitializationSettings androidInitializationSettings =
-                AndroidInitializationSettings('app_icon');
+                AndroidInitializationSettings('app_icon', '');
             const InitializationSettings initializationSettings =
                 InitializationSettings(android: androidInitializationSettings);
             await flutterLocalNotificationsPlugin
@@ -1925,7 +1925,7 @@ void main() {
     group('zonedSchedule', () {
       test('no repeat frequency', () async {
         const AndroidInitializationSettings androidInitializationSettings =
-            AndroidInitializationSettings('app_icon');
+            AndroidInitializationSettings('app_icon', '');
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin
@@ -2018,7 +2018,7 @@ void main() {
 
       test('match time components', () async {
         const AndroidInitializationSettings androidInitializationSettings =
-            AndroidInitializationSettings('app_icon');
+            AndroidInitializationSettings('app_icon', '');
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin
@@ -2114,7 +2114,7 @@ void main() {
 
       test('match day of week and time components', () async {
         const AndroidInitializationSettings androidInitializationSettings =
-            AndroidInitializationSettings('app_icon');
+            AndroidInitializationSettings('app_icon', '');
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin
@@ -2368,7 +2368,7 @@ void main() {
 
     test('startForegroundService', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -2415,7 +2415,7 @@ void main() {
 
     test('startForegroundServiceWithBlueBackgroundNotification', () async {
       const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
+          AndroidInitializationSettings('app_icon', '');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
