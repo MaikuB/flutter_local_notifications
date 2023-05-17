@@ -37,7 +37,7 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
         notification = intent.getParcelableExtra("notification");
       }
 
-      if (notification == null){
+      if (notification == null) {
         // This means the notification is corrupt
         FlutterLocalNotificationsPlugin.removeNotificationFromCache(context, notificationId);
         Log.e("notification", "Failed to parse a notification from  Intent. ID: " + notificationId);
