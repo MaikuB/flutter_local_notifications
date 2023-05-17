@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.Keep;
 import androidx.core.app.NotificationManagerCompat;
@@ -37,8 +38,9 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       }
 
       if (notification == null){
-        // this means the notification is corrupt, so we remove it
+        // This means the notification is corrupt
         FlutterLocalNotificationsPlugin.removeNotificationFromCache(context, notificationId);
+        Log.e("notification", "Failed to parse a notification from  Intent. ID: " + notificationId);
         return;
       }
 
