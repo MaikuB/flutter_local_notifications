@@ -7,7 +7,7 @@ import 'package:integration_test/integration_test.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('app_icon');
+      AndroidInitializationSettings('app_icon', '');
   const DarwinInitializationSettings initializationSettingsIOS =
       DarwinInitializationSettings();
   const DarwinInitializationSettings initializationSettingsMacOS =
