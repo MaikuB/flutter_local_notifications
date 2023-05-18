@@ -11,6 +11,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
@@ -1556,6 +1557,15 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private void initialize(MethodCall call, Result result) {
+    applicationContext.registerReceiver(new ActionBroadcastReceiver(),new IntentFilter());
+    applicationContext.registerReceiver(new ScheduledNotificationReceiver(),new IntentFilter());
+    IntentFilter filter = new IntentFilter();
+    filter.addAction(Intent.ACTION_BOOT_COMPLETED);
+    filter.addAction(Intent.ACTION_MY_PACKAGE_REPLACED);
+    filter.addAction("android.intent.action.QUICKBOOT_POWERON");
+    filter.addAction("com.htc.intent.action.QUICKBOOT_POWERON");
+    applicationContext.registerReceiver(new ScheduledNotificationBootReceiver(),filter);
+
     Map<String, Object> arguments = call.arguments();
     String defaultIcon = (String) arguments.get(DEFAULT_ICON);
     if (!isValidDrawableResource(
