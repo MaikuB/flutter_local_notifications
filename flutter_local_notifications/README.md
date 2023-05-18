@@ -36,7 +36,7 @@ A cross platform plugin for displaying local notifications.
    - [Example app](#example-app)
    - [API reference](#api-reference)
 - **[Initialisation](#initialisation)**
-   - [[iOS (all supported versions) and macOS 10.14+] Requesting notification permissions](#ios-all-supported-versions-and-macos-1014-requesting-notification-permissions)
+   - [[iOS and macOS] Requesting notification permissions](#ios-all-supported-versions-and-macos-1014-requesting-notification-permissions)
    - [Displaying a notification](#displaying-a-notification)
    - [Scheduling a notification](#scheduling-a-notification)
    - [Periodically show a notification with a specified interval](#periodically-show-a-notification-with-a-specified-interval)
@@ -51,8 +51,8 @@ A cross platform plugin for displaying local notifications.
 
 ## 📱 Supported platforms
 
-* **Android 4.1+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
-* **iOS 8.0+**. On iOS versions older than 10, the plugin will use the UILocalNotification APIs. The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on iOS 10 or newer. Notification actions only work on iOS 10 or newer.
+* **Android 4.4+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
+* **iOS 11+**. Uses the [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework).
 * **macOS 10.11+**. On macOS versions older than 10.14, the plugin will use the [NSUserNotification APIs](https://developer.apple.com/documentation/foundation/nsusernotification). The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on macOS 10.14 or newer. Notification actions only work on macOS 10.14 or newer
 * **Linux**. Uses the [Desktop Notifications Specification](https://specifications.freedesktop.org/notification-spec/).
 
@@ -93,7 +93,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Start a foreground service
 * [Android] Ability to check if notifications are enabled
 * [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
-* [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
+* [iOS 11 and macOS 10.14 or newer] Display notifications with attachments
 * [Linux] Ability to to use themed/Flutter Assets icons and sound
 * [Linux] Ability to to set the category
 * [Linux] Configuring the urgency
@@ -179,9 +179,6 @@ Version 10+ on the plugin now relies on [desugaring](https://developer.android.c
 
 ```gradle
 android {
-  defaultConfig {
-    multiDexEnabled true
-  }
 
   compileOptions {
     // Flag to enable support for the new language APIs
@@ -281,25 +278,19 @@ Add the following lines to the `application` method in the AppDelegate.m/AppDele
 
 Objective-C:
 ```objc
-if (@available(iOS 10.0, *)) {
-  [UNUserNotificationCenter currentNotificationCenter].delegate = (id<UNUserNotificationCenterDelegate>) self;
-}
+[UNUserNotificationCenter currentNotificationCenter].delegate = (id<UNUserNotificationCenterDelegate>) self;
 ```
 
 Swift:
 ```swift
-if #available(iOS 10.0, *) {
-  UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
-}
+UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
 ```
 
 ### Handling notifications whilst the app is in the foreground
 
 By design, iOS applications *do not* display notifications while the app is in the foreground unless configured to do so.
 
-For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. The default settings of the plugin will configure these such that a notification will be displayed when the app is in the foreground.
-
-For older versions of iOS, you need to handle the callback as part of specifying the method that should be fired to the `onDidReceiveLocalNotification` argument when creating an instance `DarwinInitializationSettings` object that is passed to the function for initializing the plugin.
+Use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. The default settings of the plugin will configure these such that a notification will be displayed when the app is in the foreground.
 
 Here is an example:
 
@@ -308,8 +299,7 @@ Here is an example:
 const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('app_icon');
 final DarwinInitializationSettings initializationSettingsDarwin =
-    DarwinInitializationSettings(
-        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+    DarwinInitializationSettings();
 final LinuxInitializationSettings initializationSettingsLinux =
     LinuxInitializationSettings(
         defaultActionName: 'Open notification');
@@ -357,7 +347,7 @@ If you encounter any issues please refer to the API docs and the sample code in 
 
 ### Notification Actions
 
-Notifications can now contain actions but note that on Apple's platforms, these only on iOS 10 or newer and macOS 10.14 or newer.  On macOS and Linux (see [Linux limitations](#linux-limitations) chapter), these will only run on the main isolate by calling the `onDidReceiveNotificationResponse` callback. On iOS and Android, these will run on the main isolate by calling the `onDidReceiveNotificationResponse` callback if the configuration has specified that the app/user interface should be shown i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. If they haven't, then these actions may be selected by the user when an app is sleeping or terminated and will wake up your app. However, it may not wake up the user-visible part of your App; but only the part of it which runs in the background. This is done by spawning a background isolate.
+Notifications can now contain actions. On macOS and Linux (see [Linux limitations](#linux-limitations) chapter), these will only run on the main isolate by calling the `onDidReceiveNotificationResponse` callback. On iOS and Android, these will run on the main isolate by calling the `onDidReceiveNotificationResponse` callback if the configuration has specified that the app/user interface should be shown i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. If they haven't, then these actions may be selected by the user when an app is sleeping or terminated and will wake up your app. However, it may not wake up the user-visible part of your App; but only the part of it which runs in the background. This is done by spawning a background isolate.
 
 This plugin contains handlers for iOS & Android to handle these background isolate cases and will allow you to specify a Dart entry point (a function).
 When the user selects a action, the plugin will start a **separate Flutter Engine** which will then invoke the `onDidReceiveBackgroundNotificationResponse` callback
@@ -567,7 +557,7 @@ On iOS and macOS, initialisation may show a prompt to requires users to give the
 
 For an explanation of the `onDidReceiveLocalNotification` callback associated with the `DarwinInitializationSettings` class, please read [this](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications#handling-notifications-whilst-the-app-is-in-the-foreground).
 
-### [iOS (all supported versions) and macOS 10.14+] Requesting notification permissions
+### [iOS and macOS] Requesting notification permissions
 
 The constructor for the `DarwinInitializationSettings` class  has three named parameters (`requestSoundPermission`, `requestBadgePermission` and `requestAlertPermission`) that controls which permissions are being requested. If you want to request permissions at a later point in your application on iOS, set all of the above to false when initialising the plugin.
 
@@ -726,8 +716,6 @@ final List<PendingNotificationRequest> pendingNotificationRequests =
 ### Retrieving active notifications
 
 
-
-
 ```dart
 final List<ActiveNotification> activeNotifications =
     await flutterLocalNotificationsPlugin.getActiveNotifications();
@@ -735,7 +723,7 @@ final List<ActiveNotification> activeNotifications =
 
 **Note**: The API only works for the following operating systems and versions
 - Android 6.0 or newer
-- iOS 10.0 or newer
+- iOS 11 or newer
 - macOS 10.14 or newer
 
 ### Grouping notifications
@@ -827,11 +815,6 @@ await flutterLocalNotificationsPlugin.cancelAll();
 final NotificationAppLaunchDetails? notificationAppLaunchDetails =
     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 ```
-
-### [iOS only] Periodic notifications showing up after reinstallation
-
-If you have set notifications to be shown periodically on older iOS versions (< 10) and the application was uninstalled without cancelling all alarms, then the next time it's installed you may see the "old" notifications being fired. If this is not the desired behaviour then you can add code similar to the following to the `didFinishLaunchingWithOptions` method of your `AppDelegate` class.
-
 
 Objective-C:
 
