@@ -20,6 +20,8 @@ import java.lang.reflect.Type;
 @Keep
 public class ScheduledNotificationReceiver extends BroadcastReceiver {
 
+  private static final String TAG = "ScheduledNotificationReceiver";
+
   @Override
   @SuppressWarnings("deprecation")
   public void onReceive(final Context context, Intent intent) {
@@ -40,7 +42,7 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
       if (notification == null) {
         // This means the notification is corrupt
         FlutterLocalNotificationsPlugin.removeNotificationFromCache(context, notificationId);
-        Log.e("notification", "Failed to parse a notification from  Intent. ID: " + notificationId);
+        Log.e(TAG, "Failed to parse a notification from  Intent. ID: " + notificationId);
         return;
       }
 
