@@ -1,6 +1,8 @@
 # [14.0.1]
 
 * [Android] fixed issue [1991](https://github.com/MaikuB/flutter_local_notifications/issues/1991) where tapping on a notification action with `showUserInterface` set to true whilst app is terminated wouldn't dismiss/cancel notification
+* [Android] updated logic when trying to show a scheduled notification so that receiver would remove a corrupt notification to avoid exceptions from occurring over and over again. An message will be written to error log when this occurs as well. Thanks to the PR from []
+* Fixed example app on iOS and macOS so it would play the custom sound as this step was missed in previous released where the iOS and macOS side was recreated
 
 # [14.0.0+2]
 
