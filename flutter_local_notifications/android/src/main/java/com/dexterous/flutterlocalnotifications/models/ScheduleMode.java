@@ -21,7 +21,7 @@ public enum ScheduleMode {
   public boolean useExactAlarm() {
     return this == exact || this == exactAllowWhileIdle;
   }
-  
+
   public boolean useAlarmClock() {
     return this == alarmClock;
   }
