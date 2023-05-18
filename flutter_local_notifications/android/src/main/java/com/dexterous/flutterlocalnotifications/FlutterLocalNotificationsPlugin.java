@@ -209,6 +209,7 @@ public class FlutterLocalNotificationsPlugin
           scheduleNotification(context, notificationDetails, false);
         }
       } catch (ExactAlarmPermissionException e) {
+        // TODO: update tag used to match name of class
         Log.e("notification", e.getMessage());
         removeNotificationFromCache(context, notificationDetails.id);
       }
@@ -227,6 +228,7 @@ public class FlutterLocalNotificationsPlugin
         removeNotificationFromCache(context, notificationDetails.id);
       }
     } catch (ExactAlarmPermissionException e) {
+      // TODO: update tag used to match name of class
       Log.e("notification", e.getMessage());
       removeNotificationFromCache(context, notificationDetails.id);
     }
