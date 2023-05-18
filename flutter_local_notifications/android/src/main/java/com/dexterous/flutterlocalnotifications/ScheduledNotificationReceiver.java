@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.Keep;
 import androidx.core.app.NotificationManagerCompat;
@@ -26,14 +27,24 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
         intent.getStringExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_DETAILS);
     if (StringUtils.isNullOrEmpty(notificationDetailsJson)) {
       // This logic is needed for apps that used the plugin prior to 0.3.4
+
       Notification notification;
+      int notificationId = intent.getIntExtra("notification_id", 0);
+
       if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
         notification = intent.getParcelableExtra("notification", Notification.class);
       } else {
         notification = intent.getParcelableExtra("notification");
       }
+
+      if (notification == null) {
+        // This means the notification is corrupt
+        FlutterLocalNotificationsPlugin.removeNotificationFromCache(context, notificationId);
+        Log.e("notification", "Failed to parse a notification from  Intent. ID: " + notificationId);
+        return;
+      }
+
       notification.when = System.currentTimeMillis();
-      int notificationId = intent.getIntExtra("notification_id", 0);
       NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
       notificationManager.notify(notificationId, notification);
       boolean repeat = intent.getBooleanExtra("repeat", false);
