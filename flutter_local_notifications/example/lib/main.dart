@@ -436,8 +436,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     PaddedElevatedButton(
                       buttonText:
-                          'Use Alarm Clock to Schedule notification to appear in 5 seconds '
-                          'based on local time zone',
+                          'Schedule notification to appear in 5 seconds '
+                          'based on local time zone using alarm clock',
                       onPressed: () async {
                         await _zonedScheduleAlarmClockNotification();
                       },
