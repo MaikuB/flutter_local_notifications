@@ -4,6 +4,11 @@
 /// at https://developer.android.com/training/scheduling/alarms
 enum AndroidScheduleMode {
   /// Used to specify that the notification should be scheduled to be shown at
+  /// the exact time specified AND will execute whilst device is in
+  /// low-power idle mode. Requires SCHEDULE_EXACT_ALARM permission.
+  alarmClock,
+
+  /// Used to specify that the notification should be scheduled to be shown at
   /// the exact time specified but may not execute whilst device is in
   /// low-power idle mode.
   exact,

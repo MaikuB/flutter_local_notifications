@@ -435,6 +435,14 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedElevatedButton(
+                      buttonText:
+                          'Schedule notification to appear in 5 seconds '
+                          'based on local time zone using alarm clock',
+                      onPressed: () async {
+                        await _zonedScheduleAlarmClockNotification();
+                      },
+                    ),
+                    PaddedElevatedButton(
                       buttonText: 'Repeat notification every minute',
                       onPressed: () async {
                         await _repeatNotification();
@@ -1379,6 +1387,21 @@ class _HomePageState extends State<HomePage> {
                 'your channel id', 'your channel name',
                 channelDescription: 'your channel description')),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime);
+  }
+
+  Future<void> _zonedScheduleAlarmClockNotification() async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        123,
+        'scheduled alarm clock title',
+        'scheduled alarm clock body',
+        tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+        const NotificationDetails(
+            android: AndroidNotificationDetails(
+                'alarm_clock_channel', 'Alarm Clock Channel',
+                channelDescription: 'Alarm Clock Notification')),
+        androidScheduleMode: AndroidScheduleMode.alarmClock,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime);
   }
