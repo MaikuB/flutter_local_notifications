@@ -1,3 +1,7 @@
+# [14.1.0]
+
+* [Android] added `alarmClock` as one of the `AndroidScheduleMode` options. This is useful for cases where a notification functions as an alarm and *may* show an alarm icon on the status bar depending on the device Thanks to the PR from [Muhammed Ballan](https://github.com/iballan)
+
 # [14.0.1]
 
 * [Android] fixed issue [1991](https://github.com/MaikuB/flutter_local_notifications/issues/1991) where tapping on a notification action with `showUserInterface` set to true whilst app is terminated wouldn't dismiss/cancel notification
