@@ -8,6 +8,7 @@ import java.lang.reflect.Type;
 
 @Keep
 public enum ScheduleMode {
+  alarmClock,
   exact,
   exactAllowWhileIdle,
   inexact,
@@ -19,6 +20,10 @@ public enum ScheduleMode {
 
   public boolean useExactAlarm() {
     return this == exact || this == exactAllowWhileIdle;
+  }
+
+  public boolean useAlarmClock() {
+    return this == alarmClock;
   }
 
   public static class Deserializer implements JsonDeserializer<ScheduleMode> {
