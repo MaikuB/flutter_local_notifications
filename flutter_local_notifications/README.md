@@ -41,7 +41,7 @@ A cross platform plugin for displaying local notifications.
    - [Scheduling a notification](#scheduling-a-notification)
    - [Periodically show a notification with a specified interval](#periodically-show-a-notification-with-a-specified-interval)
    - [Retrieving pending notification requests](#retrieving-pending-notification-requests)
-   - [[Android only] Retrieving active notifications](#android-only-retrieving-active-notifications)
+   - [[Selected OS versions] Retrieving active notifications](#android-only-retrieving-active-notifications)
    - [Grouping notifications](#grouping-notifications)
    - [Cancelling/deleting a notification](#cancellingdeleting-a-notification)
    - [Cancelling/deleting all notifications](#cancellingdeleting-all-notifications)
@@ -113,7 +113,7 @@ Previously, there were issues that prevented this plugin working properly with t
 
 ### Scheduled Android notifications
 
-Some Android OEMs have their own customised Android OS that can prevent applications from running in the background. Consequently, scheduled notifications may not work when the application is in the background on certain devices (e.g. by Xiaomi, Huawei). If you experience problems like this then this would be the reason why. As it's a restriction imposed by the OS, this is not something that can be resolved by the plugin. Some devices may have setting that lets users control which applications run in the background. The steps for these can vary but it is still up to the users of your application to do given it's a setting on the phone itself.
+Some Android OEMs have their own customised Android OS that can prevent applications from running in the background. Consequently, scheduled notifications may not work when the application is in the background on certain devices (e.g. by Xiaomi, Huawei). If you experience problems like this then this would be the reason why. As it's a restriction imposed by the OS, this is not something that can be resolved by the plugin. Some devices may have setting that lets users control which applications run in the background. The steps for these can vary but it is still up to the users of your application to do given it's a setting on the phone itself. The site https://dontkillmyapp.com provides details on how to do this for various devices.
 
 It has been reported that Samsung's implementation of Android has imposed a maximum of 500 alarms that can be scheduled via the [Alarm Manager](https://developer.android.com/reference/android/app/AlarmManager) API and exceptions can occur when going over the limit.
 
@@ -247,7 +247,7 @@ Notification icons should be added as a drawable resource. The example project/c
 
  * [Notifications](https://developer.android.com/studio/write/image-asset-studio#notification)
  * [Providing resources](https://developer.android.com/guide/topics/resources/providing-resources)
- * [Icon design status bar](https://android-doc.github.io/guide/practices/ui_guidelines/icon_design_status_bar.html) (archived)
+ * [Creating notification icon with Image Asset Studio](https://developer.android.com/studio/write/create-app-icons#create-notification)
 
 When specifying the large icon bitmap or big picture bitmap (associated with the big picture style), bitmaps can be either a drawable resource or file on the device. This is specified via a single property (e.g. the `largeIcon` property associated with the `AndroidNotificationDetails` class) where a value that is an instance of the `DrawableResourceAndroidBitmap` means the bitmap should be loaded from an drawable resource. If this is an instance of the `FilePathAndroidBitmap`, this indicates it should be loaded from a file referred to by a given file path.
 
@@ -425,8 +425,8 @@ final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitiali
     const DarwinNotificationCategory(
         'demoCategory',
         <DarwinNotificationAction>[
-            IOSNotificationAction('id_1', 'Action 1'),
-            IOSNotificationAction(
+            DarwinNotificationAction('id_1', 'Action 1'),
+            DarwinNotificationAction(
             'id_2',
             'Action 2',
             options: <DarwinNotificationActionOption>{
@@ -675,7 +675,7 @@ Once the time zone database has been initialised, developers may optionally want
 tz.setLocalLocation(tz.getLocation(timeZoneName));
 ```
 
-The `timezone` package doesn't provide a way to obtain the current time zone on the device so developers will need to use [platform channels](https://flutter.dev/docs/development/platform-integration/platform-channels) or use other packages that may be able to provide the information. The example app uses the [`flutter_native_timezone`](https://pub.dev/packages/flutter_native_timezone) plugin.
+The `timezone` package doesn't provide a way to obtain the current time zone on the device so developers will need to use [platform channels](https://flutter.dev/docs/development/platform-integration/platform-channels) or use other packages that may be able to provide the information. [`flutter_timezone`](https://pub.dev/packages/flutter_timezone) is the current version of the original `flutter_native_timezone` plugin used in the example app.
 
 Assuming the local location has been set, the `zonedSchedule` method can then be called in a manner similar to the following code
 
@@ -689,12 +689,12 @@ await flutterLocalNotificationsPlugin.zonedSchedule(
         android: AndroidNotificationDetails(
             'your channel id', 'your channel name',
             channelDescription: 'your channel description')),
-    androidAllowWhileIdle: true,
+    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     uiLocalNotificationDateInterpretation:
         UILocalNotificationDateInterpretation.absoluteTime);
 ```
 
-On Android, the `androidAllowWhileIdle` is used to determine if the notification should be delivered at the specified time even when the device in a low-power idle mode.
+On Android, the `androidScheduleMode` is used to determine the precision on when the notification would be delivered. In this example, it's been specified that it should appear at the exact time even when the device has entered a low-powered idle mode. Note that this requires that the exact alarm permission has been granted. If it's been revoked then the plugin will log an error message. Note that if the notification was scheduled to be recurring one but the permission had been revoked then it will no be scheduled as well. In either case, this is where developers may choose to schedule inexact notifications instead via the `androidScheduleMode` parameter.
 
 The `uiLocalNotificationDateInterpretation` is required as on iOS versions older than 10 as time zone support is limited. This means it's not possible schedule a notification for another time zone and have iOS adjust the time the notification will appear when daylight saving time happens. With this parameter, it is used to determine if the scheduled date should be interpreted as absolute time or wall clock time.
 
@@ -723,25 +723,30 @@ final List<PendingNotificationRequest> pendingNotificationRequests =
     await flutterLocalNotificationsPlugin.pendingNotificationRequests();
 ```
 
-### [Android only] Retrieving active notifications
+### Retrieving active notifications
+
+
+
 
 ```dart
 final List<ActiveNotification> activeNotifications =
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.getActiveNotifications();
+    await flutterLocalNotificationsPlugin.getActiveNotifications();
 ```
+
+**Note**: The API only works for the following operating systems and versions
+- Android 6.0 or newer
+- iOS 10.0 or newer
+- macOS 10.14 or newer
 
 ### Grouping notifications
 
 #### iOS
 
-For iOS, you can specify `threadIdentifier` in `IOSNotificationDetails`. Notifications with the same `threadIdentifier` will get grouped together automatically.
+For iOS, you can specify `threadIdentifier` in `DarwinNotificationDetails`. Notifications with the same `threadIdentifier` will get grouped together automatically.
 
 ```dart
-const IOSNotificationDetails iOSPlatformChannelSpecifics =
-    IOSNotificationDetails(threadIdentifier: 'thread_id');
+const DarwinNotificationDetails iOSPlatformChannelSpecifics =
+    DarwinNotificationDetails(threadIdentifier: 'thread_id');
 ```
 
 #### Android
@@ -819,7 +824,7 @@ await flutterLocalNotificationsPlugin.cancelAll();
 ### Getting details on if the app was launched via a notification created by this plugin
 
 ```dart
-final NotificationAppLaunchDetails notificationAppLaunchDetails =
+final NotificationAppLaunchDetails? notificationAppLaunchDetails =
     await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
 ```
 

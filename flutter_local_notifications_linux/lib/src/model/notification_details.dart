@@ -1,5 +1,4 @@
 import 'capabilities.dart';
-import 'categories.dart';
 import 'enums.dart';
 import 'hint.dart';
 import 'icon.dart';

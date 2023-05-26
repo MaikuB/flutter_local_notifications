@@ -1,3 +1,51 @@
+# [14.1.0]
+
+* [Android] added `alarmClock` as one of the `AndroidScheduleMode` options. This is useful for cases where a notification functions as an alarm and *may* show an alarm icon on the status bar depending on the device Thanks to the PR from [Muhammed Ballan](https://github.com/iballan)
+
+# [14.0.1]
+
+* [Android] fixed issue [1991](https://github.com/MaikuB/flutter_local_notifications/issues/1991) where tapping on a notification action with `showUserInterface` set to true whilst app is terminated wouldn't dismiss/cancel notification
+* [Android] updated logic when trying to show a scheduled notification so that receiver would remove a corrupt notification to avoid exceptions from occurring over and over again. An message will be written to error log when this occurs as well. Thanks to the PR from []
+* Fixed example app on iOS and macOS so it would play the custom sound as this step was missed in previous released where the iOS and macOS side was recreated
+
+# [14.0.0+2]
+
+* Bumped maximum Dart SDK constraint
+* Recreated iOS and macOS side of the example app so they would build and run with Flutter 3.10 having landed on stable channel
+
+
+# [14.0.0+1]
+
+* Updated cavaet on scheduling Android notifications where a link to https://dontkillmyapp.com has been added as it contains instructions on how to configure various devices to bypass the battery optimisations that prevent background processes from working e.g. scheduled notifications
+* Added missing note to the 14.0.0 release notes on a breaking change  the `AndroidFlutterLocalNotificationsPlugin` APIs around scheduling notifications where the `allowWhileIdle` has been removed and replaced by a `scheduleMode` parameter that allows for scheduling inexact notifications
+* Updated docs to explain that if a notification was scheduled on Android with exact timing via the `AndroidScheduleMode` enum but the exact alarm permissions had been revoked, an error log message will be written and notification will no longer be scheduled. This means recurring notifications would no longer be scheduled as well given the permission had been revoked
+
+
+# [14.0.0]
+
+* **Breaking change** the `id` property of the `ActiveNotification` class is now nullable to help indicate that the notification may not have been created by the plugin e.g. it was from Firebase Cloud Messaging. Thanks to the PR from [frankvollebregt](https://github.com/frankvollebregt)
+* **Breaking change** the following classes are now enums
+  * `AndroidNotificationCategory`
+  * `AndroidServiceForegroundType`
+  * `AndroidServiceStartType`
+  * `AudioAttributesUsage`
+  * `Day`
+  * `InterruptionLevel`
+  * `LinuxNotificationCategory`
+  * `LinuxNotificationUrgency`
+  * `Priority`
+* [Android] added support for scheduling inexact notifications. The corresponding APIs for scheduling notifications now have a new `AndroidScheduleMode` to allow for configuring this if required. The `androidAllowWhileIdle` argument is now deprecated when using the APIs available for scheduling notifications via the `FlutterLocalNotificationsPlugin` APIs and will be removed in the future. Thanks to the PR from [Joachim Böhmer](https://github.com/kaptnkoala). Note that if if a notification was scheduled with exact timing via the `AndroidScheduleMode` but the exact alarm permissions had been revoked, an error log message will be written and notification will no longer be scheduled. Do note that the `androidScheduleMode` parameter has a default value of `AndroidScheduleMode.exact` to align with what was the default value of `androidAllowWhileIdle` before (i.e. `false`) where that meant exact timing was to be used but the device being a low-powered idle may cause it to be delayed. When the `androidAllowWhileIdle` parameter is removed in the future, `androidScheduleMode` will become a required named parameter to ensure developers explicitly specify the value they want
+  * [Android] **Breaking change** related to this is whilst `androidAllowWhileIdle` is deprecated via the `FlutterLocalNotificationsPlugin` APIs, `allowWhileIdle` has been removed and completely replaced by a `scheduleMode` parameter when whe directly using the `AndroidFlutterLocalNotificationsPlugin` APIs
+* [Android] adds a namespace for compatibility with AGP (Android Gradle plugin) 8.0. Thanks to the PR from [asaarnak](https://github.com/asaarnak)
+* [iOS][macOS] fixed issue [1950](https://github.com/MaikuB/flutter_local_notifications/issues/1950) where plugin would crash when calling `zonedSchedule()` with a date/time value that is exactly when daylight savings occurs and the APIs from Apple weren't able to resolve what the actual date/time is meant to be
+* [Android] updated `AndroidServiceForegroundType` values to align with new additions that are part of Android 14. Thanks to the PR from [Rexios](https://github.com/Rexios80)
+* [macOS] fixed issue [1858](https://github.com/MaikuB/flutter_local_notifications/issues/1858) where macOS app builds were showing deprecation warnings. Thanks to the PR from [Steve Kohls](https://github.com/stevekohls)
+* Bumped `mockito` dev dependency
+* Align Dart SDK constraint with minimum Flutter version (i.e. 3.0)
+* Fixed readme that was reference old classes with `IOS` as part of the name instead of the newer classes that have the `Darwin` prefix
+* Removed dead link that had archived official documentation around guidance on creating the appropriate Android icons that would help with creating notification icons. Now replaced with a link to using [Image Asset Studio](https://developer.android.com/studio/write/create-app-icons#create-notification) to create notification icons
+
+
 # [13.0.0]
 
 * [Android] Bumped Android Gradle plugin to 7.3.1. Thanks to the PR from [Rexios](https://github.com/Rexios80)

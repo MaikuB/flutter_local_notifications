@@ -3,7 +3,7 @@
 **/Pods/
 
 # Xcode-related
+**/dgph
 **/xcuserdata/
 
-Podfile
 Podfile.lock

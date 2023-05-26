@@ -270,7 +270,7 @@ void main() {
           'notification body',
           scheduledDate,
           notificationDetails,
-          androidAllowWhileIdle: true,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
         );
@@ -283,6 +283,7 @@ void main() {
               'body': 'notification body',
               'payload': '',
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
+              'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'timeZoneName': 'Australia/Sydney',
               'platformSpecifics': <String, Object?>{
                 'subtitle': null,
@@ -337,7 +338,7 @@ void main() {
           'notification body',
           scheduledDate,
           notificationDetails,
-          androidAllowWhileIdle: true,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
           matchDateTimeComponents: DateTimeComponents.time,
@@ -353,6 +354,7 @@ void main() {
               'body': 'notification body',
               'payload': '',
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
+              'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'timeZoneName': 'Australia/Sydney',
               'matchDateTimeComponents': DateTimeComponents.time.index,
               'platformSpecifics': <String, Object?>{
@@ -410,7 +412,7 @@ void main() {
           'notification body',
           scheduledDate,
           notificationDetails,
-          androidAllowWhileIdle: true,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
           matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
@@ -426,6 +428,7 @@ void main() {
               'body': 'notification body',
               'payload': '',
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
+              'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'timeZoneName': 'Australia/Sydney',
               'matchDateTimeComponents':
                   DateTimeComponents.dayOfWeekAndTime.index,

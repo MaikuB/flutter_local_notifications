@@ -1,5 +1,3 @@
-// @dart = 2.9
-
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -24,13 +22,13 @@ void main() {
       iOS: initializationSettingsIOS,
       macOS: initializationSettingsMacOS,
       linux: initializationSettingsLinux);
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   group('initialize()', () {
     setUpAll(() async {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     });
     testWidgets('can initialise', (WidgetTester tester) async {
-      final bool initialised = await flutterLocalNotificationsPlugin
+      final bool? initialised = await flutterLocalNotificationsPlugin
           .initialize(initializationSettings);
       expect(initialised, isTrue);
     });
@@ -40,29 +38,26 @@ void main() {
         'should throw an ArgumentError', (WidgetTester tester) async {
       const InitializationSettings initializationSettings =
           InitializationSettings();
-      try {
-        await flutterLocalNotificationsPlugin
-            .initialize(initializationSettings);
-        // ignore: avoid_catches_without_on_clauses
-      } catch (e) {
-        expect(e, isArgumentError);
-        if (Platform.isAndroid) {
-          expect(e.message,
-              'Android settings must be set when targeting Android platform.');
-        }
-        if (Platform.isIOS) {
-          expect(e.message,
-              'iOS settings must be set when targeting iOS platform.');
-        }
-        if (Platform.isLinux) {
-          expect(e.message,
-              'Linux settings must be set when targeting Linux platform.');
-        }
-        if (Platform.isMacOS) {
-          expect(e.message,
-              'macOS settings must be set when targeting macOS platform.');
-        }
+      late Matcher errorMessageMatcher;
+      if (Platform.isAndroid) {
+        errorMessageMatcher = equals(
+            'Android settings must be set when targeting Android platform.');
+      } else if (Platform.isIOS) {
+        errorMessageMatcher =
+            equals('iOS settings must be set when targeting iOS platform.');
+      } else if (Platform.isLinux) {
+        equals('Linux settings must be set when targeting Linux platform.');
+      } else if (Platform.isMacOS) {
+        errorMessageMatcher =
+            equals('macOS settings must be set when targeting macOS platform.');
+      } else {
+        errorMessageMatcher = anything;
       }
+      expect(
+          () async => await flutterLocalNotificationsPlugin
+              .initialize(initializationSettings),
+          throwsA(isArgumentError.having(
+              (ArgumentError e) => e.message, 'message', errorMessageMatcher)));
     });
   });
   group('resolvePlatformSpecificImplementation()', () {

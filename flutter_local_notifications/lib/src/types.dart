@@ -1,34 +1,30 @@
 /// The days of the week.
-class Day {
+enum Day {
+  /// Sunday.
+  sunday(1),
+
+  /// Monday.
+  monday(2),
+
+  /// Tuesday.
+  tuesday(3),
+
+  /// Wednesday.
+  wednesday(4),
+
+  /// Thursday.
+  thursday(5),
+
+  /// Friday.
+  friday(6),
+
+  /// Saturday.
+  saturday(7);
+
   /// Constructs an instance of [Day].
   const Day(this.value);
 
-  /// Sunday.
-  static const Day sunday = Day(1);
-
-  /// Monday.
-  static const Day monday = Day(2);
-
-  /// Tuesday.
-  static const Day tuesday = Day(3);
-
-  /// Wednesday.
-  static const Day wednesday = Day(4);
-
-  /// Thursday.
-  static const Day thursday = Day(5);
-
-  /// Friday.
-  static const Day friday = Day(6);
-
-  /// Saturday.
-  static const Day saturday = Day(7);
-
-  /// All the possible values for the [Day] enumeration.
-  static List<Day> get values =>
-      <Day>[sunday, monday, tuesday, wednesday, thursday, friday, saturday];
-
-  /// The integer representation.
+  /// The integer representation of [Day].
   final int value;
 }
 
