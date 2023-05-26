@@ -8,6 +8,7 @@ import 'package:timezone/timezone.dart';
 import 'initialization_settings.dart';
 import 'notification_details.dart';
 import 'platform_flutter_local_notifications.dart';
+import 'platform_specifics/android/schedule_mode.dart';
 import 'platform_specifics/ios/enums.dart';
 import 'types.dart';
 
@@ -306,7 +307,9 @@ class FlutterLocalNotificationsPlugin {
     DateTime scheduledDate,
     NotificationDetails notificationDetails, {
     String? payload,
-    bool androidAllowWhileIdle = false,
+    @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
+        bool androidAllowWhileIdle = false,
+    AndroidScheduleMode? androidScheduleMode,
   }) async {
     if (kIsWeb) {
       return;
@@ -315,7 +318,9 @@ class FlutterLocalNotificationsPlugin {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()!
           .schedule(id, title, body, scheduledDate, notificationDetails.android,
-              payload: payload, androidAllowWhileIdle: androidAllowWhileIdle);
+              payload: payload,
+              scheduleMode: _chooseScheduleMode(
+                  androidScheduleMode, androidAllowWhileIdle));
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
@@ -336,7 +341,10 @@ class FlutterLocalNotificationsPlugin {
   ///
   /// The [androidAllowWhileIdle] parameter determines if the notification
   /// should still be shown at the exact time even when the device is in a
-  /// low-power idle mode.
+  /// low-power idle mode. This parameter has been deprecated and will removed
+  /// in a future major release in favour of the [androidScheduledMode]
+  /// parameter that provides the same functionality in addition to being able
+  /// to schedule notifications with inexact timings.
   ///
   /// The [uiLocalNotificationDateInterpretation] is for iOS versions older
   /// than 10 as the APIs have limited support for time zones. With this
@@ -365,7 +373,9 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
-    required bool androidAllowWhileIdle,
+    @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
+        bool androidAllowWhileIdle = false,
+    AndroidScheduleMode? androidScheduleMode,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
@@ -376,9 +386,14 @@ class FlutterLocalNotificationsPlugin {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()!
           .zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails.android,
+              id,
+              title,
+              body,
+              scheduledDate,
+              notificationDetails.android,
               payload: payload,
-              androidAllowWhileIdle: androidAllowWhileIdle,
+              scheduleMode: _chooseScheduleMode(
+                  androidScheduleMode, androidAllowWhileIdle),
               matchDateTimeComponents: matchDateTimeComponents);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
@@ -412,7 +427,10 @@ class FlutterLocalNotificationsPlugin {
   /// Android `AlarmManager` APIs are used to schedule a single notification
   /// to be shown at the exact time even when the device is in a low-power idle
   /// mode. After it is shown, the next one would be scheduled and this would
-  /// repeat.
+  /// repeat. Note that this parameter has been deprecated and will removed in
+  /// future majorrelease in favour of the [androidScheduledMode] parameter that
+  /// provides the same functionality in addition to being able to schedule
+  /// notifications with inexact timings.
   Future<void> periodicallyShow(
     int id,
     String? title,
@@ -420,7 +438,9 @@ class FlutterLocalNotificationsPlugin {
     RepeatInterval repeatInterval,
     NotificationDetails notificationDetails, {
     String? payload,
-    bool androidAllowWhileIdle = false,
+    @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
+        bool androidAllowWhileIdle = false,
+    AndroidScheduleMode? androidScheduleMode,
   }) async {
     if (kIsWeb) {
       return;
@@ -431,7 +451,8 @@ class FlutterLocalNotificationsPlugin {
           ?.periodicallyShow(id, title, body, repeatInterval,
               notificationDetails: notificationDetails.android,
               payload: payload,
-              androidAllowWhileIdle: androidAllowWhileIdle);
+              scheduleMode: _chooseScheduleMode(
+                  androidScheduleMode, androidAllowWhileIdle));
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
@@ -447,6 +468,13 @@ class FlutterLocalNotificationsPlugin {
           .periodicallyShow(id, title, body, repeatInterval);
     }
   }
+
+  AndroidScheduleMode _chooseScheduleMode(
+          AndroidScheduleMode? scheduleMode, bool allowWhileIdle) =>
+      scheduleMode ??
+      (allowWhileIdle
+          ? AndroidScheduleMode.exactAllowWhileIdle
+          : AndroidScheduleMode.exact);
 
   /// Shows a notification on a daily interval at the specified time.
   @Deprecated(
@@ -521,7 +549,15 @@ class FlutterLocalNotificationsPlugin {
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() =>
       FlutterLocalNotificationsPlatform.instance.pendingNotificationRequests();
 
-  /// Returns a list of notifications that are already delivered/shown.
+  /// Returns the list of active notifications shown by the application that
+  /// haven't been dismissed/removed.
+  ///
+  /// The supported OS versions are
+  /// - Android: Android 6.0 or newer
+  /// - iOS: iOS 10.0 or newer
+  /// - macOS: macOS 10.14 or newer
+  ///
+  /// On Linux it will throw an [UnimplementedError].
   Future<List<ActiveNotification>> getActiveNotifications() =>
       FlutterLocalNotificationsPlatform.instance.getActiveNotifications();
 }

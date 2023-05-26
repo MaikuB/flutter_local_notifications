@@ -19,7 +19,7 @@ scripts:
     description: Run dart analyzer in a specific package.
   test:unit:
     description: Run unit tests in a specific package.
-    run: melos exec --concurrency=1 -- "flutter test"
+    run: melos exec -c 1 -- "flutter test"
     select-package:
       dir-exists:
         - test
