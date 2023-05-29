@@ -480,7 +480,7 @@ class FlutterLocalNotificationsPlugin {
   @Deprecated(
       'Deprecated due to problems with time zones. Use zonedSchedule instead '
       'by passing a date in the future with the same time and pass '
-      'DateTimeComponents.matchTime as the value of the '
+      'DateTimeComponents.time as the value of the '
       'matchDateTimeComponents parameter.')
   Future<void> showDailyAtTime(
     int id,
