@@ -2,6 +2,7 @@
 
 * **Breaking change** removed deprecated `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods. Notifications that were scheduled prior to this release should still work
 * **Breaking change** removed `Time` class
+* [Android] updated tags used when writing error logs. For corrupt scheduled notifications and error is logged the tag is now `ScheduledNotifReceiver` instead of `ScheduledNotifReceiver`. When logging that exact alarm permissions have been revoked the the tag is now `FLTLocalNotifPlugin` instead of `notification`
 
 # [14.1.1]
 
