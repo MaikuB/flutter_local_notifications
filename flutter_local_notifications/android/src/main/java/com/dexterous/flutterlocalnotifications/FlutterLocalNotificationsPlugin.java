@@ -1768,7 +1768,6 @@ public class FlutterLocalNotificationsPlugin
 
   @Override
   public boolean onNewIntent(Intent intent) {
-    System.out.println("mbui: onNewIntent");
     boolean res = sendNotificationPayloadMessage(intent);
     if (res && mainActivity != null) {
       mainActivity.setIntent(intent);

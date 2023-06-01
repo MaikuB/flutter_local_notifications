@@ -1,3 +1,8 @@
+# [14.1.1]
+
+* Fixed typo in API docs for the deprecated `showDailyAtTime()` method. Thanks to the PR from [Yuichiro Kawano](https://github.com/yu1ro)
+* [Android] removed a call to standard output via `System.out.println()`
+
 # [14.1.0]
 
 * [Android] added `alarmClock` as one of the `AndroidScheduleMode` options. This is useful for cases where a notification functions as an alarm and *may* show an alarm icon on the status bar depending on the device Thanks to the PR from [Muhammed Ballan](https://github.com/iballan)
