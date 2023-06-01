@@ -117,6 +117,9 @@ public class FlutterLocalNotificationsPlugin
   static final String PAYLOAD = "payload";
   static final String NOTIFICATION_ID = "notificationId";
   static final String CANCEL_NOTIFICATION = "cancelNotification";
+
+  private static final String TAG = "FLTLocalNotifPlugin";
+
   private static final String SHARED_PREFERENCES_KEY = "notification_plugin_cache";
   private static final String DISPATCHER_HANDLE = "dispatcher_handle";
   private static final String CALLBACK_HANDLE = "callback_handle";
@@ -206,8 +209,7 @@ public class FlutterLocalNotificationsPlugin
           scheduleNotification(context, notificationDetails, false);
         }
       } catch (ExactAlarmPermissionException e) {
-        // TODO: update tag used to match name of class
-        Log.e("notification", e.getMessage());
+        Log.e(TAG, e.getMessage());
         removeNotificationFromCache(context, notificationDetails.id);
       }
     }
@@ -225,8 +227,7 @@ public class FlutterLocalNotificationsPlugin
         removeNotificationFromCache(context, notificationDetails.id);
       }
     } catch (ExactAlarmPermissionException e) {
-      // TODO: update tag used to match name of class
-      Log.e("notification", e.getMessage());
+      Log.e(TAG, e.getMessage());
       removeNotificationFromCache(context, notificationDetails.id);
     }
   }
