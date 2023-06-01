@@ -42,6 +42,11 @@ NSString *const REQUEST_SOUND_PERMISSION = @"requestSoundPermission";
 NSString *const REQUEST_ALERT_PERMISSION = @"requestAlertPermission";
 NSString *const REQUEST_BADGE_PERMISSION = @"requestBadgePermission";
 NSString *const REQUEST_CRITICAL_PERMISSION = @"requestCriticalPermission";
+NSString *const DEFAULT_PRESENT_ALERT = @"defaultPresentAlert";
+NSString *const DEFAULT_PRESENT_SOUND = @"defaultPresentSound";
+NSString *const DEFAULT_PRESENT_BADGE = @"defaultPresentBadge";
+NSString *const DEFAULT_PRESENT_BANNER = @"defaultPresentBanner";
+NSString *const DEFAULT_PRESENT_LIST = @"defaultPresentList";
 NSString *const SOUND_PERMISSION = @"sound";
 NSString *const ALERT_PERMISSION = @"alert";
 NSString *const BADGE_PERMISSION = @"badge";
@@ -85,6 +90,7 @@ NSString *const NOTIFICATION_RESPONSE_TYPE = @"notificationResponseType";
 NSString *const UNSUPPORTED_OS_VERSION_ERROR_CODE = @"unsupported_os_version";
 NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
     @"iOS version must be 10.0 or newer to use getActiveNotifications";
+NSString *const PRESENTATION_OPTIONS_USER_DEFAULTS = @"flutter_local_notifications_presentation_options";
 
 typedef NS_ENUM(NSInteger, RepeatInterval) {
   EveryMinute,
@@ -372,6 +378,24 @@ static FlutterError *getFlutterError(NSError *error) {
   bool requestedAlertPermission = false;
   bool requestedBadgePermission = false;
   bool requestedCriticalPermission = false;
+    NSMutableDictionary *presentationOptions = [[NSMutableDictionary alloc] init];
+    if ([self containsKey:DEFAULT_PRESENT_ALERT forDictionary:arguments]) {
+        presentationOptions[PRESENT_ALERT] = [NSNumber numberWithBool:[[arguments objectForKey:DEFAULT_PRESENT_ALERT] boolValue]];
+    }
+    if ([self containsKey:DEFAULT_PRESENT_SOUND forDictionary:arguments]) {
+        presentationOptions[PRESENT_SOUND] = [NSNumber numberWithBool: [[arguments objectForKey:DEFAULT_PRESENT_SOUND] boolValue]];
+    }
+    if ([self containsKey:DEFAULT_PRESENT_BADGE forDictionary:arguments]) {
+        presentationOptions[PRESENT_BADGE] = [NSNumber numberWithBool:[[arguments objectForKey:DEFAULT_PRESENT_BADGE] boolValue]];
+    }
+    if ([self containsKey:DEFAULT_PRESENT_BANNER forDictionary:arguments]) {
+        presentationOptions[PRESENT_BANNER] = [NSNumber numberWithBool:[[arguments objectForKey:DEFAULT_PRESENT_BANNER] boolValue]];
+    }
+    if ([self containsKey:DEFAULT_PRESENT_LIST forDictionary:arguments]) {
+        presentationOptions[PRESENT_LIST] = [NSNumber numberWithBool:[[arguments objectForKey:DEFAULT_PRESENT_LIST] boolValue]];
+    }
+    [[NSUserDefaults standardUserDefaults] setObject:presentationOptions
+                                                forKey:PRESENTATION_OPTIONS_USER_DEFAULTS];
   if ([self containsKey:REQUEST_SOUND_PERMISSION forDictionary:arguments]) {
     requestedSoundPermission = [arguments[REQUEST_SOUND_PERMISSION] boolValue];
   }
@@ -508,11 +532,20 @@ static FlutterError *getFlutterError(NSError *error) {
     }
   }
 
+  NSDictionary *persistedPresentationOptions = [[NSUserDefaults standardUserDefaults]
+            dictionaryForKey:PRESENTATION_OPTIONS_USER_DEFAULTS];
   bool presentAlert = false;
   bool presentSound = false;
   bool presentBadge = false;
   bool presentBanner = false;
   bool presentList = false;
+  if (persistedPresentationOptions != nil) {
+      presentAlert = [persistedPresentationOptions[PRESENT_ALERT] isEqual:@YES];
+      presentSound = [persistedPresentationOptions[PRESENT_SOUND] isEqual:@YES];
+      presentBadge = [persistedPresentationOptions[PRESENT_BADGE] isEqual:@YES];
+      presentBanner = [persistedPresentationOptions[PRESENT_BANNER] isEqual:@YES];
+      presentList = [persistedPresentationOptions[PRESENT_LIST] isEqual:@YES];
+  }
   if (arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
     NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
 
@@ -750,11 +783,20 @@ static FlutterError *getFlutterError(NSError *error) {
   if ([self containsKey:BODY forDictionary:arguments]) {
     content.body = arguments[BODY];
   }
-  bool presentAlert = false;
-  bool presentSound = false;
-  bool presentBadge = false;
-  bool presentBanner = false;
-  bool presentList = false;
+    NSDictionary *persistedPresentationOptions = [[NSUserDefaults standardUserDefaults]
+              dictionaryForKey:PRESENTATION_OPTIONS_USER_DEFAULTS];
+    bool presentAlert = false;
+    bool presentSound = false;
+    bool presentBadge = false;
+    bool presentBanner = false;
+    bool presentList = false;
+    if (persistedPresentationOptions != nil) {
+        presentAlert = [persistedPresentationOptions[PRESENT_ALERT] isEqual:@YES];
+        presentSound = [persistedPresentationOptions[PRESENT_SOUND] isEqual:@YES];
+        presentBadge = [persistedPresentationOptions[PRESENT_BADGE] isEqual:@YES];
+        presentBanner = [persistedPresentationOptions[PRESENT_BANNER] isEqual:@YES];
+        presentList = [persistedPresentationOptions[PRESENT_LIST] isEqual:@YES];
+    }
   if (arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
     NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
     if ([self containsKey:PRESENT_ALERT forDictionary:platformSpecifics]) {
