@@ -10,9 +10,6 @@ class DarwinInitializationSettings {
     this.requestSoundPermission = true,
     this.requestBadgePermission = true,
     this.requestCriticalPermission = false,
-    this.defaultPresentAlert = true,
-    this.defaultPresentSound = true,
-    this.defaultPresentBadge = true,
     this.onDidReceiveLocalNotification,
     this.notificationCategories = const <DarwinNotificationCategory>[],
   });
@@ -39,34 +36,6 @@ class DarwinInitializationSettings {
   ///
   /// Default value is 'false'.
   final bool requestCriticalPermission;
-
-  /// Configures the default setting on if an alert should be displayed when a
-  /// notification is triggered while app is in the foreground.
-  ///
-  /// Default value is true.
-  ///
-  /// On iOS, this property is only applicable to iOS 10 or newer.
-  /// On macOS, this property is only applicable to macOS 10.14 or newer.
-
-  final bool defaultPresentAlert;
-
-  /// Configures the default setting on if a sound should be played when a
-  /// notification is triggered while app is in the foreground by default.
-  ///
-  /// Default value is true.
-  ///
-  /// On iOS, this property is only applicable to iOS 10 or newer.
-  /// On macOS, this property is only applicable to macOS 10.14 or newer.
-  final bool defaultPresentSound;
-
-  /// Configures the default setting on if a badge value should be applied when
-  /// a notification is triggered while app is in the foreground by default.
-  ///
-  /// Default value is true.
-  ///
-  /// On iOS, this property is only applicable to iOS 10 or newer.
-  /// On macOS, this property is only applicable to macOS 10.14 or newer.
-  final bool defaultPresentBadge;
 
   /// Callback for handling when a notification is triggered while the app is
   /// in the foreground.

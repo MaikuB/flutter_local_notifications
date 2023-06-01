@@ -48,9 +48,6 @@ void main() {
           'requestSoundPermission': true,
           'requestBadgePermission': true,
           'requestCriticalPermission': false,
-          'defaultPresentAlert': true,
-          'defaultPresentSound': true,
-          'defaultPresentBadge': true,
           'notificationCategories': <Map<String, String>>[],
         })
       ]);
@@ -62,9 +59,6 @@ void main() {
         requestAlertPermission: false,
         requestBadgePermission: false,
         requestSoundPermission: false,
-        defaultPresentAlert: false,
-        defaultPresentBadge: false,
-        defaultPresentSound: false,
       );
       const InitializationSettings initializationSettings =
           InitializationSettings(macOS: macOSInitializationSettings);
@@ -75,9 +69,6 @@ void main() {
           'requestSoundPermission': false,
           'requestBadgePermission': false,
           'requestCriticalPermission': false,
-          'defaultPresentAlert': false,
-          'defaultPresentSound': false,
-          'defaultPresentBadge': false,
           'notificationCategories': <Map<String, String>>[],
         })
       ]);
@@ -114,6 +105,8 @@ void main() {
           presentAlert: true,
           presentBadge: true,
           presentSound: true,
+          presentBanner: true,
+          presentList: true,
           sound: 'sound.mp3',
           badgeNumber: 1,
           threadIdentifier: 'thread',
@@ -149,6 +142,8 @@ void main() {
               'presentAlert': true,
               'presentBadge': true,
               'presentSound': true,
+              'presentBanner': true,
+              'presentList': true,
               'sound': 'sound.mp3',
               'badgeNumber': 1,
               'threadIdentifier': 'thread',
@@ -185,6 +180,8 @@ void main() {
                 presentAlert: true,
                 presentBadge: true,
                 presentSound: true,
+                presentBanner: true,
+                presentList: true,
                 sound: 'sound.mp3',
                 badgeNumber: 1,
                 attachments: <DarwinNotificationAttachment>[
@@ -217,6 +214,8 @@ void main() {
                     'presentAlert': true,
                     'presentBadge': true,
                     'presentSound': true,
+                    'presentBanner': true,
+                    'presentList': true,
                     'subtitle': null,
                     'sound': 'sound.mp3',
                     'badgeNumber': 1,
@@ -255,6 +254,8 @@ void main() {
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
+            presentBanner: true,
+            presentList: true,
             sound: 'sound.mp3',
             badgeNumber: 1,
             attachments: <DarwinNotificationAttachment>[
@@ -290,6 +291,8 @@ void main() {
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
+                'presentBanner': true,
+                'presentList': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,
@@ -323,6 +326,8 @@ void main() {
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
+            presentBanner: true,
+            presentList: true,
             sound: 'sound.mp3',
             badgeNumber: 1,
             attachments: <DarwinNotificationAttachment>[
@@ -362,6 +367,8 @@ void main() {
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
+                'presentBanner': true,
+                'presentList': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,
@@ -397,6 +404,8 @@ void main() {
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
+            presentBanner: true,
+            presentList: true,
             sound: 'sound.mp3',
             badgeNumber: 1,
             attachments: <DarwinNotificationAttachment>[
@@ -437,6 +446,8 @@ void main() {
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
+                'presentBanner': true,
+                'presentList': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,
