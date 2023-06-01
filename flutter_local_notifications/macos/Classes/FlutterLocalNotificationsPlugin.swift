@@ -117,11 +117,11 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         if #available(macOS 11.0, *) {
             let presentBanner = notification.request.content.userInfo[MethodCallArguments.presentBanner] as! Bool
             let presentList = notification.request.content.userInfo[MethodCallArguments.presentList] as! Bool
-            if (presentBanner) {
+            if presentBanner {
                 print("add banner")
                 options.insert(.banner)
             }
-            if (presentList) {
+            if presentList {
                 print("add list")
                 options.insert(.list)
             }
@@ -222,7 +222,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         let defaultPresentBadge = arguments[MethodCallArguments.defaultPresentBadge] as! Bool
         let defaultPresentBanner = arguments[MethodCallArguments.defaultPresentBanner] as! Bool
         let defaultPresentList = arguments[MethodCallArguments.defaultPresentList] as! Bool
-        UserDefaults.standard.set([MethodCallArguments.presentAlert: defaultPresentAlert, MethodCallArguments.presentBadge:defaultPresentBadge, MethodCallArguments.presentSound: defaultPresentSound, MethodCallArguments.presentBanner: defaultPresentBanner, MethodCallArguments.presentList: defaultPresentList], forKey: presentationOptionsUserDefaults)
+        UserDefaults.standard.set([MethodCallArguments.presentAlert: defaultPresentAlert, MethodCallArguments.presentBadge: defaultPresentBadge, MethodCallArguments.presentSound: defaultPresentSound, MethodCallArguments.presentBanner: defaultPresentBanner, MethodCallArguments.presentList: defaultPresentList], forKey: presentationOptionsUserDefaults)
         if #available(macOS 10.14, *) {
             let requestedAlertPermission = arguments[MethodCallArguments.requestAlertPermission] as! Bool
             let requestedSoundPermission = arguments[MethodCallArguments.requestSoundPermission] as! Bool
