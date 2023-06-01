@@ -24,7 +24,6 @@ import 'platform_specifics/darwin/initialization_settings.dart';
 import 'platform_specifics/darwin/mappers.dart';
 import 'platform_specifics/darwin/notification_details.dart';
 import 'platform_specifics/ios/enums.dart';
-import 'type_mappers.dart';
 import 'typedefs.dart';
 import 'types.dart';
 import 'tz_datetime_mapper.dart';
@@ -154,33 +153,6 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<bool?> requestPermission() async =>
       _channel.invokeMethod<bool>('requestPermission');
 
-  /// Schedules a notification to be shown at the specified date and time.
-  ///
-  /// The [scheduleMode] parameter defines the precision of the timing for the
-  /// notification to be appear.
-  @Deprecated(
-      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
-  Future<void> schedule(
-    int id,
-    String? title,
-    String? body,
-    DateTime scheduledDate,
-    AndroidNotificationDetails? notificationDetails, {
-    String? payload,
-    AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
-  }) async {
-    validateId(id);
-    await _channel.invokeMethod('schedule', <String, Object?>{
-      'id': id,
-      'title': title,
-      'body': body,
-      'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
-      'platformSpecifics':
-          _buildPlatformSpecifics(notificationDetails, scheduleMode),
-      'payload': payload ?? ''
-    });
-  }
-
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
   ///
@@ -213,57 +185,6 @@ class AndroidFlutterLocalNotificationsPlugin
           'matchDateTimeComponents': matchDateTimeComponents.index
       },
     );
-  }
-
-  /// Shows a notification on a daily interval at the specified time.
-  @Deprecated(
-      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
-  Future<void> showDailyAtTime(
-    int id,
-    String? title,
-    String? body,
-    Time notificationTime,
-    AndroidNotificationDetails? notificationDetails, {
-    String? payload,
-  }) async {
-    validateId(id);
-    await _channel.invokeMethod('showDailyAtTime', <String, Object?>{
-      'id': id,
-      'title': title,
-      'body': body,
-      'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatInterval': RepeatInterval.daily.index,
-      'repeatTime': notificationTime.toMap(),
-      'platformSpecifics': notificationDetails?.toMap(),
-      'payload': payload ?? ''
-    });
-  }
-
-  /// Shows a notification on weekly interval at the specified day and time.
-  @Deprecated(
-      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
-  Future<void> showWeeklyAtDayAndTime(
-    int id,
-    String? title,
-    String? body,
-    Day day,
-    Time notificationTime,
-    AndroidNotificationDetails? notificationDetails, {
-    String? payload,
-  }) async {
-    validateId(id);
-
-    await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, Object?>{
-      'id': id,
-      'title': title,
-      'body': body,
-      'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatInterval': RepeatInterval.weekly.index,
-      'repeatTime': notificationTime.toMap(),
-      'day': day.value,
-      'platformSpecifics': notificationDetails?.toMap(),
-      'payload': payload ?? ''
-    });
   }
 
   /// Starts an Android foreground service with the given notification.
@@ -664,29 +585,6 @@ class IOSFlutterLocalNotificationsPlugin
         'critical': critical,
       });
 
-  /// Schedules a notification to be shown at the specified date and time with
-  /// an optional payload that is passed through when a notification is tapped.
-  @Deprecated(
-      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
-  Future<void> schedule(
-    int id,
-    String? title,
-    String? body,
-    DateTime scheduledDate,
-    DarwinNotificationDetails? notificationDetails, {
-    String? payload,
-  }) async {
-    validateId(id);
-    await _channel.invokeMethod('schedule', <String, Object?>{
-      'id': id,
-      'title': title,
-      'body': body,
-      'millisecondsSinceEpoch': scheduledDate.millisecondsSinceEpoch,
-      'platformSpecifics': notificationDetails?.toMap(),
-      'payload': payload ?? ''
-    });
-  }
-
   /// Schedules a notification to be shown at the specified time in the
   /// future in a specific time zone.
   ///
@@ -734,56 +632,6 @@ class IOSFlutterLocalNotificationsPlugin
               : <String, Object>{
                   'matchDateTimeComponents': matchDateTimeComponents.index
                 }));
-  }
-
-  /// Shows a notification on a daily interval at the specified time.
-  @Deprecated(
-      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
-  Future<void> showDailyAtTime(
-    int id,
-    String? title,
-    String? body,
-    Time notificationTime,
-    DarwinNotificationDetails? notificationDetails, {
-    String? payload,
-  }) async {
-    validateId(id);
-    await _channel.invokeMethod('showDailyAtTime', <String, Object?>{
-      'id': id,
-      'title': title,
-      'body': body,
-      'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatInterval': RepeatInterval.daily.index,
-      'repeatTime': notificationTime.toMap(),
-      'platformSpecifics': notificationDetails?.toMap(),
-      'payload': payload ?? ''
-    });
-  }
-
-  /// Shows a notification on weekly interval at the specified day and time.
-  @Deprecated(
-      'Deprecated due to problems with time zones. Use zonedSchedule instead.')
-  Future<void> showWeeklyAtDayAndTime(
-    int id,
-    String? title,
-    String? body,
-    Day day,
-    Time notificationTime,
-    DarwinNotificationDetails? notificationDetails, {
-    String? payload,
-  }) async {
-    validateId(id);
-    await _channel.invokeMethod('showWeeklyAtDayAndTime', <String, Object?>{
-      'id': id,
-      'title': title,
-      'body': body,
-      'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatInterval': RepeatInterval.weekly.index,
-      'repeatTime': notificationTime.toMap(),
-      'day': day.value,
-      'platformSpecifics': notificationDetails?.toMap(),
-      'payload': payload ?? ''
-    });
   }
 
   @override

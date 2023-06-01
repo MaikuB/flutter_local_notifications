@@ -147,11 +147,8 @@ public class FlutterLocalNotificationsPlugin
   private static final String SHOW_METHOD = "show";
   private static final String CANCEL_METHOD = "cancel";
   private static final String CANCEL_ALL_METHOD = "cancelAll";
-  private static final String SCHEDULE_METHOD = "schedule";
   private static final String ZONED_SCHEDULE_METHOD = "zonedSchedule";
   private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
-  private static final String SHOW_DAILY_AT_TIME_METHOD = "showDailyAtTime";
-  private static final String SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = "showWeeklyAtDayAndTime";
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
   private static final String REQUEST_PERMISSION_METHOD = "requestPermission";
@@ -524,6 +521,8 @@ public class FlutterLocalNotificationsPlugin
     }
   }
 
+  // This is left to support old apps need this done when a notification is rescheduled and used the
+  // deprecated schedule() method of the plugin
   private static void scheduleNotification(
       Context context,
       final NotificationDetails notificationDetails,
@@ -1371,9 +1370,6 @@ public class FlutterLocalNotificationsPlugin
       case SHOW_METHOD:
         show(call, result);
         break;
-      case SCHEDULE_METHOD:
-        schedule(call, result);
-        break;
       case ZONED_SCHEDULE_METHOD:
         zonedSchedule(call, result);
         break;
@@ -1392,8 +1388,6 @@ public class FlutterLocalNotificationsPlugin
             });
         break;
       case PERIODICALLY_SHOW_METHOD:
-      case SHOW_DAILY_AT_TIME_METHOD:
-      case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD:
         repeat(call, result);
         break;
       case CANCEL_METHOD:
@@ -1505,18 +1499,6 @@ public class FlutterLocalNotificationsPlugin
     if (notificationDetails != null) {
       try {
         repeatNotification(applicationContext, notificationDetails, true);
-        result.success(null);
-      } catch (PluginException e) {
-        result.error(e.code, e.getMessage(), null);
-      }
-    }
-  }
-
-  private void schedule(MethodCall call, Result result) {
-    NotificationDetails notificationDetails = extractNotificationDetails(result, call.arguments());
-    if (notificationDetails != null) {
-      try {
-        scheduleNotification(applicationContext, notificationDetails, true);
         result.success(null);
       } catch (PluginException e) {
         result.error(e.code, e.getMessage(), null);
