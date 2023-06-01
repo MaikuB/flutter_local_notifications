@@ -23,11 +23,8 @@ NSString *const FOREGROUND_ACTION_IDENTIFIERS =
 NSString *const INITIALIZE_METHOD = @"initialize";
 NSString *const GET_CALLBACK_METHOD = @"getCallbackHandle";
 NSString *const SHOW_METHOD = @"show";
-NSString *const SCHEDULE_METHOD = @"schedule";
 NSString *const ZONED_SCHEDULE_METHOD = @"zonedSchedule";
 NSString *const PERIODICALLY_SHOW_METHOD = @"periodicallyShow";
-NSString *const SHOW_DAILY_AT_TIME_METHOD = @"showDailyAtTime";
-NSString *const SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = @"showWeeklyAtDayAndTime";
 NSString *const CANCEL_METHOD = @"cancel";
 NSString *const CANCEL_ALL_METHOD = @"cancelAll";
 NSString *const PENDING_NOTIFICATIONS_REQUESTS_METHOD =
@@ -77,10 +74,6 @@ NSString *const PRESENT_BADGE = @"presentBadge";
 NSString *const BADGE_NUMBER = @"badgeNumber";
 NSString *const MILLISECONDS_SINCE_EPOCH = @"millisecondsSinceEpoch";
 NSString *const REPEAT_INTERVAL = @"repeatInterval";
-NSString *const REPEAT_TIME = @"repeatTime";
-NSString *const HOUR = @"hour";
-NSString *const MINUTE = @"minute";
-NSString *const SECOND = @"second";
 NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTimeISO8601";
 NSString *const TIME_ZONE_NAME = @"timeZoneName";
 NSString *const MATCH_DATE_TIME_COMPONENTS = @"matchDateTimeComponents";
@@ -167,14 +160,8 @@ static FlutterError *getFlutterError(NSError *error) {
     [self show:call.arguments result:result];
   } else if ([ZONED_SCHEDULE_METHOD isEqualToString:call.method]) {
     [self zonedSchedule:call.arguments result:result];
-  } else if ([SCHEDULE_METHOD isEqualToString:call.method]) {
-    [self schedule:call.arguments result:result];
   } else if ([PERIODICALLY_SHOW_METHOD isEqualToString:call.method]) {
     [self periodicallyShow:call.arguments result:result];
-  } else if ([SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]) {
-    [self showDailyAtTime:call.arguments result:result];
-  } else if ([SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
-    [self showWeeklyAtDayAndTime:call.arguments result:result];
   } else if ([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
     [self requestPermissions:call.arguments result:result];
   } else if ([CANCEL_METHOD isEqualToString:call.method]) {
@@ -660,44 +647,6 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
-- (void)schedule:(NSDictionary *_Nonnull)arguments
-          result:(FlutterResult _Nonnull)result {
-  NSNumber *secondsSinceEpoch =
-      @([arguments[MILLISECONDS_SINCE_EPOCH] longLongValue] / 1000);
-  if (@available(iOS 10.0, *)) {
-    UNMutableNotificationContent *content =
-        [self buildStandardNotificationContent:arguments result:result];
-    NSDate *date = [NSDate
-        dateWithTimeIntervalSince1970:[secondsSinceEpoch longLongValue]];
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSDateComponents *dateComponents =
-        [calendar components:(NSCalendarUnitYear | NSCalendarUnitMonth |
-                              NSCalendarUnitDay | NSCalendarUnitHour |
-                              NSCalendarUnitMinute | NSCalendarUnitSecond)
-                    fromDate:date];
-    UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger
-        triggerWithDateMatchingComponents:dateComponents
-                                  repeats:false];
-    [self addNotificationRequest:[self getIdentifier:arguments]
-                         content:content
-                          result:result
-                         trigger:trigger];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *notification =
-        [self buildStandardUILocalNotification:arguments];
-#pragma clang diagnostic pop
-    notification.fireDate = [NSDate
-        dateWithTimeIntervalSince1970:[secondsSinceEpoch longLongValue]];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-#pragma clang diagnostic pop
-    result(nil);
-  }
-}
-
 - (void)periodicallyShow:(NSDictionary *_Nonnull)arguments
                   result:(FlutterResult _Nonnull)result {
   if (@available(iOS 10.0, *)) {
@@ -735,91 +684,6 @@ static FlutterError *getFlutterError(NSError *error) {
       break;
     }
     notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:timeInterval];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-#pragma clang diagnostic pop
-    result(nil);
-  }
-}
-
-- (void)showDailyAtTime:(NSDictionary *_Nonnull)arguments
-                 result:(FlutterResult _Nonnull)result {
-  NSDictionary *timeArguments = (NSDictionary *)arguments[REPEAT_TIME];
-  NSNumber *hourComponent = timeArguments[HOUR];
-  NSNumber *minutesComponent = timeArguments[MINUTE];
-  NSNumber *secondsComponent = timeArguments[SECOND];
-  if (@available(iOS 10.0, *)) {
-    UNMutableNotificationContent *content =
-        [self buildStandardNotificationContent:arguments result:result];
-    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-    [dateComponents setHour:[hourComponent integerValue]];
-    [dateComponents setMinute:[minutesComponent integerValue]];
-    [dateComponents setSecond:[secondsComponent integerValue]];
-    UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger
-        triggerWithDateMatchingComponents:dateComponents
-                                  repeats:YES];
-    [self addNotificationRequest:[self getIdentifier:arguments]
-                         content:content
-                          result:result
-                         trigger:trigger];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *notification =
-        [self buildStandardUILocalNotification:arguments];
-#pragma clang diagnostic pop
-    notification.repeatInterval = NSCalendarUnitDay;
-    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-    [dateComponents setHour:[hourComponent integerValue]];
-    [dateComponents setMinute:[minutesComponent integerValue]];
-    [dateComponents setSecond:[secondsComponent integerValue]];
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    notification.fireDate = [calendar dateFromComponents:dateComponents];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-#pragma clang diagnostic pop
-    result(nil);
-  }
-}
-
-- (void)showWeeklyAtDayAndTime:(NSDictionary *_Nonnull)arguments
-                        result:(FlutterResult _Nonnull)result {
-  NSDictionary *timeArguments = (NSDictionary *)arguments[REPEAT_TIME];
-  NSNumber *dayOfWeekComponent = arguments[DAY];
-  NSNumber *hourComponent = timeArguments[HOUR];
-  NSNumber *minutesComponent = timeArguments[MINUTE];
-  NSNumber *secondsComponent = timeArguments[SECOND];
-  if (@available(iOS 10.0, *)) {
-    UNMutableNotificationContent *content =
-        [self buildStandardNotificationContent:arguments result:result];
-    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-    [dateComponents setHour:[hourComponent integerValue]];
-    [dateComponents setMinute:[minutesComponent integerValue]];
-    [dateComponents setSecond:[secondsComponent integerValue]];
-    [dateComponents setWeekday:[dayOfWeekComponent integerValue]];
-    UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger
-        triggerWithDateMatchingComponents:dateComponents
-                                  repeats:YES];
-    [self addNotificationRequest:[self getIdentifier:arguments]
-                         content:content
-                          result:result
-                         trigger:trigger];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *notification =
-        [self buildStandardUILocalNotification:arguments];
-#pragma clang diagnostic pop
-    notification.repeatInterval = NSCalendarUnitWeekOfYear;
-    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-    [dateComponents setHour:[hourComponent integerValue]];
-    [dateComponents setMinute:[minutesComponent integerValue]];
-    [dateComponents setSecond:[secondsComponent integerValue]];
-    [dateComponents setWeekday:[dayOfWeekComponent integerValue]];
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    notification.fireDate = [calendar dateFromComponents:dateComponents];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[UIApplication sharedApplication] scheduleLocalNotification:notification];

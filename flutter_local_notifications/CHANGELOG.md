@@ -1,3 +1,8 @@
+# [vNext]
+
+* **Breaking change** removed deprecated `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods. Notifications that were scheduled prior to this release should still work
+* **Breaking change** removed `Time` class
+
 # [14.1.1]
 
 * Fixed typo in API docs for the deprecated `showDailyAtTime()` method. Thanks to the PR from [Yuichiro Kawano](https://github.com/yu1ro)
