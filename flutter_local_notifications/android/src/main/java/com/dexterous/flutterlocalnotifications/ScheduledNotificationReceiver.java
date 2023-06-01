@@ -20,7 +20,7 @@ import java.lang.reflect.Type;
 @Keep
 public class ScheduledNotificationReceiver extends BroadcastReceiver {
 
-  private static final String TAG = "ScheduledNotificationReceiver";
+  private static final String TAG = "ScheduledNotifReceiver";
 
   @Override
   @SuppressWarnings("deprecation")
