@@ -39,6 +39,11 @@ extension DarwinInitializationSettingsMapper on DarwinInitializationSettings {
         'requestSoundPermission': requestSoundPermission,
         'requestBadgePermission': requestBadgePermission,
         'requestCriticalPermission': requestCriticalPermission,
+        'defaultPresentAlert': defaultPresentAlert,
+        'defaultPresentSound': defaultPresentSound,
+        'defaultPresentBadge': defaultPresentBadge,
+        'defaultPresentBanner': defaultPresentBanner,
+        'defaultPresentList': defaultPresentList,
         'notificationCategories': notificationCategories
             .map((e) => e.toMap()) // ignore: always_specify_types
             .toList(),

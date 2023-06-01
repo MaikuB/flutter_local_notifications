@@ -6,11 +6,11 @@ import 'notification_attachment.dart';
 class DarwinNotificationDetails {
   /// Constructs an instance of [DarwinNotificationDetails].
   const DarwinNotificationDetails({
-    required this.presentAlert,
-    required this.presentBadge,
-    required this.presentSound,
-    required this.presentBanner,
-    required this.presentList,
+    this.presentAlert,
+    this.presentBadge,
+    this.presentSound,
+    this.presentBanner,
+    this.presentList,
     this.sound,
     this.badgeNumber,
     this.attachments,
@@ -23,38 +23,53 @@ class DarwinNotificationDetails {
   /// Indicates if an alert should be display when the notification is triggered
   /// while app is in the foreground.
   ///
+  /// When this is set to `null`, it will use the default setting given
+  /// to [DarwinInitializationSettings.defaultPresentAlert].
+  ///
   /// On iOS, this property is only applicable to iOS 10 to 14.
   /// On macOS, this This property is only applicable to macOS 10.14 to 15.
   /// On newer versions of iOS and macOS, [presentList] and [presentBanner]
-  final bool presentAlert;
+  final bool? presentAlert;
 
   /// Indicates if a sound should be played when the notification is triggered
   /// while app is in the foreground.
   ///
+  /// When this is set to `null`, it will use the default setting given
+  /// to [DarwinInitializationSettings.defaultPresentSound].
+  ///
   /// This property is only applicable to iOS 10 or newer.
-  final bool presentSound;
+  final bool? presentSound;
 
   /// Indicates if badge value should be applied when the notification is
   /// triggered while app is in the foreground.
   ///
+  /// When this is set to `null`, it will use the default setting given
+  /// to [DarwinInitializationSettings.defaultPresentBadge].
+  ///
   /// On iOS, this property is only applicable to iOS 10 or newer.
   /// On macOS, this This property is only applicable to macOS 10.14 or newer.
-  final bool presentBadge;
+  final bool? presentBadge;
 
   /// Indicates if the notification should be presented as a banner when the
   /// notification is triggered while app is in the foreground.
   ///
+  /// When this is set to `null`, it will use the default setting given
+  /// to [DarwinInitializationSettings.defaultPresentBanner].
+  ///
   /// On iOS, this property is only applicable to iOS 14 or newer
   /// On macOs, this property is only applicable to macOS 11 or newer.
-  final bool presentBanner;
+  final bool? presentBanner;
 
   /// Indicates if the notification should be shown in the notification centre
   /// when the notification is
   /// triggered while app is in the foreground.
   ///
+  /// When this is set to `null`, it will use the default setting given
+  /// to [DarwinInitializationSettings.defaultPresentList].
+  ///
   /// On iOS, this property is only applicable to iOS 14 or newer
   /// On macOs, this property is only applicable to macOS 11 or newer.
-  final bool presentList;
+  final bool? presentList;
 
   /// Specifies the name of the file to play for the notification.
   ///

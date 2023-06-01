@@ -1123,21 +1123,11 @@ class _HomePageState extends State<HomePage> {
 
     const DarwinNotificationDetails iosNotificationDetails =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-      presentBanner: true,
-      presentList: true,
       categoryIdentifier: darwinNotificationCategoryPlain,
     );
 
     const DarwinNotificationDetails macOSNotificationDetails =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-      presentBanner: true,
-      presentList: true,
       categoryIdentifier: darwinNotificationCategoryPlain,
     );
 
@@ -1191,11 +1181,6 @@ class _HomePageState extends State<HomePage> {
 
     const DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-      presentBanner: true,
-      presentList: true,
       categoryIdentifier: darwinNotificationCategoryText,
     );
 
@@ -1256,11 +1241,6 @@ class _HomePageState extends State<HomePage> {
 
     const DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-      presentBanner: true,
-      presentList: true,
       categoryIdentifier: darwinNotificationCategoryText,
     );
 
@@ -1363,11 +1343,6 @@ class _HomePageState extends State<HomePage> {
     );
     const DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-      presentBanner: true,
-      presentList: true,
       sound: 'slow_spring_board.aiff',
     );
     final LinuxNotificationDetails linuxPlatformChannelSpecifics =
@@ -1456,10 +1431,6 @@ class _HomePageState extends State<HomePage> {
     const DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(
       presentSound: false,
-      presentAlert: true,
-      presentBadge: true,
-      presentBanner: true,
-      presentList: true,
     );
     const NotificationDetails notificationDetails = NotificationDetails(
         android: androidNotificationDetails,
@@ -2121,11 +2092,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotificationWithSubtitle() async {
     const DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-      presentBanner: true,
-      presentList: true,
       subtitle: 'the subtitle',
     );
     const NotificationDetails notificationDetails = NotificationDetails(
@@ -2140,13 +2106,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showNotificationWithIconBadge() async {
     const DarwinNotificationDetails darwinNotificationDetails =
-        DarwinNotificationDetails(
-            presentAlert: true,
-            presentBadge: true,
-            presentSound: true,
-            presentBanner: true,
-            presentList: true,
-            badgeNumber: 1);
+        DarwinNotificationDetails(badgeNumber: 1);
     const NotificationDetails notificationDetails = NotificationDetails(
         iOS: darwinNotificationDetails, macOS: darwinNotificationDetails);
     await flutterLocalNotificationsPlugin.show(
@@ -2160,11 +2120,6 @@ class _HomePageState extends State<HomePage> {
     ) {
       final DarwinNotificationDetails darwinNotificationDetails =
           DarwinNotificationDetails(
-        presentAlert: true,
-        presentBadge: true,
-        presentSound: true,
-        presentBanner: true,
-        presentList: true,
         threadIdentifier: threadIdentifier,
       );
       return NotificationDetails(
@@ -2194,11 +2149,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotificationWithTimeSensitiveInterruptionLevel() async {
     const DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-      presentBanner: true,
-      presentList: true,
       interruptionLevel: InterruptionLevel.timeSensitive,
     );
     const NotificationDetails notificationDetails = NotificationDetails(
@@ -2214,9 +2164,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotificationWithBannerNotInNotificationCentre() async {
     const DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
       presentBanner: true,
       presentList: false,
     );
@@ -2233,9 +2180,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotificationInNotificationCentreOnly() async {
     const DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
       presentBanner: false,
       presentList: true,
     );
@@ -2324,11 +2268,6 @@ class _HomePageState extends State<HomePage> {
         'https://dummyimage.com/600x200', 'bigPicture.jpg');
     final DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-      presentBanner: true,
-      presentList: true,
       attachments: <DarwinNotificationAttachment>[
         DarwinNotificationAttachment(
           bigPicturePath,
@@ -2350,11 +2289,6 @@ class _HomePageState extends State<HomePage> {
         'https://dummyimage.com/600x200', 'bigPicture.jpg');
     final DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-      presentBanner: true,
-      presentList: true,
       attachments: <DarwinNotificationAttachment>[
         DarwinNotificationAttachment(
           bigPicturePath,

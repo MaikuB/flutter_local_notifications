@@ -48,6 +48,11 @@ void main() {
           'requestAlertPermission': true,
           'requestSoundPermission': true,
           'requestBadgePermission': true,
+          'defaultPresentAlert': true,
+          'defaultPresentSound': true,
+          'defaultPresentBadge': true,
+          'defaultPresentBanner': true,
+          'defaultPresentList': true,
           'requestCriticalPermission': false,
           'notificationCategories': <String>[],
         })
@@ -102,6 +107,11 @@ void main() {
           'requestSoundPermission': true,
           'requestBadgePermission': true,
           'requestCriticalPermission': false,
+          'defaultPresentAlert': true,
+          'defaultPresentSound': true,
+          'defaultPresentBadge': true,
+          'defaultPresentBanner': true,
+          'defaultPresentList': true,
           'notificationCategories': <Map<String, dynamic>>[
             <String, dynamic>{
               'identifier': 'category1',
@@ -157,6 +167,11 @@ void main() {
         requestAlertPermission: false,
         requestBadgePermission: false,
         requestSoundPermission: false,
+        defaultPresentAlert: false,
+        defaultPresentBadge: false,
+        defaultPresentSound: false,
+        defaultPresentBanner: false,
+        defaultPresentList: false,
       );
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
@@ -167,6 +182,11 @@ void main() {
           'requestSoundPermission': false,
           'requestBadgePermission': false,
           'requestCriticalPermission': false,
+          'defaultPresentAlert': false,
+          'defaultPresentSound': false,
+          'defaultPresentBadge': false,
+          'defaultPresentBanner': false,
+          'defaultPresentList': false,
           'notificationCategories': <String>[],
         })
       ]);

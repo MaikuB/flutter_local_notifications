@@ -48,6 +48,11 @@ void main() {
           'requestSoundPermission': true,
           'requestBadgePermission': true,
           'requestCriticalPermission': false,
+          'defaultPresentAlert': true,
+          'defaultPresentSound': true,
+          'defaultPresentBadge': true,
+          'defaultPresentBanner': true,
+          'defaultPresentList': true,
           'notificationCategories': <Map<String, String>>[],
         })
       ]);
@@ -59,6 +64,11 @@ void main() {
         requestAlertPermission: false,
         requestBadgePermission: false,
         requestSoundPermission: false,
+        defaultPresentAlert: false,
+        defaultPresentBadge: false,
+        defaultPresentSound: false,
+        defaultPresentBanner: false,
+        defaultPresentList: false,
       );
       const InitializationSettings initializationSettings =
           InitializationSettings(macOS: macOSInitializationSettings);
@@ -69,6 +79,11 @@ void main() {
           'requestSoundPermission': false,
           'requestBadgePermission': false,
           'requestCriticalPermission': false,
+          'defaultPresentAlert': false,
+          'defaultPresentSound': false,
+          'defaultPresentBadge': false,
+          'defaultPresentBanner': false,
+          'defaultPresentList': false,
           'notificationCategories': <Map<String, String>>[],
         })
       ]);
