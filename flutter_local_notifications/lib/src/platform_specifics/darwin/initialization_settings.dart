@@ -9,6 +9,7 @@ class DarwinInitializationSettings {
     this.requestAlertPermission = true,
     this.requestSoundPermission = true,
     this.requestBadgePermission = true,
+    this.requestProvisionalPermission = true,
     this.requestCriticalPermission = false,
     this.defaultPresentAlert = true,
     this.defaultPresentSound = true,
@@ -33,6 +34,11 @@ class DarwinInitializationSettings {
   ///
   /// Default value is true.
   final bool requestBadgePermission;
+
+  /// Request permission to send provisional notification for iOS 12+
+  ///
+  /// Default value is true.
+  final bool requestProvisionalPermission;
 
   /// Request permission to show critical notifications.
   ///

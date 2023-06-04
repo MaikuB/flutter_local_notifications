@@ -38,6 +38,7 @@ extension DarwinInitializationSettingsMapper on DarwinInitializationSettings {
         'requestAlertPermission': requestAlertPermission,
         'requestSoundPermission': requestSoundPermission,
         'requestBadgePermission': requestBadgePermission,
+        'requestProvisionalPermission': requestProvisionalPermission,
         'requestCriticalPermission': requestCriticalPermission,
         'defaultPresentAlert': defaultPresentAlert,
         'defaultPresentSound': defaultPresentSound,
