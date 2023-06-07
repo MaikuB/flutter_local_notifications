@@ -118,16 +118,13 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let presentBanner = notification.request.content.userInfo[MethodCallArguments.presentBanner] as! Bool
             let presentList = notification.request.content.userInfo[MethodCallArguments.presentList] as! Bool
             if presentBanner {
-                print("add banner")
                 options.insert(.banner)
             }
             if presentList {
-                print("add list")
                 options.insert(.list)
             }
         } else {
             if presentAlert {
-                print("add alert")
                 options.insert(.alert)
             }
         }
