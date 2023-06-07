@@ -45,6 +45,8 @@ class DarwinInitializationSettings {
   /// Configures the default setting on if an alert should be displayed when a
   /// notification is triggered while app is in the foreground.
   ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/1649506-alert
+  ///
   /// Default value is true.
   ///
   /// On iOS, this property is only applicable to iOS 10 or newer but not iOS 14
@@ -59,6 +61,8 @@ class DarwinInitializationSettings {
   /// Configures the default setting on if a sound should be played when a
   /// notification is triggered while app is in the foreground.
   ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/1649521-sound
+  ///
   /// Default value is true.
   ///
   /// On iOS, this property is only applicable to iOS 10 or newer.
@@ -67,6 +71,8 @@ class DarwinInitializationSettings {
 
   /// Configures the default setting on if a badge value should be applied when
   /// a notification is triggered while app is in the foreground.
+  ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/1649515-badge
   ///
   /// Default value is true.
   ///
@@ -78,6 +84,8 @@ class DarwinInitializationSettings {
   /// presented as a banner when a notification is triggered while app is in
   /// the foreground.
   ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/3564812-banner
+  ///
   /// Default value is true.
   ///
   /// On iOS, this property is only applicable to iOS 14 or newer.
@@ -87,6 +95,8 @@ class DarwinInitializationSettings {
   /// Configures the default setting on if the notification should be
   /// in the notification centre when notification is triggered while app is in
   /// the foreground.
+  ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/3564813-list
   ///
   /// Default value is true.
   ///

@@ -23,6 +23,8 @@ class DarwinNotificationDetails {
   /// Indicates if an alert should be display when the notification is triggered
   /// while app is in the foreground.
   ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/1649506-alert
+  ///
   /// When this is set to `null`, it will use the default setting given
   /// to [DarwinInitializationSettings.defaultPresentAlert].
   ///
@@ -34,6 +36,8 @@ class DarwinNotificationDetails {
   /// Indicates if a sound should be played when the notification is triggered
   /// while app is in the foreground.
   ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/1649521-sound
+  ///
   /// When this is set to `null`, it will use the default setting given
   /// to [DarwinInitializationSettings.defaultPresentSound].
   ///
@@ -42,6 +46,8 @@ class DarwinNotificationDetails {
 
   /// Indicates if badge value should be applied when the notification is
   /// triggered while app is in the foreground.
+  ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/1649515-badge
   ///
   /// When this is set to `null`, it will use the default setting given
   /// to [DarwinInitializationSettings.defaultPresentBadge].
@@ -53,6 +59,8 @@ class DarwinNotificationDetails {
   /// Indicates if the notification should be presented as a banner when the
   /// notification is triggered while app is in the foreground.
   ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/3564812-banner
+  ///
   /// When this is set to `null`, it will use the default setting given
   /// to [DarwinInitializationSettings.defaultPresentBanner].
   ///
@@ -63,6 +71,8 @@ class DarwinNotificationDetails {
   /// Indicates if the notification should be shown in the notification centre
   /// when the notification is
   /// triggered while app is in the foreground.
+  ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/3564813-list
   ///
   /// When this is set to `null`, it will use the default setting given
   /// to [DarwinInitializationSettings.defaultPresentList].

@@ -1,8 +1,10 @@
-# [vNext]
+# [15.0.0-dev.1]
 
 * **Breaking change** removed deprecated `schedule`, `showDailyAtTime` and `showWeeklyAtDayAndTime` methods. Notifications that were scheduled prior to this release should still work
 * **Breaking change** removed `Time` class
 * [Android] updated tags used when writing error logs. For corrupt scheduled notifications and error is logged the tag is now `ScheduledNotifReceiver` instead of `ScheduledNotifReceiver`. When logging that exact alarm permissions have been revoked the the tag is now `FLTLocalNotifPlugin` instead of `notification`
+* **Breaking change** [iOS][macOS] added supported for banner and list presentation options for iOS and macOS that is applicable for iOS 14.0 or newer and macOS 11 or newer. This is a breaking change as the values default to true and the alert presentation option is no longer applicable on these OS versions as Apple has deprecated it to be replaced by the banner and list presentations. Please ensure that if you target these OS versions that you configure the options appropriately for your application.
+* Updated API documentation related to the iOS/macOS notification presentation options to include links to Apple's documentations to show what they correspond to
 
 # [14.1.1]
 
