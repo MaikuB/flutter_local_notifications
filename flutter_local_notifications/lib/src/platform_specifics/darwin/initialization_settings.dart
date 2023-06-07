@@ -13,6 +13,8 @@ class DarwinInitializationSettings {
     this.defaultPresentAlert = true,
     this.defaultPresentSound = true,
     this.defaultPresentBadge = true,
+    this.defaultPresentBanner = true,
+    this.defaultPresentList = true,
     this.onDidReceiveLocalNotification,
     this.notificationCategories = const <DarwinNotificationCategory>[],
   });
@@ -43,15 +45,23 @@ class DarwinInitializationSettings {
   /// Configures the default setting on if an alert should be displayed when a
   /// notification is triggered while app is in the foreground.
   ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/1649506-alert
+  ///
   /// Default value is true.
   ///
-  /// On iOS, this property is only applicable to iOS 10 or newer.
-  /// On macOS, this property is only applicable to macOS 10.14 or newer.
-
+  /// On iOS, this property is only applicable to iOS 10 or newer but not iOS 14
+  /// or beyond (i.e. iOS versions >= 10 and < 14)
+  /// On macOS, this property is only applicable to macOS 10.14 but not macOS 11
+  /// or beyond (i.e. macOS verisons >= 10.14 and < 14)
+  /// For iOS and macOS versions beyond the aforementioned ranges,
+  /// [defaultPresentBanner] and [defaultPresentList] are referenced as Apple
+  /// deprecated the alert presentation option.
   final bool defaultPresentAlert;
 
   /// Configures the default setting on if a sound should be played when a
-  /// notification is triggered while app is in the foreground by default.
+  /// notification is triggered while app is in the foreground.
+  ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/1649521-sound
   ///
   /// Default value is true.
   ///
@@ -60,13 +70,39 @@ class DarwinInitializationSettings {
   final bool defaultPresentSound;
 
   /// Configures the default setting on if a badge value should be applied when
-  /// a notification is triggered while app is in the foreground by default.
+  /// a notification is triggered while app is in the foreground.
+  ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/1649515-badge
   ///
   /// Default value is true.
   ///
   /// On iOS, this property is only applicable to iOS 10 or newer.
   /// On macOS, this property is only applicable to macOS 10.14 or newer.
   final bool defaultPresentBadge;
+
+  /// Configures the default setting on if the notification should be
+  /// presented as a banner when a notification is triggered while app is in
+  /// the foreground.
+  ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/3564812-banner
+  ///
+  /// Default value is true.
+  ///
+  /// On iOS, this property is only applicable to iOS 14 or newer.
+  /// On macOS, this property is only applicable to macOS 11 or newer.
+  final bool defaultPresentBanner;
+
+  /// Configures the default setting on if the notification should be
+  /// in the notification centre when notification is triggered while app is in
+  /// the foreground.
+  ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unnotificationpresentationoptions/3564813-list
+  ///
+  /// Default value is true.
+  ///
+  /// On iOS, this property is only applicable to iOS 14 or newer.
+  /// On macOS, this property is only applicable to macOS 11 or newer.
+  final bool defaultPresentList;
 
   /// Callback for handling when a notification is triggered while the app is
   /// in the foreground.

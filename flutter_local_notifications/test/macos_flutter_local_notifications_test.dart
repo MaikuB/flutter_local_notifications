@@ -51,6 +51,8 @@ void main() {
           'defaultPresentAlert': true,
           'defaultPresentSound': true,
           'defaultPresentBadge': true,
+          'defaultPresentBanner': true,
+          'defaultPresentList': true,
           'notificationCategories': <Map<String, String>>[],
         })
       ]);
@@ -65,6 +67,8 @@ void main() {
         defaultPresentAlert: false,
         defaultPresentBadge: false,
         defaultPresentSound: false,
+        defaultPresentBanner: false,
+        defaultPresentList: false,
       );
       const InitializationSettings initializationSettings =
           InitializationSettings(macOS: macOSInitializationSettings);
@@ -78,6 +82,8 @@ void main() {
           'defaultPresentAlert': false,
           'defaultPresentSound': false,
           'defaultPresentBadge': false,
+          'defaultPresentBanner': false,
+          'defaultPresentList': false,
           'notificationCategories': <Map<String, String>>[],
         })
       ]);
@@ -114,6 +120,8 @@ void main() {
           presentAlert: true,
           presentBadge: true,
           presentSound: true,
+          presentBanner: true,
+          presentList: true,
           sound: 'sound.mp3',
           badgeNumber: 1,
           threadIdentifier: 'thread',
@@ -149,6 +157,8 @@ void main() {
               'presentAlert': true,
               'presentBadge': true,
               'presentSound': true,
+              'presentBanner': true,
+              'presentList': true,
               'sound': 'sound.mp3',
               'badgeNumber': 1,
               'threadIdentifier': 'thread',
@@ -185,6 +195,8 @@ void main() {
                 presentAlert: true,
                 presentBadge: true,
                 presentSound: true,
+                presentBanner: true,
+                presentList: true,
                 sound: 'sound.mp3',
                 badgeNumber: 1,
                 attachments: <DarwinNotificationAttachment>[
@@ -217,6 +229,8 @@ void main() {
                     'presentAlert': true,
                     'presentBadge': true,
                     'presentSound': true,
+                    'presentBanner': true,
+                    'presentList': true,
                     'subtitle': null,
                     'sound': 'sound.mp3',
                     'badgeNumber': 1,
@@ -255,6 +269,8 @@ void main() {
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
+            presentBanner: true,
+            presentList: true,
             sound: 'sound.mp3',
             badgeNumber: 1,
             attachments: <DarwinNotificationAttachment>[
@@ -290,6 +306,8 @@ void main() {
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
+                'presentBanner': true,
+                'presentList': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,
@@ -323,6 +341,8 @@ void main() {
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
+            presentBanner: true,
+            presentList: true,
             sound: 'sound.mp3',
             badgeNumber: 1,
             attachments: <DarwinNotificationAttachment>[
@@ -362,6 +382,8 @@ void main() {
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
+                'presentBanner': true,
+                'presentList': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,
@@ -397,6 +419,8 @@ void main() {
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
+            presentBanner: true,
+            presentList: true,
             sound: 'sound.mp3',
             badgeNumber: 1,
             attachments: <DarwinNotificationAttachment>[
@@ -437,6 +461,8 @@ void main() {
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
+                'presentBanner': true,
+                'presentList': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,

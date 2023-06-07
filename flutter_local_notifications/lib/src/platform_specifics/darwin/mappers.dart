@@ -42,6 +42,8 @@ extension DarwinInitializationSettingsMapper on DarwinInitializationSettings {
         'defaultPresentAlert': defaultPresentAlert,
         'defaultPresentSound': defaultPresentSound,
         'defaultPresentBadge': defaultPresentBadge,
+        'defaultPresentBanner': defaultPresentBanner,
+        'defaultPresentList': defaultPresentList,
         'notificationCategories': notificationCategories
             .map((e) => e.toMap()) // ignore: always_specify_types
             .toList(),
@@ -71,6 +73,8 @@ extension DarwinNotificationDetailsMapper on DarwinNotificationDetails {
         'presentAlert': presentAlert,
         'presentSound': presentSound,
         'presentBadge': presentBadge,
+        'presentBanner': presentBanner,
+        'presentList': presentList,
         'subtitle': subtitle,
         'sound': sound,
         'badgeNumber': badgeNumber,

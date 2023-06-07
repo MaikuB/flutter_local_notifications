@@ -8,14 +8,18 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let presentAlert = "presentAlert"
         static let presentSound = "presentSound"
         static let presentBadge = "presentBadge"
+        static let presentBanner = "presentBanner"
+        static let presentList = "presentList"
         static let payload = "payload"
-        static let defaultPresentAlert = "defaultPresentAlert"
-        static let defaultPresentSound = "defaultPresentSound"
-        static let defaultPresentBadge = "defaultPresentBadge"
         static let requestAlertPermission = "requestAlertPermission"
         static let requestSoundPermission = "requestSoundPermission"
         static let requestBadgePermission = "requestBadgePermission"
         static let requestCriticalPermission = "requestCriticalPermission"
+        static let defaultPresentAlert = "defaultPresentAlert"
+        static let defaultPresentSound = "defaultPresentSound"
+        static let defaultPresentBadge = "defaultPresentBadge"
+        static let defaultPresentBanner = "defaultPresentBanner"
+        static let defaultPresentList = "defaultPresentList"
         static let alert = "alert"
         static let sound = "sound"
         static let badge = "badge"
@@ -76,11 +80,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     var channel: FlutterMethodChannel
     var initialized = false
-    var defaultPresentAlert = false
-    var defaultPresentSound = false
-    var defaultPresentBadge = false
     var launchNotificationResponseDict: [String: Any?]?
     var launchingAppFromNotification = false
+    let presentationOptionsUserDefaults = "flutter_local_notifications_presentation_options"
 
     // MARK: - FlutterPlugin initialization and registration
 
@@ -112,8 +114,19 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         let presentAlert = notification.request.content.userInfo[MethodCallArguments.presentAlert] as! Bool
         let presentSound = notification.request.content.userInfo[MethodCallArguments.presentSound] as! Bool
         let presentBadge = notification.request.content.userInfo[MethodCallArguments.presentBadge] as! Bool
-        if presentAlert {
-            options.insert(.alert)
+        if #available(macOS 11.0, *) {
+            let presentBanner = notification.request.content.userInfo[MethodCallArguments.presentBanner] as! Bool
+            let presentList = notification.request.content.userInfo[MethodCallArguments.presentList] as! Bool
+            if presentBanner {
+                options.insert(.banner)
+            }
+            if presentList {
+                options.insert(.list)
+            }
+        } else {
+            if presentAlert {
+                options.insert(.alert)
+            }
         }
         if presentSound {
             options.insert(.sound)
@@ -201,9 +214,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     func initialize(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         let arguments = call.arguments as! [String: AnyObject]
-        defaultPresentAlert = arguments[MethodCallArguments.defaultPresentAlert] as! Bool
-        defaultPresentSound = arguments[MethodCallArguments.defaultPresentSound] as! Bool
-        defaultPresentBadge = arguments[MethodCallArguments.defaultPresentBadge] as! Bool
+        let defaultPresentAlert = arguments[MethodCallArguments.defaultPresentAlert] as! Bool
+        let defaultPresentSound = arguments[MethodCallArguments.defaultPresentSound] as! Bool
+        let defaultPresentBadge = arguments[MethodCallArguments.defaultPresentBadge] as! Bool
+        let defaultPresentBanner = arguments[MethodCallArguments.defaultPresentBanner] as! Bool
+        let defaultPresentList = arguments[MethodCallArguments.defaultPresentList] as! Bool
+        UserDefaults.standard.set([MethodCallArguments.presentAlert: defaultPresentAlert, MethodCallArguments.presentBadge: defaultPresentBadge, MethodCallArguments.presentSound: defaultPresentSound, MethodCallArguments.presentBanner: defaultPresentBanner, MethodCallArguments.presentList: defaultPresentList], forKey: presentationOptionsUserDefaults)
         if #available(macOS 10.14, *) {
             let requestedAlertPermission = arguments[MethodCallArguments.requestAlertPermission] as! Bool
             let requestedSoundPermission = arguments[MethodCallArguments.requestSoundPermission] as! Bool
@@ -494,9 +510,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         if let body = arguments[MethodCallArguments.body] as? String {
             content.body = body
         }
-        var presentSound = defaultPresentSound
-        var presentBadge = defaultPresentBadge
-        var presentAlert = defaultPresentAlert
+        let persistedPresentationOptions = UserDefaults.standard.dictionary(forKey: presentationOptionsUserDefaults)!
+        var presentSound = persistedPresentationOptions[MethodCallArguments.presentSound] as! Bool
+        var presentBadge = persistedPresentationOptions[MethodCallArguments.presentBadge] as! Bool
+        var presentAlert = persistedPresentationOptions[MethodCallArguments.presentAlert] as! Bool
+        var presentBanner = persistedPresentationOptions[MethodCallArguments.presentBanner] as! Bool
+        var presentList = persistedPresentationOptions[MethodCallArguments.presentList] as! Bool
         if let platformSpecifics = arguments[MethodCallArguments.platformSpecifics] as? [String: AnyObject] {
             if let sound = platformSpecifics[MethodCallArguments.sound] as? String {
                 content.sound = UNNotificationSound.init(named: UNNotificationSoundName.init(sound))
@@ -512,6 +531,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             }
             if !(platformSpecifics[MethodCallArguments.presentBadge] is NSNull) && platformSpecifics[MethodCallArguments.presentBadge] != nil {
                 presentBadge = platformSpecifics[MethodCallArguments.presentBadge] as! Bool
+            }
+            if !(platformSpecifics[MethodCallArguments.presentBanner] is NSNull) && platformSpecifics[MethodCallArguments.presentBanner] != nil {
+                presentBanner = platformSpecifics[MethodCallArguments.presentBanner] as! Bool
+            }
+            if !(platformSpecifics[MethodCallArguments.presentList] is NSNull) && platformSpecifics[MethodCallArguments.presentList] != nil {
+                presentList = platformSpecifics[MethodCallArguments.presentList] as! Bool
             }
             if let threadIdentifier = platformSpecifics[MethodCallArguments.threadIdentifier] as? String {
                 content.threadIdentifier = threadIdentifier
@@ -546,7 +571,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 }
             }
         }
-        content.userInfo = [MethodCallArguments.payload: arguments[MethodCallArguments.payload] as Any, MethodCallArguments.presentSound: presentSound, MethodCallArguments.presentBadge: presentBadge, MethodCallArguments.presentAlert: presentAlert]
+        content.userInfo = [MethodCallArguments.payload: arguments[MethodCallArguments.payload] as Any, MethodCallArguments.presentSound: presentSound, MethodCallArguments.presentBadge: presentBadge, MethodCallArguments.presentAlert: presentAlert,
+                            MethodCallArguments.presentBanner: presentBanner,
+                            MethodCallArguments.presentList: presentList]
         if presentSound && content.sound == nil {
             content.sound = UNNotificationSound.default
         }
@@ -643,7 +670,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         if let body = arguments[MethodCallArguments.body] as? String {
             notification.informativeText = body
         }
-        var presentSound = defaultPresentSound
+        var presentSound = false
         if let platformSpecifics = arguments[MethodCallArguments.platformSpecifics] as? [String: AnyObject] {
             if let sound = platformSpecifics[MethodCallArguments.sound] as? String {
                 notification.soundName = sound
