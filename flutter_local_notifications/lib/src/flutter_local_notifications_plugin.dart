@@ -373,6 +373,8 @@ class FlutterLocalNotificationsPlugin {
               id, title, body, scheduledDate, notificationDetails.macOS,
               payload: payload,
               matchDateTimeComponents: matchDateTimeComponents);
+    } else {
+      throw UnimplementedError('zonedSchedule() has not been implemented');
     }
   }
 
