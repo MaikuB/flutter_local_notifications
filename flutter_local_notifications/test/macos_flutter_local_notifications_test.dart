@@ -47,7 +47,7 @@ void main() {
           'requestAlertPermission': true,
           'requestSoundPermission': true,
           'requestBadgePermission': true,
-          'requestProvisionalPermission': true,
+          'requestProvisionalPermission': false,
           'requestCriticalPermission': false,
           'defaultPresentAlert': true,
           'defaultPresentSound': true,

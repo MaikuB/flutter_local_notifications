@@ -9,7 +9,7 @@ class DarwinInitializationSettings {
     this.requestAlertPermission = true,
     this.requestSoundPermission = true,
     this.requestBadgePermission = true,
-    this.requestProvisionalPermission = true,
+    this.requestProvisionalPermission = false,
     this.requestCriticalPermission = false,
     this.defaultPresentAlert = true,
     this.defaultPresentSound = true,
