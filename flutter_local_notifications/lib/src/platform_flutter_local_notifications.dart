@@ -533,7 +533,7 @@ class IOSFlutterLocalNotificationsPlugin
   /// Initialisation may also request notification permissions where users will
   /// see a permissions prompt. This may be fine in cases where it's acceptable
   /// to do this when the application runs for the first time. However, if your
-  /// applicationn needs to do this at a later point in time, set the
+  /// application needs to do this at a later point in time, set the
   /// [DarwinInitializationSettings.requestAlertPermission],
   /// [DarwinInitializationSettings.requestBadgePermission] and
   /// [DarwinInitializationSettings.requestSoundPermission] values to false.
@@ -716,7 +716,7 @@ class MacOSFlutterLocalNotificationsPlugin
   /// Initialisation may also request notification permissions where users will
   /// see a permissions prompt. This may be fine in cases where it's acceptable
   /// to do this when the application runs for the first time. However, if your
-  /// applicationn needs to do this at a later point in time, set the
+  /// application needs to do this at a later point in time, set the
   /// [DarwinInitializationSettings.requestAlertPermission],
   /// [DarwinInitializationSettings.requestBadgePermission] and
   /// [DarwinInitializationSettings.requestSoundPermission] values to false.
