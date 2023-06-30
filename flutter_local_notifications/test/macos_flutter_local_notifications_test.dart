@@ -496,6 +496,7 @@ void main() {
           'sound': false,
           'badge': false,
           'alert': false,
+          'provisional': false,
           'critical': false,
         })
       ]);
@@ -508,6 +509,7 @@ void main() {
             sound: true,
             badge: true,
             alert: true,
+            provisional: true,
             critical: true,
           );
       expect(log, <Matcher>[
@@ -515,6 +517,7 @@ void main() {
           'sound': true,
           'badge': true,
           'alert': true,
+          'provisional': true,
           'critical': true,
         })
       ]);
