@@ -506,10 +506,15 @@ static FlutterError *getFlutterError(NSError *error) {
     if (badgePermission) {
       authorizationOptions += UNAuthorizationOptionBadge;
     }
-    if (@available(iOS 12.0, *)) {
-      if(provisionalPermission) {
+    if(provisionalPermission) {
+      if (@available(iOS 12.0, *)) {
         authorizationOptions += UNAuthorizationOptionProvisional;
       }
+      if (@available(macOS 10.14, *)) {
+        authorizationOptions += UNAuthorizationOptionProvisional;
+      }
+    }
+    if (@available(iOS 12.0, *)) {
       if (criticalPermission) {
         authorizationOptions += UNAuthorizationOptionCriticalAlert;
       }
