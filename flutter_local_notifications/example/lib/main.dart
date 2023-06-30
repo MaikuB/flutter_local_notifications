@@ -261,7 +261,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _isAndroidPermissionGranted();
-    _requestPermissions();
+    // _requestPermissions();
     _configureDidReceiveLocalNotificationSubject();
     _configureSelectNotificationSubject();
   }
@@ -315,6 +315,15 @@ class _HomePageState extends State<HomePage> {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+            provisional: true,
+          );
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()
           ?.requestPermissions(
             alert: true,
             badge: true,

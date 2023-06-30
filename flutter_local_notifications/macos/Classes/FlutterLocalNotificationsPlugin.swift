@@ -14,6 +14,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let requestAlertPermission = "requestAlertPermission"
         static let requestSoundPermission = "requestSoundPermission"
         static let requestBadgePermission = "requestBadgePermission"
+        static let requestProvisionalPermission = "requestProvisionalPermission"
         static let requestCriticalPermission = "requestCriticalPermission"
         static let defaultPresentAlert = "defaultPresentAlert"
         static let defaultPresentSound = "defaultPresentSound"
@@ -23,6 +24,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let alert = "alert"
         static let sound = "sound"
         static let badge = "badge"
+        static let provisional = "provisional"
         static let critical = "critical"
         static let notificationLaunchedApp = "notificationLaunchedApp"
         static let id = "id"
@@ -224,6 +226,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let requestedAlertPermission = arguments[MethodCallArguments.requestAlertPermission] as! Bool
             let requestedSoundPermission = arguments[MethodCallArguments.requestSoundPermission] as! Bool
             let requestedBadgePermission = arguments[MethodCallArguments.requestBadgePermission] as! Bool
+            let requestProvisionalPermission = arguments[MethodCallArguments.requestProvisionalPermission] as! Bool
             let requestedCriticalPermission = arguments[MethodCallArguments.requestCriticalPermission] as! Bool
 
             configureNotificationCategories(arguments) {
@@ -231,6 +234,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                     soundPermission: requestedSoundPermission,
                     alertPermission: requestedAlertPermission,
                     badgePermission: requestedBadgePermission,
+                    provisionalPermission: requestProvisionalPermission,
                     criticalPermission: requestedCriticalPermission,
                     result: result
                 )
@@ -311,8 +315,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let requestedAlertPermission = arguments[MethodCallArguments.alert] as! Bool
             let requestedSoundPermission = arguments[MethodCallArguments.sound] as! Bool
             let requestedBadgePermission = arguments[MethodCallArguments.badge] as! Bool
+            let requestedProvisionalPermission = arguments[MethodCallArguments.provisional] as! Bool
             let requestedCriticalPermission = arguments[MethodCallArguments.critical] as! Bool
-            requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, criticalPermission: requestedCriticalPermission, result: result)
+            
+            requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, provisionalPermission: requestedProvisionalPermission, criticalPermission: requestedCriticalPermission, result: result)
         } else {
             result(nil)
         }
@@ -634,8 +640,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
 
     @available(macOS 10.14, *)
-    func requestPermissionsImpl(soundPermission: Bool, alertPermission: Bool, badgePermission: Bool, criticalPermission: Bool, result: @escaping FlutterResult) {
-        if !soundPermission && !alertPermission && !badgePermission && !criticalPermission {
+    func requestPermissionsImpl(soundPermission: Bool, alertPermission: Bool, badgePermission: Bool, provisionalPermission: Bool, criticalPermission: Bool, result: @escaping FlutterResult) {
+        if !soundPermission && !alertPermission && !badgePermission && !provisionalPermission && !criticalPermission {
             result(false)
             return
         }
@@ -648,6 +654,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         }
         if badgePermission {
             options.insert(.badge)
+        }
+        if provisionalPermission {
+            options.insert(.provisional)
         }
         if criticalPermission {
             options.insert(.criticalAlert)
