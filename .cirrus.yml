@@ -1,7 +1,7 @@
 task:
   name: Build Android example app (stable channel)
   container:
-    image: cirrusci/flutter:stable
+    image: ghcr.io/cirruslabs/flutter:stable
   pub_cache:
     folder: ~/.pub-cache
   install_melos_script:
@@ -78,7 +78,7 @@ task:
 task:
   name: Build Linux example app (stable channel)
   container:
-    image: cirrusci/flutter:stable
+    image: ghcr.io/cirruslabs/flutter:stable
   pub_cache:
     folder: ~/.pub-cache
   setup_script:
@@ -112,7 +112,7 @@ task:
 task:
   name: Run all unit tests (Dart)
   container:
-    image: cirrusci/flutter:stable
+    image: ghcr.io/cirruslabs/flutter:stable
   install_melos_script:
     - dart pub global activate melos 2.9.0
   test_script:
@@ -123,7 +123,7 @@ task:
 task:
   name: Run all unit tests (Android)
   container:
-    image: cirrusci/flutter:stable
+    image: ghcr.io/cirruslabs/flutter:stable
   install_melos_script:
     - dart pub global activate melos 2.9.0
   test_script:
@@ -137,7 +137,7 @@ task:
     EMULATOR_API_LEVEL: 28
     ANDROID_ABI: "default;x86"
   container:
-    image: cirrusci/flutter:stable
+    image: ghcr.io/cirruslabs/flutter:stable
     cpu: 4
     memory: 10G
     kvm: true
