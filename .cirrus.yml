@@ -61,7 +61,7 @@ task:
 task:
   name: Build Linux example app (3.0.0)
   container:
-    image: ghcr.io/cirruslabs/flutter:3.0.0
+    image: cirrusci/flutter:3.0.0
   pub_cache:
     folder: ~/.pub-cache
   setup_script:
@@ -95,7 +95,7 @@ task:
 task:
   name: Build Linux example app (3.0.0)
   container:
-    image: ghcr.io/cirruslabs/flutter:3.0.0
+    image: cirrusci/flutter:3.0.0
   pub_cache:
     folder: ~/.pub-cache
   setup_script:
