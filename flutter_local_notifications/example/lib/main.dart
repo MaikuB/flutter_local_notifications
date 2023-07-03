@@ -310,29 +310,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _requestProvisionalPermissions() async {
-    if (Platform.isIOS || Platform.isMacOS) {
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-            provisional: true,
-          );
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-            provisional: true,
-          );
-    }
-  }
-
   void _configureDidReceiveLocalNotificationSubject() {
     didReceiveLocalNotificationStream.stream
         .listen((ReceivedNotification receivedNotification) async {
@@ -845,10 +822,6 @@ class _HomePageState extends State<HomePage> {
                     PaddedElevatedButton(
                       buttonText: 'Request permission',
                       onPressed: _requestPermissions,
-                    ),
-                    PaddedElevatedButton(
-                      buttonText: 'Request provisional permission',
-                      onPressed: _requestProvisionalPermissions,
                     ),
                     PaddedElevatedButton(
                       buttonText: 'Show notification with subtitle',
