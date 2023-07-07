@@ -1,6 +1,10 @@
+# [15.1.0+1]
+
+* Fixed formatting of 15.1.0 changelog entry
+
 # [15.1.0]
 
-# [iOS][macOS] added the ability to request provisional permissions. On iOS, this is only applicable to iOS 12 or newer. On macOS, this property is only applicable to macOS 10.14 or newer. Thanks to the PR from [Tokenyet](https://github.com/MaikuB/flutter_local_notifications/pull/2022)
+* [iOS][macOS] added the ability to request provisional permissions. On iOS, this is only applicable to iOS 12 or newer. On macOS, this property is only applicable to macOS 10.14 or newer. Thanks to the PR from [Tokenyet](https://github.com/MaikuB/flutter_local_notifications/pull/2022)
  
 # [15.0.1]
 
