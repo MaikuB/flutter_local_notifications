@@ -536,7 +536,9 @@ class IOSFlutterLocalNotificationsPlugin
   /// application needs to do this at a later point in time, set the
   /// [DarwinInitializationSettings.requestAlertPermission],
   /// [DarwinInitializationSettings.requestBadgePermission] and
-  /// [DarwinInitializationSettings.requestSoundPermission] values to false.
+  /// [DarwinInitializationSettings.requestSoundPermission] and
+  /// [DarwinInitializationSettings.requestProvisionalPermission] values to
+  /// false.
   /// [requestPermissions] can then be called to request permissions when
   /// needed.
   ///
@@ -576,12 +578,14 @@ class IOSFlutterLocalNotificationsPlugin
     bool sound = false,
     bool alert = false,
     bool badge = false,
+    bool provisional = false,
     bool critical = false,
   }) =>
       _channel.invokeMethod<bool?>('requestPermissions', <String, bool>{
         'sound': sound,
         'alert': alert,
         'badge': badge,
+        'provisional': provisional,
         'critical': critical,
       });
 
@@ -743,12 +747,14 @@ class MacOSFlutterLocalNotificationsPlugin
     bool sound = false,
     bool alert = false,
     bool badge = false,
+    bool provisional = false,
     bool critical = false,
   }) =>
       _channel.invokeMethod<bool>('requestPermissions', <String, bool?>{
         'sound': sound,
         'alert': alert,
         'badge': badge,
+        'provisional': provisional,
         'critical': critical,
       });
 

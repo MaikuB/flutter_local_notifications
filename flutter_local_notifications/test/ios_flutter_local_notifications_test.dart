@@ -49,12 +49,13 @@ void main() {
           'requestAlertPermission': true,
           'requestSoundPermission': true,
           'requestBadgePermission': true,
+          'requestProvisionalPermission': false,
+          'requestCriticalPermission': false,
           'defaultPresentAlert': true,
           'defaultPresentSound': true,
           'defaultPresentBadge': true,
           'defaultPresentBanner': true,
           'defaultPresentList': true,
-          'requestCriticalPermission': false,
           'notificationCategories': <String>[],
         })
       ]);
@@ -107,6 +108,7 @@ void main() {
           'requestAlertPermission': true,
           'requestSoundPermission': true,
           'requestBadgePermission': true,
+          'requestProvisionalPermission': false,
           'requestCriticalPermission': false,
           'defaultPresentAlert': true,
           'defaultPresentSound': true,
@@ -168,6 +170,7 @@ void main() {
         requestAlertPermission: false,
         requestBadgePermission: false,
         requestSoundPermission: false,
+        requestProvisionalPermission: false,
         defaultPresentAlert: false,
         defaultPresentBadge: false,
         defaultPresentSound: false,
@@ -182,6 +185,7 @@ void main() {
           'requestAlertPermission': false,
           'requestSoundPermission': false,
           'requestBadgePermission': false,
+          'requestProvisionalPermission': false,
           'requestCriticalPermission': false,
           'defaultPresentAlert': false,
           'defaultPresentSound': false,
@@ -577,6 +581,7 @@ void main() {
           'sound': false,
           'badge': false,
           'alert': false,
+          'provisional': false,
           'critical': false,
         })
       ]);
@@ -589,6 +594,7 @@ void main() {
             sound: true,
             badge: true,
             alert: true,
+            provisional: true,
             critical: true,
           );
       expect(log, <Matcher>[
@@ -596,6 +602,7 @@ void main() {
           'sound': true,
           'badge': true,
           'alert': true,
+          'provisional': true,
           'critical': true,
         })
       ]);

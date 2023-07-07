@@ -41,6 +41,7 @@ NSString *const DAY = @"day";
 NSString *const REQUEST_SOUND_PERMISSION = @"requestSoundPermission";
 NSString *const REQUEST_ALERT_PERMISSION = @"requestAlertPermission";
 NSString *const REQUEST_BADGE_PERMISSION = @"requestBadgePermission";
+NSString *const REQUEST_PROVISIONAL_PERMISSION = @"requestProvisionalPermission";
 NSString *const REQUEST_CRITICAL_PERMISSION = @"requestCriticalPermission";
 NSString *const DEFAULT_PRESENT_ALERT = @"defaultPresentAlert";
 NSString *const DEFAULT_PRESENT_SOUND = @"defaultPresentSound";
@@ -50,6 +51,7 @@ NSString *const DEFAULT_PRESENT_LIST = @"defaultPresentList";
 NSString *const SOUND_PERMISSION = @"sound";
 NSString *const ALERT_PERMISSION = @"alert";
 NSString *const BADGE_PERMISSION = @"badge";
+NSString *const PROVISIONAL_PERMISSION = @"provisional";
 NSString *const CRITICAL_PERMISSION = @"critical";
 NSString *const CALLBACK_DISPATCHER = @"callbackDispatcher";
 NSString *const ON_NOTIFICATION_CALLBACK_DISPATCHER =
@@ -378,6 +380,7 @@ static FlutterError *getFlutterError(NSError *error) {
   bool requestedSoundPermission = false;
   bool requestedAlertPermission = false;
   bool requestedBadgePermission = false;
+  bool requestedProvisionalPermission = false;
   bool requestedCriticalPermission = false;
   NSMutableDictionary *presentationOptions = [[NSMutableDictionary alloc] init];
   if ([self containsKey:DEFAULT_PRESENT_ALERT forDictionary:arguments]) {
@@ -417,6 +420,9 @@ static FlutterError *getFlutterError(NSError *error) {
   if ([self containsKey:REQUEST_BADGE_PERMISSION forDictionary:arguments]) {
     requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
   }
+  if([self containsKey:REQUEST_PROVISIONAL_PERMISSION forDictionary:arguments]) {
+    requestedProvisionalPermission = [arguments[REQUEST_PROVISIONAL_PERMISSION] boolValue];
+  }
   if ([self containsKey:REQUEST_CRITICAL_PERMISSION forDictionary:arguments]) {
     requestedCriticalPermission =
         [arguments[REQUEST_CRITICAL_PERMISSION] boolValue];
@@ -437,6 +443,7 @@ static FlutterError *getFlutterError(NSError *error) {
                     [self requestPermissionsImpl:requestedSoundPermission
                                  alertPermission:requestedAlertPermission
                                  badgePermission:requestedBadgePermission
+                                 provisionalPermission: requestedProvisionalPermission
                               criticalPermission:requestedCriticalPermission
                                           result:result];
                   }];
@@ -449,6 +456,7 @@ static FlutterError *getFlutterError(NSError *error) {
   bool soundPermission = false;
   bool alertPermission = false;
   bool badgePermission = false;
+  bool provisionalPermission = false;
   bool criticalPermission = false;
   if ([self containsKey:SOUND_PERMISSION forDictionary:arguments]) {
     soundPermission = [arguments[SOUND_PERMISSION] boolValue];
@@ -459,12 +467,16 @@ static FlutterError *getFlutterError(NSError *error) {
   if ([self containsKey:BADGE_PERMISSION forDictionary:arguments]) {
     badgePermission = [arguments[BADGE_PERMISSION] boolValue];
   }
+  if ([self containsKey:PROVISIONAL_PERMISSION forDictionary:arguments]) {
+    provisionalPermission = [arguments[PROVISIONAL_PERMISSION] boolValue];
+  }
   if ([self containsKey:CRITICAL_PERMISSION forDictionary:arguments]) {
     criticalPermission = [arguments[CRITICAL_PERMISSION] boolValue];
   }
   [self requestPermissionsImpl:soundPermission
                alertPermission:alertPermission
                badgePermission:badgePermission
+               provisionalPermission: provisionalPermission
             criticalPermission:criticalPermission
                         result:result];
 }
@@ -472,6 +484,7 @@ static FlutterError *getFlutterError(NSError *error) {
 - (void)requestPermissionsImpl:(bool)soundPermission
                alertPermission:(bool)alertPermission
                badgePermission:(bool)badgePermission
+               provisionalPermission:(bool)provisionalPermission
             criticalPermission:(bool)criticalPermission
                         result:(FlutterResult _Nonnull)result {
   if (!soundPermission && !alertPermission && !badgePermission &&
@@ -494,6 +507,9 @@ static FlutterError *getFlutterError(NSError *error) {
       authorizationOptions += UNAuthorizationOptionBadge;
     }
     if (@available(iOS 12.0, *)) {
+      if(provisionalPermission) {
+        authorizationOptions += UNAuthorizationOptionProvisional;
+      }
       if (criticalPermission) {
         authorizationOptions += UNAuthorizationOptionCriticalAlert;
       }
