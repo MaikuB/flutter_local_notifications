@@ -170,7 +170,6 @@ void main() {
         requestAlertPermission: false,
         requestBadgePermission: false,
         requestSoundPermission: false,
-        requestProvisionalPermission: false,
         defaultPresentAlert: false,
         defaultPresentBadge: false,
         defaultPresentSound: false,
