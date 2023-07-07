@@ -317,7 +317,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let requestedBadgePermission = arguments[MethodCallArguments.badge] as! Bool
             let requestedProvisionalPermission = arguments[MethodCallArguments.provisional] as! Bool
             let requestedCriticalPermission = arguments[MethodCallArguments.critical] as! Bool
-            
+
             requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, provisionalPermission: requestedProvisionalPermission, criticalPermission: requestedCriticalPermission, result: result)
         } else {
             result(nil)
