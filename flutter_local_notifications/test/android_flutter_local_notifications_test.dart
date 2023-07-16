@@ -2507,5 +2507,14 @@ void main() {
             },
           ));
     });
+
+    test('requestExactAlarmsPermission', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .requestExactAlarmsPermission();
+      expect(log.last,
+          isMethodCall('requestExactAlarmsPermission', arguments: null));
+    });
   });
 }
