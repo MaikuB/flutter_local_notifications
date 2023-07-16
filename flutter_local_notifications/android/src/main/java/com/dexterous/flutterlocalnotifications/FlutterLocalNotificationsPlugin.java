@@ -158,7 +158,8 @@ public class FlutterLocalNotificationsPlugin
   private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
-  private static final String REQUEST_NOTIFICATIONS_PERMISSION_METHOD = "requestNotificationsPermission";
+  private static final String REQUEST_NOTIFICATIONS_PERMISSION_METHOD =
+      "requestNotificationsPermission";
   private static final String REQUEST_EXACT_ALARMS_PERMISSION_METHOD =
       "requestExactAlarmsPermission";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
