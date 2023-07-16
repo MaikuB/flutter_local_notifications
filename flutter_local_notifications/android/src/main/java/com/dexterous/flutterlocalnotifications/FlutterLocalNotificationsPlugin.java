@@ -1,5 +1,7 @@
 package com.dexterous.flutterlocalnotifications;
 
+import static android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -34,6 +36,7 @@ import android.util.Log;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
@@ -111,6 +114,7 @@ public class FlutterLocalNotificationsPlugin
     implements MethodCallHandler,
         PluginRegistry.NewIntentListener,
         PluginRegistry.RequestPermissionsResultListener,
+        PluginRegistry.ActivityResultListener,
         FlutterPlugin,
         ActivityAware {
 
@@ -155,6 +159,8 @@ public class FlutterLocalNotificationsPlugin
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
   private static final String REQUEST_PERMISSION_METHOD = "requestPermission";
+  private static final String REQUEST_EXACT_ALARMS_PERMISSION_METHOD =
+      "requestExactAlarmsPermission";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
   private static final String INVALID_ICON_ERROR_CODE = "invalid_icon";
   private static final String INVALID_LARGE_ICON_ERROR_CODE = "invalid_large_icon";
@@ -194,8 +200,12 @@ public class FlutterLocalNotificationsPlugin
   private Context applicationContext;
   private Activity mainActivity;
   static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
+
+  static final int EXACT_ALARM_PERMISSION_REQUEST_CODE = 2;
+
   private PermissionRequestListener callback;
-  private boolean permissionRequestInProgress = false;
+
+  private PermissionRequestProgress permissionRequestProgress = PermissionRequestProgress.None;
 
   static void rescheduleNotifications(Context context) {
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
@@ -1335,6 +1345,8 @@ public class FlutterLocalNotificationsPlugin
   public void onAttachedToActivity(ActivityPluginBinding binding) {
     binding.addOnNewIntentListener(this);
     binding.addRequestPermissionsResultListener(this);
+    binding.addActivityResultListener(this);
+
     mainActivity = binding.getActivity();
     Intent mainActivityIntent = mainActivity.getIntent();
     if (!launchedActivityFromHistory(mainActivityIntent)) {
@@ -1355,6 +1367,7 @@ public class FlutterLocalNotificationsPlugin
   public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
     binding.addOnNewIntentListener(this);
     binding.addRequestPermissionsResultListener(this);
+    binding.addActivityResultListener(this);
     mainActivity = binding.getActivity();
   }
 
@@ -1383,6 +1396,20 @@ public class FlutterLocalNotificationsPlugin
         break;
       case REQUEST_PERMISSION_METHOD:
         requestPermission(
+            new PermissionRequestListener() {
+              @Override
+              public void complete(boolean granted) {
+                result.success(granted);
+              }
+
+              @Override
+              public void fail(String message) {
+                result.error(PERMISSION_REQUEST_IN_PROGRESS_ERROR_CODE, message, null);
+              }
+            });
+        break;
+      case REQUEST_EXACT_ALARMS_PERMISSION_METHOD:
+        requestExactAlarmsPermission(
             new PermissionRequestListener() {
               @Override
               public void complete(boolean granted) {
@@ -1715,7 +1742,7 @@ public class FlutterLocalNotificationsPlugin
   }
 
   public void requestPermission(@NonNull PermissionRequestListener callback) {
-    if (permissionRequestInProgress) {
+    if (permissionRequestProgress != PermissionRequestProgress.None) {
       callback.fail(PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE);
       return;
     }
@@ -1729,12 +1756,12 @@ public class FlutterLocalNotificationsPlugin
               == PackageManager.PERMISSION_GRANTED;
 
       if (!permissionGranted) {
-        permissionRequestInProgress = true;
+        permissionRequestProgress = PermissionRequestProgress.RequestingNotificationPermission;
         ActivityCompat.requestPermissions(
             mainActivity, new String[] {permission}, NOTIFICATION_PERMISSION_REQUEST_CODE);
       } else {
         this.callback.complete(true);
-        permissionRequestInProgress = false;
+        permissionRequestProgress = PermissionRequestProgress.None;
       }
     } else {
       NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mainActivity);
@@ -1742,14 +1769,40 @@ public class FlutterLocalNotificationsPlugin
     }
   }
 
+  public void requestExactAlarmsPermission(@NonNull PermissionRequestListener callback) {
+    if (permissionRequestProgress != PermissionRequestProgress.None) {
+      callback.fail(PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE);
+      return;
+    }
+
+    this.callback = callback;
+
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.S) {
+      AlarmManager alarmManager = getAlarmManager(applicationContext);
+      boolean permissionGranted = alarmManager.canScheduleExactAlarms();
+
+      if (!permissionGranted) {
+        permissionRequestProgress = PermissionRequestProgress.RequestingExactAlarmsPermission;
+        mainActivity.startActivityForResult(
+            new Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM), EXACT_ALARM_PERMISSION_REQUEST_CODE);
+      } else {
+        this.callback.complete(true);
+        permissionRequestProgress = PermissionRequestProgress.None;
+      }
+    } else {
+      this.callback.complete(true);
+    }
+  }
+
   @Override
   public boolean onRequestPermissionsResult(
       int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    if (permissionRequestInProgress && requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+    if (permissionRequestProgress == PermissionRequestProgress.RequestingNotificationPermission
+        && requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
       boolean granted =
           grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
       callback.complete(granted);
-      permissionRequestInProgress = false;
+      permissionRequestProgress = PermissionRequestProgress.None;
       return granted;
     } else {
       return false;
@@ -2059,6 +2112,21 @@ public class FlutterLocalNotificationsPlugin
     }
   }
 
+  @Override
+  public boolean onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    if (requestCode != NOTIFICATION_PERMISSION_REQUEST_CODE
+        && requestCode != EXACT_ALARM_PERMISSION_REQUEST_CODE) {
+      return false;
+    }
+
+    if (requestCode == EXACT_ALARM_PERMISSION_REQUEST_CODE && VERSION.SDK_INT >= VERSION_CODES.S) {
+      AlarmManager alarmManager = getAlarmManager(applicationContext);
+      this.callback.complete(alarmManager.canScheduleExactAlarms());
+    }
+
+    return true;
+  }
+
   private static class PluginException extends RuntimeException {
     public final String code;
 
@@ -2072,5 +2140,11 @@ public class FlutterLocalNotificationsPlugin
     public ExactAlarmPermissionException() {
       super(EXACT_ALARMS_PERMISSION_ERROR_CODE, "Exact alarms are not permitted");
     }
+  }
+
+  enum PermissionRequestProgress {
+    None,
+    RequestingNotificationPermission,
+    RequestingExactAlarmsPermission
   }
 }

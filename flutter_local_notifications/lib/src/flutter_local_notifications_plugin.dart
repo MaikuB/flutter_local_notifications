@@ -327,6 +327,10 @@ class FlutterLocalNotificationsPlugin {
   /// 10:00 and the value of the [matchDateTimeComponents] is
   /// [DateTimeComponents.time], then the next time a notification will
   /// appear is 2020-10-20 10:00.
+  ///
+  /// On Android, this will also require additional setup for the app,
+  /// especially in the app's `AndroidManifest.xml` file. Please see check the
+  /// readme for further details.
   Future<void> zonedSchedule(
     int id,
     String? title,
@@ -395,6 +399,10 @@ class FlutterLocalNotificationsPlugin {
   /// future majorrelease in favour of the [androidScheduledMode] parameter that
   /// provides the same functionality in addition to being able to schedule
   /// notifications with inexact timings.
+  ///
+  /// On Android, this will also require additional setup for the app,
+  /// especially in the app's `AndroidManifest.xml` file. Please see check the
+  /// readme for further details.
   Future<void> periodicallyShow(
     int id,
     String? title,
