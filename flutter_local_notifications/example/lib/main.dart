@@ -304,7 +304,7 @@ class _HomePageState extends State<HomePage> {
               AndroidFlutterLocalNotificationsPlugin>();
 
       final bool? grantedNotificationPermission =
-          await androidImplementation?.requestPermission();
+          await androidImplementation?.requestNotificationsPermission();
       setState(() {
         _notificationsEnabled = grantedNotificationPermission ?? false;
       });

@@ -158,7 +158,8 @@ public class FlutterLocalNotificationsPlugin
   private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
-  private static final String REQUEST_PERMISSION_METHOD = "requestPermission";
+  private static final String REQUEST_NOTIFICATIONS_PERMISSION_METHOD =
+      "requestNotificationsPermission";
   private static final String REQUEST_EXACT_ALARMS_PERMISSION_METHOD =
       "requestExactAlarmsPermission";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
@@ -1394,8 +1395,8 @@ public class FlutterLocalNotificationsPlugin
       case ZONED_SCHEDULE_METHOD:
         zonedSchedule(call, result);
         break;
-      case REQUEST_PERMISSION_METHOD:
-        requestPermission(
+      case REQUEST_NOTIFICATIONS_PERMISSION_METHOD:
+        requestNotificationsPermission(
             new PermissionRequestListener() {
               @Override
               public void complete(boolean granted) {
@@ -1741,7 +1742,7 @@ public class FlutterLocalNotificationsPlugin
     result.success(null);
   }
 
-  public void requestPermission(@NonNull PermissionRequestListener callback) {
+  public void requestNotificationsPermission(@NonNull PermissionRequestListener callback) {
     if (permissionRequestProgress != PermissionRequestProgress.None) {
       callback.fail(PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE);
       return;

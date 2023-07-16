@@ -162,8 +162,8 @@ class AndroidFlutterLocalNotificationsPlugin
   /// See also:
   ///
   ///  * https://developer.android.com/about/versions/13/changes/notification-permission
-  Future<bool?> requestPermission() async =>
-      _channel.invokeMethod<bool>('requestPermission');
+  Future<bool?> requestNotificationsPermission() async =>
+      _channel.invokeMethod<bool>('requestNotificationsPermission');
 
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
