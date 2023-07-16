@@ -1,6 +1,8 @@
 # [16.0.0-dev.1]
 
+* [Android] **Breaking changes** the plugin now only declares the bare minimum in its `AndroidManifest.xml`. This means applications making use of either scheduled notifications, full-screen intent notifications or notification actions will now require changes in the application's own `AndroidManifest.xml` file. Please check the [AndroidManifest.xml setup](https://pub.dev/packages/flutter_local_notifications#androidmanifestxml-setup) section of the readme for more details. The reason this was done was because not all applications will leverage all of the plugin's features. Doing this will now allow applications to only request the appropriate permissions needed for their application. This addresses issue [1687](https://github.com/MaikuB/flutter_local_notifications/issues/1687)
 * [Android] added the ability to request permission to schedule exact alarms via the `requestExactAlarmsPermission()` method that has been added to the `AndroidFlutterLocalNotificationsPlugin` class that represents the Android implementation of the plugin
+
 
 # [15.1.0+1]
 

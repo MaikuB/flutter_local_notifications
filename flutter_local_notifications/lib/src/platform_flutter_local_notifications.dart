@@ -170,6 +170,10 @@ class AndroidFlutterLocalNotificationsPlugin
   ///
   /// The [scheduleMode] parameter defines the precision of the timing for the
   /// notification to be appear.
+  ///
+  /// This will also require additional setup for the app, especially in the
+  /// app's `AndroidManifest.xml` file. Please see check the readme for further
+  /// details.
   Future<void> zonedSchedule(
     int id,
     String? title,
@@ -309,6 +313,15 @@ class AndroidFlutterLocalNotificationsPlugin
     );
   }
 
+  /// Periodically show a notification using the specified interval.
+  ///
+  /// For example, specifying a hourly interval means the first time the
+  /// notification will be an hour after the method has been called and
+  /// then every hour after that.
+  ///
+  /// This will also require additional setup for the app, especially in the
+  /// app's `AndroidManifest.xml` file. Please see check the readme for further
+  /// details.
   @override
   Future<void> periodicallyShow(
     int id,
