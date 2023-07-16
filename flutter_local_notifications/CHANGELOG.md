@@ -1,3 +1,7 @@
+# [16.0.0-dev.1]
+
+* [Android] added the ability to request permission to schedule exact alarms via the `requestExactAlarmsPermission()` method that has been added to the `AndroidFlutterLocalNotificationsPlugin` class that represents the Android implementation of the plugin
+
 # [15.1.0+1]
 
 * Fixed formatting of 15.1.0 changelog entry

@@ -141,6 +141,18 @@ class AndroidFlutterLocalNotificationsPlugin
     return await _channel.invokeMethod('initialize', arguments);
   }
 
+  /// Requests the permission to schedule exact alarms.
+  ///
+  /// Returns whether the permission was granted.
+  ///
+  /// Use this when your application requires the [`SCHEDULE_EXACT_ALARM`](https://developer.android.com/reference/android/Manifest.permission#SCHEDULE_EXACT_ALARM)
+  /// permission and targets Android 13 or higher. The reason for this is that
+  /// applications meeting this criteria that run on Android 14 or higher will
+  /// require the user to grant permission. See [here](https://developer.android.com/about/versions/14/changes/schedule-exact-alarms)
+  /// for official Android documentation.
+  Future<bool?> requestExactAlarmsPermission() async =>
+      _channel.invokeMethod<bool>('requestExactAlarmsPermission');
+
   /// Requests the permission for sending notifications. Returns whether the
   /// permission was granted.
   ///

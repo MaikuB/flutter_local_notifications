@@ -256,6 +256,7 @@ class _HomePageState extends State<HomePage> {
       TextEditingController();
 
   bool _notificationsEnabled = false;
+  bool _exactAlarmsEnabled = false;
 
   @override
   void initState() {
@@ -303,9 +304,17 @@ class _HomePageState extends State<HomePage> {
           flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
 
-      final bool? granted = await androidImplementation?.requestPermission();
+      final bool? grantedNotificationPermission =
+          await androidImplementation?.requestPermission();
       setState(() {
-        _notificationsEnabled = granted ?? false;
+        _notificationsEnabled = grantedNotificationPermission ?? false;
+      });
+
+      final bool? grantedExactAlarmsPermission =
+          await androidImplementation?.requestExactAlarmsPermission();
+
+      setState(() {
+        _exactAlarmsEnabled = grantedExactAlarmsPermission ?? false;
       });
     }
   }
@@ -567,6 +576,7 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text('notifications enabled: $_notificationsEnabled'),
+                    Text('exact alarms enabled: $_exactAlarmsEnabled'),
                     PaddedElevatedButton(
                       buttonText:
                           'Check if notifications are enabled for this app',
