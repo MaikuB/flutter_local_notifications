@@ -172,7 +172,7 @@ Due to some limitations on iOS with how it treats null values in dictionaries, a
 
 ## 🔧 Android Setup
 
-Before proceeding, please make sure you are using the latest version of the plugin. If for some reason, your application still needs to use an older version of the plugin then make use of the release tags to refer back to older versions of readme.
+Before proceeding, please make sure you are using the latest version of the plugin. Note that there have been differences in the setup depending on the version of the plugin used. Please make use of the release tags to refer back to older versions of readme. Applications that schedule notifications should pay close attention to the [AndroidManifest.xml setup](#androidmanifestxml-setup) section of the readme since Android 14 has brought about some behavioural changes.
 
 ### Gradle setup
 
