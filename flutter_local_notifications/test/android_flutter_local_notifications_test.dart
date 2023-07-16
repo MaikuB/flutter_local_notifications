@@ -2508,6 +2508,15 @@ void main() {
           ));
     });
 
+    test('requestNotificationsPermission', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .requestNotificationsPermission();
+      expect(log.last,
+          isMethodCall('requestNotificationsPermission', arguments: null));
+    });
+
     test('requestExactAlarmsPermission', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
