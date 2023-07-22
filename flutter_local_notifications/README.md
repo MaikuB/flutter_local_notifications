@@ -570,7 +570,7 @@ await flutterLocalNotificationsPlugin.initialize(initializationSettings,
     onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
 ```
 
-Initialisation can be done in the `main` function of your application or can be done within the first page shown in your app. Developers can refer to the example app that has code for the initialising within the `main` function. The code above has been simplified for explaining the concepts. Here we have specified the default icon to use for notifications on Android (refer to the *Android setup* section) and designated the function (`onDidReceiveNotificationResponse`) that should fire when a notification has been tapped on via the `onDidReceiveNotificationResponse` callback. Specifying this callback is entirely optional but here it will trigger navigation to another page and display the payload associated with the notification. This callback **cannot** be used to handle when a notification launched an app. Use the `getNotificationAppLaunchDetails` method when the app starts if you need to handle when a notification triggering the launch for an app e.g. change the home route of the app for deep-linking.
+Initialisation can be done in the `main` function of your application or can be done within the first page shown in your app. Developers can refer to the example app that has code for the initialising within the `main` function. The code above has been simplified for explaining the concepts. Here we have specified the default icon to use for notifications on Android (refer to the *Android setup* section) and designated the function (`onDidReceiveNotificationResponse`) that should fire when a notification has been tapped on via the `onDidReceiveNotificationResponse` callback. Specifying this callback is entirely optional but here it will trigger navigation to another page and display the payload associated with the notification. This callback **cannot** be used to handle when a notification launched an app.
 
 Note that all settings are nullable, because we don't want to force developers so specify settings for platforms they don't target. You will get a runtime ArgumentError Exception if you forgot to pass the settings for the platform you target.
 
@@ -588,6 +588,20 @@ void onDidReceiveNotificationResponse(NotificationResponse notificationResponse)
 ```
 
 In the real world, this payload could represent the id of the item you want to display the details of. Once the initialisation is complete, then you can manage the displaying of notifications. Note that this callback is only intended to work when the app is running. For scenarios where your application needs to handle when a notification launched the app refer to [here](#getting-details-on-if-the-app-was-launched-via-a-notification-created-by-this-plugin)
+
+Use the `getNotificationAppLaunchDetails` method when the app starts if you need to handle when a notification triggering the launch for an app e.g. change the home route of the app for deep-linking.
+
+```
+
+final launchDetails = await localNotificationsPlugin.getNotificationAppLaunchDetails();
+if (launchDetails?.didNotificationLaunchApp ?? false) {
+    if (launchDetails.notificationResponse != null) {
+      // TODO: do something with launchDetails.notificationResponse!
+    }
+}
+
+```
+
 
 The `DarwinInitializationSettings` class provides default settings on how the notification be presented when it is triggered and the application is in the foreground on iOS/macOS. There are optional named parameters that can be modified to suit your application's purposes. Here, it is omitted and the default values for these named properties is set such that all presentation options (alert, sound, badge) are enabled. 
 
