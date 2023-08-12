@@ -29,7 +29,7 @@ class DarwinNotificationDetails {
   /// to [DarwinInitializationSettings.defaultPresentAlert].
   ///
   /// On iOS, this property is only applicable to iOS 10 to 14.
-  /// On macOS, this This property is only applicable to macOS 10.14 to 15.
+  /// On macOS, this property is only applicable to macOS 10.14 to 15.
   /// On newer versions of iOS and macOS, [presentList] and [presentBanner]
   final bool? presentAlert;
 
@@ -53,7 +53,7 @@ class DarwinNotificationDetails {
   /// to [DarwinInitializationSettings.defaultPresentBadge].
   ///
   /// On iOS, this property is only applicable to iOS 10 or newer.
-  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
+  /// On macOS, this property is only applicable to macOS 10.14 or newer.
   final bool? presentBadge;
 
   /// Indicates if the notification should be presented as a banner when the
@@ -99,20 +99,20 @@ class DarwinNotificationDetails {
   /// Specifies the list of attachments included with the notification.
   ///
   /// On iOS, this property is only applicable to iOS 10 or newer.
-  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
+  /// On macOS, this property is only applicable to macOS 10.14 or newer.
   final List<DarwinNotificationAttachment>? attachments;
 
   /// Specifies the secondary description.
   ///
   /// On iOS, this property is only applicable to iOS 10 or newer.
-  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
+  /// On macOS, this property is only applicable to macOS 10.14 or newer.
   final String? subtitle;
 
   /// Specifies the thread identifier that can be used to group
   /// notifications together.
   ///
   /// On iOS, this property is only applicable to iOS 10 or newer.
-  /// On macOS, this This property is only applicable to macOS 10.14 or newer.
+  /// On macOS, this property is only applicable to macOS 10.14 or newer.
   final String? threadIdentifier;
 
   /// The identifier of the app-defined category object.
