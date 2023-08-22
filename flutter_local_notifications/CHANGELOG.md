@@ -1,3 +1,8 @@
+# [16.0.0-dev.2]
+
+* Updated example app so that the Android side specifies minimum SDK version version that aligns with what's specified by the Flutter SDK
+* Fixed Dart API docs for `DarwinNotificationDetails` class where `this This` was being repeated. Thanks to the PR from [Adrian Jagielak](https://github.com/adrianjagielak)
+
 # [16.0.0-dev.1]
 
 * [Android] **Breaking change** renamed the `requestPermission()` associated with the `AndroidFlutterLocalNotificationsPlugin` class to `requestNotificationsPermission()`. This was done to be more explicit given another method (`requestExactAlarmsPermission()`) has been added that also requests a permission (more details below).
