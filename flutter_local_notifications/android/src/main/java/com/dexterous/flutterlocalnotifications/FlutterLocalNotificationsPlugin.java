@@ -673,6 +673,14 @@ public class FlutterLocalNotificationsPlugin
         getBroadcastPendingIntent(context, notificationDetails.id, notificationIntent);
     AlarmManager alarmManager = getAlarmManager(context);
 
+    if (notificationDetails.scheduleMode == null) {
+      // This is to account for notifications created in older versions prior to allowWhileIdle
+      // being added so the deserialiser.
+      // Reference to old behaviour:
+      // https://github.com/MaikuB/flutter_local_notifications/blob/4b723e750d1371206520b10a122a444c4bba7475/flutter_local_notifications/android/src/main/java/com/dexterous/flutterlocalnotifications/FlutterLocalNotificationsPlugin.java#L642
+      notificationDetails.scheduleMode = ScheduleMode.inexact;
+    }
+
     if (notificationDetails.scheduleMode.useAllowWhileIdle()) {
       setupAllowWhileIdleAlarm(
           notificationDetails, alarmManager, notificationTriggerTime, pendingIntent);
@@ -1613,7 +1621,7 @@ public class FlutterLocalNotificationsPlugin
     result.success(handle);
   }
 
-  /// Extracts the details of the notifications passed from the Flutter side and also validates that
+  // Extracts the details of the notifications passed from the Flutter side and also validates that
   // some of the details (especially resources) passed are valid
   private NotificationDetails extractNotificationDetails(
       Result result, Map<String, Object> arguments) {
