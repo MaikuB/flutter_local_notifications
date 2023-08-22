@@ -42,7 +42,7 @@ android {
     defaultConfig {
         multiDexEnabled true
         applicationId "com.dexterous.flutter_local_notifications_example"
-        minSdkVersion 16
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
