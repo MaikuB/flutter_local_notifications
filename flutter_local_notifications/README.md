@@ -353,7 +353,7 @@ flutterLocalNotificationsPlugin.initialize(initializationSettings,
 ...
 
 void onDidReceiveLocalNotification(
-    int id, String title, String body, String payload) async {
+    int id, String title?, String? body, String? payload) async {
   // display a dialog with the notification details, tap ok to go to another page
   showDialog(
     context: context,
@@ -455,15 +455,15 @@ final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitiali
     const DarwinNotificationCategory(
         'demoCategory',
         <DarwinNotificationAction>[
-            DarwinNotificationAction('id_1', 'Action 1'),
-            DarwinNotificationAction(
+            DarwinNotificationAction.plain('id_1', 'Action 1'),
+            DarwinNotificationAction.plain(
             'id_2',
             'Action 2',
             options: <DarwinNotificationActionOption>{
                 DarwinNotificationActionOption.destructive,
             },
             ),
-            DarwinNotificationAction(
+            DarwinNotificationAction.plain(
             'id_3',
             'Action 3',
             options: <DarwinNotificationActionOption>{
