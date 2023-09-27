@@ -277,7 +277,8 @@ public class FlutterLocalNotificationsPlugin
             .setContentIntent(pendingIntent)
             .setPriority(notificationDetails.priority)
             .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
-            .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
+            .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce))
+            .setSilent(BooleanUtils.getValue(!notificationDetails.playSound));
 
     if (notificationDetails.actions != null) {
       // Space out request codes by 16 so even with 16 actions they won't clash
