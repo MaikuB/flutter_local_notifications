@@ -1,3 +1,8 @@
+# [16.0.0-dev.3]
+
+* [Android] fixed issue [2106](https://github.com/MaikuB/flutter_local_notifications/issues/2106) where calling `getNotificationChannels()` reports the wrong importance level or result in an exception if the importance level was unspecified
+* Fixed example code shown at the "Handling notifications whilst the app is in the foreground" section of the readme. Thanks to the PR from [Tinh Huynh](https://github.com/TinhHuynh)
+
 # [16.0.0-dev.2]
 
 * [Android] fixed issue an issue similar to [2033](https://github.com/MaikuB/flutter_local_notifications/issues/2033) that was addressed in 15.0.1 where notifications on scheduled using older version of the plugin via the `periodicallyShow()` method would fail to have the next subsequent ones scheduled. This issue started occuring in 14.0 where support for inexact notifications was added using the `ScheduleMode` enum that was added and resulted in the deprecation of `androidAllowWhileIdle`. A mechanism was added to help "migrate" old notifications that had `androidAllowWhileIdle` specified but didn't account for how there are recurring notifications that were scheduled using older versions of the plugin prior to `androidAllowWhile` being added
