@@ -1,3 +1,7 @@
+# [15.1.2]
+
+* [Android] fixed issue [2106](https://github.com/MaikuB/flutter_local_notifications/issues/2106) where calling `getNotificationChannels()` reports the wrong importance level or result in an exception if the importance level was unspecified. This hotfix has been taken from the 16.0.0-dev.3 prerelease and included in the 14.1.4 hotfix release
+
 # [15.1.1]
 
 * [Android] fixed issue an issue similar to [2033](https://github.com/MaikuB/flutter_local_notifications/issues/2033) that was addressed in 15.0.1 where notifications on scheduled using older version of the plugin via the `periodicallyShow()` method would fail to have the next subsequent ones scheduled. This issue started occuring in 14.0 where support for inexact notifications was added using the `ScheduleMode` enum that was added and resulted in the deprecation of `androidAllowWhileIdle`. A mechanism was added to help "migrate" old notifications that had `androidAllowWhileIdle` specified but didn't account for how there are recurring notifications that were scheduled using older versions of the plugin prior to `androidAllowWhile` being added. This hotfix has been taken from the 16.0.0-dev.2 prerelease and has also been applied to the 14.1.3 hotfix release as well
@@ -24,6 +28,24 @@
 * [Android] updated tags used when writing error logs. For corrupt scheduled notifications and error is logged the tag is now `ScheduledNotifReceiver` instead of `ScheduledNotifReceiver`. When logging that exact alarm permissions have been revoked the the tag is now `FLTLocalNotifPlugin` instead of `notification`
 * Updated API documentation related to the iOS/macOS notification presentation options to include links to Apple's documentations to show what they correspond to
 * Fixed typo in API docs for `initialize()` method
+
+# [14.1.4]
+
+* [Android] fixed issue [2106](https://github.com/MaikuB/flutter_local_notifications/issues/2106) where calling `getNotificationChannels()` reports the wrong importance level or result in an exception if the importance level was unspecified. This hotfix has been taken from the 16.0.0-dev.3 prerelease
+
+# [14.1.3+1]
+
+* Removed duplicate changelog entry on example app being updated
+
+
+# [14.1.3]
+
+* [Android] fixed issue an issue similar to [2033](https://github.com/MaikuB/flutter_local_notifications/issues/2033) that was addressed in 15.0.1 where notifications on scheduled using older version of the plugin via the `periodicallyShow()` method would fail to have the next subsequent ones scheduled. This issue started occuring in 14.0 where support for inexact notifications was added using the `ScheduleMode` enum that was added and resulted in the deprecation of `androidAllowWhileIdle`. A mechanism was added to help "migrate" old notifications that had `androidAllowWhileIdle` specified but didn't account for how there are recurring notifications that were scheduled using older versions of the plugin prior to `androidAllowWhile` being added. This hotfix has been taken from the 16.0.0-dev.2 prerelease
+* Updated example app so that the Android side specifies minimum SDK version version that aligns with what's specified by the Flutter SDK. This has been taken from the 16.0.0-dev.2 prerelease to allow the example app to build using recent versions where the minimum Android SDK version has changed from 16 to 19
+
+# [14.1.2]
+
+* [Android] Fixed issue [2033](https://github.com/MaikuB/flutter_local_notifications/issues/2033) where notifications on scheduled using older version of the plugin would fail to have the next subsequent ones scheduled. This issue started occuring in 14.0 where support for inexact notifications was added using the `ScheduleMode` enum that was added and resulted in the deprecation of `androidAllowWhileIdle`. A mechanism was added to help "migrate" old notifications that had `androidAllowWhileIdle` specified but didn't account for how there are recurring notifications that were scheduled using older versions of the plugin prior to `androidAllowWhile` being added. This fix has been taken from the 15.0.1 release as a hotfix
 
 # [14.1.1]
 
