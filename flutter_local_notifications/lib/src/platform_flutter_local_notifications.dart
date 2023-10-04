@@ -483,7 +483,9 @@ class AndroidFlutterLocalNotificationsPlugin
               description: a['description'],
               groupId: a['groupId'],
               showBadge: a['showBadge'],
-              importance: Importance.values[a['importance']],
+              importance: Importance.values
+                  // ignore: always_specify_types
+                  .firstWhere((i) => i.value == a['importance']),
               playSound: a['playSound'],
               sound: _getNotificationChannelSound(a),
               enableLights: a['enableLights'],
