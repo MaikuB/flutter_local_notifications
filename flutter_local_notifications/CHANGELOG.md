@@ -1,6 +1,7 @@
 # [16.0.0-dev.3]
 
 * [Android] fixed issue [2106](https://github.com/MaikuB/flutter_local_notifications/issues/2106) where calling `getNotificationChannels()` reports the wrong importance level or result in an exception if the importance level was unspecified
+* Fixed example code shown at the "Handling notifications whilst the app is in the foreground" section of the readme. Thanks to the PR from [Tinh Huynh](https://github.com/TinhHuynh)
 
 # [16.0.0-dev.2]
 
