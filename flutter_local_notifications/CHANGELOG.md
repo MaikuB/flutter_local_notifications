@@ -1,3 +1,7 @@
+# [14.1.4]
+
+* [Android] fixed issue [2106](https://github.com/MaikuB/flutter_local_notifications/issues/2106) where calling `getNotificationChannels()` reports the wrong importance level or result in an exception if the importance level was unspecified. This hotfix has been taken from the 16.0.0-dev.3 prerelease
+
 # [14.1.3+1]
 
 * Removed duplicate changelog entry on example app being updated
