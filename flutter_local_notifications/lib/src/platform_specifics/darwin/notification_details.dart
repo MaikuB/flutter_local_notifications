@@ -41,6 +41,15 @@ class DarwinNotificationDetails {
   /// When this is set to `null`, it will use the default setting given
   /// to [DarwinInitializationSettings.defaultPresentSound].
   ///
+  /// If this is set to false to indicate that the notification shouldn't play
+  /// a sound in the foreground then note that for consistency, the notification
+  /// won't play a sound when the app is in the background. If the intention in
+  /// this scenario is to have the app also play the default notification sound
+  /// whilst the app is in the background as well, then the [sound] should be
+  /// set to an arbitrary value (e.g. empty string) that doesn't match a custom
+  /// sound file. This way the platform fails to find a custom sound file to
+  /// fallback to the default notification sound.
+  ///
   /// This property is only applicable to iOS 10 or newer.
   final bool? presentSound;
 
