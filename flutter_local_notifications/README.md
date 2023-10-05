@@ -268,7 +268,7 @@ From Android 13 (API level 33) onwards, apps now have the ability to display a p
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
 flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-    AndroidFlutterLocalNotificationsPlugin>().requestPermission();
+    AndroidFlutterLocalNotificationsPlugin>().requestNotificationsPermission();
 ```
 
 ### Custom notification icons and sounds
