@@ -452,9 +452,9 @@ On iOS/macOS, notification actions need to be configured before the app is start
 final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
     // ...
     notificationCategories: [
-    const DarwinNotificationCategory(
+      DarwinNotificationCategory(
         'demoCategory',
-        <DarwinNotificationAction>[
+        actions: <DarwinNotificationAction>[
             DarwinNotificationAction.plain('id_1', 'Action 1'),
             DarwinNotificationAction.plain(
             'id_2',
