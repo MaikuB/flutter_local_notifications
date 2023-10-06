@@ -2128,8 +2128,8 @@ public class FlutterLocalNotificationsPlugin
       return false;
     }
 
-    if (permissionRequestProgress == PermissionRequestProgress.RequestingExactAlarmsPermission 
-        && requestCode == EXACT_ALARM_PERMISSION_REQUEST_CODE 
+    if (permissionRequestProgress == PermissionRequestProgress.RequestingExactAlarmsPermission
+        && requestCode == EXACT_ALARM_PERMISSION_REQUEST_CODE
         && VERSION.SDK_INT >= VERSION_CODES.S) {
       AlarmManager alarmManager = getAlarmManager(applicationContext);
       this.callback.complete(alarmManager.canScheduleExactAlarms());
