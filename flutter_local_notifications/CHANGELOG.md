@@ -1,3 +1,9 @@
+# [16.1.0]
+
+* [Android] calling the `requestExactAlarmsPermission()` method will now go directly to the alarm settings screen specific to the app instead the general alarm settings screen where users needed to pick the app they wanted to change the settings for. Thanks to the PR from [ShunMc](https://github.com/ShunMc)
+* [Android] fixed conflict with other plugins when it comes to handling permission requests. Thanks to the PR from [Patrick](https://github.com/Eimji)
+* Fixed grammar issue and iOS/macOS specific code snippet in the notification actions section of the readme. Thanks to the PRs from [Md. Touhidul Islam](https://github.com/udoy-touhid)
+
 # [16.0.0+1]
 
 * Updated code snippet in readme to reflect changes done on renaming the `requestPermission()` method associated with the `AndroidFlutterLocalNotificationsPlugin` class to `requestNotificationsPermission()`. Thanks to PR from [Róger Ninow](https://github.com/rogerninow)
