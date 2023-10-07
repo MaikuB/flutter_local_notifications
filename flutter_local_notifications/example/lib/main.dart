@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 // ignore: unnecessary_import
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,7 +13,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:http/http.dart' as http;
-import 'package:image/image.dart' as image;
 import 'package:path_provider/path_provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -52,10 +52,10 @@ class ReceivedNotification {
 String? selectedNotificationPayload;
 
 /// A notification action which triggers a url launch event
-const String urlLaunchActionId = 'id_1';
+const String urlLaunchActionId = 'id1';
 
 /// A notification action which triggers a App navigation event
-const String navigationActionId = 'id_3';
+const String navigationActionId = 'id3';
 
 /// Defines a iOS/MacOS notification category for text input actions.
 const String darwinNotificationCategoryText = 'textCategory';
@@ -1153,8 +1153,12 @@ class _HomePageState extends State<HomePage> {
       linux: linuxNotificationDetails,
     );
     await flutterLocalNotificationsPlugin.show(
-        id++, 'plain title', 'plain body', notificationDetails,
-        payload: 'item z');
+      id++,
+      'plain title',
+      'plain body',
+      notificationDetails,
+      payload: 'item z',
+    );
   }
 
   Future<void> _showNotificationWithTextAction() async {
@@ -2831,17 +2835,20 @@ Future<void> _showLinuxNotificationWithByteDataIcon() async {
   final ByteData assetIcon = await rootBundle.load(
     'icons/app_icon_density.png',
   );
-  final image.Image? iconData = image.decodePng(
-    assetIcon.buffer.asUint8List().toList(),
-  );
-  final Uint8List iconBytes = iconData!.getBytes();
+
+  final Uint8List iconBytes = assetIcon.buffer.asUint8List();
+  final ImmutableBuffer buffer = await ImmutableBuffer.fromUint8List(iconBytes);
+  final ImageDescriptor descriptor = await ImageDescriptor.encoded(buffer);
+  final int width = descriptor.width;
+  final int height = descriptor.height;
+
   final LinuxNotificationDetails linuxPlatformChannelSpecifics =
       LinuxNotificationDetails(
     icon: ByteDataLinuxIcon(
       LinuxRawIconData(
         data: iconBytes,
-        width: iconData.width,
-        height: iconData.height,
+        width: width,
+        height: height,
         channels: 4, // The icon has an alpha channel
         hasAlpha: true,
       ),

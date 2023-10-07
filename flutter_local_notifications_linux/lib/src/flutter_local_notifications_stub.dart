@@ -49,12 +49,4 @@ class LinuxFlutterLocalNotificationsPlugin
     assert(false);
     throw UnimplementedError();
   }
-
-  /// Errors on attempted calling of the stub. It exists only to satisfy
-  /// compile-time dependencies, and should never actually be called.
-  @override
-  Future<Map<int, int>> getSystemIdMap() async {
-    assert(false);
-    throw UnimplementedError();
-  }
 }
