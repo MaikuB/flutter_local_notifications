@@ -100,7 +100,7 @@ class FlutterLocalNotificationsPlugin {
   /// notification When running in environment that is neither Android and
   /// iOS (e.g. when running tests), this will be a no-op and return true.
   ///
-  /// Note that on iOS, initialisation may also request notification
+  /// Note that on iOS, initialization may also request notification
   /// permissions where users will see a permissions prompt. This may be fine
   /// in cases where it's acceptable to do this when the application runs for
   /// the first time. However, if your application needs to do this at a later

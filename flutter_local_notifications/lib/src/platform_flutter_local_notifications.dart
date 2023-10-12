@@ -557,7 +557,7 @@ class IOSFlutterLocalNotificationsPlugin
   ///
   /// Call this method on application before using the plugin further.
   ///
-  /// Initialisation may also request notification permissions where users will
+  /// Initialization may also request notification permissions where users will
   /// see a permissions prompt. This may be fine in cases where it's acceptable
   /// to do this when the application runs for the first time. However, if your
   /// application needs to do this at a later point in time, set the
@@ -744,7 +744,7 @@ class MacOSFlutterLocalNotificationsPlugin
   /// Call this method on application before using the plugin further.
   /// This should only be done once.
   ///
-  /// Initialisation may also request notification permissions where users will
+  /// Initialization may also request notification permissions where users will
   /// see a permissions prompt. This may be fine in cases where it's acceptable
   /// to do this when the application runs for the first time. However, if your
   /// application needs to do this at a later point in time, set the

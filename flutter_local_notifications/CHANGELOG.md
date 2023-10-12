@@ -156,7 +156,7 @@
 
 # [12.0.2]
 
-* [Android] changed callback lookup for notification actions to take place after Flutter engine to ensure callback cache has been initialised to find the callback. This is a follow-up to changes done in 12.0.1 in trying to address issue [1721](https://github.com/MaikuB/flutter_local_notifications/issues/1721)
+* [Android] changed callback lookup for notification actions to take place after Flutter engine to ensure callback cache has been initialized to find the callback. This is a follow-up to changes done in 12.0.1 in trying to address issue [1721](https://github.com/MaikuB/flutter_local_notifications/issues/1721)
 * [Android] updated plugin to clean up resources after it is detached from Flutter engine. Thanks to PR from [Simon Ser](https://github.com/emersion)
 
 # [12.0.1+1]
@@ -177,7 +177,7 @@
 
 * [Android] fixed crash when using notification actions with a foreground service. Thanks to the PR from [Arnold Laishram](https://github.com/arnoldlaishram)
 * [Android] Suppressed deprecation warning on calling the [`getParcelableExtra`](https://developer.android.com/reference/android/content/Intent#getParcelableExtra(java.lang.String)) Intent API
-* Fixed typo in readme around Darwin (iOS/macOS) initialisation settings
+* Fixed typo in readme around Darwin (iOS/macOS) initialization settings
 * Added a link to an issue with using Flutter apps with desugaring enabled where crashes could occur on foldable Android devices. Link to this is https://github.com/flutter/flutter/issues/110658 so those experience the problem can follow the issue and try out the solutions there as this isn't specific to the plugin
 * Replaced usage of rxDart in example app use `StreamController` instead to minimise use of dependencies and removed unused `shared_preferences` dependency
 
@@ -277,7 +277,7 @@
 
 # [9.4.1]
 
-* Calling `initialize()` on a platform with passing the appropriate initialisation settings for it will now throw an `ArgumentError`. Whilst this may be technically a breaking change, it's been done as a minor change as the call was already throwing an unhandled exception in these scenarios. This change is to help provide more information on why it fails. Documentation has also been updated to provide more on information on this as the intialisation settings for each platform are nullable so developers aren't forced to provide settings for platforms they don't target. Thanks to the PR from [Zlati Pehlivanov](https://github.com/talamaska)
+* Calling `initialize()` on a platform with passing the appropriate initialization settings for it will now throw an `ArgumentError`. Whilst this may be technically a breaking change, it's been done as a minor change as the call was already throwing an unhandled exception in these scenarios. This change is to help provide more information on why it fails. Documentation has also been updated to provide more on information on this as the intialisation settings for each platform are nullable so developers aren't forced to provide settings for platforms they don't target. Thanks to the PR from [Zlati Pehlivanov](https://github.com/talamaska)
 * Updated docs to fix typos, adjust heading levels and use the term ["daylight saving time"](https://en.wikipedia.org/wiki/Daylight_saving_time) instead of "daylight savings". Thanks to the PR from [Ross Llewallyn](https://github.com/EnduringBeta)
 
 # [9.4.0]
@@ -302,7 +302,7 @@
 # [9.2.0]
 
 * [Android] Added `areNotificationsEnabled()` method to `AndroidFlutterLocalNotificationsPlugin`. This allows querying if notifications are enabled for the app calling the method. Thanks to the PR from [Konstantin Pelz](https://github.com/komape)
-* [Linux] Fix `initialize()` returning null all the time instead of returning an appropriate boolean value to indicate if plugin has been initialised 
+* [Linux] Fix `initialize()` returning null all the time instead of returning an appropriate boolean value to indicate if plugin has been initialized 
 
 # [9.1.5]
 
@@ -433,7 +433,7 @@
 
 # [5.0.0+1]
 
-* Add link to explanation of the `onDidReceiveLocalNotification` callback to the initialisation section of the readme
+* Add link to explanation of the `onDidReceiveLocalNotification` callback to the initialization section of the readme
 * Updated testing section to clarify behaviour on platforms that aren't supported
 * Updated `timezone` dependency
 
@@ -512,7 +512,7 @@
 # [3.0.1+1]
 
 * Updated API docs for the `UriAndroidNotificationSound` class to further clarify that developers may need to write code that makes use of platform channels
-* [Android] fix issue [881](https://github.com/MaikuB/flutter_local_notifications/issues/881) where recurring notifications may fail to schedule the next occurrence on older Android versions as the ThreeTen Android Backport library hadn't been initialised yet
+* [Android] fix issue [881](https://github.com/MaikuB/flutter_local_notifications/issues/881) where recurring notifications may fail to schedule the next occurrence on older Android versions as the ThreeTen Android Backport library hadn't been initialized yet
 * [Android] switched implementation of `createNotificationChannelGroup` and `deleteNotificationChannelGroup` methods to use the `NotificationManager` APIs instead of the `NotificationManagerCompat` APIs. If you had issues with 3.0.1 then this should fix the issue (e.g. as reported in issue [871](https://github.com/MaikuB/flutter_local_notifications/issues/871)) as the the APIs that were previously being called would've required apps to use more recent versions of the AndroidX libraries
 
 # [3.0.1]
@@ -544,7 +544,7 @@
 
 # [2.0.0+1]
 
-* Fixed code snippet in readme around initialisation and configuring the `onDidReceiveLocalNotification` callback specific to iOS. Thanks to the PR from [Mike Truso](https://github.com/mftruso)
+* Fixed code snippet in readme around initialization and configuring the `onDidReceiveLocalNotification` callback specific to iOS. Thanks to the PR from [Mike Truso](https://github.com/mftruso)
 
 # [2.0.0]
 
@@ -811,7 +811,7 @@ Please note that there are a number of breaking changes in this release to impro
 
 # [1.1.7]
 
-* [iOS] Added `requestPermissions()` method to `IOSFlutterLocalNotificationsPlugin` class. This can be used to request notification permissions separately from plugin initialisation. To facilitate this the `IOSFlutterLocalNotificationsPlugin` and `AndroidFlutterLocalNotificationsPlugin` now expose a static `instance` property that can be used obtain the platform-specific implementation of the plugin so that platform-specific methods can be used. Thanks to the PR from [Dariusz Łuksza](https://github.com/dluksza)
+* [iOS] Added `requestPermissions()` method to `IOSFlutterLocalNotificationsPlugin` class. This can be used to request notification permissions separately from plugin initialization. To facilitate this the `IOSFlutterLocalNotificationsPlugin` and `AndroidFlutterLocalNotificationsPlugin` now expose a static `instance` property that can be used obtain the platform-specific implementation of the plugin so that platform-specific methods can be used. Thanks to the PR from [Dariusz Łuksza](https://github.com/dluksza)
 * Updated documentation to clarify that `getNotificationAppLaunchDetails()` is intended to be used more on if a notification from this plugin triggered launch an application
 * Updated API docs for consistency and to better follow the guidelines on effective Dart documentation
 
@@ -900,11 +900,11 @@ Please note that there are a number of breaking changes in this release to impro
 
 # [0.8.4+3]
 
-* Update example to fix issue [372](https://github.com/MaikuB/flutter_local_notifications/issues/372) around app not firing `onSelectNotification` having switched to using streams and initialising the app in the `main` function.
+* Update example to fix issue [372](https://github.com/MaikuB/flutter_local_notifications/issues/372) around app not firing `onSelectNotification` having switched to using streams and initializing the app in the `main` function.
 
 # [0.8.4+2]
 
-* Add note to readme that plugin initialisation be done as part of showing the first page of the app.
+* Add note to readme that plugin initialization be done as part of showing the first page of the app.
 
 # [0.8.4+1]
 
@@ -1196,7 +1196,7 @@ Please note that there are a number of breaking changes in this release to impro
 ## [0.0.9]
 
 * [iOS] Enable ability to customise the sound for notifications (**Important** requires testing on older iOS versions < 10)
-* [iOS] Can now specify default presentation options (**Breaking change** named parameters for iOS initialisation have changed) that can also be overridden at the notification level).
+* [iOS] Can now specify default presentation options (**Breaking change** named parameters for iOS initialization have changed) that can also be overridden at the notification level).
 * [iOS] Fixes for reading in specified options
 
 ## [0.0.8]
@@ -1209,7 +1209,7 @@ Please note that there are a number of breaking changes in this release to impro
 
 ## [0.0.6]
 
-* [iOS] Add ability to customise the presentation options when a notification is triggered while the app is in the foreground for notifications presented using the User Notifications Framework (iOS 10+). IMPORTANT: the named parameters for iOS initialisation settings constructor have had to change to differentiate between permission options and presentation options
+* [iOS] Add ability to customise the presentation options when a notification is triggered while the app is in the foreground for notifications presented using the User Notifications Framework (iOS 10+). IMPORTANT: the named parameters for iOS initialization settings constructor have had to change to differentiate between permission options and presentation options
 
 ## [0.0.5]
 

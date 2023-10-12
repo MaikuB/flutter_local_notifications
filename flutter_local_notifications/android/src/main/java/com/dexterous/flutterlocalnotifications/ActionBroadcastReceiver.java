@@ -67,7 +67,7 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
 
   private void startEngine(Context context) {
     if (engine != null) {
-      Log.e(TAG, "Engine is already initialised");
+      Log.e(TAG, "Engine is already initialized");
       return;
     }
 

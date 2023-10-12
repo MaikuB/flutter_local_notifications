@@ -27,10 +27,10 @@ void main() {
     setUpAll(() async {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     });
-    testWidgets('can initialise', (WidgetTester tester) async {
-      final bool? initialised = await flutterLocalNotificationsPlugin
+    testWidgets('can initialize', (WidgetTester tester) async {
+      final bool? initialized = await flutterLocalNotificationsPlugin
           .initialize(initializationSettings);
-      expect(initialised, isTrue);
+      expect(initialized, isTrue);
     });
 
     testWidgets(

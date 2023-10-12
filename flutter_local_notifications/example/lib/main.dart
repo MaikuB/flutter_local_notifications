@@ -23,7 +23,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 /// Streams are created so that app can respond to notification-related events
-/// since the plugin is initialised in the `main` function
+/// since the plugin is initialized in the `main` function
 final StreamController<ReceivedNotification> didReceiveLocalNotificationStream =
     StreamController<ReceivedNotification>.broadcast();
 
