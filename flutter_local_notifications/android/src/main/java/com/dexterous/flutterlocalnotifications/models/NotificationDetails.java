@@ -34,9 +34,9 @@ public class NotificationDetails implements Serializable {
   private static final String PLATFORM_SPECIFICS = "platformSpecifics";
   private static final String AUTO_CANCEL = "autoCancel";
   private static final String ONGOING = "ongoing";
+  private static final String SILENT = "silent";
   private static final String STYLE = "style";
   private static final String ICON = "icon";
-  private static final String SILENT = "silent";
   private static final String PRIORITY = "priority";
   private static final String PLAY_SOUND = "playSound";
   private static final String SOUND = "sound";
