@@ -614,6 +614,31 @@ static FlutterError *getFlutterError(NSError *error) {
             result(@(isEnabled));
         }];
     } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        UIUserNotificationSettings *settings = UIApplication.sharedApplication.currentUserNotificationSettings;
+        
+        if(settings == nil) {
+            result(@NO);
+            return;
+        }
+        
+        UIUserNotificationType types = settings.types;
+        
+        BOOL isEnabled = types != UIUserNotificationTypeNone;
+        
+        if(soundPermission) {
+            isEnabled = isEnabled && (types & UIUserNotificationTypeSound);
+        }
+        if(alertPermission) {
+            isEnabled = isEnabled && (types & UIUserNotificationTypeAlert);
+        }
+        if(badgePermission) {
+            isEnabled = isEnabled && (types & UIUserNotificationTypeBadge);
+        }
+        
+        result(@(isEnabled));
+#pragma clang diagnostic pop
     }
 }
 
