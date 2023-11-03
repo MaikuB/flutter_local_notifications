@@ -821,6 +821,10 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     PaddedElevatedButton(
+                      buttonText: 'Check permissions',
+                      onPressed: _checkNotificationsOnCupertino,
+                    ),
+                    PaddedElevatedButton(
                       buttonText: 'Request permission',
                       onPressed: _requestPermissions,
                     ),
@@ -2476,6 +2480,34 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ));
+  }
+
+  Future<void> _checkNotificationsOnCupertino() async {
+    final bool? areEnabled = await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.checkPermissions(
+          sound: true,
+          alert: true,
+          badge: true,
+        );
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          content: Text(areEnabled == null
+              ? 'ERROR: received null'
+              : (areEnabled
+              ? 'Notifications are enabled'
+              : 'Notifications are NOT enabled')),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ));
   }
 
   Future<void> _deleteNotificationChannel() async {
