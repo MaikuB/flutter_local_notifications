@@ -606,6 +606,45 @@ void main() {
         })
       ]);
     });
+
+    test('checkPermissions with default settings', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()!
+          .checkPermissions();
+      expect(log, <Matcher>[
+        isMethodCall('checkPermissions', arguments: <String, Object?>{
+          'sound': false,
+          'badge': false,
+          'alert': false,
+          'provisional': false,
+          'critical': false,
+        })
+      ]);
+    });
+
+    test('checkPermissions with all settings requested', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()!
+          .checkPermissions(
+        sound: true,
+        badge: true,
+        alert: true,
+        provisional: true,
+        critical: true,
+      );
+      expect(log, <Matcher>[
+        isMethodCall('checkPermissions', arguments: <String, Object>{
+          'sound': true,
+          'badge': true,
+          'alert': true,
+          'provisional': true,
+          'critical': true,
+        })
+      ]);
+    });
+
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
       expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);
