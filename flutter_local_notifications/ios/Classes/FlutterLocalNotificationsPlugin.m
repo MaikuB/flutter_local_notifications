@@ -592,6 +592,12 @@ static FlutterError *getFlutterError(NSError *error) {
         [center getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
             BOOL isEnabled = settings.authorizationStatus == UNAuthorizationStatusAuthorized;
             
+            if(@available(iOS 12.0, *)) {
+                if(provisionalPermission) {
+                    isEnabled = settings.authorizationStatus == UNAuthorizationStatusProvisional;
+                }
+            }
+            
             if(soundPermission) {
                 isEnabled = isEnabled && settings.soundSetting == UNNotificationSettingEnabled;
             }
@@ -602,15 +608,10 @@ static FlutterError *getFlutterError(NSError *error) {
                 isEnabled = isEnabled && settings.badgeSetting == UNNotificationSettingEnabled;
             }
             if(@available(iOS 12.0, *)) {
-                if(provisionalPermission) {
-                    isEnabled = isEnabled && settings.authorizationStatus == UNAuthorizationOptionProvisional;
-                }
-                
                 if(criticalPermission) {
                     isEnabled = isEnabled && settings.criticalAlertSetting == UNNotificationSettingEnabled;
                 }
             }
-            
             result(@(isEnabled));
         }];
     } else {
