@@ -35,6 +35,7 @@ NSString *const CALLBACK_CHANNEL =
 NSString *const ON_NOTIFICATION_METHOD = @"onNotification";
 NSString *const DID_RECEIVE_LOCAL_NOTIFICATION = @"didReceiveLocalNotification";
 NSString *const REQUEST_PERMISSIONS_METHOD = @"requestPermissions";
+NSString *const CHECK_PERMISSIONS_METHOD = @"checkPermissions";
 
 NSString *const DAY = @"day";
 
@@ -170,6 +171,8 @@ static FlutterError *getFlutterError(NSError *error) {
     [self periodicallyShow:call.arguments result:result];
   } else if ([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
     [self requestPermissions:call.arguments result:result];
+  } else if ([CHECK_PERMISSIONS_METHOD isEqualToString:call.method]) {
+    [self checkPermissions:call.arguments result:result];
   } else if ([CANCEL_METHOD isEqualToString:call.method]) {
     [self cancel:((NSNumber *)call.arguments) result:result];
   } else if ([CANCEL_ALL_METHOD isEqualToString:call.method]) {
