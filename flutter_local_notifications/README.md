@@ -95,6 +95,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Ability to check if notifications are enabled
 * [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
 * [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
+* [iOS and macOS 10.14 or newer] Ability to check if notifications are enabled with specific type check
 * [Linux] Ability to to use themed/Flutter Assets icons and sound
 * [Linux] Ability to to set the category
 * [Linux] Configuring the urgency
