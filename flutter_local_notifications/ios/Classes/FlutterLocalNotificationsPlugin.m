@@ -545,6 +545,75 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
+- (void)checkPermissions:(NSDictionary *_Nonnull)arguments
+
+                  result:(FlutterResult _Nonnull)result {
+    bool soundPermission = false;
+    bool alertPermission = false;
+    bool badgePermission = false;
+    bool provisionalPermission = false;
+    bool criticalPermission = false;
+    if ([self containsKey:SOUND_PERMISSION forDictionary:arguments]) {
+        soundPermission = [arguments[SOUND_PERMISSION] boolValue];
+    }
+    if ([self containsKey:ALERT_PERMISSION forDictionary:arguments]) {
+        alertPermission = [arguments[ALERT_PERMISSION] boolValue];
+    }
+    if ([self containsKey:BADGE_PERMISSION forDictionary:arguments]) {
+        badgePermission = [arguments[BADGE_PERMISSION] boolValue];
+    }
+    if ([self containsKey:PROVISIONAL_PERMISSION forDictionary:arguments]) {
+        provisionalPermission = [arguments[PROVISIONAL_PERMISSION] boolValue];
+    }
+    if ([self containsKey:CRITICAL_PERMISSION forDictionary:arguments]) {
+        criticalPermission = [arguments[CRITICAL_PERMISSION] boolValue];
+    }
+    [self checkPermissionsImpl:soundPermission
+               alertPermission:alertPermission
+               badgePermission:badgePermission
+         provisionalPermission:provisionalPermission
+            criticalPermission:criticalPermission
+                        result:result];
+}
+
+- (void)checkPermissionsImpl:(bool)soundPermission
+             alertPermission:(bool)alertPermission
+             badgePermission:(bool)badgePermission
+       provisionalPermission:(bool)provisionalPermission
+          criticalPermission:(bool)criticalPermission
+                      result:(FlutterResult _Nonnull)result {
+    if (@available(iOS 10.0, *)) {
+        UNUserNotificationCenter *center =
+        [UNUserNotificationCenter currentNotificationCenter];
+        
+        [center getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+            BOOL isEnabled = settings.authorizationStatus == UNAuthorizationStatusAuthorized;
+            
+            if(soundPermission) {
+                isEnabled = isEnabled && settings.soundSetting == UNNotificationSettingEnabled;
+            }
+            if(alertPermission) {
+                isEnabled = isEnabled && settings.alertSetting == UNNotificationSettingEnabled;
+            }
+            if(badgePermission) {
+                isEnabled = isEnabled && settings.badgeSetting == UNNotificationSettingEnabled;
+            }
+            if(@available(iOS 12.0, *)) {
+                if(provisionalPermission) {
+                    isEnabled = isEnabled && settings.authorizationStatus == UNAuthorizationOptionProvisional;
+                }
+                
+                if(criticalPermission) {
+                    isEnabled = isEnabled && settings.criticalAlertSetting == UNNotificationSettingEnabled;
+                }
+            }
+            
+            result(@(isEnabled));
+        }];
+    } else {
+    }
+}
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (UILocalNotification *)buildStandardUILocalNotification:
