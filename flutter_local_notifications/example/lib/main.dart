@@ -2484,30 +2484,38 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _checkNotificationsOnCupertino() async {
     final bool? areEnabled = await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.checkPermissions(
-          sound: true,
-          alert: true,
-          badge: true,
-        );
+            .resolvePlatformSpecificImplementation<
+                IOSFlutterLocalNotificationsPlugin>()
+            ?.checkPermissions(
+              sound: true,
+              alert: true,
+              badge: true,
+            ) ??
+        await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                MacOSFlutterLocalNotificationsPlugin>()
+            ?.checkPermissions(
+              sound: true,
+              alert: true,
+              badge: true,
+            );
     await showDialog<void>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          content: Text(areEnabled == null
-              ? 'ERROR: received null'
-              : (areEnabled
-              ? 'Notifications are enabled'
-              : 'Notifications are NOT enabled')),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ));
+              content: Text(areEnabled == null
+                  ? 'ERROR: received null'
+                  : (areEnabled
+                      ? 'Notifications are enabled'
+                      : 'Notifications are NOT enabled')),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ));
   }
 
   Future<void> _deleteNotificationChannel() async {
@@ -2874,7 +2882,8 @@ Future<void> _showLinuxNotificationWithByteDataIcon() async {
         data: iconBytes,
         width: iconData.width,
         height: iconData.height,
-        channels: 4, // The icon has an alpha channel
+        channels: 4,
+        // The icon has an alpha channel
         hasAlpha: true,
       ),
     ),

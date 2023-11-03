@@ -803,6 +803,24 @@ class MacOSFlutterLocalNotificationsPlugin
         'critical': critical,
       });
 
+  /// Returns whether the app can post notifications.
+  ///
+  /// Arguments can be used for check specific notifications type.
+  Future<bool?> checkPermissions({
+    bool sound = false,
+    bool alert = false,
+    bool badge = false,
+    bool provisional = false,
+    bool critical = false,
+  }) =>
+      _channel.invokeMethod<bool?>('checkPermissions', <String, bool>{
+        'sound': sound,
+        'alert': alert,
+        'badge': badge,
+        'provisional': provisional,
+        'critical': critical,
+      });
+
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
   Future<void> zonedSchedule(

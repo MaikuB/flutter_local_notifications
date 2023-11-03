@@ -193,6 +193,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             initialize(call, result)
         case "requestPermissions":
             requestPermissions(call, result)
+        case "checkPermissions":
+            checkPermissions(call, result)
         case "getNotificationAppLaunchDetails":
             getNotificationAppLaunchDetails(result)
         case "cancel":
@@ -663,6 +665,46 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         }
         UNUserNotificationCenter.current().requestAuthorization(options: options) { (granted, _) in
             result(granted)
+        }
+    }
+    
+    func checkPermissions(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        if #available(macOS 10.14, *) {
+            let arguments = call.arguments as! [String: AnyObject]
+            let requestedAlertPermission = arguments[MethodCallArguments.alert] as! Bool
+            let requestedSoundPermission = arguments[MethodCallArguments.sound] as! Bool
+            let requestedBadgePermission = arguments[MethodCallArguments.badge] as! Bool
+            let requestedProvisionalPermission = arguments[MethodCallArguments.provisional] as! Bool
+            let requestedCriticalPermission = arguments[MethodCallArguments.critical] as! Bool
+            
+            checkPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, provisionalPermission: requestedProvisionalPermission, criticalPermission: requestedCriticalPermission, result: result)
+        } else {
+            result(nil)
+        }
+    }
+    
+    @available(macOS 10.14, *)
+    func checkPermissionsImpl(soundPermission: Bool, alertPermission: Bool, badgePermission: Bool, provisionalPermission: Bool, criticalPermission: Bool, result: @escaping FlutterResult) {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            var isEnabled: Bool = settings.authorizationStatus == .authorized
+            
+            if(soundPermission) {
+                isEnabled = isEnabled && settings.soundSetting == .enabled;
+            }
+            if(alertPermission) {
+                isEnabled = isEnabled && settings.alertSetting == .enabled;
+            }
+            if(badgePermission) {
+                isEnabled = isEnabled && settings.badgeSetting == .enabled;
+            }
+            if(criticalPermission) {
+                isEnabled = isEnabled && settings.criticalAlertSetting == .enabled;
+            }
+            if(provisionalPermission) {
+                isEnabled = isEnabled && settings.authorizationStatus == .provisional;
+            }
+            
+            result(isEnabled)
         }
     }
 
