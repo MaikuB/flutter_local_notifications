@@ -687,9 +687,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     func checkPermissionsImpl(soundPermission: Bool, alertPermission: Bool, badgePermission: Bool, provisionalPermission: Bool, criticalPermission: Bool, result: @escaping FlutterResult) {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             var isEnabled: Bool = provisionalPermission ? settings.authorizationStatus == .provisional : settings.authorizationStatus == .authorized
-            
-            print(isEnabled)
-            
+
             if(soundPermission) {
                 isEnabled = isEnabled && settings.soundSetting == .enabled;
             }
