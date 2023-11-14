@@ -133,6 +133,7 @@ class AndroidNotificationDetails {
     this.ledOnMs,
     this.ledOffMs,
     this.ticker,
+    this.bubbleActivity,
     this.visibility,
     this.timeoutAfter,
     this.category,
@@ -309,6 +310,8 @@ class AndroidNotificationDetails {
 
   /// Specifies the "ticker" text which is sent to accessibility services.
   final String? ticker;
+
+  final String? bubbleActivity;
 
   /// The action to take for managing notification channels.
   ///

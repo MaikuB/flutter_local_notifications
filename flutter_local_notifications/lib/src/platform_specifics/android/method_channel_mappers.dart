@@ -209,6 +209,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'ledOnMs': ledOnMs,
         'ledOffMs': ledOffMs,
         'ticker': ticker,
+        'bubbleActivity': bubbleActivity,
         'visibility': visibility?.index,
         'timeoutAfter': timeoutAfter,
         'category': category?.name,

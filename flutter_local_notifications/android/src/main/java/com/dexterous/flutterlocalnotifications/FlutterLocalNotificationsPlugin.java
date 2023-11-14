@@ -415,6 +415,32 @@ public class FlutterLocalNotificationsPlugin
     setProgress(notificationDetails, builder);
     setCategory(notificationDetails, builder);
     setTimeoutAfter(notificationDetails, builder);
+
+
+    if(notificationDetails.bubbleActivity != null) {
+      try {
+        Class cls = Class.forName(notificationDetails.bubbleActivity);
+        Intent testIntent = new Intent(context, cls);
+        int actionFlags = PendingIntent.FLAG_MUTABLE;
+        PendingIntent bubbleIntent =  PendingIntent.getActivity(context, notificationDetails.id, testIntent, actionFlags);
+
+        IconCompat icon = IconCompat.createWithResource(context, getDrawableResourceId(context, notificationDetails.icon));
+
+        if (!StringUtils.isNullOrEmpty(notificationDetails.shortcutId)) {
+
+          androidx.core.app.NotificationCompat.BubbleMetadata bubbleData =
+          new androidx.core.app.NotificationCompat.BubbleMetadata.Builder(bubbleIntent, icon)
+            .setDesiredHeight(600)
+            .build();
+
+          builder.setBubbleMetadata(bubbleData);
+        }
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }
+    }
+ 
+
     Notification notification = builder.build();
     if (notificationDetails.additionalFlags != null
         && notificationDetails.additionalFlags.length > 0) {
