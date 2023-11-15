@@ -134,6 +134,7 @@ class AndroidNotificationDetails {
     this.ledOffMs,
     this.ticker,
     this.bubbleActivity,
+    this.bubbleExtra,
     this.visibility,
     this.timeoutAfter,
     this.category,
@@ -312,6 +313,8 @@ class AndroidNotificationDetails {
   final String? ticker;
 
   final String? bubbleActivity;
+
+  final String? bubbleExtra;
 
   /// The action to take for managing notification channels.
   ///

@@ -421,10 +421,21 @@ public class FlutterLocalNotificationsPlugin
       try {
         Class cls = Class.forName(notificationDetails.bubbleActivity);
         Intent testIntent = new Intent(context, cls);
-        int actionFlags = PendingIntent.FLAG_MUTABLE;
-        PendingIntent bubbleIntent =  PendingIntent.getActivity(context, notificationDetails.id, testIntent, actionFlags);
+        testIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        if(notificationDetails.bubbleExtra != null) {
+          final Bundle extra = new Bundle();
+          extra.putString("bubbleExtra", notificationDetails.bubbleExtra);
+          testIntent.putExtras(extra);
+        }
+
+        int actionFlags = PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
+        PendingIntent bubbleIntent = PendingIntent.getActivity(context, notificationDetails.id, testIntent, actionFlags);
 
         IconCompat icon = IconCompat.createWithResource(context, getDrawableResourceId(context, notificationDetails.icon));
+
+        Log.e(TAG, "Created pending intent: $bubbleIntent");
+        Log.e(TAG, bubbleIntent.toString());
 
         if (!StringUtils.isNullOrEmpty(notificationDetails.shortcutId)) {
 
@@ -433,6 +444,7 @@ public class FlutterLocalNotificationsPlugin
             .setDesiredHeight(600)
             .build();
 
+          builder.setContentIntent(bubbleIntent);
           builder.setBubbleMetadata(bubbleData);
         }
       } catch (ClassNotFoundException e) {
