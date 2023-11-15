@@ -444,7 +444,6 @@ public class FlutterLocalNotificationsPlugin
             .setDesiredHeight(600)
             .build();
 
-          builder.setContentIntent(bubbleIntent);
           builder.setBubbleMetadata(bubbleData);
         }
       } catch (ClassNotFoundException e) {
