@@ -158,7 +158,7 @@ jobs:
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-      - run: melos run test:integration
+          script: melos run test:integration
   integration_tests_ios:
     name: Run integration tests (iOS)
     runs-on: macos-latest
