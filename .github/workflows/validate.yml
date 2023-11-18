@@ -156,6 +156,8 @@ jobs:
           channel: stable
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - name: Install Tools
+        run: ./.github/workflows/scripts/install-tools.sh
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
@@ -170,6 +172,8 @@ jobs:
           channel: stable
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - name: Install Tools
+        run: ./.github/workflows/scripts/install-tools.sh
       - uses: futureware-tech/simulator-action@v3
         with:
           model: 'iPhone 13'
