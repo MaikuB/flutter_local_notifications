@@ -479,9 +479,16 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedElevatedButton(
-                    buttonText: 'Show notification with no sound',
+                    buttonText: 'Show notification from silent channel',
                     onPressed: () async {
                       await _showNotificationWithNoSound();
+                    },
+                  ),
+                  PaddedElevatedButton(
+                    buttonText:
+                        'Show silent notification from channel with sound',
+                    onPressed: () async {
+                      await _showNotificationSilently();
                     },
                   ),
                   PaddedElevatedButton(
@@ -1354,6 +1361,26 @@ class _HomePageState extends State<HomePage> {
         playSound: false,
         styleInformation: DefaultStyleInformation(true, true));
     const DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails(
+      presentSound: false,
+    );
+    const NotificationDetails notificationDetails = NotificationDetails(
+        android: androidNotificationDetails,
+        iOS: darwinNotificationDetails,
+        macOS: darwinNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+        id++, '<b>silent</b> title', '<b>silent</b> body', notificationDetails);
+  }
+
+  Future<void> _showNotificationSilently() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            channelDescription: 'your channel description',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker',
+            silent: true);
+    const DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(
       presentSound: false,
     );
     const NotificationDetails notificationDetails = NotificationDetails(
