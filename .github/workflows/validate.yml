@@ -162,7 +162,7 @@ jobs:
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
-            - name: AVD cache
+      - name: AVD cache
         uses: actions/cache@v3
         id: avd-cache
         with:
