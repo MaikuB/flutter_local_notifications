@@ -2,6 +2,10 @@ name: format
 
 on: push
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   java_format:
     runs-on: ubuntu-latest
