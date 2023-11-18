@@ -205,6 +205,10 @@ jobs:
       - uses: futureware-tech/simulator-action@v3
         with:
           model: 'iPhone 13'
+      - run: |
+          brew tap wix/brew
+          brew install applesimutils
+          applesimutils --byId $udid --bundle com.dexterous.flutterLocalNotificationsExample --setPermissions notifications=YES
       - run: melos run test:integration
 
 
