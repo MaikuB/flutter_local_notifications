@@ -98,7 +98,7 @@ jobs:
       - run: flutter config --enable-linux-desktop
       - name: Build
         run: melos run build:example_linux
-  build_example_linux_stable:
+  build_example_linux_300:
     name: Build Linux example app (3.0.0)
     runs-on: ubuntu-latest
     steps:
