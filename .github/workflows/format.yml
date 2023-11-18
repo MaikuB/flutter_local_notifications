@@ -10,7 +10,7 @@ jobs:
   java_format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2 # v2 minimum required
+      - uses: actions/checkout@v4
       - uses: axel-op/googlejavaformat-action@v3
         with:
           args: '--skip-sorting-imports --replace'
@@ -18,7 +18,7 @@ jobs:
   objc_format:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2 # v2 minimum required
+      - uses: actions/checkout@v4
       - name: Test
         run: |
           which clang-format || brew install clang-format
@@ -30,7 +30,7 @@ jobs:
   swift_format:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2 # v2 minimum required
+      - uses: actions/checkout@v4
       - name: Test
         run: |
           which swiftlint || brew install swiftlint
