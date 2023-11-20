@@ -417,23 +417,25 @@ public class FlutterLocalNotificationsPlugin
     setCategory(notificationDetails, builder);
     setTimeoutAfter(notificationDetails, builder);
 
-
-    if(notificationDetails.bubbleActivity != null) {
+    if (notificationDetails.bubbleActivity != null) {
       try {
         Class cls = Class.forName(notificationDetails.bubbleActivity);
         Intent testIntent = new Intent(context, cls);
         testIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        if(notificationDetails.bubbleExtra != null) {
+        if (notificationDetails.bubbleExtra != null) {
           final Bundle extra = new Bundle();
           extra.putString("bubbleExtra", notificationDetails.bubbleExtra);
           testIntent.putExtras(extra);
         }
 
         int actionFlags = PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
-        PendingIntent bubbleIntent = PendingIntent.getActivity(context, notificationDetails.id, testIntent, actionFlags);
+        PendingIntent bubbleIntent =
+            PendingIntent.getActivity(context, notificationDetails.id, testIntent, actionFlags);
 
-        IconCompat icon = IconCompat.createWithResource(context, getDrawableResourceId(context, notificationDetails.icon));
+        IconCompat icon =
+            IconCompat.createWithResource(
+                context, getDrawableResourceId(context, notificationDetails.icon));
 
         Log.e(TAG, "Created pending intent: $bubbleIntent");
         Log.e(TAG, bubbleIntent.toString());
@@ -441,9 +443,9 @@ public class FlutterLocalNotificationsPlugin
         if (!StringUtils.isNullOrEmpty(notificationDetails.shortcutId)) {
 
           androidx.core.app.NotificationCompat.BubbleMetadata bubbleData =
-          new androidx.core.app.NotificationCompat.BubbleMetadata.Builder(bubbleIntent, icon)
-            .setDesiredHeight(600)
-            .build();
+              new androidx.core.app.NotificationCompat.BubbleMetadata.Builder(bubbleIntent, icon)
+                  .setDesiredHeight(600)
+                  .build();
 
           builder.setBubbleMetadata(bubbleData);
         }
@@ -451,7 +453,6 @@ public class FlutterLocalNotificationsPlugin
         e.printStackTrace();
       }
     }
- 
 
     Notification notification = builder.build();
     if (notificationDetails.additionalFlags != null
