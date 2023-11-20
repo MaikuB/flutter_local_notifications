@@ -277,6 +277,7 @@ public class FlutterLocalNotificationsPlugin
             .setContentIntent(pendingIntent)
             .setPriority(notificationDetails.priority)
             .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
+            .setSilent(BooleanUtils.getValue(notificationDetails.silent))
             .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
 
     if (notificationDetails.actions != null) {
