@@ -1,3 +1,7 @@
+# [16.2.0]
+
+* [Android] added the `silent` property to the `AndroidNotificationDetails` that allows specifying a notification on Android to be silent even if associated the notification channel allows for sounds to be played. Thanks to the PR from [aa-euclidk](https://github.com/aa-euclidk)
+
 # [16.1.0]
 
 * [Android] calling the `requestExactAlarmsPermission()` method will now go directly to the alarm settings screen specific to the app instead the general alarm settings screen where users needed to pick the app they wanted to change the settings for. Thanks to the PR from [ShunMc](https://github.com/ShunMc)
