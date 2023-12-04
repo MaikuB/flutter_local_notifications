@@ -1,6 +1,6 @@
-#import "Converters.h"
+#import "NotificationParser.h"
 
-@implementation Converters
+@implementation NotificationParser
 
 + (UNNotificationCategoryOptions)parseNotificationCategoryOptions:
     (NSArray *)options {

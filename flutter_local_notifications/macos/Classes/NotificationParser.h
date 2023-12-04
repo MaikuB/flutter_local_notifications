@@ -1,5 +1,5 @@
 //
-//  Converters.h
+//  NotificationParser.h
 //  flutter_local_notifications
 //
 
@@ -8,7 +8,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Converters : NSObject
+@interface NotificationParser : NSObject
 
 + (UNNotificationCategoryOptions)parseNotificationCategoryOptions:
     (NSArray *)options API_AVAILABLE(ios(10.0), macos(10.14));
