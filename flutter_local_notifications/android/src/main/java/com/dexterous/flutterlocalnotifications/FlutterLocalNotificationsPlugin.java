@@ -133,7 +133,6 @@ public class FlutterLocalNotificationsPlugin
   private static final String SELECT_FOREGROUND_NOTIFICATION_ACTION =
       "SELECT_FOREGROUND_NOTIFICATION";
   private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
-  private static final String LAUNCHED_FROM_NOTIFICATION = "LAUNCHED_FROM_NOTIFICATION";
   private static final String INITIALIZE_METHOD = "initialize";
   private static final String GET_CALLBACK_HANDLE_METHOD = "getCallbackHandle";
   private static final String ARE_NOTIFICATIONS_ENABLED_METHOD = "areNotificationsEnabled";
@@ -1360,6 +1359,9 @@ public class FlutterLocalNotificationsPlugin
 
     mainActivity = binding.getActivity();
     Intent mainActivityIntent = mainActivity.getIntent();
+    Log.w("LOCAL_NOTIFICATION", "onAttachedToActivity()\n" +
+            "selected action: " + mainActivityIntent.getAction());
+
     if (!launchedActivityFromHistory(mainActivityIntent)) {
       if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.getAction())) {
         Map<String, Object> notificationResponse =
@@ -1591,7 +1593,6 @@ public class FlutterLocalNotificationsPlugin
       if (notificationLaunchedApp) {
         notificationAppLaunchDetails.put(
                 "notificationResponse", extractNotificationResponseMap(launchIntent));
-        launchIntent.putExtra(LAUNCHED_FROM_NOTIFICATION, true);
         mainActivity.setIntent(launchIntent);
       }
 
@@ -1604,15 +1605,7 @@ public class FlutterLocalNotificationsPlugin
     return launchIntent != null
             && (SELECT_NOTIFICATION.equals(launchIntent.getAction())
             || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.getAction()))
-            && !launchedActivityFromHistory(launchIntent)
-            && !isAlreadyLaunched(launchIntent);
-  }
-
-  private Boolean isAlreadyLaunched(Intent intent) {
-    if(intent != null && intent.hasExtra(LAUNCHED_FROM_NOTIFICATION)) {
-      return intent.getBooleanExtra(LAUNCHED_FROM_NOTIFICATION, false);
-    }
-    return false;
+            && !launchedActivityFromHistory(launchIntent);
   }
 
   private void initialize(MethodCall call, Result result) {
@@ -2160,6 +2153,10 @@ public class FlutterLocalNotificationsPlugin
     }
 
     return true;
+  }
+
+  public void resetSelectedNotification() {
+      mainActivity.getIntent().setAction(null);
   }
 
   private static class PluginException extends RuntimeException {
