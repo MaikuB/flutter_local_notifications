@@ -1583,29 +1583,22 @@ public class FlutterLocalNotificationsPlugin
 
   private void getNotificationAppLaunchDetails(Result result) {
     Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
-    boolean notificationLaunchedApp = false;
+    Boolean notificationLaunchedApp = false;
     if (mainActivity != null) {
       Intent launchIntent = mainActivity.getIntent();
-
       notificationLaunchedApp =
-              isNotificationLaunchedApp(launchIntent);
-
+              launchIntent != null
+                      && (SELECT_NOTIFICATION.equals(launchIntent.getAction())
+                      || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.getAction()))
+                      && !launchedActivityFromHistory(launchIntent);
       if (notificationLaunchedApp) {
         notificationAppLaunchDetails.put(
                 "notificationResponse", extractNotificationResponseMap(launchIntent));
-        mainActivity.setIntent(launchIntent);
       }
-
     }
+
     notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
     result.success(notificationAppLaunchDetails);
-  }
-
-  private boolean isNotificationLaunchedApp(Intent launchIntent) {
-    return launchIntent != null
-            && (SELECT_NOTIFICATION.equals(launchIntent.getAction())
-            || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.getAction()))
-            && !launchedActivityFromHistory(launchIntent);
   }
 
   private void initialize(MethodCall call, Result result) {
