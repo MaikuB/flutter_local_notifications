@@ -292,6 +292,14 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<void> stopForegroundService() =>
       _channel.invokeMethod('stopForegroundService');
 
+  /// Resets a selected notification
+  ///
+  /// If no selected notification present, this function does nothing.
+  ///
+  /// Could be used in cases when need to control `didNotificationLaunchApp`
+  Future<void> resetSelectedNotification() =>
+      _channel.invokeMethod('resetSelectedNotification');
+
   @override
   Future<void> show(
     int id,

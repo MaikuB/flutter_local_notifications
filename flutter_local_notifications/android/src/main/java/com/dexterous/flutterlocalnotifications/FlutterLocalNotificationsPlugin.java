@@ -149,6 +149,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String GET_NOTIFICATION_CHANNELS_METHOD = "getNotificationChannels";
   private static final String START_FOREGROUND_SERVICE = "startForegroundService";
   private static final String STOP_FOREGROUND_SERVICE = "stopForegroundService";
+  private static final String RESET_SELECTED_NOTIFICATION = "resetSelectedNotification";
   private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
   private static final String GET_ACTIVE_NOTIFICATIONS_METHOD = "getActiveNotifications";
   private static final String SHOW_METHOD = "show";
@@ -1478,6 +1479,9 @@ public class FlutterLocalNotificationsPlugin
       case STOP_FOREGROUND_SERVICE:
         stopForegroundService(result);
         break;
+      case RESET_SELECTED_NOTIFICATION:
+        resetSelectedNotification(result);
+        break;
       default:
         result.notImplemented();
         break;
@@ -2156,8 +2160,17 @@ public class FlutterLocalNotificationsPlugin
     return true;
   }
 
-  public void resetSelectedNotification() {
-      mainActivity.getIntent().setAction(null);
+  private void resetSelectedNotification(Result result) {
+      String action = mainActivity.getIntent().getAction();
+      if(action == null) {
+        return;
+      }
+      boolean isSelectNotification = action.equals(SELECT_NOTIFICATION);
+      boolean isSelectForegroundNotification = action.equals(SELECT_FOREGROUND_NOTIFICATION_ACTION);
+      if(isSelectNotification || isSelectForegroundNotification) {
+        mainActivity.getIntent().setAction("android.intent.action.MAIN");
+      }
+    result.success(null);
   }
 
   private static class PluginException extends RuntimeException {
