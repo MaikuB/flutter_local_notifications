@@ -1589,8 +1589,6 @@ public class FlutterLocalNotificationsPlugin
 
       notificationLaunchedApp =
               isNotificationLaunchedApp(launchIntent);
-      Log.w("LOCAL_NOTIFICATION", "LAUNCHED_FROM_NOTIFICATION: " +
-              notificationLaunchedApp);
 
       if (notificationLaunchedApp) {
         notificationAppLaunchDetails.put(
@@ -1611,9 +1609,6 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private void initialize(MethodCall call, Result result) {
-    Log.w("LOCAL_NOTIFICATION", "initialize()\n" +
-            "selected action: " + mainActivity.getIntent().getAction());
-
     Map<String, Object> arguments = call.arguments();
     String defaultIcon = (String) arguments.get(DEFAULT_ICON);
     if (!isValidDrawableResource(
