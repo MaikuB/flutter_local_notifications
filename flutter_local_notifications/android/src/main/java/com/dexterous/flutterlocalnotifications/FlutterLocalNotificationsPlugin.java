@@ -133,6 +133,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String SELECT_FOREGROUND_NOTIFICATION_ACTION =
       "SELECT_FOREGROUND_NOTIFICATION";
   private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
+  private static final String LAUNCHED_FROM_NOTIFICATION = "LAUNCHED_FROM_NOTIFICATION";
   private static final String INITIALIZE_METHOD = "initialize";
   private static final String GET_CALLBACK_HANDLE_METHOD = "getCallbackHandle";
   private static final String ARE_NOTIFICATIONS_ENABLED_METHOD = "areNotificationsEnabled";
@@ -1578,22 +1579,40 @@ public class FlutterLocalNotificationsPlugin
 
   private void getNotificationAppLaunchDetails(Result result) {
     Map<String, Object> notificationAppLaunchDetails = new HashMap<>();
-    Boolean notificationLaunchedApp = false;
+    boolean notificationLaunchedApp = false;
     if (mainActivity != null) {
       Intent launchIntent = mainActivity.getIntent();
+
       notificationLaunchedApp =
-          launchIntent != null
-              && (SELECT_NOTIFICATION.equals(launchIntent.getAction())
-                  || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.getAction()))
-              && !launchedActivityFromHistory(launchIntent);
+              isNotificationLaunchedApp(launchIntent);
+      Log.w("LOCAL_NOTIFICATION", "LAUNCHED_FROM_NOTIFICATION: " +
+              notificationLaunchedApp);
+
       if (notificationLaunchedApp) {
         notificationAppLaunchDetails.put(
-            "notificationResponse", extractNotificationResponseMap(launchIntent));
+                "notificationResponse", extractNotificationResponseMap(launchIntent));
+        launchIntent.putExtra(LAUNCHED_FROM_NOTIFICATION, true);
+        mainActivity.setIntent(launchIntent);
       }
-    }
 
+    }
     notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
     result.success(notificationAppLaunchDetails);
+  }
+
+  private boolean isNotificationLaunchedApp(Intent launchIntent) {
+    return launchIntent != null
+            && (SELECT_NOTIFICATION.equals(launchIntent.getAction())
+            || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.getAction()))
+            && !launchedActivityFromHistory(launchIntent)
+            && !isAlreadyLaunched(launchIntent);
+  }
+
+  private Boolean isAlreadyLaunched(Intent intent) {
+    if(intent != null && intent.hasExtra(LAUNCHED_FROM_NOTIFICATION)) {
+      return intent.getBooleanExtra(LAUNCHED_FROM_NOTIFICATION, false);
+    }
+    return false;
   }
 
   private void initialize(MethodCall call, Result result) {
