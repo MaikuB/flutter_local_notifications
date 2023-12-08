@@ -1359,8 +1359,6 @@ public class FlutterLocalNotificationsPlugin
 
     mainActivity = binding.getActivity();
     Intent mainActivityIntent = mainActivity.getIntent();
-    Log.w("LOCAL_NOTIFICATION", "onAttachedToActivity()\n" +
-            "selected action: " + mainActivityIntent.getAction());
 
     if (!launchedActivityFromHistory(mainActivityIntent)) {
       if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.getAction())) {
@@ -1609,6 +1607,9 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private void initialize(MethodCall call, Result result) {
+    Log.w("LOCAL_NOTIFICATION", "initialize()\n" +
+            "selected action: " + mainActivity.getIntent().getAction());
+
     Map<String, Object> arguments = call.arguments();
     String defaultIcon = (String) arguments.get(DEFAULT_ICON);
     if (!isValidDrawableResource(
