@@ -97,6 +97,13 @@ NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
 NSString *const PRESENTATION_OPTIONS_USER_DEFAULTS =
     @"flutter_local_notifications_presentation_options";
 
+NSString *const CHECK_ENABLED = @"isEnabled";
+NSString *const CHECK_SOUND_ENABLED = @"isSoundEnabled";
+NSString *const CHECK_ALERT_ENABLED = @"isAlertEnabled";
+NSString *const CHECK_BADGE_ENABLED = @"isBadgeEnabled";
+NSString *const CHECK_PROVISIONAL_ENABLED = @"isProvisionalEnabled";
+NSString *const CHECK_CRITICAL_ENABLED = @"isCriticalEnabled";
+
 typedef NS_ENUM(NSInteger, RepeatInterval) {
   EveryMinute,
   Hourly,
@@ -551,68 +558,33 @@ static FlutterError *getFlutterError(NSError *error) {
 - (void)checkPermissions:(NSDictionary *_Nonnull)arguments
 
                   result:(FlutterResult _Nonnull)result {
-    bool soundPermission = false;
-    bool alertPermission = false;
-    bool badgePermission = false;
-    bool provisionalPermission = false;
-    bool criticalPermission = false;
-    if ([self containsKey:SOUND_PERMISSION forDictionary:arguments]) {
-        soundPermission = [arguments[SOUND_PERMISSION] boolValue];
-    }
-    if ([self containsKey:ALERT_PERMISSION forDictionary:arguments]) {
-        alertPermission = [arguments[ALERT_PERMISSION] boolValue];
-    }
-    if ([self containsKey:BADGE_PERMISSION forDictionary:arguments]) {
-        badgePermission = [arguments[BADGE_PERMISSION] boolValue];
-    }
-    if ([self containsKey:PROVISIONAL_PERMISSION forDictionary:arguments]) {
-        provisionalPermission = [arguments[PROVISIONAL_PERMISSION] boolValue];
-    }
-    if ([self containsKey:CRITICAL_PERMISSION forDictionary:arguments]) {
-        criticalPermission = [arguments[CRITICAL_PERMISSION] boolValue];
-    }
-    [self checkPermissionsImpl:soundPermission
-               alertPermission:alertPermission
-               badgePermission:badgePermission
-         provisionalPermission:provisionalPermission
-            criticalPermission:criticalPermission
-                        result:result];
-}
-
-- (void)checkPermissionsImpl:(bool)soundPermission
-             alertPermission:(bool)alertPermission
-             badgePermission:(bool)badgePermission
-       provisionalPermission:(bool)provisionalPermission
-          criticalPermission:(bool)criticalPermission
-                      result:(FlutterResult _Nonnull)result {
     if (@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center =
         [UNUserNotificationCenter currentNotificationCenter];
         
         [center getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
             BOOL isEnabled = settings.authorizationStatus == UNAuthorizationStatusAuthorized;
+            BOOL isSoundEnabled = settings.soundSetting == UNNotificationSettingEnabled;
+            BOOL isAlertEnabled = settings.alertSetting == UNNotificationSettingEnabled;
+            BOOL isBadgeEnabled = settings.badgeSetting == UNNotificationSettingEnabled;
+            BOOL isProvisionalEnabled = false;
+            BOOL isCriticalEnabled = false;
             
             if(@available(iOS 12.0, *)) {
-                if(provisionalPermission) {
-                    isEnabled = settings.authorizationStatus == UNAuthorizationStatusProvisional;
-                }
+                isProvisionalEnabled = settings.authorizationStatus == UNAuthorizationStatusProvisional;
+                isCriticalEnabled = settings.criticalAlertSetting == UNNotificationSettingEnabled;
             }
             
-            if(soundPermission) {
-                isEnabled = isEnabled && settings.soundSetting == UNNotificationSettingEnabled;
-            }
-            if(alertPermission) {
-                isEnabled = isEnabled && settings.alertSetting == UNNotificationSettingEnabled;
-            }
-            if(badgePermission) {
-                isEnabled = isEnabled && settings.badgeSetting == UNNotificationSettingEnabled;
-            }
-            if(@available(iOS 12.0, *)) {
-                if(criticalPermission) {
-                    isEnabled = isEnabled && settings.criticalAlertSetting == UNNotificationSettingEnabled;
-                }
-            }
-            result(@(isEnabled));
+            NSDictionary *dict = @{
+                CHECK_ENABLED: @(isEnabled),
+                CHECK_SOUND_ENABLED: @(isSoundEnabled),
+                CHECK_ALERT_ENABLED: @(isAlertEnabled),
+                CHECK_BADGE_ENABLED: @(isBadgeEnabled),
+                CHECK_PROVISIONAL_ENABLED: @(isProvisionalEnabled),
+                CHECK_CRITICAL_ENABLED: @(isCriticalEnabled),
+            };
+            
+            result(dict);
         }];
     } else {
 #pragma clang diagnostic push
@@ -620,25 +592,34 @@ static FlutterError *getFlutterError(NSError *error) {
         UIUserNotificationSettings *settings = UIApplication.sharedApplication.currentUserNotificationSettings;
         
         if(settings == nil) {
-            result(@NO);
+            result(@{
+                CHECK_ENABLED: @NO,
+                CHECK_SOUND_ENABLED: @NO,
+                CHECK_ALERT_ENABLED: @NO,
+                CHECK_BADGE_ENABLED: @NO,
+                CHECK_PROVISIONAL_ENABLED: @NO,
+                CHECK_CRITICAL_ENABLED: @NO,
+            });
             return;
         }
         
         UIUserNotificationType types = settings.types;
         
         BOOL isEnabled = types != UIUserNotificationTypeNone;
+        BOOL isSoundEnabled = types & UIUserNotificationTypeSound;
+        BOOL isAlertEnabled = types & UIUserNotificationTypeAlert;
+        BOOL isBadgeEnabled = types & UIUserNotificationTypeBadge;
         
-        if(soundPermission) {
-            isEnabled = isEnabled && (types & UIUserNotificationTypeSound);
-        }
-        if(alertPermission) {
-            isEnabled = isEnabled && (types & UIUserNotificationTypeAlert);
-        }
-        if(badgePermission) {
-            isEnabled = isEnabled && (types & UIUserNotificationTypeBadge);
-        }
+        NSDictionary *dict = @{
+            CHECK_ENABLED: @(isEnabled),
+            CHECK_SOUND_ENABLED: @(isSoundEnabled),
+            CHECK_ALERT_ENABLED: @(isAlertEnabled),
+            CHECK_BADGE_ENABLED: @(isBadgeEnabled),
+            CHECK_PROVISIONAL_ENABLED: @NO,
+            CHECK_CRITICAL_ENABLED: @NO,
+        };
         
-        result(@(isEnabled));
+        result(dict);
 #pragma clang diagnostic pop
     }
 }

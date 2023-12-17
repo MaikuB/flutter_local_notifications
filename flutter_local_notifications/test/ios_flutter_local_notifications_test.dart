@@ -20,7 +20,7 @@ void main() {
     setUp(() {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
         log.add(methodCall);
         if (methodCall.method == 'pendingNotificationRequests') {
@@ -607,42 +607,12 @@ void main() {
       ]);
     });
 
-    test('checkPermissions with default settings', () async {
+    test('checkPermissions', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin>()!
+              IOSFlutterLocalNotificationsPlugin>()!
           .checkPermissions();
-      expect(log, <Matcher>[
-        isMethodCall('checkPermissions', arguments: <String, Object?>{
-          'sound': false,
-          'badge': false,
-          'alert': false,
-          'provisional': false,
-          'critical': false,
-        })
-      ]);
-    });
-
-    test('checkPermissions with all settings requested', () async {
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin>()!
-          .checkPermissions(
-        sound: true,
-        badge: true,
-        alert: true,
-        provisional: true,
-        critical: true,
-      );
-      expect(log, <Matcher>[
-        isMethodCall('checkPermissions', arguments: <String, Object>{
-          'sound': true,
-          'badge': true,
-          'alert': true,
-          'provisional': true,
-          'critical': true,
-        })
-      ]);
+      expect(log, <Matcher>[isMethodCall('checkPermissions', arguments: null)]);
     });
 
     test('cancel', () async {

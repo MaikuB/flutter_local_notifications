@@ -23,6 +23,7 @@ import 'platform_specifics/android/styles/messaging_style_information.dart';
 import 'platform_specifics/darwin/initialization_settings.dart';
 import 'platform_specifics/darwin/mappers.dart';
 import 'platform_specifics/darwin/notification_details.dart';
+import 'platform_specifics/darwin/notification_enabled_options.dart';
 import 'platform_specifics/ios/enums.dart';
 import 'typedefs.dart';
 import 'types.dart';
@@ -619,20 +620,17 @@ class IOSFlutterLocalNotificationsPlugin
   /// Returns whether the app can post notifications.
   ///
   /// Arguments can be used for check specific notifications type.
-  Future<bool?> checkPermissions({
-    bool sound = false,
-    bool alert = false,
-    bool badge = false,
-    bool provisional = false,
-    bool critical = false,
-  }) =>
-      _channel.invokeMethod<bool?>('checkPermissions', <String, bool>{
-        'sound': sound,
-        'alert': alert,
-        'badge': badge,
-        'provisional': provisional,
-        'critical': critical,
-      });
+  Future<NotificationsEnabledOptions> checkPermissions() =>
+      _channel.invokeMethod<Map<dynamic, dynamic>?>('checkPermissions').then(
+            (Map<dynamic, dynamic>? dict) => NotificationsEnabledOptions(
+              isEnabled: dict?['isEnabled'] ?? false,
+              isAlertEnabled: dict?['isAlertEnabled'] ?? false,
+              isBadgeEnabled: dict?['isBadgeEnabled'] ?? false,
+              isSoundEnabled: dict?['isSoundEnabled'] ?? false,
+              isProvisionalEnabled: dict?['isProvisionalEnabled'] ?? false,
+              isCriticalEnabled: dict?['isCriticalEnabled'] ?? false,
+            ),
+          );
 
   /// Schedules a notification to be shown at the specified time in the
   /// future in a specific time zone.
