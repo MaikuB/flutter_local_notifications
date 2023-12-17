@@ -685,7 +685,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                     MethodCallArguments.checkProvisionalEnabled: settings.authorizationStatus == .provisional,
                     MethodCallArguments.checkCriticalEnabled: settings.criticalAlertSetting == .enabled,
                 ]
-                
+
                 result(dict)
             }
         } else {
