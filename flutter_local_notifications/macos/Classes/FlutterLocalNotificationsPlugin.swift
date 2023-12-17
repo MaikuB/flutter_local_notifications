@@ -47,6 +47,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let interruptionLevel = "interruptionLevel"
         static let actionId = "actionId"
         static let notificationResponseType = "notificationResponseType"
+        static let checkEnabled = "isEnabled"
+        static let checkSoundEnabled = "isSoundEnabled"
+        static let checkAlertEnabled = "isAlertEnabled"
+        static let checkBadgeEnabled = "isBadgeEnabled"
+        static let checkProvisionalEnabled = "isProvisionalEnabled"
+        static let checkCriticalEnabled = "isCriticalEnabled"
     }
 
     struct ErrorMessages {
@@ -670,40 +676,20 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     
     func checkPermissions(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         if #available(macOS 10.14, *) {
-            let arguments = call.arguments as! [String: AnyObject]
-            let requestedAlertPermission = arguments[MethodCallArguments.alert] as! Bool
-            let requestedSoundPermission = arguments[MethodCallArguments.sound] as! Bool
-            let requestedBadgePermission = arguments[MethodCallArguments.badge] as! Bool
-            let requestedProvisionalPermission = arguments[MethodCallArguments.provisional] as! Bool
-            let requestedCriticalPermission = arguments[MethodCallArguments.critical] as! Bool
-            
-            checkPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, provisionalPermission: requestedProvisionalPermission, criticalPermission: requestedCriticalPermission, result: result)
+            UNUserNotificationCenter.current().getNotificationSettings { settings in
+                let dict = [
+                    MethodCallArguments.checkEnabled: settings.authorizationStatus == .authorized,
+                    MethodCallArguments.checkSoundEnabled: settings.soundSetting == .enabled,
+                    MethodCallArguments.checkAlertEnabled: settings.alertSetting == .enabled,
+                    MethodCallArguments.checkBadgeEnabled: settings.badgeSetting == .enabled,
+                    MethodCallArguments.checkProvisionalEnabled: settings.authorizationStatus == .provisional,
+                    MethodCallArguments.checkCriticalEnabled: settings.criticalAlertSetting == .enabled,
+                ]
+                
+                result(dict)
+            }
         } else {
             result(nil)
-        }
-    }
-    
-    @available(macOS 10.14, *)
-    func checkPermissionsImpl(soundPermission: Bool, alertPermission: Bool, badgePermission: Bool, provisionalPermission: Bool, criticalPermission: Bool, result: @escaping FlutterResult) {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            var isEnabled: Bool = provisionalPermission ? settings.authorizationStatus == .provisional : settings.authorizationStatus == .authorized
-            
-            print(isEnabled)
-            
-            if(soundPermission) {
-                isEnabled = isEnabled && settings.soundSetting == .enabled;
-            }
-            if(alertPermission) {
-                isEnabled = isEnabled && settings.alertSetting == .enabled;
-            }
-            if(badgePermission) {
-                isEnabled = isEnabled && settings.badgeSetting == .enabled;
-            }
-            if(criticalPermission) {
-                isEnabled = isEnabled && settings.criticalAlertSetting == .enabled;
-            }
-            
-            result(isEnabled)
         }
     }
 

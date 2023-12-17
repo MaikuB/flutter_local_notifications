@@ -2483,30 +2483,29 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _checkNotificationsOnCupertino() async {
-    final bool? areEnabled = await flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-                IOSFlutterLocalNotificationsPlugin>()
-            ?.checkPermissions(
-              sound: true,
-              alert: true,
-              badge: true,
-            ) ??
+    final NotificationsEnabledOptions? isEnabled =
         await flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-                MacOSFlutterLocalNotificationsPlugin>()
-            ?.checkPermissions(
-              sound: true,
-              alert: true,
-              badge: true,
-            );
+                .resolvePlatformSpecificImplementation<
+                    IOSFlutterLocalNotificationsPlugin>()
+                ?.checkPermissions() ??
+            await flutterLocalNotificationsPlugin
+                .resolvePlatformSpecificImplementation<
+                    MacOSFlutterLocalNotificationsPlugin>()
+                ?.checkPermissions();
+    final String isEnabledString = isEnabled == null
+        ? 'ERROR: received null'
+        : '''
+    isEnabled: ${isEnabled.isEnabled}
+    isSoundEnabled: ${isEnabled.isSoundEnabled}
+    isAlertEnabled: ${isEnabled.isAlertEnabled}
+    isBadgeEnabled: ${isEnabled.isBadgeEnabled}
+    isProvisionalEnabled: ${isEnabled.isProvisionalEnabled}
+    isCriticalEnabled: ${isEnabled.isCriticalEnabled}
+    ''';
     await showDialog<void>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              content: Text(areEnabled == null
-                  ? 'ERROR: received null'
-                  : (areEnabled
-                      ? 'Notifications are enabled'
-                      : 'Notifications are NOT enabled')),
+              content: Text(isEnabledString),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {

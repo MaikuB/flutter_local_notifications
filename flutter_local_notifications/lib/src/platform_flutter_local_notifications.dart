@@ -617,20 +617,26 @@ class IOSFlutterLocalNotificationsPlugin
         'critical': critical,
       });
 
-  /// Returns whether the app can post notifications.
+  /// Returns whether the app can post notifications and what kind of.
   ///
-  /// Arguments can be used for check specific notifications type.
-  Future<NotificationsEnabledOptions> checkPermissions() =>
+  /// See [NotificationsEnabledOptions] for more info.
+  Future<NotificationsEnabledOptions?> checkPermissions() =>
       _channel.invokeMethod<Map<dynamic, dynamic>?>('checkPermissions').then(
-            (Map<dynamic, dynamic>? dict) => NotificationsEnabledOptions(
-              isEnabled: dict?['isEnabled'] ?? false,
-              isAlertEnabled: dict?['isAlertEnabled'] ?? false,
-              isBadgeEnabled: dict?['isBadgeEnabled'] ?? false,
-              isSoundEnabled: dict?['isSoundEnabled'] ?? false,
-              isProvisionalEnabled: dict?['isProvisionalEnabled'] ?? false,
-              isCriticalEnabled: dict?['isCriticalEnabled'] ?? false,
-            ),
+        (Map<dynamic, dynamic>? dict) {
+          if (dict == null) {
+            return null;
+          }
+
+          return NotificationsEnabledOptions(
+            isEnabled: dict['isEnabled'] ?? false,
+            isAlertEnabled: dict['isAlertEnabled'] ?? false,
+            isBadgeEnabled: dict['isBadgeEnabled'] ?? false,
+            isSoundEnabled: dict['isSoundEnabled'] ?? false,
+            isProvisionalEnabled: dict['isProvisionalEnabled'] ?? false,
+            isCriticalEnabled: dict['isCriticalEnabled'] ?? false,
           );
+        },
+      );
 
   /// Schedules a notification to be shown at the specified time in the
   /// future in a specific time zone.
@@ -801,22 +807,24 @@ class MacOSFlutterLocalNotificationsPlugin
         'critical': critical,
       });
 
-  /// Returns whether the app can post notifications.
+  /// Returns whether the app can post notifications and what kind of.
   ///
-  /// Arguments can be used for check specific notifications type.
-  Future<bool?> checkPermissions({
-    bool sound = false,
-    bool alert = false,
-    bool badge = false,
-    bool provisional = false,
-    bool critical = false,
-  }) =>
-      _channel.invokeMethod<bool?>('checkPermissions', <String, bool>{
-        'sound': sound,
-        'alert': alert,
-        'badge': badge,
-        'provisional': provisional,
-        'critical': critical,
+  /// See [NotificationsEnabledOptions] for more info.
+  Future<NotificationsEnabledOptions?> checkPermissions() => _channel
+          .invokeMethod<Map<dynamic, dynamic>>('checkPermissions')
+          .then((Map<dynamic, dynamic>? dict) {
+        if (dict == null) {
+          return null;
+        }
+
+        return NotificationsEnabledOptions(
+          isEnabled: dict['isEnabled'] ?? false,
+          isAlertEnabled: dict['isAlertEnabled'] ?? false,
+          isBadgeEnabled: dict['isBadgeEnabled'] ?? false,
+          isSoundEnabled: dict['isSoundEnabled'] ?? false,
+          isProvisionalEnabled: dict['isProvisionalEnabled'] ?? false,
+          isCriticalEnabled: dict['isCriticalEnabled'] ?? false,
+        );
       });
 
   /// Schedules a notification to be shown at the specified date and time
