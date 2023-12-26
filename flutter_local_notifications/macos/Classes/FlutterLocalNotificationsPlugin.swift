@@ -673,7 +673,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             result(granted)
         }
     }
-    
+
     func checkPermissions(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         if #available(macOS 10.14, *) {
             UNUserNotificationCenter.current().getNotificationSettings { settings in
@@ -683,7 +683,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                     MethodCallArguments.isAlertEnabled: settings.alertSetting == .enabled,
                     MethodCallArguments.isBadgeEnabled: settings.badgeSetting == .enabled,
                     MethodCallArguments.isProvisionalEnabled: settings.authorizationStatus == .provisional,
-                    MethodCallArguments.isCriticalEnabled: settings.criticalAlertSetting == .enabled,
+                    MethodCallArguments.isCriticalEnabled: settings.criticalAlertSetting == .enabled
                 ]
 
                 result(dict)
