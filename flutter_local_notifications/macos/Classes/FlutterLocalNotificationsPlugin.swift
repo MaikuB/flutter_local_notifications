@@ -47,12 +47,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let interruptionLevel = "interruptionLevel"
         static let actionId = "actionId"
         static let notificationResponseType = "notificationResponseType"
-        static let checkEnabled = "isEnabled"
-        static let checkSoundEnabled = "isSoundEnabled"
-        static let checkAlertEnabled = "isAlertEnabled"
-        static let checkBadgeEnabled = "isBadgeEnabled"
-        static let checkProvisionalEnabled = "isProvisionalEnabled"
-        static let checkCriticalEnabled = "isCriticalEnabled"
+        static let isNotificationsEnabled = "isEnabled"
+        static let isSoundEnabled = "isSoundEnabled"
+        static let isAlertEnabled = "isAlertEnabled"
+        static let isBadgeEnabled = "isBadgeEnabled"
+        static let isProvisionalEnabled = "isProvisionalEnabled"
+        static let isCriticalEnabled = "isCriticalEnabled"
     }
 
     struct ErrorMessages {
@@ -678,12 +678,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         if #available(macOS 10.14, *) {
             UNUserNotificationCenter.current().getNotificationSettings { settings in
                 let dict = [
-                    MethodCallArguments.checkEnabled: settings.authorizationStatus == .authorized,
-                    MethodCallArguments.checkSoundEnabled: settings.soundSetting == .enabled,
-                    MethodCallArguments.checkAlertEnabled: settings.alertSetting == .enabled,
-                    MethodCallArguments.checkBadgeEnabled: settings.badgeSetting == .enabled,
-                    MethodCallArguments.checkProvisionalEnabled: settings.authorizationStatus == .provisional,
-                    MethodCallArguments.checkCriticalEnabled: settings.criticalAlertSetting == .enabled,
+                    MethodCallArguments.isNotificationsEnabled: settings.authorizationStatus == .authorized,
+                    MethodCallArguments.isSoundEnabled: settings.soundSetting == .enabled,
+                    MethodCallArguments.isAlertEnabled: settings.alertSetting == .enabled,
+                    MethodCallArguments.isBadgeEnabled: settings.badgeSetting == .enabled,
+                    MethodCallArguments.isProvisionalEnabled: settings.authorizationStatus == .provisional,
+                    MethodCallArguments.isCriticalEnabled: settings.criticalAlertSetting == .enabled,
                 ]
 
                 result(dict)

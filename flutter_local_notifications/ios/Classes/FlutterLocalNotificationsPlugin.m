@@ -97,12 +97,12 @@ NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
 NSString *const PRESENTATION_OPTIONS_USER_DEFAULTS =
     @"flutter_local_notifications_presentation_options";
 
-NSString *const CHECK_ENABLED = @"isEnabled";
-NSString *const CHECK_SOUND_ENABLED = @"isSoundEnabled";
-NSString *const CHECK_ALERT_ENABLED = @"isAlertEnabled";
-NSString *const CHECK_BADGE_ENABLED = @"isBadgeEnabled";
-NSString *const CHECK_PROVISIONAL_ENABLED = @"isProvisionalEnabled";
-NSString *const CHECK_CRITICAL_ENABLED = @"isCriticalEnabled";
+NSString *const IS_NOTIFICATIONS_ENABLED = @"isEnabled";
+NSString *const IS_SOUND_ENABLED = @"isSoundEnabled";
+NSString *const IS_ALERT_ENABLED = @"isAlertEnabled";
+NSString *const IS_BADGE_ENABLED = @"isBadgeEnabled";
+NSString *const IS_PROVISIONAL_ENABLED = @"isProvisionalEnabled";
+NSString *const IS_CRITICAL_ENABLED = @"isCriticalEnabled";
 
 typedef NS_ENUM(NSInteger, RepeatInterval) {
   EveryMinute,
@@ -576,12 +576,12 @@ static FlutterError *getFlutterError(NSError *error) {
             }
             
             NSDictionary *dict = @{
-                CHECK_ENABLED: @(isEnabled),
-                CHECK_SOUND_ENABLED: @(isSoundEnabled),
-                CHECK_ALERT_ENABLED: @(isAlertEnabled),
-                CHECK_BADGE_ENABLED: @(isBadgeEnabled),
-                CHECK_PROVISIONAL_ENABLED: @(isProvisionalEnabled),
-                CHECK_CRITICAL_ENABLED: @(isCriticalEnabled),
+                IS_NOTIFICATIONS_ENABLED: @(isEnabled),
+                IS_SOUND_ENABLED: @(isSoundEnabled),
+                IS_ALERT_ENABLED: @(isAlertEnabled),
+                IS_BADGE_ENABLED: @(isBadgeEnabled),
+                IS_PROVISIONAL_ENABLED: @(isProvisionalEnabled),
+                IS_CRITICAL_ENABLED: @(isCriticalEnabled),
             };
             
             result(dict);
@@ -593,12 +593,12 @@ static FlutterError *getFlutterError(NSError *error) {
         
         if(settings == nil) {
             result(@{
-                CHECK_ENABLED: @NO,
-                CHECK_SOUND_ENABLED: @NO,
-                CHECK_ALERT_ENABLED: @NO,
-                CHECK_BADGE_ENABLED: @NO,
-                CHECK_PROVISIONAL_ENABLED: @NO,
-                CHECK_CRITICAL_ENABLED: @NO,
+                IS_NOTIFICATIONS_ENABLED: @NO,
+                IS_SOUND_ENABLED: @NO,
+                IS_ALERT_ENABLED: @NO,
+                IS_BADGE_ENABLED: @NO,
+                IS_PROVISIONAL_ENABLED: @NO,
+                IS_CRITICAL_ENABLED: @NO,
             });
             return;
         }
@@ -611,12 +611,12 @@ static FlutterError *getFlutterError(NSError *error) {
         BOOL isBadgeEnabled = types & UIUserNotificationTypeBadge;
         
         NSDictionary *dict = @{
-            CHECK_ENABLED: @(isEnabled),
-            CHECK_SOUND_ENABLED: @(isSoundEnabled),
-            CHECK_ALERT_ENABLED: @(isAlertEnabled),
-            CHECK_BADGE_ENABLED: @(isBadgeEnabled),
-            CHECK_PROVISIONAL_ENABLED: @NO,
-            CHECK_CRITICAL_ENABLED: @NO,
+            IS_NOTIFICATIONS_ENABLED: @(isEnabled),
+            IS_SOUND_ENABLED: @(isSoundEnabled),
+            IS_ALERT_ENABLED: @(isAlertEnabled),
+            IS_BADGE_ENABLED: @(isBadgeEnabled),
+            IS_PROVISIONAL_ENABLED: @NO,
+            IS_CRITICAL_ENABLED: @NO,
         };
         
         result(dict);
