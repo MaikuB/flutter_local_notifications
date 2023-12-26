@@ -23,6 +23,7 @@ import 'platform_specifics/android/styles/messaging_style_information.dart';
 import 'platform_specifics/darwin/initialization_settings.dart';
 import 'platform_specifics/darwin/mappers.dart';
 import 'platform_specifics/darwin/notification_details.dart';
+import 'platform_specifics/darwin/notification_enabled_options.dart';
 import 'platform_specifics/ios/enums.dart';
 import 'typedefs.dart';
 import 'types.dart';
@@ -616,6 +617,27 @@ class IOSFlutterLocalNotificationsPlugin
         'critical': critical,
       });
 
+  /// Returns whether the app can post notifications and what kind of.
+  ///
+  /// See [NotificationsEnabledOptions] for more info.
+  Future<NotificationsEnabledOptions?> checkPermissions() =>
+      _channel.invokeMethod<Map<dynamic, dynamic>?>('checkPermissions').then(
+        (Map<dynamic, dynamic>? dict) {
+          if (dict == null) {
+            return null;
+          }
+
+          return NotificationsEnabledOptions(
+            isEnabled: dict['isEnabled'] ?? false,
+            isAlertEnabled: dict['isAlertEnabled'] ?? false,
+            isBadgeEnabled: dict['isBadgeEnabled'] ?? false,
+            isSoundEnabled: dict['isSoundEnabled'] ?? false,
+            isProvisionalEnabled: dict['isProvisionalEnabled'] ?? false,
+            isCriticalEnabled: dict['isCriticalEnabled'] ?? false,
+          );
+        },
+      );
+
   /// Schedules a notification to be shown at the specified time in the
   /// future in a specific time zone.
   ///
@@ -783,6 +805,26 @@ class MacOSFlutterLocalNotificationsPlugin
         'badge': badge,
         'provisional': provisional,
         'critical': critical,
+      });
+
+  /// Returns whether the app can post notifications and what kind of.
+  ///
+  /// See [NotificationsEnabledOptions] for more info.
+  Future<NotificationsEnabledOptions?> checkPermissions() => _channel
+          .invokeMethod<Map<dynamic, dynamic>>('checkPermissions')
+          .then((Map<dynamic, dynamic>? dict) {
+        if (dict == null) {
+          return null;
+        }
+
+        return NotificationsEnabledOptions(
+          isEnabled: dict['isEnabled'] ?? false,
+          isAlertEnabled: dict['isAlertEnabled'] ?? false,
+          isBadgeEnabled: dict['isBadgeEnabled'] ?? false,
+          isSoundEnabled: dict['isSoundEnabled'] ?? false,
+          isProvisionalEnabled: dict['isProvisionalEnabled'] ?? false,
+          isCriticalEnabled: dict['isCriticalEnabled'] ?? false,
+        );
       });
 
   /// Schedules a notification to be shown at the specified date and time

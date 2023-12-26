@@ -20,7 +20,7 @@ void main() {
     setUp(() {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
         log.add(methodCall);
         if (methodCall.method == 'pendingNotificationRequests') {
@@ -606,6 +606,15 @@ void main() {
         })
       ]);
     });
+
+    test('checkPermissions', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()!
+          .checkPermissions();
+      expect(log, <Matcher>[isMethodCall('checkPermissions', arguments: null)]);
+    });
+
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
       expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);

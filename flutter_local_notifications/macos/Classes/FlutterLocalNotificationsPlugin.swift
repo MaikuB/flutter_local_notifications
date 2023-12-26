@@ -47,6 +47,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let interruptionLevel = "interruptionLevel"
         static let actionId = "actionId"
         static let notificationResponseType = "notificationResponseType"
+        static let isNotificationsEnabled = "isEnabled"
+        static let isSoundEnabled = "isSoundEnabled"
+        static let isAlertEnabled = "isAlertEnabled"
+        static let isBadgeEnabled = "isBadgeEnabled"
+        static let isProvisionalEnabled = "isProvisionalEnabled"
+        static let isCriticalEnabled = "isCriticalEnabled"
     }
 
     struct ErrorMessages {
@@ -193,6 +199,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             initialize(call, result)
         case "requestPermissions":
             requestPermissions(call, result)
+        case "checkPermissions":
+            checkPermissions(call, result)
         case "getNotificationAppLaunchDetails":
             getNotificationAppLaunchDetails(result)
         case "cancel":
@@ -663,6 +671,25 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         }
         UNUserNotificationCenter.current().requestAuthorization(options: options) { (granted, _) in
             result(granted)
+        }
+    }
+    
+    func checkPermissions(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        if #available(macOS 10.14, *) {
+            UNUserNotificationCenter.current().getNotificationSettings { settings in
+                let dict = [
+                    MethodCallArguments.isNotificationsEnabled: settings.authorizationStatus == .authorized,
+                    MethodCallArguments.isSoundEnabled: settings.soundSetting == .enabled,
+                    MethodCallArguments.isAlertEnabled: settings.alertSetting == .enabled,
+                    MethodCallArguments.isBadgeEnabled: settings.badgeSetting == .enabled,
+                    MethodCallArguments.isProvisionalEnabled: settings.authorizationStatus == .provisional,
+                    MethodCallArguments.isCriticalEnabled: settings.criticalAlertSetting == .enabled,
+                ]
+
+                result(dict)
+            }
+        } else {
+            result(nil)
         }
     }
 

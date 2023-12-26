@@ -35,6 +35,7 @@ NSString *const CALLBACK_CHANNEL =
 NSString *const ON_NOTIFICATION_METHOD = @"onNotification";
 NSString *const DID_RECEIVE_LOCAL_NOTIFICATION = @"didReceiveLocalNotification";
 NSString *const REQUEST_PERMISSIONS_METHOD = @"requestPermissions";
+NSString *const CHECK_PERMISSIONS_METHOD = @"checkPermissions";
 
 NSString *const DAY = @"day";
 
@@ -95,6 +96,13 @@ NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
     @"iOS version must be 10.0 or newer to use getActiveNotifications";
 NSString *const PRESENTATION_OPTIONS_USER_DEFAULTS =
     @"flutter_local_notifications_presentation_options";
+
+NSString *const IS_NOTIFICATIONS_ENABLED = @"isEnabled";
+NSString *const IS_SOUND_ENABLED = @"isSoundEnabled";
+NSString *const IS_ALERT_ENABLED = @"isAlertEnabled";
+NSString *const IS_BADGE_ENABLED = @"isBadgeEnabled";
+NSString *const IS_PROVISIONAL_ENABLED = @"isProvisionalEnabled";
+NSString *const IS_CRITICAL_ENABLED = @"isCriticalEnabled";
 
 typedef NS_ENUM(NSInteger, RepeatInterval) {
   EveryMinute,
@@ -170,6 +178,8 @@ static FlutterError *getFlutterError(NSError *error) {
     [self periodicallyShow:call.arguments result:result];
   } else if ([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
     [self requestPermissions:call.arguments result:result];
+  } else if ([CHECK_PERMISSIONS_METHOD isEqualToString:call.method]) {
+    [self checkPermissions:call.arguments result:result];
   } else if ([CANCEL_METHOD isEqualToString:call.method]) {
     [self cancel:((NSNumber *)call.arguments) result:result];
   } else if ([CANCEL_ALL_METHOD isEqualToString:call.method]) {
@@ -543,6 +553,75 @@ static FlutterError *getFlutterError(NSError *error) {
 #pragma clang diagnostic pop
     result(@YES);
   }
+}
+
+- (void)checkPermissions:(NSDictionary *_Nonnull)arguments
+
+                  result:(FlutterResult _Nonnull)result {
+    if (@available(iOS 10.0, *)) {
+        UNUserNotificationCenter *center =
+        [UNUserNotificationCenter currentNotificationCenter];
+        
+        [center getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+            BOOL isEnabled = settings.authorizationStatus == UNAuthorizationStatusAuthorized;
+            BOOL isSoundEnabled = settings.soundSetting == UNNotificationSettingEnabled;
+            BOOL isAlertEnabled = settings.alertSetting == UNNotificationSettingEnabled;
+            BOOL isBadgeEnabled = settings.badgeSetting == UNNotificationSettingEnabled;
+            BOOL isProvisionalEnabled = false;
+            BOOL isCriticalEnabled = false;
+            
+            if(@available(iOS 12.0, *)) {
+                isProvisionalEnabled = settings.authorizationStatus == UNAuthorizationStatusProvisional;
+                isCriticalEnabled = settings.criticalAlertSetting == UNNotificationSettingEnabled;
+            }
+            
+            NSDictionary *dict = @{
+                IS_NOTIFICATIONS_ENABLED: @(isEnabled),
+                IS_SOUND_ENABLED: @(isSoundEnabled),
+                IS_ALERT_ENABLED: @(isAlertEnabled),
+                IS_BADGE_ENABLED: @(isBadgeEnabled),
+                IS_PROVISIONAL_ENABLED: @(isProvisionalEnabled),
+                IS_CRITICAL_ENABLED: @(isCriticalEnabled),
+            };
+            
+            result(dict);
+        }];
+    } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        UIUserNotificationSettings *settings = UIApplication.sharedApplication.currentUserNotificationSettings;
+        
+        if(settings == nil) {
+            result(@{
+                IS_NOTIFICATIONS_ENABLED: @NO,
+                IS_SOUND_ENABLED: @NO,
+                IS_ALERT_ENABLED: @NO,
+                IS_BADGE_ENABLED: @NO,
+                IS_PROVISIONAL_ENABLED: @NO,
+                IS_CRITICAL_ENABLED: @NO,
+            });
+            return;
+        }
+        
+        UIUserNotificationType types = settings.types;
+        
+        BOOL isEnabled = types != UIUserNotificationTypeNone;
+        BOOL isSoundEnabled = types & UIUserNotificationTypeSound;
+        BOOL isAlertEnabled = types & UIUserNotificationTypeAlert;
+        BOOL isBadgeEnabled = types & UIUserNotificationTypeBadge;
+        
+        NSDictionary *dict = @{
+            IS_NOTIFICATIONS_ENABLED: @(isEnabled),
+            IS_SOUND_ENABLED: @(isSoundEnabled),
+            IS_ALERT_ENABLED: @(isAlertEnabled),
+            IS_BADGE_ENABLED: @(isBadgeEnabled),
+            IS_PROVISIONAL_ENABLED: @NO,
+            IS_CRITICAL_ENABLED: @NO,
+        };
+        
+        result(dict);
+#pragma clang diagnostic pop
+    }
 }
 
 #pragma clang diagnostic push
