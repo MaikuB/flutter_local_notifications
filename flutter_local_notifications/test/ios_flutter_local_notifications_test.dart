@@ -20,7 +20,7 @@ void main() {
     setUp(() {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-      TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
         log.add(methodCall);
         if (methodCall.method == 'pendingNotificationRequests') {
