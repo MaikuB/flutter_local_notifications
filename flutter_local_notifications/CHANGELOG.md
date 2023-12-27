@@ -1,7 +1,11 @@
+[vNext]
+
+* Added missing acknowledgement for readme fix in 16.3.0
+
 # [16.3.0]
 
 * [iOS][macOS] added the `checkPermissions()` method to the `IOSFlutterLocalNotificationsPlugin` and `MacOSFlutterLocalNotificationsPlugin` classes respectively. This can be use to check the notification permissions granted to the app. Thanks to the PR from [Konstantin Dovnar](https://github.com/Vorkytaka)
-* Fixed part of the readme where a word was missing in the "AndroidManifest.xml setup" section
+* Fixed part of the readme where a word was missing in the "AndroidManifest.xml setup" section. Thanks to the PR from [Gavin Douch](https://github.com/Coedice)
 
 # [16.2.0]
 
