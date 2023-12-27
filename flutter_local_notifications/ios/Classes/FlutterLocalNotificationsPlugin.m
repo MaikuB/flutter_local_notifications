@@ -558,70 +558,78 @@ static FlutterError *getFlutterError(NSError *error) {
 - (void)checkPermissions:(NSDictionary *_Nonnull)arguments
 
                   result:(FlutterResult _Nonnull)result {
-    if (@available(iOS 10.0, *)) {
-        UNUserNotificationCenter *center =
+  if (@available(iOS 10.0, *)) {
+    UNUserNotificationCenter *center =
         [UNUserNotificationCenter currentNotificationCenter];
-        
-        [center getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
-            BOOL isEnabled = settings.authorizationStatus == UNAuthorizationStatusAuthorized;
-            BOOL isSoundEnabled = settings.soundSetting == UNNotificationSettingEnabled;
-            BOOL isAlertEnabled = settings.alertSetting == UNNotificationSettingEnabled;
-            BOOL isBadgeEnabled = settings.badgeSetting == UNNotificationSettingEnabled;
-            BOOL isProvisionalEnabled = false;
-            BOOL isCriticalEnabled = false;
-            
-            if(@available(iOS 12.0, *)) {
-                isProvisionalEnabled = settings.authorizationStatus == UNAuthorizationStatusProvisional;
-                isCriticalEnabled = settings.criticalAlertSetting == UNNotificationSettingEnabled;
-            }
-            
-            NSDictionary *dict = @{
-                IS_NOTIFICATIONS_ENABLED: @(isEnabled),
-                IS_SOUND_ENABLED: @(isSoundEnabled),
-                IS_ALERT_ENABLED: @(isAlertEnabled),
-                IS_BADGE_ENABLED: @(isBadgeEnabled),
-                IS_PROVISIONAL_ENABLED: @(isProvisionalEnabled),
-                IS_CRITICAL_ENABLED: @(isCriticalEnabled),
-            };
-            
-            result(dict);
-        }];
-    } else {
+
+    [center getNotificationSettingsWithCompletionHandler:^(
+                UNNotificationSettings *_Nonnull settings) {
+      BOOL isEnabled =
+          settings.authorizationStatus == UNAuthorizationStatusAuthorized;
+      BOOL isSoundEnabled =
+          settings.soundSetting == UNNotificationSettingEnabled;
+      BOOL isAlertEnabled =
+          settings.alertSetting == UNNotificationSettingEnabled;
+      BOOL isBadgeEnabled =
+          settings.badgeSetting == UNNotificationSettingEnabled;
+      BOOL isProvisionalEnabled = false;
+      BOOL isCriticalEnabled = false;
+
+      if (@available(iOS 12.0, *)) {
+        isProvisionalEnabled =
+            settings.authorizationStatus == UNAuthorizationStatusProvisional;
+        isCriticalEnabled =
+            settings.criticalAlertSetting == UNNotificationSettingEnabled;
+      }
+
+      NSDictionary *dict = @{
+        IS_NOTIFICATIONS_ENABLED : @(isEnabled),
+        IS_SOUND_ENABLED : @(isSoundEnabled),
+        IS_ALERT_ENABLED : @(isAlertEnabled),
+        IS_BADGE_ENABLED : @(isBadgeEnabled),
+        IS_PROVISIONAL_ENABLED : @(isProvisionalEnabled),
+        IS_CRITICAL_ENABLED : @(isCriticalEnabled),
+      };
+
+      result(dict);
+    }];
+  } else {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        UIUserNotificationSettings *settings = UIApplication.sharedApplication.currentUserNotificationSettings;
-        
-        if(settings == nil) {
-            result(@{
-                IS_NOTIFICATIONS_ENABLED: @NO,
-                IS_SOUND_ENABLED: @NO,
-                IS_ALERT_ENABLED: @NO,
-                IS_BADGE_ENABLED: @NO,
-                IS_PROVISIONAL_ENABLED: @NO,
-                IS_CRITICAL_ENABLED: @NO,
-            });
-            return;
-        }
-        
-        UIUserNotificationType types = settings.types;
-        
-        BOOL isEnabled = types != UIUserNotificationTypeNone;
-        BOOL isSoundEnabled = types & UIUserNotificationTypeSound;
-        BOOL isAlertEnabled = types & UIUserNotificationTypeAlert;
-        BOOL isBadgeEnabled = types & UIUserNotificationTypeBadge;
-        
-        NSDictionary *dict = @{
-            IS_NOTIFICATIONS_ENABLED: @(isEnabled),
-            IS_SOUND_ENABLED: @(isSoundEnabled),
-            IS_ALERT_ENABLED: @(isAlertEnabled),
-            IS_BADGE_ENABLED: @(isBadgeEnabled),
-            IS_PROVISIONAL_ENABLED: @NO,
-            IS_CRITICAL_ENABLED: @NO,
-        };
-        
-        result(dict);
-#pragma clang diagnostic pop
+    UIUserNotificationSettings *settings =
+        UIApplication.sharedApplication.currentUserNotificationSettings;
+
+    if (settings == nil) {
+      result(@{
+        IS_NOTIFICATIONS_ENABLED : @NO,
+        IS_SOUND_ENABLED : @NO,
+        IS_ALERT_ENABLED : @NO,
+        IS_BADGE_ENABLED : @NO,
+        IS_PROVISIONAL_ENABLED : @NO,
+        IS_CRITICAL_ENABLED : @NO,
+      });
+      return;
     }
+
+    UIUserNotificationType types = settings.types;
+
+    BOOL isEnabled = types != UIUserNotificationTypeNone;
+    BOOL isSoundEnabled = types & UIUserNotificationTypeSound;
+    BOOL isAlertEnabled = types & UIUserNotificationTypeAlert;
+    BOOL isBadgeEnabled = types & UIUserNotificationTypeBadge;
+
+    NSDictionary *dict = @{
+      IS_NOTIFICATIONS_ENABLED : @(isEnabled),
+      IS_SOUND_ENABLED : @(isSoundEnabled),
+      IS_ALERT_ENABLED : @(isAlertEnabled),
+      IS_BADGE_ENABLED : @(isBadgeEnabled),
+      IS_PROVISIONAL_ENABLED : @NO,
+      IS_CRITICAL_ENABLED : @NO,
+    };
+
+    result(dict);
+#pragma clang diagnostic pop
+  }
 }
 
 #pragma clang diagnostic push

@@ -19,7 +19,7 @@ void main() {
     setUp(() {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-      TestDefaultBinaryMessengerBinding.instance?.defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
         log.add(methodCall);
         if (methodCall.method == 'pendingNotificationRequests') {
@@ -526,11 +526,9 @@ void main() {
     test('checkPermissions', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-          MacOSFlutterLocalNotificationsPlugin>()!
+              MacOSFlutterLocalNotificationsPlugin>()!
           .checkPermissions();
-      expect(log, <Matcher>[
-        isMethodCall('checkPermissions', arguments: null)
-      ]);
+      expect(log, <Matcher>[isMethodCall('checkPermissions', arguments: null)]);
     });
 
     test('cancel', () async {
