@@ -1,3 +1,8 @@
+# [16.3.0]
+
+* [iOS][macOS] added the `checkPermissions()` method to the `IOSFlutterLocalNotificationsPlugin` and `MacOSFlutterLocalNotificationsPlugin` classes respectively. This can be use to check the notification permissions granted to the app. Thanks to the PR from [Konstantin Dovnar](https://github.com/Vorkytaka)
+* Fixed part of the readme where a word was missing in the "AndroidManifest.xml setup" section
+
 # [16.2.0]
 
 * [Android] added the `silent` property to the `AndroidNotificationDetails` that allows specifying a notification on Android to be silent even if associated the notification channel allows for sounds to be played. Thanks to the PR from [aa-euclidk](https://github.com/aa-euclidk)
