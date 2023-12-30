@@ -50,6 +50,11 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
     throw UnimplementedError('periodicallyShow() has not been implemented');
   }
 
+  Future<void> periodicallyShowWithDuration(
+      int id, String? title, String? body, Duration repeatDurationInterval) {
+    throw UnimplementedError('periodicallyShowWithDuration() has not been implemented');
+  }
+
   /// Cancel/remove the notification with the specified id.
   ///
   /// This applies to notifications that have been scheduled and those that

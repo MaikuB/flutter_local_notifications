@@ -346,6 +346,29 @@ class AndroidFlutterLocalNotificationsPlugin
     });
   }
 
+  @override
+  Future<void> periodicallyShowWithDuration(
+      int id,
+      String? title,
+      String? body,
+      Duration repeatDurationInterval, {
+        AndroidNotificationDetails? notificationDetails,
+        String? payload,
+        AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
+      }) async {
+    validateId(id);
+    await _channel.invokeMethod('periodicallyShowWithDuration', <String, Object?>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': clock.now().millisecondsSinceEpoch,
+      'repeatDurationInterval': repeatDurationInterval.inMilliseconds,
+      'platformSpecifics':
+      _buildPlatformSpecifics(notificationDetails, scheduleMode),
+      'payload': payload ?? '',
+    });
+  }
+
   Map<String, Object?> _buildPlatformSpecifics(
     AndroidNotificationDetails? notificationDetails,
     AndroidScheduleMode scheduleMode,
@@ -729,6 +752,27 @@ class IOSFlutterLocalNotificationsPlugin
     });
   }
 
+  @override
+  Future<void> periodicallyShowWithDuration(
+      int id,
+      String? title,
+      String? body,
+      Duration repeatDurationInterval, {
+        DarwinNotificationDetails? notificationDetails,
+        String? payload,
+      }) async {
+    validateId(id);
+    await _channel.invokeMethod('periodicallyShowWithDuration', <String, Object?>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': clock.now().millisecondsSinceEpoch,
+      'repeatDurationInterval': repeatDurationInterval.inMilliseconds,
+      'platformSpecifics': notificationDetails?.toMap(),
+      'payload': payload ?? ''
+    });
+  }
+
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'didReceiveNotificationResponse':
@@ -896,6 +940,27 @@ class MacOSFlutterLocalNotificationsPlugin
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
+      'platformSpecifics': notificationDetails?.toMap(),
+      'payload': payload ?? ''
+    });
+  }
+
+  @override
+  Future<void> periodicallyShowWithDuration(
+      int id,
+      String? title,
+      String? body,
+      Duration repeatDurationInterval, {
+        DarwinNotificationDetails? notificationDetails,
+        String? payload,
+      }) async {
+    validateId(id);
+    await _channel.invokeMethod('periodicallyShowWithDuration', <String, Object?>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': clock.now().millisecondsSinceEpoch,
+      'repeatDurationInterval': repeatDurationInterval.inMilliseconds,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
