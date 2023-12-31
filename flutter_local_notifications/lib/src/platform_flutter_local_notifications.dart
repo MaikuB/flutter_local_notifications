@@ -362,7 +362,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'title': title,
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatDurationInterval': repeatDurationInterval.inMilliseconds,
+      'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
       'platformSpecifics':
       _buildPlatformSpecifics(notificationDetails, scheduleMode),
       'payload': payload ?? '',
@@ -767,7 +767,7 @@ class IOSFlutterLocalNotificationsPlugin
       'title': title,
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatDurationInterval': repeatDurationInterval.inMilliseconds,
+      'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });
@@ -960,7 +960,7 @@ class MacOSFlutterLocalNotificationsPlugin
       'title': title,
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
-      'repeatDurationInterval': repeatDurationInterval.inMilliseconds,
+      'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });

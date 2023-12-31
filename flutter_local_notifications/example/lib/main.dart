@@ -424,6 +424,12 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedElevatedButton(
+                      buttonText: 'Repeat notification every 30 seconds',
+                      onPressed: () async {
+                        await _repeatPeriodicallyWithDurationNotification();
+                      },
+                    ),
+                    PaddedElevatedButton(
                       buttonText: 'Schedule daily 10:00:00 am notification in your '
                           'local time zone',
                       onPressed: () async {
@@ -1786,6 +1792,22 @@ class _HomePageState extends State<HomePage> {
       'repeating title',
       'repeating body',
       RepeatInterval.everyMinute,
+      notificationDetails,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
+  }
+
+  Future<void> _repeatPeriodicallyWithDurationNotification() async {
+    const AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
+        'repeating channel id', 'repeating channel name',
+        channelDescription: 'repeating description');
+    const NotificationDetails notificationDetails =
+    NotificationDetails(android: androidNotificationDetails);
+    await flutterLocalNotificationsPlugin.periodicallyShowWithDuration(
+      id++,
+      'repeating period title',
+      'repeating period body',
+      const Duration(seconds: 30),
       notificationDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );

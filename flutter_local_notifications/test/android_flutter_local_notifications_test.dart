@@ -2068,7 +2068,7 @@ void main() {
                   'body': 'notification body',
                   'payload': '',
                   'calledAt': now.millisecondsSinceEpoch,
-                  'repeatDurationInterval': repeatDurationInterval.inMilliseconds,
+                  'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
                   'platformSpecifics': <String, Object?>{
                     'scheduleMode': 'exact',
                     'icon': null,
