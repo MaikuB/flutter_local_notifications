@@ -424,7 +424,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedElevatedButton(
-                      buttonText: 'Repeat notification every 30 seconds',
+                      buttonText: 'Repeat notification every 5 minutes',
                       onPressed: () async {
                         await _repeatPeriodicallyWithDurationNotification();
                       },
@@ -1807,7 +1807,7 @@ class _HomePageState extends State<HomePage> {
       id++,
       'repeating period title',
       'repeating period body',
-      const Duration(seconds: 30),
+      const Duration(minutes: 5),
       notificationDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
