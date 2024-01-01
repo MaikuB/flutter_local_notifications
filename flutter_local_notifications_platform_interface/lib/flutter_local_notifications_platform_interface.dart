@@ -50,6 +50,10 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
     throw UnimplementedError('periodicallyShow() has not been implemented');
   }
 
+  /// Periodically show a notification using the specified custom duration interval.
+  /// For example, specifying a 5 minutes repeat duration interval means
+  /// the first time the notification will be an 5 minutes after the method
+  /// has been called and then every 5 minutes after that.
   Future<void> periodicallyShowWithDuration(
       int id, String? title, String? body, Duration repeatDurationInterval) {
     throw UnimplementedError('periodicallyShowWithDuration() has not been implemented');

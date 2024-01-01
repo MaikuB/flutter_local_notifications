@@ -441,11 +441,11 @@ class FlutterLocalNotificationsPlugin {
     }
   }
 
-  /// Periodically show a notification using the specified interval.
+  /// Periodically show a notification using the specified custom duration interval.
   ///
-  /// For example, specifying a hourly interval means the first time the
-  /// notification will be an hour after the method has been called and
-  /// then every hour after that.
+  /// For example, specifying a 5 minutes repeat duration interval means
+  /// the first time the notification will be an 5 minutes after the method
+  /// has been called and then every 5 minutes after that.
   ///
   /// If [androidAllowWhileIdle] is `false`, the Android `AlarmManager` APIs
   /// are used to set a recurring inexact alarm that would present the
