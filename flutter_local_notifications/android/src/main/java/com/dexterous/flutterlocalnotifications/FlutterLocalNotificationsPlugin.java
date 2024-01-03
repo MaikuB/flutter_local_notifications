@@ -700,6 +700,13 @@ public class FlutterLocalNotificationsPlugin
       AlarmManager alarmManager,
       long epochMilli,
       PendingIntent pendingIntent) {
+
+    if (notificationDetails.scheduleMode == null) {
+      // Handle ScheduleMode.useAllowWhileIdle() called on a null object reference
+      // Issue reference: https://github.com/MaikuB/flutter_local_notifications/issues/2136
+      notificationDetails.scheduleMode = ScheduleMode.inexact;
+    }
+
     if (notificationDetails.scheduleMode.useAllowWhileIdle()) {
       setupAllowWhileIdleAlarm(notificationDetails, alarmManager, epochMilli, pendingIntent);
     } else {
