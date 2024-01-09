@@ -129,7 +129,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String CALLBACK_HANDLE = "callback_handle";
   private static final String DRAWABLE = "drawable";
   private static final String DEFAULT_ICON = "defaultIcon";
-  private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
+  private static final String SELECT_NOTIFICATION_ACTION = "SELECT_NOTIFICATION";
   private static final String SELECT_FOREGROUND_NOTIFICATION_ACTION =
       "SELECT_FOREGROUND_NOTIFICATION";
   private static final String SCHEDULED_NOTIFICATIONS = "scheduled_notifications";
@@ -149,7 +149,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String GET_NOTIFICATION_CHANNELS_METHOD = "getNotificationChannels";
   private static final String START_FOREGROUND_SERVICE = "startForegroundService";
   private static final String STOP_FOREGROUND_SERVICE = "stopForegroundService";
-  private static final String RESET_SELECTED_NOTIFICATION = "resetSelectedNotification";
+  private static final String RESET_SELECTED_NOTIFICATION_CHANNEL_METHOD = "resetSelectedNotification";
   private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
   private static final String GET_ACTIVE_NOTIFICATIONS_METHOD = "getActiveNotifications";
   private static final String SHOW_METHOD = "show";
@@ -252,7 +252,7 @@ public class FlutterLocalNotificationsPlugin
       setupNotificationChannel(context, notificationChannelDetails);
     }
     Intent intent = getLaunchIntent(context);
-    intent.setAction(SELECT_NOTIFICATION);
+    intent.setAction(SELECT_NOTIFICATION_ACTION);
     intent.putExtra(NOTIFICATION_ID, notificationDetails.id);
     intent.putExtra(PAYLOAD, notificationDetails.payload);
     int flags = PendingIntent.FLAG_UPDATE_CURRENT;
@@ -625,7 +625,7 @@ public class FlutterLocalNotificationsPlugin
       notificationResponseMap.put(INPUT, remoteInput.getString(INPUT_RESULT));
     }
 
-    if (SELECT_NOTIFICATION.equals(intent.getAction())) {
+    if (SELECT_NOTIFICATION_ACTION.equals(intent.getAction())) {
       notificationResponseMap.put(NOTIFICATION_RESPONSE_TYPE, 0);
     }
 
@@ -1479,7 +1479,7 @@ public class FlutterLocalNotificationsPlugin
       case STOP_FOREGROUND_SERVICE:
         stopForegroundService(result);
         break;
-      case RESET_SELECTED_NOTIFICATION:
+      case RESET_SELECTED_NOTIFICATION_CHANNEL_METHOD:
         resetSelectedNotification(result);
         break;
       default:
@@ -1588,7 +1588,7 @@ public class FlutterLocalNotificationsPlugin
       Intent launchIntent = mainActivity.getIntent();
       notificationLaunchedApp =
               launchIntent != null
-                      && (SELECT_NOTIFICATION.equals(launchIntent.getAction())
+                      && (SELECT_NOTIFICATION_ACTION.equals(launchIntent.getAction())
                       || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.getAction()))
                       && !launchedActivityFromHistory(launchIntent);
       if (notificationLaunchedApp) {
@@ -1837,7 +1837,7 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private Boolean sendNotificationPayloadMessage(Intent intent) {
-    if (SELECT_NOTIFICATION.equals(intent.getAction())
+    if (SELECT_NOTIFICATION_ACTION.equals(intent.getAction())
         || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
       Map<String, Object> notificationResponse = extractNotificationResponseMap(intent);
       if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
@@ -2153,7 +2153,7 @@ public class FlutterLocalNotificationsPlugin
       if(action == null) {
         return;
       }
-      boolean isSelectNotification = action.equals(SELECT_NOTIFICATION);
+      boolean isSelectNotification = action.equals(SELECT_NOTIFICATION_ACTION);
       boolean isSelectForegroundNotification = action.equals(SELECT_FOREGROUND_NOTIFICATION_ACTION);
       if(isSelectNotification || isSelectForegroundNotification) {
         mainActivity.getIntent().setAction("android.intent.action.MAIN");
