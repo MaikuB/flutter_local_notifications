@@ -149,7 +149,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String GET_NOTIFICATION_CHANNELS_METHOD = "getNotificationChannels";
   private static final String START_FOREGROUND_SERVICE = "startForegroundService";
   private static final String STOP_FOREGROUND_SERVICE = "stopForegroundService";
-  private static final String RESET_SELECTED_NOTIFICATION_CHANNEL_METHOD = "resetSelectedNotification";
+  private static final String CONSUME_SELECTED_NOTIFICATION_METHOD = "consumeSelectedNotification";
   private static final String PENDING_NOTIFICATION_REQUESTS_METHOD = "pendingNotificationRequests";
   private static final String GET_ACTIVE_NOTIFICATIONS_METHOD = "getActiveNotifications";
   private static final String SHOW_METHOD = "show";
@@ -196,6 +196,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String INPUT_RESULT = "FlutterLocalNotificationsPluginInputResult";
   private static final String INPUT = "input";
   private static final String NOTIFICATION_RESPONSE_TYPE = "notificationResponseType";
+  private static final String EXTRA_IS_SELECTED_NOTIFICATION_CONSUMED_KEY = "notificationConsumed";
   static String NOTIFICATION_DETAILS = "notificationDetails";
   static Gson gson;
   private MethodChannel channel;
@@ -1479,8 +1480,8 @@ public class FlutterLocalNotificationsPlugin
       case STOP_FOREGROUND_SERVICE:
         stopForegroundService(result);
         break;
-      case RESET_SELECTED_NOTIFICATION_CHANNEL_METHOD:
-        resetSelectedNotification(result);
+      case CONSUME_SELECTED_NOTIFICATION_METHOD:
+        consumeSelectedNotification(result);
         break;
       default:
         result.notImplemented();
@@ -1590,7 +1591,8 @@ public class FlutterLocalNotificationsPlugin
               launchIntent != null
                       && (SELECT_NOTIFICATION_ACTION.equals(launchIntent.getAction())
                       || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.getAction()))
-                      && !launchedActivityFromHistory(launchIntent);
+                      && !launchedActivityFromHistory(launchIntent)
+                      && !isSelectedNotificationConsumed();
       if (notificationLaunchedApp) {
         notificationAppLaunchDetails.put(
                 "notificationResponse", extractNotificationResponseMap(launchIntent));
@@ -2148,17 +2150,31 @@ public class FlutterLocalNotificationsPlugin
     return true;
   }
 
-  private void resetSelectedNotification(Result result) {
-      String action = mainActivity.getIntent().getAction();
+  private void consumeSelectedNotification(Result result) {
+      if(mainActivity == null) {
+          return;
+      }
+
+      Intent mainActivityIntent = mainActivity.getIntent();
+      String action = mainActivityIntent.getAction();
       if(action == null) {
-        return;
+          return;
       }
-      boolean isSelectNotification = action.equals(SELECT_NOTIFICATION_ACTION);
-      boolean isSelectForegroundNotification = action.equals(SELECT_FOREGROUND_NOTIFICATION_ACTION);
-      if(isSelectNotification || isSelectForegroundNotification) {
-        mainActivity.getIntent().setAction("android.intent.action.MAIN");
+      boolean isSelectNotificationAction = action.equals(SELECT_NOTIFICATION_ACTION);
+      boolean isSelectForegroundNotificationAction =
+              action.equals(SELECT_FOREGROUND_NOTIFICATION_ACTION);
+      if(isSelectNotificationAction || isSelectForegroundNotificationAction) {
+          mainActivityIntent.putExtra(EXTRA_IS_SELECTED_NOTIFICATION_CONSUMED_KEY, true);
       }
-    result.success(null);
+      result.success(null);
+  }
+
+  private boolean isSelectedNotificationConsumed() {
+      if(mainActivity == null) {
+          return false;
+      }
+      return mainActivity.getIntent().getBooleanExtra(EXTRA_IS_SELECTED_NOTIFICATION_CONSUMED_KEY,
+              false);
   }
 
   private static class PluginException extends RuntimeException {
