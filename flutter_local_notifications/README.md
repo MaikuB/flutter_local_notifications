@@ -95,6 +95,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Ability to check if notifications are enabled
 * [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
 * [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
+* [iOS and macOS 10.14 or newer] Ability to check if notifications are enabled with specific type check
 * [Linux] Ability to to use themed/Flutter Assets icons and sound
 * [Linux] Ability to to set the category
 * [Linux] Configuring the urgency
@@ -235,7 +236,7 @@ android {
 
 Previously the plugin would specify all the permissions required all of the features that the plugin support in its own `AndroidManifest.xml` file so that developers wouldn't need to do this in their own app's `AndroidManifest.xml` file. Since version 16 onwards, the plugin will now only specify the bare minimum and these [`POST_NOTIFICATIONS`] (https://developer.android.com/reference/android/Manifest.permission#POST_NOTIFICATIONS) and [`VIBRATE`](https://developer.android.com/reference/android/Manifest.permission#VIBRATE) permissions.
 
-For apps that need the following functionality please the following in your app's `AndroidManifest.xml`
+For apps that need the following functionality please complete the following in your app's `AndroidManifest.xml`
 
 * To schedule notifications the following changes are needed
     * Specify the appropriate permissions between the `<manifest>` tags.

@@ -782,6 +782,10 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     PaddedElevatedButton(
+                      buttonText: 'Check permissions',
+                      onPressed: _checkNotificationsOnCupertino,
+                    ),
+                    PaddedElevatedButton(
                       buttonText: 'Request permission',
                       onPressed: _requestPermissions,
                     ),
@@ -2329,6 +2333,41 @@ class _HomePageState extends State<HomePage> {
             ));
   }
 
+  Future<void> _checkNotificationsOnCupertino() async {
+    final NotificationsEnabledOptions? isEnabled =
+        await flutterLocalNotificationsPlugin
+                .resolvePlatformSpecificImplementation<
+                    IOSFlutterLocalNotificationsPlugin>()
+                ?.checkPermissions() ??
+            await flutterLocalNotificationsPlugin
+                .resolvePlatformSpecificImplementation<
+                    MacOSFlutterLocalNotificationsPlugin>()
+                ?.checkPermissions();
+    final String isEnabledString = isEnabled == null
+        ? 'ERROR: received null'
+        : '''
+    isEnabled: ${isEnabled.isEnabled}
+    isSoundEnabled: ${isEnabled.isSoundEnabled}
+    isAlertEnabled: ${isEnabled.isAlertEnabled}
+    isBadgeEnabled: ${isEnabled.isBadgeEnabled}
+    isProvisionalEnabled: ${isEnabled.isProvisionalEnabled}
+    isCriticalEnabled: ${isEnabled.isCriticalEnabled}
+    ''';
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              content: Text(isEnabledString),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ));
+  }
+
   Future<void> _deleteNotificationChannel() async {
     const String channelId = 'your channel id 2';
     await flutterLocalNotificationsPlugin
@@ -2682,7 +2721,8 @@ Future<void> _showLinuxNotificationWithByteDataIcon() async {
         data: iconBytes,
         width: iconData.width,
         height: iconData.height,
-        channels: 4, // The icon has an alpha channel
+        channels: 4,
+        // The icon has an alpha channel
         hasAlpha: true,
       ),
     ),
