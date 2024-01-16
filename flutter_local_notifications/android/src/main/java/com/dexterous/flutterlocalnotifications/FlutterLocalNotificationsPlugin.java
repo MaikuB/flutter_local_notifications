@@ -702,9 +702,11 @@ public class FlutterLocalNotificationsPlugin
       PendingIntent pendingIntent) {
 
     if (notificationDetails.scheduleMode == null) {
-      // Handle ScheduleMode.useAllowWhileIdle() called on a null object reference
-      // Issue reference: https://github.com/MaikuB/flutter_local_notifications/issues/2136
-      notificationDetails.scheduleMode = ScheduleMode.inexact;
+      // This is to account for notifications created in older versions prior to allowWhileIdle
+      // being added so the deserialiser.
+      // Reference to old behaviour:
+      // https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/android/src/main/java/com/dexterous/flutterlocalnotifications/FlutterLocalNotificationsPlugin.java#L735
+      notificationDetails.scheduleMode = ScheduleMode.exact
     }
 
     if (notificationDetails.scheduleMode.useAllowWhileIdle()) {
