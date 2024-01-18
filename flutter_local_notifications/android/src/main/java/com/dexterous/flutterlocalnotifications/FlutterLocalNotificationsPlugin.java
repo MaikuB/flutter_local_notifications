@@ -706,7 +706,7 @@ public class FlutterLocalNotificationsPlugin
       // being added so the deserialiser.
       // Reference to old behaviour:
       // https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/android/src/main/java/com/dexterous/flutterlocalnotifications/FlutterLocalNotificationsPlugin.java#L735
-      notificationDetails.scheduleMode = ScheduleMode.exact
+      notificationDetails.scheduleMode = ScheduleMode.exact;
     }
 
     if (notificationDetails.scheduleMode.useAllowWhileIdle()) {
