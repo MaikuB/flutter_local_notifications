@@ -1,3 +1,8 @@
+# [15.1.3]
+
+* [Android] fixed issue [2136](https://github.com/MaikuB/flutter_local_notifications/issues/2136) where notifications on scheduled using older versions of the plugin  (likely before the `androidAllowWhileIdle` flag was added) could fail to work. This issue started occuring in 14.0 where support for inexact notifications was added using the `ScheduleMode` enum that was added and resulted in the deprecation of `androidAllowWhileIdle`. A mechanism was added to help "migrate" old notifications that wouldn't have this flag so that it results in a notification scheduled with exact timing as per the old behaviour. Thanks to the PR from [Ruchi Purohit](https://github.com/RuchiPurohit). Note that this release is to include hotfix that was made as part of the 14.1.5 hotfix release
+
+
 # [15.1.2]
 
 * [Android] fixed issue [2106](https://github.com/MaikuB/flutter_local_notifications/issues/2106) where calling `getNotificationChannels()` reports the wrong importance level or result in an exception if the importance level was unspecified. This hotfix has been taken from the 16.0.0-dev.3 prerelease and included in the 14.1.4 hotfix release
@@ -28,6 +33,10 @@
 * [Android] updated tags used when writing error logs. For corrupt scheduled notifications and error is logged the tag is now `ScheduledNotifReceiver` instead of `ScheduledNotifReceiver`. When logging that exact alarm permissions have been revoked the the tag is now `FLTLocalNotifPlugin` instead of `notification`
 * Updated API documentation related to the iOS/macOS notification presentation options to include links to Apple's documentations to show what they correspond to
 * Fixed typo in API docs for `initialize()` method
+
+# [14.1.5]
+
+* [Android] fixed issue [2136](https://github.com/MaikuB/flutter_local_notifications/issues/2136) where notifications on scheduled using older versions of the plugin  (likely before the `androidAllowWhileIdle` flag was added) could fail to work. This issue started occuring in 14.0 where support for inexact notifications was added using the `ScheduleMode` enum that was added and resulted in the deprecation of `androidAllowWhileIdle`. A mechanism was added to help "migrate" old notifications that wouldn't have this flag so that it results in a notification scheduled with exact timing as per the old behaviour. Thanks to the PR from [Ruchi Purohit](https://github.com/RuchiPurohit)
 
 # [14.1.4]
 
