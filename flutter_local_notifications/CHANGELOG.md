@@ -1,3 +1,7 @@
+# [16.3.1+1]
+
+* [iOS] added privacy manifest
+
 # [16.3.1]
 
 * Added missing acknowledgement for readme fix in 16.3.0
