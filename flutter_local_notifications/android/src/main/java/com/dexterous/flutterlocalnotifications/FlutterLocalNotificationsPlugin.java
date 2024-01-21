@@ -1538,9 +1538,9 @@ public class FlutterLocalNotificationsPlugin
       result.success(activeNotificationsPayload);
     } catch (Throwable e) {
       result.error(
-        UNSUPPORTED_OS_VERSION_ERROR_CODE,
-        e.getMessage(),
-        android.util.Log.getStackTraceString(e));
+          UNSUPPORTED_OS_VERSION_ERROR_CODE,
+          e.getMessage(),
+          android.util.Log.getStackTraceString(e));
     }
   }
 
@@ -2031,9 +2031,9 @@ public class FlutterLocalNotificationsPlugin
       result.success(channelsPayload);
     } catch (Throwable e) {
       result.error(
-        GET_NOTIFICATION_CHANNELS_ERROR_CODE,
-        e.getMessage(),
-        android.util.Log.getStackTraceString(tr));
+          GET_NOTIFICATION_CHANNELS_ERROR_CODE,
+          e.getMessage(),
+          android.util.Log.getStackTraceString(tr));
     }
   }
 
