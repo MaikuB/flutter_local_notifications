@@ -96,6 +96,7 @@ import io.flutter.embedding.engine.loader.FlutterLoader;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+import io.flutter.Log;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -1536,7 +1537,10 @@ public class FlutterLocalNotificationsPlugin
       }
       result.success(activeNotificationsPayload);
     } catch (Throwable e) {
-      throw new RuntimeException(e);
+      result.error(
+        UNSUPPORTED_OS_VERSION_ERROR_CODE,
+        e.getMessage(),
+        android.util.Log.getStackTraceString(e));
     }
   }
 
@@ -1962,7 +1966,10 @@ public class FlutterLocalNotificationsPlugin
 
       result.success(stylePayload);
     } catch (Throwable e) {
-      throw new RuntimeException(e);
+      result.error(
+          GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE,
+          e.getMessage(),
+          android.util.Log.getStackTraceString(e));
     }
   }
 
@@ -2023,7 +2030,10 @@ public class FlutterLocalNotificationsPlugin
       }
       result.success(channelsPayload);
     } catch (Throwable e) {
-      throw new RuntimeException(e);
+      result.error(
+        GET_NOTIFICATION_CHANNELS_ERROR_CODE,
+        e.getMessage(),
+        android.util.Log.getStackTraceString(tr));
     }
   }
 
