@@ -34,6 +34,7 @@ public class NotificationDetails implements Serializable {
   private static final String PLATFORM_SPECIFICS = "platformSpecifics";
   private static final String AUTO_CANCEL = "autoCancel";
   private static final String ONGOING = "ongoing";
+  private static final String SILENT = "silent";
   private static final String STYLE = "style";
   private static final String ICON = "icon";
   private static final String PRIORITY = "priority";
@@ -153,6 +154,7 @@ public class NotificationDetails implements Serializable {
   public Integer groupAlertBehavior;
   public Boolean autoCancel;
   public Boolean ongoing;
+  public Boolean silent;
   public Integer day;
   public Integer color;
   public Object largeIcon;
@@ -245,6 +247,7 @@ public class NotificationDetails implements Serializable {
     if (platformChannelSpecifics != null) {
       notificationDetails.autoCancel = (Boolean) platformChannelSpecifics.get(AUTO_CANCEL);
       notificationDetails.ongoing = (Boolean) platformChannelSpecifics.get(ONGOING);
+      notificationDetails.silent = (Boolean) platformChannelSpecifics.get(SILENT);
       notificationDetails.style =
           NotificationStyle.values()[(Integer) platformChannelSpecifics.get(STYLE)];
       readStyleInformation(notificationDetails, platformChannelSpecifics);

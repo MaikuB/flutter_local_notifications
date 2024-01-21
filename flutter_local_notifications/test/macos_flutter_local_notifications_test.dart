@@ -522,6 +522,15 @@ void main() {
         })
       ]);
     });
+
+    test('checkPermissions', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()!
+          .checkPermissions();
+      expect(log, <Matcher>[isMethodCall('checkPermissions', arguments: null)]);
+    });
+
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
       expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);

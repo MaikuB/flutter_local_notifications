@@ -95,6 +95,7 @@ A cross platform plugin for displaying local notifications.
 * [Android] Ability to check if notifications are enabled
 * [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
 * [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
+* [iOS and macOS 10.14 or newer] Ability to check if notifications are enabled with specific type check
 * [Linux] Ability to to use themed/Flutter Assets icons and sound
 * [Linux] Ability to to set the category
 * [Linux] Configuring the urgency
@@ -235,7 +236,7 @@ android {
 
 Previously the plugin would specify all the permissions required all of the features that the plugin support in its own `AndroidManifest.xml` file so that developers wouldn't need to do this in their own app's `AndroidManifest.xml` file. Since version 16 onwards, the plugin will now only specify the bare minimum and these [`POST_NOTIFICATIONS`] (https://developer.android.com/reference/android/Manifest.permission#POST_NOTIFICATIONS) and [`VIBRATE`](https://developer.android.com/reference/android/Manifest.permission#VIBRATE) permissions.
 
-For apps that need the following functionality please the following in your app's `AndroidManifest.xml`
+For apps that need the following functionality please complete the following in your app's `AndroidManifest.xml`
 
 * To schedule notifications the following changes are needed
     * Specify the appropriate permissions between the `<manifest>` tags.
@@ -268,7 +269,7 @@ From Android 13 (API level 33) onwards, apps now have the ability to display a p
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
 flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-    AndroidFlutterLocalNotificationsPlugin>().requestPermission();
+    AndroidFlutterLocalNotificationsPlugin>().requestNotificationsPermission();
 ```
 
 ### Custom notification icons and sounds
@@ -387,7 +388,7 @@ If you encounter any issues please refer to the API docs and the sample code in 
 
 ### Notification Actions
 
-Notifications can now contain actions but note that on Apple's platforms, these only on iOS 10 or newer and macOS 10.14 or newer.  On macOS and Linux (see [Linux limitations](#linux-limitations) chapter), these will only run on the main isolate by calling the `onDidReceiveNotificationResponse` callback. On iOS and Android, these will run on the main isolate by calling the `onDidReceiveNotificationResponse` callback if the configuration has specified that the app/user interface should be shown i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. If they haven't, then these actions may be selected by the user when an app is sleeping or terminated and will wake up your app. However, it may not wake up the user-visible part of your App; but only the part of it which runs in the background. This is done by spawning a background isolate.
+Notifications can now contain actions but note that on Apple's platforms, these work only on iOS 10 or newer and macOS 10.14 or newer.  On macOS and Linux (see [Linux limitations](#linux-limitations) chapter), these will only run on the main isolate by calling the `onDidReceiveNotificationResponse` callback. On iOS and Android, these will run on the main isolate by calling the `onDidReceiveNotificationResponse` callback if the configuration has specified that the app/user interface should be shown i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. If they haven't, then these actions may be selected by the user when an app is sleeping or terminated and will wake up your app. However, it may not wake up the user-visible part of your App; but only the part of it which runs in the background. This is done by spawning a background isolate.
 
 This plugin contains handlers for iOS & Android to handle these background isolate cases and will allow you to specify a Dart entry point (a function).
 When the user selects a action, the plugin will start a **separate Flutter Engine** which will then invoke the `onDidReceiveBackgroundNotificationResponse` callback
@@ -452,9 +453,9 @@ On iOS/macOS, notification actions need to be configured before the app is start
 final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
     // ...
     notificationCategories: [
-    const DarwinNotificationCategory(
+      DarwinNotificationCategory(
         'demoCategory',
-        <DarwinNotificationAction>[
+        actions: <DarwinNotificationAction>[
             DarwinNotificationAction.plain('id_1', 'Action 1'),
             DarwinNotificationAction.plain(
             'id_2',

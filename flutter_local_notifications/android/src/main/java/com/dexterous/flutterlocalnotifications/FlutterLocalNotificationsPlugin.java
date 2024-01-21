@@ -277,6 +277,7 @@ public class FlutterLocalNotificationsPlugin
             .setContentIntent(pendingIntent)
             .setPriority(notificationDetails.priority)
             .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
+            .setSilent(BooleanUtils.getValue(notificationDetails.silent))
             .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
 
     if (notificationDetails.actions != null) {
@@ -597,7 +598,7 @@ public class FlutterLocalNotificationsPlugin
     AlarmManager alarmManager = getAlarmManager(context);
     if (notificationDetails.scheduleMode == null) {
       // This is to account for notifications created in older versions prior to allowWhileIdle
-      // being added so the deserialiser.
+      // being added to the deserialiser.
       // Reference to old behaviour:
       // https://github.com/MaikuB/flutter_local_notifications/blob/4b723e750d1371206520b10a122a444c4bba7475/flutter_local_notifications/android/src/main/java/com/dexterous/flutterlocalnotifications/FlutterLocalNotificationsPlugin.java#L569C37-L569C37
       notificationDetails.scheduleMode = ScheduleMode.exactAllowWhileIdle;
@@ -675,7 +676,7 @@ public class FlutterLocalNotificationsPlugin
 
     if (notificationDetails.scheduleMode == null) {
       // This is to account for notifications created in older versions prior to allowWhileIdle
-      // being added so the deserialiser.
+      // being added to the deserialiser.
       // Reference to old behaviour:
       // https://github.com/MaikuB/flutter_local_notifications/blob/4b723e750d1371206520b10a122a444c4bba7475/flutter_local_notifications/android/src/main/java/com/dexterous/flutterlocalnotifications/FlutterLocalNotificationsPlugin.java#L642
       notificationDetails.scheduleMode = ScheduleMode.inexact;
@@ -699,6 +700,15 @@ public class FlutterLocalNotificationsPlugin
       AlarmManager alarmManager,
       long epochMilli,
       PendingIntent pendingIntent) {
+
+    if (notificationDetails.scheduleMode == null) {
+      // This is to account for notifications created in older versions prior to allowWhileIdle
+      // being added to the deserialiser.
+      // Reference to old behaviour:
+      // https://github.com/MaikuB/flutter_local_notifications/blob/4b723e750d1371206520b10a122a444c4bba7475/flutter_local_notifications/android/src/main/java/com/dexterous/flutterlocalnotifications/FlutterLocalNotificationsPlugin.java#L515
+      notificationDetails.scheduleMode = ScheduleMode.exact;
+    }
+
     if (notificationDetails.scheduleMode.useAllowWhileIdle()) {
       setupAllowWhileIdleAlarm(notificationDetails, alarmManager, epochMilli, pendingIntent);
     } else {
@@ -1793,7 +1803,10 @@ public class FlutterLocalNotificationsPlugin
       if (!permissionGranted) {
         permissionRequestProgress = PermissionRequestProgress.RequestingExactAlarmsPermission;
         mainActivity.startActivityForResult(
-            new Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM), EXACT_ALARM_PERMISSION_REQUEST_CODE);
+            new Intent(
+                ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                Uri.parse("package:" + applicationContext.getPackageName())),
+            EXACT_ALARM_PERMISSION_REQUEST_CODE);
       } else {
         this.callback.complete(true);
         permissionRequestProgress = PermissionRequestProgress.None;
@@ -2127,9 +2140,12 @@ public class FlutterLocalNotificationsPlugin
       return false;
     }
 
-    if (requestCode == EXACT_ALARM_PERMISSION_REQUEST_CODE && VERSION.SDK_INT >= VERSION_CODES.S) {
+    if (permissionRequestProgress == PermissionRequestProgress.RequestingExactAlarmsPermission
+        && requestCode == EXACT_ALARM_PERMISSION_REQUEST_CODE
+        && VERSION.SDK_INT >= VERSION_CODES.S) {
       AlarmManager alarmManager = getAlarmManager(applicationContext);
       this.callback.complete(alarmManager.canScheduleExactAlarms());
+      permissionRequestProgress = PermissionRequestProgress.None;
     }
 
     return true;
