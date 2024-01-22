@@ -2032,7 +2032,7 @@ public class FlutterLocalNotificationsPlugin
       result.error(
           GET_NOTIFICATION_CHANNELS_ERROR_CODE,
           e.getMessage(),
-          android.util.Log.getStackTraceString(tr));
+          android.util.Log.getStackTraceString(e));
     }
   }
 
