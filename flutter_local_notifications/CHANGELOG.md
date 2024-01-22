@@ -1,3 +1,8 @@
+# [16.3.2]
+
+* [Android] fixed how native stack traces were obtained. Relates to issue [2088](https://github.com/MaikuB/flutter_local_notifications/issues/2088). Thanks to the PR from [Jonas Uekötter](https://github.com/ueman)
+
+
 # [16.3.1+1]
 
 * [iOS] added privacy manifest
