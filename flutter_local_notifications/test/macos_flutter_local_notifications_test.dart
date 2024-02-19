@@ -19,8 +19,8 @@ void main() {
     setUp(() {
       debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-      // ignore: always_specify_types
-      channel.setMockMethodCallHandler((methodCall) async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
         log.add(methodCall);
         if (methodCall.method == 'pendingNotificationRequests') {
           return <Map<String, Object>?>[];
@@ -29,6 +29,7 @@ void main() {
         } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
           return null;
         }
+        return null;
       });
     });
 
@@ -47,10 +48,13 @@ void main() {
           'requestAlertPermission': true,
           'requestSoundPermission': true,
           'requestBadgePermission': true,
+          'requestProvisionalPermission': false,
           'requestCriticalPermission': false,
           'defaultPresentAlert': true,
           'defaultPresentSound': true,
           'defaultPresentBadge': true,
+          'defaultPresentBanner': true,
+          'defaultPresentList': true,
           'notificationCategories': <Map<String, String>>[],
         })
       ]);
@@ -65,6 +69,8 @@ void main() {
         defaultPresentAlert: false,
         defaultPresentBadge: false,
         defaultPresentSound: false,
+        defaultPresentBanner: false,
+        defaultPresentList: false,
       );
       const InitializationSettings initializationSettings =
           InitializationSettings(macOS: macOSInitializationSettings);
@@ -74,10 +80,13 @@ void main() {
           'requestAlertPermission': false,
           'requestSoundPermission': false,
           'requestBadgePermission': false,
+          'requestProvisionalPermission': false,
           'requestCriticalPermission': false,
           'defaultPresentAlert': false,
           'defaultPresentSound': false,
           'defaultPresentBadge': false,
+          'defaultPresentBanner': false,
+          'defaultPresentList': false,
           'notificationCategories': <Map<String, String>>[],
         })
       ]);
@@ -114,6 +123,8 @@ void main() {
           presentAlert: true,
           presentBadge: true,
           presentSound: true,
+          presentBanner: true,
+          presentList: true,
           sound: 'sound.mp3',
           badgeNumber: 1,
           threadIdentifier: 'thread',
@@ -149,6 +160,8 @@ void main() {
               'presentAlert': true,
               'presentBadge': true,
               'presentSound': true,
+              'presentBanner': true,
+              'presentList': true,
               'sound': 'sound.mp3',
               'badgeNumber': 1,
               'threadIdentifier': 'thread',
@@ -185,6 +198,8 @@ void main() {
                 presentAlert: true,
                 presentBadge: true,
                 presentSound: true,
+                presentBanner: true,
+                presentList: true,
                 sound: 'sound.mp3',
                 badgeNumber: 1,
                 attachments: <DarwinNotificationAttachment>[
@@ -217,6 +232,8 @@ void main() {
                     'presentAlert': true,
                     'presentBadge': true,
                     'presentSound': true,
+                    'presentBanner': true,
+                    'presentList': true,
                     'subtitle': null,
                     'sound': 'sound.mp3',
                     'badgeNumber': 1,
@@ -255,6 +272,8 @@ void main() {
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
+            presentBanner: true,
+            presentList: true,
             sound: 'sound.mp3',
             badgeNumber: 1,
             attachments: <DarwinNotificationAttachment>[
@@ -270,7 +289,7 @@ void main() {
           'notification body',
           scheduledDate,
           notificationDetails,
-          androidAllowWhileIdle: true,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
         );
@@ -283,12 +302,15 @@ void main() {
               'body': 'notification body',
               'payload': '',
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
+              'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'timeZoneName': 'Australia/Sydney',
               'platformSpecifics': <String, Object?>{
                 'subtitle': null,
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
+                'presentBanner': true,
+                'presentList': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,
@@ -322,6 +344,8 @@ void main() {
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
+            presentBanner: true,
+            presentList: true,
             sound: 'sound.mp3',
             badgeNumber: 1,
             attachments: <DarwinNotificationAttachment>[
@@ -337,7 +361,7 @@ void main() {
           'notification body',
           scheduledDate,
           notificationDetails,
-          androidAllowWhileIdle: true,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
           matchDateTimeComponents: DateTimeComponents.time,
@@ -353,6 +377,7 @@ void main() {
               'body': 'notification body',
               'payload': '',
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
+              'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'timeZoneName': 'Australia/Sydney',
               'matchDateTimeComponents': DateTimeComponents.time.index,
               'platformSpecifics': <String, Object?>{
@@ -360,6 +385,8 @@ void main() {
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
+                'presentBanner': true,
+                'presentList': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,
@@ -395,6 +422,8 @@ void main() {
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
+            presentBanner: true,
+            presentList: true,
             sound: 'sound.mp3',
             badgeNumber: 1,
             attachments: <DarwinNotificationAttachment>[
@@ -410,7 +439,7 @@ void main() {
           'notification body',
           scheduledDate,
           notificationDetails,
-          androidAllowWhileIdle: true,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
           matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
@@ -426,6 +455,7 @@ void main() {
               'body': 'notification body',
               'payload': '',
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
+              'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'timeZoneName': 'Australia/Sydney',
               'matchDateTimeComponents':
                   DateTimeComponents.dayOfWeekAndTime.index,
@@ -434,6 +464,8 @@ void main() {
                 'presentAlert': true,
                 'presentBadge': true,
                 'presentSound': true,
+                'presentBanner': true,
+                'presentList': true,
                 'sound': 'sound.mp3',
                 'badgeNumber': 1,
                 'threadIdentifier': null,
@@ -464,6 +496,7 @@ void main() {
           'sound': false,
           'badge': false,
           'alert': false,
+          'provisional': false,
           'critical': false,
         })
       ]);
@@ -476,6 +509,7 @@ void main() {
             sound: true,
             badge: true,
             alert: true,
+            provisional: true,
             critical: true,
           );
       expect(log, <Matcher>[
@@ -483,10 +517,20 @@ void main() {
           'sound': true,
           'badge': true,
           'alert': true,
+          'provisional': true,
           'critical': true,
         })
       ]);
     });
+
+    test('checkPermissions', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()!
+          .checkPermissions();
+      expect(log, <Matcher>[isMethodCall('checkPermissions', arguments: null)]);
+    });
+
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(1);
       expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);

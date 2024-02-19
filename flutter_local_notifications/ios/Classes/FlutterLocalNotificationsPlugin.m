@@ -5,9 +5,6 @@
 
 @implementation FlutterLocalNotificationsPlugin {
   FlutterMethodChannel *_channel;
-  bool _displayAlert;
-  bool _playSound;
-  bool _updateBadge;
   bool _initialized;
   bool _launchingAppFromNotification;
   NSObject<FlutterPluginRegistrar> *_registrar;
@@ -23,11 +20,8 @@ NSString *const FOREGROUND_ACTION_IDENTIFIERS =
 NSString *const INITIALIZE_METHOD = @"initialize";
 NSString *const GET_CALLBACK_METHOD = @"getCallbackHandle";
 NSString *const SHOW_METHOD = @"show";
-NSString *const SCHEDULE_METHOD = @"schedule";
 NSString *const ZONED_SCHEDULE_METHOD = @"zonedSchedule";
 NSString *const PERIODICALLY_SHOW_METHOD = @"periodicallyShow";
-NSString *const SHOW_DAILY_AT_TIME_METHOD = @"showDailyAtTime";
-NSString *const SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = @"showWeeklyAtDayAndTime";
 NSString *const CANCEL_METHOD = @"cancel";
 NSString *const CANCEL_ALL_METHOD = @"cancelAll";
 NSString *const PENDING_NOTIFICATIONS_REQUESTS_METHOD =
@@ -41,20 +35,26 @@ NSString *const CALLBACK_CHANNEL =
 NSString *const ON_NOTIFICATION_METHOD = @"onNotification";
 NSString *const DID_RECEIVE_LOCAL_NOTIFICATION = @"didReceiveLocalNotification";
 NSString *const REQUEST_PERMISSIONS_METHOD = @"requestPermissions";
+NSString *const CHECK_PERMISSIONS_METHOD = @"checkPermissions";
 
 NSString *const DAY = @"day";
 
 NSString *const REQUEST_SOUND_PERMISSION = @"requestSoundPermission";
 NSString *const REQUEST_ALERT_PERMISSION = @"requestAlertPermission";
 NSString *const REQUEST_BADGE_PERMISSION = @"requestBadgePermission";
+NSString *const REQUEST_PROVISIONAL_PERMISSION =
+    @"requestProvisionalPermission";
 NSString *const REQUEST_CRITICAL_PERMISSION = @"requestCriticalPermission";
-NSString *const SOUND_PERMISSION = @"sound";
-NSString *const ALERT_PERMISSION = @"alert";
-NSString *const BADGE_PERMISSION = @"badge";
-NSString *const CRITICAL_PERMISSION = @"critical";
 NSString *const DEFAULT_PRESENT_ALERT = @"defaultPresentAlert";
 NSString *const DEFAULT_PRESENT_SOUND = @"defaultPresentSound";
 NSString *const DEFAULT_PRESENT_BADGE = @"defaultPresentBadge";
+NSString *const DEFAULT_PRESENT_BANNER = @"defaultPresentBanner";
+NSString *const DEFAULT_PRESENT_LIST = @"defaultPresentList";
+NSString *const SOUND_PERMISSION = @"sound";
+NSString *const ALERT_PERMISSION = @"alert";
+NSString *const BADGE_PERMISSION = @"badge";
+NSString *const PROVISIONAL_PERMISSION = @"provisional";
+NSString *const CRITICAL_PERMISSION = @"critical";
 NSString *const CALLBACK_DISPATCHER = @"callbackDispatcher";
 NSString *const ON_NOTIFICATION_CALLBACK_DISPATCHER =
     @"onNotificationCallbackDispatcher";
@@ -74,14 +74,12 @@ NSString *const THREAD_IDENTIFIER = @"threadIdentifier";
 NSString *const PRESENT_ALERT = @"presentAlert";
 NSString *const PRESENT_SOUND = @"presentSound";
 NSString *const PRESENT_BADGE = @"presentBadge";
+NSString *const PRESENT_BANNER = @"presentBanner";
+NSString *const PRESENT_LIST = @"presentList";
 NSString *const BADGE_NUMBER = @"badgeNumber";
 NSString *const MILLISECONDS_SINCE_EPOCH = @"millisecondsSinceEpoch";
 NSString *const REPEAT_INTERVAL = @"repeatInterval";
-NSString *const REPEAT_TIME = @"repeatTime";
-NSString *const HOUR = @"hour";
-NSString *const MINUTE = @"minute";
-NSString *const SECOND = @"second";
-NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTime";
+NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTimeISO8601";
 NSString *const TIME_ZONE_NAME = @"timeZoneName";
 NSString *const MATCH_DATE_TIME_COMPONENTS = @"matchDateTimeComponents";
 NSString *const UILOCALNOTIFICATION_DATE_INTERPRETATION =
@@ -96,6 +94,15 @@ NSString *const NOTIFICATION_RESPONSE_TYPE = @"notificationResponseType";
 NSString *const UNSUPPORTED_OS_VERSION_ERROR_CODE = @"unsupported_os_version";
 NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
     @"iOS version must be 10.0 or newer to use getActiveNotifications";
+NSString *const PRESENTATION_OPTIONS_USER_DEFAULTS =
+    @"flutter_local_notifications_presentation_options";
+
+NSString *const IS_NOTIFICATIONS_ENABLED = @"isEnabled";
+NSString *const IS_SOUND_ENABLED = @"isSoundEnabled";
+NSString *const IS_ALERT_ENABLED = @"isAlertEnabled";
+NSString *const IS_BADGE_ENABLED = @"isBadgeEnabled";
+NSString *const IS_PROVISIONAL_ENABLED = @"isProvisionalEnabled";
+NSString *const IS_CRITICAL_ENABLED = @"isCriticalEnabled";
 
 typedef NS_ENUM(NSInteger, RepeatInterval) {
   EveryMinute,
@@ -167,16 +174,12 @@ static FlutterError *getFlutterError(NSError *error) {
     [self show:call.arguments result:result];
   } else if ([ZONED_SCHEDULE_METHOD isEqualToString:call.method]) {
     [self zonedSchedule:call.arguments result:result];
-  } else if ([SCHEDULE_METHOD isEqualToString:call.method]) {
-    [self schedule:call.arguments result:result];
   } else if ([PERIODICALLY_SHOW_METHOD isEqualToString:call.method]) {
     [self periodicallyShow:call.arguments result:result];
-  } else if ([SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]) {
-    [self showDailyAtTime:call.arguments result:result];
-  } else if ([SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
-    [self showWeeklyAtDayAndTime:call.arguments result:result];
   } else if ([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
     [self requestPermissions:call.arguments result:result];
+  } else if ([CHECK_PERMISSIONS_METHOD isEqualToString:call.method]) {
+    [self checkPermissions:call.arguments result:result];
   } else if ([CANCEL_METHOD isEqualToString:call.method]) {
     [self cancel:((NSString *)call.arguments) result:result];
   } else if ([CANCEL_ALL_METHOD isEqualToString:call.method]) {
@@ -385,19 +388,40 @@ static FlutterError *getFlutterError(NSError *error) {
 
 - (void)initialize:(NSDictionary *_Nonnull)arguments
             result:(FlutterResult _Nonnull)result {
-  if ([self containsKey:DEFAULT_PRESENT_ALERT forDictionary:arguments]) {
-    _displayAlert = [[arguments objectForKey:DEFAULT_PRESENT_ALERT] boolValue];
-  }
-  if ([self containsKey:DEFAULT_PRESENT_SOUND forDictionary:arguments]) {
-    _playSound = [[arguments objectForKey:DEFAULT_PRESENT_SOUND] boolValue];
-  }
-  if ([self containsKey:DEFAULT_PRESENT_BADGE forDictionary:arguments]) {
-    _updateBadge = [[arguments objectForKey:DEFAULT_PRESENT_BADGE] boolValue];
-  }
   bool requestedSoundPermission = false;
   bool requestedAlertPermission = false;
   bool requestedBadgePermission = false;
+  bool requestedProvisionalPermission = false;
   bool requestedCriticalPermission = false;
+  NSMutableDictionary *presentationOptions = [[NSMutableDictionary alloc] init];
+  if ([self containsKey:DEFAULT_PRESENT_ALERT forDictionary:arguments]) {
+    presentationOptions[PRESENT_ALERT] =
+        [NSNumber numberWithBool:[[arguments objectForKey:DEFAULT_PRESENT_ALERT]
+                                     boolValue]];
+  }
+  if ([self containsKey:DEFAULT_PRESENT_SOUND forDictionary:arguments]) {
+    presentationOptions[PRESENT_SOUND] =
+        [NSNumber numberWithBool:[[arguments objectForKey:DEFAULT_PRESENT_SOUND]
+                                     boolValue]];
+  }
+  if ([self containsKey:DEFAULT_PRESENT_BADGE forDictionary:arguments]) {
+    presentationOptions[PRESENT_BADGE] =
+        [NSNumber numberWithBool:[[arguments objectForKey:DEFAULT_PRESENT_BADGE]
+                                     boolValue]];
+  }
+  if ([self containsKey:DEFAULT_PRESENT_BANNER forDictionary:arguments]) {
+    presentationOptions[PRESENT_BANNER] = [NSNumber
+        numberWithBool:[[arguments objectForKey:DEFAULT_PRESENT_BANNER]
+                           boolValue]];
+  }
+  if ([self containsKey:DEFAULT_PRESENT_LIST forDictionary:arguments]) {
+    presentationOptions[PRESENT_LIST] =
+        [NSNumber numberWithBool:[[arguments objectForKey:DEFAULT_PRESENT_LIST]
+                                     boolValue]];
+  }
+  [[NSUserDefaults standardUserDefaults]
+      setObject:presentationOptions
+         forKey:PRESENTATION_OPTIONS_USER_DEFAULTS];
   if ([self containsKey:REQUEST_SOUND_PERMISSION forDictionary:arguments]) {
     requestedSoundPermission = [arguments[REQUEST_SOUND_PERMISSION] boolValue];
   }
@@ -406,6 +430,11 @@ static FlutterError *getFlutterError(NSError *error) {
   }
   if ([self containsKey:REQUEST_BADGE_PERMISSION forDictionary:arguments]) {
     requestedBadgePermission = [arguments[REQUEST_BADGE_PERMISSION] boolValue];
+  }
+  if ([self containsKey:REQUEST_PROVISIONAL_PERMISSION
+          forDictionary:arguments]) {
+    requestedProvisionalPermission =
+        [arguments[REQUEST_PROVISIONAL_PERMISSION] boolValue];
   }
   if ([self containsKey:REQUEST_CRITICAL_PERMISSION forDictionary:arguments]) {
     requestedCriticalPermission =
@@ -427,6 +456,7 @@ static FlutterError *getFlutterError(NSError *error) {
                     [self requestPermissionsImpl:requestedSoundPermission
                                  alertPermission:requestedAlertPermission
                                  badgePermission:requestedBadgePermission
+                           provisionalPermission:requestedProvisionalPermission
                               criticalPermission:requestedCriticalPermission
                                           result:result];
                   }];
@@ -439,6 +469,7 @@ static FlutterError *getFlutterError(NSError *error) {
   bool soundPermission = false;
   bool alertPermission = false;
   bool badgePermission = false;
+  bool provisionalPermission = false;
   bool criticalPermission = false;
   if ([self containsKey:SOUND_PERMISSION forDictionary:arguments]) {
     soundPermission = [arguments[SOUND_PERMISSION] boolValue];
@@ -449,12 +480,16 @@ static FlutterError *getFlutterError(NSError *error) {
   if ([self containsKey:BADGE_PERMISSION forDictionary:arguments]) {
     badgePermission = [arguments[BADGE_PERMISSION] boolValue];
   }
+  if ([self containsKey:PROVISIONAL_PERMISSION forDictionary:arguments]) {
+    provisionalPermission = [arguments[PROVISIONAL_PERMISSION] boolValue];
+  }
   if ([self containsKey:CRITICAL_PERMISSION forDictionary:arguments]) {
     criticalPermission = [arguments[CRITICAL_PERMISSION] boolValue];
   }
   [self requestPermissionsImpl:soundPermission
                alertPermission:alertPermission
                badgePermission:badgePermission
+         provisionalPermission:provisionalPermission
             criticalPermission:criticalPermission
                         result:result];
 }
@@ -462,6 +497,7 @@ static FlutterError *getFlutterError(NSError *error) {
 - (void)requestPermissionsImpl:(bool)soundPermission
                alertPermission:(bool)alertPermission
                badgePermission:(bool)badgePermission
+         provisionalPermission:(bool)provisionalPermission
             criticalPermission:(bool)criticalPermission
                         result:(FlutterResult _Nonnull)result {
   if (!soundPermission && !alertPermission && !badgePermission &&
@@ -484,6 +520,9 @@ static FlutterError *getFlutterError(NSError *error) {
       authorizationOptions += UNAuthorizationOptionBadge;
     }
     if (@available(iOS 12.0, *)) {
+      if (provisionalPermission) {
+        authorizationOptions += UNAuthorizationOptionProvisional;
+      }
       if (criticalPermission) {
         authorizationOptions += UNAuthorizationOptionCriticalAlert;
       }
@@ -516,6 +555,83 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
+- (void)checkPermissions:(NSDictionary *_Nonnull)arguments
+
+                  result:(FlutterResult _Nonnull)result {
+  if (@available(iOS 10.0, *)) {
+    UNUserNotificationCenter *center =
+        [UNUserNotificationCenter currentNotificationCenter];
+
+    [center getNotificationSettingsWithCompletionHandler:^(
+                UNNotificationSettings *_Nonnull settings) {
+      BOOL isEnabled =
+          settings.authorizationStatus == UNAuthorizationStatusAuthorized;
+      BOOL isSoundEnabled =
+          settings.soundSetting == UNNotificationSettingEnabled;
+      BOOL isAlertEnabled =
+          settings.alertSetting == UNNotificationSettingEnabled;
+      BOOL isBadgeEnabled =
+          settings.badgeSetting == UNNotificationSettingEnabled;
+      BOOL isProvisionalEnabled = false;
+      BOOL isCriticalEnabled = false;
+
+      if (@available(iOS 12.0, *)) {
+        isProvisionalEnabled =
+            settings.authorizationStatus == UNAuthorizationStatusProvisional;
+        isCriticalEnabled =
+            settings.criticalAlertSetting == UNNotificationSettingEnabled;
+      }
+
+      NSDictionary *dict = @{
+        IS_NOTIFICATIONS_ENABLED : @(isEnabled),
+        IS_SOUND_ENABLED : @(isSoundEnabled),
+        IS_ALERT_ENABLED : @(isAlertEnabled),
+        IS_BADGE_ENABLED : @(isBadgeEnabled),
+        IS_PROVISIONAL_ENABLED : @(isProvisionalEnabled),
+        IS_CRITICAL_ENABLED : @(isCriticalEnabled),
+      };
+
+      result(dict);
+    }];
+  } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    UIUserNotificationSettings *settings =
+        UIApplication.sharedApplication.currentUserNotificationSettings;
+
+    if (settings == nil) {
+      result(@{
+        IS_NOTIFICATIONS_ENABLED : @NO,
+        IS_SOUND_ENABLED : @NO,
+        IS_ALERT_ENABLED : @NO,
+        IS_BADGE_ENABLED : @NO,
+        IS_PROVISIONAL_ENABLED : @NO,
+        IS_CRITICAL_ENABLED : @NO,
+      });
+      return;
+    }
+
+    UIUserNotificationType types = settings.types;
+
+    BOOL isEnabled = types != UIUserNotificationTypeNone;
+    BOOL isSoundEnabled = types & UIUserNotificationTypeSound;
+    BOOL isAlertEnabled = types & UIUserNotificationTypeAlert;
+    BOOL isBadgeEnabled = types & UIUserNotificationTypeBadge;
+
+    NSDictionary *dict = @{
+      IS_NOTIFICATIONS_ENABLED : @(isEnabled),
+      IS_SOUND_ENABLED : @(isSoundEnabled),
+      IS_ALERT_ENABLED : @(isAlertEnabled),
+      IS_BADGE_ENABLED : @(isBadgeEnabled),
+      IS_PROVISIONAL_ENABLED : @NO,
+      IS_CRITICAL_ENABLED : @NO,
+    };
+
+    result(dict);
+#pragma clang diagnostic pop
+  }
+}
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (UILocalNotification *)buildStandardUILocalNotification:
@@ -534,9 +650,21 @@ static FlutterError *getFlutterError(NSError *error) {
     }
   }
 
-  bool presentAlert = _displayAlert;
-  bool presentSound = _playSound;
-  bool presentBadge = _updateBadge;
+  NSDictionary *persistedPresentationOptions =
+      [[NSUserDefaults standardUserDefaults]
+          dictionaryForKey:PRESENTATION_OPTIONS_USER_DEFAULTS];
+  bool presentAlert = false;
+  bool presentSound = false;
+  bool presentBadge = false;
+  bool presentBanner = false;
+  bool presentList = false;
+  if (persistedPresentationOptions != nil) {
+    presentAlert = [persistedPresentationOptions[PRESENT_ALERT] isEqual:@YES];
+    presentSound = [persistedPresentationOptions[PRESENT_SOUND] isEqual:@YES];
+    presentBadge = [persistedPresentationOptions[PRESENT_BADGE] isEqual:@YES];
+    presentBanner = [persistedPresentationOptions[PRESENT_BANNER] isEqual:@YES];
+    presentList = [persistedPresentationOptions[PRESENT_LIST] isEqual:@YES];
+  }
   if (arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
     NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
 
@@ -548,6 +676,13 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     if ([self containsKey:PRESENT_BADGE forDictionary:platformSpecifics]) {
       presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
+    }
+    if ([self containsKey:PRESENT_BANNER forDictionary:platformSpecifics]) {
+      presentBanner =
+          [[platformSpecifics objectForKey:PRESENT_BANNER] boolValue];
+    }
+    if ([self containsKey:PRESENT_LIST forDictionary:platformSpecifics]) {
+      presentList = [[platformSpecifics objectForKey:PRESENT_LIST] boolValue];
     }
 
     if ([self containsKey:BADGE_NUMBER forDictionary:platformSpecifics]) {
@@ -572,6 +707,8 @@ static FlutterError *getFlutterError(NSError *error) {
                                  presentAlert:presentAlert
                                  presentSound:presentSound
                                  presentBadge:presentBadge
+                                presentBanner:presentBanner
+                                  presentList:presentList
                                       payload:arguments[PAYLOAD]];
   return notification;
 }
@@ -625,9 +762,11 @@ static FlutterError *getFlutterError(NSError *error) {
     NSNumber *uiLocalNotificationDateInterpretation =
         arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION];
     NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
+    NSISO8601DateFormatter *dateFormatter =
+        [[NSISO8601DateFormatter alloc] init];
     [dateFormatter setTimeZone:timezone];
+    dateFormatter.formatOptions = NSISO8601DateFormatWithFractionalSeconds |
+                                  NSISO8601DateFormatWithInternetDateTime;
     NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
     notification.fireDate = date;
     if (uiLocalNotificationDateInterpretation != nil) {
@@ -650,44 +789,6 @@ static FlutterError *getFlutterError(NSError *error) {
         notification.repeatInterval = NSCalendarUnitYear;
       }
     }
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-#pragma clang diagnostic pop
-    result(nil);
-  }
-}
-
-- (void)schedule:(NSDictionary *_Nonnull)arguments
-          result:(FlutterResult _Nonnull)result {
-  NSNumber *secondsSinceEpoch =
-      @([arguments[MILLISECONDS_SINCE_EPOCH] longLongValue] / 1000);
-  if (@available(iOS 10.0, *)) {
-    UNMutableNotificationContent *content =
-        [self buildStandardNotificationContent:arguments result:result];
-    NSDate *date = [NSDate
-        dateWithTimeIntervalSince1970:[secondsSinceEpoch longLongValue]];
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSDateComponents *dateComponents =
-        [calendar components:(NSCalendarUnitYear | NSCalendarUnitMonth |
-                              NSCalendarUnitDay | NSCalendarUnitHour |
-                              NSCalendarUnitMinute | NSCalendarUnitSecond)
-                    fromDate:date];
-    UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger
-        triggerWithDateMatchingComponents:dateComponents
-                                  repeats:false];
-    [self addNotificationRequest:[self getIdentifier:arguments]
-                         content:content
-                          result:result
-                         trigger:trigger];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *notification =
-        [self buildStandardUILocalNotification:arguments];
-#pragma clang diagnostic pop
-    notification.fireDate = [NSDate
-        dateWithTimeIntervalSince1970:[secondsSinceEpoch longLongValue]];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[UIApplication sharedApplication] scheduleLocalNotification:notification];
@@ -741,91 +842,6 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
-- (void)showDailyAtTime:(NSDictionary *_Nonnull)arguments
-                 result:(FlutterResult _Nonnull)result {
-  NSDictionary *timeArguments = (NSDictionary *)arguments[REPEAT_TIME];
-  NSNumber *hourComponent = timeArguments[HOUR];
-  NSNumber *minutesComponent = timeArguments[MINUTE];
-  NSNumber *secondsComponent = timeArguments[SECOND];
-  if (@available(iOS 10.0, *)) {
-    UNMutableNotificationContent *content =
-        [self buildStandardNotificationContent:arguments result:result];
-    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-    [dateComponents setHour:[hourComponent integerValue]];
-    [dateComponents setMinute:[minutesComponent integerValue]];
-    [dateComponents setSecond:[secondsComponent integerValue]];
-    UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger
-        triggerWithDateMatchingComponents:dateComponents
-                                  repeats:YES];
-    [self addNotificationRequest:[self getIdentifier:arguments]
-                         content:content
-                          result:result
-                         trigger:trigger];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *notification =
-        [self buildStandardUILocalNotification:arguments];
-#pragma clang diagnostic pop
-    notification.repeatInterval = NSCalendarUnitDay;
-    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-    [dateComponents setHour:[hourComponent integerValue]];
-    [dateComponents setMinute:[minutesComponent integerValue]];
-    [dateComponents setSecond:[secondsComponent integerValue]];
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    notification.fireDate = [calendar dateFromComponents:dateComponents];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-#pragma clang diagnostic pop
-    result(nil);
-  }
-}
-
-- (void)showWeeklyAtDayAndTime:(NSDictionary *_Nonnull)arguments
-                        result:(FlutterResult _Nonnull)result {
-  NSDictionary *timeArguments = (NSDictionary *)arguments[REPEAT_TIME];
-  NSNumber *dayOfWeekComponent = arguments[DAY];
-  NSNumber *hourComponent = timeArguments[HOUR];
-  NSNumber *minutesComponent = timeArguments[MINUTE];
-  NSNumber *secondsComponent = timeArguments[SECOND];
-  if (@available(iOS 10.0, *)) {
-    UNMutableNotificationContent *content =
-        [self buildStandardNotificationContent:arguments result:result];
-    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-    [dateComponents setHour:[hourComponent integerValue]];
-    [dateComponents setMinute:[minutesComponent integerValue]];
-    [dateComponents setSecond:[secondsComponent integerValue]];
-    [dateComponents setWeekday:[dayOfWeekComponent integerValue]];
-    UNCalendarNotificationTrigger *trigger = [UNCalendarNotificationTrigger
-        triggerWithDateMatchingComponents:dateComponents
-                                  repeats:YES];
-    [self addNotificationRequest:[self getIdentifier:arguments]
-                         content:content
-                          result:result
-                         trigger:trigger];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *notification =
-        [self buildStandardUILocalNotification:arguments];
-#pragma clang diagnostic pop
-    notification.repeatInterval = NSCalendarUnitWeekOfYear;
-    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-    [dateComponents setHour:[hourComponent integerValue]];
-    [dateComponents setMinute:[minutesComponent integerValue]];
-    [dateComponents setSecond:[secondsComponent integerValue]];
-    [dateComponents setWeekday:[dayOfWeekComponent integerValue]];
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    notification.fireDate = [calendar dateFromComponents:dateComponents];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-#pragma clang diagnostic pop
-    result(nil);
-  }
-}
-
 - (void)cancel:(NSString *)id result:(FlutterResult _Nonnull)result {
   if (@available(iOS 10.0, *)) {
     UNUserNotificationCenter *center =
@@ -865,9 +881,21 @@ static FlutterError *getFlutterError(NSError *error) {
   if ([self containsKey:BODY forDictionary:arguments]) {
     content.body = arguments[BODY];
   }
-  bool presentAlert = _displayAlert;
-  bool presentSound = _playSound;
-  bool presentBadge = _updateBadge;
+  NSDictionary *persistedPresentationOptions =
+      [[NSUserDefaults standardUserDefaults]
+          dictionaryForKey:PRESENTATION_OPTIONS_USER_DEFAULTS];
+  bool presentAlert = false;
+  bool presentSound = false;
+  bool presentBadge = false;
+  bool presentBanner = false;
+  bool presentList = false;
+  if (persistedPresentationOptions != nil) {
+    presentAlert = [persistedPresentationOptions[PRESENT_ALERT] isEqual:@YES];
+    presentSound = [persistedPresentationOptions[PRESENT_SOUND] isEqual:@YES];
+    presentBadge = [persistedPresentationOptions[PRESENT_BADGE] isEqual:@YES];
+    presentBanner = [persistedPresentationOptions[PRESENT_BANNER] isEqual:@YES];
+    presentList = [persistedPresentationOptions[PRESENT_LIST] isEqual:@YES];
+  }
   if (arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
     NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
     if ([self containsKey:PRESENT_ALERT forDictionary:platformSpecifics]) {
@@ -878,6 +906,13 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     if ([self containsKey:PRESENT_BADGE forDictionary:platformSpecifics]) {
       presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
+    }
+    if ([self containsKey:PRESENT_BANNER forDictionary:platformSpecifics]) {
+      presentBanner =
+          [[platformSpecifics objectForKey:PRESENT_BANNER] boolValue];
+    }
+    if ([self containsKey:PRESENT_LIST forDictionary:platformSpecifics]) {
+      presentList = [[platformSpecifics objectForKey:PRESENT_LIST] boolValue];
     }
     if ([self containsKey:BADGE_NUMBER forDictionary:platformSpecifics]) {
       content.badge = [platformSpecifics objectForKey:BADGE_NUMBER];
@@ -966,6 +1001,8 @@ static FlutterError *getFlutterError(NSError *error) {
                             presentAlert:presentAlert
                             presentSound:presentSound
                             presentBadge:presentBadge
+                           presentBanner:presentBanner
+                             presentList:presentList
                                  payload:arguments[PAYLOAD]];
   return content;
 }
@@ -978,15 +1015,10 @@ static FlutterError *getFlutterError(NSError *error) {
   NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
   NSCalendar *calendar = [NSCalendar currentCalendar];
   NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
-  NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-
-  // Needed for some countries, when phone DateTime format is 12H
-  NSLocale *posix = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
-
-  [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
+  NSISO8601DateFormatter *dateFormatter = [[NSISO8601DateFormatter alloc] init];
   [dateFormatter setTimeZone:timezone];
-  [dateFormatter setLocale:posix];
-
+  dateFormatter.formatOptions = NSISO8601DateFormatWithFractionalSeconds |
+                                NSISO8601DateFormatWithInternetDateTime;
   NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
 
   calendar.timeZone = timezone;
@@ -1067,6 +1099,8 @@ static FlutterError *getFlutterError(NSError *error) {
                    presentAlert:(bool)presentAlert
                    presentSound:(bool)presentSound
                    presentBadge:(bool)presentBadge
+                  presentBanner:(bool)presentBanner
+                    presentList:(bool)presentList
                         payload:(NSString *)payload {
   NSMutableDictionary *userDict = [[NSMutableDictionary alloc] init];
   userDict[NOTIFICATION_ID] = id;
@@ -1076,6 +1110,8 @@ static FlutterError *getFlutterError(NSError *error) {
   userDict[PRESENT_ALERT] = [NSNumber numberWithBool:presentAlert];
   userDict[PRESENT_SOUND] = [NSNumber numberWithBool:presentSound];
   userDict[PRESENT_BADGE] = [NSNumber numberWithBool:presentBadge];
+  userDict[PRESENT_BANNER] = [NSNumber numberWithBool:presentBanner];
+  userDict[PRESENT_LIST] = [NSNumber numberWithBool:presentList];
   userDict[PAYLOAD] = payload;
   return userDict;
 }
@@ -1138,11 +1174,26 @@ static FlutterError *getFlutterError(NSError *error) {
       (NSNumber *)notification.request.content.userInfo[PRESENT_SOUND];
   NSNumber *presentBadgeValue =
       (NSNumber *)notification.request.content.userInfo[PRESENT_BADGE];
+  NSNumber *presentBannerValue =
+      (NSNumber *)notification.request.content.userInfo[PRESENT_BANNER];
+  NSNumber *presentListValue =
+      (NSNumber *)notification.request.content.userInfo[PRESENT_LIST];
   bool presentAlert = [presentAlertValue boolValue];
   bool presentSound = [presentSoundValue boolValue];
   bool presentBadge = [presentBadgeValue boolValue];
-  if (presentAlert) {
-    presentationOptions |= UNNotificationPresentationOptionAlert;
+  bool presentBanner = [presentBannerValue boolValue];
+  bool presentList = [presentListValue boolValue];
+  if (@available(iOS 14.0, *)) {
+    if (presentBanner) {
+      presentationOptions |= UNNotificationPresentationOptionBanner;
+    }
+    if (presentList) {
+      presentationOptions |= UNNotificationPresentationOptionList;
+    }
+  } else {
+    if (presentAlert) {
+      presentationOptions |= UNNotificationPresentationOptionAlert;
+    }
   }
   if (presentSound) {
     presentationOptions |= UNNotificationPresentationOptionSound;

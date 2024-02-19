@@ -1,7 +1,5 @@
 import Cocoa
 import FlutterMacOS
-import UserNotifications
-import flutter_local_notifications
 
 @NSApplicationMain
 class AppDelegate: FlutterAppDelegate {
