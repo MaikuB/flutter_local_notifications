@@ -2029,10 +2029,9 @@ void main() {
       }
     });
 
-
     group('periodicallyShowWithDuration', () {
       final DateTime now = DateTime(2023, 12, 29);
-      final List<Duration> repeatDurationIntervals = [
+      final List<Duration> repeatDurationIntervals = <Duration>[
         const Duration(seconds: 30),
         const Duration(minutes: 15),
         const Duration(hours: 5),
@@ -2043,15 +2042,15 @@ void main() {
         test('$repeatDurationInterval', () async {
           await withClock(Clock.fixed(now), () async {
             const AndroidInitializationSettings androidInitializationSettings =
-            AndroidInitializationSettings('app_icon');
+                AndroidInitializationSettings('app_icon');
             const InitializationSettings initializationSettings =
-            InitializationSettings(android: androidInitializationSettings);
+                InitializationSettings(android: androidInitializationSettings);
             await flutterLocalNotificationsPlugin
                 .initialize(initializationSettings);
 
             const AndroidNotificationDetails androidNotificationDetails =
-            AndroidNotificationDetails('channelId', 'channelName',
-                channelDescription: 'channelDescription');
+                AndroidNotificationDetails('channelId', 'channelName',
+                    channelDescription: 'channelDescription');
             await flutterLocalNotificationsPlugin.periodicallyShowWithDuration(
               1,
               'notification title',
@@ -2062,72 +2061,74 @@ void main() {
 
             expect(
                 log.last,
-                isMethodCall('periodicallyShowWithDuration', arguments: <String, Object>{
-                  'id': 1,
-                  'title': 'notification title',
-                  'body': 'notification body',
-                  'payload': '',
-                  'calledAt': now.millisecondsSinceEpoch,
-                  'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
-                  'platformSpecifics': <String, Object?>{
-                    'scheduleMode': 'exact',
-                    'icon': null,
-                    'channelId': 'channelId',
-                    'channelName': 'channelName',
-                    'channelDescription': 'channelDescription',
-                    'channelShowBadge': true,
-                    'channelAction': AndroidNotificationChannelAction
-                        .createIfNotExists.index,
-                    'importance': Importance.defaultImportance.value,
-                    'priority': Priority.defaultPriority.value,
-                    'playSound': true,
-                    'enableVibration': true,
-                    'vibrationPattern': null,
-                    'groupKey': null,
-                    'setAsGroupSummary': false,
-                    'groupAlertBehavior': GroupAlertBehavior.all.index,
-                    'autoCancel': true,
-                    'ongoing': false,
-                    'silent': false,
-                    'colorAlpha': null,
-                    'colorRed': null,
-                    'colorGreen': null,
-                    'colorBlue': null,
-                    'onlyAlertOnce': false,
-                    'showWhen': true,
-                    'when': null,
-                    'usesChronometer': false,
-                    'chronometerCountDown': false,
-                    'showProgress': false,
-                    'maxProgress': 0,
-                    'progress': 0,
-                    'indeterminate': false,
-                    'enableLights': false,
-                    'ledColorAlpha': null,
-                    'ledColorRed': null,
-                    'ledColorGreen': null,
-                    'ledColorBlue': null,
-                    'ledOnMs': null,
-                    'ledOffMs': null,
-                    'ticker': null,
-                    'visibility': null,
-                    'timeoutAfter': null,
-                    'category': null,
-                    'additionalFlags': null,
-                    'fullScreenIntent': false,
-                    'shortcutId': null,
-                    'subText': null,
-                    'style': AndroidNotificationStyle.defaultStyle.index,
-                    'styleInformation': <String, Object>{
-                      'htmlFormatContent': false,
-                      'htmlFormatTitle': false,
-                    },
-                    'tag': null,
-                    'colorized': false,
-                    'number': null,
-                    'audioAttributesUsage': 5,
-                  },
-                }));
+                isMethodCall('periodicallyShowWithDuration',
+                    arguments: <String, Object>{
+                      'id': 1,
+                      'title': 'notification title',
+                      'body': 'notification body',
+                      'payload': '',
+                      'calledAt': now.millisecondsSinceEpoch,
+                      'repeatIntervalMilliseconds':
+                          repeatDurationInterval.inMilliseconds,
+                      'platformSpecifics': <String, Object?>{
+                        'scheduleMode': 'exact',
+                        'icon': null,
+                        'channelId': 'channelId',
+                        'channelName': 'channelName',
+                        'channelDescription': 'channelDescription',
+                        'channelShowBadge': true,
+                        'channelAction': AndroidNotificationChannelAction
+                            .createIfNotExists.index,
+                        'importance': Importance.defaultImportance.value,
+                        'priority': Priority.defaultPriority.value,
+                        'playSound': true,
+                        'enableVibration': true,
+                        'vibrationPattern': null,
+                        'groupKey': null,
+                        'setAsGroupSummary': false,
+                        'groupAlertBehavior': GroupAlertBehavior.all.index,
+                        'autoCancel': true,
+                        'ongoing': false,
+                        'silent': false,
+                        'colorAlpha': null,
+                        'colorRed': null,
+                        'colorGreen': null,
+                        'colorBlue': null,
+                        'onlyAlertOnce': false,
+                        'showWhen': true,
+                        'when': null,
+                        'usesChronometer': false,
+                        'chronometerCountDown': false,
+                        'showProgress': false,
+                        'maxProgress': 0,
+                        'progress': 0,
+                        'indeterminate': false,
+                        'enableLights': false,
+                        'ledColorAlpha': null,
+                        'ledColorRed': null,
+                        'ledColorGreen': null,
+                        'ledColorBlue': null,
+                        'ledOnMs': null,
+                        'ledOffMs': null,
+                        'ticker': null,
+                        'visibility': null,
+                        'timeoutAfter': null,
+                        'category': null,
+                        'additionalFlags': null,
+                        'fullScreenIntent': false,
+                        'shortcutId': null,
+                        'subText': null,
+                        'style': AndroidNotificationStyle.defaultStyle.index,
+                        'styleInformation': <String, Object>{
+                          'htmlFormatContent': false,
+                          'htmlFormatTitle': false,
+                        },
+                        'tag': null,
+                        'colorized': false,
+                        'number': null,
+                        'audioAttributesUsage': 5,
+                      },
+                    }));
           });
         });
       }

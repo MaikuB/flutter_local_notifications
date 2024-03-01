@@ -257,7 +257,7 @@ void main() {
 
     group('periodicallyShowWithDuration', () {
       final DateTime now = DateTime(2023, 12, 29);
-      final List<Duration> repeatDurationIntervals = [
+      final List<Duration> repeatDurationIntervals = <Duration>[
         const Duration(seconds: 30),
         const Duration(minutes: 15),
         const Duration(hours: 5),
@@ -268,9 +268,9 @@ void main() {
         test('$repeatDurationInterval', () async {
           await withClock(Clock.fixed(now), () async {
             const DarwinInitializationSettings macOSInitializationSettings =
-            DarwinInitializationSettings();
+                DarwinInitializationSettings();
             const InitializationSettings initializationSettings =
-            InitializationSettings(macOS: macOSInitializationSettings);
+                InitializationSettings(macOS: macOSInitializationSettings);
             await flutterLocalNotificationsPlugin
                 .initialize(initializationSettings);
 
@@ -302,35 +302,38 @@ void main() {
 
             expect(
                 log.last,
-                isMethodCall('periodicallyShowWithDuration', arguments: <String, Object>{
-                  'id': 1,
-                  'title': 'notification title',
-                  'body': 'notification body',
-                  'payload': '',
-                  'calledAt': now.millisecondsSinceEpoch,
-                  'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
-                  'platformSpecifics': <String, Object?>{
-                    'presentAlert': true,
-                    'presentBadge': true,
-                    'presentSound': true,
-                    'presentBanner': true,
-                    'presentList': true,
-                    'subtitle': null,
-                    'sound': 'sound.mp3',
-                    'badgeNumber': 1,
-                    'threadIdentifier': null,
-                    'attachments': <Map<String, Object?>>[
-                      <String, Object?>{
-                        'filePath': 'video.mp4',
-                        'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
-                        'hideThumbnail': null,
-                        'thumbnailClippingRect': null,
-                      }
-                    ],
-                    'categoryIdentifier': null,
-                    'interruptionLevel': null,
-                  },
-                }));
+                isMethodCall('periodicallyShowWithDuration',
+                    arguments: <String, Object>{
+                      'id': 1,
+                      'title': 'notification title',
+                      'body': 'notification body',
+                      'payload': '',
+                      'calledAt': now.millisecondsSinceEpoch,
+                      'repeatIntervalMilliseconds':
+                          repeatDurationInterval.inMilliseconds,
+                      'platformSpecifics': <String, Object?>{
+                        'presentAlert': true,
+                        'presentBadge': true,
+                        'presentSound': true,
+                        'presentBanner': true,
+                        'presentList': true,
+                        'subtitle': null,
+                        'sound': 'sound.mp3',
+                        'badgeNumber': 1,
+                        'threadIdentifier': null,
+                        'attachments': <Map<String, Object?>>[
+                          <String, Object?>{
+                            'filePath': 'video.mp4',
+                            'identifier':
+                                '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                            'hideThumbnail': null,
+                            'thumbnailClippingRect': null,
+                          }
+                        ],
+                        'categoryIdentifier': null,
+                        'interruptionLevel': null,
+                      },
+                    }));
           });
         });
       }

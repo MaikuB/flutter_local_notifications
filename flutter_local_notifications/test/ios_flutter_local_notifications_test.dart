@@ -353,7 +353,7 @@ void main() {
 
     group('periodicallyShowWithDuration', () {
       final DateTime now = DateTime(2023, 12, 29);
-      final List<Duration> repeatDurationIntervals = [
+      final List<Duration> repeatDurationIntervals = <Duration>[
         const Duration(seconds: 30),
         const Duration(minutes: 15),
         const Duration(hours: 5),
@@ -364,9 +364,9 @@ void main() {
         test('$repeatDurationInterval', () async {
           await withClock(Clock.fixed(now), () async {
             const DarwinInitializationSettings iosInitializationSettings =
-            DarwinInitializationSettings();
+                DarwinInitializationSettings();
             const InitializationSettings initializationSettings =
-            InitializationSettings(iOS: iosInitializationSettings);
+                InitializationSettings(iOS: iosInitializationSettings);
             await flutterLocalNotificationsPlugin
                 .initialize(initializationSettings);
 
@@ -406,7 +406,8 @@ void main() {
                   'body': 'notification body',
                   'payload': '',
                   'calledAt': now.millisecondsSinceEpoch,
-                  'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
+                  'repeatIntervalMilliseconds':
+                      repeatDurationInterval.inMilliseconds,
                   'platformSpecifics': <String, Object?>{
                     'presentAlert': true,
                     'presentBadge': true,

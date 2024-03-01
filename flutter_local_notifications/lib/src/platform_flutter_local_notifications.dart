@@ -348,23 +348,24 @@ class AndroidFlutterLocalNotificationsPlugin
 
   @override
   Future<void> periodicallyShowWithDuration(
-      int id,
-      String? title,
-      String? body,
-      Duration repeatDurationInterval, {
-        AndroidNotificationDetails? notificationDetails,
-        String? payload,
-        AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
-      }) async {
+    int id,
+    String? title,
+    String? body,
+    Duration repeatDurationInterval, {
+    AndroidNotificationDetails? notificationDetails,
+    String? payload,
+    AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
+  }) async {
     validateId(id);
-    await _channel.invokeMethod('periodicallyShowWithDuration', <String, Object?>{
+    await _channel
+        .invokeMethod('periodicallyShowWithDuration', <String, Object?>{
       'id': id,
       'title': title,
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
       'platformSpecifics':
-      _buildPlatformSpecifics(notificationDetails, scheduleMode),
+          _buildPlatformSpecifics(notificationDetails, scheduleMode),
       'payload': payload ?? '',
     });
   }
@@ -754,15 +755,16 @@ class IOSFlutterLocalNotificationsPlugin
 
   @override
   Future<void> periodicallyShowWithDuration(
-      int id,
-      String? title,
-      String? body,
-      Duration repeatDurationInterval, {
-        DarwinNotificationDetails? notificationDetails,
-        String? payload,
-      }) async {
+    int id,
+    String? title,
+    String? body,
+    Duration repeatDurationInterval, {
+    DarwinNotificationDetails? notificationDetails,
+    String? payload,
+  }) async {
     validateId(id);
-    await _channel.invokeMethod('periodicallyShowWithDuration', <String, Object?>{
+    await _channel
+        .invokeMethod('periodicallyShowWithDuration', <String, Object?>{
       'id': id,
       'title': title,
       'body': body,
@@ -947,15 +949,16 @@ class MacOSFlutterLocalNotificationsPlugin
 
   @override
   Future<void> periodicallyShowWithDuration(
-      int id,
-      String? title,
-      String? body,
-      Duration repeatDurationInterval, {
-        DarwinNotificationDetails? notificationDetails,
-        String? payload,
-      }) async {
+    int id,
+    String? title,
+    String? body,
+    Duration repeatDurationInterval, {
+    DarwinNotificationDetails? notificationDetails,
+    String? payload,
+  }) async {
     validateId(id);
-    await _channel.invokeMethod('periodicallyShowWithDuration', <String, Object?>{
+    await _channel
+        .invokeMethod('periodicallyShowWithDuration', <String, Object?>{
       'id': id,
       'title': title,
       'body': body,
