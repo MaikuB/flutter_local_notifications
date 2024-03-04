@@ -133,7 +133,7 @@ This plugin doesn't provide APIs for directly setting the badge count for your a
 
 ### Custom notification sounds
 
-[iOS and macOS restrictions](https://developer.apple.com/documentation/usernotifications/unnotificationsound?language=objc) apply (e.g. supported file formats).
+[iOS and macOS restrictions]([https://developer.apple.com/documentation/usernotifications/unnotificationsound?language=objc](https://developer.apple.com/documentation/usernotifications/unnotificationsound?language=objc#:~:text=You%20can%20package%20the%20audio%20data%20in%20an%20aiff%2C%20wav%2C%20or%20caf%20file.%20Sound%20files%20must%20be%20less%20than%2030%20seconds%20in%20length.%20If%20the%20sound%20file%20is%20longer%20than%2030%20seconds%2C%20the%20system%20plays%20the%20default%20sound%20instead.)) apply (e.g. supported file formats).
 
 ### macOS differences
 
