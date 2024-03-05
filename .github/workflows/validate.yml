@@ -42,21 +42,6 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_android
-  build_example_android_300:
-    name: Build Android example app (3.0.0)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: 3.0.0
-          channel: stable
-          cache: true
-          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
-      - name: Install Tools
-        run: ./.github/workflows/scripts/install-tools.sh
-      - name: Build
-        run: melos run build:example_android
   build_example_ios_stable:
     name: Build iOS example app (stable channel)
     runs-on: macos-latest
@@ -92,25 +77,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          channel: stable
-          cache: true
-          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
-      - name: Install Tools
-        run: ./.github/workflows/scripts/install-tools.sh
-      - run: |
-          sudo apt-get update -y
-          sudo apt-get install -y ninja-build libgtk-3-dev
-      - run: flutter config --enable-linux-desktop
-      - name: Build
-        run: melos run build:example_linux
-  build_example_linux_300:
-    name: Build Linux example app (3.0.0)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: 3.0.0
           channel: stable
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'

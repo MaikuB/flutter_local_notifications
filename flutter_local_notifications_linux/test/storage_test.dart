@@ -75,10 +75,10 @@ void main() {
       when(mockStorageFile.existsSync()).thenReturn(false);
       when(
         mockStorageFile.createSync(recursive: true),
-      ).thenAnswer((_) => <void>{});
+      ).thenAnswer((_) {});
       when(
         mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) => <void>{});
+      ).thenAnswer((_) {});
       when(mockStorageFile.readAsStringSync()).thenReturn('');
 
       expect(await storage.insert(notifications[0]), isTrue);
@@ -111,7 +111,7 @@ void main() {
       when(mockStorageFile.existsSync()).thenReturn(true);
       when(
         mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) => <void>{});
+      ).thenAnswer((_) {});
       when(mockStorageFile.readAsStringSync()).thenReturn('');
 
       await storage.insert(notifications[0]);
@@ -153,7 +153,7 @@ void main() {
       when(mockStorageFile.existsSync()).thenReturn(true);
       when(
         mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) => <void>{});
+      ).thenAnswer((_) {});
 
       when(mockStorageFile.readAsStringSync()).thenReturn('');
       expect(await storage.getAll(), <LinuxNotificationInfo>[]);
@@ -185,7 +185,7 @@ void main() {
       when(mockStorageFile.existsSync()).thenReturn(true);
       when(
         mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) => <void>{});
+      ).thenAnswer((_) {});
 
       when(mockStorageFile.readAsStringSync()).thenReturn('');
       expect(await storage.getAll(), <LinuxNotificationInfo>[]);
@@ -213,7 +213,7 @@ void main() {
       when(mockStorageFile.existsSync()).thenReturn(true);
       when(
         mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) => <void>{});
+      ).thenAnswer((_) {});
 
       when(
         mockStorageFile.readAsStringSync(),
@@ -241,7 +241,7 @@ void main() {
       when(mockStorageFile.existsSync()).thenReturn(true);
       when(
         mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) => <void>{});
+      ).thenAnswer((_) {});
       when(mockStorageFile.readAsStringSync()).thenReturn('');
 
       await storage.insert(notifications[0]);
@@ -271,7 +271,7 @@ void main() {
       when(mockStorageFile.existsSync()).thenReturn(true);
       when(
         mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) => <void>{});
+      ).thenAnswer((_) {});
       when(mockStorageFile.readAsStringSync()).thenReturn('');
 
       await storage.insert(notification);

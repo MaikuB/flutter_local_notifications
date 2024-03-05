@@ -717,6 +717,7 @@ public class FlutterLocalNotificationsPlugin
         AlarmManagerCompat.setExact(
             alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
       } else if (notificationDetails.scheduleMode.useAlarmClock()) {
+        checkCanScheduleExactAlarms(alarmManager);
         AlarmManagerCompat.setAlarmClock(alarmManager, epochMilli, pendingIntent, pendingIntent);
       } else {
         alarmManager.set(AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
@@ -734,6 +735,7 @@ public class FlutterLocalNotificationsPlugin
       AlarmManagerCompat.setExactAndAllowWhileIdle(
           alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
     } else if (notificationDetails.scheduleMode.useAlarmClock()) {
+      checkCanScheduleExactAlarms(alarmManager);
       AlarmManagerCompat.setAlarmClock(alarmManager, epochMilli, pendingIntent, pendingIntent);
     } else {
       AlarmManagerCompat.setAndAllowWhileIdle(

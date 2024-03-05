@@ -1,3 +1,8 @@
+# [16.3.3]
+
+* [Android] added missing check on if `SCHEDULE_EXACT_ALARM` permission was granted when using the `alarmClock` as the `AndroidScheduleMode`
+* Bumped `device_info_plus` dependency for example app, which means example app requires Flutter SDK version 3.3.0 or higher to run
+
 # [16.3.2]
 
 * [Android] fixed how native stack traces were obtained. Relates to issue [2088](https://github.com/MaikuB/flutter_local_notifications/issues/2088). Thanks to the PR from [Jonas Uekötter](https://github.com/ueman)
