@@ -1,9 +1,12 @@
 # flutter_local_notifications
 
 [![pub package](https://img.shields.io/pub/v/flutter_local_notifications.svg)](https://pub.dartlang.org/packages/flutter_local_notifications)
-[![Build Status](https://api.cirrus-ci.com/github/MaikuB/flutter_local_notifications.svg)](https://cirrus-ci.com/github/MaikuB/flutter_local_notifications/master)
+![Build Status](https://github.com/MaikuB/flutter_local_notifications/actions/workflows/validate.yml/badge.svg)
 
 A cross platform plugin for displaying local notifications.
+
+>[!IMPORTANT] 
+> Given how both quickly both Flutter ecosystem and Android ecosystem evolves, the minimum Flutter SDK version will be bumped to make it easier to maintain the plugin. Note that official plugins already follow a similar approach e.g. have a minimum Flutter SDK version of 3.13. This is being called out as if this affects your applications (e.g. supported OS versions) then you may need to consider maintaining your own fork in the future
 
 ## Table of contents
 
@@ -223,11 +226,11 @@ dependencies {
 
 More information and other proposed solutions can be found in [Flutter issue #110658](https://github.com/flutter/flutter/issues/110658).
 
-The plugin also requires that the `compileSdkVersion` in your application's Gradle file is set to 33:
+The plugin also requires that the `compileSdk` in your application's Gradle file is set to 34 at a minimum:
 
 ```gradle
 android {
-    compileSdkVersion 33
+    compileSdk 34
     ...
 }
 ```

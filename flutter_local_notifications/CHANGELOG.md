@@ -1,3 +1,11 @@
+# [17.0.0]
+
+* [Android] **Breaking change** bumped `compileSdk` to 34 and updated readme to mention this
+* Updated `compileSdk` and `targetSdkVersion` of example app to 34
+* **Important announcement** given how both quickly both Flutter ecosystem and Android ecosystem evolves, the minimum Flutter SDK version will be bumped to make it easier to maintain the plugin. Note that official plugins already follow a similar approach e.g. have a minimum Flutter SDK version of 3.13. This is being called out as if this affects your applications (e.g. supported OS versions) then you may need to consider maintaining your own fork in the future
+* Updated build status badge shown on readme to sync to recent changes on using GitHub Actions
+* Fixed code snippet in readme related to handling the `onDidReceiveLocalNotification` callback. Thanks to the PR from [Sanket Patel](https://github.com/s4nk37)
+
 # [16.3.3]
 
 * [Android] added missing check on if `SCHEDULE_EXACT_ALARM` permission was granted when using the `alarmClock` as the `AndroidScheduleMode`
