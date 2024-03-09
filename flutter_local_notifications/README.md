@@ -223,11 +223,11 @@ dependencies {
 
 More information and other proposed solutions can be found in [Flutter issue #110658](https://github.com/flutter/flutter/issues/110658).
 
-The plugin also requires that the `compileSdkVersion` in your application's Gradle file is set to 33:
+The plugin also requires that the `compileSdk` in your application's Gradle file is set to 34 at a minimum:
 
 ```gradle
 android {
-    compileSdkVersion 33
+    compileSdk 34
     ...
 }
 ```

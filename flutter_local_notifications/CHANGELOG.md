@@ -1,3 +1,7 @@
+# [17.0.0]
+
+* [Android] **Breaking change** bumped `compileSdk` to 34 and updated readme to mention this
+
 # [16.3.3]
 
 * [Android] added missing check on if `SCHEDULE_EXACT_ALARM` permission was granted when using the `alarmClock` as the `AndroidScheduleMode`
