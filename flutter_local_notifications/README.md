@@ -5,6 +5,9 @@
 
 A cross platform plugin for displaying local notifications.
 
+>[!IMPORTANT] 
+> Given how both Flutter ecosystem and Android ecosystem evolves, to make it easier to maintain the plugin in the future, the minimum Flutter SDK version will be bumped. Note that official plugins already follow a similar approach e.g. have a minimum Flutter SDK version of 3.13. This is being called out as if this affects your applications (e.g. supported OS versions) then you may need to consider maintaining your own fork in the future
+
 ## Table of contents
 
 - **[📱 Supported platforms](#-supported-platforms)**

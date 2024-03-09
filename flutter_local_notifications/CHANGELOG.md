@@ -2,6 +2,7 @@
 
 * [Android] **Breaking change** bumped `compileSdk` to 34 and updated readme to mention this
 * Updated `compileSdk` and `targetSdkVersion` of example app to 34
+* **Important announcement** given how both Flutter ecosystem and Android ecosystem evolves, to make it easier to maintain the plugin in the future, the minimum Flutter SDK version will be bumped. Note that official plugins already follow a similar approach e.g. have a minimum Flutter SDK version of 3.13. This is being called out as if this affects your applications (e.g. supported OS versions) then you may need to consider maintaining your own fork in the future
 
 # [16.3.3]
 
