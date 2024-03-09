@@ -1,6 +1,7 @@
 # [17.0.0]
 
 * [Android] **Breaking change** bumped `compileSdk` to 34 and updated readme to mention this
+* Updated `compileSdk` and `targetSdkVersion` of example app to 34
 
 # [16.3.3]
 
