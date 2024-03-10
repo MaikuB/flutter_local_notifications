@@ -1,6 +1,6 @@
 #import "FlutterLocalNotificationsPlugin.h"
 #import "ActionEventSink.h"
-#import "Converters.h"
+#import "NotificationParser.h"
 #import "FlutterEngineManager.h"
 
 @implementation FlutterLocalNotificationsPlugin {
@@ -326,7 +326,7 @@ static FlutterError *getFlutterError(NSError *error) {
           NSString *identifier = action[@"identifier"];
           NSString *title = action[@"title"];
           UNNotificationActionOptions options =
-              [Converters parseNotificationActionOptions:action[@"options"]];
+              [NotificationParser parseNotificationActionOptions:action[@"options"]];
 
           if ((options & UNNotificationActionOptionForeground) != 0) {
             [foregroundActionIdentifiers addObject:identifier];
@@ -353,7 +353,7 @@ static FlutterError *getFlutterError(NSError *error) {
             categoryWithIdentifier:category[@"identifier"]
                            actions:newActions
                  intentIdentifiers:@[]
-                           options:[Converters parseNotificationCategoryOptions:
+                           options:[NotificationParser parseNotificationCategoryOptions:
                                                    category[@"options"]]];
 
         [notificationCategories addObject:notificationCategory];
