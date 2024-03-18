@@ -2079,6 +2079,7 @@ public class FlutterLocalNotificationsPlugin
       channelPayload.put("vibrationPattern", channel.getVibrationPattern());
       channelPayload.put("enableLights", channel.shouldShowLights());
       channelPayload.put("ledColor", channel.getLightColor());
+      channelPayload.put("audioAttributesUsage", channel.getAudioAttributes().getUsage());
     }
     return channelPayload;
   }
