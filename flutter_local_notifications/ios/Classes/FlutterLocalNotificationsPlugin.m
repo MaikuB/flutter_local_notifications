@@ -245,9 +245,9 @@ static FlutterError *getFlutterError(NSError *error) {
     for (UNNotification *notification in notifications) {
       NSMutableDictionary *activeNotification =
           [[NSMutableDictionary alloc] init];
-      NSLog(@"%@", notification);
+      NSLog(@"%@", notification.request);
       activeNotification[ID] =
-          notification.request.content.userInfo[NOTIFICATION_ID];
+          notification.request.content.userInfo[NOTIFICATION_ID] ?: notification.request.identifier;
       if (notification.request.content.title != nil) {
         activeNotification[TITLE] = notification.request.content.title;
       }
