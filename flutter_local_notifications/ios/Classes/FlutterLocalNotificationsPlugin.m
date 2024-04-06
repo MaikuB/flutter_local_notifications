@@ -245,7 +245,7 @@ static FlutterError *getFlutterError(NSError *error) {
     for (UNNotification *notification in notifications) {
       NSMutableDictionary *activeNotification =
           [[NSMutableDictionary alloc] init];
-      NSLog(@"%@", notification.request);
+      NSLog(@"%@", notification.request.content.userInfo);
       activeNotification[ID] =
           notification.request.content.userInfo[NOTIFICATION_ID] ?: notification.request.identifier;
       if (notification.request.content.title != nil) {
@@ -846,6 +846,40 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)cancel:(NSNumber *)id result:(FlutterResult _Nonnull)result {
+  if (@available(iOS 10.0, *)) {
+    UNUserNotificationCenter *center =
+        [UNUserNotificationCenter currentNotificationCenter];
+    NSArray *idsToRemove =
+        [[NSArray alloc] initWithObjects:[id stringValue], nil];
+    [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
+    [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
+  } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    NSArray *notifications =
+        [UIApplication sharedApplication].scheduledLocalNotifications;
+#pragma clang diagnostic pop
+    for (int i = 0; i < [notifications count]; i++) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+      UILocalNotification *localNotification = [notifications objectAtIndex:i];
+#pragma clang diagnostic pop
+      NSNumber *userInfoNotificationId =
+          localNotification.userInfo[NOTIFICATION_ID];
+      if ([userInfoNotificationId longValue] == [id longValue]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        [[UIApplication sharedApplication]
+            cancelLocalNotification:localNotification];
+#pragma clang diagnostic pop
+        break;
+      }
+    }
+  }
+  result(nil);
+}
+
+- (void)cancel:(NSString *)id result:(FlutterResult _Nonnull)result {
   if (@available(iOS 10.0, *)) {
     UNUserNotificationCenter *center =
         [UNUserNotificationCenter currentNotificationCenter];

@@ -54,7 +54,7 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   ///
   /// This applies to notifications that have been scheduled and those that
   /// have already been presented.
-  Future<void> cancel(int id) async {
+  Future<void> cancel(dynamic id) async {
     throw UnimplementedError('cancel() has not been implemented');
   }
 
