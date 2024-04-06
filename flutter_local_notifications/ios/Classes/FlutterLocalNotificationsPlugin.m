@@ -850,29 +850,36 @@ static FlutterError *getFlutterError(NSError *error) {
     UNUserNotificationCenter *center =
         [UNUserNotificationCenter currentNotificationCenter];
     NSArray *idsToRemove =
-        [[NSArray alloc] initWithObjects:[id stringValue], nil];
+        [[NSArray alloc] initWithObjects:[id], nil];
     [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
     [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
   } else {
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    NSNumber *number = [formatter numberFromString:id];
+    
+    if (number != nil) {
+      NSInteger integerValue = [number integerValue];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSArray *notifications =
-        [UIApplication sharedApplication].scheduledLocalNotifications;
+      
+      NSArray *notifications =
+          [UIApplication sharedApplication].scheduledLocalNotifications;
 #pragma clang diagnostic pop
-    for (int i = 0; i < [notifications count]; i++) {
+      for (int i = 0; i < [notifications count]; i++) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-      UILocalNotification *localNotification = [notifications objectAtIndex:i];
+        UILocalNotification *localNotification = [notifications objectAtIndex:i];
 #pragma clang diagnostic pop
-      NSNumber *userInfoNotificationId =
-          localNotification.userInfo[NOTIFICATION_ID];
-      if ([userInfoNotificationId longValue] == [id longValue]) {
+        NSNumber *userInfoNotificationId =
+            localNotification.userInfo[NOTIFICATION_ID];
+        if ([userInfoNotificationId longValue] == [integerValue longValue]) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [[UIApplication sharedApplication]
-            cancelLocalNotification:localNotification];
+          [[UIApplication sharedApplication]
+              cancelLocalNotification:localNotification];
 #pragma clang diagnostic pop
-        break;
+          break;
+        }
       }
     }
   }
