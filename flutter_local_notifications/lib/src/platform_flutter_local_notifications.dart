@@ -36,7 +36,7 @@ const MethodChannel _channel =
 class MethodChannelFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
   @override
-  Future<void> cancel(int id) {
+  Future<void> cancel(dynamic id) {
     validateId(id);
     return _channel.invokeMethod('cancel', id);
   }
