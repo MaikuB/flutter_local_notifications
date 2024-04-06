@@ -254,11 +254,66 @@ static FlutterError *getFlutterError(NSError *error) {
       if (notification.request.content.body != nil) {
         activeNotification[BODY] = notification.request.content.body;
       }
-      if (notification.request.content.userInfo[PAYLOAD] != [NSNull null]) {
+      if (notification.request.content.userInfo[PAYLOAD] != [NSNull null] &&
+          notification.request.content.userInfo[PAYLOAD] != nil) {
         activeNotification[PAYLOAD] =
             notification.request.content.userInfo[PAYLOAD];
       } else {
-        activeNotification[PAYLOAD] = notification.request.content.userInfo;
+        NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+        for (id key in userInfo) {
+          // message.messageId
+          if ([key isEqualToString:@"gcm.message_id"] || [key isEqualToString:@"google.message_id"] ||
+              [key isEqualToString:@"message_id"]) {
+            message[@"messageId"] = userInfo[key];
+            continue;
+          }
+
+          // message.messageType
+          if ([key isEqualToString:@"message_type"]) {
+            message[@"messageType"] = userInfo[key];
+            continue;
+          }
+
+          // message.collapseKey
+          if ([key isEqualToString:@"collapse_key"]) {
+            message[@"collapseKey"] = userInfo[key];
+            continue;
+          }
+
+          // message.from
+          if ([key isEqualToString:@"from"]) {
+            message[@"from"] = userInfo[key];
+            continue;
+          }
+
+          // message.sentTime
+          if ([key isEqualToString:@"google.c.a.ts"]) {
+            message[@"sentTime"] = userInfo[key];
+            continue;
+          }
+
+          // message.to
+          if ([key isEqualToString:@"to"] || [key isEqualToString:@"google.to"]) {
+            message[@"to"] = userInfo[key];
+            continue;
+          }
+
+          // build data dict from remaining keys but skip keys that shouldn't be included in data
+          if ([key isEqualToString:@"aps"] || [key hasPrefix:@"gcm."] || [key hasPrefix:@"google."]) {
+            continue;
+          }
+
+          // message.apple.imageUrl
+          if ([key isEqualToString:@"fcm_options"]) {
+            if (userInfo[key] != nil && userInfo[key][@"image"] != nil) {
+              notificationIOS[@"imageUrl"] = userInfo[key][@"image"];
+            }
+            continue;
+          }
+
+          data[key] = userInfo[key];
+        }
+        activeNotification[PAYLOAD] = data;
       }
       [activeNotifications addObject:activeNotification];
     }
