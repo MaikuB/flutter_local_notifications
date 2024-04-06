@@ -63,7 +63,7 @@ class LinuxFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> cancel(int id) {
+  Future<void> cancel(dynamic id) {
     validateId(id);
     return _manager.cancel(id);
   }
