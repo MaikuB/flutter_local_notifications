@@ -364,7 +364,7 @@ class AndroidFlutterLocalNotificationsPlugin
   /// then the notification that matches both the id and the tag will
   /// be canceled. `tag` has no effect on other platforms.
   @override
-  Future<void> cancel(int id, {String? tag}) async {
+  Future<void> cancel(dynamic id, {String? tag}) async {
     validateId(id);
 
     return _channel.invokeMethod('cancel', <String, Object?>{
