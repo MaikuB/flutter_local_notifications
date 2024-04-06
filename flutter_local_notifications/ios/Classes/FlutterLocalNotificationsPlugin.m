@@ -259,42 +259,37 @@ static FlutterError *getFlutterError(NSError *error) {
         activeNotification[PAYLOAD] =
             notification.request.content.userInfo[PAYLOAD];
       } else {
+        NSMutableDictionary *userInfo = notification.request.content.userInfo;
         NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
         for (id key in userInfo) {
           // message.messageId
           if ([key isEqualToString:@"gcm.message_id"] || [key isEqualToString:@"google.message_id"] ||
               [key isEqualToString:@"message_id"]) {
-            message[@"messageId"] = userInfo[key];
             continue;
           }
 
           // message.messageType
           if ([key isEqualToString:@"message_type"]) {
-            message[@"messageType"] = userInfo[key];
             continue;
           }
 
           // message.collapseKey
           if ([key isEqualToString:@"collapse_key"]) {
-            message[@"collapseKey"] = userInfo[key];
             continue;
           }
 
           // message.from
           if ([key isEqualToString:@"from"]) {
-            message[@"from"] = userInfo[key];
             continue;
           }
 
           // message.sentTime
           if ([key isEqualToString:@"google.c.a.ts"]) {
-            message[@"sentTime"] = userInfo[key];
             continue;
           }
 
           // message.to
           if ([key isEqualToString:@"to"] || [key isEqualToString:@"google.to"]) {
-            message[@"to"] = userInfo[key];
             continue;
           }
 
@@ -305,9 +300,6 @@ static FlutterError *getFlutterError(NSError *error) {
 
           // message.apple.imageUrl
           if ([key isEqualToString:@"fcm_options"]) {
-            if (userInfo[key] != nil && userInfo[key][@"image"] != nil) {
-              notificationIOS[@"imageUrl"] = userInfo[key][@"image"];
-            }
             continue;
           }
 
