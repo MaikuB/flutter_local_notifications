@@ -849,8 +849,7 @@ static FlutterError *getFlutterError(NSError *error) {
   if (@available(iOS 10.0, *)) {
     UNUserNotificationCenter *center =
         [UNUserNotificationCenter currentNotificationCenter];
-    NSArray *idsToRemove =
-        [[NSArray alloc] initWithObjects:[id], nil];
+    NSArray *idsToRemove = @[id];
     [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
     [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
   } else {
@@ -858,7 +857,6 @@ static FlutterError *getFlutterError(NSError *error) {
     NSNumber *number = [formatter numberFromString:id];
     
     if (number != nil) {
-      NSInteger integerValue = [number integerValue];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
       
@@ -872,7 +870,7 @@ static FlutterError *getFlutterError(NSError *error) {
 #pragma clang diagnostic pop
         NSNumber *userInfoNotificationId =
             localNotification.userInfo[NOTIFICATION_ID];
-        if ([userInfoNotificationId longValue] == [integerValue longValue]) {
+        if ([userInfoNotificationId longValue] == [number longValue]) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
           [[UIApplication sharedApplication]
