@@ -305,9 +305,12 @@ static FlutterError *getFlutterError(NSError *error) {
 
           data[key] = userInfo[key];
         }
+        NSError *error;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:data options:NSJSONWritingPrettyPrinted error:&error];
-        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        activeNotification[PAYLOAD] = jsonString;
+        if(jsonData != nil) {
+          NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+          activeNotification[PAYLOAD] = jsonString;
+        }
       }
       [activeNotifications addObject:activeNotification];
     }
