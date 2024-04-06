@@ -257,6 +257,8 @@ static FlutterError *getFlutterError(NSError *error) {
       if (notification.request.content.userInfo[PAYLOAD] != [NSNull null]) {
         activeNotification[PAYLOAD] =
             notification.request.content.userInfo[PAYLOAD];
+      } else {
+        activeNotification[PAYLOAD] = notification.request.content.userInfo;
       }
       [activeNotifications addObject:activeNotification];
     }
