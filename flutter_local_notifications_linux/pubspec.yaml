@@ -8,7 +8,11 @@ dependencies:
   ffi: ^2.0.1
   flutter:
     sdk: flutter
-  flutter_local_notifications_platform_interface: ^7.0.0
+  flutter_local_notifications_platform_interface:
+    git:
+      url: https://github.com/undecagon/flutter_local_notifications
+      path: flutter_local_notifications_platform_interface
+      ref: master
   path: ^1.8.0
   xdg_directories: ">=0.2.0+1 <2.0.0"
 
