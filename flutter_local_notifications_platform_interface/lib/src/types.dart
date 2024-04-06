@@ -20,7 +20,7 @@ class PendingNotificationRequest {
       this.id, this.title, this.body, this.payload);
 
   /// The notification's id.
-  final int id;
+  final dynamic id;
 
   /// The notification's title.
   final String? title;
@@ -49,7 +49,7 @@ class ActiveNotification {
   ///
   /// This will be null if the notification was outsided of the plugin's
   /// control e.g. on iOS and via Firebase Cloud Messaging.
-  final int? id;
+  final dynamic id;
 
   /// The notification's channel id.
   ///
