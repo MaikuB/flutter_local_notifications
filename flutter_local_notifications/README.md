@@ -180,7 +180,7 @@ Before proceeding, please make sure you are using the latest version of the plug
 
 ### Gradle setup
 
-Version 10+ on the plugin now relies on [desugaring](https://developer.android.com/studio/releases/gradle-plugin#j8-library-desugaring) to support scheduled notifications with backwards compatibility on older versions of Android. Developers will need to update their application's Gradle file at `android/app/build.gradle`. Please see the link on desugaring for details but the main parts needed in this Gradle file would be
+Version 10+ on the plugin now relies on [desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) to support scheduled notifications with backwards compatibility on older versions of Android. Developers will need to update their application's Gradle file at `android/app/build.gradle`. Please see the link on desugaring for details but the main parts needed in this Gradle file would be
 
 ```gradle
 android {
