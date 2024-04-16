@@ -189,7 +189,7 @@ When the user selects a action, the plugin will start a **separate Flutter Engin
 
 On Android and Linux, if you want to customize actions, you can put the actions directly in the `AndroidNotificationDetails` and `LinuxNotificationDetails` classes.
 
-*[iOS/macOS Specific Configuration](IOS_Configuration.md)
+On Apple platforms, see [iOS/macOS Specific Configuration](AppleConfiguration)
 
 Developers should also note that whilst accessing plugins will work, on Android there is **no** access to the `Activity` context. This means some plugins (like `url_launcher`) will require additional flags to start the main `Activity` again.
 
@@ -279,72 +279,9 @@ The `DarwinInitializationSettings` class provides default settings on how the no
 
 The `LinuxInitializationSettings` class requires a name for the default action that calls the `onDidReceiveNotificationResponse` callback when the notification is clicked. 
 
-On iOS and macOS, initialisation may show a prompt to requires users to give the application permission to display notifications (note: permissions don't need to be requested on Android). Depending on when this happens, this may not be the ideal user experience for your application. If so, please refer to the next section on how to work around this.
+On iOS and macOS, initialisation may show a prompt to requires users to give the application permission to display notifications (note: permissions don't need to be requested on Android). Depending on when this happens, this may not be the ideal user experience for your application. If so, please refer to [iOS/macOS Request Permissions](AppleRequestPermissions.md).
 
 For an explanation of the `onDidReceiveLocalNotification` callback associated with the `DarwinInitializationSettings` class, please read [this](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications#handling-notifications-whilst-the-app-is-in-the-foreground).
-
-### [iOS (all supported versions) and macOS 10.14+] Requesting notification permissions
-
-The constructor for the `DarwinInitializationSettings` class  has three named parameters (`requestSoundPermission`, `requestBadgePermission` and `requestAlertPermission`) that controls which permissions are being requested. If you want to request permissions at a later point in your application on iOS, set all of the above to false when initialising the plugin.
-
-```dart
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('app_icon');
-  final DarwinInitializationSettings initializationSettingsDarwin =
-      DarwinInitializationSettings(
-    requestSoundPermission: false,
-    requestBadgePermission: false,
-    requestAlertPermission: false,
-    onDidReceiveLocalNotification: onDidReceiveLocalNotification,
-  );
-  final MacOSInitializationSettings initializationSettingsMacOS =
-      MacOSInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false);
-  final LinuxInitializationSettings initializationSettingsLinux =
-    LinuxInitializationSettings(
-        defaultActionName: 'Open notification');
-  final InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsDarwin,
-      macOS: initializationSettingsDarwin,
-      linux: initializationSettingsLinux);
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
-```
-
-Then call the `requestPermissions` method with desired permissions at the appropriate point in your application
-
-For iOS:
-
-```dart
-final bool result = await flutterLocalNotificationsPlugin
-    .resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>()
-    ?.requestPermissions(
-    alert: true,
-    badge: true,
-    sound: true,
-    );
-```
-
-For macOS:
-
-```dart
-final bool result = await flutterLocalNotificationsPlugin
-    .resolvePlatformSpecificImplementation<
-        MacOSFlutterLocalNotificationsPlugin>()
-    ?.requestPermissions(
-    alert: true,
-    badge: true,
-    sound: true,
-    );
-```
-
-Here the call to `flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()` returns the iOS implementation of the plugin that contains APIs specific to iOS if the application is running on iOS. Similarly, the macOS implementation is returned by calling `flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<MacOSFlutterLocalNotificationsPlugin>()`. The `?.` operator is used as the result will be null when run on other platforms. Developers may alternatively choose to guard this call by checking the platform their application is running on.
 
 ### Displaying a notification
 
