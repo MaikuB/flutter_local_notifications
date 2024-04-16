@@ -1,3 +1,7 @@
+# [17.0.1]
+
+* [iOS] updated privacy manifest to declare reason the plugin uses the User Defaults API. Thanks to the PR from [Miya49-p0](https://github.com/Miya49-p0)
+
 # [17.0.0]
 
 * [Android] **Breaking change** bumped `compileSdk` to 34 and updated readme to mention this
