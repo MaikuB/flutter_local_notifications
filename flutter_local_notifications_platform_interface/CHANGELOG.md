@@ -1,3 +1,8 @@
+
+## [7.1.0]
+
+* [Android] `bigText` has added to `ActiveNotification` that allows getting information about the longer text associated with a notification displayed using the big text style. Thanks to the PR from [vulpeep](https://github.com/vulpeep)
+
 ## [7.0.0+1]
 
 * Bumped maximum Dart SDK constraint
