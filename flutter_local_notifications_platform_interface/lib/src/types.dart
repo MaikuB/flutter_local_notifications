@@ -78,7 +78,7 @@ class ActiveNotification {
   /// Returned only on Android.
   final String? tag;
 
-  /// The notification's bigText.
+  /// The notification's longer text displayed using big text style.
   ///
   /// Returned only on Android.
   final String? bigText;
