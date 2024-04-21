@@ -1,3 +1,12 @@
+
+## [17.1.0]
+
+* [Android] `bigText` has added to `ActiveNotification` that allows getting information about the longer text associated with a notification displayed using the big text style. Thanks to the PR from [vulpeep](https://github.com/vulpeep)
+* [Android] added `audioAttributesUsage` to `AndroidNotificationChannel`. Thanks to the PR from [Dithesh](https://github.com/ditheshthegreat)
+* Fix description of the behaviour iOS pending notifications limit. Thanks to the PR from [Amman Zaman](https://github.com/zamanzamzz)
+* Updated link in readme to Gradle desugaring setup. Thanks to the PR from [James Allen](https://github.com/jamesncl)
+* 
+
 # [17.0.1]
 
 * [iOS] updated privacy manifest to declare reason the plugin uses the User Defaults API. Thanks to the PR from [Miya49-p0](https://github.com/Miya49-p0)
