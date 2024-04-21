@@ -2817,7 +2817,8 @@ class _HomePageState extends State<HomePage> {
                         'vibrationPattern: ${channel.vibrationPattern}\n'
                         'showBadge: ${channel.showBadge}\n'
                         'enableLights: ${channel.enableLights}\n'
-                        'ledColor: ${channel.ledColor}\n'),
+                        'ledColor: ${channel.ledColor}\n'
+                        'audioAttributesUsage: ${channel.audioAttributesUsage}\n'),
                     const Divider(color: Colors.black),
                   ],
                 ),

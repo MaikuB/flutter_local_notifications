@@ -2359,8 +2359,10 @@ void main() {
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()!
           .createNotificationChannel(const AndroidNotificationChannel(
-              'channelId', 'channelName',
-              description: 'channelDescription'));
+            'channelId',
+            'channelName',
+            description: 'channelDescription',
+          ));
       expect(log, <Matcher>[
         isMethodCall('createNotificationChannel', arguments: <String, Object?>{
           'id': 'channelId',
@@ -2377,6 +2379,7 @@ void main() {
           'ledColorRed': null,
           'ledColorGreen': null,
           'ledColorBlue': null,
+          'audioAttributesUsage': AudioAttributesUsage.notification.value,
           'channelAction':
               AndroidNotificationChannelAction.createIfNotExists.index,
         })
@@ -2398,6 +2401,7 @@ void main() {
             enableLights: true,
             enableVibration: false,
             ledColor: Color.fromARGB(255, 255, 0, 0),
+            audioAttributesUsage: AudioAttributesUsage.alarm,
           ));
       expect(log, <Matcher>[
         isMethodCall('createNotificationChannel', arguments: <String, Object?>{
@@ -2415,6 +2419,7 @@ void main() {
           'ledColorRed': 255,
           'ledColorGreen': 0,
           'ledColorBlue': 0,
+          'audioAttributesUsage': AudioAttributesUsage.alarm.value,
           'channelAction':
               AndroidNotificationChannelAction.createIfNotExists.index,
         })
