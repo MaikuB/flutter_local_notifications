@@ -20,6 +20,7 @@ class AndroidNotificationChannel {
     this.showBadge = true,
     this.enableLights = false,
     this.ledColor,
+    this.audioAttributesUsage = AudioAttributesUsage.notification,
   });
 
   /// The channel's id.
@@ -80,4 +81,9 @@ class AndroidNotificationChannel {
   /// Whether notifications posted to this channel can appear as application
   /// icon badges in a Launcher
   final bool showBadge;
+
+  /// The attribute describing what is the intended use of the audio signal,
+  /// such as alarm or ringtone set in [`AudioAttributes.Builder`](https://developer.android.com/reference/android/media/AudioAttributes.Builder#setUsage(int))
+  /// https://developer.android.com/reference/android/media/AudioAttributes
+  final AudioAttributesUsage audioAttributesUsage;
 }

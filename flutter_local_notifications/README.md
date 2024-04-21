@@ -124,7 +124,7 @@ It has been reported that Samsung's implementation of Android has imposed a maxi
 
 ### iOS pending notifications limit
 
-There is a limit imposed by iOS where it will only keep 64 notifications that will fire the soonest.
+There is a limit imposed by iOS where it will only keep the 64 notifications that were last set on any iOS versions newer than 9. On iOS versions 9 and older, the 64 notifications that fire soonest are kept. [See here for more details.](http://ileyf.cn.openradar.appspot.com/38065340)
 
 ### Scheduled notifications and daylight saving time
 
@@ -180,7 +180,7 @@ Before proceeding, please make sure you are using the latest version of the plug
 
 ### Gradle setup
 
-Version 10+ on the plugin now relies on [desugaring](https://developer.android.com/studio/releases/gradle-plugin#j8-library-desugaring) to support scheduled notifications with backwards compatibility on older versions of Android. Developers will need to update their application's Gradle file at `android/app/build.gradle`. Please see the link on desugaring for details but the main parts needed in this Gradle file would be
+Version 10+ on the plugin now relies on [desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) to support scheduled notifications with backwards compatibility on older versions of Android. Developers will need to update their application's Gradle file at `android/app/build.gradle`. Please see the link on desugaring for details but the main parts needed in this Gradle file would be
 
 ```gradle
 android {
