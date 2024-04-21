@@ -1534,6 +1534,8 @@ public class FlutterLocalNotificationsPlugin
         activeNotificationPayload.put(
             "title", notification.extras.getCharSequence("android.title"));
         activeNotificationPayload.put("body", notification.extras.getCharSequence("android.text"));
+        activeNotificationPayload.put(
+            "bigText", notification.extras.getCharSequence("android.bigText"));
         activeNotificationsPayload.add(activeNotificationPayload);
       }
       result.success(activeNotificationsPayload);

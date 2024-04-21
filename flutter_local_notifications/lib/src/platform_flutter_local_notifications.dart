@@ -98,6 +98,7 @@ class MethodChannelFlutterLocalNotificationsPlugin
                   title: p['title'],
                   body: p['body'],
                   payload: p['payload'],
+                  bigText: p['bigText'],
                 ))
             .toList() ??
         <ActiveNotification>[];
