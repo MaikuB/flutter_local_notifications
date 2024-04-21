@@ -2361,13 +2361,13 @@ void main() {
           .createNotificationChannel(const AndroidNotificationChannel(
             'channelId',
             'channelName',
-            description: 'channelDescriptions',
+            description: 'channelDescription',
           ));
       expect(log, <Matcher>[
         isMethodCall('createNotificationChannel', arguments: <String, Object?>{
           'id': 'channelId',
           'name': 'channelName',
-          'description': 'channelDescriptions',
+          'description': 'channelDescription',
           'groupId': null,
           'showBadge': true,
           'importance': Importance.defaultImportance.value,
