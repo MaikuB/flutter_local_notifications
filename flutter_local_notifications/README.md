@@ -24,20 +24,17 @@ A cross platform plugin for displaying local notifications.
    - [Notification payload](#notification-payload)
 - **[📷 Screenshots](#-screenshots)**
 - **[👏 Acknowledgements](#-acknowledgements)**
-- **[Platform Specific Instructions](#-platform-specific-instructions)**
-  - [Android](Android.md)
-  -[iOS](IOS.md)
+- **[Platform Specific Instructions](#platform-specific-instructions)**
 - **[❓ Usage](#-usage)**
    - [Notification Actions](#notification-actions)
    - [Example app](#example-app)
    - [API reference](#api-reference)
 - **[Initialisation](#initialisation)**
-   - [[iOS (all supported versions) and macOS 10.14+] Requesting notification permissions](#ios-all-supported-versions-and-macos-1014-requesting-notification-permissions)
    - [Displaying a notification](#displaying-a-notification)
    - [Scheduling a notification](#scheduling-a-notification)
    - [Periodically show a notification with a specified interval](#periodically-show-a-notification-with-a-specified-interval)
    - [Retrieving pending notification requests](#retrieving-pending-notification-requests)
-   - [[Selected OS versions] Retrieving active notifications](#android-only-retrieving-active-notifications)
+   - [[Selected OS versions] Retrieving active notifications](#retrieving-active-notifications)
    - [Grouping notifications](#grouping-notifications)
    - [Cancelling/deleting a notification](#cancellingdeleting-a-notification)
    - [Cancelling/deleting all notifications](#cancellingdeleting-all-notifications)
@@ -167,6 +164,8 @@ Due to some limitations on iOS with how it treats null values in dictionaries, a
 * ...and everyone else for their contributions. They are greatly appreciated
 
 ## Platform Specific Instructions
+
+Use the following guides for platform specific setup and to learn about the way each platform handles notifications.
 
 * [Android](Android.md)
 * [iOS](IOS.md)
@@ -307,7 +306,7 @@ The details specific to the Android platform are also specified. This includes t
 
 Starting in version 2.0 of the plugin, scheduling notifications now requires developers to specify a date and time relative to a specific time zone. This is to solve issues with daylight saving time that existed in the `schedule` method that is now deprecated. A new `zonedSchedule` method is provided that expects an instance `TZDateTime` class provided by the [`timezone`](https://pub.dev/packages/timezone) package. Even though the `timezone` package is be a transitive dependency via this plugin, it is recommended based on [this lint rule](https://dart-lang.github.io/linter/lints/depend_on_referenced_packages.html) that you also add the `timezone` package as a direct dependency. 
 
-Once the depdendency as been added, usage of the `timezone` package requires initialisation that is covered in the package's readme. For convenience the following are code snippets used by the example app.
+Once the dependency as been added, usage of the `timezone` package requires initialisation that is covered in the package's readme. For convenience the following are code snippets used by the example app.
 
 Import the `timezone` package
 
@@ -378,9 +377,6 @@ final List<PendingNotificationRequest> pendingNotificationRequests =
 
 ### Retrieving active notifications
 
-
-
-
 ```dart
 final List<ActiveNotification> activeNotifications =
     await flutterLocalNotificationsPlugin.getActiveNotifications();
@@ -393,73 +389,10 @@ final List<ActiveNotification> activeNotifications =
 
 ### Grouping notifications
 
-#### iOS
+iOS and Android have different setup to ensure notifications are grouped. Use the following links respectively.
 
-For iOS, you can specify `threadIdentifier` in `DarwinNotificationDetails`. Notifications with the same `threadIdentifier` will get grouped together automatically.
-
-```dart
-const DarwinNotificationDetails iOSPlatformChannelSpecifics =
-    DarwinNotificationDetails(threadIdentifier: 'thread_id');
-```
-
-#### Android
-
-This is a "translation" of the sample available at https://developer.android.com/training/notify-user/group.html
-
-```dart
-const String groupKey = 'com.android.example.WORK_EMAIL';
-const String groupChannelId = 'grouped channel id';
-const String groupChannelName = 'grouped channel name';
-const String groupChannelDescription = 'grouped channel description';
-// example based on https://developer.android.com/training/notify-user/group.html
-const AndroidNotificationDetails firstNotificationAndroidSpecifics =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        importance: Importance.max,
-        priority: Priority.high,
-        groupKey: groupKey);
-const NotificationDetails firstNotificationPlatformSpecifics =
-    NotificationDetails(android: firstNotificationAndroidSpecifics);
-await flutterLocalNotificationsPlugin.show(1, 'Alex Faarborg',
-    'You will not believe...', firstNotificationPlatformSpecifics);
-const AndroidNotificationDetails secondNotificationAndroidSpecifics =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        importance: Importance.max,
-        priority: Priority.high,
-        groupKey: groupKey);
-const NotificationDetails secondNotificationPlatformSpecifics =
-    NotificationDetails(android: secondNotificationAndroidSpecifics);
-await flutterLocalNotificationsPlugin.show(
-    2,
-    'Jeff Chang',
-    'Please join us to celebrate the...',
-    secondNotificationPlatformSpecifics);
-
-// Create the summary notification to support older devices that pre-date
-/// Android 7.0 (API level 24).
-///
-/// Recommended to create this regardless as the behaviour may vary as
-/// mentioned in https://developer.android.com/training/notify-user/group
-const List<String> lines = <String>[
-    'Alex Faarborg  Check this out',
-    'Jeff Chang    Launch Party'
-];
-const InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
-    lines,
-    contentTitle: '2 messages',
-    summaryText: 'janedoe@example.com');
-const AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        styleInformation: inboxStyleInformation,
-        groupKey: groupKey,
-        setAsGroupSummary: true);
-const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-await flutterLocalNotificationsPlugin.show(
-    3, 'Attention', 'Two messages', notificationDetails);
-```
+* [iOS](IOSGrouping.md)
+* [Android](AndroidGrouping.md)
 
 ### Cancelling/deleting a notification
 
