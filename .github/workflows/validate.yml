@@ -151,7 +151,7 @@ jobs:
       - uses: futureware-tech/simulator-action@v3
         id: simulator-action
         with:
-          model: 'iPhone 13'
+          model: 'iPhone 15'
       - run: |
           brew tap wix/brew
           brew install applesimutils
