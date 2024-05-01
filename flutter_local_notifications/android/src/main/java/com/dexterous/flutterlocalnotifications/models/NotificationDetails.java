@@ -458,7 +458,7 @@ public class NotificationDetails implements Serializable {
         result.add(
             new MessageDetails(
                 (String) messageData.get(TEXT),
-                (Long) messageData.get(TIMESTAMP),
+                LongUtils.parseLong(messageData.get(TIMESTAMP)),
                 readPersonDetails((Map<String, Object>) messageData.get(PERSON)),
                 (String) messageData.get(DATA_MIME_TYPE),
                 (String) messageData.get(DATA_URI)));
