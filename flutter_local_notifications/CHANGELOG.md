@@ -1,3 +1,6 @@
+## [17.1.1]
+
+* [Android] fixes issue [#2299](https://github.com/MaikuB/flutter_local_notifications/issues/2299) where within the range of the max integer value of epoch time passed to a messaging style would result in a casting exception
 
 ## [17.1.0]
 
