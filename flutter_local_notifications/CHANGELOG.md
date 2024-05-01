@@ -5,7 +5,7 @@
 * [Android] added `audioAttributesUsage` to `AndroidNotificationChannel`. Thanks to the PR from [Dithesh](https://github.com/ditheshthegreat)
 * Fix description of the behaviour iOS pending notifications limit. Thanks to the PR from [Amman Zaman](https://github.com/zamanzamzz)
 * Updated link in readme to Gradle desugaring setup. Thanks to the PR from [James Allen](https://github.com/jamesncl)
-* 
+
 
 # [17.0.1]
 
