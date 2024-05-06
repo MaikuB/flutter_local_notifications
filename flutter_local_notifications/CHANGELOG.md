@@ -1,3 +1,7 @@
+## [17.1.2]
+
+* [Android] fixed issue [2318](https://github.com/MaikuB/flutter_local_notifications/issues/2318) where an exception could occur on calling the `getNotificationChannels()` method from the `AndroidFlutterLocalNotificationsPlugin` class. This happened when Android found that the audio attributes associated with the channel was null. The plugin will now coalesce the null value to indicate that the usage of the audio is for notifications as per https://developer.android.com/reference/android/media/AudioAttributes#USAGE_NOTIFICATION. On the Dart side, this would correspond to the [AudioAttributesUsage.notification](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AudioAttributesUsage.html#notification) enum value
+
 ## [17.1.1]
 
 * [Android] fixes issue [#2299](https://github.com/MaikuB/flutter_local_notifications/issues/2299) where within the range of the max integer value of epoch time passed to a messaging style would result in a casting exception
