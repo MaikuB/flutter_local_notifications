@@ -524,12 +524,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         if let body = arguments[MethodCallArguments.body] as? String {
             content.body = body
         }
-        let persistedPresentationOptions = UserDefaults.standard.dictionary(forKey: presentationOptionsUserDefaults)!
-        var presentSound = persistedPresentationOptions[MethodCallArguments.presentSound] as! Bool
-        var presentBadge = persistedPresentationOptions[MethodCallArguments.presentBadge] as! Bool
-        var presentAlert = persistedPresentationOptions[MethodCallArguments.presentAlert] as! Bool
-        var presentBanner = persistedPresentationOptions[MethodCallArguments.presentBanner] as! Bool
-        var presentList = persistedPresentationOptions[MethodCallArguments.presentList] as! Bool
+        let persistedPresentationOptions = UserDefaults.standard.dictionary(forKey: presentationOptionsUserDefaults)
+        var presentSound = persistedPresentationOptions?[MethodCallArguments.presentSound] as? Bool ?? false
+        var presentBadge = persistedPresentationOptions?[MethodCallArguments.presentBadge] as? Bool ?? false
+        var presentAlert = persistedPresentationOptions?[MethodCallArguments.presentAlert] as? Bool ?? false
+        var presentBanner = persistedPresentationOptions?[MethodCallArguments.presentBanner] as? Bool ?? false
+        var presentList = persistedPresentationOptions?[MethodCallArguments.presentList] as? Bool ?? false
         if let platformSpecifics = arguments[MethodCallArguments.platformSpecifics] as? [String: AnyObject] {
             if let sound = platformSpecifics[MethodCallArguments.sound] as? String {
                 content.sound = UNNotificationSound.init(named: UNNotificationSoundName.init(sound))
