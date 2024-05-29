@@ -114,6 +114,7 @@ class AndroidNotificationDetails {
     this.setAsGroupSummary = false,
     this.groupAlertBehavior = GroupAlertBehavior.all,
     this.autoCancel = true,
+    this.selectable = true,
     this.ongoing = false,
     this.silent = false,
     this.color,
@@ -237,6 +238,14 @@ class AndroidNotificationDetails {
   /// Specifies if the notification should automatically dismissed upon tapping
   /// on it.
   final bool autoCancel;
+  
+  /// Specifies if the notification is selectable.
+  /// 
+  /// If `selectable` is `false`, the `contentIntent` will be set to `null`, 
+  /// disabling click actions on the notification.
+  /// 
+  /// The default value is `true`.
+  final bool selectable;
 
   /// Specifies if the notification will be "ongoing".
   final bool ongoing;
