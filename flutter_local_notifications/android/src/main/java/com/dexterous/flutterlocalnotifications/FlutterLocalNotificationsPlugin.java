@@ -1299,9 +1299,9 @@ public class FlutterLocalNotificationsPlugin
     ZonedDateTime now = ZonedDateTime.now(zoneId);
     ZonedDateTime nextFireDate =
         ZonedDateTime.of(
-            now.getYear(),
-            now.getMonthValue(),
-            now.getDayOfMonth(),
+            scheduledDateTime.getYear(),
+            scheduledDateTime.getMonthValue(),
+            scheduledDateTime.getDayOfMonth(),
             scheduledDateTime.getHour(),
             scheduledDateTime.getMinute(),
             scheduledDateTime.getSecond(),
