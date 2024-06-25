@@ -17,7 +17,7 @@ namespace Utils {
 		if (pair == m->end()) {
 			return std::nullopt;
 		}
-		const auto val = pair->second;
+		const auto &val = pair->second;
 		if (std::holds_alternative<T>(val)) {
 			return std::get<T>(val);
 		}

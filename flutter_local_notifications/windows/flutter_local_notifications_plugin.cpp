@@ -58,6 +58,7 @@ namespace {
 		bool Initialize(
 			const std::string& appName,
 			const std::string& aumid,
+			const std::string& guid,
 			const std::optional<std::string>& iconPath,
 			const std::optional<std::string>& iconBgColor);
 
@@ -73,7 +74,8 @@ namespace {
 			const std::optional<std::string>& title,
 			const std::optional<std::string>& body,
 			const std::optional<std::string>& payload,
-			const std::optional<std::string>& group);
+			const std::optional<std::string>& group,
+			const std::optional<flutter::EncodableMap>& platformSpecifics);
 
 		/// <summary>
 		/// Dismisses the notification that has the given ID.
@@ -124,20 +126,25 @@ namespace {
 		else if (method_name == Method::INITIALIZE) {
 			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
 			if (args != nullptr) {
-				const auto appName = Utils::GetMapValue<std::string>("appName", args).value();
-				const auto aumid = Utils::GetMapValue<std::string>("aumid", args).value();
-				const auto iconPath = Utils::GetMapValue<std::string>("iconPath", args);
-				const auto iconBgColor = Utils::GetMapValue<std::string>("iconBgColor", args);
+				try {
+					const auto appName = Utils::GetMapValue<std::string>("appName", args).value();
+					const auto aumid = Utils::GetMapValue<std::string>("aumid", args).value();
+					const auto guid = Utils::GetMapValue<std::string>("guid", args).value();
+					const auto iconPath = Utils::GetMapValue<std::string>("iconPath", args);
+					const auto iconBgColor = Utils::GetMapValue<std::string>("iconBgColor", args);
 
-				result->Success(Initialize(appName, aumid, iconPath, iconBgColor));
+					result->Success(Initialize(appName, aumid, guid, iconPath, iconBgColor));
+				}
+				// handle exception when user provide a invalid guid.
+				catch (std::invalid_argument err) {
+					result->Error("INVALID_ARGUMENT", err.what());
+				}
 			}
 			else {
 				result->Error("INTERNAL", "flutter_local_notifications encountered an internal error.");
 			}
 		}
 		else if (method_name == Method::SHOW) {
-			channel->InvokeMethod("test", nullptr);
-
 			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
 			if (args != nullptr && toastNotifier.has_value()) {
 				const auto id = Utils::GetMapValue<int>("id", args).value();
@@ -145,8 +152,9 @@ namespace {
 				const auto body = Utils::GetMapValue<std::string>("body", args);
 				const auto payload = Utils::GetMapValue<std::string>("payload", args);
 				const auto group = Utils::GetMapValue<std::string>("group", args);
+				const auto platformSpecifics = Utils::GetMapValue<flutter::EncodableMap>("platformSpecifics", args);
 
-				ShowNotification(id, title, body, payload, group);
+				ShowNotification(id, title, body, payload, group, platformSpecifics);
 				result->Success();
 			}
 			else {
@@ -181,8 +189,8 @@ namespace {
 			return false;
 		}
 
-		UINT32 length;
-		auto err = GetCurrentPackageFullName(&length, nullptr);
+		UINT32 length = 0;
+		auto err = GetCurrentPackageFullName(&length, NULL);
 		if (err != ERROR_INSUFFICIENT_BUFFER) {
 			if (err == APPMODEL_ERROR_NO_PACKAGE)
 				return false;
@@ -206,12 +214,13 @@ namespace {
 	bool FlutterLocalNotificationsPlugin::Initialize(
 		const std::string& appName,
 		const std::string& aumid,
+		const std::string& guid,
 		const std::optional<std::string>& iconPath,
 		const std::optional<std::string>& iconBgColor
 	) {
 		_aumid = winrt::to_hstring(aumid);
-		PluginRegistration::RegisterApp(aumid, appName, iconPath, iconBgColor, channel);
-		
+		PluginRegistration::RegisterApp(aumid, appName, guid, iconPath, iconBgColor, channel);
+
 		const auto hasIdentity = HasIdentity();
 		if (!hasIdentity.has_value())
 			return false;
@@ -229,15 +238,21 @@ namespace {
 		const std::optional<std::string>& title,
 		const std::optional<std::string>& body,
 		const std::optional<std::string>& payload,
-		const std::optional<std::string>& group
+		const std::optional<std::string>& group,
+		const std::optional<flutter::EncodableMap>& platformSpecifics
 	) {
 		// obtain a notification template with a title and a body
 		//const auto doc = winrt::Windows::UI::Notifications::ToastNotificationManager::GetTemplateContent(winrt::Windows::UI::Notifications::ToastTemplateType::ToastText02);
 		// find all <text /> tags
 		//const auto nodes = doc.GetElementsByTagName(L"text");
 
+		auto rawXml = platformSpecifics.has_value() ?
+			Utils::GetMapValue<std::string>("rawXml", &platformSpecifics.value()) :
+			std::nullopt;
+
 		XmlDocument doc;
-		doc.LoadXml(L"\
+		if (!rawXml.has_value()) {
+			doc.LoadXml(L"\
 			<toast>\
 				<visual>\
 					<binding template=\"ToastGeneric\">\
@@ -245,24 +260,28 @@ namespace {
 				</visual>\
 			</toast>");
 
-		const auto bindingNode = doc.SelectSingleNode(L"//binding[1]");
+			const auto bindingNode = doc.SelectSingleNode(L"//binding[1]");
 
-		if (title.has_value()) {
-			// change the text of the first <text></text>, which will be the title
-			const auto textNode = doc.CreateElement(L"text");
-			textNode.InnerText(winrt::to_hstring(*title));
-			bindingNode.AppendChild(textNode);
+			if (title.has_value()) {
+				// change the text of the first <text></text>, which will be the title
+				const auto textNode = doc.CreateElement(L"text");
+				textNode.InnerText(winrt::to_hstring(*title));
+				bindingNode.AppendChild(textNode);
+			}
+			if (body.has_value()) {
+				// change the text of the second <text></text>, which will be the body
+				//nodes.Item(1).AppendChild(doc.CreateTextNode(winrt::to_hstring(body.value())));
+				const auto textNode = doc.CreateElement(L"text");
+				textNode.InnerText(winrt::to_hstring(*body));
+				bindingNode.AppendChild(textNode);
+			}
+			if (payload.has_value()) {
+				std::cout << "payload: " << *payload << std::endl;
+				doc.DocumentElement().SetAttribute(L"launch", winrt::to_hstring(*payload));
+			}
 		}
-		if (body.has_value()) {
-			// change the text of the second <text></text>, which will be the body
-			//nodes.Item(1).AppendChild(doc.CreateTextNode(winrt::to_hstring(body.value())));
-			const auto textNode = doc.CreateElement(L"text");
-			textNode.InnerText(winrt::to_hstring(*body));
-			bindingNode.AppendChild(textNode);
-		}
-		if (payload.has_value()) {
-			std::cout << "payload: " << *payload << std::endl;
-			doc.DocumentElement().SetAttribute(L"launch", winrt::to_hstring(*payload));
+		else {
+			doc.LoadXml(winrt::to_hstring(rawXml.value()));
 		}
 
 		std::cout << winrt::to_string(doc.GetXml()) << std::endl;

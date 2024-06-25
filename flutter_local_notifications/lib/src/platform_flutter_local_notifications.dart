@@ -27,7 +27,7 @@ import 'platform_specifics/darwin/notification_enabled_options.dart';
 import 'platform_specifics/ios/enums.dart';
 import 'platform_specifics/windows/initialization_settings.dart';
 import 'platform_specifics/windows/method_channel_mappers.dart';
-
+import 'platform_specifics/windows/notification_details.dart';
 import 'typedefs.dart';
 import 'types.dart';
 import 'tz_datetime_mapper.dart';
@@ -936,7 +936,9 @@ class WindowsFlutterLocalNotificationsPlugin
   DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
   /// Initializes the plugin.
   ///
-  /// Call this method on application before using the plugin further.
+  /// Call this method on application before using
+  /// the plugin further.
+  ///
   /// This should only be done once. When a notification created by this plugin
   /// was used to launch the app, calling [initialize] is what will trigger to
   /// the [onDidReceiveNotificationResponse] callback to be fire.
@@ -960,6 +962,7 @@ class WindowsFlutterLocalNotificationsPlugin
     String? body, {
     String? payload,
     String? group,
+    WindowsNotificationDetails? notificationDetails,
   }) =>
       _channel.invokeMethod('show', <String, dynamic>{
         'id': id,
@@ -967,6 +970,7 @@ class WindowsFlutterLocalNotificationsPlugin
         'body': body,
         'group': group,
         'payload': payload,
+        'platformSpecifics': notificationDetails?.toMap(),
       });
 
   @override
@@ -978,17 +982,20 @@ class WindowsFlutterLocalNotificationsPlugin
 
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
-      case 'selectNotification':
-        if (call.arguments is String) {
-          _onDidReceiveNotificationResponse?.call(call.arguments);
+      case 'didReceiveNotificationResponse':
+        if (call.arguments is Map) {
+          _onDidReceiveNotificationResponse?.call(NotificationResponse(
+              notificationResponseType:
+                  NotificationResponseType.selectedNotification,
+              payload: call.arguments['payload']));
         }
         break;
     }
   }
 }
 
-/// Checks [backgroundHandler] method, if not `null`, for eligibility to
-/// be used as a background callback.
+/// Checks [didReceiveBackgroundNotificationResponseCallback], if not `null`,
+/// for eligibility to be used as a background callback.
 ///
 /// If the method is `null`, no further action will be taken.
 ///
