@@ -6,6 +6,10 @@ packages:
   - flutter_local_notifications_platform_interface/*
   - "**/example/*"
 
+command:
+  bootstrap:
+    usePubspecOverrides: true
+
 ide:
   intellij: false
 
@@ -15,7 +19,7 @@ scripts:
     description: Run dart analyzer in a specific package.
   test:unit:
     description: Run unit tests in a specific package.
-    run: melos exec --concurrency=1 -- "flutter test"
+    run: melos exec -c 1 -- "flutter test"
     select-package:
       dir-exists:
         - test
@@ -67,4 +71,9 @@ scripts:
       dir-exists:
         - linux
       scope: "*example*"
+
+  clean:
+    run: git clean -x -d -f -q
+    description: Runs git clean as though repo was just checked out
+
   format: dart format -o write .

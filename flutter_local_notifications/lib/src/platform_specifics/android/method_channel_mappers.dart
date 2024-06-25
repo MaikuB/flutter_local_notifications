@@ -1,5 +1,3 @@
-import 'package:flutter_local_notifications/src/platform_specifics/android/bitmap.dart';
-
 import 'enums.dart';
 import 'initialization_settings.dart';
 import 'message.dart';
@@ -55,6 +53,7 @@ extension AndroidNotificationChannelMapper on AndroidNotificationChannel {
         'ledColorRed': ledColor?.red,
         'ledColorGreen': ledColor?.green,
         'ledColorBlue': ledColor?.blue,
+        'audioAttributesUsage': audioAttributesUsage.value,
         'channelAction':
             AndroidNotificationChannelAction.createIfNotExists.index,
       }..addAll(_convertNotificationSoundToMap(sound));
@@ -190,6 +189,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'groupAlertBehavior': groupAlertBehavior.index,
         'autoCancel': autoCancel,
         'ongoing': ongoing,
+        'silent': silent,
         'colorAlpha': color?.alpha,
         'colorRed': color?.red,
         'colorGreen': color?.green,
@@ -198,6 +198,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'showWhen': showWhen,
         'when': when,
         'usesChronometer': usesChronometer,
+        'chronometerCountDown': chronometerCountDown,
         'showProgress': showProgress,
         'maxProgress': maxProgress,
         'progress': progress,
@@ -212,13 +213,15 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'ticker': ticker,
         'visibility': visibility?.index,
         'timeoutAfter': timeoutAfter,
-        'category': category,
+        'category': category?.name,
         'fullScreenIntent': fullScreenIntent,
         'shortcutId': shortcutId,
         'additionalFlags': additionalFlags,
         'subText': subText,
         'tag': tag,
         'colorized': colorized,
+        'number': number,
+        'audioAttributesUsage': audioAttributesUsage.value,
       }
         ..addAll(_convertActionsToMap(actions))
         ..addAll(_convertStyleInformationToMap())

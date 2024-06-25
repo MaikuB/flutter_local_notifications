@@ -11,9 +11,9 @@ void main() {
       MockFlutterLocalNotificationsPlugin();
   FlutterLocalNotificationsPlatform.instance = mock;
 
-  test('Creates IOSNotificationAttachment when file path is specified', () {
-    expect(
-        const IOSNotificationAttachment(''), isA<IOSNotificationAttachment>());
+  test('Creates DarwinNotificationAttachment when file path is specified', () {
+    expect(const DarwinNotificationAttachment(''),
+        isA<DarwinNotificationAttachment>());
   });
 }
 

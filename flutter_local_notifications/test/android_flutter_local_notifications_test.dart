@@ -1,5 +1,6 @@
+// ignore: unnecessary_import
 import 'dart:typed_data';
-import 'dart:ui';
+
 import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,18 +25,19 @@ void main() {
     setUp(() {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-      // ignore: always_specify_types
-      channel.setMockMethodCallHandler((methodCall) async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
         log.add(methodCall);
         if (methodCall.method == 'initialize') {
           return true;
         } else if (methodCall.method == 'pendingNotificationRequests') {
           return <Map<String, Object?>>[];
-        } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
-          return null;
         } else if (methodCall.method == 'getActiveNotifications') {
           return <Map<String, Object?>>[];
+        } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
+          return null;
         }
+        return null;
       });
     });
 
@@ -139,6 +141,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -147,6 +150,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -173,6 +177,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
               'actions': <Map<String, Object>>[
                 <String, Object>{
                   'id': 'action1',
@@ -257,6 +263,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -265,6 +272,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -291,6 +299,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -337,6 +347,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -345,6 +356,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -371,6 +383,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -418,6 +432,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -426,6 +441,7 @@ void main() {
               'showWhen': true,
               'when': timestamp,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -452,6 +468,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -500,6 +518,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -508,6 +527,7 @@ void main() {
               'showWhen': true,
               'when': timestamp,
               'usesChronometer': true,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -534,6 +554,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -586,6 +608,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -594,6 +617,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -620,6 +644,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -671,6 +697,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -679,6 +706,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -705,6 +733,95 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
+            },
+          }));
+    });
+
+    test('show with default Android-specific details and silent enabled',
+        () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(android: androidInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        channelDescription: 'channelDescription',
+        silent: true,
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+          1,
+          'notification title',
+          'notification body',
+          const NotificationDetails(android: androidNotificationDetails));
+      expect(
+          log.last,
+          isMethodCall('show', arguments: <String, Object>{
+            'id': 1,
+            'title': 'notification title',
+            'body': 'notification body',
+            'payload': '',
+            'platformSpecifics': <String, Object?>{
+              'icon': null,
+              'channelId': 'channelId',
+              'channelName': 'channelName',
+              'channelDescription': 'channelDescription',
+              'channelShowBadge': true,
+              'channelAction':
+                  AndroidNotificationChannelAction.createIfNotExists.index,
+              'importance': Importance.defaultImportance.value,
+              'priority': Priority.defaultPriority.value,
+              'playSound': true,
+              'enableVibration': true,
+              'vibrationPattern': null,
+              'groupKey': null,
+              'setAsGroupSummary': false,
+              'groupAlertBehavior': GroupAlertBehavior.all.index,
+              'autoCancel': true,
+              'ongoing': false,
+              'silent': true,
+              'colorAlpha': null,
+              'colorRed': null,
+              'colorGreen': null,
+              'colorBlue': null,
+              'onlyAlertOnce': false,
+              'showWhen': true,
+              'when': null,
+              'usesChronometer': false,
+              'chronometerCountDown': false,
+              'showProgress': false,
+              'maxProgress': 0,
+              'progress': 0,
+              'indeterminate': false,
+              'enableLights': false,
+              'ledColorAlpha': null,
+              'ledColorRed': null,
+              'ledColorGreen': null,
+              'ledColorBlue': null,
+              'ledOnMs': null,
+              'ledOffMs': null,
+              'ticker': null,
+              'visibility': null,
+              'timeoutAfter': null,
+              'category': null,
+              'additionalFlags': null,
+              'fullScreenIntent': false,
+              'shortcutId': null,
+              'subText': null,
+              'style': AndroidNotificationStyle.defaultStyle.index,
+              'styleInformation': <String, Object>{
+                'htmlFormatContent': false,
+                'htmlFormatTitle': false,
+              },
+              'tag': null,
+              'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -755,6 +872,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -763,6 +881,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -789,6 +908,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -841,6 +962,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -849,6 +971,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -882,6 +1005,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -942,6 +1067,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -950,6 +1076,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -985,6 +1112,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1037,6 +1166,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -1045,6 +1175,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1078,6 +1209,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1138,6 +1271,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -1146,6 +1280,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1181,6 +1316,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1231,6 +1368,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -1239,6 +1377,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1271,6 +1410,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1328,6 +1469,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -1336,6 +1478,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1368,6 +1511,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1416,6 +1561,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -1424,6 +1570,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1450,6 +1597,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1501,6 +1650,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -1509,6 +1659,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1535,6 +1686,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1593,6 +1746,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -1601,6 +1755,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1645,6 +1800,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1714,6 +1871,7 @@ void main() {
               'groupAlertBehavior': GroupAlertBehavior.all.index,
               'autoCancel': true,
               'ongoing': false,
+              'silent': false,
               'colorAlpha': null,
               'colorRed': null,
               'colorGreen': null,
@@ -1722,6 +1880,7 @@ void main() {
               'showWhen': true,
               'when': null,
               'usesChronometer': false,
+              'chronometerCountDown': false,
               'showProgress': false,
               'maxProgress': 0,
               'progress': 0,
@@ -1768,6 +1927,8 @@ void main() {
               },
               'tag': null,
               'colorized': false,
+              'number': null,
+              'audioAttributesUsage': 5,
             },
           }));
     });
@@ -1805,7 +1966,7 @@ void main() {
                   'calledAt': now.millisecondsSinceEpoch,
                   'repeatInterval': repeatInterval.index,
                   'platformSpecifics': <String, Object?>{
-                    'allowWhileIdle': false,
+                    'scheduleMode': 'exact',
                     'icon': null,
                     'channelId': 'channelId',
                     'channelName': 'channelName',
@@ -1823,6 +1984,7 @@ void main() {
                     'groupAlertBehavior': GroupAlertBehavior.all.index,
                     'autoCancel': true,
                     'ongoing': false,
+                    'silent': false,
                     'colorAlpha': null,
                     'colorRed': null,
                     'colorGreen': null,
@@ -1831,6 +1993,7 @@ void main() {
                     'showWhen': true,
                     'when': null,
                     'usesChronometer': false,
+                    'chronometerCountDown': false,
                     'showProgress': false,
                     'maxProgress': 0,
                     'progress': 0,
@@ -1857,6 +2020,8 @@ void main() {
                     },
                     'tag': null,
                     'colorized': false,
+                    'number': null,
+                    'audioAttributesUsage': 5,
                   },
                 }));
           });
@@ -1885,7 +2050,7 @@ void main() {
             'notification body',
             scheduledDate,
             const NotificationDetails(android: androidNotificationDetails),
-            androidAllowWhileIdle: true,
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime);
         expect(
@@ -1897,8 +2062,9 @@ void main() {
               'payload': '',
               'timeZoneName': 'Australia/Sydney',
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
+              'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'platformSpecifics': <String, Object?>{
-                'allowWhileIdle': true,
+                'scheduleMode': 'exactAllowWhileIdle',
                 'icon': null,
                 'channelId': 'channelId',
                 'channelName': 'channelName',
@@ -1916,6 +2082,7 @@ void main() {
                 'groupAlertBehavior': GroupAlertBehavior.all.index,
                 'autoCancel': true,
                 'ongoing': false,
+                'silent': false,
                 'colorAlpha': null,
                 'colorRed': null,
                 'colorGreen': null,
@@ -1924,6 +2091,7 @@ void main() {
                 'showWhen': true,
                 'when': null,
                 'usesChronometer': false,
+                'chronometerCountDown': false,
                 'showProgress': false,
                 'maxProgress': 0,
                 'progress': 0,
@@ -1950,6 +2118,8 @@ void main() {
                 },
                 'tag': null,
                 'colorized': false,
+                'number': null,
+                'audioAttributesUsage': 5,
               },
             }));
       });
@@ -1975,7 +2145,7 @@ void main() {
             'notification body',
             scheduledDate,
             const NotificationDetails(android: androidNotificationDetails),
-            androidAllowWhileIdle: true,
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.time);
@@ -1988,9 +2158,10 @@ void main() {
               'payload': '',
               'timeZoneName': 'Australia/Sydney',
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
+              'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'matchDateTimeComponents': DateTimeComponents.time.index,
               'platformSpecifics': <String, Object?>{
-                'allowWhileIdle': true,
+                'scheduleMode': 'exactAllowWhileIdle',
                 'icon': null,
                 'channelId': 'channelId',
                 'channelName': 'channelName',
@@ -2008,6 +2179,7 @@ void main() {
                 'groupAlertBehavior': GroupAlertBehavior.all.index,
                 'autoCancel': true,
                 'ongoing': false,
+                'silent': false,
                 'colorAlpha': null,
                 'colorRed': null,
                 'colorGreen': null,
@@ -2016,6 +2188,7 @@ void main() {
                 'showWhen': true,
                 'when': null,
                 'usesChronometer': false,
+                'chronometerCountDown': false,
                 'showProgress': false,
                 'maxProgress': 0,
                 'progress': 0,
@@ -2042,6 +2215,8 @@ void main() {
                 },
                 'tag': null,
                 'colorized': false,
+                'number': null,
+                'audioAttributesUsage': 5,
               },
             }));
       });
@@ -2067,7 +2242,7 @@ void main() {
             'notification body',
             scheduledDate,
             const NotificationDetails(android: androidNotificationDetails),
-            androidAllowWhileIdle: true,
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             uiLocalNotificationDateInterpretation:
                 UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
@@ -2080,10 +2255,11 @@ void main() {
               'payload': '',
               'timeZoneName': 'Australia/Sydney',
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
+              'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'matchDateTimeComponents':
                   DateTimeComponents.dayOfWeekAndTime.index,
               'platformSpecifics': <String, Object?>{
-                'allowWhileIdle': true,
+                'scheduleMode': 'exactAllowWhileIdle',
                 'icon': null,
                 'channelId': 'channelId',
                 'channelName': 'channelName',
@@ -2101,6 +2277,7 @@ void main() {
                 'groupAlertBehavior': GroupAlertBehavior.all.index,
                 'autoCancel': true,
                 'ongoing': false,
+                'silent': false,
                 'colorAlpha': null,
                 'colorRed': null,
                 'colorGreen': null,
@@ -2109,6 +2286,7 @@ void main() {
                 'showWhen': true,
                 'when': null,
                 'usesChronometer': false,
+                'chronometerCountDown': false,
                 'showProgress': false,
                 'maxProgress': 0,
                 'progress': 0,
@@ -2135,6 +2313,8 @@ void main() {
                 },
                 'tag': null,
                 'colorized': false,
+                'number': null,
+                'audioAttributesUsage': 5,
               },
             }));
       });
@@ -2179,8 +2359,10 @@ void main() {
           .resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()!
           .createNotificationChannel(const AndroidNotificationChannel(
-              'channelId', 'channelName',
-              description: 'channelDescription'));
+            'channelId',
+            'channelName',
+            description: 'channelDescription',
+          ));
       expect(log, <Matcher>[
         isMethodCall('createNotificationChannel', arguments: <String, Object?>{
           'id': 'channelId',
@@ -2197,6 +2379,7 @@ void main() {
           'ledColorRed': null,
           'ledColorGreen': null,
           'ledColorBlue': null,
+          'audioAttributesUsage': AudioAttributesUsage.notification.value,
           'channelAction':
               AndroidNotificationChannelAction.createIfNotExists.index,
         })
@@ -2218,6 +2401,7 @@ void main() {
             enableLights: true,
             enableVibration: false,
             ledColor: Color.fromARGB(255, 255, 0, 0),
+            audioAttributesUsage: AudioAttributesUsage.alarm,
           ));
       expect(log, <Matcher>[
         isMethodCall('createNotificationChannel', arguments: <String, Object?>{
@@ -2235,6 +2419,7 @@ void main() {
           'ledColorRed': 255,
           'ledColorGreen': 0,
           'ledColorBlue': 0,
+          'audioAttributesUsage': AudioAttributesUsage.alarm.value,
           'channelAction':
               AndroidNotificationChannelAction.createIfNotExists.index,
         })
@@ -2249,15 +2434,6 @@ void main() {
       expect(log, <Matcher>[
         isMethodCall('deleteNotificationChannel', arguments: 'channelId')
       ]);
-    });
-
-    test('getActiveNotifications', () async {
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()!
-          .getActiveNotifications();
-      expect(log,
-          <Matcher>[isMethodCall('getActiveNotifications', arguments: null)]);
     });
 
     test('cancel', () async {
@@ -2293,11 +2469,7 @@ void main() {
     });
 
     test('getActiveNotifications', () async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()!
-          .getActiveNotifications();
+      await flutterLocalNotificationsPlugin.getActiveNotifications();
       expect(log,
           <Matcher>[isMethodCall('getActiveNotifications', arguments: null)]);
     });
@@ -2329,7 +2501,7 @@ void main() {
               'payload': '',
               'platformSpecifics': null,
             },
-            'startType': AndroidServiceStartType.startSticky.value,
+            'startType': AndroidServiceStartType.startSticky.index,
             'foregroundServiceTypes': null
           }));
     });
@@ -2382,7 +2554,7 @@ void main() {
           isMethodCall(
             'startForegroundService',
             arguments: <String, Object?>{
-              'notificationData': {
+              'notificationData': <String, Object?>{
                 'id': 1,
                 'title': 'colored background notification title',
                 'body': 'colored background notification body',
@@ -2405,6 +2577,7 @@ void main() {
                   'groupAlertBehavior': GroupAlertBehavior.all.index,
                   'autoCancel': true,
                   'ongoing': false,
+                  'silent': false,
                   'colorAlpha': 255,
                   'colorRed': 33,
                   'colorGreen': 150,
@@ -2413,6 +2586,7 @@ void main() {
                   'showWhen': true,
                   'when': null,
                   'usesChronometer': false,
+                  'chronometerCountDown': false,
                   'showProgress': false,
                   'maxProgress': 0,
                   'progress': 0,
@@ -2439,12 +2613,32 @@ void main() {
                   },
                   'tag': null,
                   'colorized': true,
+                  'number': null,
+                  'audioAttributesUsage': 5,
                 },
               },
-              'startType': AndroidServiceStartType.startSticky.value,
+              'startType': AndroidServiceStartType.startSticky.index,
               'foregroundServiceTypes': null
             },
           ));
+    });
+
+    test('requestNotificationsPermission', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .requestNotificationsPermission();
+      expect(log.last,
+          isMethodCall('requestNotificationsPermission', arguments: null));
+    });
+
+    test('requestExactAlarmsPermission', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .requestExactAlarmsPermission();
+      expect(log.last,
+          isMethodCall('requestExactAlarmsPermission', arguments: null));
     });
   });
 }

@@ -20,7 +20,9 @@ class WindowsInitializationSettings {
   /// for more information.
   final String appUserModelId;
 
+  /// The path to the icon of the notification.
   final String? iconPath;
 
+  /// The background color to the icon.
   final Color? iconBackgroundColor;
 }
