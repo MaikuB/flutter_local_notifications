@@ -193,6 +193,12 @@ class FlutterLocalNotificationsPlugin {
         onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
       );
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
+      if (initializationSettings.windows == null) {
+        throw ArgumentError(
+          'Windows settings must be set when targeting Windows platform.'
+        );
+      }
+
       return await resolvePlatformSpecificImplementation<
         WindowsFlutterLocalNotificationsPlugin
       >()?.initialize(
