@@ -219,7 +219,8 @@ namespace {
 		const std::optional<std::string>& iconBgColor
 	) {
 		_aumid = winrt::to_hstring(aumid);
-		PluginRegistration::RegisterApp(aumid, appName, guid, iconPath, iconBgColor, channel);
+		auto didRegister = PluginRegistration::RegisterApp(aumid, appName, guid, iconPath, iconBgColor, channel);
+		if (!didRegister) return false;
 
 		const auto hasIdentity = HasIdentity();
 		if (!hasIdentity.has_value())
@@ -276,15 +277,12 @@ namespace {
 				bindingNode.AppendChild(textNode);
 			}
 			if (payload.has_value()) {
-				std::cout << "payload: " << *payload << std::endl;
 				doc.DocumentElement().SetAttribute(L"launch", winrt::to_hstring(*payload));
 			}
 		}
 		else {
 			doc.LoadXml(winrt::to_hstring(rawXml.value()));
 		}
-
-		std::cout << winrt::to_string(doc.GetXml()) << std::endl;
 
 		winrt::Windows::UI::Notifications::ToastNotification notif{ doc };
 		notif.Tag(winrt::to_hstring(id));

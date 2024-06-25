@@ -111,7 +111,7 @@ using RegistryKey = winrt::handle_type<RegistryHandle>;
 
 /// <summary>
 /// Updates the Registry to enable notifications.
-/// 
+///
 /// Related resources:
 /// <ul>
 ///   <li>https://docs.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/send-local-toast-other-apps</li>
@@ -148,7 +148,7 @@ void UpdateRegistry(
 
 	// put the following key values under the key
 	// HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\PushNotifications\Backup\<aumid>
-	// 
+	//
 	// appType = app:desktop
 	// Setting = s:banner,s:toast,s:audio,c:toast,c:ringing
 	// wnsId = NonImmersivePackage
@@ -249,11 +249,17 @@ void UpdateRegistry(
 /// Register the notificatio activation callback factory
 /// and the guid of the callback.
 /// </summary>
-void RegisterCallback(std::shared_ptr<PluginMethodChannel> channel, const std::string& guid) {
+bool RegisterCallback(std::shared_ptr<PluginMethodChannel> channel, const std::string& guid) {
 	DWORD registration{};
 
 	const auto factory_ref = winrt::make_self<NotificationActivationCallbackFactory>();
 	const auto factory = factory_ref.get();
+
+	// The WinRT GUID constructor terminates the app if there's an invalid GUID, so check it here first.
+	if (guid.size() != 36 || guid[8] != '-' || guid[13] != '-' || guid[18] != '-' || guid[23] != '-') {
+		return false;
+	}
+
 	winrt::guid rclsid(guid);
 	factory->channel = channel;
 
@@ -263,9 +269,10 @@ void RegisterCallback(std::shared_ptr<PluginMethodChannel> channel, const std::s
 		CLSCTX_LOCAL_SERVER,
 		REGCLS_MULTIPLEUSE,
 		&registration));
+	return true;
 }
 
-void PluginRegistration::RegisterApp(
+bool PluginRegistration::RegisterApp(
 	const std::string& aumid,
 	const std::string& appName,
 	const std::string& guid,
@@ -273,7 +280,6 @@ void PluginRegistration::RegisterApp(
 	const std::optional<std::string>& iconBgColor,
 	std::shared_ptr<PluginMethodChannel> plugin
 ) {
-	std::cout << "register app" << std::endl;
 	UpdateRegistry(aumid, appName, guid, iconPath, iconBgColor);
-	RegisterCallback(plugin, guid);
+	return RegisterCallback(plugin, guid);
 }
