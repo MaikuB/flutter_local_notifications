@@ -10,9 +10,12 @@
 #include <appmodel.h>
 #include <NotificationActivationCallback.h>
 #include <winrt/Windows.UI.Notifications.h>
+#include <winrt/Windows.UI.Notifications.Preview.h>
 #include <winrt/Windows.UI.Notifications.Management.h>
 #include <winrt/Windows.Data.Xml.Dom.h>
 #include <winrt/Windows.ApplicationModel.h>
+#include <winrt/Windows.Foundation.Collections.h>
+#include <winrt/base.h>
 
 // For getPlatformVersion; remove unless needed for your plugin implementation.
 #include <VersionHelpers.h>
@@ -88,6 +91,8 @@ namespace {
 		/// Dismisses all currently active notifications.
 		/// </summary>
 		void CancelAllNotifications();
+
+		void GetActiveNotifications(std::vector<flutter::EncodableValue>& result);
 
 		std::optional<bool> HasIdentity();
 	};
@@ -177,6 +182,22 @@ namespace {
 		else if (method_name == Method::CANCEL_ALL && toastNotifier.has_value()) {
 			CancelAllNotifications();
 			result->Success();
+		}
+		else if (method_name == Method::GET_ACTIVE_NOTIFICATIONS && toastNotifier.has_value()) {
+			try {
+				std::vector<flutter::EncodableValue> vec;
+				GetActiveNotifications(vec);
+				result->Success(flutter::EncodableValue(vec));
+			} catch (std::exception error) {
+				result->Error("INTERNAL", error.what());
+			} catch (winrt::hresult_error error) {
+				// Windows apps need to be in an MSIX to use this API.
+				// Return an empty list if that's the case
+				std::vector<flutter::EncodableValue> vec;
+				result->Success(vec);
+			} catch (...) {
+				result->Error("INTERNAL", "flutter_local_notifications encountered an internal error.");
+			}
 		}
 		else {
 			result->NotImplemented();
@@ -314,6 +335,21 @@ namespace {
 			toastNotificationHistory = winrt::Windows::UI::Notifications::ToastNotificationManager::History();
 		}
 		toastNotificationHistory.value().Clear(_aumid);
+	}
+
+	void FlutterLocalNotificationsPlugin::GetActiveNotifications(std::vector<flutter::EncodableValue>& result) {
+		if (!toastNotificationHistory.has_value()) {
+			toastNotificationHistory = winrt::Windows::UI::Notifications::ToastNotificationManager::History();
+		}
+		const auto history = toastNotificationHistory.value().GetHistory();
+		const uint32_t size = history.Size();
+		for (uint32_t i = 0; i < size; i++) {
+			flutter::EncodableMap data;
+			const auto notif = history.GetAt(i);
+			const auto tag = notif.Tag();
+			data["id"] = flutter::EncodableValue(tag.c_str());
+			result.emplace_back(flutter::EncodableValue(data));
+		}
 	}
 }
 

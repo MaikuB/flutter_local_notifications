@@ -492,6 +492,10 @@ class FlutterLocalNotificationsPlugin {
   /// - macOS: macOS 10.14 or newer
   ///
   /// On Linux it will throw an [UnimplementedError].
+  ///
+  /// On Windows, your application must be packaged as an MSIX to be able
+  /// to use this API. If not, this function will return an empty list.
+  /// For more details, see: https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/modernize-wpf-tutorial-5
   Future<List<ActiveNotification>> getActiveNotifications() =>
       FlutterLocalNotificationsPlatform.instance.getActiveNotifications();
 }

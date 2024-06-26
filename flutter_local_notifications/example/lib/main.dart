@@ -1444,6 +1444,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _zonedScheduleNotification() async {
+    tz.initializeTimeZones();
     await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
         'scheduled title',

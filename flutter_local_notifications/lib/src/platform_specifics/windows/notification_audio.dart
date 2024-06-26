@@ -102,7 +102,7 @@ class WindowsNotificationAudio {
 
   /// Allowed file extensions for [WindowsNotificationAudio.fromFile].
   static const Set<String> allowedExtensions =
-    <String>{'.aac', '.flac', '.m4a', '.mp3', '.wav', '.wma'};
+    <String>{'aac', 'flac', 'm4a', 'mp3', 'wav', 'wma'};
 
   /// Whether this audio should loop.
   final bool shouldLoop;
