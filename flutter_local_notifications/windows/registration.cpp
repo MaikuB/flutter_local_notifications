@@ -32,15 +32,9 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
 		ULONG count) noexcept final
 	{
 		try {
-			std::wcout << L"Example" << L" has been called back from a notification." << std::endl;
-			std::wcout << L"Value of the 'app' parameter is '" << app << L"'." << std::endl;
-			std::wcout << L"Value of the 'args' parameter is '" << args << L"'." << std::endl;
-			std::wcout << L"Value of the 'count' is " << count << std::endl;
-			std::wcout << L"Value of the 'data' is:" << std::endl;
 			flutter::EncodableMap inputData;
 			for (ULONG i = 0; i < count; i++) {
 				auto item = data[i];
-				std::wcout << L"  Key: '" << item.Key << L"', Value: '" << item.Value << "'." << std::endl;
 				inputData[std::string(CW2A(item.Key))] = std::string(CW2A(item.Value));
 			}
 			const std::string payload = CW2A(args);
@@ -72,8 +66,6 @@ struct NotificationActivationCallbackFactory : winrt::implements<NotificationAct
 		GUID const& iid,
 		void** result) noexcept final
 	{
-		std::cout << "CreateInstance" << std::endl;
-
 		*result = nullptr;
 
 		if (outer) {

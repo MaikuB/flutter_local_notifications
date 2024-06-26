@@ -41,3 +41,7 @@ flutter:
 environment:
   sdk: ">=2.17.0 <4.0.0"
   flutter: ">=3.0.0"
+
+dependency_overrides:
+  flutter_local_notifications_platform_interface:
+    path: ../flutter_local_notifications_platform_interface

@@ -988,7 +988,6 @@ class WindowsFlutterLocalNotificationsPlugin
     final String xml = builder
       .buildDocument()
       .toXmlString(pretty: true, indentAttribute: (_) => true);
-    // TODO: Remove title, body, and payload from the C++ side
     await _channel.invokeMethod('show', <String, dynamic>{
       'id': id,
       'title': title,
@@ -1011,9 +1010,11 @@ class WindowsFlutterLocalNotificationsPlugin
       case 'didReceiveNotificationResponse':
         if (call.arguments is Map) {
           _onDidReceiveNotificationResponse?.call(NotificationResponse(
-              notificationResponseType:
-                  NotificationResponseType.selectedNotification,
-              payload: call.arguments['payload']));
+            notificationResponseType:
+              NotificationResponseType.selectedNotification,
+            payload: call.arguments['payload'],
+            data: Map<String, dynamic>.from(call.arguments['data']),
+          ));
         }
         break;
     }
