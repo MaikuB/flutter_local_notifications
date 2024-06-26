@@ -257,7 +257,7 @@ bool RegisterCallback(std::shared_ptr<PluginMethodChannel> channel, const std::s
 
 	// The WinRT GUID constructor terminates the app if there's an invalid GUID, so check it here first.
 	if (guid.size() != 36 || guid[8] != '-' || guid[13] != '-' || guid[18] != '-' || guid[23] != '-') {
-		return false;
+		throw std::invalid_argument("Invalid GUID");
 	}
 
 	winrt::guid rclsid(guid);

@@ -5,6 +5,7 @@ import 'package:clock/clock.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
+import 'package:xml/xml.dart';
 
 import 'callback_dispatcher.dart';
 import 'helpers.dart';
@@ -963,15 +964,40 @@ class WindowsFlutterLocalNotificationsPlugin
     String? payload,
     String? group,
     WindowsNotificationDetails? notificationDetails,
-  }) =>
-      _channel.invokeMethod('show', <String, dynamic>{
-        'id': id,
-        'title': title,
-        'body': body,
-        'group': group,
-        'payload': payload,
-        'platformSpecifics': notificationDetails?.toMap(),
+  }) async {
+    final XmlBuilder builder = XmlBuilder();
+    builder.element('toast',
+    attributes: <String, String>{
+      ...notificationDetails?.attributes ?? <String, String>{},
+      if (payload != null) 'launch': payload,
+      'useButtonStyle': 'true',
+    },
+    nest: () {
+      builder.element('visual', nest: () {
+        builder.element(
+          'binding',
+          attributes: <String, String>{'template': 'ToastGeneric'},
+          nest: () {
+            builder..element('text', nest: title)..element('text', nest: body);
+            notificationDetails?.generateBinding(builder);
+          },
+        );
       });
+      notificationDetails?.toXml(builder);
+    });
+    final String xml = builder
+      .buildDocument()
+      .toXmlString(pretty: true, indentAttribute: (_) => true);
+    // TODO: Remove title, body, and payload from the C++ side
+    await _channel.invokeMethod('show', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'group': group,
+      'payload': payload,
+      'platformSpecifics': <String, String>{'rawXml': xml},
+    });
+  }
 
   @override
   Future<void> cancel(int id, {String? group}) =>

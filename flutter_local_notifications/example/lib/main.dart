@@ -2909,7 +2909,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _showWindowsNotificationWithRawXml() async {
     final WindowsNotificationDetails windowsPlatformChannelSpecifics =
-        WindowsNotificationDetails(rawXml: _windowsRawXmlController.text);
+        WindowsNotificationDetails.fromXml(_windowsRawXmlController.text);
 
     final NotificationDetails platformChannelSpecifics =
         NotificationDetails(windows: windowsPlatformChannelSpecifics);
