@@ -11,3 +11,4 @@ const std::string Method::DID_RECEIVE_NOTIFICATION_RESPONSE = "didReceiveNotific
 const std::string Method::GET_ACTIVE_NOTIFICATIONS = "getActiveNotifications";
 const std::string Method::GET_PENDING_NOTIFICATIONS = "pendingNotificationRequests";
 const std::string Method::SCHEDULE_NOTIFICATION = "zonedSchedule";
+const std::string Method::UPDATE = "update";

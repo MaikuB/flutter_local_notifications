@@ -68,6 +68,7 @@ class WindowsSelectionInput extends WindowsInput {
 
   /// The items that can be selected.
   final List<WindowsSelection> items;
+
   /// The default item that is selected.
   final String? defaultItem;
 

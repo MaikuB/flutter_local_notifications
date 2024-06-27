@@ -1121,7 +1121,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedElevatedButton(
-                      buttonText: 'Show notifications with groups',
+                      buttonText: 'Show notifications with columns',
                       onPressed: () async {
                         await _showWindowsNotificationWithGroups();
                       },
@@ -1130,6 +1130,12 @@ class _HomePageState extends State<HomePage> {
                       buttonText: 'Show notifications with progress bar',
                       onPressed: () async {
                         await _showWindowsNotificationWithProgress();
+                      },
+                    ),
+                    PaddedElevatedButton(
+                      buttonText: 'Show notifications with dynamic progress',
+                      onPressed: () async {
+                        await _showWindowsNotificationWithUpdates();
                       },
                     ),
                     PaddedElevatedButton(
@@ -3269,7 +3275,12 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     'This is an alarm',
     null,
     NotificationDetails(
-      windows: WindowsNotificationDetails(scenario: WindowsNotificationScenario.alarm),
+      windows: WindowsNotificationDetails(
+        scenario: WindowsNotificationScenario.alarm,
+        actions: <WindowsAction>[
+          WindowsAction(content: 'Button', arguments: 'button')
+        ]
+      ),
     ),
   );
   await flutterLocalNotificationsPlugin.show(
@@ -3277,7 +3288,12 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     'This is an incoming call',
     null,
     NotificationDetails(
-      windows: WindowsNotificationDetails(scenario: WindowsNotificationScenario.incomingCall),
+      windows: WindowsNotificationDetails(
+        scenario: WindowsNotificationScenario.incomingCall,
+        actions: <WindowsAction>[
+          WindowsAction(content: 'Button', arguments: 'button')
+        ]
+      ),
     ),
   );
   await flutterLocalNotificationsPlugin.show(
@@ -3285,7 +3301,12 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     'This is a reminder',
     null,
     NotificationDetails(
-      windows: WindowsNotificationDetails(scenario: WindowsNotificationScenario.reminder),
+      windows: WindowsNotificationDetails(
+        scenario: WindowsNotificationScenario.reminder,
+        actions: <WindowsAction>[
+          WindowsAction(content: 'Button', arguments: 'button')
+        ]
+      ),
     ),
   );
   await flutterLocalNotificationsPlugin.show(
@@ -3293,7 +3314,12 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     'This is an urgent notification',
     null,
     NotificationDetails(
-      windows: WindowsNotificationDetails(scenario: WindowsNotificationScenario.urgent),
+      windows: WindowsNotificationDetails(
+        scenario: WindowsNotificationScenario.urgent,
+        actions: <WindowsAction>[
+          WindowsAction(content: 'Button', arguments: 'button')
+        ]
+      ),
     ),
   );
 }
@@ -3318,7 +3344,7 @@ Future<void> _showWindowsNotificationWithImages() => flutterLocalNotificationsPl
     windows: WindowsNotificationDetails(
       images: <WindowsImage>[
         WindowsImage(
-          source: File('./icons/coworker.png'),
+          source: File('./icons/4.0x/app_icon_density.png'),
           altText: 'A beautiful image',
         ),
       ],
@@ -3376,6 +3402,32 @@ Future<void> _showWindowsNotificationWithProgress() => flutterLocalNotifications
     ),
   ),
 );
+
+Future<void> _showWindowsNotificationWithUpdates() async {
+  final int notifId = id++;
+  final WindowsFlutterLocalNotificationsPlugin? windows = flutterLocalNotificationsPlugin
+    .resolvePlatformSpecificImplementation<WindowsFlutterLocalNotificationsPlugin>();
+  await flutterLocalNotificationsPlugin.show(
+    notifId,
+    'Dynamic updates',
+    'The progress bar should slowly fill up',
+    NotificationDetails(
+      windows: WindowsNotificationDetails(
+        progressBars: <WindowsProgressBar>[
+          WindowsProgressBar(status: 'Updating...', value: 0),
+        ],
+      ),
+    ),
+  );
+  int progress = 0;
+  Timer.periodic(const Duration(milliseconds: 300), (Timer timer) async {
+    if (progress++ == 10) {
+      // await windows?.cancel(notifId);
+      return timer.cancel();
+    }
+    await windows?.updateProgress(id: notifId, value: progress / 10, label: '$progress/10 completed');
+  });
+}
 
 Future<void> _showWindowsNotificationWithActivation() => flutterLocalNotificationsPlugin.show(
   id++,

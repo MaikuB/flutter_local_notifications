@@ -15,6 +15,7 @@
 #include <winrt/Windows.Data.Xml.Dom.h>
 #include <winrt/Windows.ApplicationModel.h>
 #include <winrt/Windows.Foundation.Collections.h>
+#include <winrt/Windows.System.h>
 #include <winrt/base.h>
 
 // For getPlatformVersion; remove unless needed for your plugin implementation.
@@ -113,7 +114,7 @@ namespace {
 		/// <param name="value">A float (0.0 - 1.0) that determines the progress</param>
 		/// <param name="label">A label to display instead of the percentage</param>
 		void UpdateProgress(const int id,
-			const std::optional<float> value,
+			const std::optional<double> value,
 			const std::optional<std::string> label);
 	};
 
@@ -244,6 +245,14 @@ namespace {
 				result->Error("INTERNAL", "flutter_local_notifications encountered an internal error.");
 			}
 		}
+		else if (method_name == Method::UPDATE && toastNotifier.has_value()) {
+			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
+			const auto id = Utils::GetMapValue<int>("id", args).value();
+			const auto value = Utils::GetMapValue<double>("value", args);
+			const auto label = Utils::GetMapValue<std::string>("label", args);
+			UpdateProgress(id, value, label);
+			result->Success();
+		}
 		else {
 			result->NotImplemented();
 		}
@@ -292,10 +301,11 @@ namespace {
 		if (!hasIdentity.has_value())
 			return false;
 
+		const auto user = winrt::Windows::System::User::GetDefault();
 		if (hasIdentity.value())
-			toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier();
+			toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::GetForUser(user).CreateToastNotifier();
 		else
-			toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::CreateToastNotifier(winrt::to_hstring(aumid));
+			toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::GetForUser(user).CreateToastNotifier(winrt::to_hstring(aumid));
 
 		return true;
 	}
@@ -338,6 +348,9 @@ namespace {
 			toastNotificationHistory = winrt::Windows::UI::Notifications::ToastNotificationManager::History();
 		}
 		toastNotificationHistory.value().Clear(_aumid);
+		for (const auto scheduled : toastNotifier.value().GetScheduledToastNotifications()) {
+			toastNotifier.value().RemoveFromSchedule(scheduled);
+		}
 	}
 
 	void FlutterLocalNotificationsPlugin::GetActiveNotifications(std::vector<flutter::EncodableValue>& result) {
@@ -384,10 +397,18 @@ namespace {
 
 	void FlutterLocalNotificationsPlugin::UpdateProgress(
 		const int id,
-		const std::optional<float> value,
+		const std::optional<double> value,
 		const std::optional<std::string> label
 	) {
-		
+		const auto tag = winrt::to_hstring(id);
+		winrt::Windows::UI::Notifications::NotificationData data;
+
+		if (value.has_value()) {
+			data.Values().Insert(winrt::to_hstring("progressValue"), winrt::to_hstring(value.value()));
+		}
+		if (label.has_value()) {
+			data.Values().Insert(winrt::to_hstring("progressValueString"), winrt::to_hstring(label.value()));
+		}
 	}
 }
 

@@ -15,4 +15,5 @@ namespace Method
 	extern const std::string GET_ACTIVE_NOTIFICATIONS;
 	extern const std::string GET_PENDING_NOTIFICATIONS;
 	extern const std::string SCHEDULE_NOTIFICATION;
+	extern const std::string UPDATE;
 }

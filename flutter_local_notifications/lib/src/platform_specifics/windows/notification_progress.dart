@@ -1,6 +1,11 @@
 import 'package:xml/xml.dart';
 
+import '../../../flutter_local_notifications.dart';
+
 /// A progress bar in a Windows notification.
+///
+/// To update the progress after the notification has been shown,
+/// use [WindowsFlutterLocalNotificationsPlugin.updateProgress].
 class WindowsProgressBar {
   /// Creates a progress bar for a Windows notification.
   WindowsProgressBar({

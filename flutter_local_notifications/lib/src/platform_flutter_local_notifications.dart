@@ -29,6 +29,7 @@ import 'platform_specifics/ios/enums.dart';
 import 'platform_specifics/windows/initialization_settings.dart';
 import 'platform_specifics/windows/method_channel_mappers.dart';
 import 'platform_specifics/windows/notification_details.dart';
+import 'platform_specifics/windows/notification_progress.dart';
 import 'typedefs.dart';
 import 'types.dart';
 import 'tz_datetime_mapper.dart';
@@ -982,7 +983,7 @@ class WindowsFlutterLocalNotificationsPlugin
       attributes: <String, String>{
         ...notificationDetails?.attributes ?? <String, String>{},
         if (payload != null) 'launch': payload,
-        'useButtonStyle': 'true',
+        if (notificationDetails?.scenario == null) 'useButtonStyle': 'true',
       },
       nest: () {
         builder.element('visual', nest: () {
@@ -1057,6 +1058,20 @@ class WindowsFlutterLocalNotificationsPlugin
       },
     });
   }
+
+  /// Updates the progress bar in the notification with the given ID.
+  ///
+  /// [value] corresponds to [WindowsProgressBar.value] and [label] with
+  /// [WindowsProgressBar.percentageOverride].
+  Future<void> updateProgress({
+    required int id,
+    double? value,
+    String? label,
+  }) => _channel.invokeMethod('update', <String, Object>{
+    'id': id,
+    if (value != null) 'value': value,
+    if (label != null) 'label': label,
+  });
 
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
