@@ -1079,7 +1079,7 @@ class WindowsFlutterLocalNotificationsPlugin
   ///
   /// [value] corresponds to [WindowsProgressBar.value] and [label] with
   /// [WindowsProgressBar.percentageOverride].
-  Future<void> updateProgress({
+  Future<int?> updateProgress({
     required int id,
     double? value,
     String? label,

@@ -117,7 +117,7 @@ namespace {
 		/// <param name="id">A unique ID that identifies this progress bar.</param>
 		/// <param name="value">A float (0.0 - 1.0) that determines the progress</param>
 		/// <param name="label">A label to display instead of the percentage</param>
-		void UpdateProgress(const int id,
+		int UpdateProgress(const int id,
 			const std::optional<std::string> value,
 			const std::optional<std::string> label);
 	};
@@ -254,8 +254,7 @@ namespace {
 			const auto id = Utils::GetMapValue<int>("id", args).value();
 			const auto value = Utils::GetMapValue<std::string>("value", args);
 			const auto label = Utils::GetMapValue<std::string>("label", args);
-			UpdateProgress(id, value, label);
-			result->Success();
+			result->Success(UpdateProgress(id, value, label));
 		}
 		else {
 			result->NotImplemented();
@@ -417,7 +416,7 @@ namespace {
 		toastNotifier.value().AddToSchedule(notif);
 	}
 
-	void FlutterLocalNotificationsPlugin::UpdateProgress(
+	int FlutterLocalNotificationsPlugin::UpdateProgress(
 		const int id,
 		const std::optional<std::string> value,
 		const std::optional<std::string> label
@@ -437,7 +436,7 @@ namespace {
 		if (label.has_value()) {
 			data.Values().Insert(winrt::to_hstring("progressString"), winrt::to_hstring(label.value()));
 		}
-		toastNotifier.value().Update(data, tag);
+		return (int) toastNotifier.value().Update(data, tag);
 	}
 }
 
