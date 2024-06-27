@@ -37,6 +37,10 @@ import 'tz_datetime_mapper.dart';
 const MethodChannel _channel =
     MethodChannel('dexterous.com/flutter/local_notifications');
 
+extension <E> on Iterable<E> {
+  E? get firstOrNull => isEmpty ? null : first;
+}
+
 /// An implementation of a local notifications platform using method channels.
 class MethodChannelFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
@@ -1020,11 +1024,23 @@ class WindowsFlutterLocalNotificationsPlugin
       payload: payload,
       notificationDetails: notificationDetails,
     );
-    await _channel.invokeMethod('show', <String, dynamic>{
+    final WindowsProgressBar? progressBar =
+      notificationDetails?.progressBars.firstOrNull;
+    print(xml);
+    final opts = <String, dynamic>{
       'id': id,
       'group': group,
-      'platformSpecifics': <String, String>{'rawXml': xml},
-    });
+      'platformSpecifics': <String, String>{
+        'rawXml': xml,
+        if (progressBar != null) ...<String, String>{
+          'progressValue': progressBar.value?.toString() ?? 'indeterminate',
+          if (progressBar.percentageOverride != null)
+            'progressString': progressBar.percentageOverride!,
+        }
+      },
+    };
+    print("opts: $opts");
+    await _channel.invokeMethod('show', opts);
   }
 
   @override
@@ -1069,7 +1085,7 @@ class WindowsFlutterLocalNotificationsPlugin
     String? label,
   }) => _channel.invokeMethod('update', <String, Object>{
     'id': id,
-    if (value != null) 'value': value,
+    'value': value?.toString() ?? 'indeterminate',
     if (label != null) 'label': label,
   });
 

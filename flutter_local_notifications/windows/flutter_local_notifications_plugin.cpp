@@ -118,7 +118,7 @@ namespace {
 		/// <param name="value">A float (0.0 - 1.0) that determines the progress</param>
 		/// <param name="label">A label to display instead of the percentage</param>
 		void UpdateProgress(const int id,
-			const std::optional<double> value,
+			const std::optional<std::string> value,
 			const std::optional<std::string> label);
 	};
 
@@ -252,7 +252,7 @@ namespace {
 		else if (method_name == Method::UPDATE && toastNotifier.has_value()) {
 			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
 			const auto id = Utils::GetMapValue<int>("id", args).value();
-			const auto value = Utils::GetMapValue<double>("value", args);
+			const auto value = Utils::GetMapValue<std::string>("value", args);
 			const auto label = Utils::GetMapValue<std::string>("label", args);
 			UpdateProgress(id, value, label);
 			result->Success();
@@ -331,6 +331,26 @@ namespace {
 		else {
 			notif.Group(_aumid);
 		}
+
+		const auto progressValue = Utils::GetMapValue<std::string>("progressValue", &platformSpecifics.value());
+		const auto progressString = Utils::GetMapValue<std::string>("progressString", &platformSpecifics.value());
+		winrt::Windows::UI::Notifications::NotificationData data;
+		std::cout << "Has value? "
+			<< progressValue.has_value()
+			<< std::endl;
+		if (progressValue.has_value()) {
+			data.Values().Insert(winrt::to_hstring("progressValue"), winrt::to_hstring(progressValue.value()));
+			std::cout << "Got value: "
+				<< progressValue.value()
+				<< std::endl;
+		}
+		if (progressString.has_value()) {
+			data.Values().Insert(winrt::to_hstring("progressString"), winrt::to_hstring(progressString.value()));
+			std::cout << "Got progress: "
+				<< progressString.value()
+				<< std::endl;
+		}
+		notif.Data(data);
 		toastNotifier.value().Show(notif);
 	}
 
@@ -362,10 +382,8 @@ namespace {
 			toastNotificationHistory = winrt::Windows::UI::Notifications::ToastNotificationManager::History();
 		}
 		const auto history = toastNotificationHistory.value().GetHistory();
-		const uint32_t size = history.Size();
-		for (uint32_t i = 0; i < size; i++) {
+		for (const auto notif : history) {
 			flutter::EncodableMap data;
-			const auto notif = history.GetAt(i);
 			const auto tag = notif.Tag();
 			const auto tagString = winrt::to_string(tag);
 			const auto tagInt = std::stoi(tagString);
@@ -401,18 +419,25 @@ namespace {
 
 	void FlutterLocalNotificationsPlugin::UpdateProgress(
 		const int id,
-		const std::optional<double> value,
+		const std::optional<std::string> value,
 		const std::optional<std::string> label
 	) {
 		const auto tag = winrt::to_hstring(id);
 		winrt::Windows::UI::Notifications::NotificationData data;
 
+		std::cout << "Has value?"
+			<< value.has_value()
+			<< std::endl;
 		if (value.has_value()) {
 			data.Values().Insert(winrt::to_hstring("progressValue"), winrt::to_hstring(value.value()));
+			std::cout << "Value: "
+				<< value.value()
+				<< std::endl;
 		}
 		if (label.has_value()) {
-			data.Values().Insert(winrt::to_hstring("progressValueString"), winrt::to_hstring(label.value()));
+			data.Values().Insert(winrt::to_hstring("progressString"), winrt::to_hstring(label.value()));
 		}
+		toastNotifier.value().Update(data, tag);
 	}
 }
 

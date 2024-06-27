@@ -36,10 +36,10 @@ class WindowsProgressBar {
     'progress',
     attributes: <String, String>{
       'status': status,
-      // 'value': value?.toString() ?? 'indeterminate',
       'value': '{progressValue}',
       if (title != null) 'title': title!,
-      if (percentageOverride != null) 'valueStringOverride': percentageOverride!
+      if (percentageOverride != null)
+        'valueStringOverride': '{progressString}',
     }
   );
 }
