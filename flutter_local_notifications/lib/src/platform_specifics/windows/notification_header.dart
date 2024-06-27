@@ -31,7 +31,6 @@ class WindowsHeader {
   /// Specifies how the application will open.
   final WindowsHeaderActivation? activation;
 
-
   /// Serializes this header to XML.
   void toXml(XmlBuilder builder) => builder.element(
     'header',

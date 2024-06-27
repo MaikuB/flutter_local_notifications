@@ -21,13 +21,13 @@ enum WindowsImageCrop {
 /// An image in a Windows notification.
 class WindowsImage extends WindowsNotificationPart {
   /// Creates a Windows notification image.
-  const WindowsImage({
-    required this.source,
+  WindowsImage({
+    required File source,
     required this.altText,
     this.addQueryParams = false,
     this.placement,
     this.crop,
-  });
+  }) : source = source.absolute;
 
   /// Whether Windows should add URL query parameters when fetching the image.
   final bool addQueryParams;

@@ -62,11 +62,14 @@ class WindowsSelectionInput extends WindowsInput {
   const WindowsSelectionInput({
     required super.id,
     required this.items,
+    this.defaultItem,
     super.title,
   }) : super(type: WindowsInputType.selection);
 
   /// The items that can be selected.
   final List<WindowsSelection> items;
+  /// The default item that is selected.
+  final String? defaultItem;
 
   @override
   void toXml(XmlBuilder builder) => builder.element(
@@ -75,6 +78,7 @@ class WindowsSelectionInput extends WindowsInput {
       'id': id,
       'type': type.name,
       if (title != null) 'title': title!,
+      if (defaultItem != null) 'defaultInput': defaultItem!,
     },
     nest: () {
       for (final WindowsSelection item in items) {

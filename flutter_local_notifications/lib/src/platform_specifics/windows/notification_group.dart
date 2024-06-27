@@ -17,11 +17,15 @@ class WindowsGroup {
     'group',
     nest: () {
       for (final WindowsColumn column in columns) {
-        builder.element('subgroup', nest: () {
-          for (final WindowsNotificationPart part in column.parts) {
-            part.toXml(builder);
-          }
-        });
+        builder.element(
+          'subgroup',
+          attributes: <String, String>{'hint-weight': '1'},
+          nest: () {
+            for (final WindowsNotificationPart part in column.parts) {
+              part.toXml(builder);
+            }
+          },
+        );
       }
     }
   );

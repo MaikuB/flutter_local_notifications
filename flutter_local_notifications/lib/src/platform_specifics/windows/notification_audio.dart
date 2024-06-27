@@ -65,6 +65,12 @@ enum WindowsNotificationSound {
 
 /// Specifies custom audio to play during a notification.
 class WindowsNotificationAudio {
+  /// No sound will play during this notification.
+  WindowsNotificationAudio.silent() :
+    source = WindowsNotificationSound.defaultSound.name,
+    shouldLoop = false,
+    isSilent = true;
+
   /// Audio from a Windows preset. See [WindowsNotificationSound] for options.
   WindowsNotificationAudio.preset({
     required WindowsNotificationSound sound,

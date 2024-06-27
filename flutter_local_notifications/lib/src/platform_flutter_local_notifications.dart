@@ -956,6 +956,54 @@ class WindowsFlutterLocalNotificationsPlugin
     return _channel.invokeMethod('initialize', settings.toMap());
   }
 
+  /// Passes the raw XML to the Windows API directly.
+  ///
+  /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
+  /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
+  Future<void> showRawXml({
+    required int id,
+    required String xml,
+    String? group,
+  }) => _channel.invokeMethod('show', <String, dynamic>{
+    'id': id,
+    'group': group,
+    'platformSpecifics': <String, String>{'rawXml': xml},
+  });
+
+  String _notificationToXml({
+    String? title,
+    String? body,
+    String? payload,
+    WindowsNotificationDetails? notificationDetails,
+  }) {
+    final XmlBuilder builder = XmlBuilder();
+    builder.element(
+      'toast',
+      attributes: <String, String>{
+        ...notificationDetails?.attributes ?? <String, String>{},
+        if (payload != null) 'launch': payload,
+        'useButtonStyle': 'true',
+      },
+      nest: () {
+        builder.element('visual', nest: () {
+          builder.element(
+            'binding',
+            attributes: <String, String>{'template': 'ToastGeneric'},
+            nest: () {
+              builder
+                ..element('text', nest: title)
+                ..element('text', nest: body);
+              notificationDetails?.generateBinding(builder);
+            },
+          );
+        });
+        notificationDetails?.toXml(builder);
+      },
+    );
+    return builder.buildDocument()
+      .toXmlString(pretty: true, indentAttribute: (_) => true);
+  }
+
   @override
   Future<void> show(
     int id,
@@ -965,35 +1013,15 @@ class WindowsFlutterLocalNotificationsPlugin
     String? group,
     WindowsNotificationDetails? notificationDetails,
   }) async {
-    final XmlBuilder builder = XmlBuilder();
-    builder.element('toast',
-    attributes: <String, String>{
-      ...notificationDetails?.attributes ?? <String, String>{},
-      if (payload != null) 'launch': payload,
-      'useButtonStyle': 'true',
-    },
-    nest: () {
-      builder.element('visual', nest: () {
-        builder.element(
-          'binding',
-          attributes: <String, String>{'template': 'ToastGeneric'},
-          nest: () {
-            builder..element('text', nest: title)..element('text', nest: body);
-            notificationDetails?.generateBinding(builder);
-          },
-        );
-      });
-      notificationDetails?.toXml(builder);
-    });
-    final String xml = builder
-      .buildDocument()
-      .toXmlString(pretty: true, indentAttribute: (_) => true);
+    final String xml = _notificationToXml(
+      title: title,
+      body: body,
+      payload: payload,
+      notificationDetails: notificationDetails,
+    );
     await _channel.invokeMethod('show', <String, dynamic>{
       'id': id,
-      'title': title,
-      'body': body,
       'group': group,
-      'payload': payload,
       'platformSpecifics': <String, String>{'rawXml': xml},
     });
   }
@@ -1004,6 +1032,31 @@ class WindowsFlutterLocalNotificationsPlugin
         'id': id,
         'group': group,
       });
+
+  /// Schedules a notification for the future.
+  Future<void> zonedSchedule(
+    int id,
+    String? title,
+    String? body,
+    TZDateTime scheduledDate,
+    WindowsNotificationDetails? notificationDetails, {
+    String? payload,
+  }) async {
+    final String xml = _notificationToXml(
+      title: title,
+      body: body,
+      payload: payload,
+      notificationDetails: notificationDetails,
+    );
+    final int secondsSinceEpoch = scheduledDate.millisecondsSinceEpoch ~/ 1000;
+    await _channel.invokeMethod('zonedSchedule', <String, dynamic>{
+      'id': id,
+      'platformSpecifics': <String, dynamic>{
+        'rawXml': xml,
+        'time': secondsSinceEpoch,
+      },
+    });
+  }
 
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {

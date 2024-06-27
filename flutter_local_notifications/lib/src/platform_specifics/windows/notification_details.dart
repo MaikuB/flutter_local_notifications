@@ -3,9 +3,13 @@ import 'package:xml/xml.dart';
 import 'notification_action.dart';
 import 'notification_audio.dart';
 import 'notification_group.dart';
+import 'notification_header.dart';
 import 'notification_image.dart';
 import 'notification_input.dart';
 import 'notification_progress.dart';
+
+export 'notification_part.dart';
+export 'notification_text.dart';
 
 /// The duration for a Windows notification.
 enum WindowsNotificationDuration {
@@ -37,6 +41,23 @@ enum WindowsNotificationScenario {
   urgent,
 }
 
+extension on DateTime {
+  String toIso8601StringTz() {
+    // Get offset
+    final Duration offset = timeZoneOffset;
+    final String sign = offset.isNegative ? '-' : '+';
+    final String hours = offset.inHours.abs().toString().padLeft(2, '0');
+    final String minutes = offset.inMinutes.abs().remainder(60)
+      .toString().padLeft(2, '0');
+    final String offsetString = '$sign$hours:$minutes';
+
+    // Get first part of properly formatted ISO 8601 date
+    final String formattedDate = toIso8601String().split('.').first;
+
+    return '$formattedDate$offsetString';
+  }
+}
+
 /// Contains notification details specific to Windows.
 ///
 /// See: https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/adaptive-interactive-toasts
@@ -48,6 +69,7 @@ class WindowsNotificationDetails {
     this.images = const <WindowsImage>[],
     this.groups = const <WindowsGroup>[],
     this.progressBars = const <WindowsProgressBar>[],
+    this.header,
     this.audio,
     this.duration,
     this.scenario,
@@ -65,22 +87,6 @@ class WindowsNotificationDetails {
       );
     }
   }
-
-  /// Passes the raw XML to the Windows API directly.
-  ///
-  /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
-  /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
-  const WindowsNotificationDetails.fromXml(this.rawXml) :
-    actions = const <WindowsAction>[],
-    inputs = const <WindowsInput>[],
-    images = const <WindowsImage>[],
-    groups = const <WindowsGroup>[],
-    progressBars = const <WindowsProgressBar>[],
-    audio = null,
-    timestamp = null,
-    duration = null,
-    scenario = null,
-    subtitle = null;
 
   /// The raw XML passed to the Windows API.
   ///
@@ -103,6 +109,9 @@ class WindowsNotificationDetails {
   /// The scenario for this notification. Sets some defaults based on the value.
   final WindowsNotificationScenario? scenario;
 
+  /// The header for this group of notifications.
+  final WindowsHeader? header;
+
   /// Overrides the timestamp to show on the notification.
   final DateTime? timestamp;
 
@@ -121,7 +130,7 @@ class WindowsNotificationDetails {
   /// XML attributes for the toast notification as a whole.
   Map<String, String> get attributes => <String, String>{
     if (duration != null) 'duration': duration!.name,
-    if (timestamp != null) 'displayTimestamp': timestamp!.toIso8601String(),
+    if (timestamp != null) 'displayTimestamp': timestamp!.toIso8601StringTz(),
     if (scenario != null) 'scenario': scenario!.name,
   };
 
@@ -140,6 +149,7 @@ class WindowsNotificationDetails {
       }
     });
     audio?.toXml(builder);
+    header?.toXml(builder);
   }
 
   /// Generates the `<binding>` element of the notification.

@@ -69,14 +69,8 @@ namespace {
 		/// Displays a single notification toast.
 		/// </summary>
 		/// <param name="id">A unique ID that identifies this notification. It can be used to cancel/dismiss the notification.</param>
-		/// <param name="title">An optional title of the notification.</param>
-		/// <param name="body">An optional body of the notification.</param>
-		/// <param name="payload"></param>
 		void ShowNotification(
 			const int id,
-			const std::optional<std::string>& title,
-			const std::optional<std::string>& body,
-			const std::optional<std::string>& payload,
 			const std::optional<std::string>& group,
 			const std::optional<flutter::EncodableMap>& platformSpecifics);
 
@@ -92,9 +86,35 @@ namespace {
 		/// </summary>
 		void CancelAllNotifications();
 
+		/// <summary>
+		/// Gets all active notifications. Requires an MSIX package to use.
+		/// </summary
 		void GetActiveNotifications(std::vector<flutter::EncodableValue>& result);
 
+		/// <summary>
+		/// Gets all pending or scheduled notifications.
+		/// </summary
+		void GetPendingNotifications(std::vector<flutter::EncodableValue>& result);
+
 		std::optional<bool> HasIdentity();
+
+		/// <summary>
+		/// Schedules a notification to be shown later.
+		/// </summary>
+		/// <param name="id">A unique ID that identifies this notification. It can be used to cancel/dismiss the notification.</param>
+		void ScheduleNotification(
+			const int id,
+			const flutter::EncodableMap& platformSpecifics);
+
+		/// <summary>
+		/// Updates a progress bar with the given id.
+		/// </summary>
+		/// <param name="id">A unique ID that identifies this progress bar.</param>
+		/// <param name="value">A float (0.0 - 1.0) that determines the progress</param>
+		/// <param name="label">A label to display instead of the percentage</param>
+		void UpdateProgress(const int id,
+			const std::optional<float> value,
+			const std::optional<std::string> label);
 	};
 
 	// static
@@ -152,15 +172,18 @@ namespace {
 		else if (method_name == Method::SHOW) {
 			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
 			if (args != nullptr && toastNotifier.has_value()) {
-				const auto id = Utils::GetMapValue<int>("id", args).value();
-				const auto title = Utils::GetMapValue<std::string>("title", args);
-				const auto body = Utils::GetMapValue<std::string>("body", args);
-				const auto payload = Utils::GetMapValue<std::string>("payload", args);
-				const auto group = Utils::GetMapValue<std::string>("group", args);
-				const auto platformSpecifics = Utils::GetMapValue<flutter::EncodableMap>("platformSpecifics", args);
+				try {
+					const auto id = Utils::GetMapValue<int>("id", args).value();
+					const auto group = Utils::GetMapValue<std::string>("group", args);
+					const auto platformSpecifics = Utils::GetMapValue<flutter::EncodableMap>("platformSpecifics", args);
 
-				ShowNotification(id, title, body, payload, group, platformSpecifics);
-				result->Success();
+					ShowNotification(id, group, platformSpecifics);
+					result->Success();
+				} catch (winrt::hresult_error error) {
+					result->Error("Invalid XML", "The XML was invalid. If you used raw XML, please verify it. If not, please report this error");
+				} catch (...) {
+					result->Error("INTERNAL", "flutter_local_notifications encountered an internal error.");
+				}
 			}
 			else {
 				result->Error("INTERNAL", "flutter_local_notifications encountered an internal error.");
@@ -195,6 +218,28 @@ namespace {
 				// Return an empty list if that's the case
 				std::vector<flutter::EncodableValue> vec;
 				result->Success(vec);
+			} catch (...) {
+				result->Error("INTERNAL", "flutter_local_notifications encountered an internal error.");
+			}
+		}
+		else if (method_name == Method::GET_PENDING_NOTIFICATIONS && toastNotifier.has_value()) {
+			try {
+				std::vector<flutter::EncodableValue> vec;
+				GetPendingNotifications(vec);
+				result->Success(vec);
+			} catch (std::exception error) {
+				result->Error("INTERNAL", error.what());
+			} catch (...) {
+				result->Error("INTERNAL", "flutter_local_notifications encountered an internal error.");
+			}
+		}
+		else if (method_name == Method::SCHEDULE_NOTIFICATION && toastNotifier.has_value()) {
+			const auto args = std::get_if<flutter::EncodableMap>(method_call.arguments());
+			const auto id = Utils::GetMapValue<int>("id", args).value();
+			const auto platformSpecifics = Utils::GetMapValue<flutter::EncodableMap>("platformSpecifics", args);
+			try {
+				ScheduleNotification(id, platformSpecifics.value());
+				result->Success();
 			} catch (...) {
 				result->Error("INTERNAL", "flutter_local_notifications encountered an internal error.");
 			}
@@ -257,53 +302,12 @@ namespace {
 
 	void FlutterLocalNotificationsPlugin::ShowNotification(
 		const int id,
-		const std::optional<std::string>& title,
-		const std::optional<std::string>& body,
-		const std::optional<std::string>& payload,
 		const std::optional<std::string>& group,
 		const std::optional<flutter::EncodableMap>& platformSpecifics
 	) {
-		// obtain a notification template with a title and a body
-		//const auto doc = winrt::Windows::UI::Notifications::ToastNotificationManager::GetTemplateContent(winrt::Windows::UI::Notifications::ToastTemplateType::ToastText02);
-		// find all <text /> tags
-		//const auto nodes = doc.GetElementsByTagName(L"text");
-
-		auto rawXml = platformSpecifics.has_value() ?
-			Utils::GetMapValue<std::string>("rawXml", &platformSpecifics.value()) :
-			std::nullopt;
-
+		auto rawXml = Utils::GetMapValue<std::string>("rawXml", &platformSpecifics.value());
 		XmlDocument doc;
-		if (!rawXml.has_value()) {
-			doc.LoadXml(L"\
-			<toast>\
-				<visual>\
-					<binding template=\"ToastGeneric\">\
-					</binding>\
-				</visual>\
-			</toast>");
-
-			const auto bindingNode = doc.SelectSingleNode(L"//binding[1]");
-
-			if (title.has_value()) {
-				// change the text of the first <text></text>, which will be the title
-				const auto textNode = doc.CreateElement(L"text");
-				textNode.InnerText(winrt::to_hstring(*title));
-				bindingNode.AppendChild(textNode);
-			}
-			if (body.has_value()) {
-				// change the text of the second <text></text>, which will be the body
-				//nodes.Item(1).AppendChild(doc.CreateTextNode(winrt::to_hstring(body.value())));
-				const auto textNode = doc.CreateElement(L"text");
-				textNode.InnerText(winrt::to_hstring(*body));
-				bindingNode.AppendChild(textNode);
-			}
-			if (payload.has_value()) {
-				doc.DocumentElement().SetAttribute(L"launch", winrt::to_hstring(*payload));
-			}
-		}
-		else {
-			doc.LoadXml(winrt::to_hstring(rawXml.value()));
-		}
+		doc.LoadXml(winrt::to_hstring(rawXml.value()));
 
 		winrt::Windows::UI::Notifications::ToastNotification notif{ doc };
 		notif.Tag(winrt::to_hstring(id));
@@ -313,7 +317,6 @@ namespace {
 		else {
 			notif.Group(_aumid);
 		}
-
 		toastNotifier.value().Show(notif);
 	}
 
@@ -347,9 +350,44 @@ namespace {
 			flutter::EncodableMap data;
 			const auto notif = history.GetAt(i);
 			const auto tag = notif.Tag();
-			data["id"] = flutter::EncodableValue(tag.c_str());
+			const auto tagString = winrt::to_string(tag);
+			const auto tagInt = std::stoi(tagString);
+			data[std::string("id")] = flutter::EncodableValue(tagInt);
 			result.emplace_back(flutter::EncodableValue(data));
 		}
+	}
+
+	void FlutterLocalNotificationsPlugin::GetPendingNotifications(std::vector<flutter::EncodableValue>& result) {
+		const auto scheduled = toastNotifier.value().GetScheduledToastNotifications();
+		for (const auto notif : scheduled) {
+			flutter::EncodableMap data;
+			const auto tag = notif.Tag();
+			const auto tagString = winrt::to_string(tag);
+			const auto tagInt = std::stoi(tagString);
+			data[std::string("id")] = flutter::EncodableValue(tagInt);
+			result.emplace_back(flutter::EncodableValue(data));
+		}
+	}
+
+	void FlutterLocalNotificationsPlugin::ScheduleNotification(const int id, const flutter::EncodableMap& platformSpecifics) {
+		auto rawXml = Utils::GetMapValue<std::string>("rawXml", &platformSpecifics);
+		XmlDocument doc;
+		doc.LoadXml(winrt::to_hstring(rawXml.value()));
+
+		const auto secondsSinceEpoch = Utils::GetMapValue<int>("time", &platformSpecifics).value();
+		time_t time(secondsSinceEpoch);
+		const auto time2 = winrt::clock::from_time_t(time);
+		winrt::Windows::UI::Notifications::ScheduledToastNotification notif(doc, time2);
+		notif.Tag(winrt::to_hstring(id));
+		toastNotifier.value().AddToSchedule(notif);
+	}
+
+	void FlutterLocalNotificationsPlugin::UpdateProgress(
+		const int id,
+		const std::optional<float> value,
+		const std::optional<std::string> label
+	) {
+		
 	}
 }
 

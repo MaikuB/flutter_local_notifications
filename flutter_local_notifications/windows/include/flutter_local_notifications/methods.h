@@ -13,4 +13,6 @@ namespace Method
 	extern const std::string CANCEL_ALL;
 	extern const std::string DID_RECEIVE_NOTIFICATION_RESPONSE;
 	extern const std::string GET_ACTIVE_NOTIFICATIONS;
+	extern const std::string GET_PENDING_NOTIFICATIONS;
+	extern const std::string SCHEDULE_NOTIFICATION;
 }

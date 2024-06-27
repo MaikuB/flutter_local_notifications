@@ -16,6 +16,7 @@ class WindowsNotificationText extends WindowsNotificationPart {
   const WindowsNotificationText({
     required this.text,
     this.centerIfCall = false,
+    this.isCaption = false,
     this.placement,
     this.languageCode,
   });
@@ -25,6 +26,9 @@ class WindowsNotificationText extends WindowsNotificationPart {
 
   /// Whether to center this text. Only relevant if in an incoming call.
   final bool centerIfCall;
+
+  /// Whether the text should be smaller like a caption.
+  final bool isCaption;
 
   /// The placement of this text. Null indicates default.
   final WindowsTextPlacement? placement;
@@ -39,6 +43,8 @@ class WindowsNotificationText extends WindowsNotificationPart {
       if (languageCode != null) 'lang': languageCode!,
       if (placement != null) 'placement': placement!.name,
       'hint-callScenarioCenterAlign': centerIfCall.toString(),
+      'hint-align': 'center',
+      if (isCaption) 'hint-style': 'captionsubtle',
     },
     nest: text,
   );
