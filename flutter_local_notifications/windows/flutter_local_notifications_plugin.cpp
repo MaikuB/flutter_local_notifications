@@ -18,6 +18,8 @@
 #include <winrt/Windows.System.h>
 #include <winrt/base.h>
 
+#include <windows.ui.notifications.h>
+
 // For getPlatformVersion; remove unless needed for your plugin implementation.
 #include <VersionHelpers.h>
 
@@ -30,6 +32,8 @@
 #include <sstream>
 
 using namespace winrt::Windows::Data::Xml::Dom;
+
+
 namespace {
 
 	class FlutterLocalNotificationsPlugin : public flutter::Plugin {
