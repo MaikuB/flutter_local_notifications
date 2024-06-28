@@ -28,6 +28,12 @@ jobs:
         with:
           fatal-infos: true
           fatal-warnings: true
+      - uses: LouisBrunner/checks-action@v2.0.0
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
   build_example_android_stable:
     name: Build Android example app (stable channel)
     runs-on: ubuntu-latest
@@ -42,6 +48,12 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_android
+      - uses: LouisBrunner/checks-action@v2.0.0
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
   build_example_ios_stable:
     name: Build iOS example app (stable channel)
     runs-on: macos-latest
@@ -56,6 +68,12 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_ios
+      - uses: LouisBrunner/checks-action@v2.0.0
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
   build_example_macos_stable:
     name: Build macOS example app (stable channel)
     runs-on: macos-latest
@@ -70,6 +88,12 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_macos
+      - uses: LouisBrunner/checks-action@v2.0.0
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
   build_example_linux_stable:
     name: Build Linux example app (stable channel)
     runs-on: ubuntu-latest
@@ -88,6 +112,12 @@ jobs:
       - run: flutter config --enable-linux-desktop
       - name: Build
         run: melos run build:example_linux
+      - uses: LouisBrunner/checks-action@v2.0.0
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
   unit_tests_dart:
     name: Run all unit tests (Dart)
     runs-on: ubuntu-latest
@@ -102,6 +132,12 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Run Tests
         run: melos run test:unit --no-select
+      - uses: LouisBrunner/checks-action@v2.0.0
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
   unit_tests_android:
     name: Run all unit tests (Android)
     runs-on: ubuntu-latest
@@ -116,6 +152,12 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Run Tests
         run: melos run test:unit:android
+      - uses: LouisBrunner/checks-action@v2.0.0
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
   integration_tests_android:
     name: Run integration tests (Android)
     runs-on: ubuntu-latest
@@ -141,6 +183,12 @@ jobs:
         with:
           api-level: 29
           script: melos run test:integration
+      - uses: LouisBrunner/checks-action@v2.0.0
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
   integration_tests_ios:
     name: Run integration tests (iOS)
     runs-on: macos-latest
@@ -162,6 +210,12 @@ jobs:
           brew install applesimutils
           applesimutils --byId ${{ steps.simulator-action.outputs.udid}} --bundle com.dexterous.flutterLocalNotificationsExample --setPermissions notifications=YES
       - run: melos run test:integration
+      - uses: LouisBrunner/checks-action@v2.0.0
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
 
 
 

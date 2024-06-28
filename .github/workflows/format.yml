@@ -14,6 +14,12 @@ jobs:
       - uses: axel-op/googlejavaformat-action@v3
         with:
           args: '--skip-sorting-imports --replace'
+      - uses: LouisBrunner/checks-action@v2.0.0
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
 
   objc_format:
     runs-on: macos-latest
@@ -26,6 +32,13 @@ jobs:
           find . -path '*/ios/**/*.h' -exec clang-format -i {} \;
           find . -path '*/macos/**/*.h' -exec clang-format -i {} \;
           git diff --exit-code || (git commit --all -m "Clang Format" && git push)
+      - uses: LouisBrunner/checks-action@v2.0.0
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
+      
 
   swift_format:
     runs-on: macos-latest
@@ -36,3 +49,9 @@ jobs:
           which swiftlint || brew install swiftlint
           swiftlint --fix
           git diff --exit-code || (git commit --all -m "Swift Format" && git push)
+      - uses: LouisBrunner/checks-action@v2.0.0
+        if: always()
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Test XYZ
+          conclusion: ${{ job.status }}
