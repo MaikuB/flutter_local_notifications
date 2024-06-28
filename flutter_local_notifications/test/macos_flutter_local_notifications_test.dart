@@ -257,8 +257,58 @@ void main() {
 
     group('periodicallyShowWithDuration', () {
       final DateTime now = DateTime(2023, 12, 29);
+
+      const Duration thirtySeconds = Duration(seconds: 30);
+      test('$thirtySeconds', () async {
+        await withClock(Clock.fixed(now), () async {
+          const DarwinInitializationSettings macOSInitializationSettings =
+              DarwinInitializationSettings();
+          const InitializationSettings initializationSettings =
+              InitializationSettings(macOS: macOSInitializationSettings);
+          await flutterLocalNotificationsPlugin
+              .initialize(initializationSettings);
+
+          const NotificationDetails notificationDetails = NotificationDetails(
+            macOS: DarwinNotificationDetails(
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
+              presentBanner: true,
+              presentList: true,
+              sound: 'sound.mp3',
+              badgeNumber: 1,
+              attachments: <DarwinNotificationAttachment>[
+                DarwinNotificationAttachment(
+                  'video.mp4',
+                  identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373',
+                )
+              ],
+            ),
+          );
+
+          await flutterLocalNotificationsPlugin.periodicallyShowWithDuration(
+            1,
+            'notification title',
+            'notification body',
+            thirtySeconds,
+            notificationDetails,
+          );
+
+          expect(
+              () async => await flutterLocalNotificationsPlugin
+                      .periodicallyShowWithDuration(
+                    1,
+                    'notification title',
+                    'notification body',
+                    thirtySeconds,
+                    notificationDetails,
+                  ),
+              throwsA(isA<ArgumentError>()));
+        });
+      });
+
       final List<Duration> repeatDurationIntervals = <Duration>[
-        const Duration(seconds: 30),
+        const Duration(minutes: 1),
         const Duration(minutes: 15),
         const Duration(hours: 5),
         const Duration(days: 30)

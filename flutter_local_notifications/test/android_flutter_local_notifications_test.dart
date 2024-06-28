@@ -2031,8 +2031,37 @@ void main() {
 
     group('periodicallyShowWithDuration', () {
       final DateTime now = DateTime(2023, 12, 29);
+
+      const Duration thirtySeconds = Duration(seconds: 30);
+      test('$thirtySeconds', () async {
+        await withClock(Clock.fixed(now), () async {
+          const AndroidInitializationSettings androidInitializationSettings =
+              AndroidInitializationSettings('app_icon');
+          const InitializationSettings initializationSettings =
+              InitializationSettings(android: androidInitializationSettings);
+          await flutterLocalNotificationsPlugin
+              .initialize(initializationSettings);
+
+          const AndroidNotificationDetails androidNotificationDetails =
+              AndroidNotificationDetails('channelId', 'channelName',
+                  channelDescription: 'channelDescription');
+
+          expect(
+              () async => await flutterLocalNotificationsPlugin
+                      .periodicallyShowWithDuration(
+                    1,
+                    'notification title',
+                    'notification body',
+                    thirtySeconds,
+                    const NotificationDetails(
+                        android: androidNotificationDetails),
+                  ),
+              throwsA(isA<ArgumentError>()));
+        });
+      });
+
       final List<Duration> repeatDurationIntervals = <Duration>[
-        const Duration(seconds: 30),
+        const Duration(minutes: 1),
         const Duration(minutes: 15),
         const Duration(hours: 5),
         const Duration(days: 30)
