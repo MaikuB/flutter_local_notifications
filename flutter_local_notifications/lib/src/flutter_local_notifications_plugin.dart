@@ -340,7 +340,7 @@ class FlutterLocalNotificationsPlugin {
     required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
     @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
-    bool androidAllowWhileIdle = false,
+        bool androidAllowWhileIdle = false,
     AndroidScheduleMode? androidScheduleMode,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
@@ -411,7 +411,7 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     String? payload,
     @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
-    bool androidAllowWhileIdle = false,
+        bool androidAllowWhileIdle = false,
     AndroidScheduleMode? androidScheduleMode,
   }) async {
     if (kIsWeb) {
@@ -448,18 +448,6 @@ class FlutterLocalNotificationsPlugin {
   /// the first time the notification will be an 5 minutes after the method
   /// has been called and then every 5 minutes after that.
   ///
-  /// If [androidAllowWhileIdle] is `false`, the Android `AlarmManager` APIs
-  /// are used to set a recurring inexact alarm that would present the
-  /// notification. This means that there may be delay in on when
-  /// notifications are displayed. If [androidAllowWhileIdle] is `true`, the
-  /// Android `AlarmManager` APIs are used to schedule a single notification
-  /// to be shown at the exact time even when the device is in a low-power idle
-  /// mode. After it is shown, the next one would be scheduled and this would
-  /// repeat. Note that this parameter has been deprecated and will removed in
-  /// future majorrelease in favour of the [androidScheduledMode] parameter that
-  /// provides the same functionality in addition to being able to schedule
-  /// notifications with inexact timings.
-  ///
   /// On Android, this will also require additional setup for the app,
   /// especially in the app's `AndroidManifest.xml` file. Please see check the
   /// readme for further details.
@@ -469,10 +457,8 @@ class FlutterLocalNotificationsPlugin {
     String? body,
     Duration repeatDurationInterval,
     NotificationDetails notificationDetails, {
+    AndroidScheduleMode androidScheduleMode = AndroidScheduleMode.exact,
     String? payload,
-    @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
-    bool androidAllowWhileIdle = false,
-    AndroidScheduleMode? androidScheduleMode,
   }) async {
     if (kIsWeb) {
       return;
@@ -484,8 +470,7 @@ class FlutterLocalNotificationsPlugin {
               id, title, body, repeatDurationInterval,
               notificationDetails: notificationDetails.android,
               payload: payload,
-              scheduleMode: _chooseScheduleMode(
-                  androidScheduleMode, androidAllowWhileIdle));
+              scheduleMode: androidScheduleMode);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
