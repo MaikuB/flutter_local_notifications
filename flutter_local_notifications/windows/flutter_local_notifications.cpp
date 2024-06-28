@@ -124,7 +124,6 @@ bool FlutterLocalNotifications::Initialize(
   const auto identityResult = HasIdentity();
   if (!identityResult.has_value()) return false;
   hasIdentity = identityResult.value();
-  std::cout << "Has identity? " << hasIdentity << std::endl;
   toastNotifier = hasIdentity
     ? ToastNotificationManager::CreateToastNotifier()
     : ToastNotificationManager::CreateToastNotifier(_aumid);
