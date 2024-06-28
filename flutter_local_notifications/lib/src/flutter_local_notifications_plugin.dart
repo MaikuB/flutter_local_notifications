@@ -340,7 +340,7 @@ class FlutterLocalNotificationsPlugin {
     required UILocalNotificationDateInterpretation
         uiLocalNotificationDateInterpretation,
     @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
-    bool androidAllowWhileIdle = false,
+        bool androidAllowWhileIdle = false,
     AndroidScheduleMode? androidScheduleMode,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
@@ -411,7 +411,7 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     String? payload,
     @Deprecated('Deprecated in favor of the androidScheduleMode parameter')
-    bool androidAllowWhileIdle = false,
+        bool androidAllowWhileIdle = false,
     AndroidScheduleMode? androidScheduleMode,
   }) async {
     if (kIsWeb) {
@@ -438,6 +438,55 @@ class FlutterLocalNotificationsPlugin {
     } else {
       await FlutterLocalNotificationsPlatform.instance
           .periodicallyShow(id, title, body, repeatInterval);
+    }
+  }
+
+  /// Periodically show a notification using the specified custom duration
+  /// interval.
+  ///
+  /// For example, specifying a 5 minutes repeat duration interval means
+  /// the first time the notification will be an 5 minutes after the method
+  /// has been called and then every 5 minutes after that.
+  ///
+  /// On Android, this will also require additional setup for the app,
+  /// especially in the app's `AndroidManifest.xml` file. Please see check the
+  /// readme for further details.
+  Future<void> periodicallyShowWithDuration(
+    int id,
+    String? title,
+    String? body,
+    Duration repeatDurationInterval,
+    NotificationDetails notificationDetails, {
+    AndroidScheduleMode androidScheduleMode = AndroidScheduleMode.exact,
+    String? payload,
+  }) async {
+    if (kIsWeb) {
+      return;
+    }
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      await resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.periodicallyShowWithDuration(
+              id, title, body, repeatDurationInterval,
+              notificationDetails: notificationDetails.android,
+              payload: payload,
+              scheduleMode: androidScheduleMode);
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      await resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.periodicallyShowWithDuration(
+              id, title, body, repeatDurationInterval,
+              notificationDetails: notificationDetails.iOS, payload: payload);
+    } else if (defaultTargetPlatform == TargetPlatform.macOS) {
+      await resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()
+          ?.periodicallyShowWithDuration(
+              id, title, body, repeatDurationInterval,
+              notificationDetails: notificationDetails.macOS, payload: payload);
+    } else {
+      await FlutterLocalNotificationsPlatform.instance
+          .periodicallyShowWithDuration(
+              id, title, body, repeatDurationInterval);
     }
   }
 

@@ -22,6 +22,7 @@ NSString *const GET_CALLBACK_METHOD = @"getCallbackHandle";
 NSString *const SHOW_METHOD = @"show";
 NSString *const ZONED_SCHEDULE_METHOD = @"zonedSchedule";
 NSString *const PERIODICALLY_SHOW_METHOD = @"periodicallyShow";
+NSString *const PERIODICALLY_SHOW_WITH_DURATION_METHOD = @"periodicallyShowWithDuration";
 NSString *const CANCEL_METHOD = @"cancel";
 NSString *const CANCEL_ALL_METHOD = @"cancelAll";
 NSString *const PENDING_NOTIFICATIONS_REQUESTS_METHOD =
@@ -79,6 +80,7 @@ NSString *const PRESENT_LIST = @"presentList";
 NSString *const BADGE_NUMBER = @"badgeNumber";
 NSString *const MILLISECONDS_SINCE_EPOCH = @"millisecondsSinceEpoch";
 NSString *const REPEAT_INTERVAL = @"repeatInterval";
+NSString *const REPEAT_INTERVAL_MILLISECODNS = @"repeatIntervalMilliseconds";
 NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTimeISO8601";
 NSString *const TIME_ZONE_NAME = @"timeZoneName";
 NSString *const MATCH_DATE_TIME_COMPONENTS = @"matchDateTimeComponents";
@@ -175,6 +177,8 @@ static FlutterError *getFlutterError(NSError *error) {
   } else if ([ZONED_SCHEDULE_METHOD isEqualToString:call.method]) {
     [self zonedSchedule:call.arguments result:result];
   } else if ([PERIODICALLY_SHOW_METHOD isEqualToString:call.method]) {
+    [self periodicallyShow:call.arguments result:result];
+  } else if ([PERIODICALLY_SHOW_WITH_DURATION_METHOD isEqualToString:call.method]) {
     [self periodicallyShow:call.arguments result:result];
   } else if ([REQUEST_PERMISSIONS_METHOD isEqualToString:call.method]) {
     [self requestPermissions:call.arguments result:result];
@@ -815,6 +819,11 @@ static FlutterError *getFlutterError(NSError *error) {
         [self buildStandardUILocalNotification:arguments];
 #pragma clang diagnostic pop
     NSTimeInterval timeInterval = 0;
+      if ([self containsKey:REPEAT_INTERVAL_MILLISECODNS forDictionary:arguments]) {
+          NSInteger repeatIntervalMilliseconds = [arguments[REPEAT_INTERVAL_MILLISECODNS] integerValue];
+          timeInterval = repeatIntervalMilliseconds / 1000.0;
+          notification.repeatInterval = NSCalendarUnitSecond;
+      }
     switch ([arguments[REPEAT_INTERVAL] integerValue]) {
     case EveryMinute:
       timeInterval = 60;
@@ -1096,6 +1105,12 @@ static FlutterError *getFlutterError(NSError *error) {
 
 - (UNTimeIntervalNotificationTrigger *)buildUserNotificationTimeIntervalTrigger:
     (id)arguments API_AVAILABLE(ios(10.0)) {
+    
+    if ([self containsKey:REPEAT_INTERVAL_MILLISECODNS forDictionary:arguments]) {
+        NSInteger repeatIntervalMilliseconds = [arguments[REPEAT_INTERVAL_MILLISECODNS] integerValue];
+        return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:repeatIntervalMilliseconds / 1000.0
+                                                                  repeats:YES];
+    }
   switch ([arguments[REPEAT_INTERVAL] integerValue]) {
   case EveryMinute:
     return [UNTimeIntervalNotificationTrigger triggerWithTimeInterval:60

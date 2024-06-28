@@ -156,6 +156,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String CANCEL_ALL_METHOD = "cancelAll";
   private static final String ZONED_SCHEDULE_METHOD = "zonedSchedule";
   private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
+  private static final String PERIODICALLY_SHOW_WITH_DURATION = "periodicallyShowWithDuration";
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
   private static final String REQUEST_NOTIFICATIONS_PERMISSION_METHOD =
@@ -212,7 +213,7 @@ public class FlutterLocalNotificationsPlugin
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
     for (NotificationDetails notificationDetails : scheduledNotifications) {
       try {
-        if (notificationDetails.repeatInterval != null) {
+        if (notificationDetails.repeatInterval != null || notificationDetails.repeatIntervalMilliseconds != null) {
           repeatNotification(context, notificationDetails, false);
         } else if (notificationDetails.timeZoneName != null) {
           zonedScheduleNotification(context, notificationDetails, false);
@@ -232,7 +233,7 @@ public class FlutterLocalNotificationsPlugin
         zonedScheduleNextNotification(context, notificationDetails);
       } else if (notificationDetails.matchDateTimeComponents != null) {
         zonedScheduleNextNotificationMatchingDateComponents(context, notificationDetails);
-      } else if (notificationDetails.repeatInterval != null) {
+      } else if (notificationDetails.repeatInterval != null || notificationDetails.repeatIntervalMilliseconds != null) {
         scheduleNextRepeatingNotification(context, notificationDetails);
       } else {
         removeNotificationFromCache(context, notificationDetails.id);
@@ -761,6 +762,12 @@ public class FlutterLocalNotificationsPlugin
 
   private static long calculateRepeatIntervalMilliseconds(NotificationDetails notificationDetails) {
     long repeatInterval = 0;
+
+    if (notificationDetails.repeatIntervalMilliseconds != null) {
+      repeatInterval = notificationDetails.repeatIntervalMilliseconds;
+      return repeatInterval;
+    }
+
     switch (notificationDetails.repeatInterval) {
       case EveryMinute:
         repeatInterval = 60000;
@@ -1444,6 +1451,9 @@ public class FlutterLocalNotificationsPlugin
             });
         break;
       case PERIODICALLY_SHOW_METHOD:
+        repeat(call, result);
+        break;
+      case PERIODICALLY_SHOW_WITH_DURATION:
         repeat(call, result);
         break;
       case CANCEL_METHOD:
