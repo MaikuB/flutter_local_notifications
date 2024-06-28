@@ -358,6 +358,7 @@ class AndroidFlutterLocalNotificationsPlugin
     AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
   }) async {
     validateId(id);
+    validateRepeatDurationInterval(repeatDurationInterval);
     await _channel
         .invokeMethod('periodicallyShowWithDuration', <String, Object?>{
       'id': id,
@@ -769,6 +770,7 @@ class IOSFlutterLocalNotificationsPlugin
     String? payload,
   }) async {
     validateId(id);
+    validateRepeatDurationInterval(repeatDurationInterval);
     await _channel
         .invokeMethod('periodicallyShowWithDuration', <String, Object?>{
       'id': id,
@@ -963,6 +965,7 @@ class MacOSFlutterLocalNotificationsPlugin
     String? payload,
   }) async {
     validateId(id);
+    validateRepeatDurationInterval(repeatDurationInterval);
     await _channel
         .invokeMethod('periodicallyShowWithDuration', <String, Object?>{
       'id': id,
