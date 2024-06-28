@@ -496,8 +496,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let notification = buildNSUserNotification(fromArguments: arguments)
             let rawRepeatInterval = arguments[MethodCallArguments.repeatInterval] as? Int
             let repeatIntervalMilliseconds = arguments[MethodCallArguments.repeatIntervalMilliseconds] as? Int
-            
-            if(rawRepeatInterval != nil) {
+
+            if rawRepeatInterval != nil {
                 let repeatInterval = RepeatInterval.init(rawValue: rawRepeatInterval!)!
                 switch repeatInterval {
                 case .everyMinute:
@@ -513,10 +513,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                     notification.deliveryDate = Date.init(timeIntervalSinceNow: 60 * 60 * 24 * 7)
                     notification.deliveryRepeatInterval = DateComponents.init(weekOfYear: 1)
                 }
-            } else if (repeatIntervalMilliseconds != nil) {
+            } else if repeatIntervalMilliseconds != nil {
                 let repeatIntervalSeconds = repeatIntervalMilliseconds! / 1000
                 notification.deliveryDate = Date.init(timeIntervalSinceNow: TimeInterval(repeatIntervalSeconds))
-                notification.deliveryRepeatInterval = DateComponents.init(second:repeatIntervalSeconds)
+                notification.deliveryRepeatInterval = DateComponents.init(second: repeatIntervalSeconds)
             }
             NSUserNotificationCenter.default.scheduleNotification(notification)
             result(nil)
@@ -645,8 +645,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     func buildUserNotificationTimeIntervalTrigger(fromArguments arguments: [String: AnyObject]) -> UNTimeIntervalNotificationTrigger {
         let rawRepeatInterval = arguments[MethodCallArguments.repeatInterval] as? Int
         let repeatIntervalMilliseconds = arguments[MethodCallArguments.repeatIntervalMilliseconds] as? Int
-        
-        if(rawRepeatInterval != nil) {
+
+        if rawRepeatInterval != nil {
             let repeatInterval = RepeatInterval.init(rawValue: rawRepeatInterval!)!
             switch repeatInterval {
             case .everyMinute:
