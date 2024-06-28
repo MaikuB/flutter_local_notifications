@@ -756,6 +756,13 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedElevatedButton(
+                      buttonText:
+                          'Request full-screen intent permission (API 34+)',
+                      onPressed: () async {
+                        await _requestFullScreenIntentPermission();
+                      },
+                    ),
+                    PaddedElevatedButton(
                       buttonText: 'Show full-screen notification',
                       onPressed: () async {
                         await _showFullScreenNotification();
@@ -1272,6 +1279,28 @@ class _HomePageState extends State<HomePage> {
         payload: 'item x');
   }
 
+  Future<void> _requestFullScreenIntentPermission() async {
+    final bool permissionGranted = await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.requestFullScreenIntentPermission() ??
+        false;
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              content: Text(
+                  'Full screen intent permission granted: $permissionGranted'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            ));
+  }
+
   Future<void> _showFullScreenNotification() async {
     await showDialog(
       context: context,
@@ -1279,7 +1308,8 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Turn off your screen'),
         content: const Text(
             'to see the full-screen intent in 5 seconds, press OK and TURN '
-            'OFF your screen'),
+            'OFF your screen. Note that the full-screen intent permission must '
+            'be granted for this to work too'),
         actions: <Widget>[
           TextButton(
             onPressed: () {
