@@ -9,11 +9,15 @@ import '../../../flutter_local_notifications.dart';
 class WindowsProgressBar {
   /// Creates a progress bar for a Windows notification.
   WindowsProgressBar({
+    required this.id,
     required this.status,
     required this.value,
     this.title,
-    this.percentageOverride,
+    this.label,
   });
+
+  /// A unique ID for this progress bar.
+  final String id;
 
   /// An optional title.
   final String? title;
@@ -24,22 +28,31 @@ class WindowsProgressBar {
   /// The value of the progress, from 0.0 to 1.0.
   ///
   /// Setting this to null indicates a indeterminate progress bar.
-  final double? value;
+  double? value;
 
   /// Overrides the default reading as a percent with a different text.
   ///
   /// Useful for indicating discrete progress, like `3/10` instead of `30%`.
-  final String? percentageOverride;
+  String? label;
 
   /// Serializes this progress bar to XML.
   void toXml(XmlBuilder builder) => builder.element(
     'progress',
     attributes: <String, String>{
       'status': status,
-      'value': '{progressValue}',
+      'value': '{$id-progressValue}',
       if (title != null) 'title': title!,
-      if (percentageOverride != null)
-        'valueStringOverride': '{progressString}',
+      if (label != null) 'valueStringOverride': '{$id-progressString}',
     }
   );
+
+  /// The data bindings for this progress bar.
+  ///
+  /// To support dynamic updates, [toXml] will inject placeholder strings
+  /// called data bindings instead of actual values. This represents the
+  /// new data.
+  Map<String, String> get data => <String, String>{
+    '$id-progressValue': value?.toString() ?? 'indeterminate',
+    if (label != null) '$id-progressString': label!
+  };
 }

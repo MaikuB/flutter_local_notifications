@@ -1133,12 +1133,6 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedElevatedButton(
-                      buttonText: 'Show notifications with dynamic progress',
-                      onPressed: () async {
-                        await _showWindowsNotificationWithUpdates();
-                      },
-                    ),
-                    PaddedElevatedButton(
                       buttonText: 'Show notitification with activation',
                       onPressed: () async {
                         await _showWindowsNotificationWithActivation();
@@ -1166,6 +1160,7 @@ class _HomePageState extends State<HomePage> {
                           controller: _windowsRawXmlController,
                           decoration: InputDecoration(
                             hintText: 'Enter the raw xml',
+                            helperText: 'Bindings: {message} --> Hello, World!',
                             constraints: const BoxConstraints.tightFor(
                                 width: 600, height: 480),
                             suffixIcon: IconButton(
@@ -3038,7 +3033,11 @@ class _HomePageState extends State<HomePage> {
 
   Future<void>? _showWindowsNotificationWithRawXml() => flutterLocalNotificationsPlugin
     .resolvePlatformSpecificImplementation<WindowsFlutterLocalNotificationsPlugin>()
-    ?.showRawXml(id: id++, xml: _windowsRawXmlController.text);
+    ?.showRawXml(
+      id: id++,
+      xml: _windowsRawXmlController.text,
+      data: <String, String>{'message': 'Hello, World!'},
+    );
 }
 
 Future<void> _showLinuxNotificationWithBodyMarkup() async {
@@ -3375,57 +3374,60 @@ Future<void> _showWindowsNotificationWithGroups() => flutterLocalNotificationsPl
   ),
 );
 
-Future<void> _showWindowsNotificationWithProgress() => flutterLocalNotificationsPlugin.show(
-  id++,
-  'This notification has progress bars',
-  'You can have precise or indeterminate',
-  NotificationDetails(
-    windows: WindowsNotificationDetails(
-      progressBars: <WindowsProgressBar>[
-        WindowsProgressBar(
-          title: 'This has indeterminate progress',
-          status: 'Downloading...',
-          value: null,
-        ),
-        WindowsProgressBar(
-          title: 'This has continuous progress',
-          status: 'Uploading...',
-          value: 0.75,
-        ),
-        WindowsProgressBar(
-          title: 'This has discrete progress',
-          status: 'Syncing...',
-          value: 0.75,
-          percentageOverride: '9/12 complete'
-        ),
-      ],
-    ),
-  ),
-);
-
-Future<void> _showWindowsNotificationWithUpdates() async {
-  final int notifId = id++;
-  final WindowsFlutterLocalNotificationsPlugin? windows = flutterLocalNotificationsPlugin
-    .resolvePlatformSpecificImplementation<WindowsFlutterLocalNotificationsPlugin>();
+Future<void> _showWindowsNotificationWithProgress() async {
+  final WindowsProgressBar fastProgress =
+    WindowsProgressBar(id: 'fast-progress', status: 'Updating quickly...', value: 0);
+  final WindowsProgressBar slowProgress =
+    WindowsProgressBar(id: 'slow-progress', status: 'Updating slowly...', value: 0, label: '0 / 10');
+  final int notificationId = id++;
+  final WindowsFlutterLocalNotificationsPlugin? windows =
+    flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<WindowsFlutterLocalNotificationsPlugin>();
   await flutterLocalNotificationsPlugin.show(
-    notifId,
-    'Dynamic updates',
-    'The progress bar should slowly fill up',
+    notificationId,
+    'This notification has progress bars',
+    'You can have precise or indeterminate',
     NotificationDetails(
       windows: WindowsNotificationDetails(
         progressBars: <WindowsProgressBar>[
-          WindowsProgressBar(status: 'Updating...', value: 0),
+          WindowsProgressBar(
+            id: 'indeterminate',
+            title: 'This has indeterminate progress',
+            status: 'Downloading...',
+            value: null,
+          ),
+          WindowsProgressBar(
+            id: 'continuous',
+            title: 'This has continuous progress',
+            status: 'Uploading...',
+            value: 0.75,
+          ),
+          WindowsProgressBar(
+            id: 'discrete',
+            title: 'This has discrete progress',
+            status: 'Syncing...',
+            value: 0.75,
+            label: '9/12 complete'
+          ),
+          fastProgress,
+          slowProgress,
         ],
       ),
     ),
   );
-  int progress = 0;
-  Timer.periodic(const Duration(milliseconds: 300), (Timer timer) async {
-    if (progress++ == 10) {
-      // await windows?.cancel(notifId);
+
+  int count = 0;
+  Timer.periodic(const Duration(milliseconds: 100), (Timer timer) async {
+    fastProgress.value = fastProgress.value! + 0.05;
+    slowProgress.value = count++ / 50;
+    fastProgress.value = fastProgress.value!.clamp(0, 1);
+    slowProgress.value = slowProgress.value!.clamp(0, 1);
+    if (fastProgress.value == 1 && slowProgress.value == 1) {
       return timer.cancel();
     }
-    await windows?.updateProgress(id: notifId, value: progress / 10, label: '$progress/10 completed');
+    count = count.clamp(0, 50);
+    slowProgress.label = '$count / 50';
+    await windows?.updateProgressBar(notificationId: notificationId, progressBar: fastProgress);
+    await windows?.updateProgressBar(notificationId: notificationId, progressBar: slowProgress);
   });
 }
 

@@ -2,6 +2,7 @@
 #define PLUGIN_REGISTRATRION_H_
 
 #include "include/flutter_local_notifications/flutter_local_notifications_plugin.h"
+#include "methods.h"
 
 #include <string>
 #include <optional>

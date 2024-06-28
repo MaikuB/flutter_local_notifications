@@ -1,11 +1,15 @@
 #include <string>
 
+#include <flutter/method_channel.h>
+#include <flutter/encodable_value.h>
+
+using PluginMethodChannel = flutter::MethodChannel<flutter::EncodableValue>;
+
 /// <summary>
 /// Defines names of methods of this plugin that are callable
 /// through Flutter's method channel.
 /// </summary>
-namespace Method
-{
+namespace Method {
 	extern const std::string INITIALIZE;
 	extern const std::string GET_NOTIFICATION_APP_LAUNCH_DETAILS;
 	extern const std::string SHOW;

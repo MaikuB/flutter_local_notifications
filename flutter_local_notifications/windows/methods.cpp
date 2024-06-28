@@ -1,4 +1,4 @@
-#include "include/flutter_local_notifications/methods.h"
+#include "methods.h"
 
 #include <string>
 

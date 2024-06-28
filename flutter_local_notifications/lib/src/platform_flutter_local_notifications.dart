@@ -37,10 +37,6 @@ import 'tz_datetime_mapper.dart';
 const MethodChannel _channel =
     MethodChannel('dexterous.com/flutter/local_notifications');
 
-extension <E> on Iterable<E> {
-  E? get firstOrNull => isEmpty ? null : first;
-}
-
 /// An implementation of a local notifications platform using method channels.
 class MethodChannelFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
@@ -963,16 +959,20 @@ class WindowsFlutterLocalNotificationsPlugin
 
   /// Passes the raw XML to the Windows API directly.
   ///
+  /// You can replace values in the `<bindings>` element with a `{placeholder}`
+  /// and set their values in [data] instead. Then, you may update them with
+  /// [updateBindings].
+  ///
   /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
   /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
   Future<void> showRawXml({
     required int id,
     required String xml,
-    String? group,
+    Map<String, String> data = const <String, String>{},
   }) => _channel.invokeMethod('show', <String, dynamic>{
     'id': id,
-    'group': group,
-    'platformSpecifics': <String, String>{'rawXml': xml},
+    'rawXml': xml,
+    'data': data,
   });
 
   String _notificationToXml({
@@ -1024,18 +1024,13 @@ class WindowsFlutterLocalNotificationsPlugin
       payload: payload,
       notificationDetails: notificationDetails,
     );
-    final WindowsProgressBar? progressBar =
-      notificationDetails?.progressBars.firstOrNull;
     await _channel.invokeMethod('show', <String, dynamic>{
       'id': id,
-      'group': group,
-      'platformSpecifics': <String, String>{
-        'rawXml': xml,
-        if (progressBar != null) ...<String, String>{
-          'progressValue': progressBar.value?.toString() ?? 'indeterminate',
-          if (progressBar.percentageOverride != null)
-            'progressString': progressBar.percentageOverride!,
-        }
+      'rawXml': xml,
+      'data': <String, String>{
+        for (final WindowsProgressBar progressBar in notificationDetails
+          ?.progressBars ?? <WindowsProgressBar>[]
+        ) ...progressBar.data,
       },
     });
   }
@@ -1065,25 +1060,31 @@ class WindowsFlutterLocalNotificationsPlugin
     final int secondsSinceEpoch = scheduledDate.millisecondsSinceEpoch ~/ 1000;
     await _channel.invokeMethod('zonedSchedule', <String, dynamic>{
       'id': id,
-      'platformSpecifics': <String, dynamic>{
-        'rawXml': xml,
-        'time': secondsSinceEpoch,
-      },
+      'rawXml': xml,
+      'time': secondsSinceEpoch,
     });
   }
 
   /// Updates the progress bar in the notification with the given ID.
   ///
-  /// [value] corresponds to [WindowsProgressBar.value] and [label] with
-  /// [WindowsProgressBar.percentageOverride].
-  Future<int?> updateProgress({
+  /// Note that in order to update [WindowsProgressBar.label], it must
+  /// not have been set to null when [show] was called.
+  Future<int?> updateProgressBar({
+    required int notificationId,
+    required WindowsProgressBar progressBar,
+  }) => updateBindings(id: notificationId, data: progressBar.data);
+
+  /// Updates any data binding in the given notification.
+  ///
+  /// If you use [showRawXml], you can replace any value in the `<binding>`
+  /// element with `{name}`, and then use this function to update that value
+  /// by passing `data: {'name': value}`.
+  Future<int?> updateBindings({
     required int id,
-    double? value,
-    String? label,
+    required Map<String, String> data,
   }) => _channel.invokeMethod('update', <String, Object>{
     'id': id,
-    'value': value?.toString() ?? 'indeterminate',
-    if (label != null) 'label': label,
+    'data': data,
   });
 
   Future<void> _handleMethod(MethodCall call) async {

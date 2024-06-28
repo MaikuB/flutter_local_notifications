@@ -4,7 +4,7 @@
 
 #include "registration.h"
 #include "include/flutter_local_notifications/flutter_local_notifications_plugin.h"
-#include "include/flutter_local_notifications/methods.h"
+#include "methods.h"
 
 #include <atlbase.h>
 #include <atlconv.h>
