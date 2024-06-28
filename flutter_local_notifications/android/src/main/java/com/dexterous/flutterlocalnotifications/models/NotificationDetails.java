@@ -229,7 +229,8 @@ public class NotificationDetails implements Serializable {
           RepeatInterval.values()[(Integer) arguments.get(REPEAT_INTERVAL)];
     }
     if (arguments.containsKey(REPEAT_INTERVAL_MILLISECONDS)) {
-      notificationDetails.repeatIntervalMilliseconds = (Integer) arguments.get(REPEAT_INTERVAL_MILLISECONDS);
+      notificationDetails.repeatIntervalMilliseconds =
+          (Integer) arguments.get(REPEAT_INTERVAL_MILLISECONDS);
     }
     if (arguments.containsKey(REPEAT_TIME)) {
       @SuppressWarnings("unchecked")

@@ -213,7 +213,8 @@ public class FlutterLocalNotificationsPlugin
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
     for (NotificationDetails notificationDetails : scheduledNotifications) {
       try {
-        if (notificationDetails.repeatInterval != null || notificationDetails.repeatIntervalMilliseconds != null) {
+        if (notificationDetails.repeatInterval != null
+            || notificationDetails.repeatIntervalMilliseconds != null) {
           repeatNotification(context, notificationDetails, false);
         } else if (notificationDetails.timeZoneName != null) {
           zonedScheduleNotification(context, notificationDetails, false);
@@ -233,7 +234,8 @@ public class FlutterLocalNotificationsPlugin
         zonedScheduleNextNotification(context, notificationDetails);
       } else if (notificationDetails.matchDateTimeComponents != null) {
         zonedScheduleNextNotificationMatchingDateComponents(context, notificationDetails);
-      } else if (notificationDetails.repeatInterval != null || notificationDetails.repeatIntervalMilliseconds != null) {
+      } else if (notificationDetails.repeatInterval != null
+          || notificationDetails.repeatIntervalMilliseconds != null) {
         scheduleNextRepeatingNotification(context, notificationDetails);
       } else {
         removeNotificationFromCache(context, notificationDetails.id);
