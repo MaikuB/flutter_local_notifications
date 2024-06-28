@@ -2,6 +2,7 @@
 
 * [Android][iOS][macOS] added `periodicallyShowWithDuration()` method that allows for having a notification periodically shown based on a specified duration. The duration will need to be at least a minute. Thanks to the PR from [Mateusz Łuczak](https://github.com/mateuszluczak1996)
 * [Android] added the `requestFullScreenIntentPermission()` to the `AndroidFlutterNotificationsPlugin` class. This allows app to request the full-screen intent permission. Updated the documentation around full-screen intent notifications accordingly as well
+* Added a comment to the `AndroidManifest.xml` file of the example to state that it requests the `USE_EXACT_ALARM` only for ease of use. Developers will need to check if they should be using the `SCHEDULE_EXACT_ALARM` permission instead
 
 ## [17.1.2]
 
