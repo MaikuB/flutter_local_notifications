@@ -166,7 +166,7 @@ public class FlutterLocalNotificationsPlugin
       "requestExactAlarmsPermission";
 
   private static final String REQUEST_FULL_SCREEN_INTENT_PERMISSION_METHOD =
-          "requestFullScreenIntentPermission";
+      "requestFullScreenIntentPermission";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
   private static final String INVALID_ICON_ERROR_CODE = "invalid_icon";
   private static final String INVALID_LARGE_ICON_ERROR_CODE = "invalid_large_icon";
@@ -1460,18 +1460,17 @@ public class FlutterLocalNotificationsPlugin
         break;
       case REQUEST_FULL_SCREEN_INTENT_PERMISSION_METHOD:
         requestFullScreenIntentPermission(
-              new PermissionRequestListener() {
-                @Override
-                public void complete(boolean granted) {
-                  result.success(granted);
-                }
-
-                @Override
-                public void fail(String message) {
-                  result.error(PERMISSION_REQUEST_IN_PROGRESS_ERROR_CODE, message, null);
-                }
+            new PermissionRequestListener() {
+              @Override
+              public void complete(boolean granted) {
+                result.success(granted);
               }
-        );
+
+              @Override
+              public void fail(String message) {
+                result.error(PERMISSION_REQUEST_IN_PROGRESS_ERROR_CODE, message, null);
+              }
+            });
         break;
       case PERIODICALLY_SHOW_METHOD:
         repeat(call, result);
@@ -1866,16 +1865,17 @@ public class FlutterLocalNotificationsPlugin
 
     if (Build.VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE) {
       NotificationManager notificationManager =
-              (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);      AlarmManager alarmManager = getAlarmManager(applicationContext);
+          (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+      AlarmManager alarmManager = getAlarmManager(applicationContext);
       boolean permissionGranted = notificationManager.canUseFullScreenIntent();
 
       if (!permissionGranted) {
         permissionRequestProgress = PermissionRequestProgress.RequestingFullScreenIntentPermission;
         mainActivity.startActivityForResult(
-                new Intent(
-                        ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT,
-                        Uri.parse("package:" + applicationContext.getPackageName())),
-                FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE);
+            new Intent(
+                ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT,
+                Uri.parse("package:" + applicationContext.getPackageName())),
+            FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE);
       } else {
         this.callback.complete(true);
         permissionRequestProgress = PermissionRequestProgress.None;
@@ -2218,7 +2218,7 @@ public class FlutterLocalNotificationsPlugin
   public boolean onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     if (requestCode != NOTIFICATION_PERMISSION_REQUEST_CODE
         && requestCode != EXACT_ALARM_PERMISSION_REQUEST_CODE
-            && requestCode != FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE) {
+        && requestCode != FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE) {
       return false;
     }
 
@@ -2231,10 +2231,10 @@ public class FlutterLocalNotificationsPlugin
     }
 
     if (permissionRequestProgress == PermissionRequestProgress.RequestingFullScreenIntentPermission
-            && requestCode == FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE
-            && VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        && requestCode == FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE
+        && VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE) {
       NotificationManager notificationManager =
-              (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+          (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
       this.callback.complete(notificationManager.canUseFullScreenIntent());
       permissionRequestProgress = PermissionRequestProgress.None;
     }
