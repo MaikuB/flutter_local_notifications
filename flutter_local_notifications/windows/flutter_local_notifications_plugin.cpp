@@ -32,7 +32,7 @@
 #include <sstream>
 
 using namespace winrt::Windows::Data::Xml::Dom;
-
+using namespace winrt::Windows::UI::Notifications;
 
 namespace {
 
@@ -46,8 +46,8 @@ namespace {
 
 	private:
 		std::wstring _aumid;
-		std::optional<winrt::Windows::UI::Notifications::ToastNotifier> toastNotifier;
-		std::optional<winrt::Windows::UI::Notifications::ToastNotificationHistory> toastNotificationHistory;
+		std::optional<ToastNotifier> toastNotifier;
+		std::optional<ToastNotificationHistory> toastNotificationHistory;
 		std::shared_ptr<PluginMethodChannel> channel;
 
 		// Called when a method is called on this plugin's channel from Dart.
@@ -306,9 +306,9 @@ namespace {
 
 		const auto user = winrt::Windows::System::User::GetDefault();
 		if (hasIdentity.value())
-			toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::GetForUser(user).CreateToastNotifier();
+			toastNotifier = ToastNotificationManager::GetForUser(user).CreateToastNotifier();
 		else
-			toastNotifier = winrt::Windows::UI::Notifications::ToastNotificationManager::GetForUser(user).CreateToastNotifier(winrt::to_hstring(aumid));
+			toastNotifier = ToastNotificationManager::GetForUser(user).CreateToastNotifier(winrt::to_hstring(aumid));
 
 		return true;
 	}
@@ -322,18 +322,12 @@ namespace {
 		XmlDocument doc;
 		doc.LoadXml(winrt::to_hstring(rawXml.value()));
 
-		winrt::Windows::UI::Notifications::ToastNotification notif{ doc };
+		ToastNotification notif{ doc };
 		notif.Tag(winrt::to_hstring(id));
-		if (group.has_value()) {
-			notif.Group(winrt::to_hstring(*group));
-		}
-		else {
-			notif.Group(_aumid);
-		}
 
 		const auto progressValue = Utils::GetMapValue<std::string>("progressValue", &platformSpecifics.value());
 		const auto progressString = Utils::GetMapValue<std::string>("progressString", &platformSpecifics.value());
-		winrt::Windows::UI::Notifications::NotificationData data;
+		NotificationData data;
 		std::cout << "Has value? "
 			<< progressValue.has_value()
 			<< std::endl;
@@ -355,7 +349,7 @@ namespace {
 
 	void FlutterLocalNotificationsPlugin::CancelNotification(const int id, const std::optional<std::string>& group) {
 		if (!toastNotificationHistory.has_value()) {
-			toastNotificationHistory = winrt::Windows::UI::Notifications::ToastNotificationManager::History();
+			toastNotificationHistory = ToastNotificationManager::History();
 		}
 
 		if (group.has_value()) {
@@ -368,7 +362,7 @@ namespace {
 
 	void FlutterLocalNotificationsPlugin::CancelAllNotifications() {
 		if (!toastNotificationHistory.has_value()) {
-			toastNotificationHistory = winrt::Windows::UI::Notifications::ToastNotificationManager::History();
+			toastNotificationHistory = ToastNotificationManager::History();
 		}
 		toastNotificationHistory.value().Clear(_aumid);
 		for (const auto scheduled : toastNotifier.value().GetScheduledToastNotifications()) {
@@ -378,7 +372,7 @@ namespace {
 
 	void FlutterLocalNotificationsPlugin::GetActiveNotifications(std::vector<flutter::EncodableValue>& result) {
 		if (!toastNotificationHistory.has_value()) {
-			toastNotificationHistory = winrt::Windows::UI::Notifications::ToastNotificationManager::History();
+			toastNotificationHistory = ToastNotificationManager::History();
 		}
 		const auto history = toastNotificationHistory.value().GetHistory();
 		for (const auto notif : history) {
@@ -388,6 +382,11 @@ namespace {
 			const auto tagInt = std::stoi(tagString);
 			data[std::string("id")] = flutter::EncodableValue(tagInt);
 			result.emplace_back(flutter::EncodableValue(data));
+
+			NotificationData notifData;
+			notifData.Values().Insert(winrt::to_hstring("progressValue"), winrt::to_hstring("0.5"));
+			notifData.Values().Insert(winrt::to_hstring("progressString"), winrt::to_hstring("5/10"));
+			toastNotifier.value().Update(notifData, tag);
 		}
 	}
 
@@ -411,7 +410,7 @@ namespace {
 		const auto secondsSinceEpoch = Utils::GetMapValue<int>("time", &platformSpecifics).value();
 		time_t time(secondsSinceEpoch);
 		const auto time2 = winrt::clock::from_time_t(time);
-		winrt::Windows::UI::Notifications::ScheduledToastNotification notif(doc, time2);
+		ScheduledToastNotification notif(doc, time2);
 		notif.Tag(winrt::to_hstring(id));
 		toastNotifier.value().AddToSchedule(notif);
 	}
@@ -422,7 +421,7 @@ namespace {
 		const std::optional<std::string> label
 	) {
 		const auto tag = winrt::to_hstring(id);
-		winrt::Windows::UI::Notifications::NotificationData data;
+		NotificationData data;
 
 		std::cout << "Has value?"
 			<< value.has_value()
