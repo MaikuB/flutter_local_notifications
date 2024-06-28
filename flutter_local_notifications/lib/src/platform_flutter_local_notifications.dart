@@ -1026,8 +1026,7 @@ class WindowsFlutterLocalNotificationsPlugin
     );
     final WindowsProgressBar? progressBar =
       notificationDetails?.progressBars.firstOrNull;
-    print(xml);
-    final opts = <String, dynamic>{
+    await _channel.invokeMethod('show', <String, dynamic>{
       'id': id,
       'group': group,
       'platformSpecifics': <String, String>{
@@ -1038,9 +1037,7 @@ class WindowsFlutterLocalNotificationsPlugin
             'progressString': progressBar.percentageOverride!,
         }
       },
-    };
-    print("opts: $opts");
-    await _channel.invokeMethod('show', opts);
+    });
   }
 
   @override
