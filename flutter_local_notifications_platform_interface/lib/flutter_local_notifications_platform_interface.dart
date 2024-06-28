@@ -57,6 +57,8 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   /// For example, specifying a 5 minutes repeat duration interval means
   /// the first time the notification will be an 5 minutes after the method
   /// has been called and then every 5 minutes after that.
+  ///
+  /// [repeatDurationInterval] must be at least one minute.
   Future<void> periodicallyShowWithDuration(
       int id, String? title, String? body, Duration repeatDurationInterval) {
     throw UnimplementedError(
