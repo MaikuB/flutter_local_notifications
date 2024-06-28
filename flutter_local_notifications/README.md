@@ -24,28 +24,17 @@ A cross platform plugin for displaying local notifications.
    - [Notification payload](#notification-payload)
 - **[📷 Screenshots](#-screenshots)**
 - **[👏 Acknowledgements](#-acknowledgements)**
-- **[🔧 Android Setup](#-android-setup)**
-   - [Gradle setup](#gradle-setup)
-   - [AndroidManifest.xml setup](#androidmanifestxml-setup)
-   - [Requesting permissions on Android 13 or higher](#requesting-permissions-on-android-13-or-higher)
-   - [Custom notification icons and sounds](#custom-notification-icons-and-sounds)
-   - [Scheduled notifications](#scheduling-a-notification)
-   - [Fullscreen intent notifications](#full-screen-intent-notifications)
-   - [Release build configuration](#release-build-configuration)
-- **[🔧 iOS setup](#-ios-setup)**
-   - [General setup](#general-setup)
-   - [Handling notifications whilst the app is in the foreground](#handling-notifications-whilst-the-app-is-in-the-foreground)
+- **[Platform Specific Instructions](#platform-specific-instructions)**
 - **[❓ Usage](#-usage)**
    - [Notification Actions](#notification-actions)
    - [Example app](#example-app)
    - [API reference](#api-reference)
 - **[Initialisation](#initialisation)**
-   - [[iOS (all supported versions) and macOS 10.14+] Requesting notification permissions](#ios-all-supported-versions-and-macos-1014-requesting-notification-permissions)
    - [Displaying a notification](#displaying-a-notification)
    - [Scheduling a notification](#scheduling-a-notification)
    - [Periodically show a notification with a specified interval](#periodically-show-a-notification-with-a-specified-interval)
    - [Retrieving pending notification requests](#retrieving-pending-notification-requests)
-   - [[Selected OS versions] Retrieving active notifications](#android-only-retrieving-active-notifications)
+   - [[Selected OS versions] Retrieving active notifications](#retrieving-active-notifications)
    - [Grouping notifications](#grouping-notifications)
    - [Cancelling/deleting a notification](#cancellingdeleting-a-notification)
    - [Cancelling/deleting all notifications](#cancellingdeleting-all-notifications)
@@ -174,215 +163,12 @@ Due to some limitations on iOS with how it treats null values in dictionaries, a
 * [Zhang Jing](https://github.com/byrdkm17) for adding 'ticker' support for Android notifications
 * ...and everyone else for their contributions. They are greatly appreciated
 
-## 🔧 Android Setup
+## Platform Specific Instructions
 
-Before proceeding, please make sure you are using the latest version of the plugin. Note that there have been differences in the setup depending on the version of the plugin used. Please make use of the release tags to refer back to older versions of readme. Applications that schedule notifications should pay close attention to the [AndroidManifest.xml setup](#androidmanifestxml-setup) section of the readme since Android 14 has brought about some behavioural changes.
+Use the following guides for platform specific setup and to learn about the way each platform handles notifications.
 
-### Gradle setup
-
-Version 10+ on the plugin now relies on [desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) to support scheduled notifications with backwards compatibility on older versions of Android. Developers will need to update their application's Gradle file at `android/app/build.gradle`. Please see the link on desugaring for details but the main parts needed in this Gradle file would be
-
-```gradle
-android {
-  defaultConfig {
-    multiDexEnabled true
-  }
-
-  compileOptions {
-    // Flag to enable support for the new language APIs
-    coreLibraryDesugaringEnabled true
-    // Sets Java compatibility to Java 8
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
-}
-
-dependencies {
-  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
-}
-```
-
-Note that the plugin uses Android Gradle plugin 7.3.1 to leverage this functionality so to errr on the safe side, applications should aim to use the same version at a **minimum**. Using a higher version is also needed as at point, Android Studio bundled a newer version of the Java SDK that will only work with Gradle 7.3 or higher (see [here](https://docs.flutter.dev/release/breaking-changes/android-java-gradle-migration-guide) for more details). For a Flutter project, this is specified in `android/build.gradle` and the main parts would look similar to the following
-
-```gradle
-buildscript {
-   ...
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
-        ...
-    }
-```
-
-There have been reports that enabling desugaring may result in a Flutter apps crashing on Android 12L and above. This would be an issue with Flutter itself, not the plugin. One possible fix is adding the [WindowManager library](https://developer.android.com/jetpack/androidx/releases/window) as a dependency:
-
-```gradle
-dependencies {
-    implementation 'androidx.window:window:1.0.0'
-    implementation 'androidx.window:window-java:1.0.0'
-    ...
-}
-```
-
-More information and other proposed solutions can be found in [Flutter issue #110658](https://github.com/flutter/flutter/issues/110658).
-
-The plugin also requires that the `compileSdk` in your application's Gradle file is set to 34 at a minimum:
-
-```gradle
-android {
-    compileSdk 34
-    ...
-}
-```
-
-### AndroidManifest.xml setup
-
-Previously the plugin would specify all the permissions required all of the features that the plugin support in its own `AndroidManifest.xml` file so that developers wouldn't need to do this in their own app's `AndroidManifest.xml` file. Since version 16 onwards, the plugin will now only specify the bare minimum and these [`POST_NOTIFICATIONS`] (https://developer.android.com/reference/android/Manifest.permission#POST_NOTIFICATIONS) and [`VIBRATE`](https://developer.android.com/reference/android/Manifest.permission#VIBRATE) permissions.
-
-For apps that need the following functionality please complete the following in your app's `AndroidManifest.xml`
-
-* To schedule notifications the following changes are needed
-    * Specify the appropriate permissions between the `<manifest>` tags.
-        * `<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>`: this is required so the plugin can known when the device is rebooted. This is required so that the plugin can reschedule notifications upon a reboot
-        * If the app requires scheduling notifications with exact timings (aka exact alarms), there are two options since Android 14 brought about behavioural changes (see [here](https://developer.android.com/about/versions/14/changes/schedule-exact-alarms) for more details)
-            * specify `<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />` and call the `requestExactAlarmsPermission()` exposed by the `AndroidFlutterNotificationsPlugin` class so that the user can grant the permission via the app or
-            * specify `<uses-permission android:name="android.permission.USE_EXACT_ALARM" />`. Users will not be prompted to grant permission, however as per the official Android documentation on the `USE_EXACT_ALARM` permission (refer to [here](https://developer.android.com/about/versions/14/changes/schedule-exact-alarms#calendar-alarm-clock) and [here](https://developer.android.com/reference/android/Manifest.permission#USE_EXACT_ALARM)), this requires the app to target Android 13 (API level 33) or higher and could be subject to approval and auditing by the app store(s) used to publish theapp
-    * Specify the following between the `<application>` tags so that the plugin can actually show the scheduled notification(s)
-    ```xml
-    <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
-    <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
-        <intent-filter>
-            <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
-            <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-            <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-        </intent-filter>
-    </receiver>
-    ```
-* To use full-screen intent notifications, specify the `<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />` permission between the `<manifest>` tags.
-* To use notification actions, specify `<receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />` between the `<application>` tags so that the plugin can process the actions and trigger the appropriate callback(s)
-
-Developers can refer to the example app's `AndroidManifest.xml` to help see what the end result may look like. Do note that the example app covers all the plugin's supported functionality so will request more permissions than your own app may need
-
-### Requesting permissions on Android 13 or higher
-
-From Android 13 (API level 33) onwards, apps now have the ability to display a prompt where users can decide if they want to grant an app permission to show notifications. For further reading on this matter read https://developer.android.com/guide/topics/ui/notifiers/notification-permission. To support this applications need target their application to Android 13 or higher and the compile SDK version needs to be at least 33 (Android 13). For example, to target Android 13, update your app's `build.gradle` file to have a `targetSdkVersion` of `33`. Applications can then call the following code to request the permission where the `requestPermission` method is associated with the `AndroidFlutterLocalNotificationsPlugin` class (i.e. the Android implementation of the plugin)
-
-```
-FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-    AndroidFlutterLocalNotificationsPlugin>().requestNotificationsPermission();
-```
-
-### Custom notification icons and sounds
-
-Notification icons should be added as a drawable resource. The example project/code shows how to set default icon for all notifications and how to specify one for each notification. It is possible to use launcher icon/mipmap and this by default is `@mipmap/ic_launcher` in the Android manifest and can be passed `AndroidInitializationSettings` constructor. However, the offical Android guidance is that you should use drawable resources. Custom notification sounds should be added as a raw resource and the sample illustrates how to play a notification with a custom sound. Refer to the following links around Android resources and notification icons.
-
- * [Notifications](https://developer.android.com/studio/write/image-asset-studio#notification)
- * [Providing resources](https://developer.android.com/guide/topics/resources/providing-resources)
- * [Creating notification icon with Image Asset Studio](https://developer.android.com/studio/write/create-app-icons#create-notification)
-
-When specifying the large icon bitmap or big picture bitmap (associated with the big picture style), bitmaps can be either a drawable resource or file on the device. This is specified via a single property (e.g. the `largeIcon` property associated with the `AndroidNotificationDetails` class) where a value that is an instance of the `DrawableResourceAndroidBitmap` means the bitmap should be loaded from an drawable resource. If this is an instance of the `FilePathAndroidBitmap`, this indicates it should be loaded from a file referred to by a given file path.
-
-⚠️ For Android 8.0+, sounds and vibrations are associated with notification channels and can only be configured when they are first created. Showing/scheduling a notification will create a channel with the specified id if it doesn't exist already. If another notification specifies the same channel id but tries to specify another sound or vibration pattern then nothing occurs.
-
-### Full-screen intent notifications
-
-If your application needs the ability to schedule full-screen intent notifications, add the following attributes to the activity you're opening. For a Flutter application, there is typically only one activity extends from `FlutterActivity`. These attributes ensure the screen turns on and shows when the device is locked.
-
-```xml
-<activity
-    android:showWhenLocked="true"
-    android:turnScreenOn="true">
-```
-
-For reference, the example app's `AndroidManifest.xml` file can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/AndroidManifest.xml).
-
-Note that when a full-screen intent notification actually occurs (as opposed to a heads-up notification that the system may decide should occur), the plugin will act as though the user has tapped on a notification so handle those the same way (e.g. `onDidReceiveNotificationResponse` callback) to display the appropriate page for your application.
-
-### Release build configuration
-
-Before creating the release build of your app (which is the default setting when building an APK or app bundle) you will need to customise your ProGuard configuration file as per this [link](https://developer.android.com/studio/build/shrink-code#keep-code). Rules specific to the GSON dependency being used by the plugin will need to be added. These rules can be found [here](https://github.com/google/gson/blob/master/examples/android-proguard-example/proguard.cfg). Whilst the example app has a Proguard rules (`proguard-rules.pro`) [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/proguard-rules.pro), it is recommended that developers refer to the rules on the GSON repository in case they get updated over time.
-
-⚠️ Ensure that you have configured the resources that should be kept so that resources like your notification icons aren't discarded by the R8 compiler by following the instructions [here](https://developer.android.com/studio/build/shrink-code#keep-resources). If you have chosen to use `@mipmap/ic_launcher` as the notification icon (against the official Android guidance), be sure to include this in the `keep.xml` file. If you fail to do this, notifications might be broken. In the worst case they will never show, instead silently failing when the system looks for a resource that has been removed. If they do still show, you might not see the icon you specified. The configuration used by the example app can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/keep.xml) where it is specifying that all drawable resources should be kept, as well as the file used to play a custom notification sound (sound file is located [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/slow_spring_board.mp3)).
-
-## 🔧 iOS setup
-
-### General setup
-
-Add the following lines to the `application` method in the AppDelegate.m/AppDelegate.swift file of your iOS project. See an example of this [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/ios/Runner/AppDelegate.swift).
-
-Objective-C:
-```objc
-if (@available(iOS 10.0, *)) {
-  [UNUserNotificationCenter currentNotificationCenter].delegate = (id<UNUserNotificationCenterDelegate>) self;
-}
-```
-
-Swift:
-```swift
-if #available(iOS 10.0, *) {
-  UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
-}
-```
-
-### Handling notifications whilst the app is in the foreground
-
-By design, iOS applications *do not* display notifications while the app is in the foreground unless configured to do so.
-
-For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. The default settings of the plugin will configure these such that a notification will be displayed when the app is in the foreground.
-
-For older versions of iOS, you need to handle the callback as part of specifying the method that should be fired to the `onDidReceiveLocalNotification` argument when creating an instance `DarwinInitializationSettings` object that is passed to the function for initializing the plugin.
-
-Here is an example:
-
-```dart
-// initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
-const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('app_icon');
-final DarwinInitializationSettings initializationSettingsDarwin =
-    DarwinInitializationSettings(
-        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-final LinuxInitializationSettings initializationSettingsLinux =
-    LinuxInitializationSettings(
-        defaultActionName: 'Open notification');
-final InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
-    iOS: initializationSettingsDarwin,
-    linux: initializationSettingsLinux);
-flutterLocalNotificationsPlugin.initialize(initializationSettings,
-    onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
-
-...
-
-void onDidReceiveLocalNotification(
-    int id, String? title, String? body, String? payload) async {
-  // display a dialog with the notification details, tap ok to go to another page
-  showDialog(
-    context: context,
-    builder: (BuildContext context) => CupertinoAlertDialog(
-      title: Text(title??''),
-      content: Text(body??''),
-      actions: [
-        CupertinoDialogAction(
-          isDefaultAction: true,
-          child: Text('Ok'),
-          onPressed: () async {
-            Navigator.of(context, rootNavigator: true).pop();
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SecondScreen(payload),
-              ),
-            );
-          },
-        )
-      ],
-    ),
-  );
-}
-```
+* [Android](Android.md)
+* [iOS](IOS.md)
 
 ## ❓ Usage
 
@@ -400,114 +186,9 @@ When the user selects a action, the plugin will start a **separate Flutter Engin
 
 *Android* and *Linux* do not require any configuration.
 
-*iOS* will require a few steps:
+On Android and Linux, if you want to customize actions, you can put the actions directly in the `AndroidNotificationDetails` and `LinuxNotificationDetails` classes.
 
-Adjust `AppDelegate.m` and set the plugin registrant callback:
-
-If you're using Objective-C, add this function anywhere in AppDelegate.m:
-``` objc
-// This is required for calling FlutterLocalNotificationsPlugin.setPluginRegistrantCallback method.
-#import <FlutterLocalNotificationsPlugin.h>
-...
-...
-void registerPlugins(NSObject<FlutterPluginRegistry>* registry) {
-    [GeneratedPluginRegistrant registerWithRegistry:registry];
-}
-```
-
-then extend `didFinishLaunchingWithOptions` and register the callback:
-
-``` objc
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [GeneratedPluginRegistrant registerWithRegistry:self];
-
-    // Add this method    
-    [FlutterLocalNotificationsPlugin setPluginRegistrantCallback:registerPlugins];
-}
-```
-
-For Swift, open the `AppDelegate.swift` and update the `didFinishLaunchingWithOptions` as follows
-where the commented code indicates the code to add in and why
-
-```swift
-import UIKit
-import Flutter
-// This is required for calling FlutterLocalNotificationsPlugin.setPluginRegistrantCallback method.
-import flutter_local_notifications
-
-@UIApplicationMain
-override func application(
-  _ application: UIApplication,
-  didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  ) -> Bool {
-  // This is required to make any communication available in the action isolate.
-  FlutterLocalNotificationsPlugin.setPluginRegistrantCallback { (registry) in
-    GeneratedPluginRegistrant.register(with: registry)
-  }
-
-  ...
-  return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-}
-```
-
-On iOS/macOS, notification actions need to be configured before the app is started using the `initialize` method
-
-``` dart
-final DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
-    // ...
-    notificationCategories: [
-      DarwinNotificationCategory(
-        'demoCategory',
-        actions: <DarwinNotificationAction>[
-            DarwinNotificationAction.plain('id_1', 'Action 1'),
-            DarwinNotificationAction.plain(
-            'id_2',
-            'Action 2',
-            options: <DarwinNotificationActionOption>{
-                DarwinNotificationActionOption.destructive,
-            },
-            ),
-            DarwinNotificationAction.plain(
-            'id_3',
-            'Action 3',
-            options: <DarwinNotificationActionOption>{
-                DarwinNotificationActionOption.foreground,
-            },
-            ),
-        ],
-        options: <DarwinNotificationCategoryOption>{
-            DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
-        },
-    )
-],
-```
-
-On iOS/macOS, the notification category will define which actions are availble. On Android and Linux, you can put the actions directly in the `AndroidNotificationDetails` and `LinuxNotificationDetails` classes.
-
-**Usage**:
-
-You need to configure a **top level** or **static** method which will handle the action:
-
-``` dart
-@pragma('vm:entry-point')
-void notificationTapBackground(NotificationResponse notificationResponse) {
-  // handle action
-}
-```
-
-Specify this function as a parameter in the `initialize` method of this plugin:
-
-``` dart
-await flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
-    onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
-        // ...
-    },
-    onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
-);
-```
-
-Remember this function runs (except Linux) in a separate isolate! This function also requires the `@pragma('vm:entry-point')` annotation to ensure that tree-shaking doesn't remove the code since it would be invoked on the native side. See [here](https://github.com/dart-lang/sdk/blob/master/runtime/docs/compiler/aot/entry_point_pragma.md) for official documentation on the annotation.
+On Apple platforms, see [iOS/macOS Specific Configuration](AppleConfiguration)
 
 Developers should also note that whilst accessing plugins will work, on Android there is **no** access to the `Activity` context. This means some plugins (like `url_launcher`) will require additional flags to start the main `Activity` again.
 
@@ -597,72 +278,9 @@ The `DarwinInitializationSettings` class provides default settings on how the no
 
 The `LinuxInitializationSettings` class requires a name for the default action that calls the `onDidReceiveNotificationResponse` callback when the notification is clicked. 
 
-On iOS and macOS, initialisation may show a prompt to requires users to give the application permission to display notifications (note: permissions don't need to be requested on Android). Depending on when this happens, this may not be the ideal user experience for your application. If so, please refer to the next section on how to work around this.
+On iOS and macOS, initialisation may show a prompt to requires users to give the application permission to display notifications (note: permissions don't need to be requested on Android). Depending on when this happens, this may not be the ideal user experience for your application. If so, please refer to [iOS/macOS Request Permissions](AppleRequestPermissions.md).
 
 For an explanation of the `onDidReceiveLocalNotification` callback associated with the `DarwinInitializationSettings` class, please read [this](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications#handling-notifications-whilst-the-app-is-in-the-foreground).
-
-### [iOS (all supported versions) and macOS 10.14+] Requesting notification permissions
-
-The constructor for the `DarwinInitializationSettings` class  has three named parameters (`requestSoundPermission`, `requestBadgePermission` and `requestAlertPermission`) that controls which permissions are being requested. If you want to request permissions at a later point in your application on iOS, set all of the above to false when initialising the plugin.
-
-```dart
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('app_icon');
-  final DarwinInitializationSettings initializationSettingsDarwin =
-      DarwinInitializationSettings(
-    requestSoundPermission: false,
-    requestBadgePermission: false,
-    requestAlertPermission: false,
-    onDidReceiveLocalNotification: onDidReceiveLocalNotification,
-  );
-  final MacOSInitializationSettings initializationSettingsMacOS =
-      MacOSInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false);
-  final LinuxInitializationSettings initializationSettingsLinux =
-    LinuxInitializationSettings(
-        defaultActionName: 'Open notification');
-  final InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsDarwin,
-      macOS: initializationSettingsDarwin,
-      linux: initializationSettingsLinux);
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
-```
-
-Then call the `requestPermissions` method with desired permissions at the appropriate point in your application
-
-For iOS:
-
-```dart
-final bool result = await flutterLocalNotificationsPlugin
-    .resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>()
-    ?.requestPermissions(
-    alert: true,
-    badge: true,
-    sound: true,
-    );
-```
-
-For macOS:
-
-```dart
-final bool result = await flutterLocalNotificationsPlugin
-    .resolvePlatformSpecificImplementation<
-        MacOSFlutterLocalNotificationsPlugin>()
-    ?.requestPermissions(
-    alert: true,
-    badge: true,
-    sound: true,
-    );
-```
-
-Here the call to `flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()` returns the iOS implementation of the plugin that contains APIs specific to iOS if the application is running on iOS. Similarly, the macOS implementation is returned by calling `flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<MacOSFlutterLocalNotificationsPlugin>()`. The `?.` operator is used as the result will be null when run on other platforms. Developers may alternatively choose to guard this call by checking the platform their application is running on.
 
 ### Displaying a notification
 
@@ -688,7 +306,7 @@ The details specific to the Android platform are also specified. This includes t
 
 Starting in version 2.0 of the plugin, scheduling notifications now requires developers to specify a date and time relative to a specific time zone. This is to solve issues with daylight saving time that existed in the `schedule` method that is now deprecated. A new `zonedSchedule` method is provided that expects an instance `TZDateTime` class provided by the [`timezone`](https://pub.dev/packages/timezone) package. Even though the `timezone` package is be a transitive dependency via this plugin, it is recommended based on [this lint rule](https://dart-lang.github.io/linter/lints/depend_on_referenced_packages.html) that you also add the `timezone` package as a direct dependency. 
 
-Once the depdendency as been added, usage of the `timezone` package requires initialisation that is covered in the package's readme. For convenience the following are code snippets used by the example app.
+Once the dependency as been added, usage of the `timezone` package requires initialisation that is covered in the package's readme. For convenience the following are code snippets used by the example app.
 
 Import the `timezone` package
 
@@ -759,9 +377,6 @@ final List<PendingNotificationRequest> pendingNotificationRequests =
 
 ### Retrieving active notifications
 
-
-
-
 ```dart
 final List<ActiveNotification> activeNotifications =
     await flutterLocalNotificationsPlugin.getActiveNotifications();
@@ -774,73 +389,10 @@ final List<ActiveNotification> activeNotifications =
 
 ### Grouping notifications
 
-#### iOS
+iOS and Android have different setup to ensure notifications are grouped. Use the following links respectively.
 
-For iOS, you can specify `threadIdentifier` in `DarwinNotificationDetails`. Notifications with the same `threadIdentifier` will get grouped together automatically.
-
-```dart
-const DarwinNotificationDetails iOSPlatformChannelSpecifics =
-    DarwinNotificationDetails(threadIdentifier: 'thread_id');
-```
-
-#### Android
-
-This is a "translation" of the sample available at https://developer.android.com/training/notify-user/group.html
-
-```dart
-const String groupKey = 'com.android.example.WORK_EMAIL';
-const String groupChannelId = 'grouped channel id';
-const String groupChannelName = 'grouped channel name';
-const String groupChannelDescription = 'grouped channel description';
-// example based on https://developer.android.com/training/notify-user/group.html
-const AndroidNotificationDetails firstNotificationAndroidSpecifics =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        importance: Importance.max,
-        priority: Priority.high,
-        groupKey: groupKey);
-const NotificationDetails firstNotificationPlatformSpecifics =
-    NotificationDetails(android: firstNotificationAndroidSpecifics);
-await flutterLocalNotificationsPlugin.show(1, 'Alex Faarborg',
-    'You will not believe...', firstNotificationPlatformSpecifics);
-const AndroidNotificationDetails secondNotificationAndroidSpecifics =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        importance: Importance.max,
-        priority: Priority.high,
-        groupKey: groupKey);
-const NotificationDetails secondNotificationPlatformSpecifics =
-    NotificationDetails(android: secondNotificationAndroidSpecifics);
-await flutterLocalNotificationsPlugin.show(
-    2,
-    'Jeff Chang',
-    'Please join us to celebrate the...',
-    secondNotificationPlatformSpecifics);
-
-// Create the summary notification to support older devices that pre-date
-/// Android 7.0 (API level 24).
-///
-/// Recommended to create this regardless as the behaviour may vary as
-/// mentioned in https://developer.android.com/training/notify-user/group
-const List<String> lines = <String>[
-    'Alex Faarborg  Check this out',
-    'Jeff Chang    Launch Party'
-];
-const InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
-    lines,
-    contentTitle: '2 messages',
-    summaryText: 'janedoe@example.com');
-const AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        styleInformation: inboxStyleInformation,
-        groupKey: groupKey,
-        setAsGroupSummary: true);
-const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-await flutterLocalNotificationsPlugin.show(
-    3, 'Attention', 'Two messages', notificationDetails);
-```
+* [iOS](IOSGrouping.md)
+* [Android](AndroidGrouping.md)
 
 ### Cancelling/deleting a notification
 
