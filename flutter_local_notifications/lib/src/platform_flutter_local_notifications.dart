@@ -98,6 +98,7 @@ class MethodChannelFlutterLocalNotificationsPlugin
                   title: p['title'],
                   body: p['body'],
                   payload: p['payload'],
+                  bigText: p['bigText'],
                 ))
             .toList() ??
         <ActiveNotification>[];
@@ -517,6 +518,11 @@ class AndroidFlutterLocalNotificationsPlugin
               enableVibration: a['enableVibration'],
               vibrationPattern: a['vibrationPattern'],
               ledColor: Color(a['ledColor']),
+              audioAttributesUsage: AudioAttributesUsage.values.firstWhere(
+                // ignore: always_specify_types
+                (e) => e.value == a['audioAttributesUsage'],
+                orElse: () => AudioAttributesUsage.notification,
+              ),
             ))
         .toList();
   }

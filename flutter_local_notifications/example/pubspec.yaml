@@ -4,7 +4,7 @@ publish_to: none
 
 dependencies:
   cupertino_icons: ^1.0.2
-  device_info_plus: ^8.0.0
+  device_info_plus: ^9.1.2
   flutter:
     sdk: flutter
   flutter_local_notifications:
