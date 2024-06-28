@@ -286,14 +286,6 @@ void main() {
             ),
           );
 
-          await flutterLocalNotificationsPlugin.periodicallyShowWithDuration(
-            1,
-            'notification title',
-            'notification body',
-            thirtySeconds,
-            notificationDetails,
-          );
-
           expect(
               () async => await flutterLocalNotificationsPlugin
                       .periodicallyShowWithDuration(
