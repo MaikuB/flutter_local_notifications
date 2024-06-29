@@ -1,3 +1,7 @@
+## [17.2.1]
+
+* [Android] fixed issue [#2329](https://github.com/MaikuB/flutter_local_notifications/issues/2329) where a compilation issue could occur due to ambiguity between Android APIs being called. Thanks to the PR from [Greg Price](https://github.com/gnprice)
+
 ## [17.2.0]
 
 * [Android][iOS][macOS] added `periodicallyShowWithDuration()` method that allows for having a notification periodically shown based on a specified duration. The duration will need to be at least a minute. Thanks to the PR from [Mateusz Łuczak](https://github.com/mateuszluczak1996)
