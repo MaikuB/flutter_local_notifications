@@ -11,6 +11,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  java_format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: axel-op/googlejavaformat-action@v3
+        with:
+          args: '--skip-sorting-imports --replace'
+
+  objc_format:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test
+        run: |
+          which clang-format || brew install clang-format
+          find . -name '*.m' -exec clang-format -i {} \;
+          find . -path '*/ios/**/*.h' -exec clang-format -i {} \;
+          find . -path '*/macos/**/*.h' -exec clang-format -i {} \;
+          git diff --exit-code || (git commit --all -m "Clang Format" && git push)
+
+  swift_format:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test
+        run: |
+          which swiftlint || brew install swiftlint
+          swiftlint --fix
+          git diff --exit-code || (git commit --all -m "Swift Format" && git push)
+
   analyze:
     name: Run Dart Analyzer
     runs-on: ubuntu-latest
