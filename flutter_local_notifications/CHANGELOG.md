@@ -1,3 +1,7 @@
+## [17.2.1+1]
+
+* Fixed accidental change done in example app as part of 17.2.0 where it made use of `SCHEDULE_EXACT_ALARM` permission instead of `USE_EXACT_ALARM`
+
 ## [17.2.1]
 
 * [Android] fixed issue [#2329](https://github.com/MaikuB/flutter_local_notifications/issues/2329) where a compilation issue could occur due to ambiguity between Android APIs being called. Thanks to the PR from [Greg Price](https://github.com/gnprice)
