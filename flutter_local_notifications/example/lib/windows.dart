@@ -74,6 +74,11 @@ List<Widget> examples({
       await _showWindowsNotificationWithHeader();
     },
   ),
+  PaddedElevatedButton(
+    buttonText: 'Show notification with raw XML',
+    onPressed: showXmlNotification,
+  ),
+  const SizedBox(height: 8),
   SizedBox(
     width: 500,
     child: ExpansionTile(
@@ -94,11 +99,6 @@ List<Widget> examples({
         ),
       ),]
     ),
-  ),
-  const SizedBox(height: 8),
-  PaddedElevatedButton(
-    buttonText: 'Show notification with raw XML',
-    onPressed: showXmlNotification,
   ),
 ];
 
