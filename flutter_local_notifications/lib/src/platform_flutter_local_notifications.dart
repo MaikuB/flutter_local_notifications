@@ -160,6 +160,20 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<bool?> requestExactAlarmsPermission() async =>
       _channel.invokeMethod<bool>('requestExactAlarmsPermission');
 
+  /// Requests the permission to send/use full-screen intents.
+  ///
+  /// Returns whether the permission was granted.
+  ///
+  /// Use this when your application requires the [`USE_FULL_SCREEN_INTENT`](https://developer.android.com/reference/android/Manifest.permission#SCHEDULE_EXACT_ALARM)
+  /// permission and targets Android 14 or higher. The reason for this is that
+  /// the permission is granted by default. However, applications that do not
+  /// have calling or alarm functionalities have the permission revoked by the
+  /// Google Play Store. See
+  /// [here](https://source.android.com/docs/core/permissions/fsi-limits)
+  /// for official Android documentation.
+  Future<bool?> requestFullScreenIntentPermission() async =>
+      _channel.invokeMethod<bool>('requestFullScreenIntentPermission');
+
   /// Requests the permission for sending notifications. Returns whether the
   /// permission was granted.
   ///
@@ -346,6 +360,31 @@ class AndroidFlutterLocalNotificationsPlugin
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
+      'platformSpecifics':
+          _buildPlatformSpecifics(notificationDetails, scheduleMode),
+      'payload': payload ?? '',
+    });
+  }
+
+  @override
+  Future<void> periodicallyShowWithDuration(
+    int id,
+    String? title,
+    String? body,
+    Duration repeatDurationInterval, {
+    AndroidNotificationDetails? notificationDetails,
+    String? payload,
+    AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
+  }) async {
+    validateId(id);
+    validateRepeatDurationInterval(repeatDurationInterval);
+    await _channel
+        .invokeMethod('periodicallyShowWithDuration', <String, Object?>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': clock.now().millisecondsSinceEpoch,
+      'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
       'platformSpecifics':
           _buildPlatformSpecifics(notificationDetails, scheduleMode),
       'payload': payload ?? '',
@@ -740,6 +779,29 @@ class IOSFlutterLocalNotificationsPlugin
     });
   }
 
+  @override
+  Future<void> periodicallyShowWithDuration(
+    int id,
+    String? title,
+    String? body,
+    Duration repeatDurationInterval, {
+    DarwinNotificationDetails? notificationDetails,
+    String? payload,
+  }) async {
+    validateId(id);
+    validateRepeatDurationInterval(repeatDurationInterval);
+    await _channel
+        .invokeMethod('periodicallyShowWithDuration', <String, Object?>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': clock.now().millisecondsSinceEpoch,
+      'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
+      'platformSpecifics': notificationDetails?.toMap(),
+      'payload': payload ?? ''
+    });
+  }
+
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'didReceiveNotificationResponse':
@@ -907,6 +969,29 @@ class MacOSFlutterLocalNotificationsPlugin
       'body': body,
       'calledAt': clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
+      'platformSpecifics': notificationDetails?.toMap(),
+      'payload': payload ?? ''
+    });
+  }
+
+  @override
+  Future<void> periodicallyShowWithDuration(
+    int id,
+    String? title,
+    String? body,
+    Duration repeatDurationInterval, {
+    DarwinNotificationDetails? notificationDetails,
+    String? payload,
+  }) async {
+    validateId(id);
+    validateRepeatDurationInterval(repeatDurationInterval);
+    await _channel
+        .invokeMethod('periodicallyShowWithDuration', <String, Object?>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': clock.now().millisecondsSinceEpoch,
+      'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
     });

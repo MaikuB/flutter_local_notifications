@@ -18,6 +18,12 @@ List<Widget> examples(BuildContext context) => <Widget>[
     },
   ),
   PaddedElevatedButton(
+    buttonText: 'Repeat notification every 5 minutes',
+    onPressed: () async {
+      await _repeatPeriodicallyWithDurationNotification();
+    },
+  ),
+  PaddedElevatedButton(
     buttonText:
         'Schedule daily 10:00:00 am notification in your '
         'local time zone',
@@ -165,6 +171,23 @@ Future<void> _repeatNotification() async {
     'repeating title',
     'repeating body',
     RepeatInterval.everyMinute,
+    notificationDetails,
+    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+  );
+}
+
+Future<void> _repeatPeriodicallyWithDurationNotification() async {
+  const AndroidNotificationDetails androidNotificationDetails =
+      AndroidNotificationDetails(
+          'repeating channel id', 'repeating channel name',
+          channelDescription: 'repeating description');
+  const NotificationDetails notificationDetails =
+      NotificationDetails(android: androidNotificationDetails);
+  await flutterLocalNotificationsPlugin.periodicallyShowWithDuration(
+    id++,
+    'repeating period title',
+    'repeating period body',
+    const Duration(minutes: 5),
     notificationDetails,
     androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
   );
