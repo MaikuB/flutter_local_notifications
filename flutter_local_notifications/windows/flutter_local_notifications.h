@@ -32,6 +32,9 @@ class FlutterLocalNotifications : public flutter::Plugin {
     std::shared_ptr<PluginMethodChannel> channel;
     bool hasIdentity = false;
 
+    /// Checks if this app was installed using an MSIX packager.
+    ///
+    /// See: https://learn.microsoft.com/en-us/windows/msix/detect-package-identity.
     std::optional<bool> HasIdentity();
 
     // Called when a method is called on this plugin's channel from Dart.

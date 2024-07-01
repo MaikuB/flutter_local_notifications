@@ -21,22 +21,26 @@ enum WindowsImageCrop {
 /// An image in a Windows notification.
 class WindowsImage extends WindowsNotificationPart {
   /// Creates a Windows notification image.
-  WindowsImage({
-    required File source,
+  WindowsImage.file(
+    this.file, {
     required this.altText,
     this.addQueryParams = false,
     this.placement,
     this.crop,
-  }) : source = source.absolute;
+  });
 
   /// Whether Windows should add URL query parameters when fetching the image.
   final bool addQueryParams;
+
   /// A description of the image to be used by assistive technology.
   final String altText;
+
   /// The source of the image.
-  final File source;
+  final File file;
+
   /// Where this image will be placed. Null indicates below the notification.
   final WindowsImagePlacement? placement;
+
   /// How the image will be cropped. Null indicates uncropped.
   final WindowsImageCrop? crop;
 
@@ -44,7 +48,7 @@ class WindowsImage extends WindowsNotificationPart {
   void toXml(XmlBuilder builder) => builder.element(
     'image',
     attributes: <String, String>{
-      'src': Uri.file(source.path, windows: true).toString(),
+      'src': Uri.file(file.absolute.path, windows: true).toString(),
       'alt': altText,
       'addImageQuery': addQueryParams.toString(),
       if (placement != null) 'placement': placement!.name,
