@@ -3,7 +3,6 @@
 #include <flutter/method_channel.h>
 #include <flutter/encodable_value.h>
 
-using PluginMethodChannel = flutter::MethodChannel<flutter::EncodableValue>;
 
 /// <summary>
 /// Defines names of methods of this plugin that are callable

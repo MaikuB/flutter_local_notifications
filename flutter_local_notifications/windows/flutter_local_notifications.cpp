@@ -65,7 +65,17 @@ void FlutterLocalNotifications::HandleMethodCall(
       const auto value = Initialize(appName, aumid, guid, iconPath, iconColor);
       result->Success(value);
     } else if (methodName == Method::GET_NOTIFICATION_APP_LAUNCH_DETAILS) {
-      result->Success();  // TODO: Decide if/how this can be implemented
+			auto map = utils->launchData;
+			*utils->didLaunchWithNotification = true;
+
+      const auto didLaunch = *(utils->didLaunchWithNotification);
+      FlutterMap outerData;
+      outerData[std::string("notificationLaunchedApp")] = didLaunch;
+      if (didLaunch) {
+        auto data = *(utils->launchData);
+        outerData[std::string("notificationResponse")] = flutter::EncodableValue(data);
+      }
+      result->Success(flutter::EncodableValue(outerData));
     } else if (methodName == Method::CANCEL_ALL) {
       CancelAll();
       result->Success();
@@ -119,7 +129,16 @@ bool FlutterLocalNotifications::Initialize(
   const std::optional<std::string>& iconColor
 ) {
   _aumid = winrt::to_hstring(aumid);
-  const auto didRegister = PluginRegistration::RegisterApp(aumid, appName, guid, iconPath, iconColor, channel);
+
+  FlutterMap launchDetails;
+  bool didLaunchWithNotifications = false;
+  RegistrationUtils rawUtils;
+  rawUtils.channel = channel;
+  rawUtils.didLaunchWithNotification = std::make_shared<bool>(didLaunchWithNotifications);
+  rawUtils.launchData = std::make_shared<FlutterMap>(launchDetails);
+  utils = std::make_shared<RegistrationUtils>(rawUtils);
+
+  const auto didRegister = RegisterApp(aumid, appName, guid, iconPath, iconColor, utils);
   if (!didRegister) return false;
   const auto identityResult = HasIdentity();
   if (!identityResult.has_value()) return false;

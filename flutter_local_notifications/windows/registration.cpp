@@ -21,9 +21,8 @@
 /// <summary>
 /// This callback will be called when a notification sent by this plugin is clicked on.
 /// </summary>
-struct NotificationActivationCallback : winrt::implements<NotificationActivationCallback, INotificationActivationCallback>
-{
-	std::shared_ptr<PluginMethodChannel> channel;
+struct NotificationActivationCallback : winrt::implements<NotificationActivationCallback, INotificationActivationCallback> {
+	std::shared_ptr<RegistrationUtils> utils;
 
 	HRESULT __stdcall Activate(
 		LPCWSTR app,
@@ -38,12 +37,16 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
 				inputData[std::string(CW2A(item.Key))] = std::string(CW2A(item.Value));
 			}
 			const std::string payload = CW2A(args);
-			flutter::EncodableMap response;
-			response[std::string("payload")] = flutter::EncodableValue(payload);
-			response[std::string("data")] = flutter::EncodableValue(inputData);
-			channel->InvokeMethod(
+			const auto openedWithAction = args != nullptr;
+			auto map = utils->launchData;
+			*utils->didLaunchWithNotification = true;
+			(*map)[std::string("notificationResponseType")] = (int) openedWithAction;
+			(*map)[std::string("payload")] = flutter::EncodableValue(payload);
+			(*map)[std::string("data")] = flutter::EncodableValue(inputData);
+			flutter::EncodableMap copy(*map);
+			utils->channel->InvokeMethod(
 				Method::DID_RECEIVE_NOTIFICATION_RESPONSE,
-				std::make_unique<flutter::EncodableValue>(response),
+				std::make_unique<flutter::EncodableValue>(copy),
 				nullptr
 			);
 			return S_OK;
@@ -59,7 +62,7 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
 /// </summary>
 struct NotificationActivationCallbackFactory : winrt::implements<NotificationActivationCallbackFactory, IClassFactory>
 {
-	std::shared_ptr<PluginMethodChannel> channel;
+	std::shared_ptr<RegistrationUtils> utils;
 
 	HRESULT __stdcall CreateInstance(
 		IUnknown* outer,
@@ -73,7 +76,7 @@ struct NotificationActivationCallbackFactory : winrt::implements<NotificationAct
 		}
 
 		const auto cb = winrt::make_self<NotificationActivationCallback>();
-		cb.get()->channel = channel;
+		cb.get()->utils = utils;
 
 		return cb->QueryInterface(iid, result);
 	}
@@ -241,7 +244,7 @@ void UpdateRegistry(
 /// Register the notificatio activation callback factory
 /// and the guid of the callback.
 /// </summary>
-bool RegisterCallback(std::shared_ptr<PluginMethodChannel> channel, const std::string& guid) {
+bool RegisterCallback(const std::string& guid, std::shared_ptr<RegistrationUtils> utils) {
 	DWORD registration{};
 
 	const auto factory_ref = winrt::make_self<NotificationActivationCallbackFactory>();
@@ -253,7 +256,7 @@ bool RegisterCallback(std::shared_ptr<PluginMethodChannel> channel, const std::s
 	}
 
 	winrt::guid rclsid(guid);
-	factory->channel = channel;
+	factory->utils = utils;
 
 	winrt::check_hresult(CoRegisterClassObject(
 		rclsid,
@@ -264,14 +267,14 @@ bool RegisterCallback(std::shared_ptr<PluginMethodChannel> channel, const std::s
 	return true;
 }
 
-bool PluginRegistration::RegisterApp(
+bool RegisterApp(
 	const std::string& aumid,
 	const std::string& appName,
 	const std::string& guid,
 	const std::optional<std::string>& iconPath,
 	const std::optional<std::string>& iconBgColor,
-	std::shared_ptr<PluginMethodChannel> plugin
+	std::shared_ptr<RegistrationUtils> utils
 ) {
 	UpdateRegistry(aumid, appName, guid, iconPath, iconBgColor);
-	return RegisterCallback(plugin, guid);
+	return RegisterCallback(guid, utils);
 }

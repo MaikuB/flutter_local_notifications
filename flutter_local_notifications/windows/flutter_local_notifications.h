@@ -9,13 +9,10 @@
 #include <winrt/Windows.UI.Notifications.h>
 
 #include "methods.h"
+#include "registration.h"
+#include "types.h"
 
 namespace local_notifications {
-
-using FlutterMap = flutter::EncodableMap;
-using FlutterList = flutter::EncodableList;
-using FlutterMethodCall = flutter::MethodCall<flutter::EncodableValue>;
-using FlutterMethodResult = flutter::MethodResult<flutter::EncodableValue>;
 
 class FlutterLocalNotifications : public flutter::Plugin {
   public:
@@ -30,6 +27,7 @@ class FlutterLocalNotifications : public flutter::Plugin {
     std::optional<winrt::Windows::UI::Notifications::ToastNotifier> toastNotifier;
     std::optional<winrt::Windows::UI::Notifications::ToastNotificationHistory> toastHistory;
     std::shared_ptr<PluginMethodChannel> channel;
+    std::shared_ptr<RegistrationUtils> utils;
     bool hasIdentity = false;
 
     /// Checks if this app was installed using an MSIX packager.
