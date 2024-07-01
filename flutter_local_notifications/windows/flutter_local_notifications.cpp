@@ -65,9 +65,6 @@ void FlutterLocalNotifications::HandleMethodCall(
       const auto value = Initialize(appName, aumid, guid, iconPath, iconColor);
       result->Success(value);
     } else if (methodName == Method::GET_NOTIFICATION_APP_LAUNCH_DETAILS) {
-			auto map = utils->launchData;
-			*utils->didLaunchWithNotification = true;
-
       const auto didLaunch = *(utils->didLaunchWithNotification);
       FlutterMap outerData;
       outerData[std::string("notificationLaunchedApp")] = didLaunch;
