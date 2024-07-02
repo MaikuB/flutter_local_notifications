@@ -1116,7 +1116,7 @@ class _HomePageState extends State<HomePage> {
           WindowsAction(
             content: 'Image',
             arguments: 'image',
-            imageUri: Uri.file(File('icons/coworker.png').absolute.path, windows: true),
+            image: File('icons/coworker.png'),
           ),
           WindowsAction(
             content: 'Context',

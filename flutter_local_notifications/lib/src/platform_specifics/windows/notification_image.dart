@@ -27,7 +27,15 @@ class WindowsImage extends WindowsNotificationPart {
     this.addQueryParams = false,
     this.placement,
     this.crop,
-  });
+  }) {
+    if (!file.isAbsolute) {
+      throw ArgumentError.value(
+        file.path,
+        'WindowsImage.file',
+        'File path must be absolute',
+      );
+    }
+  }
 
   /// Whether Windows should add URL query parameters when fetching the image.
   final bool addQueryParams;

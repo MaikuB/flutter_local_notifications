@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:xml/xml.dart';
 
 // NOTE: All enum values in this file have Windows RT-specific names.
 // If you change their Dart names, be sure to override [Enum.name].
 
 /// Decides how the [WindowsAction] will launch the app.
+///
+/// On desktop platforms, [foreground] and [background] are treated the same.
 enum WindowsActivationType {
   /// The application will launch in the foreground (the default).
   foreground,
@@ -54,23 +58,19 @@ class WindowsAction {
     this.activationType = WindowsActivationType.foreground,
     this.activationBehavior = WindowsNotificationBehavior.dismiss,
     this.placement,
-    this.imageUri,
+    this.image,
     this.inputId,
     this.buttonStyle,
     this.tooltip,
   }) {
-    if (imageUri != null && !allowedSchemes.contains(imageUri!.scheme)) {
+    if (image != null && !image!.isAbsolute) {
       throw ArgumentError.value(
-        imageUri.toString(),
-        'WindowsNotificationAction.imageUri',
-        'URI scheme must be one of the following schemes: $allowedSchemes',
+        image!.path,
+        'WindowsImage.file',
+        'File path must be absolute',
       );
     }
   }
-
-  /// The set of allowed schemes for [imageUri].
-  static const Set<String> allowedSchemes =
-    <String>{'http', 'https', 'ms-appx', 'ms-appdata', 'file'};
 
   /// The body text of the button.
   final String content;
@@ -93,15 +93,12 @@ class WindowsAction {
   /// Null indicates a regular button.
   final WindowsActionPlacement? placement;
 
-  /// A URI of an image to show on the button.
+  /// An image to show on the button.
   ///
   /// Images must be white with a transparent background, and should be
   /// 16x16 pixels with no padding. If you provide an image for one button,
-  /// you must provide images for all your buttons.
-  ///
-  /// Supported protocols are: `http`, `https`, `ms-appx`, `ms-appdata:///local`,
-  /// and `file`. Other protocols will throw an error.
-  final Uri? imageUri;
+  /// you should provide images for all your buttons.
+  final File? image;
 
   /// The ID of an input box.
   ///
@@ -125,7 +122,8 @@ class WindowsAction {
       'activationType': activationType.name,
       'afterActivationBehavior': activationBehavior.name,
       if (placement != null) 'placement': placement!.name,
-      if (imageUri != null) 'imageUri': imageUri!.toString(),
+      if (image != null) 'imageUri':
+        Uri.file(image!.absolute.path, windows: true).toString(),
       if (inputId != null) 'hint-inputId': inputId!,
       if (buttonStyle != null) 'hint-buttonStyle': buttonStyle!.name,
       if (tooltip != null) 'hint-toolTip': tooltip!,
