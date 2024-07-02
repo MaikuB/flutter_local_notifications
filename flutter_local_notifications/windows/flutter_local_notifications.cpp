@@ -65,14 +65,19 @@ void FlutterLocalNotifications::HandleMethodCall(
       const auto value = Initialize(appName, aumid, guid, iconPath, iconColor);
       result->Success(value);
     } else if (methodName == Method::GET_NOTIFICATION_APP_LAUNCH_DETAILS) {
-      const auto didLaunch = *(utils->didLaunchWithNotification);
-      FlutterMap outerData;
-      outerData[std::string("notificationLaunchedApp")] = didLaunch;
-      if (didLaunch) {
-        auto data = *(utils->launchData);
-        outerData[std::string("notificationResponse")] = flutter::EncodableValue(data);
+      if (utils == nullptr) {
+        result->Error("not-initialized", "You must initialize the plugin before calling any methods");
+        return;
       }
-      result->Success(flutter::EncodableValue(outerData));
+      // const auto didLaunch = *(utils->didLaunchWithNotification);
+      // FlutterMap outerData;
+      // outerData[std::string("notificationLaunchedApp")] = didLaunch;
+      // if (didLaunch) {
+      //   auto data = *(utils->launchData);
+      //   outerData[std::string("notificationResponse")] = flutter::EncodableValue(data);
+      // }
+      // result->Success(flutter::EncodableValue(outerData));
+      result->Success();
     } else if (methodName == Method::CANCEL_ALL) {
       CancelAll();
       result->Success();

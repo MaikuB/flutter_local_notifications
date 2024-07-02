@@ -57,6 +57,12 @@ List<Widget> examples({
     },
   ),
   PaddedElevatedButton(
+    buttonText: 'Show notifications with dynamic content',
+    onPressed: () async {
+      await _showWindowsNotificationWithDynamic();
+    },
+  ),
+  PaddedElevatedButton(
     buttonText: 'Show notitification with activation',
     onPressed: () async {
       await _showWindowsNotificationWithActivation();
@@ -281,6 +287,36 @@ Future<void> _showWindowsNotificationWithProgress() async {
     slowProgress.label = '$count / 50';
     await windows?.updateProgressBar(notificationId: notificationId, progressBar: fastProgress);
     await windows?.updateProgressBar(notificationId: notificationId, progressBar: slowProgress);
+  });
+}
+
+Future<void> _showWindowsNotificationWithDynamic() async {
+  final DateTime start = DateTime.now();
+  final int notificationId = id++;
+  final WindowsFlutterLocalNotificationsPlugin? windows =
+    flutterLocalNotificationsPlugin
+    .resolvePlatformSpecificImplementation<WindowsFlutterLocalNotificationsPlugin>();
+  await flutterLocalNotificationsPlugin.show(
+    notificationId,
+    'Dynamic content',
+    'This notification will be updated from Dart code',
+    NotificationDetails(
+      windows: WindowsNotificationDetails(
+        subtitle: '{stopwatch}',
+      ),
+    ),
+  );
+  Map<String, String> getBindings() => <String, String>{
+    'stopwatch': 'Elapsed time: ${DateTime.now().difference(start).inSeconds} seconds',
+  };
+  await windows?.updateBindings(id: notificationId, data: getBindings());
+  Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
+    if (timer.tick > 10) {
+      timer.cancel();
+      await flutterLocalNotificationsPlugin.cancel(notificationId);
+      return;
+    }
+    await windows?.updateBindings(id: notificationId, data: getBindings());
   });
 }
 
