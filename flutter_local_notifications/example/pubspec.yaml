@@ -10,7 +10,7 @@ dependencies:
   flutter_local_notifications:
     path: ../
   flutter_timezone: ^1.0.4
-  http: ^0.13.4
+  http: ^1.2.1
   image: ^3.0.8
   path_provider: ^2.0.0
 
@@ -21,6 +21,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  msix: ^2.8.17
 
 # The following overrides exist to ensure the example app builds with the latest code
 # of these packages as part of CI
@@ -39,3 +40,8 @@ flutter:
 environment:
   sdk: ">=2.15.0 <3.0.0"
   flutter: ">=2.8.0"
+
+msix_config:
+  display_name: Flutter Local Notifications Example
+  identity_name: Com.Example.FlutterLocalNotificationsExample
+  debug: true

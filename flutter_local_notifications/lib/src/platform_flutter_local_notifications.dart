@@ -5,6 +5,7 @@ import 'package:clock/clock.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
+import 'package:xml/xml.dart';
 
 import 'callback_dispatcher.dart';
 import 'helpers.dart';
@@ -25,6 +26,10 @@ import 'platform_specifics/darwin/mappers.dart';
 import 'platform_specifics/darwin/notification_details.dart';
 import 'platform_specifics/darwin/notification_enabled_options.dart';
 import 'platform_specifics/ios/enums.dart';
+import 'platform_specifics/windows/initialization_settings.dart';
+import 'platform_specifics/windows/method_channel_mappers.dart';
+import 'platform_specifics/windows/notification_details.dart';
+import 'platform_specifics/windows/notification_progress.dart';
 import 'typedefs.dart';
 import 'types.dart';
 import 'tz_datetime_mapper.dart';
@@ -45,31 +50,31 @@ class MethodChannelFlutterLocalNotificationsPlugin
   Future<void> cancelAll() => _channel.invokeMethod('cancelAll');
 
   @override
-  Future<NotificationAppLaunchDetails?>
-      getNotificationAppLaunchDetails() async {
+  Future<NotificationAppLaunchDetails?> getNotificationAppLaunchDetails(
+  ) async {
     final Map<dynamic, dynamic>? result =
-        await _channel.invokeMethod('getNotificationAppLaunchDetails');
+      await _channel.invokeMethod('getNotificationAppLaunchDetails');
     final Map<dynamic, dynamic>? notificationResponse =
-        result != null && result.containsKey('notificationResponse')
-            ? result['notificationResponse']
-            : null;
-    return result != null
-        ? NotificationAppLaunchDetails(
-            result['notificationLaunchedApp'],
-            notificationResponse: notificationResponse == null
-                ? null
-                : NotificationResponse(
-                    id: notificationResponse['notificationId'],
-                    actionId: notificationResponse['actionId'],
-                    input: notificationResponse['input'],
-                    notificationResponseType: NotificationResponseType.values[
-                        notificationResponse['notificationResponseType']],
-                    payload: notificationResponse.containsKey('payload')
-                        ? notificationResponse['payload']
-                        : null,
-                  ),
-          )
-        : null;
+      result != null && result.containsKey('notificationResponse')
+        ? result['notificationResponse'] : null;
+    return result == null ? null : NotificationAppLaunchDetails(
+      result['notificationLaunchedApp'],
+      notificationResponse: notificationResponse == null ? null
+        : NotificationResponse(
+          id: notificationResponse['notificationId'],
+          actionId: notificationResponse['actionId'],
+          input: notificationResponse['input'],
+          notificationResponseType: NotificationResponseType.values[
+            notificationResponse['notificationResponseType']],
+          payload: notificationResponse.containsKey('payload')
+            ? notificationResponse['payload']
+            : null,
+          data: Map<String, dynamic>.from(
+            notificationResponse['data']
+              ?? <String, dynamic>{},
+          ),
+        ),
+    );
   }
 
   @override
@@ -108,7 +113,7 @@ class MethodChannelFlutterLocalNotificationsPlugin
 /// Android implementation of the local notifications plugin.
 class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
-  DidReceiveNotificationResponseCallback? _ondidReceiveNotificationResponse;
+  DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
 
   /// Initializes the plugin.
   ///
@@ -132,7 +137,7 @@ class AndroidFlutterLocalNotificationsPlugin
     DidReceiveBackgroundNotificationResponseCallback?
         onDidReceiveBackgroundNotificationResponse,
   }) async {
-    _ondidReceiveNotificationResponse = onDidReceiveNotificationResponse;
+    _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
     _channel.setMethodCallHandler(_handleMethod);
 
     final Map<String, Object> arguments = initializationSettings.toMap();
@@ -225,7 +230,7 @@ class AndroidFlutterLocalNotificationsPlugin
   /// a foreground service with a notification id of 0.
   ///
   /// Since not all users of this plugin need such a service, it was not
-  /// added to this plugins Android manifest. Thie means you have to add
+  /// added to this plugins Android manifest. This means you have to add
   /// it if you want to use the foreground service functionality. Add the
   /// foreground service permission to your apps `AndroidManifest.xml` like
   /// described in the [official Android documentation](https://developer.android.com/guide/components/foreground-services#request-foreground-service-permissions):
@@ -252,11 +257,11 @@ class AndroidFlutterLocalNotificationsPlugin
   /// The notification of the foreground service can be updated by
   /// simply calling this method multiple times.
   ///
-  /// Information on selecting an appropriate `startType` for your app's usecase
-  /// should be taken from the official Android documentation, check [`Service.onStartCommand`](https://developer.android.com/reference/android/app/Service#onStartCommand(android.content.Intent,%20int,%20int)).
+  /// Information on selecting an appropriate `startType` for your app's use
+  /// case should be taken from the official Android documentation, check [`Service.onStartCommand`](https://developer.android.com/reference/android/app/Service#onStartCommand(android.content.Intent,%20int,%20int)).
   /// The there mentioned constants can be found in [AndroidServiceStartType].
   ///
-  /// The notification for the foreground service will not be dismissable
+  /// The notification for the foreground service will not be dismissible
   /// and automatically removed when using [stopForegroundService].
   ///
   /// `foregroundServiceType` is a set of foreground service types to apply to
@@ -576,7 +581,7 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'didReceiveNotificationResponse':
-        _ondidReceiveNotificationResponse?.call(
+        _onDidReceiveNotificationResponse?.call(
           NotificationResponse(
             id: call.arguments['notificationId'],
             actionId: call.arguments['actionId'],
@@ -603,7 +608,7 @@ class IOSFlutterLocalNotificationsPlugin
   ///
   /// Call this method on application before using the plugin further.
   ///
-  /// Initialisation may also request notification permissions where users will
+  /// Initialization may also request notification permissions where users will
   /// see a permissions prompt. This may be fine in cases where it's acceptable
   /// to do this when the application runs for the first time. However, if your
   /// application needs to do this at a later point in time, set the
@@ -834,7 +839,7 @@ class MacOSFlutterLocalNotificationsPlugin
   /// Call this method on application before using the plugin further.
   /// This should only be done once.
   ///
-  /// Initialisation may also request notification permissions where users will
+  /// Initialization may also request notification permissions where users will
   /// see a permissions prompt. This may be fine in cases where it's acceptable
   /// to do this when the application runs for the first time. However, if your
   /// application needs to do this at a later point in time, set the
@@ -1012,6 +1017,177 @@ class MacOSFlutterLocalNotificationsPlugin
   }
 }
 
+/// Windows implementation of the flutter_local_notifications plugin.
+class WindowsFlutterLocalNotificationsPlugin
+    extends MethodChannelFlutterLocalNotificationsPlugin {
+  DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
+  /// Initializes the plugin.
+  ///
+  /// Call this method on application before using
+  /// the plugin further.
+  ///
+  /// This should only be done once. When a notification created by this plugin
+  /// was used to launch the app, calling [initialize] is what will trigger to
+  /// the [onDidReceiveNotificationResponse] callback to be fire.
+  ///
+  /// To handle when a notification launched an application, use
+  /// [getNotificationAppLaunchDetails].
+  Future<bool?> initialize(
+    WindowsInitializationSettings settings, {
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse
+  }) {
+    _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
+    _channel.setMethodCallHandler(_handleMethod);
+
+    return _channel.invokeMethod('initialize', settings.toMap());
+  }
+
+  /// Passes the raw XML to the Windows API directly.
+  ///
+  /// You can replace values in the `<bindings>` element with a `{placeholder}`
+  /// and set their values in [data] instead. Then, you may update them with
+  /// [updateBindings].
+  ///
+  /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
+  /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
+  Future<void> showRawXml({
+    required int id,
+    required String xml,
+    Map<String, String> data = const <String, String>{},
+  }) => _channel.invokeMethod('show', <String, dynamic>{
+    'id': id,
+    'rawXml': xml,
+    'data': data,
+  });
+
+  String _notificationToXml({
+    String? title,
+    String? body,
+    String? payload,
+    WindowsNotificationDetails? notificationDetails,
+  }) {
+    final XmlBuilder builder = XmlBuilder();
+    builder.element(
+      'toast',
+      attributes: <String, String>{
+        ...notificationDetails?.attributes ?? <String, String>{},
+        if (payload != null) 'launch': payload,
+        if (notificationDetails?.scenario == null) 'useButtonStyle': 'true',
+      },
+      nest: () {
+        builder.element('visual', nest: () {
+          builder.element(
+            'binding',
+            attributes: <String, String>{'template': 'ToastGeneric'},
+            nest: () {
+              builder
+                ..element('text', nest: title)
+                ..element('text', nest: body);
+              notificationDetails?.generateBinding(builder);
+            },
+          );
+        });
+        notificationDetails?.toXml(builder);
+      },
+    );
+    return builder.buildDocument()
+      .toXmlString(pretty: true, indentAttribute: (_) => true);
+  }
+
+  @override
+  Future<void> show(
+    int id,
+    String? title,
+    String? body, {
+    String? payload,
+    String? group,
+    WindowsNotificationDetails? notificationDetails,
+  }) async {
+    final String xml = _notificationToXml(
+      title: title,
+      body: body,
+      payload: payload,
+      notificationDetails: notificationDetails,
+    );
+    await _channel.invokeMethod('show', <String, dynamic>{
+      'id': id,
+      'rawXml': xml,
+      'data': <String, String>{
+        for (final WindowsProgressBar progressBar in notificationDetails
+          ?.progressBars ?? <WindowsProgressBar>[]
+        ) ...progressBar.data,
+      },
+    });
+  }
+
+  @override
+  Future<void> cancel(int id, {String? group}) =>
+      _channel.invokeMethod('cancel', <String, dynamic>{
+        'id': id,
+        'group': group,
+      });
+
+  /// Schedules a notification for the future.
+  Future<void> zonedSchedule(
+    int id,
+    String? title,
+    String? body,
+    TZDateTime scheduledDate,
+    WindowsNotificationDetails? notificationDetails, {
+    String? payload,
+  }) async {
+    final String xml = _notificationToXml(
+      title: title,
+      body: body,
+      payload: payload,
+      notificationDetails: notificationDetails,
+    );
+    final int secondsSinceEpoch = scheduledDate.millisecondsSinceEpoch ~/ 1000;
+    await _channel.invokeMethod('zonedSchedule', <String, dynamic>{
+      'id': id,
+      'rawXml': xml,
+      'time': secondsSinceEpoch,
+    });
+  }
+
+  /// Updates the progress bar in the notification with the given ID.
+  ///
+  /// Note that in order to update [WindowsProgressBar.label], it must
+  /// not have been set to null when [show] was called.
+  Future<int?> updateProgressBar({
+    required int notificationId,
+    required WindowsProgressBar progressBar,
+  }) => updateBindings(id: notificationId, data: progressBar.data);
+
+  /// Updates any data binding in the given notification.
+  ///
+  /// Instead of a text value, you can replace any value in the `<binding>`
+  /// element with `{name}`, and then use this function to update that value
+  /// by passing `data: {'name': value}`.
+  Future<int?> updateBindings({
+    required int id,
+    required Map<String, String> data,
+  }) => _channel.invokeMethod('update', <String, Object>{
+    'id': id,
+    'data': data,
+  });
+
+  Future<void> _handleMethod(MethodCall call) async {
+    switch (call.method) {
+      case 'didReceiveNotificationResponse':
+        if (call.arguments is Map) {
+          _onDidReceiveNotificationResponse?.call(NotificationResponse(
+            notificationResponseType:
+              NotificationResponseType.selectedNotification,
+            payload: call.arguments['payload'],
+            data: Map<String, dynamic>.from(call.arguments['data']),
+          ));
+        }
+        break;
+    }
+  }
+}
+
 /// Checks [didReceiveBackgroundNotificationResponseCallback], if not `null`,
 /// for eligibility to be used as a background callback.
 ///
@@ -1028,7 +1204,7 @@ void _evaluateBackgroundNotificationCallback(
     final CallbackHandle? callback = PluginUtilities.getCallbackHandle(
         didReceiveBackgroundNotificationResponseCallback);
     assert(callback != null, '''
-          The backgroundHandler needs to be either a static function or a top 
+          The backgroundHandler needs to be either a static function or a top
           level function to be accessible as a Flutter entry point.''');
 
     final CallbackHandle? dispatcher =

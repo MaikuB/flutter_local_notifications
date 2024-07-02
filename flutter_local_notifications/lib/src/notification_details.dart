@@ -2,6 +2,7 @@ import 'package:flutter_local_notifications_linux/flutter_local_notifications_li
 
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/darwin/notification_details.dart';
+import 'platform_specifics/windows/notification_details.dart';
 
 /// Contains notification details specific to each platform.
 class NotificationDetails {
@@ -11,6 +12,7 @@ class NotificationDetails {
     this.iOS,
     this.macOS,
     this.linux,
+    this.windows,
   });
 
   /// Notification details for Android.
@@ -24,4 +26,7 @@ class NotificationDetails {
 
   /// Notification details for Linux.
   final LinuxNotificationDetails? linux;
+
+  /// Notification details for Windows.
+  final WindowsNotificationDetails? windows;
 }
