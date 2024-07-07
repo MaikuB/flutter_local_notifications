@@ -202,7 +202,7 @@ Future<void> _showWindowsNotificationWithImages() => flutterLocalNotificationsPl
     windows: WindowsNotificationDetails(
       images: <WindowsImage>[
         WindowsImage.file(
-          File('./icons/4.0x/app_icon_density.png'),
+          File('./icons/4.0x/app_icon_density.png').absolute,
           altText: 'A beautiful image',
         ),
       ],
@@ -220,11 +220,11 @@ Future<void> _showWindowsNotificationWithGroups() => flutterLocalNotificationsPl
       groups: <WindowsGroup>[
         WindowsGroup(<WindowsColumn>[
           WindowsColumn(<WindowsNotificationPart>[
-            WindowsImage.file(File('icons/coworker.png'), altText: 'A coworker'),
+            WindowsImage.file(File('icons/coworker.png').absolute, altText: 'A coworker'),
             const WindowsNotificationText(text: 'A coworker', isCaption: true),
           ]),
           WindowsColumn(<WindowsNotificationPart>[
-            WindowsImage.file(File('icons/4.0x/app_icon_density.png'), altText: 'The icon'),
+            WindowsImage.file(File('icons/4.0x/app_icon_density.png').absolute, altText: 'The icon'),
             const WindowsNotificationText(text: 'The icon'),
           ]),
         ]),

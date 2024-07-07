@@ -123,7 +123,7 @@ class WindowsAction {
       'afterActivationBehavior': activationBehavior.name,
       if (placement != null) 'placement': placement!.name,
       if (image != null) 'imageUri':
-        Uri.file(image!.absolute.path, windows: true).toString(),
+        Uri.file(image!.absolute.path, windows: true).toFilePath(),
       if (inputId != null) 'hint-inputId': inputId!,
       if (buttonStyle != null) 'hint-buttonStyle': buttonStyle!.name,
       if (tooltip != null) 'hint-toolTip': tooltip!,

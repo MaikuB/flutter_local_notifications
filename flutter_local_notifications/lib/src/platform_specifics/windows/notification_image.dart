@@ -56,7 +56,7 @@ class WindowsImage extends WindowsNotificationPart {
   void toXml(XmlBuilder builder) => builder.element(
     'image',
     attributes: <String, String>{
-      'src': Uri.file(file.absolute.path, windows: true).toString(),
+      'src': Uri.file(file.absolute.path, windows: true).toFilePath(),
       'alt': altText,
       'addImageQuery': addQueryParams.toString(),
       if (placement != null) 'placement': placement!.name,

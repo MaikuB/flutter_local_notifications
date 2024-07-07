@@ -83,7 +83,7 @@ class WindowsNotificationAudio {
     required Uri file,
     this.shouldLoop = false,
     this.isSilent = false,
-  }) : source = file.toString() {
+  }) : source = file.toFilePath() {
     if (!allowedSchemes.contains(file.scheme)) {
       throw ArgumentError.value(
         file.toString(),
