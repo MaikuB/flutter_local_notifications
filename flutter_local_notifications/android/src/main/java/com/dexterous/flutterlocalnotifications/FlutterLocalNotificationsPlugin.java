@@ -452,19 +452,23 @@ public class FlutterLocalNotificationsPlugin
       NotificationDetails notificationDetails,
       NotificationCompat.Builder builder) {
     if (!StringUtils.isNullOrEmpty(notificationDetails.icon)) {
-      builder.setSmallIcon(getDrawableResourceId(context, notificationDetails.icon));
-    } else {
-      SharedPreferences sharedPreferences =
-          context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-      String defaultIcon = sharedPreferences.getString(DEFAULT_ICON, null);
-      if (StringUtils.isNullOrEmpty(defaultIcon)) {
-        // for backwards compatibility: this is for handling the old way references to the icon used
-        // to be kept but should be removed in future
-        builder.setSmallIcon(notificationDetails.iconResourceId);
-
-      } else {
-        builder.setSmallIcon(getDrawableResourceId(context, defaultIcon));
+      int icon = getDrawableResourceId(context, notificationDetails.icon);
+      if(icon != 0) {
+        builder.setSmallIcon(icon);
+        return;
       }
+    }
+
+    SharedPreferences sharedPreferences =
+        context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+    String defaultIcon = sharedPreferences.getString(DEFAULT_ICON, null);
+    if (StringUtils.isNullOrEmpty(defaultIcon)) {
+      // for backwards compatibility: this is for handling the old way references to the icon used
+      // to be kept but should be removed in future
+      builder.setSmallIcon(notificationDetails.iconResourceId);
+
+    } else {
+      builder.setSmallIcon(getDrawableResourceId(context, defaultIcon));
     }
   }
 
@@ -1639,8 +1643,7 @@ public class FlutterLocalNotificationsPlugin
   private NotificationDetails extractNotificationDetails(
       Result result, Map<String, Object> arguments) {
     NotificationDetails notificationDetails = NotificationDetails.from(arguments);
-    if (hasInvalidIcon(result, notificationDetails.icon)
-        || hasInvalidLargeIcon(
+    if (hasInvalidLargeIcon(
             result, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource)
         || hasInvalidBigPictureResources(result, notificationDetails)
         || hasInvalidRawSoundResource(result, notificationDetails)
