@@ -30,6 +30,8 @@ dependency_overrides:
     path: ../../flutter_local_notifications_linux
   flutter_local_notifications_platform_interface:
     path: ../../flutter_local_notifications_platform_interface
+  flutter_local_notifications_windows:
+    path: ../../flutter_local_notifications_windows
 
 flutter:
   uses-material-design: true

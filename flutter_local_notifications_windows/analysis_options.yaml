@@ -1,0 +1,52 @@
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints. See the following for docs:
+# https://dart.dev/guides/language/analysis-options
+#
+# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
+# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
+# invoked from the command line by running `flutter analyze`.
+include: package:very_good_analysis/analysis_options.yaml  # has more lints
+
+analyzer:
+  language:
+    # Strict casts isn't helpful with null safety. It only notifies you on `dynamic`,
+    # which happens all the time in JSON.
+    #
+    # See https://github.com/dart-lang/language/blob/main/resources/type-system/strict-casts.md
+    strict-casts: false
+
+    # Don't let any types be inferred as `dynamic`.
+    #
+    # See https://github.com/dart-lang/language/blob/main/resources/type-system/strict-inference.md
+    strict-inference: true
+
+    # Don't let Dart infer the wrong type on the left side of an assignment.
+    #
+    # See https://github.com/dart-lang/language/blob/main/resources/type-system/strict-raw-types.md
+    strict-raw-types: true
+
+  # These are only temporary while these files are in development.
+  # exclude:
+
+linter:
+  rules:
+    # Rules NOT in package:very_good_analysis
+    prefer_double_quotes: true
+    prefer_expression_function_bodies: true
+    avoid_types_on_closure_parameters: true
+
+    # Rules to be disabled from package:very_good_analysis
+    prefer_single_quotes: false  # prefer_double_quotes
+    lines_longer_than_80_chars: false  # lines should be at most 100 chars
+    sort_pub_dependencies: false  # Sort dependencies by function
+    use_key_in_widget_constructors: false  # not in Flutter apps
+    directives_ordering: false  # sort dart, then flutter, then package imports
+    always_use_package_imports: false  # not when importing sibling files
+    sort_constructors_first: false  # final properties, then constructor
+    avoid_dynamic_calls: false  # this lint takes over errors in the IDE
+    one_member_abstracts: false  # abstract classes are good for interfaces
+    cascade_invocations: false  # cascades are often harder to read
+
+    # Temporarily disabled until we are ready to document
+    public_member_api_docs: false
+    flutter_style_todos: false
