@@ -20,69 +20,64 @@ extern "C" {
 
 typedef struct NativePlugin NativePlugin;
 
-typedef struct Pair {
+typedef struct StringMapEntry {
   const char* key;
   const char* value;
-} Pair;
+} StringMapEntry;
 
-typedef struct {
+typedef struct NativeStringMap {
+  const StringMapEntry* entries;
+  int size;
+} NativeStringMap;
+
+typedef struct NativeNotificationDetails {
   int id;
-} NativeDetails;
+} NativeNotificationDetails;
 
-typedef enum {
+typedef enum NativeLaunchType {
   notification,
   action,
 } NativeLaunchType;
 
-typedef struct {
+typedef struct NativeLaunchDetails {
   int didLaunch;
   NativeLaunchType launchType;
-  char* payload;
-  int payloadSize;
-  Pair* data;
-  int dataSize;
+  const char* payload;
+  NativeStringMap data;
 } NativeLaunchDetails;
 
-typedef void (*NativeNotificationCallback)(NativeLaunchDetails* details);
+typedef void (*NativeNotificationCallback)(NativeLaunchDetails details);
 
 // See: https://learn.microsoft.com/en-us/uwp/api/windows.ui.notifications.notificationupdateresult
-typedef enum {
+typedef enum NativeUpdateResult {
   success = 0,
   failed = 1,
   notFound = 2,
 } NativeUpdateResult;
 
 FFI_PLUGIN_EXPORT NativePlugin* createPlugin();
+
 FFI_PLUGIN_EXPORT void disposePlugin(NativePlugin* ptr);
 
-FFI_PLUGIN_EXPORT int init(
-  NativePlugin* plugin,
-  char* appName,
-  char* aumId,
-  char* guid,
-  char* iconPath,
-  NativeNotificationCallback callback
-);
+FFI_PLUGIN_EXPORT int init(NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath, NativeNotificationCallback callback);
 
-FFI_PLUGIN_EXPORT int showNotification(NativePlugin* plugin, int id, char* xml, Pair* bindings, int bindingsSize);
+FFI_PLUGIN_EXPORT int showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap bindings);
 
 FFI_PLUGIN_EXPORT int scheduleNotification(NativePlugin* plugin, int id, char* xml, int time);
 
-FFI_PLUGIN_EXPORT NativeUpdateResult updateNotification(NativePlugin* plugin, int id, Pair* bindings, int bindingsSize);
+FFI_PLUGIN_EXPORT NativeUpdateResult updateNotification(NativePlugin* plugin, int id, NativeStringMap bindings);
 
 FFI_PLUGIN_EXPORT void cancelAll(NativePlugin* plugin);
 
 FFI_PLUGIN_EXPORT void cancelNotification(NativePlugin* plugin, int id);
 
-FFI_PLUGIN_EXPORT NativeDetails* getActiveNotifications(NativePlugin* plugin, int* size);
+FFI_PLUGIN_EXPORT NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* size);
 
-FFI_PLUGIN_EXPORT NativeDetails* getPendingNotifications(NativePlugin* plugin, int* size);
+FFI_PLUGIN_EXPORT NativeNotificationDetails* getPendingNotifications(NativePlugin* plugin, int* size);
 
-FFI_PLUGIN_EXPORT NativeLaunchDetails* getLaunchDetails(NativePlugin* plugin);
+FFI_PLUGIN_EXPORT void freeDetailsArray(NativeNotificationDetails* ptr);
 
-FFI_PLUGIN_EXPORT void freeDetailsArray(NativeDetails* ptr);
-
-FFI_PLUGIN_EXPORT void freePairArray(Pair* ptr);
+FFI_PLUGIN_EXPORT void freeLaunchDetails(NativeLaunchDetails details);
 
 #ifdef __cplusplus
 }

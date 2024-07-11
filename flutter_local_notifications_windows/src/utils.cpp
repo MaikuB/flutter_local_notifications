@@ -1,52 +1,27 @@
+#include <winrt/Windows.Foundation.Collections.h>
+
 #include "utils.hpp"
 
-Bindings pairsToBindings(Pair* pairs, int size) {
-  Bindings result;
-  for (int index = 0; index < size; index++) {
-    const auto pair = pairs[index];
-    result.try_emplace(pair.key, pair.value);
-  }
+char* toNativeString(string str) {
+  const auto size = (int) str.size() + 1;  // + 1 for null terminator
+  const auto result = new char[size];
+  strcpy_s(result, size, str.c_str());
   return result;
 }
 
-Pair* bindingsToPairs(Bindings bindings, int* size) {
-  *size = (int) bindings.size();
-  auto array = new Pair[*size];
-  int index = 0;
-  for (const auto pair : bindings) {
-    array[index].key = pair.first.c_str();
-    array[index].value = pair.second.c_str();
-    index++;
-  }
-  return array;
+NativeStringMap toNativeMap(vector<StringMapEntry> entries) {
+  const auto size = (int) entries.size();
+  const auto array = new StringMapEntry[size];
+  std::copy(entries.begin(), entries.end(), array);
+  return { array, size };
 }
 
-NativeDetails* getDetailsArray(vector<NativeDetails> vec, int* size) {
-  *size = (int) vec.size();
-  auto result = new NativeDetails[vec.size()];
-  for (int index = 0; index < vec.size(); index++) {
-    result[index] = vec.at(index);
-  }
-  return result;
-}
-
-NotificationData dataFromBindings(Bindings bindings) {
+NotificationData dataFromMap(NativeStringMap map) {
   NotificationData data;
-  for (const auto pair : bindings) {
-    const auto key = winrt::to_hstring(pair.first);
-    const auto value = winrt::to_hstring(pair.second);
+  for (int index = 0; index < map.size; index++) {
+    const auto key = winrt::to_hstring(map.entries[index].key);
+    const auto value = winrt::to_hstring(map.entries[index].value);
     data.Values().Insert(key, value);
   }
   return data;
-}
-
-NativeLaunchDetails* parseLaunchDetails(LaunchData data) {
-  NativeLaunchDetails* result = new NativeLaunchDetails;
-  result->didLaunch = data.didLaunch;
-  result->data = bindingsToPairs(data.data, &result->dataSize);
-  result->launchType = data.launchType;
-  result->payload = new char[data.payload.size()];
-  result->payloadSize = (int) data.payload.size();
-  memcpy(result->payload, data.payload.c_str(), data.payload.size());
-  return result;
 }

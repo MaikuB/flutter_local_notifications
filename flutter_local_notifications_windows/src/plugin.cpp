@@ -1,23 +1,262 @@
+#include <sstream>
+
 #include <windows.h>  // <-- This must be the first Windows header
 #include <appmodel.h>
+#include <atlbase.h>
+#include <NotificationActivationCallback.h>
 #include <VersionHelpers.h>
-#include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/Windows.Data.Xml.Dom.h>
 
 #include "plugin.hpp"
-#include "registration.hpp"
+#include "utils.hpp"
 
-using namespace notifications;
-using winrt::Windows::Data::Xml::Dom::XmlDocument;
+struct RegistryHandle {
+	using type = HKEY;
 
-notifications::NativePlugin* pluginPtr = nullptr;
+	static void close(type value) noexcept {
+		WINRT_VERIFY_(ERROR_SUCCESS, RegCloseKey(value));
+	}
 
-void globalHandleLaunchData(LaunchData data) {
-  if (pluginPtr == nullptr) return;
-  pluginPtr->handleLaunchData(data);
+	static constexpr type invalid() noexcept { return nullptr; }
+};
+
+using RegistryKey = winrt::handle_type<RegistryHandle>;
+
+/// This callback will be called when a notification sent by this plugin is clicked on.
+struct NotificationActivationCallback : winrt::implements<NotificationActivationCallback, INotificationActivationCallback> {
+	NativeNotificationCallback callback;
+
+	HRESULT __stdcall Activate(
+		LPCWSTR app,
+		LPCWSTR args,
+		NOTIFICATION_USER_INPUT_DATA const* data,
+		ULONG count) noexcept final
+	{
+		try {
+      // Fill the data map
+      vector<StringMapEntry> entries;
+			for (ULONG i = 0; i < count; i++) {
+				auto item = data[i];
+        const std::string key = CW2A(item.Key);
+        const std::string value = CW2A(item.Value);
+        const auto pair = StringMapEntry { toNativeString(key), toNativeString(value) };
+        entries.push_back(pair);
+			}
+
+			const auto openedWithAction = args != nullptr;
+      const auto payload = string(CW2A(args));
+      const auto launchType = openedWithAction
+        ? NativeLaunchType::action : NativeLaunchType::notification;
+      NativeLaunchDetails launchDetails;
+      launchDetails.didLaunch = true;
+      launchDetails.launchType = launchType;
+      launchDetails.payload = toNativeString(payload);
+      launchDetails.data = toNativeMap(entries);
+      callback(launchDetails);
+			return S_OK;
+		}
+		catch (...) {
+			return winrt::to_hresult();
+		}
+	}
+};
+
+/// A class factory that creates an instance of NotificationActivationCallback.
+struct NotificationActivationCallbackFactory : winrt::implements<NotificationActivationCallbackFactory, IClassFactory> {
+	NativeNotificationCallback callback;
+
+	HRESULT __stdcall CreateInstance(
+		IUnknown* outer,
+		GUID const& iid,
+		void** result) noexcept final
+	{
+		*result = nullptr;
+
+		if (outer) {
+			return CLASS_E_NOAGGREGATION;
+		}
+
+		const auto cb = winrt::make_self<NotificationActivationCallback>();
+		cb.get()->callback = callback;
+
+		return cb->QueryInterface(iid, result);
+	}
+
+	HRESULT __stdcall LockServer(BOOL) noexcept final { return S_OK; }
+};
+
+/// <summary>
+/// Updates the Registry to enable notifications.
+///
+/// Related resources:
+/// <ul>
+///   <li>https://docs.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/send-local-toast-other-apps</li>
+/// </ul>
+/// </summary>
+/// <param name="aumid">The app user model ID of the app. Provided during initialization of the plugin.</param>
+/// <param name="appName">The display name of the app. The name will be shown on the notification toasts.</param>
+/// <param name="iconPath">An optional path to the icon of the app. The icon will be shown on the notification toasts</param>
+/// <param name="iconBgColor">An optional string that specifies the background color of the icon, in the format of AARRGGBB.</param>
+void UpdateRegistry(
+	const std::string& aumid,
+	const std::string& appName,
+	const std::string& guid,
+	const std::optional<std::string>& iconPath
+) {
+	std::stringstream ss;
+	ss << "Software\\Microsoft\\Windows\\CurrentVersion\\PushNotifications\\Backup\\" << aumid;
+	const auto notifSettingsKeyPath = ss.str();
+	RegistryKey key;
+
+	// create registry key
+	// HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\PushNotifications\Backup
+	winrt::check_win32(RegCreateKeyExA(
+		HKEY_CURRENT_USER,
+		notifSettingsKeyPath.c_str(),
+		0,
+		nullptr,
+		0,
+		KEY_WRITE,
+		nullptr,
+		key.put(),
+		nullptr));
+
+	// put the following key values under the key
+	// HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\PushNotifications\Backup\<aumid>
+	//
+	// appType = app:desktop
+	// Setting = s:banner,s:toast,s:audio,c:toast,c:ringing
+	// wnsId = NonImmersivePackage
+
+	const std::string appType = "app:desktop";
+	const std::string setting = "s:banner,s:toast,s:audio,c:toast,c:ringing";
+	const std::string wnsId = "NonImmersivePackage";
+	winrt::check_win32(RegSetValueExA(
+		key.get(),
+		"appType",
+		0,
+		REG_SZ,
+		reinterpret_cast<const BYTE*>(appType.c_str()),
+		static_cast<uint32_t>(appType.size() + 1 * sizeof(char))));
+	winrt::check_win32(RegSetValueExA(
+		key.get(),
+		"Setting",
+		0,
+		REG_SZ,
+		reinterpret_cast<const BYTE*>(setting.c_str()),
+		static_cast<uint32_t>(setting.size() + 1 * sizeof(char))));
+	winrt::check_win32(RegSetValueExA(
+		key.get(),
+		"wnsId",
+		0,
+		REG_SZ,
+		reinterpret_cast<const BYTE*>(wnsId.c_str()),
+		static_cast<uint32_t>(wnsId.size() + 1 * sizeof(char))));
+
+	// now, we register app info to the Registry.
+
+	ss.clear();
+	ss.str(std::string());
+	ss << "Software\\Classes\\AppUserModelId\\" << aumid;
+	const auto appInfoKeyPath = ss.str();
+	RegistryKey appInfoKey;
+
+	// create registry key
+	// HKEY_CURRENT_USER\Software\Classes\AppUserModelId\<aumid>
+	winrt::check_win32(RegCreateKeyExA(
+		HKEY_CURRENT_USER,
+		appInfoKeyPath.c_str(),
+		0,
+		nullptr,
+		0,
+		KEY_WRITE,
+		nullptr,
+		appInfoKey.put(),
+		nullptr));
+
+	winrt::check_win32(RegSetValueExA(
+		appInfoKey.get(),
+		"DisplayName",
+		0,
+		REG_SZ,
+		reinterpret_cast<const BYTE*>(appName.c_str()),
+		static_cast<uint32_t>(appName.size() + 1 * sizeof(char))));
+
+	if (iconPath.has_value()) {
+		const auto v = iconPath.value();
+		winrt::check_win32(RegSetValueExA(
+			appInfoKey.get(),
+			"IconUri",
+			0,
+			REG_SZ,
+			reinterpret_cast<const BYTE*>(v.c_str()),
+			static_cast<uint32_t>(v.size() + 1 * sizeof(char))));
+	}
+
+  // TODO: Decide if this is possible/worth it to support
+	// if (iconBgColor.has_value()) {
+	// 	const auto v = iconBgColor.value();
+	// 	winrt::check_win32(RegSetValueExA(
+	// 		appInfoKey.get(),
+	// 		"IconBackgroundColor",
+	// 		0,
+	// 		REG_SZ,
+	// 		reinterpret_cast<const BYTE*>(v.c_str()),
+	// 		static_cast<uint32_t>(v.size() + 1 * sizeof(char))));
+	// }
+
+	// combine guid to class id
+	ss.clear();
+	ss.str(std::string());
+	ss << '{' << guid << '}';
+	const auto clsid = ss.str();
+
+	// register the guid of the notification activation callback
+	winrt::check_win32(RegSetValueExA(
+		appInfoKey.get(),
+		"CustomActivator",
+		0,
+		REG_SZ,
+		reinterpret_cast<const BYTE*>(clsid.c_str()),
+		static_cast<uint32_t>(clsid.size() + 1 * sizeof(char))));
 }
 
-optional<bool> notifications::NativePlugin::checkIdentity() {
+/// Register the notification activation callback factory
+/// and the guid of the callback.
+bool RegisterCallback(const std::string& guid, NativeNotificationCallback callback) {
+	DWORD registration{};
+
+	const auto factory_ref = winrt::make_self<NotificationActivationCallbackFactory>();
+	const auto factory = factory_ref.get();
+
+	// The WinRT GUID constructor terminates the app if there's an invalid GUID, so check it here first.
+	if (guid.size() != 36 || guid[8] != '-' || guid[13] != '-' || guid[18] != '-' || guid[23] != '-') {
+		throw std::invalid_argument("Invalid GUID");
+	}
+
+	winrt::guid rclsid(guid);
+	factory->callback = callback;
+
+	winrt::check_hresult(CoRegisterClassObject(
+		rclsid,
+		factory,
+		CLSCTX_LOCAL_SERVER,
+		REGCLS_MULTIPLEUSE,
+		&registration));
+	return true;
+}
+
+bool WinRTPlugin::registerApp(
+	const string& aumid,
+	const string& appName,
+	const string& guid,
+	const optional<string>& iconPath,
+	NativeNotificationCallback callback
+) {
+	UpdateRegistry(aumid, appName, guid, iconPath);
+	return RegisterCallback(guid, callback);
+}
+
+std::optional<bool> WinRTPlugin::checkIdentity() {
   if (!IsWindows8OrGreater()) return false;
   uint32_t length = 0;
   auto error = GetCurrentPackageFullName(&length, nullptr);
@@ -30,114 +269,3 @@ optional<bool> notifications::NativePlugin::checkIdentity() {
   free(fullName);
   return true;
 }
-
-notifications::NativePlugin::NativePlugin() { }
-notifications::NativePlugin::~NativePlugin() { }
-
-void notifications::NativePlugin::handleLaunchData(LaunchData data) {
-  auto details = parseLaunchDetails(data);
-  this->launchData = data;
-  this->callback(details);
-}
-
-bool notifications::NativePlugin::init(string appName, string aumid, string guid, optional<string> iconPath, NativeNotificationCallback callback) {
-  if (pluginPtr != nullptr) delete pluginPtr;
-  pluginPtr = this;
-  this->callback = callback;
-  this->aumid = winrt::to_hstring(aumid);
-  const auto didRegister = RegisterApp(aumid, appName, guid, iconPath, globalHandleLaunchData);
-  if (!didRegister) return false;
-  const auto identityResult = checkIdentity();
-  if (!identityResult.has_value()) return false;
-  hasIdentity = identityResult.value();
-  notifier = hasIdentity
-    ? ToastNotificationManager::CreateToastNotifier()
-    : ToastNotificationManager::CreateToastNotifier(this->aumid);
-  history = ToastNotificationManager::History();
-  return true;
-}
-
-bool notifications::NativePlugin::showNotification(int id, string xml, Bindings bindings) {
-  if (!notifier.has_value()) return false;
-  XmlDocument doc;
-  try { doc.LoadXml(winrt::to_hstring(xml)); }
-  catch (winrt::hresult_error error) { return false; }
-  ToastNotification notification(doc);
-  const auto data = dataFromBindings(bindings);
-  notification.Tag(winrt::to_hstring(id));
-  notification.Data(data);
-  notifier.value().Show(notification);
-  return true;
-}
-
-bool notifications::NativePlugin::scheduleNotification(const int id, const std::string xml, const time_t time) {
-  if (!notifier.has_value()) return false;
-  XmlDocument doc;
-  try { doc.LoadXml(winrt::to_hstring(xml)); }
-  catch (winrt::hresult_error error) { return false; }
-  ScheduledToastNotification notification(doc, winrt::clock::from_time_t(time));
-  notification.Tag(winrt::to_hstring(id));
-  notifier.value().AddToSchedule(notification);
-  return true;
-}
-
-void notifications::NativePlugin::cancelAll() {
-  if (!history.has_value() || !notifier.has_value()) return;
-  if (hasIdentity) {
-    history.value().Clear();
-  } else {
-    history.value().Clear(aumid);
-  }
-  const auto allScheduled = notifier.value().GetScheduledToastNotifications();
-  for (const auto notification : allScheduled) {
-    notifier.value().RemoveFromSchedule(notification);
-  }
-}
-
-void notifications::NativePlugin::cancelNotification(int id) {
-  if (!history.has_value() || !notifier.has_value()) return;
-  const auto tag = winrt::to_hstring(id);
-  if (hasIdentity) history.value().Remove(tag);
-  for (const auto notification : notifier.value().GetScheduledToastNotifications()) {
-    if (notification.Tag() == tag) {
-      notifier.value().RemoveFromSchedule(notification);
-      return;
-    }
-  }
-}
-
-NativeUpdateResult notifications::NativePlugin::updateNotification(int id, Bindings bindings) {
-  if (!notifier.has_value()) return NativeUpdateResult::failed;
-  const auto tag = winrt::to_hstring(id);
-  const auto data = dataFromBindings(bindings);
-  return (NativeUpdateResult) notifier.value().Update(data, tag);
-}
-
-vector<NativeDetails> notifications::NativePlugin::getActiveNotifications() {
-  vector<NativeDetails> result;
-  if (!history.has_value() || !hasIdentity) return result;
-  for (const auto notification : history.value().GetHistory()) {
-    NativeDetails details;
-    const auto tag = notification.Tag();
-    const auto tagStr = winrt::to_string(tag);
-    const auto tagInt = std::stoi(tagStr);
-    details.id = tagInt;
-    result.emplace_back(details);
-  }
-  return result;
-}
-
-vector<NativeDetails> notifications::NativePlugin::getPendingNotifications() {
-  vector<NativeDetails> result;
-  if (!notifier.has_value()) return result;
-  for (const auto notification : notifier.value().GetScheduledToastNotifications()) {
-    NativeDetails details;
-    const auto tag = notification.Tag();
-    const auto tagStr = winrt::to_string(tag);
-    const auto tagInt = std::stoi(tagStr);
-    details.id = tagInt;
-    result.emplace_back(details);
-  }
-  return result;
-}
-

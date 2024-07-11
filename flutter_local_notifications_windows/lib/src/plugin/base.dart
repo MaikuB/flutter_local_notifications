@@ -12,6 +12,10 @@ abstract class WindowsNotificationsBase extends FlutterLocalNotificationsPlatfor
     DidReceiveNotificationResponseCallback? onNotificationReceived,
   });
 
+  /// The raw XML passed to the Windows API.
+  ///
+  /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
+  /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
   Future<void> showRawXml({
     required int id,
     required String xml,

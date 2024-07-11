@@ -47,8 +47,7 @@ extension on DateTime {
     final offset = timeZoneOffset;
     final sign = offset.isNegative ? "-" : "+";
     final hours = offset.inHours.abs().toString().padLeft(2, "0");
-    final minutes = offset.inMinutes.abs().remainder(60)
-      .toString().padLeft(2, "0");
+    final minutes = offset.inMinutes.abs().remainder(60).toString().padLeft(2, "0");
     final offsetString = "$sign$hours:$minutes";
     // Get first part of properly formatted ISO 8601 date
     final formattedDate = toIso8601String().split(".").first;
@@ -61,7 +60,7 @@ extension on DateTime {
 /// See: https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/adaptive-interactive-toasts
 class WindowsNotificationDetails {
   /// Creates a Windows notification from the given options.
-  WindowsNotificationDetails({
+  const WindowsNotificationDetails({
     this.actions = const <WindowsAction>[],
     this.inputs = const <WindowsInput>[],
     this.images = const <WindowsImage>[],
@@ -74,24 +73,7 @@ class WindowsNotificationDetails {
     this.scenario,
     this.timestamp,
     this.subtitle,
-  }) : rawXml = null {
-    if (actions.length > 5) {
-      throw ArgumentError(
-        "WindowsNotificationDetails can only have up to 5 actions",
-      );
-    }
-    if (inputs.length > 5) {
-      throw ArgumentError(
-        "WindowsNotificationDetails can only have up to 5 inputs",
-      );
-    }
-  }
-
-  /// The raw XML passed to the Windows API.
-  ///
-  /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
-  /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
-  final String? rawXml;
+  });
 
   /// A list of at most five action buttons.
   final List<WindowsAction> actions;
@@ -142,9 +124,11 @@ class WindowsNotificationDetails {
 
   /// Builds all relevant XML parts under the root `<toast>` element.
   void toXml(XmlBuilder builder) {
-    if (rawXml != null) {
-      builder.xml(rawXml!);
-      return;
+    if (actions.length > 5) {
+      throw ArgumentError("WindowsNotificationDetails can only have up to 5 actions");
+    }
+    if (inputs.length > 5) {
+      throw ArgumentError("WindowsNotificationDetails can only have up to 5 inputs");
     }
     builder.element("actions", nest: () {
       for (final input in inputs) {

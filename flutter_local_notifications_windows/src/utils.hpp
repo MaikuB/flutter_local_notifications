@@ -1,26 +1,19 @@
 #pragma once
 
-#include <winrt/Windows.UI.Notifications.h>
-#include <winrt/Windows.Foundation.Collections.h>
-
 #include <map>
 #include <string>
 
-#include "ffi_api.h"
-#include "registration.hpp"
+#include <windows.h>  // <-- This must be the first Windows header
+#include <winrt/Windows.UI.Notifications.h>
 
-using std::map;
+#include "ffi_api.h"
+
 using std::string;
 using std::vector;
-using winrt::Windows::UI::Notifications::NotificationData;
-using Bindings = map<string, string>;
+using namespace winrt::Windows::UI::Notifications;
 
-Bindings pairsToBindings(Pair* pairs, int size);
+char* toNativeString(string str);
 
-Pair* bindingsToPairs(Bindings bindings, int* size);
+NativeStringMap toNativeMap(vector<StringMapEntry> entries);
 
-NativeDetails* getDetailsArray(vector<NativeDetails> vec, int* size);
-
-NotificationData dataFromBindings(Bindings bindings);
-
-NativeLaunchDetails* parseLaunchDetails(LaunchData details);
+NotificationData dataFromMap(NativeStringMap map);

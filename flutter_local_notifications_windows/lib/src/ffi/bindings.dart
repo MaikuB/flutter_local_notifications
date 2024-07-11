@@ -92,29 +92,23 @@ class NotificationsPluginBindings {
     ffi.Pointer<NativePlugin> plugin,
     int id,
     ffi.Pointer<pkg_ffi.Utf8> xml,
-    ffi.Pointer<Pair> bindings,
-    int bindingsSize,
+    NativeStringMap bindings,
   ) {
     return _showNotification(
       plugin,
       id,
       xml,
       bindings,
-      bindingsSize,
     );
   }
 
   late final _showNotificationPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Int Function(
-              ffi.Pointer<NativePlugin>,
-              ffi.Int,
-              ffi.Pointer<pkg_ffi.Utf8>,
-              ffi.Pointer<Pair>,
-              ffi.Int)>>('showNotification');
+          ffi.Int Function(ffi.Pointer<NativePlugin>, ffi.Int,
+              ffi.Pointer<pkg_ffi.Utf8>, NativeStringMap)>>('showNotification');
   late final _showNotification = _showNotificationPtr.asFunction<
       int Function(ffi.Pointer<NativePlugin>, int, ffi.Pointer<pkg_ffi.Utf8>,
-          ffi.Pointer<Pair>, int)>();
+          NativeStringMap)>();
 
   int scheduleNotification(
     ffi.Pointer<NativePlugin> plugin,
@@ -141,23 +135,21 @@ class NotificationsPluginBindings {
   int updateNotification(
     ffi.Pointer<NativePlugin> plugin,
     int id,
-    ffi.Pointer<Pair> bindings,
-    int bindingsSize,
+    NativeStringMap bindings,
   ) {
     return _updateNotification(
       plugin,
       id,
       bindings,
-      bindingsSize,
     );
   }
 
   late final _updateNotificationPtr = _lookup<
       ffi.NativeFunction<
           ffi.Int32 Function(ffi.Pointer<NativePlugin>, ffi.Int,
-              ffi.Pointer<Pair>, ffi.Int)>>('updateNotification');
+              NativeStringMap)>>('updateNotification');
   late final _updateNotification = _updateNotificationPtr.asFunction<
-      int Function(ffi.Pointer<NativePlugin>, int, ffi.Pointer<Pair>, int)>();
+      int Function(ffi.Pointer<NativePlugin>, int, NativeStringMap)>();
 
   void cancelAll(
     ffi.Pointer<NativePlugin> plugin,
@@ -190,7 +182,7 @@ class NotificationsPluginBindings {
   late final _cancelNotification = _cancelNotificationPtr
       .asFunction<void Function(ffi.Pointer<NativePlugin>, int)>();
 
-  ffi.Pointer<NativeDetails> getActiveNotifications(
+  ffi.Pointer<NativeNotificationDetails> getActiveNotifications(
     ffi.Pointer<NativePlugin> plugin,
     ffi.Pointer<ffi.Int> size,
   ) {
@@ -202,13 +194,14 @@ class NotificationsPluginBindings {
 
   late final _getActiveNotificationsPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Pointer<NativeDetails> Function(ffi.Pointer<NativePlugin>,
+          ffi.Pointer<NativeNotificationDetails> Function(
+              ffi.Pointer<NativePlugin>,
               ffi.Pointer<ffi.Int>)>>('getActiveNotifications');
   late final _getActiveNotifications = _getActiveNotificationsPtr.asFunction<
-      ffi.Pointer<NativeDetails> Function(
+      ffi.Pointer<NativeNotificationDetails> Function(
           ffi.Pointer<NativePlugin>, ffi.Pointer<ffi.Int>)>();
 
-  ffi.Pointer<NativeDetails> getPendingNotifications(
+  ffi.Pointer<NativeNotificationDetails> getPendingNotifications(
     ffi.Pointer<NativePlugin> plugin,
     ffi.Pointer<ffi.Int> size,
   ) {
@@ -220,29 +213,15 @@ class NotificationsPluginBindings {
 
   late final _getPendingNotificationsPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Pointer<NativeDetails> Function(ffi.Pointer<NativePlugin>,
+          ffi.Pointer<NativeNotificationDetails> Function(
+              ffi.Pointer<NativePlugin>,
               ffi.Pointer<ffi.Int>)>>('getPendingNotifications');
   late final _getPendingNotifications = _getPendingNotificationsPtr.asFunction<
-      ffi.Pointer<NativeDetails> Function(
+      ffi.Pointer<NativeNotificationDetails> Function(
           ffi.Pointer<NativePlugin>, ffi.Pointer<ffi.Int>)>();
 
-  ffi.Pointer<NativeLaunchDetails> getLaunchDetails(
-    ffi.Pointer<NativePlugin> plugin,
-  ) {
-    return _getLaunchDetails(
-      plugin,
-    );
-  }
-
-  late final _getLaunchDetailsPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Pointer<NativeLaunchDetails> Function(
-              ffi.Pointer<NativePlugin>)>>('getLaunchDetails');
-  late final _getLaunchDetails = _getLaunchDetailsPtr.asFunction<
-      ffi.Pointer<NativeLaunchDetails> Function(ffi.Pointer<NativePlugin>)>();
-
   void freeDetailsArray(
-    ffi.Pointer<NativeDetails> ptr,
+    ffi.Pointer<NativeNotificationDetails> ptr,
   ) {
     return _freeDetailsArray(
       ptr,
@@ -250,35 +229,43 @@ class NotificationsPluginBindings {
   }
 
   late final _freeDetailsArrayPtr = _lookup<
-          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<NativeDetails>)>>(
-      'freeDetailsArray');
+      ffi.NativeFunction<
+          ffi.Void Function(
+              ffi.Pointer<NativeNotificationDetails>)>>('freeDetailsArray');
   late final _freeDetailsArray = _freeDetailsArrayPtr
-      .asFunction<void Function(ffi.Pointer<NativeDetails>)>();
+      .asFunction<void Function(ffi.Pointer<NativeNotificationDetails>)>();
 
-  void freePairArray(
-    ffi.Pointer<Pair> ptr,
+  void freeLaunchDetails(
+    NativeLaunchDetails details,
   ) {
-    return _freePairArray(
-      ptr,
+    return _freeLaunchDetails(
+      details,
     );
   }
 
-  late final _freePairArrayPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<Pair>)>>(
-          'freePairArray');
-  late final _freePairArray =
-      _freePairArrayPtr.asFunction<void Function(ffi.Pointer<Pair>)>();
+  late final _freeLaunchDetailsPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(NativeLaunchDetails)>>(
+          'freeLaunchDetails');
+  late final _freeLaunchDetails =
+      _freeLaunchDetailsPtr.asFunction<void Function(NativeLaunchDetails)>();
 }
 
 class NativePlugin extends ffi.Opaque {}
 
-class Pair extends ffi.Struct {
+class StringMapEntry extends ffi.Struct {
   external ffi.Pointer<pkg_ffi.Utf8> key;
 
   external ffi.Pointer<pkg_ffi.Utf8> value;
 }
 
-class NativeDetails extends ffi.Struct {
+class NativeStringMap extends ffi.Struct {
+  external ffi.Pointer<StringMapEntry> entries;
+
+  @ffi.Int()
+  external int size;
+}
+
+class NativeNotificationDetails extends ffi.Struct {
   @ffi.Int()
   external int id;
 }
@@ -297,13 +284,7 @@ class NativeLaunchDetails extends ffi.Struct {
 
   external ffi.Pointer<pkg_ffi.Utf8> payload;
 
-  @ffi.Int()
-  external int payloadSize;
-
-  external ffi.Pointer<Pair> data;
-
-  @ffi.Int()
-  external int dataSize;
+  external NativeStringMap data;
 }
 
 /// See: https://learn.microsoft.com/en-us/uwp/api/windows.ui.notifications.notificationupdateresult
@@ -314,5 +295,4 @@ abstract class NativeUpdateResult {
 }
 
 typedef NativeNotificationCallback = ffi.Pointer<
-    ffi.NativeFunction<
-        ffi.Void Function(ffi.Pointer<NativeLaunchDetails> details)>>;
+    ffi.NativeFunction<ffi.Void Function(NativeLaunchDetails details)>>;

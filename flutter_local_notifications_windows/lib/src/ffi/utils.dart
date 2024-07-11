@@ -7,12 +7,12 @@ import "package:flutter_local_notifications_windows/src/plugin/base.dart";
 import "bindings.dart";
 import "../details.dart";
 
-typedef NativeCallbackType = Void Function(Pointer<NativeLaunchDetails> details);
+typedef NativeCallbackType = Void Function(NativeLaunchDetails details);
 
-extension PairUtils on Pointer<Pair> {
-  Map<String, String> toMap(int length) => {
-    for (var index = 0; index < length; index++)
-      this[index].key.toDartString(): this[index].value.toDartString(),
+extension NativeStringMapUtils on NativeStringMap {
+  Map<String, String> toMap() => {
+    for (var index = 0; index < size; index++)
+      entries[index].key.toDartString(): entries[index].value.toDartString(),
   };
 }
 
@@ -37,25 +37,27 @@ NotificationUpdateResult getUpdateResult(int result) {
   }
 }
 
-extension MapToPairs on Map<String, String> {
-  Pointer<Pair> toPairs(Arena arena) {
-    final pairs = arena.call<Pair>(length);
+extension MapToNativeMap on Map<String, String> {
+  NativeStringMap toNativeMap(Arena arena) {
+    final pointer = arena<NativeStringMap>();
+    pointer.ref.size = length;
+    pointer.ref.entries = arena<StringMapEntry>(length);
     var index = 0;
     for (final entry in entries) {
-      final pair = pairs[index++];
-      pair.key = entry.key.toNativeUtf8(allocator: arena);
-      pair.value = entry.value.toNativeUtf8(allocator: arena);
+      pointer.ref.entries[index].key = entry.key.toNativeUtf8(allocator: arena);
+      pointer.ref.entries[index].value = entry.value.toNativeUtf8(allocator: arena);
+      index++;
     }
-    return pairs;
+    return pointer.ref;
   }
 }
 
-List<ActiveNotification> parseActiveNotifications(Pointer<NativeDetails> array, int length) => [
+List<ActiveNotification> parseActiveNotifications(Pointer<NativeNotificationDetails> array, int length) => [
   for (var index = 0; index < length; index++)
     ActiveNotification(id: array[index].id),
 ];
 
-List<PendingNotificationRequest> parsePendingNotifications(Pointer<NativeDetails> array, int length) => [
+List<PendingNotificationRequest> parsePendingNotifications(Pointer<NativeNotificationDetails> array, int length) => [
   for (var index = 0; index < length; index++)
     PendingNotificationRequest(array[index].id, null, null, null),
 ];
