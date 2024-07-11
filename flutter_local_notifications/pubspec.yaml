@@ -40,6 +40,8 @@ flutter:
         pluginClass: FlutterLocalNotificationsPlugin
       linux:
         default_package: flutter_local_notifications_linux
+      windows:
+        default_package: flutter_local_notifications_windows
 
 
 environment:

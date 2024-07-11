@@ -239,8 +239,8 @@ Future<void> _showWindowsNotificationWithProgress() async {
   final WindowsProgressBar slowProgress =
     WindowsProgressBar(id: 'slow-progress', status: 'Updating slowly...', value: 0, label: '0 / 10');
   final int notificationId = id++;
-  final WindowsFlutterLocalNotificationsPlugin? windows =
-    flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<WindowsFlutterLocalNotificationsPlugin>();
+  final FlutterLocalNotificationsWindows? windows =
+    flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<FlutterLocalNotificationsWindows>();
   await flutterLocalNotificationsPlugin.show(
     notificationId,
     'This notification has progress bars',
@@ -293,9 +293,9 @@ Future<void> _showWindowsNotificationWithProgress() async {
 Future<void> _showWindowsNotificationWithDynamic() async {
   final DateTime start = DateTime.now();
   final int notificationId = id++;
-  final WindowsFlutterLocalNotificationsPlugin? windows =
+  final FlutterLocalNotificationsWindows? windows =
     flutterLocalNotificationsPlugin
-    .resolvePlatformSpecificImplementation<WindowsFlutterLocalNotificationsPlugin>();
+    .resolvePlatformSpecificImplementation<FlutterLocalNotificationsWindows>();
   await flutterLocalNotificationsPlugin.show(
     notificationId,
     'Dynamic content',
@@ -309,14 +309,14 @@ Future<void> _showWindowsNotificationWithDynamic() async {
   Map<String, String> getBindings() => <String, String>{
     'stopwatch': 'Elapsed time: ${DateTime.now().difference(start).inSeconds} seconds',
   };
-  await windows?.updateBindings(id: notificationId, data: getBindings());
+  await windows?.updateBindings(id: notificationId, bindings: getBindings());
   Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
     if (timer.tick > 10) {
       timer.cancel();
       await flutterLocalNotificationsPlugin.cancel(notificationId);
       return;
     }
-    await windows?.updateBindings(id: notificationId, data: getBindings());
+    await windows?.updateBindings(id: notificationId, bindings: getBindings());
   });
 }
 

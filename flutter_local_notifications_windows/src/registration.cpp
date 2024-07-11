@@ -1,28 +1,35 @@
-// Huge credit to these StackOverflow answers:
-// https://stackoverflow.com/questions/51947833/activation-from-c-winrt-dll
-// https://stackoverflow.com/questions/67005337/how-works-notifications-on-windows-registry-no-shortlink
+#include <sstream>
 
-#include "registration.h"
-#include "include/flutter_local_notifications/flutter_local_notifications_plugin.h"
-#include "methods.h"
-
+#include <windows.h>
+#include <VersionHelpers.h>
+#include <appmodel.h>
 #include <atlbase.h>
 #include <atlconv.h>
 #include <shlobj.h>
 #include <propvarutil.h>
 #include <propkey.h>
-#include <NotificationActivationCallback.h>
+
+#include <winrt/base.h>
 #include <winrt/Windows.UI.Notifications.h>
-#include <winrt/Windows.Data.Xml.Dom.h>
+#include <NotificationActivationCallback.h>
 
-#include <iostream>
-#include <sstream>
+#include "registration.hpp"
 
-/// <summary>
+struct RegistryHandle {
+	using type = HKEY;
+
+	static void close(type value) noexcept {
+		WINRT_VERIFY_(ERROR_SUCCESS, RegCloseKey(value));
+	}
+
+	static constexpr type invalid() noexcept { return nullptr; }
+};
+
+using RegistryKey = winrt::handle_type<RegistryHandle>;
+
 /// This callback will be called when a notification sent by this plugin is clicked on.
-/// </summary>
 struct NotificationActivationCallback : winrt::implements<NotificationActivationCallback, INotificationActivationCallback> {
-	std::shared_ptr<RegistrationUtils> utils;
+	LaunchCallback callback;
 
 	HRESULT __stdcall Activate(
 		LPCWSTR app,
@@ -31,24 +38,21 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
 		ULONG count) noexcept final
 	{
 		try {
-			flutter::EncodableMap inputData;
+      LaunchData launchData;
+      // Fill the data map
 			for (ULONG i = 0; i < count; i++) {
 				auto item = data[i];
-				inputData[std::string(CW2A(item.Key))] = std::string(CW2A(item.Value));
+        const std::string key = CW2A(item.Key);
+        const std::string value = CW2A(item.Value);
+        launchData.data.try_emplace(key, value);
 			}
-			const std::string payload = CW2A(args);
+
 			const auto openedWithAction = args != nullptr;
-			auto map = utils->launchData;
-			*utils->didLaunchWithNotification = true;
-			(*map)[std::string("notificationResponseType")] = (int) openedWithAction;
-			(*map)[std::string("payload")] = flutter::EncodableValue(payload);
-			(*map)[std::string("data")] = flutter::EncodableValue(inputData);
-			flutter::EncodableMap copy(*map);
-			utils->channel->InvokeMethod(
-				Method::DID_RECEIVE_NOTIFICATION_RESPONSE,
-				std::make_unique<flutter::EncodableValue>(copy),
-				nullptr
-			);
+      launchData.payload = CW2A(args);
+      launchData.didLaunch = true;
+      launchData.launchType = openedWithAction
+        ? NativeLaunchType::action : NativeLaunchType::notification;
+      callback(launchData);
 			return S_OK;
 		}
 		catch (...) {
@@ -57,12 +61,9 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
 	}
 };
 
-/// <summary>
 /// A class factory that creates an instance of NotificationActivationCallback.
-/// </summary>
-struct NotificationActivationCallbackFactory : winrt::implements<NotificationActivationCallbackFactory, IClassFactory>
-{
-	std::shared_ptr<RegistrationUtils> utils;
+struct NotificationActivationCallbackFactory : winrt::implements<NotificationActivationCallbackFactory, IClassFactory> {
+	LaunchCallback callback;
 
 	HRESULT __stdcall CreateInstance(
 		IUnknown* outer,
@@ -76,33 +77,13 @@ struct NotificationActivationCallbackFactory : winrt::implements<NotificationAct
 		}
 
 		const auto cb = winrt::make_self<NotificationActivationCallback>();
-		cb.get()->utils = utils;
+		cb.get()->callback = callback;
 
 		return cb->QueryInterface(iid, result);
 	}
 
-	HRESULT __stdcall LockServer(BOOL) noexcept final {
-		return S_OK;
-	}
+	HRESULT __stdcall LockServer(BOOL) noexcept final { return S_OK; }
 };
-
-struct RegistryHandle
-{
-	using type = HKEY;
-
-	static void close(type value) noexcept {
-		WINRT_VERIFY_(ERROR_SUCCESS, RegCloseKey(value));
-	}
-
-	static constexpr type invalid() noexcept {
-		return nullptr;
-	}
-};
-
-/// <summary>
-/// A handle to a registry key.
-/// </summary>
-using RegistryKey = winrt::handle_type<RegistryHandle>;
 
 /// <summary>
 /// Updates the Registry to enable notifications.
@@ -120,8 +101,7 @@ void UpdateRegistry(
 	const std::string& aumid,
 	const std::string& appName,
 	const std::string& guid,
-	const std::optional<std::string>& iconPath,
-	const std::optional<std::string>& iconBgColor
+	const std::optional<std::string>& iconPath
 ) {
 	std::stringstream ss;
 	ss << "Software\\Microsoft\\Windows\\CurrentVersion\\PushNotifications\\Backup\\" << aumid;
@@ -213,16 +193,17 @@ void UpdateRegistry(
 			static_cast<uint32_t>(v.size() + 1 * sizeof(char))));
 	}
 
-	if (iconBgColor.has_value()) {
-		const auto v = iconBgColor.value();
-		winrt::check_win32(RegSetValueExA(
-			appInfoKey.get(),
-			"IconBackgroundColor",
-			0,
-			REG_SZ,
-			reinterpret_cast<const BYTE*>(v.c_str()),
-			static_cast<uint32_t>(v.size() + 1 * sizeof(char))));
-	}
+  // TODO: Decide if this is possible/worth it to support
+	// if (iconBgColor.has_value()) {
+	// 	const auto v = iconBgColor.value();
+	// 	winrt::check_win32(RegSetValueExA(
+	// 		appInfoKey.get(),
+	// 		"IconBackgroundColor",
+	// 		0,
+	// 		REG_SZ,
+	// 		reinterpret_cast<const BYTE*>(v.c_str()),
+	// 		static_cast<uint32_t>(v.size() + 1 * sizeof(char))));
+	// }
 
 	// combine guid to class id
 	ss.clear();
@@ -240,11 +221,9 @@ void UpdateRegistry(
 		static_cast<uint32_t>(clsid.size() + 1 * sizeof(char))));
 }
 
-/// <summary>
-/// Register the notificatio activation callback factory
+/// Register the notification activation callback factory
 /// and the guid of the callback.
-/// </summary>
-bool RegisterCallback(const std::string& guid, std::shared_ptr<RegistrationUtils> utils) {
+bool RegisterCallback(const std::string& guid, LaunchCallback callback) {
 	DWORD registration{};
 
 	const auto factory_ref = winrt::make_self<NotificationActivationCallbackFactory>();
@@ -256,7 +235,7 @@ bool RegisterCallback(const std::string& guid, std::shared_ptr<RegistrationUtils
 	}
 
 	winrt::guid rclsid(guid);
-	factory->utils = utils;
+	factory->callback = callback;
 
 	winrt::check_hresult(CoRegisterClassObject(
 		rclsid,
@@ -268,13 +247,12 @@ bool RegisterCallback(const std::string& guid, std::shared_ptr<RegistrationUtils
 }
 
 bool RegisterApp(
-	const std::string& aumid,
-	const std::string& appName,
-	const std::string& guid,
-	const std::optional<std::string>& iconPath,
-	const std::optional<std::string>& iconBgColor,
-	std::shared_ptr<RegistrationUtils> utils
+	const string& aumid,
+	const string& appName,
+	const string& guid,
+	const optional<string>& iconPath,
+	LaunchCallback callback
 ) {
-	UpdateRegistry(aumid, appName, guid, iconPath, iconBgColor);
-	return RegisterCallback(guid, utils);
+	UpdateRegistry(aumid, appName, guid, iconPath);
+	return RegisterCallback(guid, callback);
 }

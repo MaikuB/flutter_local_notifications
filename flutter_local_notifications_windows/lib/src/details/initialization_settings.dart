@@ -1,5 +1,3 @@
-import 'package:flutter/widgets.dart';
-
 /// Plugin initialization settings for Windows.
 class WindowsInitializationSettings {
   /// Creates a new settings object for initializing this plugin on Windows.
@@ -8,7 +6,6 @@ class WindowsInitializationSettings {
     required this.appUserModelId,
     required this.guid,
     this.iconPath,
-    this.iconBackgroundColor,
   });
 
   /// The name of the app that should be shown in the notification toast.
@@ -26,7 +23,4 @@ class WindowsInitializationSettings {
 
   /// The path to the icon of the notification.
   final String? iconPath;
-
-  /// The background color to the icon.
-  final Color? iconBackgroundColor;
 }

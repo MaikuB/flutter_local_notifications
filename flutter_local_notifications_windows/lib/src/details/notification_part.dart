@@ -1,4 +1,4 @@
-import 'package:xml/xml.dart';
+import "package:xml/xml.dart";
 
 /// A text or image element in a Windows notification.
 ///

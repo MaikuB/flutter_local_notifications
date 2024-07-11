@@ -1,14 +1,6 @@
 export 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
-export 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart'
-    show
-        DidReceiveBackgroundNotificationResponseCallback,
-        DidReceiveNotificationResponseCallback,
-        PendingNotificationRequest,
-        ActiveNotification,
-        RepeatInterval,
-        NotificationAppLaunchDetails,
-        NotificationResponse,
-        NotificationResponseType;
+export 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
+export 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
 
 export 'src/flutter_local_notifications_plugin.dart';
 export 'src/initialization_settings.dart';
@@ -44,15 +36,6 @@ export 'src/platform_specifics/darwin/notification_category_option.dart';
 export 'src/platform_specifics/darwin/notification_details.dart';
 export 'src/platform_specifics/darwin/notification_enabled_options.dart';
 export 'src/platform_specifics/ios/enums.dart';
-export 'src/platform_specifics/windows/initialization_settings.dart';
-export 'src/platform_specifics/windows/notification_action.dart';
-export 'src/platform_specifics/windows/notification_audio.dart';
-export 'src/platform_specifics/windows/notification_details.dart';
-export 'src/platform_specifics/windows/notification_group.dart';
-export 'src/platform_specifics/windows/notification_header.dart';
-export 'src/platform_specifics/windows/notification_image.dart';
-export 'src/platform_specifics/windows/notification_input.dart';
-export 'src/platform_specifics/windows/notification_progress.dart';
-export 'src/platform_specifics/windows/notification_text.dart';
+
 export 'src/typedefs.dart';
 export 'src/types.dart';

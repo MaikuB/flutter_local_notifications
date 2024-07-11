@@ -5,7 +5,6 @@ import 'package:clock/clock.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:timezone/timezone.dart';
-import 'package:xml/xml.dart';
 
 import 'callback_dispatcher.dart';
 import 'helpers.dart';
@@ -26,10 +25,6 @@ import 'platform_specifics/darwin/mappers.dart';
 import 'platform_specifics/darwin/notification_details.dart';
 import 'platform_specifics/darwin/notification_enabled_options.dart';
 import 'platform_specifics/ios/enums.dart';
-import 'platform_specifics/windows/initialization_settings.dart';
-import 'platform_specifics/windows/method_channel_mappers.dart';
-import 'platform_specifics/windows/notification_details.dart';
-import 'platform_specifics/windows/notification_progress.dart';
 import 'typedefs.dart';
 import 'types.dart';
 import 'tz_datetime_mapper.dart';
@@ -1013,177 +1008,6 @@ class MacOSFlutterLocalNotificationsPlugin
         break;
       default:
         return await Future<void>.error('Method not defined');
-    }
-  }
-}
-
-/// Windows implementation of the flutter_local_notifications plugin.
-class WindowsFlutterLocalNotificationsPlugin
-    extends MethodChannelFlutterLocalNotificationsPlugin {
-  DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
-  /// Initializes the plugin.
-  ///
-  /// Call this method on application before using
-  /// the plugin further.
-  ///
-  /// This should only be done once. When a notification created by this plugin
-  /// was used to launch the app, calling [initialize] is what will trigger to
-  /// the [onDidReceiveNotificationResponse] callback to be fire.
-  ///
-  /// To handle when a notification launched an application, use
-  /// [getNotificationAppLaunchDetails].
-  Future<bool?> initialize(
-    WindowsInitializationSettings settings, {
-    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse
-  }) {
-    _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
-    _channel.setMethodCallHandler(_handleMethod);
-
-    return _channel.invokeMethod('initialize', settings.toMap());
-  }
-
-  /// Passes the raw XML to the Windows API directly.
-  ///
-  /// You can replace values in the `<bindings>` element with a `{placeholder}`
-  /// and set their values in [data] instead. Then, you may update them with
-  /// [updateBindings].
-  ///
-  /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
-  /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
-  Future<void> showRawXml({
-    required int id,
-    required String xml,
-    Map<String, String> data = const <String, String>{},
-  }) => _channel.invokeMethod('show', <String, dynamic>{
-    'id': id,
-    'rawXml': xml,
-    'data': data,
-  });
-
-  String _notificationToXml({
-    String? title,
-    String? body,
-    String? payload,
-    WindowsNotificationDetails? notificationDetails,
-  }) {
-    final XmlBuilder builder = XmlBuilder();
-    builder.element(
-      'toast',
-      attributes: <String, String>{
-        ...notificationDetails?.attributes ?? <String, String>{},
-        if (payload != null) 'launch': payload,
-        if (notificationDetails?.scenario == null) 'useButtonStyle': 'true',
-      },
-      nest: () {
-        builder.element('visual', nest: () {
-          builder.element(
-            'binding',
-            attributes: <String, String>{'template': 'ToastGeneric'},
-            nest: () {
-              builder
-                ..element('text', nest: title)
-                ..element('text', nest: body);
-              notificationDetails?.generateBinding(builder);
-            },
-          );
-        });
-        notificationDetails?.toXml(builder);
-      },
-    );
-    return builder.buildDocument()
-      .toXmlString(pretty: true, indentAttribute: (_) => true);
-  }
-
-  @override
-  Future<void> show(
-    int id,
-    String? title,
-    String? body, {
-    String? payload,
-    String? group,
-    WindowsNotificationDetails? notificationDetails,
-  }) async {
-    final String xml = _notificationToXml(
-      title: title,
-      body: body,
-      payload: payload,
-      notificationDetails: notificationDetails,
-    );
-    await _channel.invokeMethod('show', <String, dynamic>{
-      'id': id,
-      'rawXml': xml,
-      'data': <String, String>{
-        for (final WindowsProgressBar progressBar in notificationDetails
-          ?.progressBars ?? <WindowsProgressBar>[]
-        ) ...progressBar.data,
-      },
-    });
-  }
-
-  @override
-  Future<void> cancel(int id, {String? group}) =>
-      _channel.invokeMethod('cancel', <String, dynamic>{
-        'id': id,
-        'group': group,
-      });
-
-  /// Schedules a notification for the future.
-  Future<void> zonedSchedule(
-    int id,
-    String? title,
-    String? body,
-    TZDateTime scheduledDate,
-    WindowsNotificationDetails? notificationDetails, {
-    String? payload,
-  }) async {
-    final String xml = _notificationToXml(
-      title: title,
-      body: body,
-      payload: payload,
-      notificationDetails: notificationDetails,
-    );
-    final int secondsSinceEpoch = scheduledDate.millisecondsSinceEpoch ~/ 1000;
-    await _channel.invokeMethod('zonedSchedule', <String, dynamic>{
-      'id': id,
-      'rawXml': xml,
-      'time': secondsSinceEpoch,
-    });
-  }
-
-  /// Updates the progress bar in the notification with the given ID.
-  ///
-  /// Note that in order to update [WindowsProgressBar.label], it must
-  /// not have been set to null when [show] was called.
-  Future<int?> updateProgressBar({
-    required int notificationId,
-    required WindowsProgressBar progressBar,
-  }) => updateBindings(id: notificationId, data: progressBar.data);
-
-  /// Updates any data binding in the given notification.
-  ///
-  /// Instead of a text value, you can replace any value in the `<binding>`
-  /// element with `{name}`, and then use this function to update that value
-  /// by passing `data: {'name': value}`.
-  Future<int?> updateBindings({
-    required int id,
-    required Map<String, String> data,
-  }) => _channel.invokeMethod('update', <String, Object>{
-    'id': id,
-    'data': data,
-  });
-
-  Future<void> _handleMethod(MethodCall call) async {
-    switch (call.method) {
-      case 'didReceiveNotificationResponse':
-        if (call.arguments is Map) {
-          _onDidReceiveNotificationResponse?.call(NotificationResponse(
-            notificationResponseType:
-              NotificationResponseType.selectedNotification,
-            payload: call.arguments['payload'],
-            data: Map<String, dynamic>.from(call.arguments['data']),
-          ));
-        }
-        break;
     }
   }
 }

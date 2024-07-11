@@ -1,8 +1,8 @@
-import 'dart:io';
+import "dart:io";
 
-import 'package:xml/xml.dart';
+import "package:xml/xml.dart";
 
-import 'notification_part.dart';
+import "notification_part.dart";
 
 /// Where a Windows notification image can be placed.
 enum WindowsImagePlacement {
@@ -31,8 +31,8 @@ class WindowsImage extends WindowsNotificationPart {
     if (!file.isAbsolute) {
       throw ArgumentError.value(
         file.path,
-        'WindowsImage.file',
-        'File path must be absolute',
+        "WindowsImage.file",
+        "File path must be absolute",
       );
     }
   }
@@ -54,13 +54,13 @@ class WindowsImage extends WindowsNotificationPart {
 
   @override
   void toXml(XmlBuilder builder) => builder.element(
-    'image',
+    "image",
     attributes: <String, String>{
-      'src': Uri.file(file.absolute.path, windows: true).toFilePath(),
-      'alt': altText,
-      'addImageQuery': addQueryParams.toString(),
-      if (placement != null) 'placement': placement!.name,
-      if (crop != null) 'hint-crop': crop!.name,
+      "src": Uri.file(file.absolute.path, windows: true).toFilePath(),
+      "alt": altText,
+      "addImageQuery": addQueryParams.toString(),
+      if (placement != null) "placement": placement!.name,
+      if (crop != null) "hint-crop": crop!.name,
     },
   );
 }

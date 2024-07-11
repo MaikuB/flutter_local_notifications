@@ -174,6 +174,7 @@ Future<void> main() async {
     initializationSettings,
     onDidReceiveNotificationResponse:
         (NotificationResponse notificationResponse) {
+          print(notificationResponse.notificationResponseType);
       switch (notificationResponse.notificationResponseType) {
         case NotificationResponseType.selectedNotification:
           selectNotificationStream.add(notificationResponse);
@@ -2762,11 +2763,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void>? _showWindowsNotificationWithRawXml() => flutterLocalNotificationsPlugin
-    .resolvePlatformSpecificImplementation<WindowsFlutterLocalNotificationsPlugin>()
+    .resolvePlatformSpecificImplementation<FlutterLocalNotificationsWindows>()
     ?.showRawXml(
       id: id++,
       xml: _windowsRawXmlController.text,
-      data: <String, String>{'message': 'Hello, World!'},
+      bindings: <String, String>{'message': 'Hello, World!'},
     );
 }
 

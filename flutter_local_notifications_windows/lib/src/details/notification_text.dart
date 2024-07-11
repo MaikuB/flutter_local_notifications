@@ -1,6 +1,6 @@
-import 'package:xml/xml.dart';
+import "package:xml/xml.dart";
 
-import 'notification_part.dart';
+import "notification_part.dart";
 
 /// Where text can be placed in a Windows notification.
 enum WindowsTextPlacement {
@@ -38,13 +38,13 @@ class WindowsNotificationText extends WindowsNotificationPart {
 
   @override
   void toXml(XmlBuilder builder) => builder.element(
-    'text',
+    "text",
     attributes: <String, String>{
-      if (languageCode != null) 'lang': languageCode!,
-      if (placement != null) 'placement': placement!.name,
-      'hint-callScenarioCenterAlign': centerIfCall.toString(),
-      'hint-align': 'center',
-      if (isCaption) 'hint-style': 'captionsubtle',
+      if (languageCode != null) "lang": languageCode!,
+      if (placement != null) "placement": placement!.name,
+      "hint-callScenarioCenterAlign": centerIfCall.toString(),
+      "hint-align": "center",
+      if (isCaption) "hint-style": "captionsubtle",
     },
     nest: text,
   );

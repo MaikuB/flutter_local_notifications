@@ -1,6 +1,6 @@
-import 'package:xml/xml.dart';
+import "package:xml/xml.dart";
 
-import 'notification_part.dart';
+import "notification_part.dart";
 
 /// A group of notification content that must be displayed as a whole.
 ///
@@ -14,20 +14,20 @@ class WindowsGroup {
 
   /// Serializes this group to XML.
   void toXml(XmlBuilder builder) => builder.element(
-    'group',
+    "group",
     nest: () {
-      for (final WindowsColumn column in columns) {
+      for (final column in columns) {
         builder.element(
-          'subgroup',
-          attributes: <String, String>{'hint-weight': '1'},
+          "subgroup",
+          attributes: <String, String>{"hint-weight": "1"},
           nest: () {
-            for (final WindowsNotificationPart part in column.parts) {
+            for (final part in column.parts) {
               part.toXml(builder);
             }
           },
         );
       }
-    }
+    },
   );
 }
 

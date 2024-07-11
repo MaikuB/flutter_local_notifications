@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
+import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
 import 'package:timezone/timezone.dart';
 
 import 'initialization_settings.dart';
@@ -43,7 +44,7 @@ class FlutterLocalNotificationsPlugin {
           LinuxFlutterLocalNotificationsPlugin();
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       FlutterLocalNotificationsPlatform.instance =
-          WindowsFlutterLocalNotificationsPlugin();
+          FlutterLocalNotificationsWindows();
     }
   }
 
@@ -90,9 +91,9 @@ class FlutterLocalNotificationsPlugin {
             is LinuxFlutterLocalNotificationsPlugin) {
       return FlutterLocalNotificationsPlatform.instance as T?;
     } else if (defaultTargetPlatform == TargetPlatform.windows &&
-        T == WindowsFlutterLocalNotificationsPlugin &&
+        T == FlutterLocalNotificationsWindows &&
         FlutterLocalNotificationsPlatform.instance
-            is WindowsFlutterLocalNotificationsPlugin) {
+            is FlutterLocalNotificationsWindows) {
       return FlutterLocalNotificationsPlatform.instance as T?;
     }
 
@@ -200,10 +201,10 @@ class FlutterLocalNotificationsPlugin {
       }
 
       return await resolvePlatformSpecificImplementation<
-        WindowsFlutterLocalNotificationsPlugin
+        FlutterLocalNotificationsWindows
       >()?.initialize(
         initializationSettings.windows!,
-        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+        onNotificationReceived: onDidReceiveNotificationResponse,
       );
     }
     return true;
@@ -240,7 +241,7 @@ class FlutterLocalNotificationsPlugin {
           ?.getNotificationAppLaunchDetails();
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       return await resolvePlatformSpecificImplementation<
-              WindowsFlutterLocalNotificationsPlugin>()
+              FlutterLocalNotificationsWindows>()
           ?.getNotificationAppLaunchDetails();
     } else {
       return await FlutterLocalNotificationsPlatform.instance
@@ -286,9 +287,9 @@ class FlutterLocalNotificationsPlugin {
               payload: payload);
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       await resolvePlatformSpecificImplementation<
-              WindowsFlutterLocalNotificationsPlugin>()
+              FlutterLocalNotificationsWindows>()
           ?.show(id, title, body,
-              notificationDetails: notificationDetails?.windows,
+              details: notificationDetails?.windows,
               payload: payload);
     } else {
       await FlutterLocalNotificationsPlatform.instance.show(id, title, body);
@@ -413,7 +414,7 @@ class FlutterLocalNotificationsPlugin {
               matchDateTimeComponents: matchDateTimeComponents);
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       await resolvePlatformSpecificImplementation<
-        WindowsFlutterLocalNotificationsPlugin
+        FlutterLocalNotificationsWindows
       >()?.zonedSchedule(
         id, title, body, scheduledDate, notificationDetails.windows,
         payload: payload,

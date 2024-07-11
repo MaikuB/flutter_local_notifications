@@ -1,5 +1,4 @@
 import '../flutter_local_notifications.dart';
-export 'platform_specifics/windows/initialization_settings.dart';
 
 /// Settings for initializing the plugin for each platform.
 class InitializationSettings {

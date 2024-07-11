@@ -3,14 +3,19 @@
 # the plugin to fail to compile for some customers of the plugin.
 cmake_minimum_required(VERSION 3.10)
 
-project(flutter_local_notifications_windows_library VERSION 0.0.1 LANGUAGES C)
+project(flutter_local_notifications_windows_library VERSION 1.0.0 LANGUAGES CXX)
 
 add_library(flutter_local_notifications_windows SHARED
-  "flutter_local_notifications_windows.c"
+  "ffi_api.cpp"
+  "plugin.cpp"
+  "registration.cpp"
+  "utils.cpp"
 )
 
+target_compile_features(flutter_local_notifications_windows PRIVATE cxx_std_17)
+
 set_target_properties(flutter_local_notifications_windows PROPERTIES
-  PUBLIC_HEADER flutter_local_notifications_windows.h
+  PUBLIC_HEADER ffi_api.h
   OUTPUT_NAME "flutter_local_notifications_windows"
 )
 

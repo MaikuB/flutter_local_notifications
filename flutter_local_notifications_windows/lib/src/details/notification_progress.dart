@@ -1,11 +1,11 @@
-import 'package:xml/xml.dart';
+import "package:xml/xml.dart";
 
-import '../../../flutter_local_notifications.dart';
+import "package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart";
 
 /// A progress bar in a Windows notification.
 ///
 /// To update the progress after the notification has been shown,
-/// use [WindowsFlutterLocalNotificationsPlugin.updateProgress].
+/// use [FlutterLocalNotificationsWindows.updateProgressBar].
 class WindowsProgressBar {
   /// Creates a progress bar for a Windows notification.
   WindowsProgressBar({
@@ -37,13 +37,13 @@ class WindowsProgressBar {
 
   /// Serializes this progress bar to XML.
   void toXml(XmlBuilder builder) => builder.element(
-    'progress',
+    "progress",
     attributes: <String, String>{
-      'status': status,
-      'value': '{$id-progressValue}',
-      if (title != null) 'title': title!,
-      if (label != null) 'valueStringOverride': '{$id-progressString}',
-    }
+      "status": status,
+      "value": "{$id-progressValue}",
+      if (title != null) "title": title!,
+      if (label != null) "valueStringOverride": "{$id-progressString}",
+    },
   );
 
   /// The data bindings for this progress bar.
@@ -52,7 +52,7 @@ class WindowsProgressBar {
   /// called data bindings instead of actual values. This represents the
   /// new data.
   Map<String, String> get data => <String, String>{
-    '$id-progressValue': value?.toString() ?? 'indeterminate',
-    if (label != null) '$id-progressString': label!
+    "$id-progressValue": value?.toString() ?? "indeterminate",
+    if (label != null) "$id-progressString": label!,
   };
 }
