@@ -38,7 +38,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     final aumId = settings.appUserModelId.toNativeUtf8(allocator: arena);
     final guid = settings.guid.toNativeUtf8(allocator: arena);
     final iconPath = settings.iconPath?.toNativeUtf8(allocator: arena) ?? nullptr;
-    final callback = NativeCallable<NativeCallbackType>.listener(_globalLaunchCallback).nativeFunction;
+    final callback = NativeCallable<NativeNotificationCallbackFunction>.listener(_globalLaunchCallback).nativeFunction;
     final result = _bindings.init(_plugin, appName, aumId, guid, iconPath, callback);
     return result.toBool();
   });

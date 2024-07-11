@@ -250,22 +250,22 @@ class NotificationsPluginBindings {
       _freeLaunchDetailsPtr.asFunction<void Function(NativeLaunchDetails)>();
 }
 
-class NativePlugin extends ffi.Opaque {}
+final class NativePlugin extends ffi.Opaque {}
 
-class StringMapEntry extends ffi.Struct {
+final class StringMapEntry extends ffi.Struct {
   external ffi.Pointer<pkg_ffi.Utf8> key;
 
   external ffi.Pointer<pkg_ffi.Utf8> value;
 }
 
-class NativeStringMap extends ffi.Struct {
+final class NativeStringMap extends ffi.Struct {
   external ffi.Pointer<StringMapEntry> entries;
 
   @ffi.Int()
   external int size;
 }
 
-class NativeNotificationDetails extends ffi.Struct {
+final class NativeNotificationDetails extends ffi.Struct {
   @ffi.Int()
   external int id;
 }
@@ -275,7 +275,7 @@ abstract class NativeLaunchType {
   static const int action = 1;
 }
 
-class NativeLaunchDetails extends ffi.Struct {
+final class NativeLaunchDetails extends ffi.Struct {
   @ffi.Int()
   external int didLaunch;
 
@@ -294,5 +294,9 @@ abstract class NativeUpdateResult {
   static const int notFound = 2;
 }
 
-typedef NativeNotificationCallback = ffi.Pointer<
-    ffi.NativeFunction<ffi.Void Function(NativeLaunchDetails details)>>;
+typedef NativeNotificationCallback
+    = ffi.Pointer<ffi.NativeFunction<NativeNotificationCallbackFunction>>;
+typedef NativeNotificationCallbackFunction = ffi.Void Function(
+    NativeLaunchDetails details);
+typedef DartNativeNotificationCallbackFunction = void Function(
+    NativeLaunchDetails details);

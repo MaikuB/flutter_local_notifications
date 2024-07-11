@@ -7,8 +7,6 @@ import "package:flutter_local_notifications_windows/src/plugin/base.dart";
 import "bindings.dart";
 import "../details.dart";
 
-typedef NativeCallbackType = Void Function(NativeLaunchDetails details);
-
 extension NativeStringMapUtils on NativeStringMap {
   Map<String, String> toMap() => {
     for (var index = 0; index < size; index++)
