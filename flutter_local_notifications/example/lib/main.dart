@@ -1112,7 +1112,7 @@ class _HomePageState extends State<HomePage> {
       WindowsNotificationDetails(
         subtitle: 'Click the three dots for another button',
         actions: <WindowsAction>[
-          WindowsAction(
+          const WindowsAction(
             content: 'Text',
             arguments: 'text',
           ),
@@ -1121,7 +1121,7 @@ class _HomePageState extends State<HomePage> {
             arguments: 'image',
             image: File('icons/coworker.png').absolute,
           ),
-          WindowsAction(
+          const WindowsAction(
             content: 'Context',
             arguments: 'context',
             placement: WindowsActionPlacement.contextMenu,
@@ -1169,17 +1169,17 @@ class _HomePageState extends State<HomePage> {
       categoryIdentifier: darwinNotificationCategoryText,
     );
 
-    final WindowsNotificationDetails windowsNotificationDetails =
+    const WindowsNotificationDetails windowsNotificationDetails =
       WindowsNotificationDetails(
         actions: <WindowsAction>[
           WindowsAction(content: 'Send', arguments: 'send-reply', inputId: 'text'),
         ],
         inputs: <WindowsTextInput>[
-          const WindowsTextInput(id: 'text', title: 'Send a reply?', hintText: 'Message'),
+          WindowsTextInput(id: 'text', title: 'Send a reply?', hintText: 'Message'),
         ],
       );
 
-    final NotificationDetails notificationDetails = NotificationDetails(
+    const NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
       iOS: darwinNotificationDetails,
       macOS: darwinNotificationDetails,
@@ -1240,12 +1240,12 @@ class _HomePageState extends State<HomePage> {
       categoryIdentifier: darwinNotificationCategoryText,
     );
 
-    final WindowsNotificationDetails windowsNotificationDetails =
+    const WindowsNotificationDetails windowsNotificationDetails =
       WindowsNotificationDetails(
         actions: <WindowsAction>[
           WindowsAction(content: 'Submit', arguments: 'submit', inputId: 'choice'),
         ],
-        inputs: const <WindowsInput>[
+        inputs: <WindowsInput>[
           WindowsSelectionInput(
             id: 'choice',
             defaultItem: 'abc',
@@ -1257,7 +1257,7 @@ class _HomePageState extends State<HomePage> {
         ],
       );
 
-    final NotificationDetails notificationDetails = NotificationDetails(
+    const NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
       iOS: darwinNotificationDetails,
       macOS: darwinNotificationDetails,

@@ -132,7 +132,7 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     id++,
     'This is an alarm',
     null,
-    NotificationDetails(
+    const NotificationDetails(
       windows: WindowsNotificationDetails(
         scenario: WindowsNotificationScenario.alarm,
         actions: <WindowsAction>[
@@ -145,7 +145,7 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     id++,
     'This is an incoming call',
     null,
-    NotificationDetails(
+    const NotificationDetails(
       windows: WindowsNotificationDetails(
         scenario: WindowsNotificationScenario.incomingCall,
         actions: <WindowsAction>[
@@ -158,7 +158,7 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     id++,
     'This is a reminder',
     null,
-    NotificationDetails(
+    const NotificationDetails(
       windows: WindowsNotificationDetails(
         scenario: WindowsNotificationScenario.reminder,
         actions: <WindowsAction>[
@@ -171,7 +171,7 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     id++,
     'This is an urgent notification',
     null,
-    NotificationDetails(
+    const NotificationDetails(
       windows: WindowsNotificationDetails(
         scenario: WindowsNotificationScenario.urgent,
         actions: <WindowsAction>[
@@ -324,7 +324,7 @@ Future<void> _showWindowsNotificationWithActivation() => flutterLocalNotificatio
   id++,
   'These buttons do different things',
   'Click on each one!',
-  NotificationDetails(
+  const NotificationDetails(
     windows: WindowsNotificationDetails(
       actions: <WindowsAction>[
         WindowsAction(
@@ -348,7 +348,7 @@ Future<void> _showWindowsNotificationWithButtonStyle() => flutterLocalNotificati
   id++,
   'Incoming call',
   'Your best friend',
-  NotificationDetails(
+  const NotificationDetails(
     windows: WindowsNotificationDetails(
       actions: <WindowsAction>[
         WindowsAction(
