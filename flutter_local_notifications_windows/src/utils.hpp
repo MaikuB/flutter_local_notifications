@@ -12,8 +12,11 @@ using std::string;
 using std::vector;
 using namespace winrt::Windows::UI::Notifications;
 
+/// Allocates and returns a char array representing the original C++ string.
 char* toNativeString(string str);
 
+/// Allocates and returns a [NativeStringMap] with the given key-value pairs.
 NativeStringMap toNativeMap(vector<StringMapEntry> entries);
 
+/// Parses a [NativeStringMap] into a WinRT [NotificationData].
 NotificationData dataFromMap(NativeStringMap map);

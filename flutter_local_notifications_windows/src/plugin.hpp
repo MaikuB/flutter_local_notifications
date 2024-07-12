@@ -14,20 +14,38 @@ using namespace winrt::Windows::UI::Notifications;
 
 class WinRTPlugin {
   public:
-    bool hasIdentity = false;
+    /// Whether the plugin has been properly initialized.
     bool isReady = false;
+
+    /// Whether the current application has package identity (ie, was packaged with an MSIX).
+    ///
+    /// This impacts whether apps can query active notifications or cancel them.
+    /// For more details, see https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/package-identity-overview.
+    bool hasIdentity = false;
+
+    /// The app user model ID. Used instead of package identity when [hasIdentity] is false.
+    ///
+    /// For more details, see https://learn.microsoft.com/en-us/windows/win32/shell/appids
     winrt::hstring aumid;
+
+    /// The API responsible for showing notifications. Null if [isReady] is false.
     optional<ToastNotifier> notifier;
+
+    /// The API responsible for querying shown notifications. Null if [isReady] is false.
     optional<ToastNotificationHistory> history;
-    NativeLaunchDetails launchData;
+
+    /// A callback to run when a notification is pressed, when the app is or is not running.
     NativeNotificationCallback callback;
 
     WinRTPlugin() { }
-    ~WinRTPlugin() { freeLaunchDetails(launchData); }
+    ~WinRTPlugin() { }
 
-    // void onLaunch(NativeLaunchDetails details);
-
+    /// Checks whether the current application has package identity. See [hasIdentity] for details.
+    ///
+    /// Returns true or false if the package has identity, or null if an error occurred.
     std::optional<bool> checkIdentity();
+
+    /// Registers the given [callback] to run when a notification is pressed.
     bool registerApp(
       const string& aumid,
       const string& appName,

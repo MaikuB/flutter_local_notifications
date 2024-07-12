@@ -25,12 +25,7 @@ using RegistryKey = winrt::handle_type<RegistryHandle>;
 struct NotificationActivationCallback : winrt::implements<NotificationActivationCallback, INotificationActivationCallback> {
 	NativeNotificationCallback callback;
 
-	HRESULT __stdcall Activate(
-		LPCWSTR app,
-		LPCWSTR args,
-		NOTIFICATION_USER_INPUT_DATA const* data,
-		ULONG count) noexcept final
-	{
+	HRESULT __stdcall Activate(LPCWSTR app, LPCWSTR args, NOTIFICATION_USER_INPUT_DATA const* data, ULONG count) noexcept final {
 		try {
       // Fill the data map
       vector<StringMapEntry> entries;
@@ -44,8 +39,7 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
 
 			const auto openedWithAction = args != nullptr;
       const auto payload = string(CW2A(args));
-      const auto launchType = openedWithAction
-        ? NativeLaunchType::action : NativeLaunchType::notification;
+      const auto launchType = openedWithAction ? NativeLaunchType::action : NativeLaunchType::notification;
       NativeLaunchDetails launchDetails;
       launchDetails.didLaunch = true;
       launchDetails.launchType = launchType;
@@ -53,8 +47,7 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
       launchDetails.data = toNativeMap(entries);
       callback(launchDetails);
 			return S_OK;
-		}
-		catch (...) {
+		} catch (...) {
 			return winrt::to_hresult();
 		}
 	}
@@ -64,38 +57,20 @@ struct NotificationActivationCallback : winrt::implements<NotificationActivation
 struct NotificationActivationCallbackFactory : winrt::implements<NotificationActivationCallbackFactory, IClassFactory> {
 	NativeNotificationCallback callback;
 
-	HRESULT __stdcall CreateInstance(
-		IUnknown* outer,
-		GUID const& iid,
-		void** result) noexcept final
-	{
+	HRESULT __stdcall CreateInstance(IUnknown* outer, GUID const& iid, void** result) noexcept final {
 		*result = nullptr;
-
-		if (outer) {
-			return CLASS_E_NOAGGREGATION;
-		}
-
+		if (outer) return CLASS_E_NOAGGREGATION;
 		const auto cb = winrt::make_self<NotificationActivationCallback>();
 		cb.get()->callback = callback;
-
 		return cb->QueryInterface(iid, result);
 	}
 
 	HRESULT __stdcall LockServer(BOOL) noexcept final { return S_OK; }
 };
 
-/// <summary>
 /// Updates the Registry to enable notifications.
 ///
-/// Related resources:
-/// <ul>
-///   <li>https://docs.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/send-local-toast-other-apps</li>
-/// </ul>
-/// </summary>
-/// <param name="aumid">The app user model ID of the app. Provided during initialization of the plugin.</param>
-/// <param name="appName">The display name of the app. The name will be shown on the notification toasts.</param>
-/// <param name="iconPath">An optional path to the icon of the app. The icon will be shown on the notification toasts</param>
-/// <param name="iconBgColor">An optional string that specifies the background color of the icon, in the format of AARRGGBB.</param>
+/// Related resources: https://docs.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/send-local-toast-other-apps
 void UpdateRegistry(
 	const std::string& aumid,
 	const std::string& appName,
@@ -192,18 +167,6 @@ void UpdateRegistry(
 			static_cast<uint32_t>(v.size() + 1 * sizeof(char))));
 	}
 
-  // TODO: Decide if this is possible/worth it to support
-	// if (iconBgColor.has_value()) {
-	// 	const auto v = iconBgColor.value();
-	// 	winrt::check_win32(RegSetValueExA(
-	// 		appInfoKey.get(),
-	// 		"IconBackgroundColor",
-	// 		0,
-	// 		REG_SZ,
-	// 		reinterpret_cast<const BYTE*>(v.c_str()),
-	// 		static_cast<uint32_t>(v.size() + 1 * sizeof(char))));
-	// }
-
 	// combine guid to class id
 	ss.clear();
 	ss.str(std::string());
@@ -228,11 +191,6 @@ bool RegisterCallback(const std::string& guid, NativeNotificationCallback callba
 	const auto factory_ref = winrt::make_self<NotificationActivationCallbackFactory>();
 	const auto factory = factory_ref.get();
 
-	// The WinRT GUID constructor terminates the app if there's an invalid GUID, so check it here first.
-	if (guid.size() != 36 || guid[8] != '-' || guid[13] != '-' || guid[18] != '-' || guid[23] != '-') {
-		throw std::invalid_argument("Invalid GUID");
-	}
-
 	winrt::guid rclsid(guid);
 	factory->callback = callback;
 
@@ -241,7 +199,8 @@ bool RegisterCallback(const std::string& guid, NativeNotificationCallback callba
 		factory,
 		CLSCTX_LOCAL_SERVER,
 		REGCLS_MULTIPLEUSE,
-		&registration));
+		&registration
+	));
 	return true;
 }
 

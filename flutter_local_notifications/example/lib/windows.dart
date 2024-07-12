@@ -10,7 +10,7 @@ import 'plugin.dart';
 const WindowsInitializationSettings initSettings = WindowsInitializationSettings(
   appName: 'Flutter Local Notifications Example',
   appUserModelId: 'Com.Dexterous.FlutterLocalNotificationsExample',
-  guid: '68d0c89d-760f-4f79-a067-ae8d4220ccc1',
+  guid: 'd49b0314-ee7a-4626-bf79-97cdb8a991bb',
 );
 
 List<Widget> examples({
@@ -113,7 +113,7 @@ Future<void> _showWindowsNotificationWithDuration() async {
     id++,
     'This is a short notification',
     'This will last about 7 seconds',
-    NotificationDetails(
+    const NotificationDetails(
       windows: WindowsNotificationDetails(duration: WindowsNotificationDuration.short),
     ),
   );
@@ -121,7 +121,7 @@ Future<void> _showWindowsNotificationWithDuration() async {
     id++,
     'This is a long notification',
     'This will last about 25 seconds',
-    NotificationDetails(
+    const NotificationDetails(
       windows: WindowsNotificationDetails(duration: WindowsNotificationDuration.long),
     ),
   );
@@ -300,7 +300,7 @@ Future<void> _showWindowsNotificationWithDynamic() async {
     notificationId,
     'Dynamic content',
     'This notification will be updated from Dart code',
-    NotificationDetails(
+    const NotificationDetails(
       windows: WindowsNotificationDetails(
         subtitle: '{stopwatch}',
       ),
@@ -376,7 +376,7 @@ Future<void> _showWindowsNotificationWithHeader() async {
     id++,
     'This is the first notification',
     null,
-    NotificationDetails(
+    const NotificationDetails(
       windows: WindowsNotificationDetails(header: header),
     ),
   );
@@ -384,7 +384,7 @@ Future<void> _showWindowsNotificationWithHeader() async {
     id++,
     'This is the second notification',
     null,
-    NotificationDetails(
+    const NotificationDetails(
       windows: WindowsNotificationDetails(header: header),
     ),
   );

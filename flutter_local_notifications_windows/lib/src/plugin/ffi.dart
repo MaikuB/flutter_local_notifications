@@ -11,6 +11,14 @@ void _globalLaunchCallback(NativeLaunchDetails details) {
   FlutterLocalNotificationsWindows.instance?._onNotificationReceived(details);
 }
 
+extension on String {
+  bool get isValidGuid => length == 36
+    && this[8] == "-"
+    && this[13] == "-"
+    && this[18] == "-"
+    && this[23] == "-";
+}
+
 class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   static FlutterLocalNotificationsWindows? instance;
 
@@ -31,6 +39,10 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     WindowsInitializationSettings settings, {
     DidReceiveNotificationResponseCallback? onNotificationReceived,
   }) async => using((arena) {
+    // The C++ code will crash if there's an invalid GUID, so check it here first.
+    if (!settings.guid.isValidGuid) {
+      throw ArgumentError.value(settings.guid, "GUID", "Invalid GUID. Please use xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx format\nYou can get one by searching GUID generators online");
+    }
     if (instance != null) return false;
     instance = this;
     userCallback = onNotificationReceived;
