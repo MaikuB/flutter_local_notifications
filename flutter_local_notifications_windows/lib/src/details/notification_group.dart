@@ -19,7 +19,7 @@ class WindowsGroup {
       for (final column in columns) {
         builder.element(
           "subgroup",
-          attributes: <String, String>{"hint-weight": "1"},
+          attributes: {"hint-weight": "1"},
           nest: () {
             for (final part in column.parts) {
               part.toXml(builder);

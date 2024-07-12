@@ -11,8 +11,8 @@ String notificationToXml({
   final builder = XmlBuilder();
   builder.element(
     "toast",
-    attributes: <String, String>{
-      ...details?.attributes ?? <String, String>{},
+    attributes: {
+      ...details?.attributes ?? {},
       if (payload != null) "launch": payload,
       if (details?.scenario == null) "useButtonStyle": "true",
     },
@@ -20,7 +20,7 @@ String notificationToXml({
       builder.element("visual", nest: () {
         builder.element(
           "binding",
-          attributes: <String, String>{"template": "ToastGeneric"},
+          attributes: {"template": "ToastGeneric"},
           nest: () {
             builder.element("text", nest: title);
             builder.element("text", nest: body);

@@ -38,7 +38,7 @@ class WindowsProgressBar {
   /// Serializes this progress bar to XML.
   void toXml(XmlBuilder builder) => builder.element(
     "progress",
-    attributes: <String, String>{
+    attributes: {
       "status": status,
       "value": "{$id-progressValue}",
       if (title != null) "title": title!,
@@ -48,10 +48,9 @@ class WindowsProgressBar {
 
   /// The data bindings for this progress bar.
   ///
-  /// To support dynamic updates, [toXml] will inject placeholder strings
-  /// called data bindings instead of actual values. This represents the
-  /// new data.
-  Map<String, String> get data => <String, String>{
+  /// To support dynamic updates, [toXml] will inject placeholder strings called data bindings
+  /// instead of actual values. This represents the new data.
+  Map<String, String> get data => {
     "$id-progressValue": value?.toString() ?? "indeterminate",
     if (label != null) "$id-progressString": label!,
   };

@@ -52,7 +52,7 @@ enum WindowsActionPlacement {
 /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-action#attributes
 class WindowsAction {
   /// Constructs a Windows notification button from parameters.
-  WindowsAction({
+  const WindowsAction({
     required this.content,
     required this.arguments,
     this.activationType = WindowsActivationType.foreground,
@@ -62,15 +62,7 @@ class WindowsAction {
     this.inputId,
     this.buttonStyle,
     this.tooltip,
-  }) {
-    if (image != null && !image!.isAbsolute) {
-      throw ArgumentError.value(
-        image!.path,
-        "WindowsImage.file",
-        "File path must be absolute",
-      );
-    }
-  }
+  });
 
   /// The body text of the button.
   final String content;
@@ -114,19 +106,24 @@ class WindowsAction {
   /// Serializes this notification action as Windows-compatible XML.
   ///
   /// See: https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-action#syntax
-  void toXml(XmlBuilder builder) => builder.element(
-    "action",
-    attributes: <String, String>{
-      "content": content,
-      "arguments": arguments,
-      "activationType": activationType.name,
-      "afterActivationBehavior": activationBehavior.name,
-      if (placement != null) "placement": placement!.name,
-      if (image != null) "imageUri":
-        Uri.file(image!.absolute.path, windows: true).toFilePath(),
-      if (inputId != null) "hint-inputId": inputId!,
-      if (buttonStyle != null) "hint-buttonStyle": buttonStyle!.name,
-      if (tooltip != null) "hint-toolTip": tooltip!,
-    },
-  );
+  void toXml(XmlBuilder builder) {
+    if (image != null && !image!.isAbsolute) {
+      throw ArgumentError.value(image!.path, "WindowsImage.file", "File path must be absolute");
+    }
+    builder.element(
+      "action",
+      attributes: {
+        "content": content,
+        "arguments": arguments,
+        "activationType": activationType.name,
+        "afterActivationBehavior": activationBehavior.name,
+        if (placement != null) "placement": placement!.name,
+        if (image != null) "imageUri":
+          Uri.file(image!.absolute.path, windows: true).toFilePath(),
+        if (inputId != null) "hint-inputId": inputId!,
+        if (buttonStyle != null) "hint-buttonStyle": buttonStyle!.name,
+        if (tooltip != null) "hint-toolTip": tooltip!,
+      },
+    );
+  }
 }

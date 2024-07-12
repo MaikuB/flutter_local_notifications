@@ -21,21 +21,13 @@ enum WindowsImageCrop {
 /// An image in a Windows notification.
 class WindowsImage extends WindowsNotificationPart {
   /// Creates a Windows notification image.
-  WindowsImage.file(
+  const WindowsImage.file(
     this.file, {
     required this.altText,
     this.addQueryParams = false,
     this.placement,
     this.crop,
-  }) {
-    if (!file.isAbsolute) {
-      throw ArgumentError.value(
-        file.path,
-        "WindowsImage.file",
-        "File path must be absolute",
-      );
-    }
-  }
+  });
 
   /// Whether Windows should add URL query parameters when fetching the image.
   final bool addQueryParams;
@@ -53,14 +45,20 @@ class WindowsImage extends WindowsNotificationPart {
   final WindowsImageCrop? crop;
 
   @override
-  void toXml(XmlBuilder builder) => builder.element(
-    "image",
-    attributes: <String, String>{
+  void toXml(XmlBuilder builder) {
+    if (!file.isAbsolute) {
+      throw ArgumentError.value(
+        file.path,
+        "WindowsImage.file",
+        "File path must be absolute",
+      );
+    }
+    builder.element("image", attributes: {
       "src": Uri.file(file.absolute.path, windows: true).toFilePath(),
       "alt": altText,
       "addImageQuery": addQueryParams.toString(),
       if (placement != null) "placement": placement!.name,
       if (crop != null) "hint-crop": crop!.name,
-    },
-  );
+    },);
+  }
 }

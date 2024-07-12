@@ -120,7 +120,7 @@ class WindowsNotificationAudio {
   /// Serializes this audio to Windows-compatible XML.
   void toXml(XmlBuilder builder) => builder.element(
     "audio",
-    attributes: <String, String>{
+    attributes: {
       "src": source,
       "silent": isSilent.toString(),
       "loop": shouldLoop.toString(),

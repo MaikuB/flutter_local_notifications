@@ -39,7 +39,7 @@ class WindowsNotificationText extends WindowsNotificationPart {
   @override
   void toXml(XmlBuilder builder) => builder.element(
     "text",
-    attributes: <String, String>{
+    attributes: {
       if (languageCode != null) "lang": languageCode!,
       if (placement != null) "placement": placement!.name,
       "hint-callScenarioCenterAlign": centerIfCall.toString(),

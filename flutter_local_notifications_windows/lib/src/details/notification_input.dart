@@ -47,7 +47,7 @@ class WindowsTextInput extends WindowsInput {
   @override
   void toXml(XmlBuilder builder) => builder.element(
     "input",
-    attributes: <String, String>{
+    attributes: {
       "id": id,
       "type": type.name,
       if (title != null) "title": title!,
@@ -75,7 +75,7 @@ class WindowsSelectionInput extends WindowsInput {
   @override
   void toXml(XmlBuilder builder) => builder.element(
     "input",
-    attributes: <String, String>{
+    attributes: {
       "id": id,
       "type": type.name,
       if (title != null) "title": title!,
@@ -106,7 +106,7 @@ class WindowsSelection {
   /// Serializes this item to XML.
   void toXml(XmlBuilder builder) => builder.element(
     "selection",
-    attributes: <String, String>{
+    attributes: {
       "id": id,
       "content": content,
     },

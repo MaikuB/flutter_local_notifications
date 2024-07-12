@@ -66,7 +66,7 @@ class WindowsNotificationDetails {
     this.images = const <WindowsImage>[],
     this.groups = const <WindowsGroup>[],
     this.progressBars = const <WindowsProgressBar>[],
-    this.bindings = const <String, String>{},
+    this.bindings = const {},
     this.header,
     this.audio,
     this.duration,
@@ -116,7 +116,7 @@ class WindowsNotificationDetails {
   final Map<String, String> bindings;
 
   /// XML attributes for the toast notification as a whole.
-  Map<String, String> get attributes => <String, String>{
+  Map<String, String> get attributes => {
     if (duration != null) "duration": duration!.name,
     if (timestamp != null) "displayTimestamp": timestamp!.toIso8601StringTz(),
     if (scenario != null) "scenario": scenario!.name,

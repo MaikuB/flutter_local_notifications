@@ -34,7 +34,7 @@ class WindowsHeader {
   /// Serializes this header to XML.
   void toXml(XmlBuilder builder) => builder.element(
     "header",
-    attributes: <String, String>{
+    attributes: {
       "id": id,
       "title": title,
       "arguments": arguments,
