@@ -6,7 +6,9 @@ import "../details.dart";
 export "package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart";
 export "package:timezone/timezone.dart";
 
+/// The Windows implementation of `package:flutter_local_notifications`.
 abstract class WindowsNotificationsBase extends FlutterLocalNotificationsPlatform {
+  /// Initializes the plugin. No other method should be called before this.
   Future<bool> initialize(
     WindowsInitializationSettings settings, {
     DidReceiveNotificationResponseCallback? onNotificationReceived,
@@ -31,6 +33,7 @@ abstract class WindowsNotificationsBase extends FlutterLocalNotificationsPlatfor
     WindowsNotificationDetails? details,
   });
 
+  /// Schedules a notification to appear at the given date and time.
   Future<void> zonedSchedule(
     int id,
     String? title,

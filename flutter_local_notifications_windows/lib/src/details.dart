@@ -11,8 +11,12 @@ export "details/notification_progress.dart";
 export "details/notification_text.dart";
 export "details/notification_to_xml.dart";
 
+/// The result of updating a notification.
 enum NotificationUpdateResult {
+  /// The update was successful.
   success,
+  /// There was an unexpected error updating the notification.
   error,
+  /// No notification with the provided ID could be found.
   notFound,
 }

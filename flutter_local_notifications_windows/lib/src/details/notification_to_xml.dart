@@ -2,6 +2,9 @@ import "package:xml/xml.dart";
 
 import "notification_details.dart";
 
+/// Converts a notification with [WindowsNotificationDetails] into well-formed XML.
+///
+/// For more details, refer to the [Toast Notification XML schema](https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root).
 String notificationToXml({
   String? title,
   String? body,

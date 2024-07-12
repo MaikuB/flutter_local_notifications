@@ -110,7 +110,7 @@ class WindowsNotificationDetails {
 
   /// Custom bindings in the notification.
   ///
-  /// Text elements can contains "bindings", which are entered as `<bindingName>` directly into the
+  /// Text elements can contains "bindings", which are entered as `{bindingName}` directly into the
   /// string values. You can then update them while or after the notification is launched by
   /// using the binding name as the key here, and the value as any string you want
   final Map<String, String> bindings;

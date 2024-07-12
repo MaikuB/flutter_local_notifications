@@ -19,15 +19,27 @@ extension on String {
     && this[23] == "-";
 }
 
+/// The FFI implementation of `package:flutter_local_notifications`.
 class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
+  /// The global instance of this plugin. Used in [_globalLaunchCallback].
   static FlutterLocalNotificationsWindows? instance;
 
+  /// The FFI generated bindings to the native code.
   late final NotificationsPluginBindings _bindings;
+
+  /// A pointer to the C++ handler class.
   late final Pointer<NativePlugin> _plugin;
 
+  /// The last recorded launch details, if any.
+  ///
+  /// If the app is opened with a notification, this can be read with [getNotificationAppLaunchDetails].
+  /// If a notification is pressed while the app is running, this will be passed to [userCallback].
   NativeLaunchDetails? _details;
+
+  /// A user-provided callback from [initialize] to run when a notification is pressed.
   DidReceiveNotificationResponseCallback? userCallback;
 
+  /// Creates an instance of the native plugin.
   FlutterLocalNotificationsWindows() {
     final library = DynamicLibrary.open("flutter_local_notifications_windows.dll");
     _bindings = NotificationsPluginBindings(library);
@@ -78,7 +90,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   Future<List<ActiveNotification>> getActiveNotifications() async => using((arena) {
     final length = arena<Int>();
     final array = _bindings.getActiveNotifications(_plugin, length);
-    final result = parseActiveNotifications(array, length.value);
+    final result = array.asActiveNotifications(length.value);
     _bindings.freeDetailsArray(array);
     return result;
   });
@@ -87,7 +99,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() async => using((arena) {
     final length = arena<Int>();
     final array = _bindings.getPendingNotifications(_plugin, length);
-    final result = parsePendingNotifications(array, length.value);
+    final result = array.asPendingRequests(length.value);
     _bindings.freeDetailsArray(array);
     return result;
   });

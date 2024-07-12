@@ -1,16 +1,15 @@
 import "../details.dart";
 import "base.dart";
 
+/// A stub implementation for platforms that don't support FFI.
 class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
-  FlutterLocalNotificationsWindows() {
-    throw UnimplementedError("This is just the stub implementation. Do not use this");
-  }
-
   @override
   Future<bool> initialize(
     WindowsInitializationSettings settings, {
     DidReceiveNotificationResponseCallback? onNotificationReceived,
-  }) async => false;
+  }) async {
+    throw UnsupportedError("This platform does not support Windows notifications");
+  }
 
   @override
   Future<void> cancel(int id) async { }

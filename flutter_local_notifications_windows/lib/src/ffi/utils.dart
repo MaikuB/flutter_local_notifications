@@ -7,17 +7,22 @@ import "package:flutter_local_notifications_windows/src/plugin/base.dart";
 import "bindings.dart";
 import "../details.dart";
 
+/// Helpful methods on native string maps.
 extension NativeStringMapUtils on NativeStringMap {
+  /// Converts this map to a typical Dart map.
   Map<String, String> toMap() => {
     for (var index = 0; index < size; index++)
       entries[index].key.toDartString(): entries[index].value.toDartString(),
   };
 }
 
+/// Helpful methods on integers.
 extension IntUtils on int {
+  /// Converts this integer into a boolean. Useful for return types of C functions.
   bool toBool() => this == 1;
 }
 
+/// Gets the [NotificationResponseType] from a [NativeLaunchType].
 NotificationResponseType getResponseType(int launchType) {
   switch (launchType) {
     case NativeLaunchType.notification: return NotificationResponseType.selectedNotification;
@@ -26,6 +31,7 @@ NotificationResponseType getResponseType(int launchType) {
   }
 }
 
+/// Gets the [NotificationUpdateResult] from a [NativeUpdateResult].
 NotificationUpdateResult getUpdateResult(int result) {
   switch (result) {
     case 0: return NotificationUpdateResult.success;
@@ -35,7 +41,9 @@ NotificationUpdateResult getUpdateResult(int result) {
   }
 }
 
+/// Helpful methods on string maps.
 extension MapToNativeMap on Map<String, String> {
+  /// Allocates and returns a pointer to a [NativeStringMap] using the provided arena.
   NativeStringMap toNativeMap(Arena arena) {
     final pointer = arena<NativeStringMap>();
     pointer.ref.size = length;
@@ -50,12 +58,17 @@ extension MapToNativeMap on Map<String, String> {
   }
 }
 
-List<ActiveNotification> parseActiveNotifications(Pointer<NativeNotificationDetails> array, int length) => [
-  for (var index = 0; index < length; index++)
-    ActiveNotification(id: array[index].id),
-];
+/// Helpful methods on native notification details.
+extension NativeNotificationDetailsUtils on Pointer<NativeNotificationDetails> {
+  /// Parses this array as a list of [ActiveNotification]s.
+  List<ActiveNotification> asActiveNotifications(int length) => [
+    for (var index = 0; index < length; index++)
+      ActiveNotification(id: this[index].id),
+  ];
 
-List<PendingNotificationRequest> parsePendingNotifications(Pointer<NativeNotificationDetails> array, int length) => [
-  for (var index = 0; index < length; index++)
-    PendingNotificationRequest(array[index].id, null, null, null),
-];
+  /// Parses this array os a list of [PendingNotificationRequest]s.
+  List<PendingNotificationRequest> asPendingRequests(int length) => [
+    for (var index = 0; index < length; index++)
+      PendingNotificationRequest(this[index].id, null, null, null),
+  ];
+}

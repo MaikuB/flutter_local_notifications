@@ -48,5 +48,5 @@ linter:
     cascade_invocations: false  # cascades are often harder to read
 
     # Temporarily disabled until we are ready to document
-    public_member_api_docs: false
-    flutter_style_todos: false
+    # public_member_api_docs: false
+    # flutter_style_todos: false
