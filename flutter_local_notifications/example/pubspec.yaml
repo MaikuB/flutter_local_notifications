@@ -37,5 +37,5 @@ flutter:
     - sound/
 
 environment:
-  sdk: ">=2.15.0 <3.0.0"
-  flutter: ">=2.8.0"
+  sdk: ^3.1.0
+  flutter: ">=3.1.3"
