@@ -1,3 +1,7 @@
+## [4.0.1]
+
+* Fixed issue [#2368](https://github.com/MaikuB/flutter_local_notifications/issues/2368). This involved updating pubspec so it defines that it implements the Linux implementation of `flutter_local_notifications` and updating the code so it registers the Linux implementation
+
 ## [4.0.0+1]
 
 * Bumped maximum Dart SDK constraint
