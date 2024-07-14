@@ -1,3 +1,6 @@
+## [vNext]
+
+* Bumped minimum Flutter SDK requirement to 3.13
 
 ## [7.2.0]
 

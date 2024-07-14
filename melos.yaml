@@ -1,10 +1,10 @@
 name: flutter_local_notifications
 repository: https://github.com/MaikuB/flutter_local_notifications
 packages:
-  - flutter_local_notifications/*
-  - flutter_local_notifications_linux/*
-  - flutter_local_notifications_platform_interface/*
-  - "**/example/*"
+  - flutter_local_notifications
+  - flutter_local_notifications_linux
+  - flutter_local_notifications_platform_interface
+  - flutter_local_notifications/example/
 
 command:
   bootstrap:
@@ -20,19 +20,19 @@ scripts:
   test:unit:
     description: Run unit tests in a specific package.
     run: melos exec -c 1 -- "flutter test"
-    select-package:
-      dir-exists:
+    packageFilters:
+      dirExists:
         - test
   test:unit:android:
     description: Runs java unit tests
     run: melos exec -c 1 -- "flutter build apk --debug && cd android && ./gradlew flutter_local_notifications:testDebug"
-    select-package:
+    packageFilters:
       scope: "*example*"
   test:integration:
     run: melos exec -c 1 -- "flutter test integration_test"
     description: Run integration tests
-    select-package:
-      dir-exists:
+    packageFilters:
+      dirExists:
         - integration_test
       scope: "*example*"
   build:example_android:
@@ -40,8 +40,8 @@ scripts:
       melos exec -c 1 -- \
         "flutter build apk --debug"
     description: Build a specific example app for Android.
-    select-package:
-      dir-exists:
+    packageFilters:
+      dirExists:
         - android
       scope: "*example*"
   build:example_ios:
@@ -49,8 +49,8 @@ scripts:
       melos exec -c 1 -- \
         "flutter build ios --no-codesign --debug"
     description: Build a specific example app for iOS.
-    select-package:
-      dir-exists:
+    packageFilters:
+      dirExists:
         - ios
       scope: "*example*"
   build:example_macos:
@@ -58,8 +58,8 @@ scripts:
       melos exec -c 1 -- \
         "flutter build macos"
     description: Build a specific example app for macOS.
-    select-package:
-      dir-exists:
+    packageFilters:
+      dirExists:
         - macos
       scope: "*example*"
   build:example_linux:
@@ -67,8 +67,8 @@ scripts:
       melos exec -c 1 -- \
         "flutter build linux"
     description: Build a specific example app for Linux.
-    select-package:
-      dir-exists:
+    packageFilters:
+      dirExists:
         - linux
       scope: "*example*"
 

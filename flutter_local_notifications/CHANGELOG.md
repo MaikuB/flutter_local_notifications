@@ -1,3 +1,7 @@
+## [vNext]
+
+* Bumped minimum Flutter SDK requirement to 3.13
+
 ## [17.2.1+2]
 
 *  Updated Gradle setup readme section around specifying AGP version to include link to Flutter documentation for apps that are using the declarative Plugin DSL syntax

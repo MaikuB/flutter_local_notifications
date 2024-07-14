@@ -76,6 +76,21 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_android
+  build_example_android_3_13:
+      name: Build Android example app (3.13)
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - uses: subosito/flutter-action@v2
+          with:
+            channel: stable
+            flutter-version: 3.13.0
+            cache: true
+            cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+        - name: Install Tools
+          run: ./.github/workflows/scripts/install-tools.sh
+        - name: Build
+          run: melos run build:example_android
   build_example_ios_stable:
     name: Build iOS example app (stable channel)
     runs-on: macos-latest
@@ -84,6 +99,21 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - name: Install Tools
+        run: ./.github/workflows/scripts/install-tools.sh
+      - name: Build
+        run: melos run build:example_ios
+  build_example_ios_3_13:
+    name: Build iOS example app (3.13)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.13.0
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
@@ -104,6 +134,21 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_macos
+  build_example_macos_3_13:
+    name: Build macOS example app (3.13)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.13.0
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - name: Install Tools
+        run: ./.github/workflows/scripts/install-tools.sh
+      - name: Build
+        run: melos run build:example_macos
   build_example_linux_stable:
     name: Build Linux example app (stable channel)
     runs-on: ubuntu-latest
@@ -112,6 +157,25 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - name: Install Tools
+        run: ./.github/workflows/scripts/install-tools.sh
+      - run: |
+          sudo apt-get update -y
+          sudo apt-get install -y ninja-build libgtk-3-dev
+      - run: flutter config --enable-linux-desktop
+      - name: Build
+        run: melos run build:example_linux
+  build_example_linux_3_13:
+    name: Build Linux example app (3.13)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.13.0
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
