@@ -21,7 +21,7 @@ scripts:
     description: Run unit tests in a specific package.
     run: melos exec -c 1 -- "flutter test"
     packageFilters:
-      dir-exists:
+      dirExists:
         - test
   test:unit:android:
     description: Runs java unit tests
@@ -32,7 +32,7 @@ scripts:
     run: melos exec -c 1 -- "flutter test integration_test"
     description: Run integration tests
     packageFilters:
-      dir-exists:
+      dirExists:
         - integration_test
       scope: "*example*"
   build:example_android:
@@ -41,7 +41,7 @@ scripts:
         "flutter build apk --debug"
     description: Build a specific example app for Android.
     packageFilters:
-      dir-exists:
+      dirExists:
         - android
       scope: "*example*"
   build:example_ios:
@@ -50,7 +50,7 @@ scripts:
         "flutter build ios --no-codesign --debug"
     description: Build a specific example app for iOS.
     packageFilters:
-      dir-exists:
+      dirExists:
         - ios
       scope: "*example*"
   build:example_macos:
@@ -59,7 +59,7 @@ scripts:
         "flutter build macos"
     description: Build a specific example app for macOS.
     packageFilters:
-      dir-exists:
+      dirExists:
         - macos
       scope: "*example*"
   build:example_linux:
@@ -68,7 +68,7 @@ scripts:
         "flutter build linux"
     description: Build a specific example app for Linux.
     packageFilters:
-      dir-exists:
+      dirExists:
         - linux
       scope: "*example*"
 
