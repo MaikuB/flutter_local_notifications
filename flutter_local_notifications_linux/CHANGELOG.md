@@ -1,3 +1,7 @@
+## [4.0.1]
+
+* Fixed pubspec so it defines that it implements the Linux implementation of `flutter_local_notifications`
+
 ## [4.0.0+1]
 
 * Bumped maximum Dart SDK constraint
