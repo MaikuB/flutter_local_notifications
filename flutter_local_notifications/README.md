@@ -753,7 +753,7 @@ const NotificationDetails notificationDetails =
     NotificationDetails(android: androidNotificationDetails);
 await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
     'repeating body', RepeatInterval.everyMinute, notificationDetails,
-    androidAllowWhileIdle: true);
+    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle);
 ```
 
 ### Retrieving pending notification requests

@@ -1,6 +1,7 @@
 ## [vNext]
 
-* Bumped minimum Flutter SDK requirement to 3.13
+* **Breaking change** Bumped minimum Flutter SDK requirement to 3.13
+* [Android] **Breaking change**  removed the deprecated `androidAllowWhileIdle` parameter from `zonedSchedule()` and `periodicallyShow()` methods. `androidScheduleMode` is now a required parameter
 
 ## [17.2.1+2]
 

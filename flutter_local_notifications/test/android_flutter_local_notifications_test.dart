@@ -1954,6 +1954,7 @@ void main() {
               'notification body',
               repeatInterval,
               const NotificationDetails(android: androidNotificationDetails),
+              androidScheduleMode: AndroidScheduleMode.exact,
             );
 
             expect(
