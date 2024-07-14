@@ -1,3 +1,7 @@
+## [vNext]
+
+* Bumped minimum Flutter SDK requirement to 3.13
+
 ## [17.2.1+1]
 
 * Fixed accidental change done in example app as part of 17.2.0 where it made use of `SCHEDULE_EXACT_ALARM` permission instead of `USE_EXACT_ALARM`
