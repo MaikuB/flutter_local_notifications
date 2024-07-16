@@ -20,6 +20,7 @@ dev_dependencies:
   very_good_analysis: ^6.0.0
   flutter_test:
     sdk: flutter
+  test: ^1.25.2
 
 flutter:
   plugin:

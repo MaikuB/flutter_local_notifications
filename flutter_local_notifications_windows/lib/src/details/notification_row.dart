@@ -2,12 +2,12 @@ import "package:xml/xml.dart";
 
 import "notification_part.dart";
 
-/// A group of notification content that must be displayed as a whole.
+/// A group of notification content that must be displayed as a whole row.
 ///
 /// See: https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-group
-class WindowsGroup {
+class WindowsRow {
   /// Makes a group of multiple columns.
-  const WindowsGroup(this.columns);
+  const WindowsRow(this.columns);
 
   /// The different columns being grouped together.
   final List<WindowsColumn> columns;

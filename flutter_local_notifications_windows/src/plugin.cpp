@@ -9,6 +9,8 @@
 #include "plugin.hpp"
 #include "utils.hpp"
 
+#include <iostream>
+
 struct RegistryHandle {
 	using type = HKEY;
 
@@ -187,13 +189,11 @@ void UpdateRegistry(
 /// and the guid of the callback.
 bool RegisterCallback(const std::string& guid, NativeNotificationCallback callback) {
 	DWORD registration{};
-
+	winrt::guid rclsid(guid);
+  ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 	const auto factory_ref = winrt::make_self<NotificationActivationCallbackFactory>();
 	const auto factory = factory_ref.get();
-
-	winrt::guid rclsid(guid);
 	factory->callback = callback;
-
 	winrt::check_hresult(CoRegisterClassObject(
 		rclsid,
 		factory,

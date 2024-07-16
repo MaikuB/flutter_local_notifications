@@ -2,7 +2,7 @@ import "package:xml/xml.dart";
 
 import "notification_action.dart";
 import "notification_audio.dart";
-import "notification_group.dart";
+import "notification_row.dart";
 import "notification_header.dart";
 import "notification_image.dart";
 import "notification_input.dart";
@@ -64,7 +64,7 @@ class WindowsNotificationDetails {
     this.actions = const <WindowsAction>[],
     this.inputs = const <WindowsInput>[],
     this.images = const <WindowsImage>[],
-    this.groups = const <WindowsGroup>[],
+    this.groups = const <WindowsRow>[],
     this.progressBars = const <WindowsProgressBar>[],
     this.bindings = const {},
     this.header,
@@ -103,7 +103,7 @@ class WindowsNotificationDetails {
   final List<WindowsImage> images;
 
   /// A list of groups to show.
-  final List<WindowsGroup> groups;
+  final List<WindowsRow> groups;
 
   /// A list of progress bars to show.
   final List<WindowsProgressBar> progressBars;

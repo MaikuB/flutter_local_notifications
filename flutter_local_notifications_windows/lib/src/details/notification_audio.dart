@@ -75,15 +75,17 @@ class WindowsNotificationAudio {
   WindowsNotificationAudio.preset({
     required WindowsNotificationSound sound,
     this.shouldLoop = false,
-    this.isSilent = false,
-  }) : source = sound.name;
+  }) :
+    isSilent = false,
+    source = sound.name;
 
   /// Audio from a file. See [allowedSchemes] and [allowedExtensions].
   WindowsNotificationAudio.fromFile({
     required Uri file,
     this.shouldLoop = false,
-    this.isSilent = false,
-  }) : source = file.toFilePath() {
+  }) :
+    isSilent = false,
+    source = file.toFilePath() {
     if (!allowedSchemes.contains(file.scheme)) {
       throw ArgumentError.value(
         file.toString(),

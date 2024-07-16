@@ -217,8 +217,8 @@ Future<void> _showWindowsNotificationWithGroups() => flutterLocalNotificationsPl
   NotificationDetails(
     windows: WindowsNotificationDetails(
       subtitle: 'Caption text is fainter',
-      groups: <WindowsGroup>[
-        WindowsGroup(<WindowsColumn>[
+      groups: <WindowsRow>[
+        WindowsRow(<WindowsColumn>[
           WindowsColumn(<WindowsNotificationPart>[
             WindowsImage.file(File('icons/coworker.png').absolute, altText: 'A coworker'),
             const WindowsNotificationText(text: 'A coworker', isCaption: true),

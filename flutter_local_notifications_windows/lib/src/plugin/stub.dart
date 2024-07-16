@@ -12,6 +12,9 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   }
 
   @override
+  void dispose() { }
+
+  @override
   Future<void> cancel(int id) async { }
 
   @override

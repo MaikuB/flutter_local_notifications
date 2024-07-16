@@ -3,6 +3,7 @@ repository: https://github.com/MaikuB/flutter_local_notifications
 packages:
   - flutter_local_notifications/*
   - flutter_local_notifications_linux/*
+  - flutter_local_notifications_windows/*
   - flutter_local_notifications_platform_interface/*
   - "**/example/*"
 
@@ -67,6 +68,15 @@ scripts:
       melos exec -c 1 -- \
         "flutter build linux"
     description: Build a specific example app for Linux.
+    select-package:
+      dir-exists:
+        - linux
+      scope: "*example*"
+  build:example_windows:
+    run: |
+      melos exec -c 1 -- \
+        "dart run msix:create"
+    description: Build a specific example app for Windows.
     select-package:
       dir-exists:
         - linux

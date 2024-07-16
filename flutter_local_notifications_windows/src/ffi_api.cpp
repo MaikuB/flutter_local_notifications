@@ -6,6 +6,8 @@
 #include "plugin.hpp"
 #include "utils.hpp"
 
+#include <iostream>
+
 using winrt::Windows::Data::Xml::Dom::XmlDocument;
 
 NativePlugin* createPlugin() {
@@ -39,8 +41,11 @@ int showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap bi
   const auto ptr = reinterpret_cast<WinRTPlugin*>(plugin);
   if (!ptr->isReady) return false;
   XmlDocument doc;
-  try { doc.LoadXml(winrt::to_hstring(xml)); }
-  catch (winrt::hresult_error error) { return false; }
+  try {
+    doc.LoadXml(winrt::to_hstring(xml));
+  } catch (winrt::hresult_error error) {
+    return false;
+  }
   ToastNotification notification(doc);
   const auto data = dataFromMap(bindings);
   notification.Tag(winrt::to_hstring(id));

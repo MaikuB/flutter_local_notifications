@@ -14,6 +14,9 @@ abstract class WindowsNotificationsBase extends FlutterLocalNotificationsPlatfor
     DidReceiveNotificationResponseCallback? onNotificationReceived,
   });
 
+  /// Releases any resources used by this plugin.
+  void dispose();
+
   /// The raw XML passed to the Windows API.
   ///
   /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
