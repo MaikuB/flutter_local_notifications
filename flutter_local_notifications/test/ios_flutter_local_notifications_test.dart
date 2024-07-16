@@ -304,12 +304,12 @@ void main() {
             );
 
             await flutterLocalNotificationsPlugin.periodicallyShow(
-              1,
-              'notification title',
-              'notification body',
-              repeatInterval,
-              notificationDetails,
-            );
+                1,
+                'notification title',
+                'notification body',
+                repeatInterval,
+                notificationDetails,
+                androidScheduleMode: AndroidScheduleMode.exact);
 
             expect(
               log.last,

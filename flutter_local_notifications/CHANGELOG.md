@@ -1,3 +1,12 @@
+## [vNext]
+
+* **Breaking change** Bumped minimum Flutter SDK requirement to 3.13
+* [Android] **Breaking change**  removed the deprecated `androidAllowWhileIdle` parameter from `zonedSchedule()` and `periodicallyShow()` methods. `androidScheduleMode` is now a required parameter
+
+## [17.2.1+2]
+
+*  Updated Gradle setup readme section around specifying AGP version to include link to Flutter documentation for apps that are using the declarative Plugin DSL syntax
+
 ## [17.2.1+1]
 
 * Fixed accidental change done in example app as part of 17.2.0 where it made use of `SCHEDULE_EXACT_ALARM` permission instead of `USE_EXACT_ALARM`

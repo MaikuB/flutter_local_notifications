@@ -55,10 +55,12 @@ A cross platform plugin for displaying local notifications.
 
 ## 📱 Supported platforms
 
-* **Android 4.1+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
-* **iOS 8.0+**. On iOS versions older than 10, the plugin will use the UILocalNotification APIs. The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on iOS 10 or newer. Notification actions only work on iOS 10 or newer.
-* **macOS 10.11+**. On macOS versions older than 10.14, the plugin will use the [NSUserNotification APIs](https://developer.apple.com/documentation/foundation/nsusernotification). The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on macOS 10.14 or newer. Notification actions only work on macOS 10.14 or newer
-* **Linux**. Uses the [Desktop Notifications Specification](https://specifications.freedesktop.org/notification-spec/).
+* **Android+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
+* **iOS**. Uses the [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework)
+* **macOS**. On macOS versions older than 10.14, the plugin will use the [NSUserNotification APIs](https://developer.apple.com/documentation/foundation/nsusernotification). The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on macOS 10.14 or newer. Notification actions only work on macOS 10.14 or newer
+* **Linux**. Uses the [Desktop Notifications Specification](https://specifications.freedesktop.org/notification-spec/)
+
+Note: the plugin has a requires Flutter SDK 3.13 at a minimum. The list of support platforms for Flutter 3.1.3 itself can be found [here](https://github.com/flutter/website/blob/3d18ab48218101493af84953b71eac0cc6781fdd/src/reference/supported-platforms.md)
 
 ## ✨ Features
 
@@ -202,7 +204,7 @@ dependencies {
 }
 ```
 
-Note that the plugin uses Android Gradle plugin 7.3.1 to leverage this functionality so to errr on the safe side, applications should aim to use the same version at a **minimum**. Using a higher version is also needed as at point, Android Studio bundled a newer version of the Java SDK that will only work with Gradle 7.3 or higher (see [here](https://docs.flutter.dev/release/breaking-changes/android-java-gradle-migration-guide) for more details). For a Flutter project, this is specified in `android/build.gradle` and the main parts would look similar to the following
+Note that the plugin uses Android Gradle plugin (AGP) 7.3.1 to leverage this functionality so to errr on the safe side, applications should aim to use the same version at a **minimum**. Using a higher version is also needed as at point, Android Studio bundled a newer version of the Java SDK that will only work with Gradle 7.3 or higher (see [here](https://docs.flutter.dev/release/breaking-changes/android-java-gradle-migration-guide) for more details). For a Flutter app usin the legacy `apply` script syntax, this is specified in `android/build.gradle` and the main parts would look similar to the following
 
 ```gradle
 buildscript {
@@ -213,6 +215,8 @@ buildscript {
         ...
     }
 ```
+
+If your app is using the new declarative Plugin DSL syntax, please refer to the Flutter documentation [here](https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply) where they document where the AGP version can be specified
 
 There have been reports that enabling desugaring may result in a Flutter apps crashing on Android 12L and above. This would be an issue with Flutter itself, not the plugin. One possible fix is adding the [WindowManager library](https://developer.android.com/jetpack/androidx/releases/window) as a dependency:
 
@@ -749,7 +753,7 @@ const NotificationDetails notificationDetails =
     NotificationDetails(android: androidNotificationDetails);
 await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
     'repeating body', RepeatInterval.everyMinute, notificationDetails,
-    androidAllowWhileIdle: true);
+    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle);
 ```
 
 ### Retrieving pending notification requests

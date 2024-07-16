@@ -217,6 +217,7 @@ void main() {
               'notification body',
               repeatInterval,
               notificationDetails,
+              androidScheduleMode: AndroidScheduleMode.exact,
             );
 
             expect(
