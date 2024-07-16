@@ -6,8 +6,6 @@
 #include "plugin.hpp"
 #include "utils.hpp"
 
-#include <iostream>
-
 using winrt::Windows::Data::Xml::Dom::XmlDocument;
 
 NativePlugin* createPlugin() {
