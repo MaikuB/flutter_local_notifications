@@ -93,6 +93,7 @@ class NotificationResponse {
     this.actionId,
     this.input,
     this.payload,
+    this.data = const <String, dynamic>{},
   });
 
   /// The notification's id.
@@ -106,10 +107,16 @@ class NotificationResponse {
 
   /// The value of the input field if the notification action had an input
   /// field.
+  ///
+  /// On Windows, this is always null. Instead, [data] holds the values of
+  /// each input with the input's ID as the key.
   final String? input;
 
   /// The notification's payload.
   final String? payload;
+
+  /// Any other data returned by the platform.
+  final Map<String, dynamic> data;
 
   /// The notification response type.
   final NotificationResponseType notificationResponseType;
