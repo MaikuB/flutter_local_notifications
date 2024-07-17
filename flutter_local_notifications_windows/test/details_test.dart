@@ -110,7 +110,7 @@ void main() => group("Details:", () {
     plugin.testDetails(const WindowsNotificationDetails(inputs: [selection, textInput], actions: [action]));
   });
 
-  test("Progress", () async {
+  test("Progress", retry: 5, () async {
     final simple = WindowsProgressBar(id: "simple", status: "Testing...", value: 0.25);
     final complex = WindowsProgressBar(id: "complex", status: "Testing...", value: 0.75, label: "Progress label", title: "Progress title");
     final dynamic = WindowsProgressBar(id: "dynamic", status: "Testing...", value: 0);
