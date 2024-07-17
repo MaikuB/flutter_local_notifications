@@ -1,3 +1,16 @@
+// This file demonstrates how the WinRT APIs are _not_ thread safe.
+//
+// If you debug this code into the C++, you'll see that the crash happens when
+// declaring a local variable. A quick google shows that dynamic libraries are
+// only loaded *once* into the Dart VM. This leads me to believe that it is an
+// issue with sharing address spaces, and the two local variables exist at the
+// same time, causing the crash.
+//
+// This crash can happen when running `dart test -j 1`, which would otherwise
+// fix other concurrency issues with the tests. This crash is not significant
+// for users as it depends on having two plugins instantiated at the same time,
+// which is not recommended, but I left it here as a demonstration if needed.
+
 import "dart:isolate";
 
 import "package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart";
@@ -6,19 +19,17 @@ import "package:timezone/standalone.dart";
 const settings = WindowsInitializationSettings(appName: "Test app", appUserModelId: "com.test.test", guid: "a8c22b55-049e-422f-b30f-863694de08c8");
 
 void main() async {
-  await Isolate.spawn(main2, null);
-  await Isolate.spawn(main3, null);
+  await Isolate.spawn(bindingsTest, null);
+  await Isolate.spawn(scheduledTest, null);
 
   await Future<void>.delayed(const Duration(seconds: 5));
 }
 
-Future<void> main3(_) async {
+Future<void> scheduledTest(_) async {
   await Future<void>.delayed(const Duration(seconds: 4));
-  // Scheduled:
   final plugin = FlutterLocalNotificationsWindows();
   await plugin.initialize(settings);
   await initializeTimeZone();
-
   final location = getLocation("US/Eastern");
   final now = TZDateTime.now(location);
   final later = now.add(const Duration(days: 1));
@@ -27,10 +38,9 @@ Future<void> main3(_) async {
   await plugin.zonedSchedule(302, null, null, later, null);
 }
 
-Future<void> main2(_) async {
+Future<void> bindingsTest(_) async {
   final bindings = {"title": "Bindings title", "body": "Bindings body"};
   await Future<void>.delayed(const Duration(seconds: 1));
-  // Bindings:
   final plugin = FlutterLocalNotificationsWindows();
   await plugin.initialize(settings);
   await plugin.show(503, "{title}", "{body}");
