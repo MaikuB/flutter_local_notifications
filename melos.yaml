@@ -75,7 +75,7 @@ scripts:
   build:example_windows:
     run: |
       melos exec -c 1 -- \
-        "flutter build windows && dart run msix:create"
+        "dart run msix:create"
     description: Build a specific example app for Windows.
     packageFilters:
       dirExists:

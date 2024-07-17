@@ -4,22 +4,16 @@ version: 1.0.0
 
 environment:
   sdk: ">=3.1.0 <4.0.0"
-  flutter: ">=3.0.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
   ffi: ^2.1.2
   flutter_local_notifications_platform_interface: ^7.2.0
-  plugin_platform_interface: ^2.0.2
   timezone: ^0.9.4
   xml: ^6.5.0
 
 dev_dependencies:
-  ffigen: ^12.0.0  # using such a low version to avoid Dart 3.0
+  ffigen: ^12.0.0
   very_good_analysis: ^6.0.0
-  flutter_test:
-    sdk: flutter
   test: ^1.25.2
 
 flutter:
