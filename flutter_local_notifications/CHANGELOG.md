@@ -2,6 +2,7 @@
 
 * **Breaking change** Bumped minimum Flutter SDK requirement to 3.13
 * [Android] **Breaking change**  removed the deprecated `androidAllowWhileIdle` parameter from `zonedSchedule()` and `periodicallyShow()` methods. `androidScheduleMode` is now a required parameter
+* Bumped dependency on `flutter_local_notifications_linux` to 4.0.1. Updated app-facing packaging to no longer create and register the Linux implementation as this will now be handled by the `flutter_local_notifications_linux` package itself
 
 ## [17.2.1+2]
 

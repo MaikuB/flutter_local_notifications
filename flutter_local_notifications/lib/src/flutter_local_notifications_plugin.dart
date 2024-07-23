@@ -38,9 +38,6 @@ class FlutterLocalNotificationsPlugin {
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       FlutterLocalNotificationsPlatform.instance =
           MacOSFlutterLocalNotificationsPlugin();
-    } else if (defaultTargetPlatform == TargetPlatform.linux) {
-      FlutterLocalNotificationsPlatform.instance =
-          LinuxFlutterLocalNotificationsPlugin();
     }
   }
 
