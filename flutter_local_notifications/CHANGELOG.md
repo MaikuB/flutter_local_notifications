@@ -1,3 +1,7 @@
+## [17.2.2]
+
+* Bumped dependency on `flutter_local_notifications_linux` to 4.0.1. Updated app-facing packaging to no longer create and register the Linux implementation as this will now be handled by the `flutter_local_notifications_linux` package itself
+
 ## [17.2.1+2]
 
 *  Updated Gradle setup readme section around specifying AGP version to include link to Flutter documentation for apps that are using the declarative Plugin DSL syntax
