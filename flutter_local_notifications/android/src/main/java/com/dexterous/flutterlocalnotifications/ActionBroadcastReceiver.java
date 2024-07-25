@@ -56,7 +56,7 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
       int notificationId = (int) action.get(FlutterLocalNotificationsPlugin.NOTIFICATION_ID);
       Object tag = action.get(FlutterLocalNotificationsPlugin.NOTIFICATION_TAG);
 
-      if(tag instanceof String) {
+      if (tag instanceof String) {
         NotificationManagerCompat.from(context).cancel((String) tag, notificationId);
       } else {
         NotificationManagerCompat.from(context).cancel(notificationId);
