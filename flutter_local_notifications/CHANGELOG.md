@@ -1,6 +1,7 @@
 ## [17.2.2]
 
 * Bumped dependency on `flutter_local_notifications_linux` to 4.0.1. Updated app-facing packaging to no longer create and register the Linux implementation as this will now be handled by the `flutter_local_notifications_linux` package itself
+* [Android] fixed issue where notifications with tags weren't cancelled when action was invoked when the `autoCancel` property for the action was set to `true`. Thanks to the PR from [Remco Anker](https://github.com/remcoanker)
 
 ## [17.2.1+2]
 
