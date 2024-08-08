@@ -24,20 +24,18 @@ extension IntUtils on int {
 
 /// Gets the [NotificationResponseType] from a [NativeLaunchType].
 NotificationResponseType getResponseType(int launchType) {
-  switch (launchType) {
+  switch (NativeLaunchType.fromValue(launchType)) {
     case NativeLaunchType.notification: return NotificationResponseType.selectedNotification;
     case NativeLaunchType.action: return NotificationResponseType.selectedNotificationAction;
-    default: throw ArgumentError("Invalid launch type: $launchType");
   }
 }
 
 /// Gets the [NotificationUpdateResult] from a [NativeUpdateResult].
-NotificationUpdateResult getUpdateResult(int result) {
+NotificationUpdateResult getUpdateResult(NativeUpdateResult result) {
   switch (result) {
-    case 0: return NotificationUpdateResult.success;
-    case 1: return NotificationUpdateResult.error;
-    case 2: return NotificationUpdateResult.notFound;
-    default: throw ArgumentError("Invalid update result: $result");
+    case NativeUpdateResult.success: return NotificationUpdateResult.success;
+    case NativeUpdateResult.failed: return NotificationUpdateResult.error;
+    case NativeUpdateResult.notFound: return NotificationUpdateResult.notFound;
   }
 }
 

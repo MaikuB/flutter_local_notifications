@@ -201,7 +201,7 @@ bool RegisterCallback(const std::string& guid, NativeNotificationCallback callba
 	return true;
 }
 
-bool WinRTPlugin::registerApp(
+bool NativePlugin::registerApp(
 	const string& aumid,
 	const string& appName,
 	const string& guid,
@@ -212,7 +212,7 @@ bool WinRTPlugin::registerApp(
 	return RegisterCallback(guid, callback);
 }
 
-std::optional<bool> WinRTPlugin::checkIdentity() {
+std::optional<bool> NativePlugin::checkIdentity() {
   if (!IsWindows8OrGreater()) return false;
   uint32_t length = 0;
   auto error = GetCurrentPackageFullName(&length, nullptr);

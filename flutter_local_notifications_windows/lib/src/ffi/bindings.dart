@@ -142,21 +142,21 @@ class NotificationsPluginBindings {
   /// String values in the `<binding>` element of the XML can be placeholders instead of values,
   /// for example, `<text>{name}</text>` and then call this function with a map with a `name` key,
   /// and any string value, and the notification will be updated with that value where `name` was.
-  int updateNotification(
+  NativeUpdateResult updateNotification(
     ffi.Pointer<NativePlugin> plugin,
     int id,
     NativeStringMap bindings,
   ) {
-    return _updateNotification(
+    return NativeUpdateResult.fromValue(_updateNotification(
       plugin,
       id,
       bindings,
-    );
+    ));
   }
 
   late final _updateNotificationPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Int32 Function(ffi.Pointer<NativePlugin>, ffi.Int,
+          ffi.UnsignedInt Function(ffi.Pointer<NativePlugin>, ffi.Int,
               NativeStringMap)>>('updateNotification');
   late final _updateNotification = _updateNotificationPtr.asFunction<
       int Function(ffi.Pointer<NativePlugin>, int, NativeStringMap)>();
@@ -295,9 +295,18 @@ final class NativeNotificationDetails extends ffi.Struct {
 }
 
 /// How the app was launched, either by pressing on the notification or an action within it.
-abstract class NativeLaunchType {
-  static const int notification = 0;
-  static const int action = 1;
+enum NativeLaunchType {
+  notification(0),
+  action(1);
+
+  final int value;
+  const NativeLaunchType(this.value);
+
+  static NativeLaunchType fromValue(int value) => switch (value) {
+        0 => notification,
+        1 => action,
+        _ => throw ArgumentError("Unknown value for NativeLaunchType: $value"),
+      };
 }
 
 /// Details about how the app was launched.
@@ -307,7 +316,7 @@ final class NativeLaunchDetails extends ffi.Struct {
   external int didLaunch;
 
   /// What part of the notification launched the app.
-  @ffi.Int32()
+  @ffi.UnsignedInt()
   external int launchType;
 
   /// The payload sent to the app by the notification. Usually the action that was pressed.
@@ -318,10 +327,21 @@ final class NativeLaunchDetails extends ffi.Struct {
 }
 
 /// See: https://learn.microsoft.com/en-us/uwp/api/windows.ui.notifications.notificationupdateresult
-abstract class NativeUpdateResult {
-  static const int success = 0;
-  static const int failed = 1;
-  static const int notFound = 2;
+enum NativeUpdateResult {
+  success(0),
+  failed(1),
+  notFound(2);
+
+  final int value;
+  const NativeUpdateResult(this.value);
+
+  static NativeUpdateResult fromValue(int value) => switch (value) {
+        0 => success,
+        1 => failed,
+        2 => notFound,
+        _ =>
+          throw ArgumentError("Unknown value for NativeUpdateResult: $value"),
+      };
 }
 
 /// A callback that is run with [NativeLaunchDetails] when a notification is pressed.

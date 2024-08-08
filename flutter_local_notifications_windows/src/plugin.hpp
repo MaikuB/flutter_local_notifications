@@ -12,7 +12,7 @@ using std::optional;
 using std::string;
 using namespace winrt::Windows::UI::Notifications;
 
-class WinRTPlugin {
+class NativePlugin {
   public:
     /// Whether the plugin has been properly initialized.
     bool isReady = false;
@@ -37,8 +37,8 @@ class WinRTPlugin {
     /// A callback to run when a notification is pressed, when the app is or is not running.
     NativeNotificationCallback callback;
 
-    WinRTPlugin() { }
-    ~WinRTPlugin() { }
+    NativePlugin() { }
+    ~NativePlugin() { }
 
     /// Checks whether the current application has package identity. See [hasIdentity] for details.
     ///
