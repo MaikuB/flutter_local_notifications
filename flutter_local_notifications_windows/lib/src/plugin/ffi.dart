@@ -2,6 +2,7 @@ import "dart:ffi";
 import "package:ffi/ffi.dart";
 
 import "../details.dart";
+import "../details/notification_to_xml.dart";
 import "../ffi/bindings.dart";
 import "../ffi/utils.dart";
 

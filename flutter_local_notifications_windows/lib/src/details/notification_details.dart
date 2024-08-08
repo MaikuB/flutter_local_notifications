@@ -41,20 +41,6 @@ enum WindowsNotificationScenario {
   urgent,
 }
 
-extension on DateTime {
-  String toIso8601StringTz() {
-    // Get offset
-    final offset = timeZoneOffset;
-    final sign = offset.isNegative ? "-" : "+";
-    final hours = offset.inHours.abs().toString().padLeft(2, "0");
-    final minutes = offset.inMinutes.abs().remainder(60).toString().padLeft(2, "0");
-    final offsetString = "$sign$hours:$minutes";
-    // Get first part of properly formatted ISO 8601 date
-    final formattedDate = toIso8601String().split(".").first;
-    return "$formattedDate$offsetString";
-  }
-}
-
 /// Contains notification details specific to Windows.
 ///
 /// See: https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/adaptive-interactive-toasts
@@ -114,13 +100,6 @@ class WindowsNotificationDetails {
   /// string values. You can then update them while or after the notification is launched by
   /// using the binding name as the key here, and the value as any string you want
   final Map<String, String> bindings;
-
-  /// XML attributes for the toast notification as a whole.
-  Map<String, String> get attributes => {
-    if (duration != null) "duration": duration!.name,
-    if (timestamp != null) "displayTimestamp": timestamp!.toIso8601StringTz(),
-    if (scenario != null) "scenario": scenario!.name,
-  };
 
   /// Builds all relevant XML parts under the root `<toast>` element.
   void toXml(XmlBuilder builder) {
