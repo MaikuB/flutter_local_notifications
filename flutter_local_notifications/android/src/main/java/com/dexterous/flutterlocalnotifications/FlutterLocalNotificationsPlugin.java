@@ -284,7 +284,10 @@ public class FlutterLocalNotificationsPlugin
                     : notificationDetails.body)
             .setTicker(notificationDetails.ticker)
             .setAutoCancel(BooleanUtils.getValue(notificationDetails.autoCancel))
-            .setContentIntent(pendingIntent)
+            .setContentIntent(
+                BooleanUtils.getValue(notificationDetails.selectable) 
+                    ? pendingIntent 
+                    : null)
             .setPriority(notificationDetails.priority)
             .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
             .setSilent(BooleanUtils.getValue(notificationDetails.silent))
