@@ -1,3 +1,15 @@
+## [vNext]
+
+* **Breaking change** Bumped minimum Flutter SDK requirement to 3.13
+
+## [7.2.0]
+
+* Added `periodicallyShowWithDuration()` and corresponding `validateRepeatDurationInterval()` helper method to ensure duration is at least a minute
+
+## [7.1.0]
+
+* [Android] `bigText` has added to `ActiveNotification` that allows getting information about the longer text associated with a notification displayed using the big text style. Thanks to the PR from [vulpeep](https://github.com/vulpeep)
+
 ## [7.0.0+1]
 
 * Bumped maximum Dart SDK constraint
