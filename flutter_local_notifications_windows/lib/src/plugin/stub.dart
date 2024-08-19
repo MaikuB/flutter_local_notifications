@@ -52,6 +52,14 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   }) async { }
 
   @override
+  Future<void> zonedScheduleRawXml(
+    int id,
+    String xml,
+    TZDateTime scheduledDate,
+    WindowsNotificationDetails? details,
+  ) async { }
+
+  @override
   Future<NotificationUpdateResult> updateBindings({
     required int id,
     required Map<String, String> bindings,

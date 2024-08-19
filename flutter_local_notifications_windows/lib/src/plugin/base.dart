@@ -46,6 +46,17 @@ abstract class WindowsNotificationsBase extends FlutterLocalNotificationsPlatfor
     String? payload,
   });
 
+  /// Schedules a notification to appear using raw XML at the given date and time.
+  ///
+  /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
+  /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
+  Future<void> zonedScheduleRawXml(
+    int id,
+    String xml,
+    TZDateTime scheduledDate,
+    WindowsNotificationDetails? details,
+  );
+
   /// Updates the progress bar in the notification with the given ID.
   ///
   /// Note that in order to update [WindowsProgressBar.label], it must

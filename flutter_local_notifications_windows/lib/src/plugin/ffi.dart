@@ -194,6 +194,19 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   });
 
   @override
+  Future<void> zonedScheduleRawXml(
+    int id,
+    String xml,
+    TZDateTime scheduledDate,
+    WindowsNotificationDetails? details,
+  ) async => using((arena) {
+    if (!_isReady) throw StateError("Flutter Local Notifications (Windows) must be initialized before use");
+    if (scheduledDate.isBefore(DateTime.now())) throw ArgumentError("Flutter Local Notifications (Windows) cannot schedule notifications in the past");
+    final secondsSinceEpoch = scheduledDate.millisecondsSinceEpoch ~/ 1000;
+    _bindings.scheduleNotification(_plugin, id, xml.toNativeUtf8(allocator: arena), secondsSinceEpoch);
+  });
+
+  @override
   Future<NotificationUpdateResult> updateBindings({required int id, required Map<String, String> bindings}) async => using((arena) {
     if (!_isReady) throw StateError("Flutter Local Notifications (Windows) must be initialized before use");
     final result = _bindings.updateNotification(_plugin, id, bindings.toNativeMap(arena));
