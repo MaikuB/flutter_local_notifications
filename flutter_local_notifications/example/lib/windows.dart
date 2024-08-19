@@ -63,19 +63,19 @@ List<Widget> examples({
     },
   ),
   PaddedElevatedButton(
-    buttonText: 'Show notitification with activation',
+    buttonText: 'Show notification with activation',
     onPressed: () async {
       await _showWindowsNotificationWithActivation();
     },
   ),
   PaddedElevatedButton(
-    buttonText: 'Show notitification with button styles',
+    buttonText: 'Show notification with button styles',
     onPressed: () async {
       await _showWindowsNotificationWithButtonStyle();
     },
   ),
   PaddedElevatedButton(
-    buttonText: 'Show notitifications in a group',
+    buttonText: 'Show notifications in a group',
     onPressed: () async {
       await _showWindowsNotificationWithHeader();
     },
