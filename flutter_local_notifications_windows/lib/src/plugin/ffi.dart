@@ -22,6 +22,11 @@ extension on String {
 
 /// The FFI implementation of `package:flutter_local_notifications`.
 class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
+  /// Registers the Windows implementation with Flutter.
+  static void registerWith() {
+    FlutterLocalNotificationsPlatform.instance = FlutterLocalNotificationsWindows();
+  }
+
   /// The global instance of this plugin. Used in [_globalLaunchCallback].
   static FlutterLocalNotificationsWindows? instance;
 

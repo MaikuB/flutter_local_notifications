@@ -22,3 +22,4 @@ flutter:
     platforms:
       windows:
         ffiPlugin: true
+        dartPluginClass: FlutterLocalNotificationsWindows
