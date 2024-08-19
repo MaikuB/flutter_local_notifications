@@ -1163,7 +1163,7 @@ class _HomePageState extends State<HomePage> {
           WindowsAction(content: 'Send', arguments: 'send-reply', inputId: 'text'),
         ],
         inputs: <WindowsTextInput>[
-          WindowsTextInput(id: 'text', title: 'Send a reply?', hintText: 'Message'),
+          WindowsTextInput(id: 'text', title: 'Send a reply?', placeHolderContent: 'Message'),
         ],
       );
 

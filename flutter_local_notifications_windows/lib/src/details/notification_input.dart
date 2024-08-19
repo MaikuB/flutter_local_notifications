@@ -37,12 +37,12 @@ class WindowsTextInput extends WindowsInput {
   /// Creates an input field in a notification.
   const WindowsTextInput({
     required super.id,
-    this.hintText,
+    this.placeHolderContent,
     super.title,
   }) : super(type: WindowsInputType.text);
 
-  /// The hint text.
-  final String? hintText;
+  /// A placeholder shown before the user enters input, like a hint text.
+  final String? placeHolderContent;
 
   @override
   void toXml(XmlBuilder builder) => builder.element(
@@ -51,7 +51,7 @@ class WindowsTextInput extends WindowsInput {
       "id": id,
       "type": type.name,
       if (title != null) "title": title!,
-      if (hintText != null) "placeHolderContent": hintText!,
+      if (placeHolderContent != null) "placeHolderContent": placeHolderContent!,
     },
   );
 }

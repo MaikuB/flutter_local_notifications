@@ -95,7 +95,7 @@ void main() => group("Details:", () {
   });
 
   test("Inputs", () async {
-    const textInput = WindowsTextInput(id: "input", hintText: "Text hint", title: "Text title");
+    const textInput = WindowsTextInput(id: "input", placeHolderContent: "Text hint", title: "Text title");
     const selection = WindowsSelectionInput(id: "input", items: [
       WindowsSelection(id: "item1", content: "Item 1"),
       WindowsSelection(id: "item2", content: "Item 2"),
