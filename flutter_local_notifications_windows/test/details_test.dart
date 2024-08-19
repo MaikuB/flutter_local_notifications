@@ -43,7 +43,6 @@ void main() => group("Details:", () {
       content: "content",
       arguments: "args",
       activationBehavior: WindowsNotificationBehavior.pendingUpdate,
-      activationType: WindowsActivationType.background,
       buttonStyle: WindowsButtonStyle.success,
       inputId: "input-id",
       tooltip: "tooltip",

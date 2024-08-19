@@ -6,13 +6,9 @@ import "package:xml/xml.dart";
 // If you change their Dart names, be sure to override [Enum.name].
 
 /// Decides how the [WindowsAction] will launch the app.
-///
-/// On desktop platforms, [foreground] and [background] are treated the same.
 enum WindowsActivationType {
   /// The application will launch in the foreground (the default).
   foreground,
-  /// The application will launch as a background task.
-  background,
   /// Any application can be launched using its protocol.
   protocol,
 }

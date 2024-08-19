@@ -330,7 +330,6 @@ Future<void> _showWindowsNotificationWithActivation() => flutterLocalNotificatio
         WindowsAction(
           content: 'Loading',
           arguments: 'loading',
-          activationType: WindowsActivationType.background,
           activationBehavior: WindowsNotificationBehavior.pendingUpdate,
         ),
         WindowsAction(
