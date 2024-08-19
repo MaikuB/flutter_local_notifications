@@ -20,7 +20,7 @@ extension on String {
     && this[23] == "-";
 }
 
-/// The FFI implementation of `package:flutter_local_notifications`.
+/// The Windows implementation of `package:flutter_local_notifications`.
 class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   /// Registers the Windows implementation with Flutter.
   static void registerWith() {
