@@ -60,7 +60,7 @@ abstract class WindowsNotificationsBase extends FlutterLocalNotificationsPlatfor
   /// Updates the progress bar in the notification with the given ID.
   ///
   /// Note that in order to update [WindowsProgressBar.label], it must
-  /// not have been set to null when [show] was called.
+  /// not have been set to `null` when the notification was created
   Future<NotificationUpdateResult> updateProgressBar({
     required int notificationId,
     required WindowsProgressBar progressBar,
