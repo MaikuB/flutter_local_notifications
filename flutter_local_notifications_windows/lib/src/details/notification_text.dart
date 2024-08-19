@@ -30,7 +30,9 @@ class WindowsNotificationText extends WindowsNotificationPart {
   /// Whether the text should be smaller like a caption.
   final bool isCaption;
 
-  /// The placement of this text. Null indicates default.
+  /// The placement of this text.
+  ///
+  /// The default placement (null) is in the main body of the notification.
   final WindowsTextPlacement? placement;
 
   /// The language of this text.
