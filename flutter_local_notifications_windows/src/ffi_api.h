@@ -19,6 +19,8 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+
 /// A fake type to represent the C++ class that will own the Windows API handles.
 typedef struct NativePlugin NativePlugin;
 
@@ -48,7 +50,7 @@ typedef enum NativeLaunchType {
 /// Details about how the app was launched.
 typedef struct NativeLaunchDetails {
   /// Whether the app was launched by a notification
-  int didLaunch;
+  bool didLaunch;
   /// What part of the notification launched the app.
   NativeLaunchType launchType;
   /// The payload sent to the app by the notification. Usually the action that was pressed.
@@ -76,13 +78,13 @@ FFI_PLUGIN_EXPORT NativePlugin* createPlugin();
 FFI_PLUGIN_EXPORT void disposePlugin(NativePlugin* ptr);
 
 /// Initializes the plugin and registers the callback to be run when a notification is pressed.
-FFI_PLUGIN_EXPORT int init(NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath, NativeNotificationCallback callback);
+FFI_PLUGIN_EXPORT bool init(NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath, NativeNotificationCallback callback);
 
 /// Shows the XML as a notification with the given ID. See [updateNotification] for details on bindings.
-FFI_PLUGIN_EXPORT int showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap bindings);
+FFI_PLUGIN_EXPORT bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap bindings);
 
 /// Schedules the notification to be shown at the given time (as a [time_t]).
-FFI_PLUGIN_EXPORT int scheduleNotification(NativePlugin* plugin, int id, char* xml, int time);
+FFI_PLUGIN_EXPORT bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time);
 
 /// Updates a notification with the provided bindings after it's been shown.
 ///

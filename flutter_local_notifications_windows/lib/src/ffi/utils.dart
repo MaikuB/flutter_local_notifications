@@ -17,14 +17,6 @@ extension NativeStringMapUtils on NativeStringMap {
   };
 }
 
-/// Helpful methods on integers.
-extension IntUtils on int {
-  /// Converts this integer into a boolean.
-  ///
-  /// Useful for return types of C functions.
-  bool toBool() => this == 1;
-}
-
 /// Gets the [NotificationResponseType] from a [NativeLaunchType].
 NotificationResponseType getResponseType(int launchType) {
   switch (NativeLaunchType.fromValue(launchType)) {

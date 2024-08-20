@@ -55,7 +55,7 @@ class NotificationsPluginBindings {
       _disposePluginPtr.asFunction<void Function(ffi.Pointer<NativePlugin>)>();
 
   /// Initializes the plugin and registers the callback to be run when a notification is pressed.
-  int init(
+  bool init(
     ffi.Pointer<NativePlugin> plugin,
     ffi.Pointer<pkg_ffi.Utf8> appName,
     ffi.Pointer<pkg_ffi.Utf8> aumId,
@@ -75,7 +75,7 @@ class NotificationsPluginBindings {
 
   late final _initPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Int Function(
+          ffi.Bool Function(
               ffi.Pointer<NativePlugin>,
               ffi.Pointer<pkg_ffi.Utf8>,
               ffi.Pointer<pkg_ffi.Utf8>,
@@ -83,7 +83,7 @@ class NotificationsPluginBindings {
               ffi.Pointer<pkg_ffi.Utf8>,
               NativeNotificationCallback)>>('init');
   late final _init = _initPtr.asFunction<
-      int Function(
+      bool Function(
           ffi.Pointer<NativePlugin>,
           ffi.Pointer<pkg_ffi.Utf8>,
           ffi.Pointer<pkg_ffi.Utf8>,
@@ -92,7 +92,7 @@ class NotificationsPluginBindings {
           NativeNotificationCallback)>();
 
   /// Shows the XML as a notification with the given ID. See [updateNotification] for details on bindings.
-  int showNotification(
+  bool showNotification(
     ffi.Pointer<NativePlugin> plugin,
     int id,
     ffi.Pointer<pkg_ffi.Utf8> xml,
@@ -108,14 +108,14 @@ class NotificationsPluginBindings {
 
   late final _showNotificationPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Int Function(ffi.Pointer<NativePlugin>, ffi.Int,
+          ffi.Bool Function(ffi.Pointer<NativePlugin>, ffi.Int,
               ffi.Pointer<pkg_ffi.Utf8>, NativeStringMap)>>('showNotification');
   late final _showNotification = _showNotificationPtr.asFunction<
-      int Function(ffi.Pointer<NativePlugin>, int, ffi.Pointer<pkg_ffi.Utf8>,
+      bool Function(ffi.Pointer<NativePlugin>, int, ffi.Pointer<pkg_ffi.Utf8>,
           NativeStringMap)>();
 
   /// Schedules the notification to be shown at the given time (as a [time_t]).
-  int scheduleNotification(
+  bool scheduleNotification(
     ffi.Pointer<NativePlugin> plugin,
     int id,
     ffi.Pointer<pkg_ffi.Utf8> xml,
@@ -131,10 +131,10 @@ class NotificationsPluginBindings {
 
   late final _scheduleNotificationPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Int Function(ffi.Pointer<NativePlugin>, ffi.Int,
+          ffi.Bool Function(ffi.Pointer<NativePlugin>, ffi.Int,
               ffi.Pointer<pkg_ffi.Utf8>, ffi.Int)>>('scheduleNotification');
   late final _scheduleNotification = _scheduleNotificationPtr.asFunction<
-      int Function(
+      bool Function(
           ffi.Pointer<NativePlugin>, int, ffi.Pointer<pkg_ffi.Utf8>, int)>();
 
   /// Updates a notification with the provided bindings after it's been shown.
@@ -312,8 +312,8 @@ enum NativeLaunchType {
 /// Details about how the app was launched.
 final class NativeLaunchDetails extends ffi.Struct {
   /// Whether the app was launched by a notification
-  @ffi.Int()
-  external int didLaunch;
+  @ffi.Bool()
+  external bool didLaunch;
 
   /// What part of the notification launched the app.
   @ffi.UnsignedInt()

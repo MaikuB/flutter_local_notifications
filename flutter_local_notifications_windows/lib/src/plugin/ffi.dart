@@ -89,8 +89,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         .listener(_globalLaunchCallback)
         .nativeFunction;
     final bool result = _bindings
-      .init(_plugin, appName, aumId, guid, iconPath, callback)
-      .toBool();
+      .init(_plugin, appName, aumId, guid, iconPath, callback);
     _isReady = result;
     return result;
   });
@@ -191,7 +190,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     }
     final Map<String, String> data = details.data.toMap();
     return NotificationAppLaunchDetails(
-      details.didLaunch.toBool(),
+      details.didLaunch,
       notificationResponse: NotificationResponse(
         notificationResponseType: getResponseType(details.launchType),
         payload: details.payload.toDartString(),
@@ -257,7 +256,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         id,
         xml.toNativeUtf8(allocator: arena),
         nativeMap,
-      ).toBool();
+      );
     if (!result) {
       throw Exception(
         'Flutter Local Notifications could not show notification',
@@ -282,7 +281,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         id,
         xml.toNativeUtf8(allocator: arena),
         bindings.toNativeMap(arena)
-      ).toBool();
+      );
     if (!result) {
       throw ArgumentError('Flutter Local Notifications: Invalid XML');
     }

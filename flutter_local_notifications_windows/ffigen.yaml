@@ -6,6 +6,8 @@ description: |
   Regenerate bindings with `dart run ffigen --config ffigen.yaml`.
 output: 'lib/src/ffi/bindings.dart'
 
+silence-enum-warning: true
+
 headers:
   entry-points:
     - 'src/ffi_api.h'
