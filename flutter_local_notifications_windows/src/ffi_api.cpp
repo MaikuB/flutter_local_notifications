@@ -16,7 +16,7 @@ void disposePlugin(NativePlugin* plugin) {
   delete plugin;
 }
 
-int init(NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath, NativeNotificationCallback callback) {
+bool init(NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath, NativeNotificationCallback callback) {
   string icon;
   if (iconPath != nullptr) icon = string(iconPath);
   const auto didRegister = plugin->registerApp(aumId, appName, guid, icon, callback);
@@ -33,7 +33,7 @@ int init(NativePlugin* plugin, char* appName, char* aumId, char* guid, char* ico
   return true;
 }
 
-int showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap bindings) {
+bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap bindings) {
   if (!plugin->isReady) return false;
   XmlDocument doc;
   try {
@@ -49,7 +49,7 @@ int showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap bi
   return true;
 }
 
-int scheduleNotification(NativePlugin* plugin, int id, char* xml, int time) {
+bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time) {
   if (!plugin->isReady) return false;
   XmlDocument doc;
   try { doc.LoadXml(winrt::to_hstring(xml)); }
