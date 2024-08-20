@@ -11,12 +11,16 @@
 // for users as it depends on having two plugins instantiated at the same time,
 // which is not recommended, but I left it here as a demonstration if needed.
 
-import "dart:isolate";
+import 'dart:isolate';
 
-import "package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart";
-import "package:timezone/standalone.dart";
+import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
+import 'package:timezone/standalone.dart';
 
-const settings = WindowsInitializationSettings(appName: "Test app", appUserModelId: "com.test.test", guid: "a8c22b55-049e-422f-b30f-863694de08c8");
+const WindowsInitializationSettings settings = WindowsInitializationSettings(
+  appName: 'Test app',
+  appUserModelId: 'com.test.test',
+  guid: 'a8c22b55-049e-422f-b30f-863694de08c8',
+);
 
 void main() async {
   await Isolate.spawn(bindingsTest, null);
@@ -27,23 +31,28 @@ void main() async {
 
 Future<void> scheduledTest(_) async {
   await Future<void>.delayed(const Duration(seconds: 4));
-  final plugin = FlutterLocalNotificationsWindows();
+  final FlutterLocalNotificationsWindows plugin =
+      FlutterLocalNotificationsWindows();
   await plugin.initialize(settings);
   await initializeTimeZone();
-  final location = getLocation("US/Eastern");
-  final now = TZDateTime.now(location);
-  final later = now.add(const Duration(days: 1));
+  final Location location = getLocation('US/Eastern');
+  final TZDateTime now = TZDateTime.now(location);
+  final TZDateTime later = now.add(const Duration(days: 1));
   await plugin.zonedSchedule(300, null, null, later, null);
   await plugin.zonedSchedule(301, null, null, later, null);
   await plugin.zonedSchedule(302, null, null, later, null);
 }
 
 Future<void> bindingsTest(_) async {
-  final bindings = {"title": "Bindings title", "body": "Bindings body"};
+  final Map<String, String> bindings = <String, String>{
+    'title': 'Bindings title',
+    'body': 'Bindings body'
+  };
   await Future<void>.delayed(const Duration(seconds: 1));
-  final plugin = FlutterLocalNotificationsWindows();
+  final FlutterLocalNotificationsWindows plugin =
+      FlutterLocalNotificationsWindows();
   await plugin.initialize(settings);
-  await plugin.show(503, "{title}", "{body}");
+  await plugin.show(503, '{title}', '{body}');
   await Future<void>.delayed(const Duration(milliseconds: 100));
   await plugin.updateBindings(id: 503, bindings: bindings);
   await plugin.updateBindings(id: 503, bindings: bindings);

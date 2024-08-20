@@ -1,6 +1,6 @@
-import "dart:io";
+import 'dart:io';
 
-import "package:xml/xml.dart";
+import 'package:xml/xml.dart';
 
 // NOTE: All enum values in this file have Windows RT-specific names.
 // If you change their Dart names, be sure to override [Enum.name].
@@ -9,6 +9,7 @@ import "package:xml/xml.dart";
 enum WindowsActivationType {
   /// The application will launch in the foreground (the default).
   foreground,
+
   /// Any application can be launched using its protocol.
   protocol,
 }
@@ -16,11 +17,13 @@ enum WindowsActivationType {
 /// Decides how a [WindowsAction] will react to being pressed.
 enum WindowsNotificationBehavior {
   /// The notification will be dismissed.
-  dismiss("default"),
+  dismiss('default'),
+
   /// The notification will remain on screen and show a loading status.
-  pendingUpdate("pendingUpdate");
+  pendingUpdate('pendingUpdate');
 
   const WindowsNotificationBehavior(this.name);
+
   /// The Windows API name for this choice.
   final String name;
 }
@@ -28,11 +31,13 @@ enum WindowsNotificationBehavior {
 /// Decides how a [WindowsAction] will be styled.
 enum WindowsButtonStyle {
   /// A green button.
-  success("Success"),
+  success('Success'),
+
   /// A red button.
-  critical("Critical");
+  critical('Critical');
 
   const WindowsButtonStyle(this.name);
+
   /// The Windows API name for this choice.
   final String name;
 }
@@ -104,21 +109,25 @@ class WindowsAction {
   /// See: https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-action#syntax
   void toXml(XmlBuilder builder) {
     if (image != null && !image!.isAbsolute) {
-      throw ArgumentError.value(image!.path, "WindowsImage.file", "File path must be absolute");
+      throw ArgumentError.value(
+        image!.path,
+        'WindowsImage.file',
+        'File path must be absolute',
+      );
     }
     builder.element(
-      "action",
-      attributes: {
-        "content": content,
-        "arguments": arguments,
-        "activationType": activationType.name,
-        "afterActivationBehavior": activationBehavior.name,
-        if (placement != null) "placement": placement!.name,
-        if (image != null) "imageUri":
+      'action',
+      attributes: <String, String>{
+        'content': content,
+        'arguments': arguments,
+        'activationType': activationType.name,
+        'afterActivationBehavior': activationBehavior.name,
+        if (placement != null) 'placement': placement!.name,
+        if (image != null) 'imageUri':
           Uri.file(image!.absolute.path, windows: true).toFilePath(),
-        if (inputId != null) "hint-inputId": inputId!,
-        if (buttonStyle != null) "hint-buttonStyle": buttonStyle!.name,
-        if (tooltip != null) "hint-toolTip": tooltip!,
+        if (inputId != null) 'hint-inputId': inputId!,
+        if (buttonStyle != null) 'hint-buttonStyle': buttonStyle!.name,
+        if (tooltip != null) 'hint-toolTip': tooltip!,
       },
     );
   }

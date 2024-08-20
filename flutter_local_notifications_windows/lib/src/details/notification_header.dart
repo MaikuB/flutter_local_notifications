@@ -1,4 +1,4 @@
-import "package:xml/xml.dart";
+import 'package:xml/xml.dart';
 
 /// Decides how the application will open when the header is pressed.
 enum WindowsHeaderActivation {
@@ -33,12 +33,12 @@ class WindowsHeader {
 
   /// Serializes this header to XML.
   void toXml(XmlBuilder builder) => builder.element(
-    "header",
-    attributes: {
-      "id": id,
-      "title": title,
-      "arguments": arguments,
-      if (activation != null) "activationType": activation!.name,
+    'header',
+    attributes: <String, String>{
+      'id': id,
+      'title': title,
+      'arguments': arguments,
+      if (activation != null) 'activationType': activation!.name,
     },
   );
 }

@@ -1,12 +1,15 @@
-import "package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart";
-import "package:test/test.dart";
+import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
+import 'package:test/test.dart';
 
-const settings = WindowsInitializationSettings(appName: "test", appUserModelId: "com.test.test", guid: "a8c22b55-049e-422f-b30f-863694de08c8");
-const emptyXml = "";
-const invalidXml = "Blah blah blah";
-const notWindowsXml = "<text>Hi<text>";
-const unmatchedXml = "<text>Hi";
-const validXml = """
+const WindowsInitializationSettings settings = WindowsInitializationSettings(
+    appName: 'test',
+    appUserModelId: 'com.test.test',
+    guid: 'a8c22b55-049e-422f-b30f-863694de08c8');
+const String emptyXml = '';
+const String invalidXml = 'Blah blah blah';
+const String notWindowsXml = '<text>Hi<text>';
+const String unmatchedXml = '<text>Hi';
+const String validXml = '''
 <toast>
 
   <visual>
@@ -17,9 +20,9 @@ const validXml = """
   </visual>
 
 </toast>
-""";
+''';
 
-const complexXml = """
+const String complexXml = '''
 <toast launch="action=viewEvent&amp;eventId=63851">
 
   <visual>
@@ -51,19 +54,25 @@ const complexXml = """
   </actions>
 
 </toast>
-""";
+''';
 
-void main() => group("XML", () {
-  final plugin = FlutterLocalNotificationsWindows();
-  setUpAll(() => plugin.initialize(settings));
-  tearDownAll(() async { await plugin.cancelAll(); plugin.dispose(); });
+void main() => group('XML', () {
+      final FlutterLocalNotificationsWindows plugin =
+          FlutterLocalNotificationsWindows();
+      setUpAll(() => plugin.initialize(settings));
+      tearDownAll(() async {
+        await plugin.cancelAll();
+        plugin.dispose();
+      });
 
-  test("catches invalid XML", () async {
-    expect(plugin.showRawXml(id: 0, xml: emptyXml), throwsArgumentError);
-    expect(plugin.showRawXml(id: 1, xml: invalidXml), throwsArgumentError);
-    expect(plugin.showRawXml(id: 2, xml: notWindowsXml), throwsArgumentError);
-    expect(plugin.showRawXml(id: 3, xml: unmatchedXml), throwsArgumentError);
-    expect(plugin.showRawXml(id: 4, xml: validXml), completes);
-    expect(plugin.showRawXml(id: 5, xml: complexXml), completes);
-  });
-});
+      test('catches invalid XML', () async {
+        expect(plugin.showRawXml(id: 0, xml: emptyXml), throwsArgumentError);
+        expect(plugin.showRawXml(id: 1, xml: invalidXml), throwsArgumentError);
+        expect(
+            plugin.showRawXml(id: 2, xml: notWindowsXml), throwsArgumentError);
+        expect(
+            plugin.showRawXml(id: 3, xml: unmatchedXml), throwsArgumentError);
+        expect(plugin.showRawXml(id: 4, xml: validXml), completes);
+        expect(plugin.showRawXml(id: 5, xml: complexXml), completes);
+      });
+    });

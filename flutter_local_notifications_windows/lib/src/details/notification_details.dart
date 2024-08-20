@@ -1,20 +1,21 @@
-import "package:xml/xml.dart";
+import 'package:xml/xml.dart';
 
-import "notification_action.dart";
-import "notification_audio.dart";
-import "notification_row.dart";
-import "notification_header.dart";
-import "notification_image.dart";
-import "notification_input.dart";
-import "notification_progress.dart";
+import 'notification_action.dart';
+import 'notification_audio.dart';
+import 'notification_header.dart';
+import 'notification_image.dart';
+import 'notification_input.dart';
+import 'notification_progress.dart';
+import 'notification_row.dart';
 
-export "notification_part.dart";
-export "notification_text.dart";
+export 'notification_part.dart';
+export 'notification_text.dart';
 
 /// The duration for a Windows notification.
 enum WindowsNotificationDuration {
   /// The notification will stay for a long time.
   long,
+
   /// The notification will stay for a short time.
   short,
 }
@@ -52,7 +53,7 @@ class WindowsNotificationDetails {
     this.images = const <WindowsImage>[],
     this.groups = const <WindowsRow>[],
     this.progressBars = const <WindowsProgressBar>[],
-    this.bindings = const {},
+    this.bindings = const <String, String>{},
     this.header,
     this.audio,
     this.duration,
@@ -96,27 +97,35 @@ class WindowsNotificationDetails {
 
   /// Custom bindings in the notification.
   ///
-  /// Text elements can contains "bindings", which are entered as `{bindingName}` directly into the
-  /// string values. You can then update them while or after the notification is launched by
-  /// using the binding name as the key here, and the value as any string you want
+  /// Text elements can contains "bindings", which are entered as
+  /// `{bindingName}` directly into the string values. You can then update them
+  /// while or after the notification is launched by using the binding name as
+  /// the key here, and the value as any string you want.
   final Map<String, String> bindings;
 
   /// Builds all relevant XML parts under the root `<toast>` element.
   void toXml(XmlBuilder builder) {
     if (actions.length > 5) {
-      throw ArgumentError("WindowsNotificationDetails can only have up to 5 actions");
+      throw ArgumentError(
+        'WindowsNotificationDetails can only have up to 5 actions',
+      );
     }
     if (inputs.length > 5) {
-      throw ArgumentError("WindowsNotificationDetails can only have up to 5 inputs");
+      throw ArgumentError(
+        'WindowsNotificationDetails can only have up to 5 inputs',
+      );
     }
-    builder.element("actions", nest: () {
-      for (final input in inputs) {
-        input.toXml(builder);
-      }
-      for (final action in actions) {
-        action.toXml(builder);
-      }
-    },);
+    builder.element(
+      'actions',
+      nest: () {
+        for (final WindowsInput input in inputs) {
+          input.toXml(builder);
+        }
+        for (final WindowsAction action in actions) {
+          action.toXml(builder);
+        }
+      },
+    );
     audio?.toXml(builder);
     header?.toXml(builder);
   }
@@ -126,15 +135,15 @@ class WindowsNotificationDetails {
   /// See: https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-binding
   void generateBinding(XmlBuilder builder) {
     if (subtitle != null) {
-      builder.element("text", nest: subtitle);
+      builder.element('text', nest: subtitle);
     }
-    for (final image in images) {
+    for (final WindowsImage image in images) {
       image.toXml(builder);
     }
-    for (final group in groups) {
+    for (final WindowsRow group in groups) {
       group.toXml(builder);
     }
-    for (final progressBar in progressBars) {
+    for (final WindowsProgressBar progressBar in progressBars) {
       progressBar.toXml(builder);
     }
   }

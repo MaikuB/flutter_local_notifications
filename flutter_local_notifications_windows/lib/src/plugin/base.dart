@@ -1,13 +1,16 @@
-import "package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart";
-import "package:timezone/timezone.dart";
+import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
+import 'package:timezone/timezone.dart';
 
-import "../details.dart";
+import '../details.dart';
+import '../details/notification_to_xml.dart';
 
-export "package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart";
-export "package:timezone/timezone.dart";
+export 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
+export 'package:timezone/timezone.dart';
 
 /// The Windows implementation of `package:flutter_local_notifications`.
-abstract class WindowsNotificationsBase extends FlutterLocalNotificationsPlatform {
+abstract class WindowsNotificationsBase
+  extends FlutterLocalNotificationsPlatform
+{
   /// Initializes the plugin. No other method should be called before this.
   Future<bool> initialize(
     WindowsInitializationSettings settings, {
@@ -24,7 +27,7 @@ abstract class WindowsNotificationsBase extends FlutterLocalNotificationsPlatfor
   Future<void> showRawXml({
     required int id,
     required String xml,
-    Map<String, String> bindings = const {},
+    Map<String, String> bindings = const <String, String>{},
   });
 
   @override
@@ -46,7 +49,7 @@ abstract class WindowsNotificationsBase extends FlutterLocalNotificationsPlatfor
     String? payload,
   });
 
-  /// Schedules a notification to appear using raw XML at the given date and time.
+  /// Schedules a notification to appear using raw XML at this date and time.
   ///
   /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
   /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
@@ -64,7 +67,10 @@ abstract class WindowsNotificationsBase extends FlutterLocalNotificationsPlatfor
   Future<NotificationUpdateResult> updateProgressBar({
     required int notificationId,
     required WindowsProgressBar progressBar,
-  }) => updateBindings(id: notificationId, bindings: progressBar.data);
+  }) => updateBindings(
+    id: notificationId,
+    bindings: progressBar.data,
+  );
 
   /// Updates any data binding in the given notification.
   ///

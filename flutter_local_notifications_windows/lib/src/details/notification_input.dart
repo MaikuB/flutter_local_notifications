@@ -1,9 +1,10 @@
-import "package:xml/xml.dart";
+import 'package:xml/xml.dart';
 
 /// The type of a [WindowsInput].
 enum WindowsInputType {
   /// A text input.
   text,
+
   /// A multiple choice input.
   selection,
 }
@@ -46,12 +47,13 @@ class WindowsTextInput extends WindowsInput {
 
   @override
   void toXml(XmlBuilder builder) => builder.element(
-    "input",
-    attributes: {
-      "id": id,
-      "type": type.name,
-      if (title != null) "title": title!,
-      if (placeHolderContent != null) "placeHolderContent": placeHolderContent!,
+    'input',
+    attributes: <String, String>{
+      'id': id,
+      'type': type.name,
+      if (title != null) 'title': title!,
+      if (placeHolderContent != null)
+        'placeHolderContent': placeHolderContent!,
     },
   );
 }
@@ -74,15 +76,15 @@ class WindowsSelectionInput extends WindowsInput {
 
   @override
   void toXml(XmlBuilder builder) => builder.element(
-    "input",
-    attributes: {
-      "id": id,
-      "type": type.name,
-      if (title != null) "title": title!,
-      if (defaultItem != null) "defaultInput": defaultItem!,
+    'input',
+    attributes: <String, String>{
+      'id': id,
+      'type': type.name,
+      if (title != null) 'title': title!,
+      if (defaultItem != null) 'defaultInput': defaultItem!,
     },
     nest: () {
-      for (final item in items) {
+      for (final WindowsSelection item in items) {
         item.toXml(builder);
       }
     },
@@ -105,10 +107,10 @@ class WindowsSelection {
 
   /// Serializes this item to XML.
   void toXml(XmlBuilder builder) => builder.element(
-    "selection",
-    attributes: {
-      "id": id,
-      "content": content,
+    'selection',
+    attributes: <String, String>{
+      'id': id,
+      'content': content,
     },
   );
 }
