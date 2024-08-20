@@ -89,4 +89,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     required int id,
     required Map<String, String> bindings,
   }) async => NotificationUpdateResult.success;
+
+  @override
+  void enableMultithreading() { }
 }

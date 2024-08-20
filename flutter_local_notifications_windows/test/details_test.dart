@@ -20,6 +20,7 @@ extension PluginUtils on FlutterLocalNotificationsWindows {
 }
 
 void main() => group('Details:', () {
+  FlutterLocalNotificationsWindows().enableMultithreading();
   final FlutterLocalNotificationsWindows plugin =
     FlutterLocalNotificationsWindows();
   setUpAll(() => plugin.initialize(settings));

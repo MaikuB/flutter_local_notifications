@@ -137,3 +137,7 @@ void freeLaunchDetails(NativeLaunchDetails details) {
   }
   if (details.data.entries != nullptr) delete[] details.data.entries;
 }
+
+void enableMultithreading() {
+  CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+}

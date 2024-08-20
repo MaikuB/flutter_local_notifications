@@ -362,4 +362,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
       .updateNotification(_plugin, id, bindings.toNativeMap(arena));
     return getUpdateResult(result);
   });
+
+  @override
+  void enableMultithreading() => _bindings.enableMultithreading();
 }

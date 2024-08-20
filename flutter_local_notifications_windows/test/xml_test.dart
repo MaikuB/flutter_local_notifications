@@ -57,6 +57,8 @@ const String complexXml = '''
 ''';
 
 void main() => group('XML', () {
+  FlutterLocalNotificationsWindows().enableMultithreading();
+
       final FlutterLocalNotificationsWindows plugin =
           FlutterLocalNotificationsWindows();
       setUpAll(() => plugin.initialize(settings));
