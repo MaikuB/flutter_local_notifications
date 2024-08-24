@@ -106,10 +106,11 @@ class LinuxNotificationAction {
     required this.label,
   });
 
-  /// Unique ID for this action. This ID will be sent back in the action handler
-  /// defined in [FlutterLocalNotificationsPlugin].
+  /// Unique ID for this action.
   ///
-  /// If [LinuxNotificationDetails.keyAsIconName] is `true`,
+  /// This ID will be sent back to the plugin when the action is invoked.
+  ///
+  /// If [LinuxNotificationDetails.actionKeyAsIconName] is `true`,
   /// the server will attempt to interpret [key] as a named icon.
   /// [label] will be used to annotate the icon for accessibility purposes.
   /// The icon name should be compliant with the Freedesktop.org Icon Naming Specification https://specifications.freedesktop.org/icon-naming-spec/latest/

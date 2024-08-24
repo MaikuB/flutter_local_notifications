@@ -1,14 +1,16 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 
-import 'flutter_local_notifications_platform_linux.dart';
 import 'model/capabilities.dart';
 import 'model/initialization_settings.dart';
 import 'model/notification_details.dart';
-import 'notification_manager.dart';
 
-/// Linux implementation of the local notifications plugin.
+import 'notification_manager_stub.dart'
+    if (dart.library.ffi) 'notification_manager.dart';
+
+/// Linux implementation of `package:flutter_local_notifications`.
 class LinuxFlutterLocalNotificationsPlugin
-    extends FlutterLocalNotificationsPlatformLinux {
+    extends FlutterLocalNotificationsPlatform {
   /// Constructs an instance of [LinuxNotificationDetails].
   LinuxFlutterLocalNotificationsPlugin()
       : _manager = LinuxNotificationManager();
@@ -30,15 +32,10 @@ class LinuxFlutterLocalNotificationsPlugin
 
   /// Initializes the plugin.
   ///
-  /// Call this method on application before using the plugin further.
-  ///
-  /// This should only be done once. When a notification created by this plugin
+  /// Call this method on application before using the plugin further. This
+  /// should only be done once. When a notification created by this plugin
   /// was used to launch the app, calling [initialize] is what will trigger to
-  /// the [onSelectNotification] callback to be fire.
-  ///
-  /// [onSelectNotificationAction] specifies a callback handler which receives
-  /// notification action IDs.
-  @override
+  /// the [onDidReceiveNotificationResponse] callback to be fire.
   Future<bool?> initialize(
     LinuxInitializationSettings initializationSettings, {
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
@@ -80,7 +77,6 @@ class LinuxFlutterLocalNotificationsPlugin
   /// Returns the system notification server capabilities.
   /// Some functionality may not be implemented by the notification server,
   /// conforming clients should check if it is available before using it.
-  @override
   Future<LinuxServerCapabilities> getCapabilities() =>
       _manager.getCapabilities();
 
@@ -91,6 +87,5 @@ class LinuxFlutterLocalNotificationsPlugin
   /// so it's undesirable to save it to persistable storage without any
   /// invalidation/update. For more information, please see
   /// Desktop Notifications Specification https://specifications.freedesktop.org/notification-spec/latest/ar01s02.html
-  @override
   Future<Map<int, int>> getSystemIdMap() => _manager.getSystemIdMap();
 }
