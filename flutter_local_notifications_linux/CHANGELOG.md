@@ -1,6 +1,7 @@
 ## [vNext]
 
 * **Breaking change** Bumped minimum Flutter SDK requirement to 3.13
+* Fixed and updated API docs. Previously API docs referenced docs for `LinuxFlutterLocalNotificationsPlugin` reference the API docs for the stub implementation. This was resolved by updating how the plugin deals with being run on platforms that don't support FFI
 
 ## [4.0.1]
 
