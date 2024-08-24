@@ -6,7 +6,7 @@ import 'package:flutter_local_notifications_linux/flutter_local_notifications_li
 import 'package:flutter_local_notifications_linux/src/dbus_wrapper.dart';
 import 'package:flutter_local_notifications_linux/src/model/hint.dart';
 import 'package:flutter_local_notifications_linux/src/notification_info.dart';
-import 'package:flutter_local_notifications_linux/src/notifications_manager.dart';
+import 'package:flutter_local_notifications_linux/src/notification_manager.dart';
 import 'package:flutter_local_notifications_linux/src/platform_info.dart';
 import 'package:flutter_local_notifications_linux/src/storage.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
@@ -15,6 +15,8 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as path;
 
+import 'notification_manager_test.mocks.dart';
+
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<DBusWrapper>(),
   MockSpec<DBusRemoteObjectSignalStream>(),
@@ -22,8 +24,6 @@ import 'package:path/path.dart' as path;
   MockSpec<NotificationStorage>(),
   MockSpec<DidReceiveNotificationResponseCallback>(),
 ])
-import 'notifications_manager_test.mocks.dart';
-
 class FakeStreamSubscription<T> extends Fake implements StreamSubscription<T> {}
 
 // ignore: one_member_abstracts
