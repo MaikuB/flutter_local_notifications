@@ -31,6 +31,7 @@ void main() async {
   await Isolate.spawn(scheduledTest, null);
 
   // This is the critical line. Removing this causes crashes in the Windows SDK
+  // ignore: invalid_use_of_visible_for_testing_member
   FlutterLocalNotificationsWindows().enableMultithreading();
 
   await Future<void>.delayed(const Duration(seconds: 5));

@@ -46,7 +46,7 @@ class WindowsImage extends WindowsNotificationPart {
   final WindowsImageCrop? crop;
 
   @override
-  void toXml(XmlBuilder builder) {
+  void buildXml(XmlBuilder builder) {
     if (!file.isAbsolute) {
       throw ArgumentError.value(
         file.path,

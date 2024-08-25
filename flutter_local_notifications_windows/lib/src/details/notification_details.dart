@@ -104,7 +104,7 @@ class WindowsNotificationDetails {
   final Map<String, String> bindings;
 
   /// Builds all relevant XML parts under the root `<toast>` element.
-  void toXml(XmlBuilder builder) {
+  void buildXml(XmlBuilder builder) {
     if (actions.length > 5) {
       throw ArgumentError(
         'WindowsNotificationDetails can only have up to 5 actions',
@@ -119,15 +119,15 @@ class WindowsNotificationDetails {
       'actions',
       nest: () {
         for (final WindowsInput input in inputs) {
-          input.toXml(builder);
+          input.buildXml(builder);
         }
         for (final WindowsAction action in actions) {
-          action.toXml(builder);
+          action.buildXml(builder);
         }
       },
     );
-    audio?.toXml(builder);
-    header?.toXml(builder);
+    audio?.buildXml(builder);
+    header?.buildXml(builder);
   }
 
   /// Generates the `<binding>` element of the notification.
@@ -138,13 +138,13 @@ class WindowsNotificationDetails {
       builder.element('text', nest: subtitle);
     }
     for (final WindowsImage image in images) {
-      image.toXml(builder);
+      image.buildXml(builder);
     }
     for (final WindowsRow group in groups) {
-      group.toXml(builder);
+      group.buildXml(builder);
     }
     for (final WindowsProgressBar progressBar in progressBars) {
-      progressBar.toXml(builder);
+      progressBar.buildXml(builder);
     }
   }
 }

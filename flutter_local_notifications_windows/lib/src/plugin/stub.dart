@@ -1,7 +1,9 @@
+import 'package:meta/meta.dart';
+
 import '../details.dart';
 import 'base.dart';
 
-/// A stub implementation for platforms that don't support FFI.
+/// The Windows implementation of `package:flutter_local_notifications`.
 class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   @override
   Future<bool> initialize(
@@ -91,5 +93,6 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   }) async => NotificationUpdateResult.success;
 
   @override
+  @visibleForTesting
   void enableMultithreading() { }
 }

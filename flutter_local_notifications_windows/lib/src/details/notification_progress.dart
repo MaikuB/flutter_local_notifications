@@ -36,7 +36,7 @@ class WindowsProgressBar {
   String? label;
 
   /// Serializes this progress bar to XML.
-  void toXml(XmlBuilder builder) => builder.element(
+  void buildXml(XmlBuilder builder) => builder.element(
     'progress',
     attributes: <String, String>{
       'status': status,

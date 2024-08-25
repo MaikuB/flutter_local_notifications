@@ -107,7 +107,7 @@ class WindowsAction {
   /// Serializes this notification action as Windows-compatible XML.
   ///
   /// See: https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-action#syntax
-  void toXml(XmlBuilder builder) {
+  void buildXml(XmlBuilder builder) {
     if (image != null && !image!.isAbsolute) {
       throw ArgumentError.value(
         image!.path,

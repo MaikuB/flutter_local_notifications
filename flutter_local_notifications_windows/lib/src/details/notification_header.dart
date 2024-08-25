@@ -32,7 +32,7 @@ class WindowsHeader {
   final WindowsHeaderActivation? activation;
 
   /// Serializes this header to XML.
-  void toXml(XmlBuilder builder) => builder.element(
+  void buildXml(XmlBuilder builder) => builder.element(
     'header',
     attributes: <String, String>{
       'id': id,

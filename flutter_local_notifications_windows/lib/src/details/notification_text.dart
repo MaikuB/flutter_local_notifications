@@ -39,7 +39,7 @@ class WindowsNotificationText extends WindowsNotificationPart {
   final String? languageCode;
 
   @override
-  void toXml(XmlBuilder builder) => builder.element(
+  void buildXml(XmlBuilder builder) => builder.element(
     'text',
     attributes: <String, String>{
       if (languageCode != null) 'lang': languageCode!,

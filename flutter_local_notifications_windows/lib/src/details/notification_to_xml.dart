@@ -31,8 +31,10 @@ extension on WindowsNotificationDetails {
 extension ProgressBarXml on WindowsProgressBar {
   /// The data bindings for this progress bar.
   ///
-  /// To support dynamic updates, [toXml] will inject placeholder strings called
-  /// data bindings instead of actual values. This represents the new data.
+  /// To support dynamic updates, [buildXml] will inject placeholder strings
+  /// called data bindings instead of actual values. This can then be updated
+  /// dynamically later by calling
+  /// [FlutterLocalNotificationsWindows.updateProgressBar].
   Map<String, String> get data => <String, String>{
     '$id-progressValue': value?.toString() ?? 'indeterminate',
     if (label != null) '$id-progressString': label!,
@@ -72,7 +74,7 @@ String notificationToXml({
           );
         },
       );
-      details?.toXml(builder);
+      details?.buildXml(builder);
     },
   );
   return builder

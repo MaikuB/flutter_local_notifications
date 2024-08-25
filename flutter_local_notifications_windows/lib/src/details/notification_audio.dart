@@ -153,7 +153,7 @@ class WindowsNotificationAudio {
   final String source;
 
   /// Serializes this audio to Windows-compatible XML.
-  void toXml(XmlBuilder builder) => builder.element(
+  void buildXml(XmlBuilder builder) => builder.element(
     'audio',
     attributes: <String, String>{
       'src': source,

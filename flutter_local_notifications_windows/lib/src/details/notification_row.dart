@@ -13,7 +13,7 @@ class WindowsRow {
   final List<WindowsColumn> columns;
 
   /// Serializes this group to XML.
-  void toXml(XmlBuilder builder) => builder.element(
+  void buildXml(XmlBuilder builder) => builder.element(
     'group',
     nest: () {
       for (final WindowsColumn column in columns) {
@@ -22,7 +22,7 @@ class WindowsRow {
           attributes: <String, String>{'hint-weight': '1'},
           nest: () {
             for (final WindowsNotificationPart part in column.parts) {
-              part.toXml(builder);
+              part.buildXml(builder);
             }
           },
         );

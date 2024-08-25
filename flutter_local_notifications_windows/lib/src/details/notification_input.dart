@@ -30,7 +30,7 @@ abstract class WindowsInput {
   final String? title;
 
   /// Serializes this input to XML.
-  void toXml(XmlBuilder builder);
+  void buildXml(XmlBuilder builder);
 }
 
 /// A text input.
@@ -46,7 +46,7 @@ class WindowsTextInput extends WindowsInput {
   final String? placeHolderContent;
 
   @override
-  void toXml(XmlBuilder builder) => builder.element(
+  void buildXml(XmlBuilder builder) => builder.element(
     'input',
     attributes: <String, String>{
       'id': id,
@@ -75,7 +75,7 @@ class WindowsSelectionInput extends WindowsInput {
   final String? defaultItem;
 
   @override
-  void toXml(XmlBuilder builder) => builder.element(
+  void buildXml(XmlBuilder builder) => builder.element(
     'input',
     attributes: <String, String>{
       'id': id,
@@ -85,7 +85,7 @@ class WindowsSelectionInput extends WindowsInput {
     },
     nest: () {
       for (final WindowsSelection item in items) {
-        item.toXml(builder);
+        item.buildXml(builder);
       }
     },
   );
@@ -106,7 +106,7 @@ class WindowsSelection {
   final String content;
 
   /// Serializes this item to XML.
-  void toXml(XmlBuilder builder) => builder.element(
+  void buildXml(XmlBuilder builder) => builder.element(
     'selection',
     attributes: <String, String>{
       'id': id,

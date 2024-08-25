@@ -13,5 +13,5 @@ abstract class WindowsNotificationPart {
   const WindowsNotificationPart();
 
   /// Serializes this part to XML, according to the Windows API.
-  void toXml(XmlBuilder builder);
+  void buildXml(XmlBuilder builder);
 }
