@@ -1,5 +1,3 @@
-import 'package:xml/xml.dart';
-
 /// A text or image element in a Windows notification.
 ///
 /// Note: This should not be used for anything else as notification
@@ -11,7 +9,4 @@ import 'package:xml/xml.dart';
 abstract class WindowsNotificationPart {
   /// A const constructor.
   const WindowsNotificationPart();
-
-  /// Serializes this part to XML, according to the Windows API.
-  void buildXml(XmlBuilder builder);
 }

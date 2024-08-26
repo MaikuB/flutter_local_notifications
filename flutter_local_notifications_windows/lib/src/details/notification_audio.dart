@@ -1,5 +1,3 @@
-import 'package:xml/xml.dart';
-
 extension on Uri {
   String get filename => pathSegments.last;
   String get extension => pathSegments.last.split('.').last;
@@ -151,14 +149,4 @@ class WindowsNotificationAudio {
 
   /// The source of the audio.
   final String source;
-
-  /// Serializes this audio to Windows-compatible XML.
-  void buildXml(XmlBuilder builder) => builder.element(
-    'audio',
-    attributes: <String, String>{
-      'src': source,
-      'silent': isSilent.toString(),
-      'loop': shouldLoop.toString(),
-    },
-  );
 }

@@ -1,5 +1,3 @@
-import 'package:xml/xml.dart';
-
 import '../../flutter_local_notifications_windows.dart';
 
 /// A progress bar in a Windows notification.
@@ -34,15 +32,4 @@ class WindowsProgressBar {
   ///
   /// Useful for indicating discrete progress, like `3/10` instead of `30%`.
   String? label;
-
-  /// Serializes this progress bar to XML.
-  void buildXml(XmlBuilder builder) => builder.element(
-    'progress',
-    attributes: <String, String>{
-      'status': status,
-      'value': '{$id-progressValue}',
-      if (title != null) 'title': title!,
-      if (label != null) 'valueStringOverride': '{$id-progressString}',
-    },
-  );
 }

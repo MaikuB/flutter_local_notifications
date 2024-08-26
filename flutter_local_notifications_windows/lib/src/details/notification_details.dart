@@ -1,5 +1,3 @@
-import 'package:xml/xml.dart';
-
 import 'notification_action.dart';
 import 'notification_audio.dart';
 import 'notification_header.dart';
@@ -51,7 +49,7 @@ class WindowsNotificationDetails {
     this.actions = const <WindowsAction>[],
     this.inputs = const <WindowsInput>[],
     this.images = const <WindowsImage>[],
-    this.groups = const <WindowsRow>[],
+    this.rows = const <WindowsRow>[],
     this.progressBars = const <WindowsProgressBar>[],
     this.bindings = const <String, String>{},
     this.header,
@@ -89,8 +87,8 @@ class WindowsNotificationDetails {
   /// A list of images to show.
   final List<WindowsImage> images;
 
-  /// A list of groups to show.
-  final List<WindowsRow> groups;
+  /// A list of rows to show.
+  final List<WindowsRow> rows;
 
   /// A list of progress bars to show.
   final List<WindowsProgressBar> progressBars;
@@ -102,49 +100,4 @@ class WindowsNotificationDetails {
   /// while or after the notification is launched by using the binding name as
   /// the key here, and the value as any string you want.
   final Map<String, String> bindings;
-
-  /// Builds all relevant XML parts under the root `<toast>` element.
-  void buildXml(XmlBuilder builder) {
-    if (actions.length > 5) {
-      throw ArgumentError(
-        'WindowsNotificationDetails can only have up to 5 actions',
-      );
-    }
-    if (inputs.length > 5) {
-      throw ArgumentError(
-        'WindowsNotificationDetails can only have up to 5 inputs',
-      );
-    }
-    builder.element(
-      'actions',
-      nest: () {
-        for (final WindowsInput input in inputs) {
-          input.buildXml(builder);
-        }
-        for (final WindowsAction action in actions) {
-          action.buildXml(builder);
-        }
-      },
-    );
-    audio?.buildXml(builder);
-    header?.buildXml(builder);
-  }
-
-  /// Generates the `<binding>` element of the notification.
-  ///
-  /// See: https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-binding
-  void generateBinding(XmlBuilder builder) {
-    if (subtitle != null) {
-      builder.element('text', nest: subtitle);
-    }
-    for (final WindowsImage image in images) {
-      image.buildXml(builder);
-    }
-    for (final WindowsRow group in groups) {
-      group.buildXml(builder);
-    }
-    for (final WindowsProgressBar progressBar in progressBars) {
-      progressBar.buildXml(builder);
-    }
-  }
 }

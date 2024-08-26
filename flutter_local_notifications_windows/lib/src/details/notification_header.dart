@@ -1,5 +1,3 @@
-import 'package:xml/xml.dart';
-
 /// Decides how the application will open when the header is pressed.
 enum WindowsHeaderActivation {
   /// Opens the app in the foreground.
@@ -30,15 +28,4 @@ class WindowsHeader {
 
   /// Specifies how the application will open.
   final WindowsHeaderActivation? activation;
-
-  /// Serializes this header to XML.
-  void buildXml(XmlBuilder builder) => builder.element(
-    'header',
-    attributes: <String, String>{
-      'id': id,
-      'title': title,
-      'arguments': arguments,
-      if (activation != null) 'activationType': activation!.name,
-    },
-  );
 }

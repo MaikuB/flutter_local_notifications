@@ -1,5 +1,3 @@
-import 'package:xml/xml.dart';
-
 import 'notification_part.dart';
 
 /// Where text can be placed in a Windows notification.
@@ -37,17 +35,4 @@ class WindowsNotificationText extends WindowsNotificationPart {
 
   /// The language of this text.
   final String? languageCode;
-
-  @override
-  void buildXml(XmlBuilder builder) => builder.element(
-    'text',
-    attributes: <String, String>{
-      if (languageCode != null) 'lang': languageCode!,
-      if (placement != null) 'placement': placement!.name,
-      'hint-callScenarioCenterAlign': centerIfCall.toString(),
-      'hint-align': 'center',
-      if (isCaption) 'hint-style': 'captionsubtle',
-    },
-    nest: text,
-  );
 }

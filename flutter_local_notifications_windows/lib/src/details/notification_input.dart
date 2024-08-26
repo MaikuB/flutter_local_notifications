@@ -1,5 +1,3 @@
-import 'package:xml/xml.dart';
-
 /// The type of a [WindowsInput].
 enum WindowsInputType {
   /// A text input.
@@ -10,7 +8,7 @@ enum WindowsInputType {
 }
 
 /// A text or multiple choice input element in a Windows notification.
-abstract class WindowsInput {
+sealed class WindowsInput {
   /// Creates an input field in a notification.
   const WindowsInput({
     required this.id,
@@ -28,9 +26,6 @@ abstract class WindowsInput {
 
   /// The title of this input.
   final String? title;
-
-  /// Serializes this input to XML.
-  void buildXml(XmlBuilder builder);
 }
 
 /// A text input.
@@ -44,18 +39,6 @@ class WindowsTextInput extends WindowsInput {
 
   /// A placeholder shown before the user enters input, like a hint text.
   final String? placeHolderContent;
-
-  @override
-  void buildXml(XmlBuilder builder) => builder.element(
-    'input',
-    attributes: <String, String>{
-      'id': id,
-      'type': type.name,
-      if (title != null) 'title': title!,
-      if (placeHolderContent != null)
-        'placeHolderContent': placeHolderContent!,
-    },
-  );
 }
 
 /// A multiple choice input.
@@ -73,22 +56,6 @@ class WindowsSelectionInput extends WindowsInput {
 
   /// The default item that is selected.
   final String? defaultItem;
-
-  @override
-  void buildXml(XmlBuilder builder) => builder.element(
-    'input',
-    attributes: <String, String>{
-      'id': id,
-      'type': type.name,
-      if (title != null) 'title': title!,
-      if (defaultItem != null) 'defaultInput': defaultItem!,
-    },
-    nest: () {
-      for (final WindowsSelection item in items) {
-        item.buildXml(builder);
-      }
-    },
-  );
 }
 
 /// An option that can be selected by a [WindowsSelectionInput].
@@ -104,13 +71,4 @@ class WindowsSelection {
 
   /// The content of this item in the UI.
   final String content;
-
-  /// Serializes this item to XML.
-  void buildXml(XmlBuilder builder) => builder.element(
-    'selection',
-    attributes: <String, String>{
-      'id': id,
-      'content': content,
-    },
-  );
 }

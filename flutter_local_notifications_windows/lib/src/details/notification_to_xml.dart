@@ -1,6 +1,7 @@
 import 'package:xml/xml.dart';
 
 import '../../flutter_local_notifications_windows.dart';
+import 'xml/details.dart';
 
 extension on DateTime {
   String toIso8601StringTz() {

@@ -1,5 +1,3 @@
-import 'package:xml/xml.dart';
-
 import 'notification_part.dart';
 
 /// A group of notification content that must be displayed as a whole row.
@@ -11,24 +9,6 @@ class WindowsRow {
 
   /// The different columns being grouped together.
   final List<WindowsColumn> columns;
-
-  /// Serializes this group to XML.
-  void buildXml(XmlBuilder builder) => builder.element(
-    'group',
-    nest: () {
-      for (final WindowsColumn column in columns) {
-        builder.element(
-          'subgroup',
-          attributes: <String, String>{'hint-weight': '1'},
-          nest: () {
-            for (final WindowsNotificationPart part in column.parts) {
-              part.buildXml(builder);
-            }
-          },
-        );
-      }
-    },
-  );
 }
 
 /// A vertical column of text and images in a Windows notification.

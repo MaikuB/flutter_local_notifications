@@ -107,17 +107,17 @@ void main() => group('Details:', () {
 
       ..testDetails(const WindowsNotificationDetails())
       ..testDetails(const WindowsNotificationDetails(
-        groups: <WindowsRow>[WindowsRow(<WindowsColumn>[])]))
-      ..testDetails(const WindowsNotificationDetails(groups: <WindowsRow>[
+        rows: <WindowsRow>[WindowsRow(<WindowsColumn>[])]))
+      ..testDetails(const WindowsNotificationDetails(rows: <WindowsRow>[
         WindowsRow(<WindowsColumn>[emptyColumn])
       ]))
-      ..testDetails(WindowsNotificationDetails(groups: <WindowsRow>[
+      ..testDetails(WindowsNotificationDetails(rows: <WindowsRow>[
         WindowsRow(<WindowsColumn>[simpleColumn])
       ]))
       ..testDetails(
-        WindowsNotificationDetails(groups: <WindowsRow>[bigRow]))
+        WindowsNotificationDetails(rows: <WindowsRow>[bigRow]))
       ..testDetails(
-        WindowsNotificationDetails(groups: List<WindowsRow>.filled(5, bigRow)));
+        WindowsNotificationDetails(rows: List<WindowsRow>.filled(5, bigRow)));
   });
 
   test('Header', () async {
