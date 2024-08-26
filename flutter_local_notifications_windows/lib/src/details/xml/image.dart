@@ -1,6 +1,6 @@
 import 'package:xml/xml.dart';
 
-import '../notification_image.dart';
+import '../notification_parts.dart';
 
 /// Converts a [WindowsImage] to XML
 extension ImageToXml on WindowsImage {

@@ -1,4 +1,4 @@
-import 'notification_part.dart';
+import 'notification_parts.dart';
 
 /// A group of notification content that must be displayed as a whole row.
 ///

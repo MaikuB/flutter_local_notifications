@@ -1,13 +1,12 @@
 import 'notification_action.dart';
 import 'notification_audio.dart';
 import 'notification_header.dart';
-import 'notification_image.dart';
 import 'notification_input.dart';
+import 'notification_parts.dart';
 import 'notification_progress.dart';
 import 'notification_row.dart';
 
-export 'notification_part.dart';
-export 'notification_text.dart';
+export 'notification_parts.dart';
 
 /// The duration for a Windows notification.
 enum WindowsNotificationDuration {

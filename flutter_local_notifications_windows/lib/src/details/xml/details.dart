@@ -2,7 +2,6 @@ import 'package:xml/xml.dart';
 
 import '../notification_action.dart';
 import '../notification_details.dart';
-import '../notification_image.dart';
 import '../notification_input.dart';
 import '../notification_progress.dart';
 import '../notification_row.dart';

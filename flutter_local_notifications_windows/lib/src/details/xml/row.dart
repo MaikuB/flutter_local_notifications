@@ -1,9 +1,7 @@
 import 'package:xml/xml.dart';
 
-import '../notification_image.dart';
-import '../notification_part.dart';
+import '../notification_parts.dart';
 import '../notification_row.dart';
-import '../notification_text.dart';
 
 import 'image.dart';
 import 'text.dart';

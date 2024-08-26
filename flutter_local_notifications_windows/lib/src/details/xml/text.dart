@@ -1,6 +1,6 @@
 import 'package:xml/xml.dart';
 
-import '../notification_text.dart';
+import '../notification_parts.dart';
 
 /// Converts a [WindowsNotificationText] to XML
 extension TextToXml on WindowsNotificationText {
