@@ -16,4 +16,15 @@ extension ProgressBarToXml on WindowsProgressBar {
       if (label != null) 'valueStringOverride': '{$id-progressString}',
     },
   );
+
+  /// The data bindings for this progress bar.
+  ///
+  /// To support dynamic updates, [buildXml] will inject placeholder strings
+  /// called data bindings instead of actual values. This can then be updated
+  /// dynamically later by calling
+  /// [FlutterLocalNotificationsWindows.updateProgressBar].
+  Map<String, String> get data => <String, String>{
+    '$id-progressValue': value?.toString() ?? 'indeterminate',
+    if (label != null) '$id-progressString': label!,
+  };
 }

@@ -13,8 +13,23 @@ import 'header.dart';
 import 'image.dart';
 import 'input.dart';
 import 'progress.dart';
-import 'row.dart'
-;
+import 'row.dart';
+
+extension on DateTime {
+  String toIso8601StringTz() {
+    // Get offset
+    final Duration offset = timeZoneOffset;
+    final String sign = offset.isNegative ? '-' : '+';
+    final String hours = offset.inHours.abs().toString().padLeft(2, '0');
+    final String minutes =
+      offset.inMinutes.abs().remainder(60).toString().padLeft(2, '0');
+    final String offsetString = '$sign$hours:$minutes';
+    // Get first part of properly formatted ISO 8601 date
+    final String formattedDate = toIso8601String().split('.').first;
+    return '$formattedDate$offsetString';
+  }
+}
+
 /// Converts a [WindowsNotificationDetails] to XML
 extension DetailsToXml on WindowsNotificationDetails {
   /// Builds all relevant XML parts under the root `<toast>` element.
@@ -64,4 +79,12 @@ extension DetailsToXml on WindowsNotificationDetails {
       progressBar.buildXml(builder);
     }
   }
+
+  /// XML attributes for the toast notification as a whole.
+  Map<String, String> get attributes => <String, String>{
+    if (duration != null) 'duration': duration!.name,
+    if (timestamp != null)
+      'displayTimestamp': timestamp!.toIso8601StringTz(),
+    if (scenario != null) 'scenario': scenario!.name,
+  };
 }
