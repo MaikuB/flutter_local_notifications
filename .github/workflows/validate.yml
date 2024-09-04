@@ -63,6 +63,20 @@ jobs:
         with:
           fatal-infos: true
           fatal-warnings: true
+  format:
+    name: Dart formatting checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - name: Install Tools
+        run: ./.github/workflows/scripts/install-tools.sh
+      - name: Format
+        run: melos run format-ci
   build_example_android_stable:
     name: Build Android example app (stable channel)
     runs-on: ubuntu-latest
