@@ -77,3 +77,5 @@ scripts:
     description: Runs git clean as though repo was just checked out
 
   format: dart format -o write .
+
+  format-ci: dart format --output=none --set-exit-if-changed .
