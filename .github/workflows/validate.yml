@@ -204,7 +204,7 @@ jobs:
       - name: Build
         run: melos run build:example_windows
   build_example_windows_3_19:
-    name: Build Linux example app (3.19)
+    name: Build Windows example app (3.19)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
