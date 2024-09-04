@@ -89,26 +89,24 @@ enum WindowsNotificationSound {
 /// Specifies custom audio to play during a notification.
 class WindowsNotificationAudio {
   /// No sound will play during this notification.
-  WindowsNotificationAudio.silent() :
-    source = WindowsNotificationSound.defaultSound.name,
-    shouldLoop = false,
-    isSilent = true;
+  WindowsNotificationAudio.silent()
+      : source = WindowsNotificationSound.defaultSound.name,
+        shouldLoop = false,
+        isSilent = true;
 
   /// Audio from a Windows preset. See [WindowsNotificationSound] for options.
   WindowsNotificationAudio.preset({
     required WindowsNotificationSound sound,
     this.shouldLoop = false,
-  }) : isSilent = false,
-    source = sound.name;
+  })  : isSilent = false,
+        source = sound.name;
 
   /// Audio from a file. See [allowedSchemes] and [allowedExtensions].
   WindowsNotificationAudio.fromFile({
     required Uri file,
     this.shouldLoop = false,
-  }) :
-    isSilent = false,
-    source = file.toFilePath()
-  {
+  })  : isSilent = false,
+        source = file.toFilePath() {
     if (!allowedSchemes.contains(file.scheme)) {
       throw ArgumentError.value(
         file.toString(),
@@ -116,10 +114,8 @@ class WindowsNotificationAudio {
         'URI scheme must be one of the following schemes: $allowedSchemes',
       );
     }
-    if (
-      !file.filename.contains('.')
-      || !allowedExtensions.contains(file.extension)
-    ) {
+    if (!file.filename.contains('.') ||
+        !allowedExtensions.contains(file.extension)) {
       throw ArgumentError.value(
         file.toString(),
         'WindowsNotificationAudio.file',

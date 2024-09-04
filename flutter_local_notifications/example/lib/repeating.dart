@@ -6,72 +6,66 @@ import 'padded_button.dart';
 import 'plugin.dart';
 
 List<Widget> examples(BuildContext context) => <Widget>[
-  const Divider(),
-  const Text(
-    'Repeating notifications',
-    style: TextStyle(fontWeight: FontWeight.bold),
-  ),
-  PaddedElevatedButton(
-    buttonText: 'Repeat notification every minute',
-    onPressed: () async {
-      await _repeatNotification();
-    },
-  ),
-  PaddedElevatedButton(
-    buttonText: 'Repeat notification every 5 minutes',
-    onPressed: () async {
-      await _repeatPeriodicallyWithDurationNotification();
-    },
-  ),
-  PaddedElevatedButton(
-    buttonText:
-        'Schedule daily 10:00:00 am notification in your '
-        'local time zone',
-    onPressed: () async {
-      await _scheduleDailyTenAMNotification();
-    },
-  ),
-  PaddedElevatedButton(
-    buttonText:
-        'Schedule daily 10:00:00 am notification in your '
-        "local time zone using last year's date",
-    onPressed: () async {
-      await _scheduleDailyTenAMLastYearNotification();
-    },
-  ),
-  PaddedElevatedButton(
-    buttonText:
-        'Schedule weekly 10:00:00 am notification in your '
-        'local time zone',
-    onPressed: () async {
-      await _scheduleWeeklyTenAMNotification();
-    },
-  ),
-  PaddedElevatedButton(
-    buttonText:
-        'Schedule weekly Monday 10:00:00 am notification '
-        'in your local time zone',
-    onPressed: () async {
-      await _scheduleWeeklyMondayTenAMNotification();
-    },
-  ),
-  PaddedElevatedButton(
-    buttonText:
-        'Schedule monthly Monday 10:00:00 am notification in '
-        'your local time zone',
-    onPressed: () async {
-      await _scheduleMonthlyMondayTenAMNotification();
-    },
-  ),
-  PaddedElevatedButton(
-    buttonText:
-        'Schedule yearly Monday 10:00:00 am notification in '
-        'your local time zone',
-    onPressed: () async {
-      await _scheduleYearlyMondayTenAMNotification();
-    },
-  ),
-];
+      const Divider(),
+      const Text(
+        'Repeating notifications',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      PaddedElevatedButton(
+        buttonText: 'Repeat notification every minute',
+        onPressed: () async {
+          await _repeatNotification();
+        },
+      ),
+      PaddedElevatedButton(
+        buttonText: 'Repeat notification every 5 minutes',
+        onPressed: () async {
+          await _repeatPeriodicallyWithDurationNotification();
+        },
+      ),
+      PaddedElevatedButton(
+        buttonText: 'Schedule daily 10:00:00 am notification in your '
+            'local time zone',
+        onPressed: () async {
+          await _scheduleDailyTenAMNotification();
+        },
+      ),
+      PaddedElevatedButton(
+        buttonText: 'Schedule daily 10:00:00 am notification in your '
+            "local time zone using last year's date",
+        onPressed: () async {
+          await _scheduleDailyTenAMLastYearNotification();
+        },
+      ),
+      PaddedElevatedButton(
+        buttonText: 'Schedule weekly 10:00:00 am notification in your '
+            'local time zone',
+        onPressed: () async {
+          await _scheduleWeeklyTenAMNotification();
+        },
+      ),
+      PaddedElevatedButton(
+        buttonText: 'Schedule weekly Monday 10:00:00 am notification '
+            'in your local time zone',
+        onPressed: () async {
+          await _scheduleWeeklyMondayTenAMNotification();
+        },
+      ),
+      PaddedElevatedButton(
+        buttonText: 'Schedule monthly Monday 10:00:00 am notification in '
+            'your local time zone',
+        onPressed: () async {
+          await _scheduleMonthlyMondayTenAMNotification();
+        },
+      ),
+      PaddedElevatedButton(
+        buttonText: 'Schedule yearly Monday 10:00:00 am notification in '
+            'your local time zone',
+        onPressed: () async {
+          await _scheduleYearlyMondayTenAMNotification();
+        },
+      ),
+    ];
 
 /// To test we don't validate past dates when using `matchDateTimeComponents`
 Future<void> _scheduleDailyTenAMLastYearNotification() async {
@@ -81,8 +75,8 @@ Future<void> _scheduleDailyTenAMLastYearNotification() async {
       'daily scheduled notification body',
       _nextInstanceOfTenAMLastYear(),
       const NotificationDetails(
-        android: AndroidNotificationDetails('daily notification channel id',
-            'daily notification channel name',
+        android: AndroidNotificationDetails(
+            'daily notification channel id', 'daily notification channel name',
             channelDescription: 'daily notification description'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -200,8 +194,8 @@ Future<void> _scheduleDailyTenAMNotification() async {
       'daily scheduled notification body',
       _nextInstanceOfTenAM(),
       const NotificationDetails(
-        android: AndroidNotificationDetails('daily notification channel id',
-            'daily notification channel name',
+        android: AndroidNotificationDetails(
+            'daily notification channel id', 'daily notification channel name',
             channelDescription: 'daily notification description'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,

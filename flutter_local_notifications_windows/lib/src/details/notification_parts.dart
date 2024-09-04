@@ -55,7 +55,6 @@ class WindowsImage extends WindowsNotificationPart {
   final WindowsImageCrop? crop;
 }
 
-
 /// Where text can be placed in a Windows notification.
 enum WindowsTextPlacement {
   /// Shown at the bottom of the notification body in smaller text.

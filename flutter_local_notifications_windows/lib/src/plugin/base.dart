@@ -10,8 +10,7 @@ export 'package:timezone/timezone.dart';
 
 /// The Windows implementation of `package:flutter_local_notifications`.
 abstract class WindowsNotificationsBase
-  extends FlutterLocalNotificationsPlatform
-{
+    extends FlutterLocalNotificationsPlatform {
   /// Initializes the plugin. No other method should be called before this.
   Future<bool> initialize(
     WindowsInitializationSettings settings, {
@@ -68,10 +67,11 @@ abstract class WindowsNotificationsBase
   Future<NotificationUpdateResult> updateProgressBar({
     required int notificationId,
     required WindowsProgressBar progressBar,
-  }) => updateBindings(
-    id: notificationId,
-    bindings: progressBar.data,
-  );
+  }) =>
+      updateBindings(
+        id: notificationId,
+        bindings: progressBar.data,
+      );
 
   /// Updates any data binding in the given notification.
   ///

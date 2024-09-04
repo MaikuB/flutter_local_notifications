@@ -45,31 +45,34 @@ class MethodChannelFlutterLocalNotificationsPlugin
   Future<void> cancelAll() => _channel.invokeMethod('cancelAll');
 
   @override
-  Future<NotificationAppLaunchDetails?> getNotificationAppLaunchDetails(
-  ) async {
+  Future<NotificationAppLaunchDetails?>
+      getNotificationAppLaunchDetails() async {
     final Map<dynamic, dynamic>? result =
-      await _channel.invokeMethod('getNotificationAppLaunchDetails');
+        await _channel.invokeMethod('getNotificationAppLaunchDetails');
     final Map<dynamic, dynamic>? notificationResponse =
-      result != null && result.containsKey('notificationResponse')
-        ? result['notificationResponse'] : null;
-    return result == null ? null : NotificationAppLaunchDetails(
-      result['notificationLaunchedApp'],
-      notificationResponse: notificationResponse == null ? null
-        : NotificationResponse(
-          id: notificationResponse['notificationId'],
-          actionId: notificationResponse['actionId'],
-          input: notificationResponse['input'],
-          notificationResponseType: NotificationResponseType.values[
-            notificationResponse['notificationResponseType']],
-          payload: notificationResponse.containsKey('payload')
-            ? notificationResponse['payload']
-            : null,
-          data: Map<String, dynamic>.from(
-            notificationResponse['data']
-              ?? <String, dynamic>{},
-          ),
-        ),
-    );
+        result != null && result.containsKey('notificationResponse')
+            ? result['notificationResponse']
+            : null;
+    return result == null
+        ? null
+        : NotificationAppLaunchDetails(
+            result['notificationLaunchedApp'],
+            notificationResponse: notificationResponse == null
+                ? null
+                : NotificationResponse(
+                    id: notificationResponse['notificationId'],
+                    actionId: notificationResponse['actionId'],
+                    input: notificationResponse['input'],
+                    notificationResponseType: NotificationResponseType.values[
+                        notificationResponse['notificationResponseType']],
+                    payload: notificationResponse.containsKey('payload')
+                        ? notificationResponse['payload']
+                        : null,
+                    data: Map<String, dynamic>.from(
+                      notificationResponse['data'] ?? <String, dynamic>{},
+                    ),
+                  ),
+          );
   }
 
   @override

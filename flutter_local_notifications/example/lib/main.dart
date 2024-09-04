@@ -90,52 +90,52 @@ Future<void> main() async {
   await _configureLocalTimeZone();
 
   const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('app_icon');
+      AndroidInitializationSettings('app_icon');
 
   final List<DarwinNotificationCategory> darwinNotificationCategories =
-    <DarwinNotificationCategory>[
-      DarwinNotificationCategory(
-        darwinNotificationCategoryText,
-        actions: <DarwinNotificationAction>[
-          DarwinNotificationAction.text(
-            'text_1',
-            'Action 1',
-            buttonTitle: 'Send',
-            placeholder: 'Placeholder',
-          ),
-        ],
-      ),
-      DarwinNotificationCategory(
-        darwinNotificationCategoryPlain,
-        actions: <DarwinNotificationAction>[
-          DarwinNotificationAction.plain('id_1', 'Action 1'),
-          DarwinNotificationAction.plain(
-            'id_2',
-            'Action 2 (destructive)',
-            options: <DarwinNotificationActionOption>{
-              DarwinNotificationActionOption.destructive,
-            },
-          ),
-          DarwinNotificationAction.plain(
-            navigationActionId,
-            'Action 3 (foreground)',
-            options: <DarwinNotificationActionOption>{
-              DarwinNotificationActionOption.foreground,
-            },
-          ),
-          DarwinNotificationAction.plain(
-            'id_4',
-            'Action 4 (auth required)',
-            options: <DarwinNotificationActionOption>{
-              DarwinNotificationActionOption.authenticationRequired,
-            },
-          ),
-        ],
-        options: <DarwinNotificationCategoryOption>{
-          DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
-        },
-      )
-    ];
+      <DarwinNotificationCategory>[
+    DarwinNotificationCategory(
+      darwinNotificationCategoryText,
+      actions: <DarwinNotificationAction>[
+        DarwinNotificationAction.text(
+          'text_1',
+          'Action 1',
+          buttonTitle: 'Send',
+          placeholder: 'Placeholder',
+        ),
+      ],
+    ),
+    DarwinNotificationCategory(
+      darwinNotificationCategoryPlain,
+      actions: <DarwinNotificationAction>[
+        DarwinNotificationAction.plain('id_1', 'Action 1'),
+        DarwinNotificationAction.plain(
+          'id_2',
+          'Action 2 (destructive)',
+          options: <DarwinNotificationActionOption>{
+            DarwinNotificationActionOption.destructive,
+          },
+        ),
+        DarwinNotificationAction.plain(
+          navigationActionId,
+          'Action 3 (foreground)',
+          options: <DarwinNotificationActionOption>{
+            DarwinNotificationActionOption.foreground,
+          },
+        ),
+        DarwinNotificationAction.plain(
+          'id_4',
+          'Action 4 (auth required)',
+          options: <DarwinNotificationActionOption>{
+            DarwinNotificationActionOption.authenticationRequired,
+          },
+        ),
+      ],
+      options: <DarwinNotificationCategoryOption>{
+        DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
+      },
+    )
+  ];
 
   /// Note: permissions aren't requested here just to demonstrate that can be
   /// done later
@@ -147,10 +147,10 @@ Future<void> main() async {
     onDidReceiveLocalNotification:
         (int id, String? title, String? body, String? payload) async {
       didReceiveLocalNotificationStream.add(ReceivedNotification(
-          id: id,
-          title: title,
-          body: body,
-          payload: payload,
+        id: id,
+        title: title,
+        body: body,
+        payload: payload,
       ));
     },
     notificationCategories: darwinNotificationCategories,
@@ -176,8 +176,8 @@ Future<void> main() async {
     onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
   );
 
-  final NotificationAppLaunchDetails? notificationAppLaunchDetails =
-    !kIsWeb && Platform.isLinux
+  final NotificationAppLaunchDetails? notificationAppLaunchDetails = !kIsWeb &&
+          Platform.isLinux
       ? null
       : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   String initialRoute = HomePage.routeName;
@@ -309,8 +309,9 @@ class _HomePageState extends State<HomePage> {
                 Navigator.of(context, rootNavigator: true).pop();
                 await Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (BuildContext context) =>
-                        SecondPage(receivedNotification.payload, data: receivedNotification.data),
+                    builder: (BuildContext context) => SecondPage(
+                        receivedNotification.payload,
+                        data: receivedNotification.data),
                   ),
                 );
               },
@@ -323,9 +324,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _configureSelectNotificationSubject() {
-    selectNotificationStream.stream.listen((NotificationResponse? response) async {
+    selectNotificationStream.stream
+        .listen((NotificationResponse? response) async {
       await Navigator.of(context).push(MaterialPageRoute<void>(
-        builder: (BuildContext context) => SecondPage(response?.payload, data: response?.data),
+        builder: (BuildContext context) =>
+            SecondPage(response?.payload, data: response?.data),
       ));
     });
   }
@@ -460,8 +463,7 @@ class _HomePageState extends State<HomePage> {
                       await _cancelAllNotifications();
                     },
                   ),
-                  if (!Platform.isWindows)
-                    ...repeating.examples(context),
+                  if (!Platform.isWindows) ...repeating.examples(context),
                   const Divider(),
                   const Text(
                     'Notifications with actions',
@@ -1097,25 +1099,25 @@ class _HomePageState extends State<HomePage> {
     );
 
     final WindowsNotificationDetails windowsNotificationsDetails =
-      WindowsNotificationDetails(
-        subtitle: 'Click the three dots for another button',
-        actions: <WindowsAction>[
-          const WindowsAction(
-            content: 'Text',
-            arguments: 'text',
-          ),
-          WindowsAction(
-            content: 'Image',
-            arguments: 'image',
-            image: File('icons/coworker.png').absolute,
-          ),
-          const WindowsAction(
-            content: 'Context',
-            arguments: 'context',
-            placement: WindowsActionPlacement.contextMenu,
-          ),
-        ],
-      );
+        WindowsNotificationDetails(
+      subtitle: 'Click the three dots for another button',
+      actions: <WindowsAction>[
+        const WindowsAction(
+          content: 'Text',
+          arguments: 'text',
+        ),
+        WindowsAction(
+          content: 'Image',
+          arguments: 'image',
+          image: File('icons/coworker.png').absolute,
+        ),
+        const WindowsAction(
+          content: 'Context',
+          arguments: 'context',
+          placement: WindowsActionPlacement.contextMenu,
+        ),
+      ],
+    );
 
     final NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
@@ -1158,14 +1160,16 @@ class _HomePageState extends State<HomePage> {
     );
 
     const WindowsNotificationDetails windowsNotificationDetails =
-      WindowsNotificationDetails(
-        actions: <WindowsAction>[
-          WindowsAction(content: 'Send', arguments: 'send-reply', inputId: 'text'),
-        ],
-        inputs: <WindowsTextInput>[
-          WindowsTextInput(id: 'text', title: 'Send a reply?', placeHolderContent: 'Message'),
-        ],
-      );
+        WindowsNotificationDetails(
+      actions: <WindowsAction>[
+        WindowsAction(
+            content: 'Send', arguments: 'send-reply', inputId: 'text'),
+      ],
+      inputs: <WindowsTextInput>[
+        WindowsTextInput(
+            id: 'text', title: 'Send a reply?', placeHolderContent: 'Message'),
+      ],
+    );
 
     const NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
@@ -1229,21 +1233,22 @@ class _HomePageState extends State<HomePage> {
     );
 
     const WindowsNotificationDetails windowsNotificationDetails =
-      WindowsNotificationDetails(
-        actions: <WindowsAction>[
-          WindowsAction(content: 'Submit', arguments: 'submit', inputId: 'choice'),
-        ],
-        inputs: <WindowsInput>[
-          WindowsSelectionInput(
-            id: 'choice',
-            defaultItem: 'abc',
-            items: <WindowsSelection>[
-              WindowsSelection(id: 'abc', content: 'abc'),
-              WindowsSelection(id: 'def', content: 'def'),
-            ],
-          ),
-        ],
-      );
+        WindowsNotificationDetails(
+      actions: <WindowsAction>[
+        WindowsAction(
+            content: 'Submit', arguments: 'submit', inputId: 'choice'),
+      ],
+      inputs: <WindowsInput>[
+        WindowsSelectionInput(
+          id: 'choice',
+          defaultItem: 'abc',
+          items: <WindowsSelection>[
+            WindowsSelection(id: 'abc', content: 'abc'),
+            WindowsSelection(id: 'def', content: 'def'),
+          ],
+        ),
+      ],
+    );
 
     const NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
@@ -1375,9 +1380,10 @@ class _HomePageState extends State<HomePage> {
       sound: AssetsLinuxSound('sound/slow_spring_board.mp3'),
     );
     final WindowsNotificationDetails windowsNotificationDetails =
-      WindowsNotificationDetails(
-        audio: WindowsNotificationAudio.preset(sound: WindowsNotificationSound.alarm5),
-      );
+        WindowsNotificationDetails(
+      audio: WindowsNotificationAudio.preset(
+          sound: WindowsNotificationSound.alarm5),
+    );
     final NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
       iOS: darwinNotificationDetails,
@@ -1463,7 +1469,7 @@ class _HomePageState extends State<HomePage> {
       presentSound: false,
     );
     final WindowsNotificationDetails windowsDetails =
-      WindowsNotificationDetails(audio: WindowsNotificationAudio.silent());
+        WindowsNotificationDetails(audio: WindowsNotificationAudio.silent());
     final NotificationDetails notificationDetails = NotificationDetails(
         windows: windowsDetails,
         android: androidNotificationDetails,
@@ -1486,7 +1492,7 @@ class _HomePageState extends State<HomePage> {
       presentSound: false,
     );
     final WindowsNotificationDetails windowsDetails =
-      WindowsNotificationDetails(audio: WindowsNotificationAudio.silent());
+        WindowsNotificationDetails(audio: WindowsNotificationAudio.silent());
     final NotificationDetails notificationDetails = NotificationDetails(
         windows: windowsDetails,
         android: androidNotificationDetails,
@@ -2749,13 +2755,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void>? _showWindowsNotificationWithRawXml() => flutterLocalNotificationsPlugin
-    .resolvePlatformSpecificImplementation<FlutterLocalNotificationsWindows>()
-    ?.showRawXml(
-      id: id++,
-      xml: _windowsRawXmlController.text,
-      bindings: <String, String>{'message': 'Hello, World!'},
-    );
+  Future<void>? _showWindowsNotificationWithRawXml() =>
+      flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              FlutterLocalNotificationsWindows>()
+          ?.showRawXml(
+        id: id++,
+        xml: _windowsRawXmlController.text,
+        bindings: <String, String>{'message': 'Hello, World!'},
+      );
 }
 
 Future<void> _showLinuxNotificationWithBodyMarkup() async {

@@ -190,13 +190,12 @@ class FlutterLocalNotificationsPlugin {
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       if (initializationSettings.windows == null) {
         throw ArgumentError(
-          'Windows settings must be set when targeting Windows platform.'
-        );
+            'Windows settings must be set when targeting Windows platform.');
       }
 
       return await resolvePlatformSpecificImplementation<
-        FlutterLocalNotificationsWindows
-      >()?.initialize(
+              FlutterLocalNotificationsWindows>()
+          ?.initialize(
         initializationSettings.windows!,
         onNotificationReceived: onDidReceiveNotificationResponse,
       );
@@ -283,8 +282,7 @@ class FlutterLocalNotificationsPlugin {
       await resolvePlatformSpecificImplementation<
               FlutterLocalNotificationsWindows>()
           ?.show(id, title, body,
-              details: notificationDetails?.windows,
-              payload: payload);
+              details: notificationDetails?.windows, payload: payload);
     } else {
       await FlutterLocalNotificationsPlatform.instance.show(id, title, body);
     }
@@ -394,9 +392,13 @@ class FlutterLocalNotificationsPlugin {
               matchDateTimeComponents: matchDateTimeComponents);
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       await resolvePlatformSpecificImplementation<
-        FlutterLocalNotificationsWindows
-      >()?.zonedSchedule(
-        id, title, body, scheduledDate, notificationDetails.windows,
+              FlutterLocalNotificationsWindows>()
+          ?.zonedSchedule(
+        id,
+        title,
+        body,
+        scheduledDate,
+        notificationDetails.windows,
         payload: payload,
       );
     } else {

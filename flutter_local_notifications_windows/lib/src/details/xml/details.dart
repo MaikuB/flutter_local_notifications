@@ -21,7 +21,7 @@ extension on DateTime {
     final String sign = offset.isNegative ? '-' : '+';
     final String hours = offset.inHours.abs().toString().padLeft(2, '0');
     final String minutes =
-      offset.inMinutes.abs().remainder(60).toString().padLeft(2, '0');
+        offset.inMinutes.abs().remainder(60).toString().padLeft(2, '0');
     final String offsetString = '$sign$hours:$minutes';
     // Get first part of properly formatted ISO 8601 date
     final String formattedDate = toIso8601String().split('.').first;
@@ -48,8 +48,10 @@ extension DetailsToXml on WindowsNotificationDetails {
       nest: () {
         for (final WindowsInput input in inputs) {
           switch (input) {
-            case WindowsTextInput(): input.buildXml(builder);
-            case WindowsSelectionInput(): input.buildXml(builder);
+            case WindowsTextInput():
+              input.buildXml(builder);
+            case WindowsSelectionInput():
+              input.buildXml(builder);
           }
         }
         for (final WindowsAction action in actions) {
@@ -81,9 +83,9 @@ extension DetailsToXml on WindowsNotificationDetails {
 
   /// XML attributes for the toast notification as a whole.
   Map<String, String> get attributes => <String, String>{
-    if (duration != null) 'duration': duration!.name,
-    if (timestamp != null)
-      'displayTimestamp': timestamp!.toIso8601StringTz(),
-    if (scenario != null) 'scenario': scenario!.name,
-  };
+        if (duration != null) 'duration': duration!.name,
+        if (timestamp != null)
+          'displayTimestamp': timestamp!.toIso8601StringTz(),
+        if (scenario != null) 'scenario': scenario!.name,
+      };
 }

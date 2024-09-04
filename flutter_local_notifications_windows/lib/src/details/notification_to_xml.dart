@@ -42,6 +42,6 @@ String notificationToXml({
     },
   );
   return builder
-    .buildDocument()
-    .toXmlString(pretty: true, indentAttribute: (_) => true);
+      .buildDocument()
+      .toXmlString(pretty: true, indentAttribute: (_) => true);
 }
