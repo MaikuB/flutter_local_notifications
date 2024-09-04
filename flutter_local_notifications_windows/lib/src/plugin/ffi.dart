@@ -73,8 +73,8 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
           throw ArgumentError.value(
             settings.guid,
             'GUID',
-            'Invalid GUID. Please use xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx format\n'
-                'You can get one by searching GUID generators online',
+            'Invalid GUID. Please use xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+                ' format.\nYou can get one by searching GUID generators online',
           );
         }
         instance = this;
@@ -297,7 +297,8 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         }
         if (scheduledDate.isBefore(DateTime.now())) {
           throw ArgumentError(
-            'Flutter Local Notifications cannot schedule notifications in the past',
+            'Flutter Local Notifications cannot'
+            ' schedule notifications in the past',
           );
         }
         final String xml = notificationToXml(
@@ -331,7 +332,8 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         }
         if (scheduledDate.isBefore(DateTime.now())) {
           throw ArgumentError(
-            'Flutter Local Notifications cannot schedule notifications in the past',
+            'Flutter Local Notifications cannot'
+            ' schedule notifications in the past',
           );
         }
         final int secondsSinceEpoch =
