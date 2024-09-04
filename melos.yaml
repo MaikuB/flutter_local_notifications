@@ -22,6 +22,7 @@ scripts:
     description: Run unit tests in a specific package.
     run: melos exec -c 1 -- "flutter test"
     packageFilters:
+      ignore: '*_windows'
       dirExists:
         - test
   test:unit:android:
@@ -29,10 +30,16 @@ scripts:
     run: melos exec -c 1 -- "flutter build apk --debug && cd android && ./gradlew flutter_local_notifications:testDebug"
     packageFilters:
       scope: "*example*"
+  test:unit:windows:
+    description: Runs Windows-specific unit tests
+    run: melos exec -c 1 -- "dart test"
+    packageFilters:
+      scope: '*_windows'
   test:integration:
     run: melos exec -c 1 -- "flutter test integration_test"
     description: Run integration tests
     packageFilters:
+      ignore: '*_windows'
       dirExists:
         - integration_test
       scope: "*example*"

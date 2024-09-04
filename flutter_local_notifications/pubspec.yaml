@@ -39,5 +39,5 @@ flutter:
         default_package: flutter_local_notifications_windows
 
 environment:
-  sdk: ^3.2.0
-  flutter: ">=3.16.0"
+  sdk: ^3.3.0
+  flutter: ">=3.19.0"
