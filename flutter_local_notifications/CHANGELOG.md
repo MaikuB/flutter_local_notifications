@@ -2,6 +2,8 @@
 
 * **Breaking change** Bumped minimum Flutter SDK requirement to 3.13
 * [Android] **Breaking change**  removed the deprecated `androidAllowWhileIdle` parameter from `zonedSchedule()` and `periodicallyShow()` methods. `androidScheduleMode` is now a required parameter
+* Fixed example app to have the appropriate permissions for foreground services
+* Updated readme when it comes to setting up the `AndroidManifest.xml` file to include details of what's needed for foreground services. Note these details were already available in the API docs
 
 ## [17.2.3]
 
