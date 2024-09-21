@@ -265,6 +265,16 @@ For apps that need the following functionality please complete the following in 
     ```
 * To use full-screen intent notifications, specify the `<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />` permission between the `<manifest>` tags. Developers will also need to follow the instructions documented [here](#full-screen-intent-notifications)
 * To use notification actions, specify `<receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />` between the `<application>` tags so that the plugin can process the actions and trigger the appropriate callback(s)
+* To use foreground services the following changes are needed
+    * [Request the appropriate permissions](https://developer.android.com/develop/background-work/services/foreground-services#request-foreground-service-permissions)
+    * Declare the service exposed by the plugin by adding the following between `<application>` tags. An example of what this looks like is below where `<foreground service types>` should be replaced with the foreground service type(s) your app needs. If you want your foreground service to be stopped if your app is stopped, set `android:stopWithTask` to `true`
+    ```xml
+     <service
+            android:name="com.dexterous.flutterlocalnotifications.ForegroundService"        
+            android:exported="false"
+            android:stopWithTask="false"
+            android:foregroundServiceType="<foreground service types>">
+    ```
 
 Developers can refer to the example app's `AndroidManifest.xml` to help see what the end result may look like. Do note that the example app covers all the plugin's supported functionality so will request more permissions than your own app may need
 
