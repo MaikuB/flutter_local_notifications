@@ -1,3 +1,8 @@
+## [17.2.3]
+
+* [Android] fixed [#2309](https://github.com/MaikuB/flutter_local_notifications/issues/2309) where plugin runs into an exception getting the sound information for a notification channel. Thanks to the PR from [Goddchen](https://github.com/Goddchen)
+* Fixed typo in readme. Thanks to PR from [Ahmad Mahmoudi](https://github.com/A404M)
+
 ## [17.2.2]
 
 * Bumped dependency on `flutter_local_notifications_linux` to 4.0.1. Updated app-facing packaging to no longer create and register the Linux implementation as this will now be handled by the `flutter_local_notifications_linux` package itself
