@@ -10,9 +10,10 @@ dependencies:
   flutter_local_notifications:
     path: ../
   flutter_timezone: ^1.0.4
-  http: ^0.13.4
-  image: ^3.0.8
+  http: ^1.2.1
+  image: ^4.2.0
   path_provider: ^2.0.0
+  timezone: ^0.9.4
 
 dev_dependencies:
   flutter_driver:
@@ -21,6 +22,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  msix: ^3.16.7
 
 flutter:
   uses-material-design: true
@@ -31,3 +33,15 @@ flutter:
 environment:
   sdk: ^3.1.0
   flutter: ">=3.1.3"
+
+msix_config:
+  display_name: Flutter Local Notifications Example
+  identity_name: Com.Example.FlutterLocalNotificationsExample
+  msix_version: 1.0.0.0
+  store: false
+  install_certificate: false
+  output_name: example
+  toast_activator:
+    clsid: "d49b0314-ee7a-4626-bf79-97cdb8a991bb"
+    arguments: "msix-args"
+    display_name: "Flutter Local Notifications"

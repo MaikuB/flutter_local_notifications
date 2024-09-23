@@ -9,6 +9,10 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "pub"
+    directory: "/flutter_local_notifications_windows"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pub"
     directory: "/flutter_local_notifications"
     schedule:
       interval: "daily"

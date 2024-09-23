@@ -3,6 +3,7 @@ repository: https://github.com/MaikuB/flutter_local_notifications
 packages:
   - flutter_local_notifications
   - flutter_local_notifications_linux
+  - flutter_local_notifications_windows
   - flutter_local_notifications_platform_interface
   - flutter_local_notifications/example/
 
@@ -21,6 +22,7 @@ scripts:
     description: Run unit tests in a specific package.
     run: melos exec -c 1 -- "flutter test"
     packageFilters:
+      ignore: '*_windows'
       dirExists:
         - test
   test:unit:android:
@@ -28,10 +30,16 @@ scripts:
     run: melos exec -c 1 -- "flutter build apk --debug && cd android && ./gradlew flutter_local_notifications:testDebug"
     packageFilters:
       scope: "*example*"
+  test:unit:windows:
+    description: Runs Windows-specific unit tests
+    run: melos exec -c 1 -- "dart test"
+    packageFilters:
+      scope: '*_windows'
   test:integration:
     run: melos exec -c 1 -- "flutter test integration_test"
     description: Run integration tests
     packageFilters:
+      ignore: '*_windows'
       dirExists:
         - integration_test
       scope: "*example*"
@@ -70,6 +78,15 @@ scripts:
     packageFilters:
       dirExists:
         - linux
+      scope: "*example*"
+  build:example_windows:
+    run: |
+      melos exec -c 1 -- \
+        "dart run msix:create"
+    description: Build a specific example app for Windows.
+    packageFilters:
+      dirExists:
+        - windows
       scope: "*example*"
 
   clean:
