@@ -108,6 +108,12 @@ class MethodChannelFlutterLocalNotificationsPlugin
 /// Android implementation of the local notifications plugin.
 class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
+  /// Registers this implementation as the plugin instance.
+  static void registerWith() {
+    FlutterLocalNotificationsPlatform.instance =
+        AndroidFlutterLocalNotificationsPlugin();
+  }
+
   DidReceiveNotificationResponseCallback? _ondidReceiveNotificationResponse;
 
   /// Initializes the plugin.
@@ -596,6 +602,12 @@ class AndroidFlutterLocalNotificationsPlugin
 /// iOS implementation of the local notifications plugin.
 class IOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
+  /// Registers this implementation as the plugin instance.
+  static void registerWith() {
+    FlutterLocalNotificationsPlatform.instance =
+        IOSFlutterLocalNotificationsPlugin();
+  }
+
   DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
   DidReceiveLocalNotificationCallback? _onDidReceiveLocalNotification;
 
@@ -827,6 +839,12 @@ class IOSFlutterLocalNotificationsPlugin
 /// macOS implementation of the local notifications plugin.
 class MacOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
+  /// Registers this implementation as the plugin instance.
+  static void registerWith() {
+    FlutterLocalNotificationsPlatform.instance =
+        MacOSFlutterLocalNotificationsPlugin();
+  }
+
   DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
 
   /// Initializes the plugin.
