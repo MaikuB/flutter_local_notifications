@@ -28,10 +28,13 @@ flutter:
       android:
         package: com.dexterous.flutterlocalnotifications
         pluginClass: FlutterLocalNotificationsPlugin
+        dartPluginClass: AndroidFlutterLocalNotificationsPlugin
       ios:
         pluginClass: FlutterLocalNotificationsPlugin
+        dartPluginClass: IOSFlutterLocalNotificationsPlugin
       macos:
         pluginClass: FlutterLocalNotificationsPlugin
+        dartPluginClass: MacOSFlutterLocalNotificationsPlugin
       linux:
         default_package: flutter_local_notifications_linux
 
