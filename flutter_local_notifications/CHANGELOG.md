@@ -1,4 +1,4 @@
-## [vNext]
+## [18.0.0-dev.1]
 
 * **Breaking changes** Bumped minimum Flutter SDK requirement to 3.13. Consequently the minimum OS requirements for each platform has been updated as well
   * [Android] minimum Android version is now 4.4 (API level 19)
