@@ -6,7 +6,7 @@
 A cross platform plugin for displaying local notifications.
 
 >[!IMPORTANT] 
-> Given how both quickly both Flutter ecosystem and Android ecosystem evolves, the minimum Flutter SDK version will be bumped to make it easier to maintain the plugin. Note that official plugins already follow a similar approach e.g. have a minimum Flutter SDK version of 3.13. This is being called out as if this affects your applications (e.g. supported OS versions) then you may need to consider maintaining your own fork in the future
+> Given how both quickly both Flutter ecosystem and Android ecosystem evolves, the minimum Flutter SDK version will occasionally be bumped to make it easier to maintain the plugin. Note that official plugins already follow a similar approach. This is being called out as if this affects your applications (e.g. supported OS versions) then you may need to consider maintaining your own fork in the future
 
 ## Table of contents
 
@@ -56,11 +56,11 @@ A cross platform plugin for displaying local notifications.
 ## 📱 Supported platforms
 
 * **Android+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
-* **iOS**. Uses the [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework)
-* **macOS**. On macOS versions older than 10.14, the plugin will use the [NSUserNotification APIs](https://developer.apple.com/documentation/foundation/nsusernotification). The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on macOS 10.14 or newer. Notification actions only work on macOS 10.14 or newer
+* **iOS** Uses the [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework)
+* **macOS** Uses the [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework)
 * **Linux**. Uses the [Desktop Notifications Specification](https://specifications.freedesktop.org/notification-spec/)
 
-Note: the plugin has a requires Flutter SDK 3.13 at a minimum. The list of support platforms for Flutter 3.1.3 itself can be found [here](https://github.com/flutter/website/blob/3d18ab48218101493af84953b71eac0cc6781fdd/src/reference/supported-platforms.md)
+Note: the plugin requires Flutter SDK 3.13 at a minimum. The list of support platforms for Flutter 3.13 itself can be found [here](https://github.com/flutter/website/blob/3d18ab48218101493af84953b71eac0cc6781fdd/src/reference/supported-platforms.md)
 
 ## ✨ Features
 
