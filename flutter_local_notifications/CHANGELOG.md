@@ -5,7 +5,7 @@
   * [iOS] minimum iOS version is now 11
   * [macOS] minimum macOS version is now 10.14
 * [Android] **Breaking change**  removed the deprecated `androidAllowWhileIdle` parameter from `zonedSchedule()` and `periodicallyShow()` methods. `androidScheduleMode` is now a required parameter
-* **Breaking change** plugin has been fixed with regards to how it registers the platform-specific implementations of the plugin. Thanks to the PR from [Kate](https://github.com/provokateurin). Any written tests done on the [FlutterLocalNotificationsPlugin] will need to manually call the `registerWith()` method that has been added to each implementation. This affects the following platforms
+* **Breaking change** plugin has been fixed with regards to how it registers the platform-specific implementations of the plugin. Thanks to the PR from [Kate](https://github.com/provokateurin). Any written tests done on the [FlutterLocalNotificationsPlugin] will need to manually call the `registerWith()` method that has been added to each implementation. This affects the following platforms/classes where the `registerWith()` method was added
   * [Android] `AndroidFlutterLocalNotificationsPlugin`
   * [iOS] `IOSFlutterLocalNotificationsPlugin`
   * [macOS] `MacOSFlutterLocalNotificationsPlugin`
