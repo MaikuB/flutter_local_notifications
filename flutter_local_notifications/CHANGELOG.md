@@ -1,6 +1,9 @@
 ## [vNext]
 
-* **Breaking change** Bumped minimum Flutter SDK requirement to 3.13
+* **Breaking changes** Bumped minimum Flutter SDK requirement to 3.13. Consequently the minimum OS requirements for each platform has been updated as well
+  * [Android] minimum Android version is now 4.4 (API level 19)
+  * [iOS] minimum iOS version is now 11
+  * [macOS] minimum macOS version is now 10.14
 * [Android] **Breaking change**  removed the deprecated `androidAllowWhileIdle` parameter from `zonedSchedule()` and `periodicallyShow()` methods. `androidScheduleMode` is now a required parameter
 * Fixed example app to have the appropriate permissions for foreground services
 * Updated readme when it comes to setting up the `AndroidManifest.xml` file to include details of what's needed for foreground services. Note these details were already available in the API docs
