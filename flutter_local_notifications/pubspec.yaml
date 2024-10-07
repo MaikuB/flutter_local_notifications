@@ -2,7 +2,7 @@ name: flutter_local_notifications
 description: A cross platform plugin for displaying and scheduling local
   notifications for Flutter applications with the ability to customise for each
   platform.
-version: 17.2.3
+version: 18.0.0-dev.1
 homepage: https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications
 issue_tracker: https://github.com/MaikuB/flutter_local_notifications/issues
 
@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_local_notifications_linux: ^4.0.1
-  flutter_local_notifications_platform_interface: ^7.2.0
+  flutter_local_notifications_platform_interface: ^8.0.0-dev.1
   timezone: ^0.9.0
 
 dev_dependencies:
