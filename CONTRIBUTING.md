@@ -10,4 +10,20 @@ Most of the tests are around verifying the details sent via the platform channel
 
 For API docs, please try to adhere to the effective Dart documentation guidelines that can be found [here](https://dart.dev/guides/language/effective-dart/documentation).
 
-Managing the monorepo is through the use of [`melos`](https://melos.invertase.dev). Currently the minimum Flutter SDK version supported is 3.0 with a corresponding minimum Dart SDK version of 2.17. This isn't compatible with melos versions 3.0 or newer due to incompatible Dart SDK version constraints. To avoid bumping the plugin's minimum Flutter and Dart SDK version constraints just for the sake of being able to use newer versions of `melos`, version 2.9.0 used. For local development purposes you can activate 2.9.0 by running `dart pub global activate melos 2.9.0`. The cirrus build scripts run the same command to specify `melos` version 2.9.0
+## Environment setup
+
+`flutter_local_notifications` uses [Melos](https://melos.invertase.dev) to manage the monorepo project.
+
+To install Melos, run the following command from a terminal/command prompt:
+
+```
+dart pub global activate melos
+```
+
+At the root of your locally cloned repository bootstrap the all dependencies and link them locally
+
+```
+melos bootstrap
+```
+
+This removes the need for providing manual [`dependency_overrides`](https://dart.dev/tools/pub/pubspec). There's no need to run `flutter pub get` either. All the packages, example app and tests will run for the locally cloned repository. The workflows setup on GitHub are also configured use Melos to validate changes. For more information on Melos, refer to its [website](https://melos.invertase.dev)

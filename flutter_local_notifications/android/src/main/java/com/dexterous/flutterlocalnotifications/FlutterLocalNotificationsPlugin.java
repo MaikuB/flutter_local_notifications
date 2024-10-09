@@ -1,5 +1,6 @@
 package com.dexterous.flutterlocalnotifications;
 
+import static android.provider.Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT;
 import static android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM;
 
 import android.Manifest;
@@ -120,6 +121,7 @@ public class FlutterLocalNotificationsPlugin
 
   static final String PAYLOAD = "payload";
   static final String NOTIFICATION_ID = "notificationId";
+  static final String NOTIFICATION_TAG = "notificationTag";
   static final String CANCEL_NOTIFICATION = "cancelNotification";
 
   private static final String TAG = "FLTLocalNotifPlugin";
@@ -156,12 +158,16 @@ public class FlutterLocalNotificationsPlugin
   private static final String CANCEL_ALL_METHOD = "cancelAll";
   private static final String ZONED_SCHEDULE_METHOD = "zonedSchedule";
   private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
+  private static final String PERIODICALLY_SHOW_WITH_DURATION = "periodicallyShowWithDuration";
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
   private static final String REQUEST_NOTIFICATIONS_PERMISSION_METHOD =
       "requestNotificationsPermission";
   private static final String REQUEST_EXACT_ALARMS_PERMISSION_METHOD =
       "requestExactAlarmsPermission";
+
+  private static final String REQUEST_FULL_SCREEN_INTENT_PERMISSION_METHOD =
+      "requestFullScreenIntentPermission";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
   private static final String INVALID_ICON_ERROR_CODE = "invalid_icon";
   private static final String INVALID_LARGE_ICON_ERROR_CODE = "invalid_large_icon";
@@ -204,6 +210,8 @@ public class FlutterLocalNotificationsPlugin
 
   static final int EXACT_ALARM_PERMISSION_REQUEST_CODE = 2;
 
+  static final int FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE = 3;
+
   private PermissionRequestListener callback;
 
   private PermissionRequestProgress permissionRequestProgress = PermissionRequestProgress.None;
@@ -212,7 +220,8 @@ public class FlutterLocalNotificationsPlugin
     ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
     for (NotificationDetails notificationDetails : scheduledNotifications) {
       try {
-        if (notificationDetails.repeatInterval != null) {
+        if (notificationDetails.repeatInterval != null
+            || notificationDetails.repeatIntervalMilliseconds != null) {
           repeatNotification(context, notificationDetails, false);
         } else if (notificationDetails.timeZoneName != null) {
           zonedScheduleNotification(context, notificationDetails, false);
@@ -232,7 +241,8 @@ public class FlutterLocalNotificationsPlugin
         zonedScheduleNextNotification(context, notificationDetails);
       } else if (notificationDetails.matchDateTimeComponents != null) {
         zonedScheduleNextNotificationMatchingDateComponents(context, notificationDetails);
-      } else if (notificationDetails.repeatInterval != null) {
+      } else if (notificationDetails.repeatInterval != null
+          || notificationDetails.repeatIntervalMilliseconds != null) {
         scheduleNextRepeatingNotification(context, notificationDetails);
       } else {
         removeNotificationFromCache(context, notificationDetails.id);
@@ -303,6 +313,7 @@ public class FlutterLocalNotificationsPlugin
 
         actionIntent
             .putExtra(NOTIFICATION_ID, notificationDetails.id)
+            .putExtra(NOTIFICATION_TAG, notificationDetails.tag)
             .putExtra(ACTION_ID, action.id)
             .putExtra(CANCEL_NOTIFICATION, action.cancelNotification)
             .putExtra(PAYLOAD, notificationDetails.payload);
@@ -617,6 +628,7 @@ public class FlutterLocalNotificationsPlugin
     final int notificationId = intent.getIntExtra(NOTIFICATION_ID, 0);
     final Map<String, Object> notificationResponseMap = new HashMap<>();
     notificationResponseMap.put(NOTIFICATION_ID, notificationId);
+    notificationResponseMap.put(NOTIFICATION_TAG, intent.getStringExtra(NOTIFICATION_TAG));
     notificationResponseMap.put(ACTION_ID, intent.getStringExtra(ACTION_ID));
     notificationResponseMap.put(
         FlutterLocalNotificationsPlugin.PAYLOAD,
@@ -764,6 +776,12 @@ public class FlutterLocalNotificationsPlugin
 
   private static long calculateRepeatIntervalMilliseconds(NotificationDetails notificationDetails) {
     long repeatInterval = 0;
+
+    if (notificationDetails.repeatIntervalMilliseconds != null) {
+      repeatInterval = notificationDetails.repeatIntervalMilliseconds;
+      return repeatInterval;
+    }
+
     switch (notificationDetails.repeatInterval) {
       case EveryMinute:
         repeatInterval = 60000;
@@ -1033,7 +1051,7 @@ public class FlutterLocalNotificationsPlugin
     }
 
     if (bigPictureStyleInformation.hideExpandedLargeIcon) {
-      bigPictureStyle.bigLargeIcon(null);
+      bigPictureStyle.bigLargeIcon((Bitmap) null);
     } else {
       if (bigPictureStyleInformation.largeIcon != null) {
         bigPictureStyle.bigLargeIcon(
@@ -1446,7 +1464,24 @@ public class FlutterLocalNotificationsPlugin
               }
             });
         break;
+      case REQUEST_FULL_SCREEN_INTENT_PERMISSION_METHOD:
+        requestFullScreenIntentPermission(
+            new PermissionRequestListener() {
+              @Override
+              public void complete(boolean granted) {
+                result.success(granted);
+              }
+
+              @Override
+              public void fail(String message) {
+                result.error(PERMISSION_REQUEST_IN_PROGRESS_ERROR_CODE, message, null);
+              }
+            });
+        break;
       case PERIODICALLY_SHOW_METHOD:
+        repeat(call, result);
+        break;
+      case PERIODICALLY_SHOW_WITH_DURATION:
         repeat(call, result);
         break;
       case CANCEL_METHOD:
@@ -1826,6 +1861,36 @@ public class FlutterLocalNotificationsPlugin
     }
   }
 
+  public void requestFullScreenIntentPermission(@NonNull PermissionRequestListener callback) {
+    if (permissionRequestProgress != PermissionRequestProgress.None) {
+      callback.fail(PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE);
+      return;
+    }
+
+    this.callback = callback;
+
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE) {
+      NotificationManager notificationManager =
+          (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+      AlarmManager alarmManager = getAlarmManager(applicationContext);
+      boolean permissionGranted = notificationManager.canUseFullScreenIntent();
+
+      if (!permissionGranted) {
+        permissionRequestProgress = PermissionRequestProgress.RequestingFullScreenIntentPermission;
+        mainActivity.startActivityForResult(
+            new Intent(
+                ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT,
+                Uri.parse("package:" + applicationContext.getPackageName())),
+            FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE);
+      } else {
+        this.callback.complete(true);
+        permissionRequestProgress = PermissionRequestProgress.None;
+      }
+    } else {
+      this.callback.complete(true);
+    }
+  }
+
   @Override
   public boolean onRequestPermissionsResult(
       int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -2068,11 +2133,16 @@ public class FlutterLocalNotificationsPlugin
             channelPayload.put("sound", resource);
           } else {
             // Kept for backwards compatibility when the source resource used to be based on id
-            String resourceName =
-                applicationContext.getResources().getResourceEntryName(resourceId);
-            if (resourceName != null) {
-              channelPayload.put("soundSource", soundSources.indexOf(SoundSource.RawResource));
-              channelPayload.put("sound", resourceName);
+            try {
+              String resourceName =
+                  applicationContext.getResources().getResourceEntryName(resourceId);
+              if (resourceName != null) {
+                channelPayload.put("soundSource", soundSources.indexOf(SoundSource.RawResource));
+                channelPayload.put("sound", resourceName);
+              }
+            } catch (Exception e) {
+              channelPayload.put("sound", null);
+              channelPayload.put("playSound", false);
             }
           }
         } else {
@@ -2158,7 +2228,8 @@ public class FlutterLocalNotificationsPlugin
   @Override
   public boolean onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     if (requestCode != NOTIFICATION_PERMISSION_REQUEST_CODE
-        && requestCode != EXACT_ALARM_PERMISSION_REQUEST_CODE) {
+        && requestCode != EXACT_ALARM_PERMISSION_REQUEST_CODE
+        && requestCode != FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE) {
       return false;
     }
 
@@ -2167,6 +2238,15 @@ public class FlutterLocalNotificationsPlugin
         && VERSION.SDK_INT >= VERSION_CODES.S) {
       AlarmManager alarmManager = getAlarmManager(applicationContext);
       this.callback.complete(alarmManager.canScheduleExactAlarms());
+      permissionRequestProgress = PermissionRequestProgress.None;
+    }
+
+    if (permissionRequestProgress == PermissionRequestProgress.RequestingFullScreenIntentPermission
+        && requestCode == FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE
+        && VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE) {
+      NotificationManager notificationManager =
+          (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+      this.callback.complete(notificationManager.canUseFullScreenIntent());
       permissionRequestProgress = PermissionRequestProgress.None;
     }
 
@@ -2191,6 +2271,7 @@ public class FlutterLocalNotificationsPlugin
   enum PermissionRequestProgress {
     None,
     RequestingNotificationPermission,
-    RequestingExactAlarmsPermission
+    RequestingExactAlarmsPermission,
+    RequestingFullScreenIntentPermission
   }
 }

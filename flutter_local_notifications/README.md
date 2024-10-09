@@ -6,7 +6,7 @@
 A cross platform plugin for displaying local notifications.
 
 >[!IMPORTANT] 
-> Given how both quickly both Flutter ecosystem and Android ecosystem evolves, the minimum Flutter SDK version will be bumped to make it easier to maintain the plugin. Note that official plugins already follow a similar approach e.g. have a minimum Flutter SDK version of 3.13. This is being called out as if this affects your applications (e.g. supported OS versions) then you may need to consider maintaining your own fork in the future
+> Given how both quickly both Flutter ecosystem and Android ecosystem evolves, the minimum Flutter SDK version will occasionally be bumped to make it easier to maintain the plugin. Note that official plugins already follow a similar approach. This is being called out as if this affects your applications (e.g. supported OS versions) then you may need to consider maintaining your own fork in the future
 
 ## Table of contents
 
@@ -55,10 +55,12 @@ A cross platform plugin for displaying local notifications.
 
 ## 📱 Supported platforms
 
-* **Android 4.1+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
-* **iOS 8.0+**. On iOS versions older than 10, the plugin will use the UILocalNotification APIs. The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on iOS 10 or newer. Notification actions only work on iOS 10 or newer.
-* **macOS 10.11+**. On macOS versions older than 10.14, the plugin will use the [NSUserNotification APIs](https://developer.apple.com/documentation/foundation/nsusernotification). The [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework) is used on macOS 10.14 or newer. Notification actions only work on macOS 10.14 or newer
-* **Linux**. Uses the [Desktop Notifications Specification](https://specifications.freedesktop.org/notification-spec/).
+* **Android+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
+* **iOS** Uses the [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework)
+* **macOS** Uses the [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework)
+* **Linux**. Uses the [Desktop Notifications Specification](https://specifications.freedesktop.org/notification-spec/)
+
+Note: the plugin requires Flutter SDK 3.13 at a minimum. The list of support platforms for Flutter 3.13 itself can be found [here](https://github.com/flutter/website/blob/3d18ab48218101493af84953b71eac0cc6781fdd/src/reference/supported-platforms.md)
 
 ## ✨ Features
 
@@ -202,7 +204,7 @@ dependencies {
 }
 ```
 
-Note that the plugin uses Android Gradle plugin 7.3.1 to leverage this functionality so to errr on the safe side, applications should aim to use the same version at a **minimum**. Using a higher version is also needed as at point, Android Studio bundled a newer version of the Java SDK that will only work with Gradle 7.3 or higher (see [here](https://docs.flutter.dev/release/breaking-changes/android-java-gradle-migration-guide) for more details). For a Flutter project, this is specified in `android/build.gradle` and the main parts would look similar to the following
+Note that the plugin uses Android Gradle plugin (AGP) 7.3.1 to leverage this functionality so to err on the safe side, applications should aim to use the same version at a **minimum**. Using a higher version is also needed as at point, Android Studio bundled a newer version of the Java SDK that will only work with Gradle 7.3 or higher (see [here](https://docs.flutter.dev/release/breaking-changes/android-java-gradle-migration-guide) for more details). For a Flutter app using the legacy `apply` script syntax, this is specified in `android/build.gradle` and the main parts would look similar to the following
 
 ```gradle
 buildscript {
@@ -213,6 +215,8 @@ buildscript {
         ...
     }
 ```
+
+If your app is using the new declarative Plugin DSL syntax, please refer to the Flutter documentation [here](https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply) where they document where the AGP version can be specified
 
 There have been reports that enabling desugaring may result in a Flutter apps crashing on Android 12L and above. This would be an issue with Flutter itself, not the plugin. One possible fix is adding the [WindowManager library](https://developer.android.com/jetpack/androidx/releases/window) as a dependency:
 
@@ -259,8 +263,18 @@ For apps that need the following functionality please complete the following in 
         </intent-filter>
     </receiver>
     ```
-* To use full-screen intent notifications, specify the `<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />` permission between the `<manifest>` tags.
+* To use full-screen intent notifications, specify the `<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />` permission between the `<manifest>` tags. Developers will also need to follow the instructions documented [here](#full-screen-intent-notifications)
 * To use notification actions, specify `<receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />` between the `<application>` tags so that the plugin can process the actions and trigger the appropriate callback(s)
+* To use foreground services the following changes are needed
+    * [Request the appropriate permissions](https://developer.android.com/develop/background-work/services/foreground-services#request-foreground-service-permissions)
+    * Declare the service exposed by the plugin by adding the following between `<application>` tags. An example of what this looks like is below where `<foreground service types>` should be replaced with the foreground service type(s) your app needs. If you want your foreground service to be stopped if your app is stopped, set `android:stopWithTask` to `true`
+    ```xml
+     <service
+            android:name="com.dexterous.flutterlocalnotifications.ForegroundService"        
+            android:exported="false"
+            android:stopWithTask="false"
+            android:foregroundServiceType="<foreground service types>">
+    ```
 
 Developers can refer to the example app's `AndroidManifest.xml` to help see what the end result may look like. Do note that the example app covers all the plugin's supported functionality so will request more permissions than your own app may need
 
@@ -300,6 +314,8 @@ If your application needs the ability to schedule full-screen intent notificatio
 For reference, the example app's `AndroidManifest.xml` file can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/AndroidManifest.xml).
 
 Note that when a full-screen intent notification actually occurs (as opposed to a heads-up notification that the system may decide should occur), the plugin will act as though the user has tapped on a notification so handle those the same way (e.g. `onDidReceiveNotificationResponse` callback) to display the appropriate page for your application.
+
+Developers should also be across Google's requirements on using full-screen intents. Please refer to their documentation [here](https://source.android.com/docs/core/permissions/fsi-limits) for more information. Should you app need request permissions, the `AndroidFlutterNotificationsPlugin` class exposes the `requestFullScreenIntentPermission()` method that can be used to do so.
 
 ### Release build configuration
 
@@ -747,7 +763,7 @@ const NotificationDetails notificationDetails =
     NotificationDetails(android: androidNotificationDetails);
 await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
     'repeating body', RepeatInterval.everyMinute, notificationDetails,
-    androidAllowWhileIdle: true);
+    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle);
 ```
 
 ### Retrieving pending notification requests
