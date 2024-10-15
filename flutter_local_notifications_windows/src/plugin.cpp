@@ -187,7 +187,7 @@ void UpdateRegistry(
 /// and the guid of the callback.
 bool RegisterCallback(const std::string& guid, NativeNotificationCallback callback) {
 	DWORD registration{};
-	winrt::guid rclsid(guid);
+	winrt::guid rclsid = parseGuid(guid);
 	const auto factory_ref = winrt::make_self<NotificationActivationCallbackFactory>();
 	const auto factory = factory_ref.get();
 	factory->callback = callback;

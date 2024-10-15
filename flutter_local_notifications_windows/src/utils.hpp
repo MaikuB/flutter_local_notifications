@@ -20,3 +20,5 @@ NativeStringMap toNativeMap(vector<StringMapEntry> entries);
 
 /// Parses a [NativeStringMap] into a WinRT [NotificationData].
 NotificationData dataFromMap(NativeStringMap map);
+
+winrt::guid parseGuid(const std::string& guidString);
