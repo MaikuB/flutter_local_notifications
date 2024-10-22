@@ -487,7 +487,8 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)checkPermissions:(NSDictionary *_Nonnull)arguments
-                  result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
+                  result:(FlutterResult _Nonnull)result
+    API_AVAILABLE(ios(10.0)) {
   UNUserNotificationCenter *center =
       [UNUserNotificationCenter currentNotificationCenter];
 
@@ -548,7 +549,8 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)periodicallyShow:(NSDictionary *_Nonnull)arguments
-                  result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
+                  result:(FlutterResult _Nonnull)result
+    API_AVAILABLE(ios(10.0)) {
   UNMutableNotificationContent *content =
       [self buildStandardNotificationContent:arguments result:result];
   UNTimeIntervalNotificationTrigger *trigger =
