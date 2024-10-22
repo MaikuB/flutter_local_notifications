@@ -303,7 +303,7 @@ static FlutterError *getFlutterError(NSError *error) {
           setObject:foregroundActionIdentifiers
              forKey:FOREGROUND_ACTION_IDENTIFIERS];
     }
-    
+
     completionHandler();
   }
 }
