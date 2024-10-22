@@ -458,7 +458,6 @@ static FlutterError *getFlutterError(NSError *error) {
     result(@NO);
     return;
   }
-  if (@available(iOS 10.0, *)) {
     UNUserNotificationCenter *center =
         [UNUserNotificationCenter currentNotificationCenter];
 
@@ -485,31 +484,9 @@ static FlutterError *getFlutterError(NSError *error) {
                                               NSError *_Nullable error) {
                             result(@(granted));
                           }];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UIUserNotificationType notificationTypes = 0;
-    if (soundPermission) {
-      notificationTypes |= UIUserNotificationTypeSound;
-    }
-    if (alertPermission) {
-      notificationTypes |= UIUserNotificationTypeAlert;
-    }
-    if (badgePermission) {
-      notificationTypes |= UIUserNotificationTypeBadge;
-    }
-    UIUserNotificationSettings *settings =
-        [UIUserNotificationSettings settingsForTypes:notificationTypes
-                                          categories:nil];
-    [[UIApplication sharedApplication]
-        registerUserNotificationSettings:settings];
-#pragma clang diagnostic pop
-    result(@YES);
-  }
 }
 
 - (void)checkPermissions:(NSDictionary *_Nonnull)arguments
-
                   result:(FlutterResult _Nonnull)result {
   if (@available(iOS 10.0, *)) {
     UNUserNotificationCenter *center =
@@ -585,221 +562,42 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-- (UILocalNotification *)buildStandardUILocalNotification:
-    (NSDictionary *)arguments {
-  UILocalNotification *notification = [[UILocalNotification alloc] init];
-#pragma clang diagnostic pop
-  if ([self containsKey:BODY forDictionary:arguments]) {
-    notification.alertBody = arguments[BODY];
-  }
-
-  NSString *title;
-  if ([self containsKey:TITLE forDictionary:arguments]) {
-    title = arguments[TITLE];
-    if (@available(iOS 8.2, *)) {
-      notification.alertTitle = title;
-    }
-  }
-
-  NSDictionary *persistedPresentationOptions =
-      [[NSUserDefaults standardUserDefaults]
-          dictionaryForKey:PRESENTATION_OPTIONS_USER_DEFAULTS];
-  bool presentAlert = false;
-  bool presentSound = false;
-  bool presentBadge = false;
-  bool presentBanner = false;
-  bool presentList = false;
-  if (persistedPresentationOptions != nil) {
-    presentAlert = [persistedPresentationOptions[PRESENT_ALERT] isEqual:@YES];
-    presentSound = [persistedPresentationOptions[PRESENT_SOUND] isEqual:@YES];
-    presentBadge = [persistedPresentationOptions[PRESENT_BADGE] isEqual:@YES];
-    presentBanner = [persistedPresentationOptions[PRESENT_BANNER] isEqual:@YES];
-    presentList = [persistedPresentationOptions[PRESENT_LIST] isEqual:@YES];
-  }
-  if (arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
-    NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
-
-    if ([self containsKey:PRESENT_ALERT forDictionary:platformSpecifics]) {
-      presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
-    }
-    if ([self containsKey:PRESENT_SOUND forDictionary:platformSpecifics]) {
-      presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
-    }
-    if ([self containsKey:PRESENT_BADGE forDictionary:platformSpecifics]) {
-      presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
-    }
-    if ([self containsKey:PRESENT_BANNER forDictionary:platformSpecifics]) {
-      presentBanner =
-          [[platformSpecifics objectForKey:PRESENT_BANNER] boolValue];
-    }
-    if ([self containsKey:PRESENT_LIST forDictionary:platformSpecifics]) {
-      presentList = [[platformSpecifics objectForKey:PRESENT_LIST] boolValue];
-    }
-
-    if ([self containsKey:BADGE_NUMBER forDictionary:platformSpecifics]) {
-      notification.applicationIconBadgeNumber =
-          [platformSpecifics[BADGE_NUMBER] integerValue];
-    }
-
-    if ([self containsKey:SOUND forDictionary:platformSpecifics]) {
-      notification.soundName = [platformSpecifics[SOUND] stringValue];
-    }
-  }
-
-  if (presentSound && notification.soundName == nil) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    notification.soundName = UILocalNotificationDefaultSoundName;
-#pragma clang diagnostic pop
-  }
-
-  notification.userInfo = [self buildUserDict:arguments[ID]
-                                        title:title
-                                 presentAlert:presentAlert
-                                 presentSound:presentSound
-                                 presentBadge:presentBadge
-                                presentBanner:presentBanner
-                                  presentList:presentList
-                                      payload:arguments[PAYLOAD]];
-  return notification;
-}
-
 - (NSString *)getIdentifier:(id)arguments {
   return [arguments[ID] stringValue];
 }
 
 - (void)show:(NSDictionary *_Nonnull)arguments
-      result:(FlutterResult _Nonnull)result {
-  if (@available(iOS 10.0, *)) {
+      result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
     UNMutableNotificationContent *content =
         [self buildStandardNotificationContent:arguments result:result];
     [self addNotificationRequest:[self getIdentifier:arguments]
                          content:content
                           result:result
                          trigger:nil];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *notification =
-        [self buildStandardUILocalNotification:arguments];
-    [[UIApplication sharedApplication]
-        presentLocalNotificationNow:notification];
-#pragma clang diagnostic pop
-    result(nil);
-  }
 }
 
 - (void)zonedSchedule:(NSDictionary *_Nonnull)arguments
-               result:(FlutterResult _Nonnull)result {
-  if (@available(iOS 10.0, *)) {
+               result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
     UNMutableNotificationContent *content =
-        [self buildStandardNotificationContent:arguments result:result];
+    [self buildStandardNotificationContent:arguments result:result];
     UNCalendarNotificationTrigger *trigger =
-        [self buildUserNotificationCalendarTrigger:arguments];
+    [self buildUserNotificationCalendarTrigger:arguments];
     [self addNotificationRequest:[self getIdentifier:arguments]
                          content:content
                           result:result
                          trigger:trigger];
-
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *notification =
-        [self buildStandardUILocalNotification:arguments];
-#pragma clang diagnostic pop
-    NSString *scheduledDateTime = arguments[SCHEDULED_DATE_TIME];
-    NSString *timeZoneName = arguments[TIME_ZONE_NAME];
-    NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
-    NSNumber *uiLocalNotificationDateInterpretation =
-        arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION];
-    NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
-    NSISO8601DateFormatter *dateFormatter =
-        [[NSISO8601DateFormatter alloc] init];
-    [dateFormatter setTimeZone:timezone];
-    dateFormatter.formatOptions = NSISO8601DateFormatWithFractionalSeconds |
-                                  NSISO8601DateFormatWithInternetDateTime;
-    NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
-    notification.fireDate = date;
-    if (uiLocalNotificationDateInterpretation != nil) {
-      if ([uiLocalNotificationDateInterpretation integerValue] ==
-          AbsoluteGMTTime) {
-        notification.timeZone = nil;
-      } else if ([uiLocalNotificationDateInterpretation integerValue] ==
-                 WallClockTime) {
-        notification.timeZone = timezone;
-      }
-    }
-    if (matchDateComponents != nil) {
-      if ([matchDateComponents integerValue] == Time) {
-        notification.repeatInterval = NSCalendarUnitDay;
-      } else if ([matchDateComponents integerValue] == DayOfWeekAndTime) {
-        notification.repeatInterval = NSCalendarUnitWeekOfYear;
-      } else if ([matchDateComponents integerValue] == DayOfMonthAndTime) {
-        notification.repeatInterval = NSCalendarUnitMonth;
-      } else if ([matchDateComponents integerValue] == DateAndTime) {
-        notification.repeatInterval = NSCalendarUnitYear;
-      }
-    }
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-#pragma clang diagnostic pop
-    result(nil);
-  }
 }
 
 - (void)periodicallyShow:(NSDictionary *_Nonnull)arguments
-                  result:(FlutterResult _Nonnull)result {
-  if (@available(iOS 10.0, *)) {
+                  result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
     UNMutableNotificationContent *content =
-        [self buildStandardNotificationContent:arguments result:result];
+    [self buildStandardNotificationContent:arguments result:result];
     UNTimeIntervalNotificationTrigger *trigger =
-        [self buildUserNotificationTimeIntervalTrigger:arguments];
+    [self buildUserNotificationTimeIntervalTrigger:arguments];
     [self addNotificationRequest:[self getIdentifier:arguments]
                          content:content
                           result:result
                          trigger:trigger];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *notification =
-        [self buildStandardUILocalNotification:arguments];
-#pragma clang diagnostic pop
-    NSTimeInterval timeInterval = 0;
-    if ([self containsKey:REPEAT_INTERVAL_MILLISECODNS
-            forDictionary:arguments]) {
-      NSInteger repeatIntervalMilliseconds =
-          [arguments[REPEAT_INTERVAL_MILLISECODNS] integerValue];
-      timeInterval = repeatIntervalMilliseconds / 1000.0;
-      notification.repeatInterval = NSCalendarUnitSecond;
-    }
-    switch ([arguments[REPEAT_INTERVAL] integerValue]) {
-    case EveryMinute:
-      timeInterval = 60;
-      notification.repeatInterval = NSCalendarUnitMinute;
-      break;
-    case Hourly:
-      timeInterval = 60 * 60;
-      notification.repeatInterval = NSCalendarUnitHour;
-      break;
-    case Daily:
-      timeInterval = 60 * 60 * 24;
-      notification.repeatInterval = NSCalendarUnitDay;
-      break;
-    case Weekly:
-      timeInterval = 60 * 60 * 24 * 7;
-      notification.repeatInterval = NSCalendarUnitWeekOfYear;
-      break;
-    }
-    notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:timeInterval];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-#pragma clang diagnostic pop
-    result(nil);
-  }
 }
 
 - (void)cancel:(NSNumber *)id result:(FlutterResult _Nonnull)result {
