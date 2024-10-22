@@ -211,7 +211,7 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)pendingNotificationRequests:(FlutterResult _Nonnull)result
-    NS_AVAILABLE_IOS(10.0) {
+    API_AVAILABLE(ios(10.0)) {
   UNUserNotificationCenter *center =
       [UNUserNotificationCenter currentNotificationCenter];
   [center getPendingNotificationRequestsWithCompletionHandler:^(
@@ -243,7 +243,7 @@ static FlutterError *getFlutterError(NSError *error) {
 /// appropriate.
 - (void)configureNotificationCategories:(NSDictionary *_Nonnull)arguments
                   withCompletionHandler:(void (^)(void))completionHandler
-    NS_AVAILABLE_IOS(10.0) {
+    API_AVAILABLE(ios(10.0)) {
   if ([self containsKey:@"notificationCategories" forDictionary:arguments]) {
     NSMutableSet<UNNotificationCategory *> *notificationCategories =
         [NSMutableSet set];
@@ -310,7 +310,7 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)getActiveNotifications:(FlutterResult _Nonnull)result
-    NS_AVAILABLE_IOS(10.0) {
+    API_AVAILABLE(ios(10.0)) {
   UNUserNotificationCenter *center =
       [UNUserNotificationCenter currentNotificationCenter];
   [center getDeliveredNotificationsWithCompletionHandler:^(
@@ -487,7 +487,7 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)checkPermissions:(NSDictionary *_Nonnull)arguments
-                  result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
+                  result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
   UNUserNotificationCenter *center =
       [UNUserNotificationCenter currentNotificationCenter];
 
@@ -526,7 +526,7 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)show:(NSDictionary *_Nonnull)arguments
-      result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
+      result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
   UNMutableNotificationContent *content =
       [self buildStandardNotificationContent:arguments result:result];
   [self addNotificationRequest:[self getIdentifier:arguments]
@@ -536,7 +536,7 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)zonedSchedule:(NSDictionary *_Nonnull)arguments
-               result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
+               result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
   UNMutableNotificationContent *content =
       [self buildStandardNotificationContent:arguments result:result];
   UNCalendarNotificationTrigger *trigger =
@@ -548,7 +548,7 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)periodicallyShow:(NSDictionary *_Nonnull)arguments
-                  result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
+                  result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
   UNMutableNotificationContent *content =
       [self buildStandardNotificationContent:arguments result:result];
   UNTimeIntervalNotificationTrigger *trigger =
@@ -560,7 +560,7 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)cancel:(NSNumber *)id
-        result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
+        result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
   UNUserNotificationCenter *center =
       [UNUserNotificationCenter currentNotificationCenter];
   NSArray *idsToRemove =
@@ -570,7 +570,7 @@ static FlutterError *getFlutterError(NSError *error) {
   result(nil);
 }
 
-- (void)cancelAll:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
+- (void)cancelAll:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
   UNUserNotificationCenter *center =
       [UNUserNotificationCenter currentNotificationCenter];
   [center removeAllPendingNotificationRequests];
@@ -717,7 +717,7 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (UNCalendarNotificationTrigger *)buildUserNotificationCalendarTrigger:
-    (id)arguments NS_AVAILABLE_IOS(10.0) {
+    (id)arguments API_AVAILABLE(ios(10.0)) {
   NSString *scheduledDateTime = arguments[SCHEDULED_DATE_TIME];
   NSString *timeZoneName = arguments[TIME_ZONE_NAME];
 
@@ -879,7 +879,7 @@ static FlutterError *getFlutterError(NSError *error) {
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:
              (void (^)(UNNotificationPresentationOptions))completionHandler
-    NS_AVAILABLE_IOS(10.0) {
+    API_AVAILABLE(ios(10.0)) {
   if (![self
           isAFlutterLocalNotification:notification.request.content.userInfo]) {
     return;
@@ -922,7 +922,7 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (NSMutableDictionary *)extractNotificationResponseDict:
-    (UNNotificationResponse *_Nonnull)response NS_AVAILABLE_IOS(10.0) {
+    (UNNotificationResponse *_Nonnull)response API_AVAILABLE(ios(10.0)) {
   NSMutableDictionary *notitificationResponseDict =
       [[NSMutableDictionary alloc] init];
   NSInteger notificationId =
@@ -954,7 +954,7 @@ static FlutterError *getFlutterError(NSError *error) {
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
     didReceiveNotificationResponse:(UNNotificationResponse *)response
              withCompletionHandler:(void (^)(void))completionHandler
-    NS_AVAILABLE_IOS(10.0) {
+    API_AVAILABLE(ios(10.0)) {
   if (![self isAFlutterLocalNotification:response.notification.request.content
                                              .userInfo]) {
     return;
