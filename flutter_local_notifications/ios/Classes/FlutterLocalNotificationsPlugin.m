@@ -611,19 +611,12 @@ static FlutterError *getFlutterError(NSError *error) {
   result(nil);
 }
 
-- (void)cancelAll:(FlutterResult _Nonnull)result {
-  if (@available(iOS 10.0, *)) {
+- (void)cancelAll:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
     UNUserNotificationCenter *center =
-        [UNUserNotificationCenter currentNotificationCenter];
+    [UNUserNotificationCenter currentNotificationCenter];
     [center removeAllPendingNotificationRequests];
     [center removeAllDeliveredNotifications];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] cancelAllLocalNotifications];
-#pragma clang diagnostic pop
-  }
-  result(nil);
+    result(nil);
 }
 
 - (UNMutableNotificationContent *)
