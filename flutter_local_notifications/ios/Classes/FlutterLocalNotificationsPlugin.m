@@ -1031,31 +1031,4 @@ static FlutterError *getFlutterError(NSError *error) {
   return YES;
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-- (void)application:(UIApplication *)application
-    didReceiveLocalNotification:(UILocalNotification *)notification {
-#pragma clang diagnostic pop
-  if (@available(iOS 10.0, *)) {
-    return;
-  }
-  if (![self isAFlutterLocalNotification:notification.userInfo]) {
-    return;
-  }
-
-  NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
-  arguments[ID] = notification.userInfo[NOTIFICATION_ID];
-  if (notification.userInfo[TITLE] != [NSNull null]) {
-    arguments[TITLE] = notification.userInfo[TITLE];
-  }
-  if (notification.alertBody != nil) {
-    arguments[BODY] = notification.alertBody;
-  }
-  if (notification.userInfo[PAYLOAD] != [NSNull null]) {
-    arguments[PAYLOAD] = notification.userInfo[PAYLOAD];
-  }
-  [_channel invokeMethod:DID_RECEIVE_LOCAL_NOTIFICATION arguments:arguments];
-}
-
 @end

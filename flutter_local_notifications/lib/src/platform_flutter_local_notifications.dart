@@ -25,7 +25,6 @@ import 'platform_specifics/darwin/mappers.dart';
 import 'platform_specifics/darwin/notification_details.dart';
 import 'platform_specifics/darwin/notification_enabled_options.dart';
 import 'platform_specifics/ios/enums.dart';
-import 'typedefs.dart';
 import 'types.dart';
 import 'tz_datetime_mapper.dart';
 
@@ -609,7 +608,6 @@ class IOSFlutterLocalNotificationsPlugin
   }
 
   DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
-  DidReceiveLocalNotificationCallback? _onDidReceiveLocalNotification;
 
   /// Initializes the plugin.
   ///
@@ -645,8 +643,6 @@ class IOSFlutterLocalNotificationsPlugin
         onDidReceiveBackgroundNotificationResponse,
   }) async {
     _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
-    _onDidReceiveLocalNotification =
-        initializationSettings.onDidReceiveLocalNotification;
     _channel.setMethodCallHandler(_handleMethod);
 
     final Map<String, Object> arguments = initializationSettings.toMap();
@@ -822,13 +818,6 @@ class IOSFlutterLocalNotificationsPlugin
                 .values[call.arguments['notificationResponseType']],
           ),
         );
-        break;
-      case 'didReceiveLocalNotification':
-        _onDidReceiveLocalNotification!(
-            call.arguments['id'],
-            call.arguments['title'],
-            call.arguments['body'],
-            call.arguments['payload']);
         break;
       default:
         return await Future<void>.error('Method not defined');
