@@ -210,36 +210,6 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
-- (void)activeUserNotificationRequests:(FlutterResult _Nonnull)result
-    NS_AVAILABLE_IOS(10.0) {
-  UNUserNotificationCenter *center =
-      [UNUserNotificationCenter currentNotificationCenter];
-  [center getDeliveredNotificationsWithCompletionHandler:^(
-              NSArray<UNNotification *> *_Nonnull notifications) {
-    NSMutableArray<NSMutableDictionary<NSString *, NSObject *> *>
-        *activeNotifications =
-            [[NSMutableArray alloc] initWithCapacity:[notifications count]];
-    for (UNNotification *notification in notifications) {
-      NSMutableDictionary *activeNotification =
-          [[NSMutableDictionary alloc] init];
-      activeNotification[ID] =
-          notification.request.content.userInfo[NOTIFICATION_ID];
-      if (notification.request.content.title != nil) {
-        activeNotification[TITLE] = notification.request.content.title;
-      }
-      if (notification.request.content.body != nil) {
-        activeNotification[BODY] = notification.request.content.body;
-      }
-      if (notification.request.content.userInfo[PAYLOAD] != [NSNull null]) {
-        activeNotification[PAYLOAD] =
-            notification.request.content.userInfo[PAYLOAD];
-      }
-      [activeNotifications addObject:activeNotification];
-    }
-    result(activeNotifications);
-  }];
-}
-
 - (void)pendingNotificationRequests:(FlutterResult _Nonnull)result
     NS_AVAILABLE_IOS(10.0) {
   UNUserNotificationCenter *center =
@@ -345,14 +315,33 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
-- (void)getActiveNotifications:(FlutterResult _Nonnull)result {
-  if (@available(iOS 10.0, *)) {
-    [self activeUserNotificationRequests:result];
-  } else {
-    result([FlutterError errorWithCode:UNSUPPORTED_OS_VERSION_ERROR_CODE
-                               message:GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE
-                               details:nil]);
-  }
+- (void)getActiveNotifications:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
+    UNUserNotificationCenter *center =
+    [UNUserNotificationCenter currentNotificationCenter];
+    [center getDeliveredNotificationsWithCompletionHandler:^(
+                                                             NSArray<UNNotification *> *_Nonnull notifications) {
+                                                                 NSMutableArray<NSMutableDictionary<NSString *, NSObject *> *>
+                                                                 *activeNotifications =
+                                                                 [[NSMutableArray alloc] initWithCapacity:[notifications count]];
+                                                                 for (UNNotification *notification in notifications) {
+                                                                     NSMutableDictionary *activeNotification =
+                                                                     [[NSMutableDictionary alloc] init];
+                                                                     activeNotification[ID] =
+                                                                     notification.request.content.userInfo[NOTIFICATION_ID];
+                                                                     if (notification.request.content.title != nil) {
+                                                                         activeNotification[TITLE] = notification.request.content.title;
+                                                                     }
+                                                                     if (notification.request.content.body != nil) {
+                                                                         activeNotification[BODY] = notification.request.content.body;
+                                                                     }
+                                                                     if (notification.request.content.userInfo[PAYLOAD] != [NSNull null]) {
+                                                                         activeNotification[PAYLOAD] =
+                                                                         notification.request.content.userInfo[PAYLOAD];
+                                                                     }
+                                                                     [activeNotifications addObject:activeNotification];
+                                                                 }
+                                                                 result(activeNotifications);
+                                                             }];
 }
 
 - (void)initialize:(NSDictionary *_Nonnull)arguments
