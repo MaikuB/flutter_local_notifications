@@ -600,14 +600,15 @@ static FlutterError *getFlutterError(NSError *error) {
                        trigger:trigger];
 }
 
-- (void)cancel:(NSNumber *)id result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
-    UNUserNotificationCenter *center =
-    [UNUserNotificationCenter currentNotificationCenter];
-    NSArray *idsToRemove =
-    [[NSArray alloc] initWithObjects:[id stringValue], nil];
-    [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
-    [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
-    result(nil);
+- (void)cancel:(NSNumber *)id
+        result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
+  UNUserNotificationCenter *center =
+      [UNUserNotificationCenter currentNotificationCenter];
+  NSArray *idsToRemove =
+      [[NSArray alloc] initWithObjects:[id stringValue], nil];
+  [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
+  [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
+  result(nil);
 }
 
 - (void)cancelAll:(FlutterResult _Nonnull)result {
