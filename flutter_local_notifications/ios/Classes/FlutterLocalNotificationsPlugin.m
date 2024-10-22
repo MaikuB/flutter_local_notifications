@@ -302,10 +302,9 @@ static FlutterError *getFlutterError(NSError *error) {
       [[NSUserDefaults standardUserDefaults]
           setObject:foregroundActionIdentifiers
              forKey:FOREGROUND_ACTION_IDENTIFIERS];
-      completionHandler();
-    } else {
-      completionHandler();
     }
+    
+    completionHandler();
   }
 }
 
