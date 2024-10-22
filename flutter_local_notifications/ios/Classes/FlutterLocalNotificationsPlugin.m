@@ -1004,31 +1004,4 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
-#pragma mark - AppDelegate
-- (BOOL)application:(UIApplication *)application
-    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  if (launchOptions != nil) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *launchNotification =
-        (UILocalNotification *)[launchOptions
-            objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
-#pragma clang diagnostic pop
-    _launchingAppFromNotification =
-        launchNotification != nil &&
-        [self isAFlutterLocalNotification:launchNotification.userInfo];
-    if (_launchingAppFromNotification) {
-      _launchNotificationResponseDict = [[NSMutableDictionary alloc] init];
-      _launchNotificationResponseDict[@"notificationId"] =
-          launchNotification.userInfo[NOTIFICATION_ID];
-      _launchNotificationResponseDict[PAYLOAD] =
-          launchNotification.userInfo[PAYLOAD];
-      _launchNotificationResponseDict[NOTIFICATION_RESPONSE_TYPE] =
-          [NSNumber numberWithInteger:0];
-    }
-  }
-
-  return YES;
-}
-
 @end
