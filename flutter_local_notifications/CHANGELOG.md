@@ -1,3 +1,7 @@
+## [18.0.0-dev.2]
+
+* [iOS] **Breaking change** Removed `onDidReceiveLocalNotification` callback as this was only relevant on iOS versions older than 10
+
 ## [18.0.0-dev.1]
 
 * **Breaking changes** Bumped minimum Flutter SDK requirement to 3.13. Consequently the minimum OS requirements for each platform has been updated as well
