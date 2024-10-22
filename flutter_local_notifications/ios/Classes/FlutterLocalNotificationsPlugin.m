@@ -241,78 +241,71 @@ static FlutterError *getFlutterError(NSError *error) {
 
 /// Extracts notification categories from [arguments] and configures them as
 /// appropriate.
-///
-/// This code will simply return the `completionHandler` if not running on a
-/// compatible iOS version or when no categories were specified in [arguments].
 - (void)configureNotificationCategories:(NSDictionary *_Nonnull)arguments
-                  withCompletionHandler:(void (^)(void))completionHandler {
-  if (@available(iOS 10.0, *)) {
+                  withCompletionHandler:(void (^)(void))completionHandler NS_AVAILABLE_IOS(10.0) {
     if ([self containsKey:@"notificationCategories" forDictionary:arguments]) {
-      NSMutableSet<UNNotificationCategory *> *notificationCategories =
-          [NSMutableSet set];
-
-      NSArray *categories = arguments[@"notificationCategories"];
-      NSMutableArray<NSString *> *foregroundActionIdentifiers =
-          [[NSMutableArray alloc] init];
-
-      for (NSDictionary *category in categories) {
-        NSMutableArray<UNNotificationAction *> *newActions =
+        NSMutableSet<UNNotificationCategory *> *notificationCategories =
+        [NSMutableSet set];
+        
+        NSArray *categories = arguments[@"notificationCategories"];
+        NSMutableArray<NSString *> *foregroundActionIdentifiers =
+        [[NSMutableArray alloc] init];
+        
+        for (NSDictionary *category in categories) {
+            NSMutableArray<UNNotificationAction *> *newActions =
             [NSMutableArray array];
-
-        NSArray *actions = category[@"actions"];
-        for (NSDictionary *action in actions) {
-          NSString *type = action[@"type"];
-          NSString *identifier = action[@"identifier"];
-          NSString *title = action[@"title"];
-          UNNotificationActionOptions options =
-              [Converters parseNotificationActionOptions:action[@"options"]];
-
-          if ((options & UNNotificationActionOptionForeground) != 0) {
-            [foregroundActionIdentifiers addObject:identifier];
-          }
-
-          if ([type isEqualToString:@"plain"]) {
-            [newActions
-                addObject:[UNNotificationAction actionWithIdentifier:identifier
-                                                               title:title
-                                                             options:options]];
-          } else if ([type isEqualToString:@"text"]) {
-            NSString *buttonTitle = action[@"buttonTitle"];
-            NSString *placeholder = action[@"placeholder"];
-            [newActions addObject:[UNTextInputNotificationAction
-                                      actionWithIdentifier:identifier
-                                                     title:title
-                                                   options:options
-                                      textInputButtonTitle:buttonTitle
-                                      textInputPlaceholder:placeholder]];
-          }
+            
+            NSArray *actions = category[@"actions"];
+            for (NSDictionary *action in actions) {
+                NSString *type = action[@"type"];
+                NSString *identifier = action[@"identifier"];
+                NSString *title = action[@"title"];
+                UNNotificationActionOptions options =
+                [Converters parseNotificationActionOptions:action[@"options"]];
+                
+                if ((options & UNNotificationActionOptionForeground) != 0) {
+                    [foregroundActionIdentifiers addObject:identifier];
+                }
+                
+                if ([type isEqualToString:@"plain"]) {
+                    [newActions
+                     addObject:[UNNotificationAction actionWithIdentifier:identifier
+                                                                    title:title
+                                                                  options:options]];
+                } else if ([type isEqualToString:@"text"]) {
+                    NSString *buttonTitle = action[@"buttonTitle"];
+                    NSString *placeholder = action[@"placeholder"];
+                    [newActions addObject:[UNTextInputNotificationAction
+                                           actionWithIdentifier:identifier
+                                           title:title
+                                           options:options
+                                           textInputButtonTitle:buttonTitle
+                                           textInputPlaceholder:placeholder]];
+                }
+            }
+            
+            UNNotificationCategory *notificationCategory = [UNNotificationCategory
+                                                            categoryWithIdentifier:category[@"identifier"]
+                                                            actions:newActions
+                                                            intentIdentifiers:@[]
+                                                            options:[Converters parseNotificationCategoryOptions:
+                                                                     category[@"options"]]];
+            
+            [notificationCategories addObject:notificationCategory];
         }
-
-        UNNotificationCategory *notificationCategory = [UNNotificationCategory
-            categoryWithIdentifier:category[@"identifier"]
-                           actions:newActions
-                 intentIdentifiers:@[]
-                           options:[Converters parseNotificationCategoryOptions:
-                                                   category[@"options"]]];
-
-        [notificationCategories addObject:notificationCategory];
-      }
-
-      if (notificationCategories.count > 0) {
-        UNUserNotificationCenter *center =
+        
+        if (notificationCategories.count > 0) {
+            UNUserNotificationCenter *center =
             [UNUserNotificationCenter currentNotificationCenter];
-        [center setNotificationCategories:notificationCategories];
-        [[NSUserDefaults standardUserDefaults]
-            setObject:foregroundActionIdentifiers
-               forKey:FOREGROUND_ACTION_IDENTIFIERS];
-        completionHandler();
-      } else {
-        completionHandler();
-      }
+            [center setNotificationCategories:notificationCategories];
+            [[NSUserDefaults standardUserDefaults]
+             setObject:foregroundActionIdentifiers
+             forKey:FOREGROUND_ACTION_IDENTIFIERS];
+            completionHandler();
+        } else {
+            completionHandler();
+        }
     }
-  } else {
-    completionHandler();
-  }
 }
 
 - (void)getActiveNotifications:(FlutterResult _Nonnull)result
