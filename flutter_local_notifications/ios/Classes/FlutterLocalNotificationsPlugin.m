@@ -612,11 +612,11 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)cancelAll:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
-    UNUserNotificationCenter *center =
-    [UNUserNotificationCenter currentNotificationCenter];
-    [center removeAllPendingNotificationRequests];
-    [center removeAllDeliveredNotifications];
-    result(nil);
+  UNUserNotificationCenter *center =
+      [UNUserNotificationCenter currentNotificationCenter];
+  [center removeAllPendingNotificationRequests];
+  [center removeAllDeliveredNotifications];
+  result(nil);
 }
 
 - (UNMutableNotificationContent *)
