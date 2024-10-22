@@ -458,32 +458,32 @@ static FlutterError *getFlutterError(NSError *error) {
     result(@NO);
     return;
   }
-    UNUserNotificationCenter *center =
-        [UNUserNotificationCenter currentNotificationCenter];
+  UNUserNotificationCenter *center =
+      [UNUserNotificationCenter currentNotificationCenter];
 
-    UNAuthorizationOptions authorizationOptions = 0;
-    if (soundPermission) {
-      authorizationOptions += UNAuthorizationOptionSound;
+  UNAuthorizationOptions authorizationOptions = 0;
+  if (soundPermission) {
+    authorizationOptions += UNAuthorizationOptionSound;
+  }
+  if (alertPermission) {
+    authorizationOptions += UNAuthorizationOptionAlert;
+  }
+  if (badgePermission) {
+    authorizationOptions += UNAuthorizationOptionBadge;
+  }
+  if (@available(iOS 12.0, *)) {
+    if (provisionalPermission) {
+      authorizationOptions += UNAuthorizationOptionProvisional;
     }
-    if (alertPermission) {
-      authorizationOptions += UNAuthorizationOptionAlert;
+    if (criticalPermission) {
+      authorizationOptions += UNAuthorizationOptionCriticalAlert;
     }
-    if (badgePermission) {
-      authorizationOptions += UNAuthorizationOptionBadge;
-    }
-    if (@available(iOS 12.0, *)) {
-      if (provisionalPermission) {
-        authorizationOptions += UNAuthorizationOptionProvisional;
-      }
-      if (criticalPermission) {
-        authorizationOptions += UNAuthorizationOptionCriticalAlert;
-      }
-    }
-    [center requestAuthorizationWithOptions:(authorizationOptions)
-                          completionHandler:^(BOOL granted,
-                                              NSError *_Nullable error) {
-                            result(@(granted));
-                          }];
+  }
+  [center requestAuthorizationWithOptions:(authorizationOptions)
+                        completionHandler:^(BOOL granted,
+                                            NSError *_Nullable error) {
+                          result(@(granted));
+                        }];
 }
 
 - (void)checkPermissions:(NSDictionary *_Nonnull)arguments
@@ -568,36 +568,36 @@ static FlutterError *getFlutterError(NSError *error) {
 
 - (void)show:(NSDictionary *_Nonnull)arguments
       result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
-    UNMutableNotificationContent *content =
-        [self buildStandardNotificationContent:arguments result:result];
-    [self addNotificationRequest:[self getIdentifier:arguments]
-                         content:content
-                          result:result
-                         trigger:nil];
+  UNMutableNotificationContent *content =
+      [self buildStandardNotificationContent:arguments result:result];
+  [self addNotificationRequest:[self getIdentifier:arguments]
+                       content:content
+                        result:result
+                       trigger:nil];
 }
 
 - (void)zonedSchedule:(NSDictionary *_Nonnull)arguments
                result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
-    UNMutableNotificationContent *content =
-    [self buildStandardNotificationContent:arguments result:result];
-    UNCalendarNotificationTrigger *trigger =
-    [self buildUserNotificationCalendarTrigger:arguments];
-    [self addNotificationRequest:[self getIdentifier:arguments]
-                         content:content
-                          result:result
-                         trigger:trigger];
+  UNMutableNotificationContent *content =
+      [self buildStandardNotificationContent:arguments result:result];
+  UNCalendarNotificationTrigger *trigger =
+      [self buildUserNotificationCalendarTrigger:arguments];
+  [self addNotificationRequest:[self getIdentifier:arguments]
+                       content:content
+                        result:result
+                       trigger:trigger];
 }
 
 - (void)periodicallyShow:(NSDictionary *_Nonnull)arguments
                   result:(FlutterResult _Nonnull)result NS_AVAILABLE_IOS(10.0) {
-    UNMutableNotificationContent *content =
-    [self buildStandardNotificationContent:arguments result:result];
-    UNTimeIntervalNotificationTrigger *trigger =
-    [self buildUserNotificationTimeIntervalTrigger:arguments];
-    [self addNotificationRequest:[self getIdentifier:arguments]
-                         content:content
-                          result:result
-                         trigger:trigger];
+  UNMutableNotificationContent *content =
+      [self buildStandardNotificationContent:arguments result:result];
+  UNTimeIntervalNotificationTrigger *trigger =
+      [self buildUserNotificationTimeIntervalTrigger:arguments];
+  [self addNotificationRequest:[self getIdentifier:arguments]
+                       content:content
+                        result:result
+                       trigger:trigger];
 }
 
 - (void)cancel:(NSNumber *)id result:(FlutterResult _Nonnull)result {
