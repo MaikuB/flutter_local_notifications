@@ -1,3 +1,7 @@
+## [17.2.4]
+
+* [macOS] added privacy manifest file
+
 ## [17.2.3]
 
 * [Android] fixed [#2309](https://github.com/MaikuB/flutter_local_notifications/issues/2309) where plugin runs into an exception getting the sound information for a notification channel. Thanks to the PR from [Goddchen](https://github.com/Goddchen)
