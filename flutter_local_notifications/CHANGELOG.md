@@ -1,3 +1,7 @@
+## [18.0.0-dev.3]
+
+* Included changes from 17.2.4 release that was done to add in a privacy manifest file to macOS implementation
+
 ## [18.0.0-dev.2]
 
 * [iOS] **Breaking change** Removed `onDidReceiveLocalNotification` callback as this was only relevant on iOS versions older than 10
