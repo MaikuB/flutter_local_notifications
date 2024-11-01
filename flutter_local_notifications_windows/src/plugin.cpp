@@ -218,10 +218,8 @@ std::optional<bool> NativePlugin::checkIdentity() {
   auto error = GetCurrentPackageFullName(&length, nullptr);
   if (error == APPMODEL_ERROR_NO_PACKAGE) return false;
   else if (error != ERROR_INSUFFICIENT_BUFFER) return std::nullopt;
-  PWSTR fullName = (PWSTR) malloc(length * sizeof(*fullName));
-  if (fullName == nullptr) return std::nullopt;
-  error = GetCurrentPackageFullName(&length, fullName);
+	std::vector<wchar_t> fullName;
+  error = GetCurrentPackageFullName(&length, fullName.data());
   if (error != ERROR_SUCCESS) return std::nullopt;
-  free(fullName);
   return true;
 }
