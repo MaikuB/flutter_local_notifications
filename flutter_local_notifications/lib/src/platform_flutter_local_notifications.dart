@@ -25,7 +25,6 @@ import 'platform_specifics/darwin/mappers.dart';
 import 'platform_specifics/darwin/notification_details.dart';
 import 'platform_specifics/darwin/notification_enabled_options.dart';
 import 'platform_specifics/ios/enums.dart';
-import 'typedefs.dart';
 import 'types.dart';
 import 'tz_datetime_mapper.dart';
 
@@ -111,6 +110,12 @@ class MethodChannelFlutterLocalNotificationsPlugin
 /// Android implementation of the local notifications plugin.
 class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
+  /// Registers this implementation as the plugin instance.
+  static void registerWith() {
+    FlutterLocalNotificationsPlatform.instance =
+        AndroidFlutterLocalNotificationsPlugin();
+  }
+
   DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
 
   /// Initializes the plugin.
@@ -599,8 +604,13 @@ class AndroidFlutterLocalNotificationsPlugin
 /// iOS implementation of the local notifications plugin.
 class IOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
+  /// Registers this implementation as the plugin instance.
+  static void registerWith() {
+    FlutterLocalNotificationsPlatform.instance =
+        IOSFlutterLocalNotificationsPlugin();
+  }
+
   DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
-  DidReceiveLocalNotificationCallback? _onDidReceiveLocalNotification;
 
   /// Initializes the plugin.
   ///
@@ -636,8 +646,6 @@ class IOSFlutterLocalNotificationsPlugin
         onDidReceiveBackgroundNotificationResponse,
   }) async {
     _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
-    _onDidReceiveLocalNotification =
-        initializationSettings.onDidReceiveLocalNotification;
     _channel.setMethodCallHandler(_handleMethod);
 
     final Map<String, Object> arguments = initializationSettings.toMap();
@@ -814,13 +822,6 @@ class IOSFlutterLocalNotificationsPlugin
           ),
         );
         break;
-      case 'didReceiveLocalNotification':
-        _onDidReceiveLocalNotification!(
-            call.arguments['id'],
-            call.arguments['title'],
-            call.arguments['body'],
-            call.arguments['payload']);
-        break;
       default:
         return await Future<void>.error('Method not defined');
     }
@@ -830,6 +831,12 @@ class IOSFlutterLocalNotificationsPlugin
 /// macOS implementation of the local notifications plugin.
 class MacOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
+  /// Registers this implementation as the plugin instance.
+  static void registerWith() {
+    FlutterLocalNotificationsPlatform.instance =
+        MacOSFlutterLocalNotificationsPlugin();
+  }
+
   DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
 
   /// Initializes the plugin.

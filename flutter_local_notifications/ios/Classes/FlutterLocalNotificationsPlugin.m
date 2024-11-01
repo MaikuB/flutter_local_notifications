@@ -210,8 +210,8 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
-- (void)pendingUserNotificationRequests:(FlutterResult _Nonnull)result
-    NS_AVAILABLE_IOS(10.0) {
+- (void)pendingNotificationRequests:(FlutterResult _Nonnull)result
+    API_AVAILABLE(ios(10.0)) {
   UNUserNotificationCenter *center =
       [UNUserNotificationCenter currentNotificationCenter];
   [center getPendingNotificationRequestsWithCompletionHandler:^(
@@ -239,8 +239,77 @@ static FlutterError *getFlutterError(NSError *error) {
   }];
 }
 
-- (void)activeUserNotificationRequests:(FlutterResult _Nonnull)result
-    NS_AVAILABLE_IOS(10.0) {
+/// Extracts notification categories from [arguments] and configures them as
+/// appropriate.
+- (void)configureNotificationCategories:(NSDictionary *_Nonnull)arguments
+                  withCompletionHandler:(void (^)(void))completionHandler
+    API_AVAILABLE(ios(10.0)) {
+  if ([self containsKey:@"notificationCategories" forDictionary:arguments]) {
+    NSMutableSet<UNNotificationCategory *> *notificationCategories =
+        [NSMutableSet set];
+
+    NSArray *categories = arguments[@"notificationCategories"];
+    NSMutableArray<NSString *> *foregroundActionIdentifiers =
+        [[NSMutableArray alloc] init];
+
+    for (NSDictionary *category in categories) {
+      NSMutableArray<UNNotificationAction *> *newActions =
+          [NSMutableArray array];
+
+      NSArray *actions = category[@"actions"];
+      for (NSDictionary *action in actions) {
+        NSString *type = action[@"type"];
+        NSString *identifier = action[@"identifier"];
+        NSString *title = action[@"title"];
+        UNNotificationActionOptions options =
+            [Converters parseNotificationActionOptions:action[@"options"]];
+
+        if ((options & UNNotificationActionOptionForeground) != 0) {
+          [foregroundActionIdentifiers addObject:identifier];
+        }
+
+        if ([type isEqualToString:@"plain"]) {
+          [newActions
+              addObject:[UNNotificationAction actionWithIdentifier:identifier
+                                                             title:title
+                                                           options:options]];
+        } else if ([type isEqualToString:@"text"]) {
+          NSString *buttonTitle = action[@"buttonTitle"];
+          NSString *placeholder = action[@"placeholder"];
+          [newActions addObject:[UNTextInputNotificationAction
+                                    actionWithIdentifier:identifier
+                                                   title:title
+                                                 options:options
+                                    textInputButtonTitle:buttonTitle
+                                    textInputPlaceholder:placeholder]];
+        }
+      }
+
+      UNNotificationCategory *notificationCategory = [UNNotificationCategory
+          categoryWithIdentifier:category[@"identifier"]
+                         actions:newActions
+               intentIdentifiers:@[]
+                         options:[Converters parseNotificationCategoryOptions:
+                                                 category[@"options"]]];
+
+      [notificationCategories addObject:notificationCategory];
+    }
+
+    if (notificationCategories.count > 0) {
+      UNUserNotificationCenter *center =
+          [UNUserNotificationCenter currentNotificationCenter];
+      [center setNotificationCategories:notificationCategories];
+      [[NSUserDefaults standardUserDefaults]
+          setObject:foregroundActionIdentifiers
+             forKey:FOREGROUND_ACTION_IDENTIFIERS];
+    }
+
+    completionHandler();
+  }
+}
+
+- (void)getActiveNotifications:(FlutterResult _Nonnull)result
+    API_AVAILABLE(ios(10.0)) {
   UNUserNotificationCenter *center =
       [UNUserNotificationCenter currentNotificationCenter];
   [center getDeliveredNotificationsWithCompletionHandler:^(
@@ -267,129 +336,6 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     result(activeNotifications);
   }];
-}
-
-- (void)pendingLocalNotificationRequests:(FlutterResult _Nonnull)result {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  NSArray *notifications =
-      [UIApplication sharedApplication].scheduledLocalNotifications;
-  NSMutableArray<NSDictionary<NSString *, NSObject *> *>
-      *pendingNotificationRequests =
-          [[NSMutableArray alloc] initWithCapacity:[notifications count]];
-  for (int i = 0; i < [notifications count]; i++) {
-    UILocalNotification *localNotification = [notifications objectAtIndex:i];
-#pragma clang diagnostic pop
-    NSMutableDictionary *pendingNotificationRequest =
-        [[NSMutableDictionary alloc] init];
-    pendingNotificationRequest[ID] =
-        localNotification.userInfo[NOTIFICATION_ID];
-    if (localNotification.userInfo[TITLE] != [NSNull null]) {
-      pendingNotificationRequest[TITLE] = localNotification.userInfo[TITLE];
-    }
-    if (localNotification.alertBody) {
-      pendingNotificationRequest[BODY] = localNotification.alertBody;
-    }
-    if (localNotification.userInfo[PAYLOAD] != [NSNull null]) {
-      pendingNotificationRequest[PAYLOAD] = localNotification.userInfo[PAYLOAD];
-    }
-    [pendingNotificationRequests addObject:pendingNotificationRequest];
-  }
-  result(pendingNotificationRequests);
-}
-
-- (void)pendingNotificationRequests:(FlutterResult _Nonnull)result {
-  if (@available(iOS 10.0, *)) {
-    [self pendingUserNotificationRequests:result];
-  } else {
-    [self pendingLocalNotificationRequests:result];
-  }
-}
-
-/// Extracts notification categories from [arguments] and configures them as
-/// appropriate.
-///
-/// This code will simply return the `completionHandler` if not running on a
-/// compatible iOS version or when no categories were specified in [arguments].
-- (void)configureNotificationCategories:(NSDictionary *_Nonnull)arguments
-                  withCompletionHandler:(void (^)(void))completionHandler {
-  if (@available(iOS 10.0, *)) {
-    if ([self containsKey:@"notificationCategories" forDictionary:arguments]) {
-      NSMutableSet<UNNotificationCategory *> *notificationCategories =
-          [NSMutableSet set];
-
-      NSArray *categories = arguments[@"notificationCategories"];
-      NSMutableArray<NSString *> *foregroundActionIdentifiers =
-          [[NSMutableArray alloc] init];
-
-      for (NSDictionary *category in categories) {
-        NSMutableArray<UNNotificationAction *> *newActions =
-            [NSMutableArray array];
-
-        NSArray *actions = category[@"actions"];
-        for (NSDictionary *action in actions) {
-          NSString *type = action[@"type"];
-          NSString *identifier = action[@"identifier"];
-          NSString *title = action[@"title"];
-          UNNotificationActionOptions options =
-              [Converters parseNotificationActionOptions:action[@"options"]];
-
-          if ((options & UNNotificationActionOptionForeground) != 0) {
-            [foregroundActionIdentifiers addObject:identifier];
-          }
-
-          if ([type isEqualToString:@"plain"]) {
-            [newActions
-                addObject:[UNNotificationAction actionWithIdentifier:identifier
-                                                               title:title
-                                                             options:options]];
-          } else if ([type isEqualToString:@"text"]) {
-            NSString *buttonTitle = action[@"buttonTitle"];
-            NSString *placeholder = action[@"placeholder"];
-            [newActions addObject:[UNTextInputNotificationAction
-                                      actionWithIdentifier:identifier
-                                                     title:title
-                                                   options:options
-                                      textInputButtonTitle:buttonTitle
-                                      textInputPlaceholder:placeholder]];
-          }
-        }
-
-        UNNotificationCategory *notificationCategory = [UNNotificationCategory
-            categoryWithIdentifier:category[@"identifier"]
-                           actions:newActions
-                 intentIdentifiers:@[]
-                           options:[Converters parseNotificationCategoryOptions:
-                                                   category[@"options"]]];
-
-        [notificationCategories addObject:notificationCategory];
-      }
-
-      if (notificationCategories.count > 0) {
-        UNUserNotificationCenter *center =
-            [UNUserNotificationCenter currentNotificationCenter];
-        [center setNotificationCategories:notificationCategories];
-        [[NSUserDefaults standardUserDefaults]
-            setObject:foregroundActionIdentifiers
-               forKey:FOREGROUND_ACTION_IDENTIFIERS];
-        completionHandler();
-      } else {
-        completionHandler();
-      }
-    }
-  } else {
-    completionHandler();
-  }
-}
-
-- (void)getActiveNotifications:(FlutterResult _Nonnull)result {
-  if (@available(iOS 10.0, *)) {
-    [self activeUserNotificationRequests:result];
-  } else {
-    result([FlutterError errorWithCode:UNSUPPORTED_OS_VERSION_ERROR_CODE
-                               message:GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE
-                               details:nil]);
-  }
 }
 
 - (void)initialize:(NSDictionary *_Nonnull)arguments
@@ -511,212 +457,68 @@ static FlutterError *getFlutterError(NSError *error) {
     result(@NO);
     return;
   }
-  if (@available(iOS 10.0, *)) {
-    UNUserNotificationCenter *center =
-        [UNUserNotificationCenter currentNotificationCenter];
+  UNUserNotificationCenter *center =
+      [UNUserNotificationCenter currentNotificationCenter];
 
-    UNAuthorizationOptions authorizationOptions = 0;
-    if (soundPermission) {
-      authorizationOptions += UNAuthorizationOptionSound;
-    }
-    if (alertPermission) {
-      authorizationOptions += UNAuthorizationOptionAlert;
-    }
-    if (badgePermission) {
-      authorizationOptions += UNAuthorizationOptionBadge;
-    }
-    if (@available(iOS 12.0, *)) {
-      if (provisionalPermission) {
-        authorizationOptions += UNAuthorizationOptionProvisional;
-      }
-      if (criticalPermission) {
-        authorizationOptions += UNAuthorizationOptionCriticalAlert;
-      }
-    }
-    [center requestAuthorizationWithOptions:(authorizationOptions)
-                          completionHandler:^(BOOL granted,
-                                              NSError *_Nullable error) {
-                            result(@(granted));
-                          }];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UIUserNotificationType notificationTypes = 0;
-    if (soundPermission) {
-      notificationTypes |= UIUserNotificationTypeSound;
-    }
-    if (alertPermission) {
-      notificationTypes |= UIUserNotificationTypeAlert;
-    }
-    if (badgePermission) {
-      notificationTypes |= UIUserNotificationTypeBadge;
-    }
-    UIUserNotificationSettings *settings =
-        [UIUserNotificationSettings settingsForTypes:notificationTypes
-                                          categories:nil];
-    [[UIApplication sharedApplication]
-        registerUserNotificationSettings:settings];
-#pragma clang diagnostic pop
-    result(@YES);
+  UNAuthorizationOptions authorizationOptions = 0;
+  if (soundPermission) {
+    authorizationOptions += UNAuthorizationOptionSound;
   }
+  if (alertPermission) {
+    authorizationOptions += UNAuthorizationOptionAlert;
+  }
+  if (badgePermission) {
+    authorizationOptions += UNAuthorizationOptionBadge;
+  }
+  if (@available(iOS 12.0, *)) {
+    if (provisionalPermission) {
+      authorizationOptions += UNAuthorizationOptionProvisional;
+    }
+    if (criticalPermission) {
+      authorizationOptions += UNAuthorizationOptionCriticalAlert;
+    }
+  }
+  [center requestAuthorizationWithOptions:(authorizationOptions)
+                        completionHandler:^(BOOL granted,
+                                            NSError *_Nullable error) {
+                          result(@(granted));
+                        }];
 }
 
 - (void)checkPermissions:(NSDictionary *_Nonnull)arguments
+                  result:(FlutterResult _Nonnull)result
+    API_AVAILABLE(ios(10.0)) {
+  UNUserNotificationCenter *center =
+      [UNUserNotificationCenter currentNotificationCenter];
 
-                  result:(FlutterResult _Nonnull)result {
-  if (@available(iOS 10.0, *)) {
-    UNUserNotificationCenter *center =
-        [UNUserNotificationCenter currentNotificationCenter];
+  [center getNotificationSettingsWithCompletionHandler:^(
+              UNNotificationSettings *_Nonnull settings) {
+    BOOL isEnabled =
+        settings.authorizationStatus == UNAuthorizationStatusAuthorized;
+    BOOL isSoundEnabled = settings.soundSetting == UNNotificationSettingEnabled;
+    BOOL isAlertEnabled = settings.alertSetting == UNNotificationSettingEnabled;
+    BOOL isBadgeEnabled = settings.badgeSetting == UNNotificationSettingEnabled;
+    BOOL isProvisionalEnabled = false;
+    BOOL isCriticalEnabled = false;
 
-    [center getNotificationSettingsWithCompletionHandler:^(
-                UNNotificationSettings *_Nonnull settings) {
-      BOOL isEnabled =
-          settings.authorizationStatus == UNAuthorizationStatusAuthorized;
-      BOOL isSoundEnabled =
-          settings.soundSetting == UNNotificationSettingEnabled;
-      BOOL isAlertEnabled =
-          settings.alertSetting == UNNotificationSettingEnabled;
-      BOOL isBadgeEnabled =
-          settings.badgeSetting == UNNotificationSettingEnabled;
-      BOOL isProvisionalEnabled = false;
-      BOOL isCriticalEnabled = false;
-
-      if (@available(iOS 12.0, *)) {
-        isProvisionalEnabled =
-            settings.authorizationStatus == UNAuthorizationStatusProvisional;
-        isCriticalEnabled =
-            settings.criticalAlertSetting == UNNotificationSettingEnabled;
-      }
-
-      NSDictionary *dict = @{
-        IS_NOTIFICATIONS_ENABLED : @(isEnabled),
-        IS_SOUND_ENABLED : @(isSoundEnabled),
-        IS_ALERT_ENABLED : @(isAlertEnabled),
-        IS_BADGE_ENABLED : @(isBadgeEnabled),
-        IS_PROVISIONAL_ENABLED : @(isProvisionalEnabled),
-        IS_CRITICAL_ENABLED : @(isCriticalEnabled),
-      };
-
-      result(dict);
-    }];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UIUserNotificationSettings *settings =
-        UIApplication.sharedApplication.currentUserNotificationSettings;
-
-    if (settings == nil) {
-      result(@{
-        IS_NOTIFICATIONS_ENABLED : @NO,
-        IS_SOUND_ENABLED : @NO,
-        IS_ALERT_ENABLED : @NO,
-        IS_BADGE_ENABLED : @NO,
-        IS_PROVISIONAL_ENABLED : @NO,
-        IS_CRITICAL_ENABLED : @NO,
-      });
-      return;
+    if (@available(iOS 12.0, *)) {
+      isProvisionalEnabled =
+          settings.authorizationStatus == UNAuthorizationStatusProvisional;
+      isCriticalEnabled =
+          settings.criticalAlertSetting == UNNotificationSettingEnabled;
     }
-
-    UIUserNotificationType types = settings.types;
-
-    BOOL isEnabled = types != UIUserNotificationTypeNone;
-    BOOL isSoundEnabled = types & UIUserNotificationTypeSound;
-    BOOL isAlertEnabled = types & UIUserNotificationTypeAlert;
-    BOOL isBadgeEnabled = types & UIUserNotificationTypeBadge;
 
     NSDictionary *dict = @{
       IS_NOTIFICATIONS_ENABLED : @(isEnabled),
       IS_SOUND_ENABLED : @(isSoundEnabled),
       IS_ALERT_ENABLED : @(isAlertEnabled),
       IS_BADGE_ENABLED : @(isBadgeEnabled),
-      IS_PROVISIONAL_ENABLED : @NO,
-      IS_CRITICAL_ENABLED : @NO,
+      IS_PROVISIONAL_ENABLED : @(isProvisionalEnabled),
+      IS_CRITICAL_ENABLED : @(isCriticalEnabled),
     };
 
     result(dict);
-#pragma clang diagnostic pop
-  }
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-- (UILocalNotification *)buildStandardUILocalNotification:
-    (NSDictionary *)arguments {
-  UILocalNotification *notification = [[UILocalNotification alloc] init];
-#pragma clang diagnostic pop
-  if ([self containsKey:BODY forDictionary:arguments]) {
-    notification.alertBody = arguments[BODY];
-  }
-
-  NSString *title;
-  if ([self containsKey:TITLE forDictionary:arguments]) {
-    title = arguments[TITLE];
-    if (@available(iOS 8.2, *)) {
-      notification.alertTitle = title;
-    }
-  }
-
-  NSDictionary *persistedPresentationOptions =
-      [[NSUserDefaults standardUserDefaults]
-          dictionaryForKey:PRESENTATION_OPTIONS_USER_DEFAULTS];
-  bool presentAlert = false;
-  bool presentSound = false;
-  bool presentBadge = false;
-  bool presentBanner = false;
-  bool presentList = false;
-  if (persistedPresentationOptions != nil) {
-    presentAlert = [persistedPresentationOptions[PRESENT_ALERT] isEqual:@YES];
-    presentSound = [persistedPresentationOptions[PRESENT_SOUND] isEqual:@YES];
-    presentBadge = [persistedPresentationOptions[PRESENT_BADGE] isEqual:@YES];
-    presentBanner = [persistedPresentationOptions[PRESENT_BANNER] isEqual:@YES];
-    presentList = [persistedPresentationOptions[PRESENT_LIST] isEqual:@YES];
-  }
-  if (arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
-    NSDictionary *platformSpecifics = arguments[PLATFORM_SPECIFICS];
-
-    if ([self containsKey:PRESENT_ALERT forDictionary:platformSpecifics]) {
-      presentAlert = [[platformSpecifics objectForKey:PRESENT_ALERT] boolValue];
-    }
-    if ([self containsKey:PRESENT_SOUND forDictionary:platformSpecifics]) {
-      presentSound = [[platformSpecifics objectForKey:PRESENT_SOUND] boolValue];
-    }
-    if ([self containsKey:PRESENT_BADGE forDictionary:platformSpecifics]) {
-      presentBadge = [[platformSpecifics objectForKey:PRESENT_BADGE] boolValue];
-    }
-    if ([self containsKey:PRESENT_BANNER forDictionary:platformSpecifics]) {
-      presentBanner =
-          [[platformSpecifics objectForKey:PRESENT_BANNER] boolValue];
-    }
-    if ([self containsKey:PRESENT_LIST forDictionary:platformSpecifics]) {
-      presentList = [[platformSpecifics objectForKey:PRESENT_LIST] boolValue];
-    }
-
-    if ([self containsKey:BADGE_NUMBER forDictionary:platformSpecifics]) {
-      notification.applicationIconBadgeNumber =
-          [platformSpecifics[BADGE_NUMBER] integerValue];
-    }
-
-    if ([self containsKey:SOUND forDictionary:platformSpecifics]) {
-      notification.soundName = [platformSpecifics[SOUND] stringValue];
-    }
-  }
-
-  if (presentSound && notification.soundName == nil) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    notification.soundName = UILocalNotificationDefaultSoundName;
-#pragma clang diagnostic pop
-  }
-
-  notification.userInfo = [self buildUserDict:arguments[ID]
-                                        title:title
-                                 presentAlert:presentAlert
-                                 presentSound:presentSound
-                                 presentBadge:presentBadge
-                                presentBanner:presentBanner
-                                  presentList:presentList
-                                      payload:arguments[PAYLOAD]];
-  return notification;
+  }];
 }
 
 - (NSString *)getIdentifier:(id)arguments {
@@ -724,183 +526,56 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)show:(NSDictionary *_Nonnull)arguments
-      result:(FlutterResult _Nonnull)result {
-  if (@available(iOS 10.0, *)) {
-    UNMutableNotificationContent *content =
-        [self buildStandardNotificationContent:arguments result:result];
-    [self addNotificationRequest:[self getIdentifier:arguments]
-                         content:content
-                          result:result
-                         trigger:nil];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *notification =
-        [self buildStandardUILocalNotification:arguments];
-    [[UIApplication sharedApplication]
-        presentLocalNotificationNow:notification];
-#pragma clang diagnostic pop
-    result(nil);
-  }
+      result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
+  UNMutableNotificationContent *content =
+      [self buildStandardNotificationContent:arguments result:result];
+  [self addNotificationRequest:[self getIdentifier:arguments]
+                       content:content
+                        result:result
+                       trigger:nil];
 }
 
 - (void)zonedSchedule:(NSDictionary *_Nonnull)arguments
-               result:(FlutterResult _Nonnull)result {
-  if (@available(iOS 10.0, *)) {
-    UNMutableNotificationContent *content =
-        [self buildStandardNotificationContent:arguments result:result];
-    UNCalendarNotificationTrigger *trigger =
-        [self buildUserNotificationCalendarTrigger:arguments];
-    [self addNotificationRequest:[self getIdentifier:arguments]
-                         content:content
-                          result:result
-                         trigger:trigger];
-
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *notification =
-        [self buildStandardUILocalNotification:arguments];
-#pragma clang diagnostic pop
-    NSString *scheduledDateTime = arguments[SCHEDULED_DATE_TIME];
-    NSString *timeZoneName = arguments[TIME_ZONE_NAME];
-    NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
-    NSNumber *uiLocalNotificationDateInterpretation =
-        arguments[UILOCALNOTIFICATION_DATE_INTERPRETATION];
-    NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
-    NSISO8601DateFormatter *dateFormatter =
-        [[NSISO8601DateFormatter alloc] init];
-    [dateFormatter setTimeZone:timezone];
-    dateFormatter.formatOptions = NSISO8601DateFormatWithFractionalSeconds |
-                                  NSISO8601DateFormatWithInternetDateTime;
-    NSDate *date = [dateFormatter dateFromString:scheduledDateTime];
-    notification.fireDate = date;
-    if (uiLocalNotificationDateInterpretation != nil) {
-      if ([uiLocalNotificationDateInterpretation integerValue] ==
-          AbsoluteGMTTime) {
-        notification.timeZone = nil;
-      } else if ([uiLocalNotificationDateInterpretation integerValue] ==
-                 WallClockTime) {
-        notification.timeZone = timezone;
-      }
-    }
-    if (matchDateComponents != nil) {
-      if ([matchDateComponents integerValue] == Time) {
-        notification.repeatInterval = NSCalendarUnitDay;
-      } else if ([matchDateComponents integerValue] == DayOfWeekAndTime) {
-        notification.repeatInterval = NSCalendarUnitWeekOfYear;
-      } else if ([matchDateComponents integerValue] == DayOfMonthAndTime) {
-        notification.repeatInterval = NSCalendarUnitMonth;
-      } else if ([matchDateComponents integerValue] == DateAndTime) {
-        notification.repeatInterval = NSCalendarUnitYear;
-      }
-    }
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-#pragma clang diagnostic pop
-    result(nil);
-  }
+               result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
+  UNMutableNotificationContent *content =
+      [self buildStandardNotificationContent:arguments result:result];
+  UNCalendarNotificationTrigger *trigger =
+      [self buildUserNotificationCalendarTrigger:arguments];
+  [self addNotificationRequest:[self getIdentifier:arguments]
+                       content:content
+                        result:result
+                       trigger:trigger];
 }
 
 - (void)periodicallyShow:(NSDictionary *_Nonnull)arguments
-                  result:(FlutterResult _Nonnull)result {
-  if (@available(iOS 10.0, *)) {
-    UNMutableNotificationContent *content =
-        [self buildStandardNotificationContent:arguments result:result];
-    UNTimeIntervalNotificationTrigger *trigger =
-        [self buildUserNotificationTimeIntervalTrigger:arguments];
-    [self addNotificationRequest:[self getIdentifier:arguments]
-                         content:content
-                          result:result
-                         trigger:trigger];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *notification =
-        [self buildStandardUILocalNotification:arguments];
-#pragma clang diagnostic pop
-    NSTimeInterval timeInterval = 0;
-    if ([self containsKey:REPEAT_INTERVAL_MILLISECODNS
-            forDictionary:arguments]) {
-      NSInteger repeatIntervalMilliseconds =
-          [arguments[REPEAT_INTERVAL_MILLISECODNS] integerValue];
-      timeInterval = repeatIntervalMilliseconds / 1000.0;
-      notification.repeatInterval = NSCalendarUnitSecond;
-    }
-    switch ([arguments[REPEAT_INTERVAL] integerValue]) {
-    case EveryMinute:
-      timeInterval = 60;
-      notification.repeatInterval = NSCalendarUnitMinute;
-      break;
-    case Hourly:
-      timeInterval = 60 * 60;
-      notification.repeatInterval = NSCalendarUnitHour;
-      break;
-    case Daily:
-      timeInterval = 60 * 60 * 24;
-      notification.repeatInterval = NSCalendarUnitDay;
-      break;
-    case Weekly:
-      timeInterval = 60 * 60 * 24 * 7;
-      notification.repeatInterval = NSCalendarUnitWeekOfYear;
-      break;
-    }
-    notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:timeInterval];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-#pragma clang diagnostic pop
-    result(nil);
-  }
+                  result:(FlutterResult _Nonnull)result
+    API_AVAILABLE(ios(10.0)) {
+  UNMutableNotificationContent *content =
+      [self buildStandardNotificationContent:arguments result:result];
+  UNTimeIntervalNotificationTrigger *trigger =
+      [self buildUserNotificationTimeIntervalTrigger:arguments];
+  [self addNotificationRequest:[self getIdentifier:arguments]
+                       content:content
+                        result:result
+                       trigger:trigger];
 }
 
-- (void)cancel:(NSNumber *)id result:(FlutterResult _Nonnull)result {
-  if (@available(iOS 10.0, *)) {
-    UNUserNotificationCenter *center =
-        [UNUserNotificationCenter currentNotificationCenter];
-    NSArray *idsToRemove =
-        [[NSArray alloc] initWithObjects:[id stringValue], nil];
-    [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
-    [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSArray *notifications =
-        [UIApplication sharedApplication].scheduledLocalNotifications;
-#pragma clang diagnostic pop
-    for (int i = 0; i < [notifications count]; i++) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-      UILocalNotification *localNotification = [notifications objectAtIndex:i];
-#pragma clang diagnostic pop
-      NSNumber *userInfoNotificationId =
-          localNotification.userInfo[NOTIFICATION_ID];
-      if ([userInfoNotificationId longValue] == [id longValue]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-        [[UIApplication sharedApplication]
-            cancelLocalNotification:localNotification];
-#pragma clang diagnostic pop
-        break;
-      }
-    }
-  }
+- (void)cancel:(NSNumber *)id
+        result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
+  UNUserNotificationCenter *center =
+      [UNUserNotificationCenter currentNotificationCenter];
+  NSArray *idsToRemove =
+      [[NSArray alloc] initWithObjects:[id stringValue], nil];
+  [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
+  [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
   result(nil);
 }
 
-- (void)cancelAll:(FlutterResult _Nonnull)result {
-  if (@available(iOS 10.0, *)) {
-    UNUserNotificationCenter *center =
-        [UNUserNotificationCenter currentNotificationCenter];
-    [center removeAllPendingNotificationRequests];
-    [center removeAllDeliveredNotifications];
-  } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [[UIApplication sharedApplication] cancelAllLocalNotifications];
-#pragma clang diagnostic pop
-  }
+- (void)cancelAll:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
+  UNUserNotificationCenter *center =
+      [UNUserNotificationCenter currentNotificationCenter];
+  [center removeAllPendingNotificationRequests];
+  [center removeAllDeliveredNotifications];
   result(nil);
 }
 
@@ -1043,7 +718,7 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (UNCalendarNotificationTrigger *)buildUserNotificationCalendarTrigger:
-    (id)arguments NS_AVAILABLE_IOS(10.0) {
+    (id)arguments API_AVAILABLE(ios(10.0)) {
   NSString *scheduledDateTime = arguments[SCHEDULED_DATE_TIME];
   NSString *timeZoneName = arguments[TIME_ZONE_NAME];
 
@@ -1205,7 +880,7 @@ static FlutterError *getFlutterError(NSError *error) {
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:
              (void (^)(UNNotificationPresentationOptions))completionHandler
-    NS_AVAILABLE_IOS(10.0) {
+    API_AVAILABLE(ios(10.0)) {
   if (![self
           isAFlutterLocalNotification:notification.request.content.userInfo]) {
     return;
@@ -1248,7 +923,7 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (NSMutableDictionary *)extractNotificationResponseDict:
-    (UNNotificationResponse *_Nonnull)response NS_AVAILABLE_IOS(10.0) {
+    (UNNotificationResponse *_Nonnull)response API_AVAILABLE(ios(10.0)) {
   NSMutableDictionary *notitificationResponseDict =
       [[NSMutableDictionary alloc] init];
   NSInteger notificationId =
@@ -1280,7 +955,7 @@ static FlutterError *getFlutterError(NSError *error) {
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
     didReceiveNotificationResponse:(UNNotificationResponse *)response
              withCompletionHandler:(void (^)(void))completionHandler
-    NS_AVAILABLE_IOS(10.0) {
+    API_AVAILABLE(ios(10.0)) {
   if (![self isAFlutterLocalNotification:response.notification.request.content
                                              .userInfo]) {
     return;
@@ -1328,60 +1003,6 @@ static FlutterError *getFlutterError(NSError *error) {
 
     completionHandler();
   }
-}
-
-#pragma mark - AppDelegate
-- (BOOL)application:(UIApplication *)application
-    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  if (launchOptions != nil) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    UILocalNotification *launchNotification =
-        (UILocalNotification *)[launchOptions
-            objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
-#pragma clang diagnostic pop
-    _launchingAppFromNotification =
-        launchNotification != nil &&
-        [self isAFlutterLocalNotification:launchNotification.userInfo];
-    if (_launchingAppFromNotification) {
-      _launchNotificationResponseDict = [[NSMutableDictionary alloc] init];
-      _launchNotificationResponseDict[@"notificationId"] =
-          launchNotification.userInfo[NOTIFICATION_ID];
-      _launchNotificationResponseDict[PAYLOAD] =
-          launchNotification.userInfo[PAYLOAD];
-      _launchNotificationResponseDict[NOTIFICATION_RESPONSE_TYPE] =
-          [NSNumber numberWithInteger:0];
-    }
-  }
-
-  return YES;
-}
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-implementations"
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-- (void)application:(UIApplication *)application
-    didReceiveLocalNotification:(UILocalNotification *)notification {
-#pragma clang diagnostic pop
-  if (@available(iOS 10.0, *)) {
-    return;
-  }
-  if (![self isAFlutterLocalNotification:notification.userInfo]) {
-    return;
-  }
-
-  NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
-  arguments[ID] = notification.userInfo[NOTIFICATION_ID];
-  if (notification.userInfo[TITLE] != [NSNull null]) {
-    arguments[TITLE] = notification.userInfo[TITLE];
-  }
-  if (notification.alertBody != nil) {
-    arguments[BODY] = notification.alertBody;
-  }
-  if (notification.userInfo[PAYLOAD] != [NSNull null]) {
-    arguments[PAYLOAD] = notification.userInfo[PAYLOAD];
-  }
-  [_channel invokeMethod:DID_RECEIVE_LOCAL_NOTIFICATION arguments:arguments];
 }
 
 @end

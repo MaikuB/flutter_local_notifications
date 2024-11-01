@@ -1,7 +1,33 @@
-## [vNext]
+## [18.0.0-dev.3]
 
-* **Breaking change** Bumped minimum Flutter SDK requirement to 3.13
+* Included changes from 17.2.4 release that was done to add in a privacy manifest file to macOS implementation
+
+## [18.0.0-dev.2]
+
+* [iOS] **Breaking change** Removed `onDidReceiveLocalNotification` callback as this was only relevant on iOS versions older than 10
+
+## [18.0.0-dev.1]
+
+* **Breaking changes** Bumped minimum Flutter SDK requirement to 3.13. Consequently the minimum OS requirements for each platform has been updated as well
+  * [Android] minimum Android version is now 4.4 (API level 19)
+  * [iOS] minimum iOS version is now 11
+  * [macOS] minimum macOS version is now 10.14
 * [Android] **Breaking change**  removed the deprecated `androidAllowWhileIdle` parameter from `zonedSchedule()` and `periodicallyShow()` methods. `androidScheduleMode` is now a required parameter
+* **Breaking change** plugin has been fixed with regards to how it registers the platform-specific implementations of the plugin. Thanks to the PR from [Kate](https://github.com/provokateurin). Any written tests done on the [FlutterLocalNotificationsPlugin] will need to manually call the `registerWith()` method that has been added to each implementation. This affects the following platforms/classes where the `registerWith()` method was added
+  * [Android] `AndroidFlutterLocalNotificationsPlugin`
+  * [iOS] `IOSFlutterLocalNotificationsPlugin`
+  * [macOS] `MacOSFlutterLocalNotificationsPlugin`
+* Fixed example app to have the appropriate permissions for foreground services
+* Updated readme when it comes to setting up the `AndroidManifest.xml` file to include details of what's needed for foreground services. Note these details were already available in the API docs
+
+## [17.2.4]
+
+* [macOS] added privacy manifest file
+
+## [17.2.3]
+
+* [Android] fixed [#2309](https://github.com/MaikuB/flutter_local_notifications/issues/2309) where plugin runs into an exception getting the sound information for a notification channel. Thanks to the PR from [Goddchen](https://github.com/Goddchen)
+* Fixed typo in readme. Thanks to PR from [Ahmad Mahmoudi](https://github.com/A404M)
 
 ## [17.2.2]
 

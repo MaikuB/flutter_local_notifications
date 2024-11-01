@@ -1,4 +1,3 @@
-import '../../typedefs.dart';
 import 'notification_category.dart';
 
 /// Plugin initialization settings for Darwin-based operating systems
@@ -16,7 +15,6 @@ class DarwinInitializationSettings {
     this.defaultPresentBadge = true,
     this.defaultPresentBanner = true,
     this.defaultPresentList = true,
-    this.onDidReceiveLocalNotification,
     this.notificationCategories = const <DarwinNotificationCategory>[],
   });
 
@@ -124,12 +122,6 @@ class DarwinInitializationSettings {
   /// On iOS, this property is only applicable to iOS 14 or newer.
   /// On macOS, this property is only applicable to macOS 11 or newer.
   final bool defaultPresentList;
-
-  /// Callback for handling when a notification is triggered while the app is
-  /// in the foreground.
-  ///
-  /// This property is only applicable to iOS versions older than 10.
-  final DidReceiveLocalNotificationCallback? onDidReceiveLocalNotification;
 
   /// Configure the notification categories ([DarwinNotificationCategory])
   /// available. This allows for fine-tuning of preview display.
