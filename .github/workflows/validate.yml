@@ -181,16 +181,24 @@ jobs:
           channel: stable
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
-      - name: Rename directory
-        run: |
-          move flutter_local_notifications repo
-          dir
       - name: Install Tools
         run: |
           dart pub global activate melos
           melos bootstrap
+      - name: Rename directory
+        run: |
+          move flutter_local_notifications f
+          move f\example f\e
+          dir
+          dir f
+          dir f\e
       - name: Build
-        run: melos run build:example_windows
+        # run: melos run build:example_windows
+        run: |
+          cd f\e
+          dart pub get
+          dart run msix:create
+
   build_example_windows_3_19:
     name: Build Windows example app (3.19)
     runs-on: windows-latest
