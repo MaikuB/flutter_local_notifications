@@ -191,9 +191,6 @@ jobs:
         run: |
           move flutter_local_notifications f
           move f\example f\e
-          dir
-          dir f
-          dir f\e
       - name: Build
         run: |
           cd f\e
