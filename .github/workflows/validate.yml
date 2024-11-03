@@ -5,9 +5,9 @@ on:
     paths-ignore:
       - '**.md'
   push:
-    branches:
-      - master
-      - hotfix/*
+    # branches:
+    #   - master
+    #   - hotfix/*
     paths-ignore:
       - '**.md'
 
@@ -181,6 +181,10 @@ jobs:
           channel: stable
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - name: Rename directory
+        run: |
+          move flutter_local_notifications repo
+          dir
       - name: Install Tools
         run: |
           dart pub global activate melos
