@@ -5,9 +5,9 @@ on:
     paths-ignore:
       - '**.md'
   push:
-    # branches:
-    #   - master
-    #   - hotfix/*
+    branches:
+      - master
+      - hotfix/*
     paths-ignore:
       - '**.md'
 
@@ -185,6 +185,8 @@ jobs:
         run: |
           dart pub global activate melos
           melos bootstrap
+      # Windows has a filename length limit, which this repo just hits
+      # This saves us precious characters during the compilation
       - name: Rename directory
         run: |
           move flutter_local_notifications f
@@ -193,12 +195,10 @@ jobs:
           dir f
           dir f\e
       - name: Build
-        # run: melos run build:example_windows
         run: |
           cd f\e
           dart pub get
           dart run msix:create
-
   build_example_windows_3_19:
     name: Build Windows example app (3.19)
     runs-on: windows-latest
@@ -214,8 +214,17 @@ jobs:
         run: |
           dart pub global activate melos
           melos bootstrap
+      # Windows has a filename length limit, which this repo just hits
+      # This saves us precious characters during the compilation
+      - name: Rename directory
+        run: |
+          move flutter_local_notifications f
+          move f\example f\e
       - name: Build
-        run: melos run build:example_windows
+        run: |
+          cd f\e
+          dart pub get
+          dart run msix:create
   unit_tests_dart:
     name: Run all unit tests (Dart)
     runs-on: ubuntu-latest
