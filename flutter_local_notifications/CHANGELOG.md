@@ -1,3 +1,8 @@
+## [18.0.1]
+
+* Added upper bound constraints for [timezone](https://pub.dev/packages/timezone) dependency. Future releases may bump the minimum `timezone` dependency but this approach is being used at the moment as version 0.10.0 of the time `timezone` package introduces a dependency on `http` package. Directly bumping the `flutter_local_notifications` dependency on `timezone` could have introduced dependency conflicts
+* Bumped `http` dependency in example app
+
 ## [18.0.0]
 
 * **Breaking changes** Bumped minimum Flutter SDK requirement to 3.13. Consequently the minimum OS requirements for each platform has been updated as well
