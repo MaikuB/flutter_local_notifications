@@ -34,3 +34,26 @@ jobs:
           which swiftlint || brew install swiftlint
           swiftlint --fix
           git diff --exit-code || (git commit --all -m "Swift Format" && git push)
+
+  windows_cpp_format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install latest clang-format
+        run: |
+          sudo apt install python3-pip -y
+          python3 -m pip install clang-format
+
+      - name: Format C++ code
+        run: |
+          cd flutter_local_notifications_windows/src
+          ~/.local/bin/clang-format --version
+          ~/.local/bin/clang-format *.cpp *.hpp *.h -i
+          # git diff --exit-code || (git commit --all -m "Clang Format" && git push)
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Clang format

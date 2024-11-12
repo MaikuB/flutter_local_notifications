@@ -1,0 +1,27 @@
+name: flutter_local_notifications_windows
+description: "A new Flutter FFI plugin project."
+version: 1.0.0
+homepage: https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications_windows
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+dependencies:
+  ffi: ^2.1.2
+  flutter_local_notifications_platform_interface: ^8.1.0
+  meta: ^1.11.0
+  timezone: ^0.9.4
+  xml: ^6.5.0
+
+dev_dependencies:
+  ffigen: ^13.0.0
+  test: ^1.25.2
+
+flutter:
+  plugin:
+    implements: flutter_local_notifications
+    platforms:
+      windows:
+        ffiPlugin: true
+        dartPluginClass: FlutterLocalNotificationsWindows

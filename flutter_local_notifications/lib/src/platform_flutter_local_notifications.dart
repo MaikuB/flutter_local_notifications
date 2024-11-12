@@ -52,8 +52,9 @@ class MethodChannelFlutterLocalNotificationsPlugin
         result != null && result.containsKey('notificationResponse')
             ? result['notificationResponse']
             : null;
-    return result != null
-        ? NotificationAppLaunchDetails(
+    return result == null
+        ? null
+        : NotificationAppLaunchDetails(
             result['notificationLaunchedApp'],
             notificationResponse: notificationResponse == null
                 ? null
@@ -66,9 +67,11 @@ class MethodChannelFlutterLocalNotificationsPlugin
                     payload: notificationResponse.containsKey('payload')
                         ? notificationResponse['payload']
                         : null,
+                    data: Map<String, dynamic>.from(
+                      notificationResponse['data'] ?? <String, dynamic>{},
+                    ),
                   ),
-          )
-        : null;
+          );
   }
 
   @override
@@ -113,7 +116,7 @@ class AndroidFlutterLocalNotificationsPlugin
         AndroidFlutterLocalNotificationsPlugin();
   }
 
-  DidReceiveNotificationResponseCallback? _ondidReceiveNotificationResponse;
+  DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
 
   /// Initializes the plugin.
   ///
@@ -137,7 +140,7 @@ class AndroidFlutterLocalNotificationsPlugin
     DidReceiveBackgroundNotificationResponseCallback?
         onDidReceiveBackgroundNotificationResponse,
   }) async {
-    _ondidReceiveNotificationResponse = onDidReceiveNotificationResponse;
+    _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
     _channel.setMethodCallHandler(_handleMethod);
 
     final Map<String, Object> arguments = initializationSettings.toMap();
@@ -230,7 +233,7 @@ class AndroidFlutterLocalNotificationsPlugin
   /// a foreground service with a notification id of 0.
   ///
   /// Since not all users of this plugin need such a service, it was not
-  /// added to this plugins Android manifest. Thie means you have to add
+  /// added to this plugins Android manifest. This means you have to add
   /// it if you want to use the foreground service functionality. Add the
   /// foreground service permission to your apps `AndroidManifest.xml` like
   /// described in the [official Android documentation](https://developer.android.com/guide/components/foreground-services#request-foreground-service-permissions):
@@ -257,11 +260,11 @@ class AndroidFlutterLocalNotificationsPlugin
   /// The notification of the foreground service can be updated by
   /// simply calling this method multiple times.
   ///
-  /// Information on selecting an appropriate `startType` for your app's usecase
-  /// should be taken from the official Android documentation, check [`Service.onStartCommand`](https://developer.android.com/reference/android/app/Service#onStartCommand(android.content.Intent,%20int,%20int)).
+  /// Information on selecting an appropriate `startType` for your app's use
+  /// case should be taken from the official Android documentation, check [`Service.onStartCommand`](https://developer.android.com/reference/android/app/Service#onStartCommand(android.content.Intent,%20int,%20int)).
   /// The there mentioned constants can be found in [AndroidServiceStartType].
   ///
-  /// The notification for the foreground service will not be dismissable
+  /// The notification for the foreground service will not be dismissible
   /// and automatically removed when using [stopForegroundService].
   ///
   /// `foregroundServiceType` is a set of foreground service types to apply to
@@ -581,7 +584,7 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'didReceiveNotificationResponse':
-        _ondidReceiveNotificationResponse?.call(
+        _onDidReceiveNotificationResponse?.call(
           NotificationResponse(
             id: call.arguments['notificationId'],
             actionId: call.arguments['actionId'],
@@ -613,7 +616,7 @@ class IOSFlutterLocalNotificationsPlugin
   ///
   /// Call this method on application before using the plugin further.
   ///
-  /// Initialisation may also request notification permissions where users will
+  /// Initialization may also request notification permissions where users will
   /// see a permissions prompt. This may be fine in cases where it's acceptable
   /// to do this when the application runs for the first time. However, if your
   /// application needs to do this at a later point in time, set the
@@ -841,7 +844,7 @@ class MacOSFlutterLocalNotificationsPlugin
   /// Call this method on application before using the plugin further.
   /// This should only be done once.
   ///
-  /// Initialisation may also request notification permissions where users will
+  /// Initialization may also request notification permissions where users will
   /// see a permissions prompt. This may be fine in cases where it's acceptable
   /// to do this when the application runs for the first time. However, if your
   /// application needs to do this at a later point in time, set the
@@ -1035,7 +1038,7 @@ void _evaluateBackgroundNotificationCallback(
     final CallbackHandle? callback = PluginUtilities.getCallbackHandle(
         didReceiveBackgroundNotificationResponseCallback);
     assert(callback != null, '''
-          The backgroundHandler needs to be either a static function or a top 
+          The backgroundHandler needs to be either a static function or a top
           level function to be accessible as a Flutter entry point.''');
 
     final CallbackHandle? dispatcher =

@@ -61,15 +61,15 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_android
-  build_example_android_3_13:
-      name: Build Android example app (3.13)
+  build_example_android_3_19:
+      name: Build Android example app (3.19)
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
         - uses: subosito/flutter-action@v2
           with:
             channel: stable
-            flutter-version: 3.13.0
+            flutter-version: 3.19.0
             cache: true
             cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
         - name: Install Tools
@@ -90,15 +90,15 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_ios
-  build_example_ios_3_13:
-    name: Build iOS example app (3.13)
+  build_example_ios_3_19:
+    name: Build iOS example app (3.19)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.13.0
+          flutter-version: 3.19.0
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
@@ -119,15 +119,15 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_macos
-  build_example_macos_3_13:
-    name: Build macOS example app (3.13)
+  build_example_macos_3_19:
+    name: Build macOS example app (3.19)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.13.0
+          flutter-version: 3.19.0
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
@@ -152,15 +152,15 @@ jobs:
       - run: flutter config --enable-linux-desktop
       - name: Build
         run: melos run build:example_linux
-  build_example_linux_3_13:
-    name: Build Linux example app (3.13)
+  build_example_linux_3_19:
+    name: Build Linux example app (3.19)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.13.0
+          flutter-version: 3.19.0
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
@@ -171,6 +171,57 @@ jobs:
       - run: flutter config --enable-linux-desktop
       - name: Build
         run: melos run build:example_linux
+  build_example_windows_stable:
+    name: Build Windows example app (stable channel)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - name: Install Tools
+        run: |
+          dart pub global activate melos
+          melos bootstrap
+      # Windows has a filename length limit, which this repo just hits
+      # This saves us precious characters during the compilation
+      - name: Rename directory
+        run: |
+          move flutter_local_notifications f
+          move f\example f\e
+      - name: Build
+        run: |
+          cd f\e
+          dart pub get
+          dart run msix:create
+  build_example_windows_3_19:
+    name: Build Windows example app (3.19)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.19.0
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - name: Install Tools
+        run: |
+          dart pub global activate melos
+          melos bootstrap
+      # Windows has a filename length limit, which this repo just hits
+      # This saves us precious characters during the compilation
+      - name: Rename directory
+        run: |
+          move flutter_local_notifications f
+          move f\example f\e
+      - name: Build
+        run: |
+          cd f\e
+          dart pub get
+          dart run msix:create
   unit_tests_dart:
     name: Run all unit tests (Dart)
     runs-on: ubuntu-latest
@@ -199,6 +250,22 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Run Tests
         run: melos run test:unit:android
+  unit_tests_windows:
+    name: Run all unit tests (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - name: Install tools
+        run: |
+          dart pub global activate melos
+          melos bootstrap
+      - name: Run Tests
+        run: melos run test:unit:windows
   integration_tests_android:
     name: Run integration tests (Android)
     runs-on: ubuntu-latest
@@ -245,6 +312,3 @@ jobs:
           brew install applesimutils
           applesimutils --byId ${{ steps.simulator-action.outputs.udid}} --bundle com.dexterous.flutterLocalNotificationsExample --setPermissions notifications=YES
       - run: melos run test:integration
-
-
-
