@@ -49,4 +49,5 @@ jobs:
         run: |
           cd flutter_local_notifications_windows/src
           ~/.local/bin/clang-format --version
-          ~/.local/bin/clang-format *.cpp *.hpp *.h -i -n -Werror
+          ~/.local/bin/clang-format *.cpp *.hpp *.h -i
+          git diff --exit-code || (git commit --all -m "Clang Format" && git push)
