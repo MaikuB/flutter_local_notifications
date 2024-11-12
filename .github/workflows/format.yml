@@ -35,7 +35,7 @@ jobs:
           swiftlint --fix
           git diff --exit-code || (git commit --all -m "Swift Format" && git push)
 
-  windows_cpp_format
+  windows_cpp_format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
