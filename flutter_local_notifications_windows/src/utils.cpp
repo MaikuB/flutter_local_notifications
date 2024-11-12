@@ -65,7 +65,7 @@ winrt::guid parseGuid(const std::string& guidString) {
   }
   // clang-format on
   return {
-    uint8_to_uint32 (
+    uint8_to_uint32(
       hex_to_uint8(guidString[0], guidString[1]), hex_to_uint8(guidString[2], guidString[3]),
       hex_to_uint8(guidString[4], guidString[5]), hex_to_uint8(guidString[6], guidString[7])
     ),
