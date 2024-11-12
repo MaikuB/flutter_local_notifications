@@ -112,10 +112,14 @@ FFI_PLUGIN_EXPORT void cancelNotification(NativePlugin* plugin, int id);
 ///
 /// Only applications with "package identity" (ie, installed with an MSIX installer), can use this.
 /// When your app does not have identity, such as in debug mode, this will return an empty array.
-FFI_PLUGIN_EXPORT NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* size);
+FFI_PLUGIN_EXPORT NativeNotificationDetails* getActiveNotifications(
+  NativePlugin* plugin, int* size
+);
 
 /// Gets all notifications that have been scheduled but not yet shown.
-FFI_PLUGIN_EXPORT NativeNotificationDetails* getPendingNotifications(NativePlugin* plugin, int* size);
+FFI_PLUGIN_EXPORT NativeNotificationDetails* getPendingNotifications(
+  NativePlugin* plugin, int* size
+);
 
 /// Releases the memory associated with a [NativeNotificationDetails] array.
 FFI_PLUGIN_EXPORT void freeDetailsArray(NativeNotificationDetails* ptr);

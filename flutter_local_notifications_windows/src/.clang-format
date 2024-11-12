@@ -25,9 +25,7 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 Language:        Cpp
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All
-PenaltyBreakAssignment: 200
-PenaltyExcessCharacter: 100
-PenaltyIndentedWhitespace: 200
+PenaltyExcessCharacter: 200
 PenaltyReturnTypeOnItsOwnLine: 1000
 PointerAlignment: Left
 QualifierAlignment: Left

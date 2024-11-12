@@ -53,9 +53,17 @@ constexpr uint32_t uint8_to_uint32(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
 }
 
 winrt::guid parseGuid(const std::string& guidString) {
-  if (guidString.size() != 36 || guidString[8] != '-' || guidString[13] != '-' || guidString[18] != '-' || guidString[23] != '-') {
+  // clang-format off
+  if (
+    guidString.size() != 36
+      || guidString[8] != '-'
+      || guidString[13] != '-'
+      || guidString[18] != '-'
+      || guidString[23] != '-'
+  ) {
     throw std::invalid_argument("guidString is not a valid GUID string");
   }
+  // clang-format on
   return {
     uint8_to_uint32(
       hex_to_uint8(guidString[0], guidString[1]), hex_to_uint8(guidString[2], guidString[3]),
