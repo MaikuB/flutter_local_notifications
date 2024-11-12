@@ -42,4 +42,5 @@ jobs:
       - name: Format C++ code
         run: |
           cd flutter_local_notifications_windows/src
+          clang-format --version
           clang-format *.cpp *.hpp *.h -i -n -Werror
