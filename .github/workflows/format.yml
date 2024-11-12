@@ -42,12 +42,11 @@ jobs:
 
       - name: Install latest clang-format
         run: |
-          sudo add-apt-repository universe
-          sudo apt update
-          sudo apt install clang-format-17
+          sudo apt install python3-pip -y
+          python3 -m pip install clang-format
 
       - name: Format C++ code
         run: |
           cd flutter_local_notifications_windows/src
-          clang-format --version
-          clang-format *.cpp *.hpp *.h -i -n -Werror
+          ~/.local/bin/clang-format --version
+          ~/.local/bin/clang-format *.cpp *.hpp *.h -i -n -Werror
