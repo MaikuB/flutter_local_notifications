@@ -1,3 +1,7 @@
+## [8.1.0-dev.1]
+
+* Added `data` property to `NotificationResponse` class to support notification actions on Windows. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches)
+
 ## [8.0.0]
 
 * **Breaking change** Bumped minimum Flutter SDK requirement to 3.13

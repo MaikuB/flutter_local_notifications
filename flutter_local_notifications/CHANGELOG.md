@@ -1,3 +1,8 @@
+## [19.0.0-dev.1]
+
+* [Windows] Added support for Windows. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches/)
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.19.0 and Dart SDK requirement to 3.3.0
+
 ## [18.0.1]
 
 * Added upper bound constraints for [timezone](https://pub.dev/packages/timezone) dependency. This is to allow the plugin and apps pull version 0.10.x if constraints are satisified. Future releases may bump the minimum `timezone` dependency but this approach is being used at the moment as version 0.10.0 of the time `timezone` package introduces a dependency on `http` package. Directly bumping the `flutter_local_notifications` dependency on `timezone` could have introduced dependency conflicts
