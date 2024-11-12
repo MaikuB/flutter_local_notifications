@@ -39,6 +39,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install latest clang-format
+        run: sudo apt install clang-format-17
+
       - name: Format C++ code
         run: |
           cd flutter_local_notifications_windows/src
