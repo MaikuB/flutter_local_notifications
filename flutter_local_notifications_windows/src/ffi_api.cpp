@@ -8,15 +8,14 @@
 
 using winrt::Windows::Data::Xml::Dom::XmlDocument;
 
-NativePlugin* createPlugin() {
-  return new NativePlugin();
-}
+NativePlugin* createPlugin() { return new NativePlugin(); }
 
-void disposePlugin(NativePlugin* plugin) {
-  delete plugin;
-}
+void disposePlugin(NativePlugin* plugin) { delete plugin; }
 
-bool init(NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath, NativeNotificationCallback callback) {
+bool init(
+  NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath,
+  NativeNotificationCallback callback
+) {
   string icon;
   if (iconPath != nullptr) icon = string(iconPath);
   const auto didRegister = plugin->registerApp(aumId, appName, guid, icon, callback);
@@ -52,8 +51,11 @@ bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap b
 bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time) {
   if (!plugin->isReady) return false;
   XmlDocument doc;
-  try { doc.LoadXml(winrt::to_hstring(xml)); }
-  catch (winrt::hresult_error error) { return false; }
+  try {
+    doc.LoadXml(winrt::to_hstring(xml));
+  } catch (winrt::hresult_error error) {
+    return false;
+  }
   ScheduledToastNotification notification(doc, winrt::clock::from_time_t(time));
   notification.Tag(winrt::to_hstring(id));
   plugin->notifier.value().AddToSchedule(notification);
@@ -94,7 +96,10 @@ void cancelNotification(NativePlugin* plugin, int id) {
 
 NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* size) {
   // TODO: Get more details here
-  if (!plugin->isReady || !plugin->hasIdentity) { *size = 0; return nullptr; }
+  if (!plugin->isReady || !plugin->hasIdentity) {
+    *size = 0;
+    return nullptr;
+  }
   const auto active = plugin->history.value().GetHistory();
   *size = active.Size();
   const auto result = new NativeNotificationDetails[*size];
@@ -110,7 +115,10 @@ NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* siz
 
 NativeNotificationDetails* getPendingNotifications(NativePlugin* plugin, int* size) {
   // TODO: Get more details here
-  if (!plugin->isReady) { *size = 0; return nullptr; }
+  if (!plugin->isReady) {
+    *size = 0;
+    return nullptr;
+  }
   const auto pending = plugin->notifier.value().GetScheduledToastNotifications();
   *size = pending.Size();
   const auto result = new NativeNotificationDetails[*size];
@@ -124,9 +132,7 @@ NativeNotificationDetails* getPendingNotifications(NativePlugin* plugin, int* si
   return result;
 }
 
-void freeDetailsArray(NativeNotificationDetails* ptr) {
-  delete[] ptr;
-}
+void freeDetailsArray(NativeNotificationDetails* ptr) { delete[] ptr; }
 
 void freeLaunchDetails(NativeLaunchDetails details) {
   if (details.payload != nullptr) delete[] details.payload;
@@ -138,6 +144,4 @@ void freeLaunchDetails(NativeLaunchDetails details) {
   if (details.data.entries != nullptr) delete[] details.data.entries;
 }
 
-void enableMultithreading() {
-  CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-}
+void enableMultithreading() { CoInitializeEx(nullptr, COINIT_MULTITHREADED); }

@@ -34,3 +34,12 @@ jobs:
           which swiftlint || brew install swiftlint
           swiftlint --fix
           git diff --exit-code || (git commit --all -m "Swift Format" && git push)
+
+  windows_cpp_format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Format C++ code
+        run: |
+          cd flutter_local_notifications_windows/src
+          clang-format *.cpp *.hpp *.h -i -n -Werror

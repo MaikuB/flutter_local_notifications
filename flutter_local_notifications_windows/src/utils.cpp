@@ -14,7 +14,7 @@ NativeStringMap toNativeMap(vector<StringMapEntry> entries) {
   const auto size = (int) entries.size();
   const auto array = new StringMapEntry[size];
   std::copy(entries.begin(), entries.end(), array);
-  return { array, size };
+  return {array, size};
 }
 
 NotificationData dataFromMap(NativeStringMap map) {
@@ -27,7 +27,7 @@ NotificationData dataFromMap(NativeStringMap map) {
   return data;
 }
 
-constexpr uint8_t hex_to_uint(char const c) {
+constexpr uint8_t hex_to_uint(const char c) {
   if (c >= '0' && c <= '9') {
     return static_cast<uint8_t>(c - '0');
   } else if (c >= 'A' && c <= 'F') {
@@ -39,7 +39,7 @@ constexpr uint8_t hex_to_uint(char const c) {
   }
 }
 
-constexpr uint8_t hex_to_uint8(char const a, char const b) {
+constexpr uint8_t hex_to_uint8(const char a, const char b) {
   return (hex_to_uint(a) << 4) | hex_to_uint(b);
 }
 
@@ -48,8 +48,8 @@ constexpr uint16_t uint8_to_uint16(uint8_t a, uint8_t b) {
 }
 
 constexpr uint32_t uint8_to_uint32(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
-  return (static_cast<uint32_t>(uint8_to_uint16(a, b)) << 16) |
-    static_cast<uint32_t>(uint8_to_uint16(c, d));
+  return (static_cast<uint32_t>(uint8_to_uint16(a, b)) << 16)
+    | static_cast<uint32_t>(uint8_to_uint16(c, d));
 }
 
 winrt::guid parseGuid(const std::string& guidString) {
@@ -58,18 +58,14 @@ winrt::guid parseGuid(const std::string& guidString) {
   }
   return {
     uint8_to_uint32(
-      hex_to_uint8(guidString[0], guidString[1]),
-      hex_to_uint8(guidString[2], guidString[3]),
-      hex_to_uint8(guidString[4], guidString[5]),
-      hex_to_uint8(guidString[6], guidString[7])
+      hex_to_uint8(guidString[0], guidString[1]), hex_to_uint8(guidString[2], guidString[3]),
+      hex_to_uint8(guidString[4], guidString[5]), hex_to_uint8(guidString[6], guidString[7])
     ),
     uint8_to_uint16(
-      hex_to_uint8(guidString[9], guidString[10]),
-      hex_to_uint8(guidString[11], guidString[12])
+      hex_to_uint8(guidString[9], guidString[10]), hex_to_uint8(guidString[11], guidString[12])
     ),
     uint8_to_uint16(
-      hex_to_uint8(guidString[14], guidString[15]),
-      hex_to_uint8(guidString[16], guidString[17])
+      hex_to_uint8(guidString[14], guidString[15]), hex_to_uint8(guidString[16], guidString[17])
     ),
     {
       hex_to_uint8(guidString[19], guidString[20]),

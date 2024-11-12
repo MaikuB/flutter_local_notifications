@@ -78,10 +78,16 @@ FFI_PLUGIN_EXPORT NativePlugin* createPlugin();
 FFI_PLUGIN_EXPORT void disposePlugin(NativePlugin* ptr);
 
 /// Initializes the plugin and registers the callback to be run when a notification is pressed.
-FFI_PLUGIN_EXPORT bool init(NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath, NativeNotificationCallback callback);
+FFI_PLUGIN_EXPORT bool init(
+  NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath,
+  NativeNotificationCallback callback
+);
 
-/// Shows the XML as a notification with the given ID. See [updateNotification] for details on bindings.
-FFI_PLUGIN_EXPORT bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap bindings);
+/// Shows the XML as a notification with the given ID. See [updateNotification] for details on
+/// bindings.
+FFI_PLUGIN_EXPORT bool showNotification(
+  NativePlugin* plugin, int id, char* xml, NativeStringMap bindings
+);
 
 /// Schedules the notification to be shown at the given time (as a [time_t]).
 FFI_PLUGIN_EXPORT bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time);
@@ -91,7 +97,8 @@ FFI_PLUGIN_EXPORT bool scheduleNotification(NativePlugin* plugin, int id, char* 
 /// String values in the `<binding>` element of the XML can be placeholders instead of values,
 /// for example, `<text>{name}</text>` and then call this function with a map with a `name` key,
 /// and any string value, and the notification will be updated with that value where `name` was.
-FFI_PLUGIN_EXPORT NativeUpdateResult updateNotification(NativePlugin* plugin, int id, NativeStringMap bindings);
+FFI_PLUGIN_EXPORT NativeUpdateResult
+updateNotification(NativePlugin* plugin, int id, NativeStringMap bindings);
 
 /// Cancels all notifications.
 FFI_PLUGIN_EXPORT void cancelAll(NativePlugin* plugin);

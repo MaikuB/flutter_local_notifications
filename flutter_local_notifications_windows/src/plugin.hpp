@@ -23,7 +23,8 @@ struct NativePlugin {
   /// Whether the current application has package identity (ie, was packaged with an MSIX).
   ///
   /// This impacts whether apps can query active notifications or cancel them.
-  /// For more details, see https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/package-identity-overview.
+  /// For more details, see
+  /// https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/package-identity-overview.
   bool hasIdentity = false;
 
   /// The app user model ID. Used instead of package identity when [hasIdentity] is false.
@@ -40,8 +41,8 @@ struct NativePlugin {
   /// A callback to run when a notification is pressed, when the app is or is not running.
   NativeNotificationCallback callback;
 
-  NativePlugin() { }
-  ~NativePlugin() { }
+  NativePlugin() {}
+  ~NativePlugin() {}
 
   /// Checks whether the current application has package identity. See [hasIdentity] for details.
   ///
@@ -50,10 +51,7 @@ struct NativePlugin {
 
   /// Registers the given [callback] to run when a notification is pressed.
   bool registerApp(
-    const string& aumid,
-    const string& appName,
-    const string& guid,
-    const optional<string>& iconPath,
-    NativeNotificationCallback callback
+    const string& aumid, const string& appName, const string& guid,
+    const optional<string>& iconPath, NativeNotificationCallback callback
   );
 };
