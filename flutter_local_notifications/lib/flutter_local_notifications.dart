@@ -1,5 +1,7 @@
 export 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
-export 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
+// Exports what's defined in platform interface but hide helper methods
+export 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart'
+    hide validateId, validateRepeatDurationInterval;
 export 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
 
 export 'src/flutter_local_notifications_plugin.dart';
