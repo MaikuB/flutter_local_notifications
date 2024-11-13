@@ -22,7 +22,7 @@ scripts:
     description: Run unit tests in a specific package.
     run: melos exec -c 1 -- "flutter test"
     packageFilters:
-      ignore: '*_windows'
+      ignore: '*windows*'
       dirExists:
         - test
   test:unit:android:
@@ -36,12 +36,12 @@ scripts:
     packageFilters:
       dirExists:
         - test
-      scope: '*_windows'
+      scope: '*windows*'
   test:integration:
     run: melos exec -c 1 -- "flutter test integration_test"
     description: Run integration tests
     packageFilters:
-      ignore: '*_windows'
+      ignore: '*windows*'
       dirExists:
         - integration_test
       scope: "*example*"
