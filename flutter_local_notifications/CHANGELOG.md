@@ -1,3 +1,10 @@
+## [19.0.0-dev.1]
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.19.0 and Dart SDK requirement to 3.3.0
+* **Breaking change** [iOS] removed `uiLocalNotificationDateInterpretation` parameter from `zonedSchedule()` method. This was done as it actually no relevant as of the 18.0.0 that dropped support for iOS versions older than 10, which in turn meant that the deprecated `UILocalNotification` APIs from Apple were no longer used. The corresponding `UILocalNotificationDateInterpretation` enum has already been removed as well
+* [Windows] Added support for Windows. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches/)
+* Bumped `timezone` dependency so that minimum version is now 0.10.0
+
 ## [18.0.1]
 
 * Added upper bound constraints for [timezone](https://pub.dev/packages/timezone) dependency. This is to allow the plugin and apps pull version 0.10.x if constraints are satisified. Future releases may bump the minimum `timezone` dependency but this approach is being used at the moment as version 0.10.0 of the time `timezone` package introduces a dependency on `http` package. Directly bumping the `flutter_local_notifications` dependency on `timezone` could have introduced dependency conflicts

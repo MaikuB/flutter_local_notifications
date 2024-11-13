@@ -116,6 +116,8 @@ class NotificationResponse {
   final String? payload;
 
   /// Any other data returned by the platform.
+  ///
+  /// Returned only on Windows.
   final Map<String, dynamic> data;
 
   /// The notification response type.
