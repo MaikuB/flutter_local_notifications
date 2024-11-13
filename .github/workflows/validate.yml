@@ -269,7 +269,9 @@ jobs:
           cd flutter_local_notifications_windows
           .\build.bat
       - name: Run Tests
-        run: melos run test:unit:windows
+        run: |
+          cd flutter_local_notifications_windows
+          flutter test
   integration_tests_android:
     name: Run integration tests (Android)
     runs-on: ubuntu-latest
