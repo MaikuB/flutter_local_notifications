@@ -80,8 +80,6 @@ Future<void> _scheduleDailyTenAMLastYearNotification() async {
             channelDescription: 'daily notification description'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time);
 }
 
@@ -97,8 +95,6 @@ Future<void> _scheduleWeeklyTenAMNotification() async {
             channelDescription: 'weekly notificationdescription'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
 }
 
@@ -114,8 +110,6 @@ Future<void> _scheduleWeeklyMondayTenAMNotification() async {
             channelDescription: 'weekly notificationdescription'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
 }
 
@@ -131,8 +125,6 @@ Future<void> _scheduleMonthlyMondayTenAMNotification() async {
             channelDescription: 'monthly notificationdescription'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.dayOfMonthAndTime);
 }
 
@@ -148,8 +140,6 @@ Future<void> _scheduleYearlyMondayTenAMNotification() async {
             channelDescription: 'yearly notification description'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.dateAndTime);
 }
 
@@ -199,8 +189,6 @@ Future<void> _scheduleDailyTenAMNotification() async {
             channelDescription: 'daily notification description'),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time);
 }
 

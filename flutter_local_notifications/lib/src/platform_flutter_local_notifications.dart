@@ -24,7 +24,6 @@ import 'platform_specifics/darwin/initialization_settings.dart';
 import 'platform_specifics/darwin/mappers.dart';
 import 'platform_specifics/darwin/notification_details.dart';
 import 'platform_specifics/darwin/notification_enabled_options.dart';
-import 'platform_specifics/ios/enums.dart';
 import 'types.dart';
 import 'tz_datetime_mapper.dart';
 
@@ -696,32 +695,17 @@ class IOSFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified time in the
   /// future in a specific time zone.
-  ///
-  /// Due to the limited support for time zones provided the UILocalNotification
-  /// APIs used on devices using iOS versions older than 10, the
-  /// [uiLocalNotificationDateInterpretation] is needed to control how
-  /// [scheduledDate] is interpreted. See official docs at
-  /// https://developer.apple.com/documentation/uikit/uilocalnotification/1616659-timezone
-  /// for more details. Note that due to this limited support, it's likely that
-  /// on older iOS devices, there will still be issues with daylight saving time
-  /// except for when the time zone used in the [scheduledDate] matches the
-  /// device's time zone and [uiLocalNotificationDateInterpretation] is set to
-  /// [UILocalNotificationDateInterpretation.wallClockTime].
   Future<void> zonedSchedule(
     int id,
     String? title,
     String? body,
     TZDateTime scheduledDate,
     DarwinNotificationDetails? notificationDetails, {
-    required UILocalNotificationDateInterpretation
-        uiLocalNotificationDateInterpretation,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
-    ArgumentError.checkNotNull(uiLocalNotificationDateInterpretation,
-        'uiLocalNotificationDateInterpretation');
     final Map<String, Object?> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
     await _channel.invokeMethod(
@@ -732,8 +716,6 @@ class IOSFlutterLocalNotificationsPlugin
           'body': body,
           'platformSpecifics': serializedPlatformSpecifics,
           'payload': payload ?? '',
-          'uiLocalNotificationDateInterpretation':
-              uiLocalNotificationDateInterpretation.index,
         }
           ..addAll(scheduledDate.toMap())
           ..addAll(matchDateTimeComponents == null

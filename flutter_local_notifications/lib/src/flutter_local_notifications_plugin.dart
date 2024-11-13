@@ -10,7 +10,6 @@ import 'initialization_settings.dart';
 import 'notification_details.dart';
 import 'platform_flutter_local_notifications.dart';
 import 'platform_specifics/android/schedule_mode.dart';
-import 'platform_specifics/ios/enums.dart';
 import 'types.dart';
 
 /// Provides cross-platform functionality for displaying local notifications.
@@ -311,11 +310,6 @@ class FlutterLocalNotificationsPlugin {
   /// platform channel in yyyy-mm-dd hh:mm:ss format. Therefore, the precision
   /// is at the best to the second.
   ///
-  /// The [uiLocalNotificationDateInterpretation] is for iOS versions older
-  /// than 10 as the APIs have limited support for time zones. With this
-  /// parameter, it is used to determine if the scheduled date should be
-  /// interpreted as absolute time or wall clock time.
-  ///
   /// If a value for [matchDateTimeComponents] parameter is given, this tells
   /// the plugin to schedule a recurring notification that matches the
   /// specified date and time components. Specifying
@@ -343,8 +337,6 @@ class FlutterLocalNotificationsPlugin {
     String? body,
     TZDateTime scheduledDate,
     NotificationDetails notificationDetails, {
-    required UILocalNotificationDateInterpretation
-        uiLocalNotificationDateInterpretation,
     required AndroidScheduleMode androidScheduleMode,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
@@ -365,8 +357,6 @@ class FlutterLocalNotificationsPlugin {
               IOSFlutterLocalNotificationsPlugin>()
           ?.zonedSchedule(
               id, title, body, scheduledDate, notificationDetails.iOS,
-              uiLocalNotificationDateInterpretation:
-                  uiLocalNotificationDateInterpretation,
               payload: payload,
               matchDateTimeComponents: matchDateTimeComponents);
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
