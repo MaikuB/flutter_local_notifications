@@ -34,6 +34,8 @@ scripts:
     description: Runs Windows-specific unit tests
     run: melos exec -c 1 -- "flutter test"
     packageFilters:
+      dirExists:
+        - test
       scope: '*_windows'
   test:integration:
     run: melos exec -c 1 -- "flutter test integration_test"
