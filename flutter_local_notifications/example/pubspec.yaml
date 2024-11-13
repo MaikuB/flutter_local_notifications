@@ -13,7 +13,7 @@ dependencies:
   http: ^1.2.1
   image: ^4.2.0
   path_provider: ^2.0.0
-  timezone: ^0.9.4
+  timezone: ^0.10.0
 
 dev_dependencies:
   flutter_driver:
