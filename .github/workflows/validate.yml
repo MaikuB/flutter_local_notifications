@@ -264,6 +264,10 @@ jobs:
         run: |
           dart pub global activate melos
           melos bootstrap
+      - name: Build DLL for native code
+        run: |
+          cd flutter_local_notifications_windows
+          .\build.bat
       - name: Run Tests
         run: melos run test:unit:windows
   integration_tests_android:
