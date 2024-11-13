@@ -511,9 +511,7 @@ void main() {
             'notification body',
             scheduledDate,
             notificationDetails,
-            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime);
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle);
 
         expect(
             log.last,
@@ -522,8 +520,6 @@ void main() {
               'title': 'notification title',
               'body': 'notification body',
               'payload': '',
-              'uiLocalNotificationDateInterpretation':
-                  UILocalNotificationDateInterpretation.absoluteTime.index,
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
               'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'timeZoneName': 'Australia/Sydney',
@@ -583,8 +579,6 @@ void main() {
             scheduledDate,
             notificationDetails,
             androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.time);
 
         expect(
@@ -594,8 +588,6 @@ void main() {
               'title': 'notification title',
               'body': 'notification body',
               'payload': '',
-              'uiLocalNotificationDateInterpretation':
-                  UILocalNotificationDateInterpretation.absoluteTime.index,
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
               'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'timeZoneName': 'Australia/Sydney',
@@ -656,8 +648,6 @@ void main() {
             scheduledDate,
             notificationDetails,
             androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
 
         expect(
@@ -667,8 +657,6 @@ void main() {
               'title': 'notification title',
               'body': 'notification body',
               'payload': '',
-              'uiLocalNotificationDateInterpretation':
-                  UILocalNotificationDateInterpretation.absoluteTime.index,
               'scheduledDateTime': convertDateToISO8601String(scheduledDate),
               'scheduledDateTimeISO8601': scheduledDate.toIso8601String(),
               'timeZoneName': 'Australia/Sydney',

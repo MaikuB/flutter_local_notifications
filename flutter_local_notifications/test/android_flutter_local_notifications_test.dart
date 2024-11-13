@@ -2186,9 +2186,7 @@ void main() {
             'notification body',
             scheduledDate,
             const NotificationDetails(android: androidNotificationDetails),
-            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime);
+            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle);
         expect(
             log.last,
             isMethodCall('zonedSchedule', arguments: <String, Object>{
@@ -2282,8 +2280,6 @@ void main() {
             scheduledDate,
             const NotificationDetails(android: androidNotificationDetails),
             androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.time);
         expect(
             log.last,
@@ -2379,8 +2375,6 @@ void main() {
             scheduledDate,
             const NotificationDetails(android: androidNotificationDetails),
             androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
             matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
         expect(
             log.last,
