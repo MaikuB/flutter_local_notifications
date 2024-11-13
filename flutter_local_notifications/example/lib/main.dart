@@ -1265,9 +1265,7 @@ class _HomePageState extends State<HomePage> {
                           priority: Priority.high,
                           importance: Importance.high,
                           fullScreenIntent: true)),
-                  androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-                  uiLocalNotificationDateInterpretation:
-                      UILocalNotificationDateInterpretation.absoluteTime);
+                  androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle);
 
               Navigator.pop(context);
             },
@@ -1390,9 +1388,7 @@ class _HomePageState extends State<HomePage> {
             android: AndroidNotificationDetails(
                 'your channel id', 'your channel name',
                 channelDescription: 'your channel description')),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle);
   }
 
   Future<void> _zonedScheduleAlarmClockNotification() async {
@@ -1405,9 +1401,7 @@ class _HomePageState extends State<HomePage> {
             android: AndroidNotificationDetails(
                 'alarm_clock_channel', 'Alarm Clock Channel',
                 channelDescription: 'Alarm Clock Notification')),
-        androidScheduleMode: AndroidScheduleMode.alarmClock,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
+        androidScheduleMode: AndroidScheduleMode.alarmClock);
   }
 
   Future<void> _showNotificationWithNoSound() async {

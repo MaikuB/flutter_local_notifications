@@ -85,8 +85,6 @@ NSString *const REPEAT_INTERVAL_MILLISECODNS = @"repeatIntervalMilliseconds";
 NSString *const SCHEDULED_DATE_TIME = @"scheduledDateTimeISO8601";
 NSString *const TIME_ZONE_NAME = @"timeZoneName";
 NSString *const MATCH_DATE_TIME_COMPONENTS = @"matchDateTimeComponents";
-NSString *const UILOCALNOTIFICATION_DATE_INTERPRETATION =
-    @"uiLocalNotificationDateInterpretation";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
@@ -119,11 +117,6 @@ typedef NS_ENUM(NSInteger, DateTimeComponents) {
   DayOfWeekAndTime,
   DayOfMonthAndTime,
   DateAndTime
-};
-
-typedef NS_ENUM(NSInteger, UILocalNotificationDateInterpretation) {
-  AbsoluteGMTTime,
-  WallClockTime
 };
 
 static FlutterError *getFlutterError(NSError *error) {
