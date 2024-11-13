@@ -271,7 +271,7 @@ jobs:
       - name: Run Tests
         run: |
           cd flutter_local_notifications_windows
-          flutter test
+          flutter test --verbose
   integration_tests_android:
     name: Run integration tests (Android)
     runs-on: ubuntu-latest
