@@ -13,7 +13,7 @@ dependencies:
   flutter_local_notifications_linux: ^5.0.0
   flutter_local_notifications_windows: ^1.0.0
   flutter_local_notifications_platform_interface: ^8.1.0
-  timezone: ">=0.9.0 <0.11.0"
+  timezone: ^0.10.0
 
 dev_dependencies:
   flutter_driver:
