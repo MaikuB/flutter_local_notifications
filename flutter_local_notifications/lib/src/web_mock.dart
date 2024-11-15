@@ -1,8 +1,12 @@
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 
 /// A stub implementation of the web plugin, for non-web platforms.
-class WebFlutterLocalNotificationsPlugin extends FlutterLocalNotificationsPlatform {
-  Future<bool?> initialize() async { return null; }
+class WebFlutterLocalNotificationsPlugin
+  extends FlutterLocalNotificationsPlatform
+{
+  /// Initializes the plugin.
+  Future<bool?> initialize() async => null;
 
-  Future<bool> requestNotificationsPermission() async { return false; }
+  /// Requests permission to use the plugin.
+  Future<bool> requestNotificationsPermission() async => false;
 }
