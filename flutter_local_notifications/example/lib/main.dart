@@ -297,9 +297,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    floatingActionButton: FloatingActionButton(onPressed: () => print(
-      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<WebFlutterLocalNotificationsPlugin>()
-    )),
+    floatingActionButton: FloatingActionButton(onPressed: () =>
+      flutterLocalNotificationsPlugin.show(0, null, null, null),
+    ),
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),

@@ -43,7 +43,7 @@ flutter:
         default_package: flutter_local_notifications_windows
       web:
         pluginClass: WebFlutterLocalNotificationsPlugin
-        fileName: "src/platform_flutter_local_notifications.dart"
+        fileName: "src/web_flutter_local_notifications.dart"
 
 environment:
   sdk: ^3.3.0

@@ -11,6 +11,7 @@ import 'notification_details.dart';
 import 'platform_flutter_local_notifications.dart';
 import 'platform_specifics/android/schedule_mode.dart';
 import 'types.dart';
+import 'web_flutter_local_notifications.dart';
 
 /// Provides cross-platform functionality for displaying local notifications.
 ///
@@ -46,7 +47,7 @@ class FlutterLocalNotificationsPlugin {
           'FlutterLocalNotificationsPlatform');
     }
 
-    final FlutterLocalNotificationsPlatform instance = 
+    final FlutterLocalNotificationsPlatform instance =
       FlutterLocalNotificationsPlatform.instance;
     if (kIsWeb && T == WebFlutterLocalNotificationsPlugin && instance is T) {
       return instance;
@@ -239,7 +240,8 @@ class FlutterLocalNotificationsPlugin {
     String? payload,
   }) async {
     if (kIsWeb) {
-      return;
+      await resolvePlatformSpecificImplementation<WebFlutterLocalNotificationsPlugin>()
+        ?.show(id, title, body, payload: payload);
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<
