@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' hide Platform;
 // ignore: unnecessary_import
 import 'dart:typed_data';
 
@@ -15,11 +15,14 @@ import 'package:image/image.dart' as image;
 import 'package:path_provider/path_provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:universal_platform/universal_platform.dart';
 
 import 'padded_button.dart';
 import 'plugin.dart';
 import 'repeating.dart' as repeating;
 import 'windows.dart' as windows;
+
+typedef Platform = UniversalPlatform;
 
 /// Streams are created so that app can respond to notification-related events
 /// since the plugin is initialized in the `main` function
