@@ -1004,6 +1004,13 @@ class MacOSFlutterLocalNotificationsPlugin
   }
 }
 
+/// Web implementation of the local notifications plugin.
+class WebFlutterLocalNotificationsPlugin extends FlutterLocalNotificationsPlatform {
+  static void registerWith(_) {
+    FlutterLocalNotificationsPlatform.instance = WebFlutterLocalNotificationsPlugin();
+  }
+}
+
 /// Checks [didReceiveBackgroundNotificationResponseCallback], if not `null`,
 /// for eligibility to be used as a background callback.
 ///

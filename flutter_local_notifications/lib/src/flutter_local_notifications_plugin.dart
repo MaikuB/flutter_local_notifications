@@ -45,35 +45,36 @@ class FlutterLocalNotificationsPlugin {
           'The type argument must be a concrete subclass of '
           'FlutterLocalNotificationsPlatform');
     }
-    if (kIsWeb) {
-      return null;
-    }
 
-    if (defaultTargetPlatform == TargetPlatform.android &&
-        T == AndroidFlutterLocalNotificationsPlugin &&
-        FlutterLocalNotificationsPlatform.instance
-            is AndroidFlutterLocalNotificationsPlugin) {
-      return FlutterLocalNotificationsPlatform.instance as T?;
+    final FlutterLocalNotificationsPlatform instance = 
+      FlutterLocalNotificationsPlatform.instance;
+    if (kIsWeb && T == WebFlutterLocalNotificationsPlugin && instance is T) {
+      return instance;
+    } else if (defaultTargetPlatform == TargetPlatform.android &&
+      T == AndroidFlutterLocalNotificationsPlugin &&
+      instance is T
+    ) {
+      return instance;
     } else if (defaultTargetPlatform == TargetPlatform.iOS &&
-        T == IOSFlutterLocalNotificationsPlugin &&
-        FlutterLocalNotificationsPlatform.instance
-            is IOSFlutterLocalNotificationsPlugin) {
-      return FlutterLocalNotificationsPlatform.instance as T?;
+      T == IOSFlutterLocalNotificationsPlugin &&
+      instance is T
+    ) {
+      return instance;
     } else if (defaultTargetPlatform == TargetPlatform.macOS &&
-        T == MacOSFlutterLocalNotificationsPlugin &&
-        FlutterLocalNotificationsPlatform.instance
-            is MacOSFlutterLocalNotificationsPlugin) {
-      return FlutterLocalNotificationsPlatform.instance as T?;
+      T == MacOSFlutterLocalNotificationsPlugin &&
+      instance is T
+    ) {
+      return instance;
     } else if (defaultTargetPlatform == TargetPlatform.linux &&
-        T == LinuxFlutterLocalNotificationsPlugin &&
-        FlutterLocalNotificationsPlatform.instance
-            is LinuxFlutterLocalNotificationsPlugin) {
-      return FlutterLocalNotificationsPlatform.instance as T?;
+      T == LinuxFlutterLocalNotificationsPlugin &&
+      instance is T
+    ) {
+      return instance;
     } else if (defaultTargetPlatform == TargetPlatform.windows &&
-        T == FlutterLocalNotificationsWindows &&
-        FlutterLocalNotificationsPlatform.instance
-            is FlutterLocalNotificationsWindows) {
-      return FlutterLocalNotificationsPlatform.instance as T?;
+      T == FlutterLocalNotificationsWindows &&
+      instance is T
+    ) {
+      return instance;
     }
 
     return null;
