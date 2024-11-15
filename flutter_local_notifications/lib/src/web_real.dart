@@ -20,11 +20,9 @@ class WebFlutterLocalNotificationsPlugin
   Future<void> show(
     int id, String? title, String? body, {String? payload}
   ) async {
-    final Map<String, int> data =
-      <String, int>{'id': id};
-    final NotificationOptions options = NotificationOptions(
-      data: jsonEncode(data).toJS,
-    );
+    final Map<String, int> data = <String, int>{'id': id};
+    final NotificationOptions options =
+      NotificationOptions(data: jsonEncode(data).toJS);
     _registration?.showNotification(title ?? 'This is a notification', options);
   }
 
