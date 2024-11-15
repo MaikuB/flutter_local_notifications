@@ -48,7 +48,7 @@ class WebFlutterLocalNotificationsPlugin
     final List<ActiveNotification> result = <ActiveNotification>[];
     final Set<int> ids = <int>{};
     final List<Notification> jsNotifs =
-      await _registration!.getDartNotifications();
+        await _registration!.getDartNotifications();
     for (final Notification jsNotification in jsNotifs) {
       final int? id = jsNotification.id;
       if (id == null) {
@@ -67,7 +67,7 @@ class WebFlutterLocalNotificationsPlugin
       return;
     }
     final List<Notification> notifs =
-      await _registration!.getDartNotifications();
+        await _registration!.getDartNotifications();
     for (final Notification notification in notifs) {
       if (notification.id == id || (tag != null && tag == notification.tag)) {
         notification.close();
@@ -81,7 +81,7 @@ class WebFlutterLocalNotificationsPlugin
       return;
     }
     final List<Notification> notifs =
-      await _registration!.getDartNotifications();
+        await _registration!.getDartNotifications();
     for (final Notification notification in notifs) {
       notification.close();
     }
@@ -95,5 +95,5 @@ extension on Notification {
 
 extension on ServiceWorkerRegistration {
   Future<List<Notification>> getDartNotifications() async =>
-    (await getNotifications().toDart).toDart;
+      (await getNotifications().toDart).toDart;
 }

@@ -284,8 +284,8 @@ class FlutterLocalNotificationsPlugin {
   /// be canceled. `tag` has no effect on other platforms.
   Future<void> cancel(int id, {String? tag}) async {
     if (kIsWeb) {
-      await resolvePlatformSpecificImplementation
-        <WebFlutterLocalNotificationsPlugin>()
+      await resolvePlatformSpecificImplementation<
+              WebFlutterLocalNotificationsPlugin>()
           ?.cancel(id, tag: tag);
     } else if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<

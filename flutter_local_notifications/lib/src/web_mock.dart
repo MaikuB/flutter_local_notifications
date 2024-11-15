@@ -10,5 +10,5 @@ class WebFlutterLocalNotificationsPlugin
   Future<bool> requestNotificationsPermission() async => false;
 
   @override
-  Future<void> cancel(int id, {String? tag}) async { }
+  Future<void> cancel(int id, {String? tag}) async {}
 }
