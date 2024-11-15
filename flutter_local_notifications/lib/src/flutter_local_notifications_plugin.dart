@@ -119,7 +119,8 @@ class FlutterLocalNotificationsPlugin {
         onDidReceiveBackgroundNotificationResponse,
   }) async {
     if (kIsWeb) {
-      return true;
+      return resolvePlatformSpecificImplementation<WebFlutterLocalNotificationsPlugin>()
+        ?.initialize();
     }
 
     if (defaultTargetPlatform == TargetPlatform.android) {

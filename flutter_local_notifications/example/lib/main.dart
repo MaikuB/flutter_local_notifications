@@ -276,6 +276,9 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         _notificationsEnabled = grantedNotificationPermission ?? false;
       });
+    } else if (kIsWeb) {
+      await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<WebFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
     }
   }
 
