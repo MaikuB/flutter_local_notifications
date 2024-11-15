@@ -1004,7 +1004,6 @@ class MacOSFlutterLocalNotificationsPlugin
   }
 }
 
-
 /// Checks [didReceiveBackgroundNotificationResponseCallback], if not `null`,
 /// for eligibility to be used as a background callback.
 ///

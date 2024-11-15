@@ -277,8 +277,10 @@ class _HomePageState extends State<HomePage> {
         _notificationsEnabled = grantedNotificationPermission ?? false;
       });
     } else if (kIsWeb) {
-      await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<WebFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              WebFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission();
     }
   }
 
@@ -300,9 +302,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    floatingActionButton: FloatingActionButton(onPressed: () =>
-      flutterLocalNotificationsPlugin.show(0, null, null, null),
-    ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () =>
+              flutterLocalNotificationsPlugin.show(0, null, null, null),
+        ),
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),

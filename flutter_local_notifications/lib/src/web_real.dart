@@ -6,33 +6,30 @@ import '../flutter_local_notifications.dart';
 
 /// Web implementation of the local notifications plugin.
 class WebFlutterLocalNotificationsPlugin
-  extends FlutterLocalNotificationsPlatform
-{
+    extends FlutterLocalNotificationsPlatform {
   /// Registers the web plugin with the platform interface.
   static void registerWith(_) {
     FlutterLocalNotificationsPlatform.instance =
-      WebFlutterLocalNotificationsPlugin();
+        WebFlutterLocalNotificationsPlugin();
   }
 
   ServiceWorkerRegistration? _registration;
 
   @override
-  Future<void> show(
-    int id, String? title, String? body, {String? payload}
-  ) async {
+  Future<void> show(int id, String? title, String? body,
+      {String? payload}) async {
     final Map<String, int> data = <String, int>{'id': id};
     final NotificationOptions options =
-      NotificationOptions(data: jsonEncode(data).toJS);
+        NotificationOptions(data: jsonEncode(data).toJS);
     _registration?.showNotification(title ?? 'This is a notification', options);
   }
 
   /// Initializes the plugin.
   Future<bool?> initialize() async {
-    _registration = await window.navigator.serviceWorker
-      .getRegistration().toDart;
+    _registration =
+        await window.navigator.serviceWorker.getRegistration().toDart;
     return _registration != null;
   }
-
 
   /// Requests notification permission from the browser.
   ///
@@ -48,8 +45,8 @@ class WebFlutterLocalNotificationsPlugin
     if (_registration == null) {
       return <ActiveNotification>[];
     }
-    final JSArray<Notification> notificationsArray = await _registration
-      !.getNotifications().toDart;
+    final JSArray<Notification> notificationsArray =
+        await _registration!.getNotifications().toDart;
     final List<ActiveNotification> result = <ActiveNotification>[];
     final Set<int> ids = <int>{};
     for (final Notification jsNotification in notificationsArray.toDart) {

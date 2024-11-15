@@ -48,33 +48,28 @@ class FlutterLocalNotificationsPlugin {
     }
 
     final FlutterLocalNotificationsPlatform instance =
-      FlutterLocalNotificationsPlatform.instance;
+        FlutterLocalNotificationsPlatform.instance;
     if (kIsWeb && T == WebFlutterLocalNotificationsPlugin && instance is T) {
       return instance;
     } else if (defaultTargetPlatform == TargetPlatform.android &&
-      T == AndroidFlutterLocalNotificationsPlugin &&
-      instance is T
-    ) {
+        T == AndroidFlutterLocalNotificationsPlugin &&
+        instance is T) {
       return instance;
     } else if (defaultTargetPlatform == TargetPlatform.iOS &&
-      T == IOSFlutterLocalNotificationsPlugin &&
-      instance is T
-    ) {
+        T == IOSFlutterLocalNotificationsPlugin &&
+        instance is T) {
       return instance;
     } else if (defaultTargetPlatform == TargetPlatform.macOS &&
-      T == MacOSFlutterLocalNotificationsPlugin &&
-      instance is T
-    ) {
+        T == MacOSFlutterLocalNotificationsPlugin &&
+        instance is T) {
       return instance;
     } else if (defaultTargetPlatform == TargetPlatform.linux &&
-      T == LinuxFlutterLocalNotificationsPlugin &&
-      instance is T
-    ) {
+        T == LinuxFlutterLocalNotificationsPlugin &&
+        instance is T) {
       return instance;
     } else if (defaultTargetPlatform == TargetPlatform.windows &&
-      T == FlutterLocalNotificationsWindows &&
-      instance is T
-    ) {
+        T == FlutterLocalNotificationsWindows &&
+        instance is T) {
       return instance;
     }
 
@@ -119,8 +114,8 @@ class FlutterLocalNotificationsPlugin {
         onDidReceiveBackgroundNotificationResponse,
   }) async {
     if (kIsWeb) {
-      return resolvePlatformSpecificImplementation
-        <WebFlutterLocalNotificationsPlugin>()
+      return resolvePlatformSpecificImplementation<
+              WebFlutterLocalNotificationsPlugin>()
           ?.initialize();
     }
 
@@ -242,8 +237,8 @@ class FlutterLocalNotificationsPlugin {
     String? payload,
   }) async {
     if (kIsWeb) {
-      await resolvePlatformSpecificImplementation
-        <WebFlutterLocalNotificationsPlugin>()
+      await resolvePlatformSpecificImplementation<
+              WebFlutterLocalNotificationsPlugin>()
           ?.show(id, title, body, payload: payload);
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
