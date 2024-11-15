@@ -45,16 +45,12 @@ class WebFlutterLocalNotificationsPlugin
     if (_registration == null) {
       return <ActiveNotification>[];
     }
-    final JSArray<Notification> notificationsArray =
-        await _registration!.getNotifications().toDart;
     final List<ActiveNotification> result = <ActiveNotification>[];
     final Set<int> ids = <int>{};
-    for (final Notification jsNotification in notificationsArray.toDart) {
-      final dynamic data = jsonDecode(jsNotification.data.toString());
-      if (data == null) {
-        continue;
-      }
-      final int? id = data['id'];
+    final List<Notification> jsNotifs =
+      await _registration!.getDartNotifications();
+    for (final Notification jsNotification in jsNotifs) {
+      final int? id = jsNotification.id;
       if (id == null) {
         continue;
       }
@@ -64,4 +60,40 @@ class WebFlutterLocalNotificationsPlugin
     }
     return result;
   }
+
+  @override
+  Future<void> cancel(int id, {String? tag}) async {
+    if (_registration == null) {
+      return;
+    }
+    final List<Notification> notifs =
+      await _registration!.getDartNotifications();
+    for (final Notification notification in notifs) {
+      if (notification.id == id || (tag != null && tag == notification.tag)) {
+        notification.close();
+      }
+    }
+  }
+
+  @override
+  Future<void> cancelAll() async {
+    if (_registration == null) {
+      return;
+    }
+    final List<Notification> notifs =
+      await _registration!.getDartNotifications();
+    for (final Notification notification in notifs) {
+      notification.close();
+    }
+  }
+}
+
+extension on Notification {
+  /// Gets the ID of the notification.
+  int? get id => jsonDecode(data.toString())?['id'];
+}
+
+extension on ServiceWorkerRegistration {
+  Future<List<Notification>> getDartNotifications() async =>
+    (await getNotifications().toDart).toDart;
 }
