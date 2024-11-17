@@ -1,9 +1,12 @@
+import 'action.dart';
 import 'direction.dart';
 
+export 'action.dart';
 export 'direction.dart';
 
 class WebNotificationDetails {
   const WebNotificationDetails({
+    this.actions = const <WebNotificationAction>[],
     this.direction = WebNotificationDirection.auto,
     this.badgeUrl,
     this.body,
@@ -18,6 +21,7 @@ class WebNotificationDetails {
     this.vibrationPattern,
   });
 
+  final List<WebNotificationAction> actions;
   final WebNotificationDirection direction;
   final Uri? badgeUrl;
   final String? body;

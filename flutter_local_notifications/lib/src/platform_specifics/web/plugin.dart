@@ -46,24 +46,13 @@ class WebFlutterLocalNotificationsPlugin
         'Call initialize() first',
       );
     }
-    final Map<String, int> data = <String, int>{'id': id};
-    final NotificationOptions options = NotificationOptions(
-      badge: details?.badgeUrl.toString() ?? '',
-      body: details?.body ?? '',
-      data: jsonEncode(data).toJS,
-      dir: details?.direction.jsValue ?? WebNotificationDirection.auto.jsValue,
-      icon: details?.iconUrl.toString() ?? '',
-      image: details?.imageUrl.toString() ?? '',
-      lang: details?.lang ?? '',
-      renotify: details?.renotify ?? false,
-      requireInteraction: details?.requireInteraction ?? false,
-      silent: details?.isSilent,
-      tag: details?.tag ?? '',
-      timestamp: (details?.timestamp ?? DateTime.now()).millisecondsSinceEpoch,
-      vibrate: details?.vibrationPatternMs ?? <JSNumber>[].toJS,
+    details ??= WebNotificationDetails(
+      actions: [
+        WebNotificationAction(action: "action-1", title: "Action 1"),
+      ],
     );
     await _registration!
-        .showNotification(title ?? 'This is a notification', options)
+        .showNotification(title ?? 'This is a notification', details.toJs(id))
         .toDart;
   }
 
@@ -148,4 +137,28 @@ extension on WebNotificationDetails {
           for (final Duration duration in vibrationPattern!)
             duration.inMilliseconds.toJS,
         ].toJS;
+}
+
+extension on WebNotificationDetails? {
+  NotificationOptions toJs(int id) => NotificationOptions(
+      actions: [
+        for (final action in this?.actions ?? [])
+          NotificationAction(action: action.action,
+          title: action.title,
+          icon: action.icon?.toString() ?? ''),
+      ].toJS,
+      badge: this?.badgeUrl.toString() ?? '',
+      body: this?.body ?? '',
+      data: jsonEncode(<String, int>{'id': id}).toJS,
+      dir: this?.direction.jsValue ?? WebNotificationDirection.auto.jsValue,
+      icon: this?.iconUrl.toString() ?? '',
+      image: this?.imageUrl.toString() ?? '',
+      lang: this?.lang ?? '',
+      renotify: this?.renotify ?? false,
+      requireInteraction: this?.requireInteraction ?? false,
+      silent: this?.isSilent,
+      tag: this?.tag ?? '',
+      timestamp: (this?.timestamp ?? DateTime.now()).millisecondsSinceEpoch,
+      vibrate: this?.vibrationPatternMs ?? <JSNumber>[].toJS,
+    );
 }
