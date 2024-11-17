@@ -114,6 +114,25 @@ class WebFlutterLocalNotificationsPlugin
       notification.close();
     }
   }
+
+  @override
+  Future<List<PendingNotificationRequest>>
+      pendingNotificationRequests() async => <PendingNotificationRequest>[];
+
+  @override
+  Future<void> periodicallyShow(
+      int id, String? title, String? body, RepeatInterval repeatInterval) {
+    throw UnsupportedError('periodicallyShow() is not supported on the web');
+  }
+
+  @override
+  Future<void> periodicallyShowWithDuration(
+      int id, String? title, String? body, Duration repeatDurationInterval) {
+    throw UnsupportedError(
+      'periodicallyShowWithDuration() is not supported '
+      'on the web',
+    );
+  }
 }
 
 extension on Notification {
