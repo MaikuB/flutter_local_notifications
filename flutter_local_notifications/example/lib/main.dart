@@ -302,10 +302,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () =>
-              flutterLocalNotificationsPlugin.show(0, null, null, null),
-        ),
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
@@ -366,13 +362,14 @@ class _HomePageState extends State<HomePage> {
                       await _showNotificationWithNoBody();
                     },
                   ),
-                  PaddedElevatedButton(
-                    buttonText: 'Show notification with custom sound',
-                    onPressed: () async {
-                      await _showNotificationCustomSound();
-                    },
-                  ),
-                  if (kIsWeb || !Platform.isLinux) ...<Widget>[
+                  if (Platform.isAndroid)
+                    PaddedElevatedButton(
+                      buttonText: 'Show notification with custom sound',
+                      onPressed: () async {
+                        await _showNotificationCustomSound();
+                      },
+                    ),
+                  if (!kIsWeb && !Platform.isLinux) ...<Widget>[
                     PaddedElevatedButton(
                       buttonText:
                           'Schedule notification to appear in 5 seconds '
@@ -395,26 +392,28 @@ class _HomePageState extends State<HomePage> {
                         await _checkPendingNotificationRequests();
                       },
                     ),
+                  ],
+                  if (!Platform.isLinux)
                     PaddedElevatedButton(
                       buttonText: 'Get active notifications',
                       onPressed: () async {
                         await _getActiveNotifications();
                       },
                     ),
-                  ],
                   PaddedElevatedButton(
                     buttonText: 'Show notification from silent channel',
                     onPressed: () async {
                       await _showNotificationWithNoSound();
                     },
                   ),
-                  PaddedElevatedButton(
-                    buttonText:
-                        'Show silent notification from channel with sound',
-                    onPressed: () async {
-                      await _showNotificationSilently();
-                    },
-                  ),
+                  if (!kIsWeb)
+                    PaddedElevatedButton(
+                      buttonText:
+                          'Show silent notification from channel with sound',
+                      onPressed: () async {
+                        await _showNotificationSilently();
+                      },
+                    ),
                   PaddedElevatedButton(
                     buttonText: 'Cancel latest notification',
                     onPressed: () async {
@@ -427,7 +426,8 @@ class _HomePageState extends State<HomePage> {
                       await _cancelAllNotifications();
                     },
                   ),
-                  if (!Platform.isWindows) ...repeating.examples(context),
+                  if (!Platform.isWindows && !kIsWeb)
+                    ...repeating.examples(context),
                   const Divider(),
                   const Text(
                     'Notifications with actions',
@@ -454,7 +454,7 @@ class _HomePageState extends State<HomePage> {
                         await _showNotificationWithTextAction();
                       },
                     ),
-                  if (!Platform.isLinux)
+                  if (!Platform.isLinux && !kIsWeb)
                     PaddedElevatedButton(
                       buttonText: 'Show notification with text choice',
                       onPressed: () async {
@@ -1062,24 +1062,35 @@ class _HomePageState extends State<HomePage> {
       ],
     );
 
-    final WindowsNotificationDetails windowsNotificationsDetails =
-        WindowsNotificationDetails(
-      subtitle: 'Click the three dots for another button',
-      actions: <WindowsAction>[
-        const WindowsAction(
-          content: 'Text',
-          arguments: 'text',
-        ),
-        WindowsAction(
-          content: 'Image',
-          arguments: 'image',
-          image: File('icons/coworker.png').absolute,
-        ),
-        const WindowsAction(
-          content: 'Context',
-          arguments: 'context',
-          placement: WindowsActionPlacement.contextMenu,
-        ),
+    final WindowsNotificationDetails? windowsNotificationsDetails = kIsWeb
+        ? null
+        : WindowsNotificationDetails(
+            subtitle: 'Click the three dots for another button',
+            actions: <WindowsAction>[
+              const WindowsAction(
+                content: 'Text',
+                arguments: 'text',
+              ),
+              WindowsAction(
+                content: 'Image',
+                arguments: 'image',
+                image: File('icons/coworker.png').absolute,
+              ),
+              const WindowsAction(
+                content: 'Context',
+                arguments: 'context',
+                placement: WindowsActionPlacement.contextMenu,
+              ),
+            ],
+          );
+
+    final WebNotificationDetails webDetails = WebNotificationDetails(
+      actions: <WebNotificationAction>[
+        const WebNotificationAction(action: 'Text', title: 'text'),
+        WebNotificationAction(
+            action: 'Image',
+            title: 'image',
+            icon: Uri.parse('https://picsum.photos/200')),
       ],
     );
 
@@ -1089,6 +1100,7 @@ class _HomePageState extends State<HomePage> {
       macOS: macOSNotificationDetails,
       linux: linuxNotificationDetails,
       windows: windowsNotificationsDetails,
+      web: webDetails,
     );
     await flutterLocalNotificationsPlugin.show(
         id++, 'plain title', 'plain body', notificationDetails,
@@ -1135,11 +1147,21 @@ class _HomePageState extends State<HomePage> {
       ],
     );
 
+    const WebNotificationDetails webDetails = WebNotificationDetails(
+      actions: <WebNotificationAction>[
+        WebNotificationAction(
+            action: 'text',
+            title: 'Send a reply',
+            type: WebNotificationActionType.textInput),
+      ],
+    );
+
     const NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
       iOS: darwinNotificationDetails,
       macOS: darwinNotificationDetails,
       windows: windowsNotificationDetails,
+      web: webDetails,
     );
 
     await flutterLocalNotificationsPlugin.show(id++, 'Text Input Notification',
@@ -1428,11 +1450,14 @@ class _HomePageState extends State<HomePage> {
     );
     final WindowsNotificationDetails windowsDetails =
         WindowsNotificationDetails(audio: WindowsNotificationAudio.silent());
+    const WebNotificationDetails webDetails =
+        WebNotificationDetails(isSilent: true);
     final NotificationDetails notificationDetails = NotificationDetails(
         windows: windowsDetails,
         android: androidNotificationDetails,
         iOS: darwinNotificationDetails,
-        macOS: darwinNotificationDetails);
+        macOS: darwinNotificationDetails,
+        web: webDetails);
     await flutterLocalNotificationsPlugin.show(
         id++, '<b>silent</b> title', '<b>silent</b> body', notificationDetails);
   }

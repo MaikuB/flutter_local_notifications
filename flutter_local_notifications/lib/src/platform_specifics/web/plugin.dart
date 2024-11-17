@@ -46,11 +46,7 @@ class WebFlutterLocalNotificationsPlugin
         'Call initialize() first',
       );
     }
-    details ??= WebNotificationDetails(
-      actions: [
-        WebNotificationAction(action: "action-1", title: "Action 1"),
-      ],
-    );
+
     await _registration!
         .showNotification(title ?? 'This is a notification', details.toJs(id))
         .toDart;
@@ -140,12 +136,18 @@ extension on WebNotificationDetails {
 }
 
 extension on WebNotificationDetails? {
-  NotificationOptions toJs(int id) => NotificationOptions(
-      actions: [
-        for (final action in this?.actions ?? [])
-          NotificationAction(action: action.action,
-          title: action.title,
-          icon: action.icon?.toString() ?? ''),
+  NotificationOptions toJs(int id) {
+    final NotificationOptions options = NotificationOptions(
+      actions: <NotificationAction>[
+        for (final WebNotificationAction action
+            in this?.actions ?? <WebNotificationAction>[])
+          // THis workaround is here because not all browsers support this
+          <String, dynamic>{
+            'action': action.action,
+            'title': action.title,
+            'icon': action.icon?.toString(),
+            'type': action.type.jsValue,
+          }.jsify() as NotificationAction,
       ].toJS,
       badge: this?.badgeUrl.toString() ?? '',
       body: this?.body ?? '',
@@ -159,6 +161,12 @@ extension on WebNotificationDetails? {
       silent: this?.isSilent,
       tag: this?.tag ?? '',
       timestamp: (this?.timestamp ?? DateTime.now()).millisecondsSinceEpoch,
-      vibrate: this?.vibrationPatternMs ?? <JSNumber>[].toJS,
     );
+
+    final JSArray<JSNumber>? vibration = this?.vibrationPatternMs;
+    if (vibration != null) {
+      options.vibrate = vibration;
+    }
+    return options;
+  }
 }

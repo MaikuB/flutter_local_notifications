@@ -239,7 +239,13 @@ class FlutterLocalNotificationsPlugin {
     if (kIsWeb) {
       await resolvePlatformSpecificImplementation<
               WebFlutterLocalNotificationsPlugin>()
-          ?.show(id, title, body, payload: payload);
+          ?.show(
+        id,
+        title,
+        body,
+        payload: payload,
+        details: notificationDetails?.web,
+      );
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<
