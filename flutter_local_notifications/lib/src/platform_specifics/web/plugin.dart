@@ -1,8 +1,18 @@
 import 'dart:convert';
 import 'dart:js_interop';
 
+import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:web/web.dart';
-import '../flutter_local_notifications.dart';
+
+import 'details.dart';
+
+extension on WebNotificationDetails {
+  JSArray<JSNumber>? get vibrationPatternMs => vibrationPattern == null
+    ? null : <JSNumber>[
+      for (final Duration duration in vibrationPattern!)
+        duration.inMilliseconds.toJS,
+    ].toJS;
+}
 
 /// Web implementation of the local notifications plugin.
 class WebFlutterLocalNotificationsPlugin
@@ -17,11 +27,51 @@ class WebFlutterLocalNotificationsPlugin
 
   @override
   Future<void> show(int id, String? title, String? body,
-      {String? payload}) async {
+      {String? payload, WebNotificationDetails? details}) async {
+    if (_registration == null) {
+      throw StateError(
+        'FlutterLocalNotifications.show(): You must call initialize() before '
+        'calling this method',
+      );
+    } else if (Notification.permission != 'granted') {
+      throw StateError(
+        'FlutterLocalNotifications.show(): You must request notifications '
+        'permissions first',
+      );
+    } else if (details?.isSilent == true && details?.vibrationPattern != null) {
+      throw ArgumentError(
+        'WebNotificationDetails: Cannot specify both silent and a vibration '
+        'pattern',
+      );
+    } else if (details?.renotify == true && details?.tag == null) {
+      throw ArgumentError(
+        'WebNotificationDetails: If you specify renotify, you must also '
+        'specify a tag',
+      );
+    } else if (_registration!.active == null) {
+      throw StateError(
+        'FlutterLocalNotifications.show(): There is no active service worker. '
+        'Call initialize() first',
+      );
+    }
     final Map<String, int> data = <String, int>{'id': id};
-    final NotificationOptions options =
-        NotificationOptions(data: jsonEncode(data).toJS);
-    _registration?.showNotification(title ?? 'This is a notification', options);
+    final NotificationOptions options = NotificationOptions(
+      badge: details?.badgeUrl.toString() ?? '',
+      body: details?.body ?? '',
+      data: jsonEncode(data).toJS,
+      dir: details?.direction.jsValue ?? WebNotificationDirection.auto.jsValue,
+      icon: details?.iconUrl.toString() ?? '',
+      image: details?.imageUrl.toString() ?? '',
+      lang: details?.lang ?? '',
+      renotify: details?.renotify ?? false,
+      requireInteraction: details?.requireInteraction ?? false,
+      silent: details?.isSilent,
+      tag: details?.tag ?? '',
+      timestamp: (details?.timestamp ?? DateTime.now()).millisecondsSinceEpoch,
+      vibrate: details?.vibrationPatternMs ?? <JSNumber>[].toJS,
+    );
+    await _registration
+      !.showNotification(title ?? 'This is a notification', options).toDart;
   }
 
   /// Initializes the plugin.
