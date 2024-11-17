@@ -40,3 +40,4 @@ export 'src/platform_specifics/darwin/notification_enabled_options.dart';
 
 export 'src/typedefs.dart';
 export 'src/types.dart';
+export 'src/web_flutter_local_notifications.dart';
