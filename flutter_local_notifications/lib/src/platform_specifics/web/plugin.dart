@@ -6,14 +6,6 @@ import 'package:web/web.dart';
 
 import 'details.dart';
 
-extension on WebNotificationDetails {
-  JSArray<JSNumber>? get vibrationPatternMs => vibrationPattern == null
-    ? null : <JSNumber>[
-      for (final Duration duration in vibrationPattern!)
-        duration.inMilliseconds.toJS,
-    ].toJS;
-}
-
 /// Web implementation of the local notifications plugin.
 class WebFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
@@ -70,8 +62,9 @@ class WebFlutterLocalNotificationsPlugin
       timestamp: (details?.timestamp ?? DateTime.now()).millisecondsSinceEpoch,
       vibrate: details?.vibrationPatternMs ?? <JSNumber>[].toJS,
     );
-    await _registration
-      !.showNotification(title ?? 'This is a notification', options).toDart;
+    await _registration!
+        .showNotification(title ?? 'This is a notification', options)
+        .toDart;
   }
 
   /// Initializes the plugin.
@@ -146,4 +139,13 @@ extension on Notification {
 extension on ServiceWorkerRegistration {
   Future<List<Notification>> getDartNotifications() async =>
       (await getNotifications().toDart).toDart;
+}
+
+extension on WebNotificationDetails {
+  JSArray<JSNumber>? get vibrationPatternMs => vibrationPattern == null
+      ? null
+      : <JSNumber>[
+          for (final Duration duration in vibrationPattern!)
+            duration.inMilliseconds.toJS,
+        ].toJS;
 }
