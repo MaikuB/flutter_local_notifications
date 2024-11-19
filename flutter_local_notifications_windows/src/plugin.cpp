@@ -181,12 +181,18 @@ std::optional<bool> NativePlugin::checkIdentity() {
   if (!IsWindows8OrGreater()) return false;
   uint32_t length = 0;
   auto error = GetCurrentPackageFullName(&length, nullptr);
+<<<<<<< Updated upstream
   if (error == APPMODEL_ERROR_NO_PACKAGE) {
     return false;
   } else if (error != ERROR_INSUFFICIENT_BUFFER) {
     return std::nullopt;
   }
   std::vector<wchar_t> fullName;
+=======
+  if (error == APPMODEL_ERROR_NO_PACKAGE) return false;
+  else if (error != ERROR_INSUFFICIENT_BUFFER) return std::nullopt;
+	std::vector<wchar_t> fullName(length);
+>>>>>>> Stashed changes
   error = GetCurrentPackageFullName(&length, fullName.data());
   if (error != ERROR_SUCCESS) return std::nullopt;
   return true;
