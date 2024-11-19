@@ -189,9 +189,11 @@ std::optional<bool> NativePlugin::checkIdentity() {
   }
   std::vector<wchar_t> fullName;
 =======
-  if (error == APPMODEL_ERROR_NO_PACKAGE) return false;
-  else if (error != ERROR_INSUFFICIENT_BUFFER) return std::nullopt;
-	std::vector<wchar_t> fullName(length);
+  if (error == APPMODEL_ERROR_NO_PACKAGE)
+    return false;
+  else if (error != ERROR_INSUFFICIENT_BUFFER)
+    return std::nullopt;
+  std::vector<wchar_t> fullName(length);
 >>>>>>> Stashed changes
   error = GetCurrentPackageFullName(&length, fullName.data());
   if (error != ERROR_SUCCESS) return std::nullopt;
