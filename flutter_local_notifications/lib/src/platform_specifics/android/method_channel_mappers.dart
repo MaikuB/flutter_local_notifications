@@ -188,6 +188,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'setAsGroupSummary': setAsGroupSummary,
         'groupAlertBehavior': groupAlertBehavior.index,
         'autoCancel': autoCancel,
+        'selectable': selectable,
         'ongoing': ongoing,
         'silent': silent,
         'colorAlpha': color?.alpha,
