@@ -262,6 +262,8 @@ class AndroidFlutterLocalNotificationsPlugin
   /// Information on selecting an appropriate `startType` for your app's use
   /// case should be taken from the official Android documentation, check [`Service.onStartCommand`](https://developer.android.com/reference/android/app/Service#onStartCommand(android.content.Intent,%20int,%20int)).
   /// The there mentioned constants can be found in [AndroidServiceStartType].
+  /// WARNING: We strongly disadvise using [AndroidServiceStartType.startSticky]
+  /// because it can lead to crashes, see this [github issue](https://github.com/MaikuB/flutter_local_notifications/issues/2446).
   ///
   /// The notification for the foreground service will not be dismissible
   /// and automatically removed when using [stopForegroundService].
@@ -278,7 +280,7 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<void> startForegroundService(int id, String? title, String? body,
       {AndroidNotificationDetails? notificationDetails,
       String? payload,
-      AndroidServiceStartType startType = AndroidServiceStartType.startSticky,
+      AndroidServiceStartType startType = AndroidServiceStartType.startRedeliverIntent,
       Set<AndroidServiceForegroundType>? foregroundServiceTypes}) {
     validateId(id);
     if (id == 0) {

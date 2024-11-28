@@ -125,6 +125,9 @@ enum AndroidServiceForegroundType {
 }
 
 /// The available start types for an Android service.
+/// 
+/// WARNING: We strongly disadvise using [AndroidServiceStartType.startSticky]
+/// because it can lead to crashes, see this [github issue](https://github.com/MaikuB/flutter_local_notifications/issues/2446).
 enum AndroidServiceStartType {
   /// Corresponds to [`Service.START_STICKY_COMPATIBILITY`](https://developer.android.com/reference/android/app/Service#START_STICKY_COMPATIBILITY).
   startStickyCompatibility,
