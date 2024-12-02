@@ -38,14 +38,14 @@ dependencies {
 For more details, see the link above.
 
 > [!Warning]
-> There was [a crash](https://github.com/flutter/flutter/issues/110658) that used to occur on devices running Android 12L. Flutter has since fixed the issue around Flutter 3.24.0. If you are using an earlier version of Flutter, you'll need to add the following to your _module_ build file:
-
-```gradle
-dependencies {
-  implementation 'androidx.window:window:1.0.0'
-  implementation 'androidx.window:window-java:1.0.0'
-}
-```
+> There was [a crash](https://github.com/flutter/flutter/issues/110658) that used to occur on devices running Android 12L. Flutter has since fixed the issue in 3.24.0. If you are using an earlier version of Flutter, you'll need to add the following to your _module_ build file:
+>
+> ```gradle
+> dependencies {
+>  implementation 'androidx.window:window:1.0.0'
+>  implementation 'androidx.window:window-java:1.0.0'
+> }
+> ```
 
 ### Upgrading the Android Gradle Plugin
 
