@@ -1,6 +1,6 @@
 # Android Setup
 
->[!Important]
+> [!Important]
 > Before proceeding, please make sure you are using the latest version of the plugin, since some versions require changes to the setup process.
 
 While this plugin handles some of the setup, other settings are required on a project basis and therefore must be applied within your project before notifications will work.
@@ -37,8 +37,8 @@ dependencies {
 ```
 For more details, see the link above.
 
->[!Note]
->There was [a crash](https://github.com/flutter/flutter/issues/110658) that used to occur on devices running Android 12L. Flutter has since fixed the issue around Flutter 3.24.0. If you are using an earlier version of Flutter, you'll need to add the following to your _module_ build file:
+> [!Warning]
+> There was [a crash](https://github.com/flutter/flutter/issues/110658) that used to occur on devices running Android 12L. Flutter has since fixed the issue around Flutter 3.24.0. If you are using an earlier version of Flutter, you'll need to add the following to your _module_ build file:
 
 ```gradle
 dependencies {
@@ -87,14 +87,14 @@ Next, add the following receiver inside the `<application>` tag so that the plug
 ```xml
 <application ...>
   <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
-    <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
-        <intent-filter>
-            <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
-            <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-            <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-        </intent-filter>
-    </receiver>
+  <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+    <intent-filter>
+      <action android:name="android.intent.action.BOOT_COMPLETED"/>
+      <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+      <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+      <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+    </intent-filter>
+  </receiver>
 </application>
 ```
 
@@ -107,11 +107,11 @@ If you need that level of precision, [you'll need another permission](). For exa
 - Exact scheduling is a core requirement for your app. In this case, you'll need the [`USE_EXACT_ALARM`](https://developer.android.com/reference/android/Manifest.permission#USE_EXACT_ALARM) permission, which won't require user consent in-app but may subject your app to more stringent app store reviews.
 - Exact scheduling is a nice-to-have addition for your app that users can opt-out of. In this case, you'll want to use the [`SCHEDULE_EXACT_ALARM`](https://developer.android.com/reference/android/Manifest.permission#SCHEDULE_EXACT_ALARM). This permission will need to be granted by the user using [`requestExactAlarmsPermission()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/requestExactAlarmsPermission.html) function in Dart. This permission can be revoked at any time by the user or system, so use [`canScheduleExactNotifications()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/canScheduleExactNotifications.html) to check at run-time if you still have this permission.
 
->[!Warning]
->Scheduling exact alarms prevents the Android OS from being able to properly optimize the device's energy usage and idle time, and can lead to noticeably worse battery life for your users. Carefully consider whether you actually need these permissions and be mindful of users with lower-performing hardware.
+> [!Caution]
+> Scheduling exact alarms prevents the Android OS from being able to properly optimize the device's energy usage and idle time, and can lead to noticeably worse battery life for your users. Carefully consider whether you actually need these permissions and be mindful of users with lower-performing hardware.
 
->[!Note]
->Some Android device manufacturers implement non-standard app-killing behavior to extend battery life more aggressively than what the Android docs suggest. This behavior, if it applies to your app, is at the OS level and cannot be prevented by this plugin. See [this site]( https://dontkillmyapp.com) for a rundown of such manufacturers and what you can do for your users.
+> [!Note]
+> Some Android device manufacturers implement non-standard app-killing behavior to extend battery life more aggressively than what the Android docs suggest. This behavior, if it applies to your app, is at the OS level and cannot be prevented by this plugin. See [this site]( https://dontkillmyapp.com) for a rundown of such manufacturers and what you can do for your users.
 
 In any case, add the appropriate permission to your manifest, under the top-level `<manifest>` tag.
 
@@ -176,8 +176,7 @@ Foreground services require additions to the manifest. First, you must request t
       android:name="com.dexterous.flutterlocalnotifications.ForegroundService"
       android:exported="false"
       android:stopWithTask="false"
-      android:foregroundServiceType="my_service_type1|my_service_type2"
-    >
+      android:foregroundServiceType="my_service_type1|my_service_type2" >
     </service>
   </application>
 </manifest>
@@ -193,8 +192,8 @@ Notifications may also make use of [large icons](https://developer.android.com/d
 
 Android groups notifications of a similar purpose into [channels](https://developer.android.com/develop/ui/views/notifications#ManageChannels). Separate from "grouping", this is meant to allow users to customize how their notifications are shown, like "new message" or "upcoming deals". Using channels consistently will give users confidence and more options when changing settings. To put notifications in the same channel, simply use the same `channelId` in your calls to `show()`.
 
->[!Important]
->Notification sounds, vibration patterns, and importance levels are configured on the notification channel as a whole, not on each notification. These settings are finalized when the first notification of that channel is shown and cannot be changed. Instead, direct users to their system settings to make changes.
+> [!Note]
+> Notification sounds, vibration patterns, and importance levels are configured on the notification channel as a whole, not on each notification. These settings are finalized when the first notification of that channel is shown and cannot be changed. Instead, direct users to their system settings to make changes.
 
 ## Code and asset shrinking
 
