@@ -33,4 +33,6 @@ The [msix package](https://pub.dev/packages/msix) can help generate an MSIX inst
   - a `clsid` option that exactly matches `WindowsInitializationSettings.guid`
   - a `display_name` option that will be on each notification and cannot be changed in Dart.
 
+The GUID/CLSID, as the name implies, needs to be _globally unique_. Avoid using IDs from tutorials as other apps on the user's device may be using them as well. Instead, use [online GUID generators](https://guidgenerator.com) to generate a new, unique GUID, and use that for your MSIX and Dart options. 
+
 For a full example, see [the example app's `pubspec.yaml`](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/pubspec.yaml).
