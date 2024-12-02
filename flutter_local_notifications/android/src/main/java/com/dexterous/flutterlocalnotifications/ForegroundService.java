@@ -36,7 +36,7 @@ public class ForegroundService extends Service {
     } else {
       startForeground(parameter.notificationData.id, notification);
     }
-    return parameter.startMode;
+    return Service.START_NOT_STICKY;
   }
 
   private static int orCombineFlags(ArrayList<Integer> flags) {
