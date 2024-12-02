@@ -239,6 +239,9 @@ class AndroidNotificationDetails {
   final bool autoCancel;
 
   /// Specifies if the notification will be "ongoing".
+  ///
+  /// This used to mean the notification would be non-dismissible, but as of
+  /// Android 14, [that has changed](https://developer.android.com/about/versions/14/behavior-changes-all#non-dismissable-notifications).
   final bool ongoing;
 
   /// Specifies if the notification will be "silent".

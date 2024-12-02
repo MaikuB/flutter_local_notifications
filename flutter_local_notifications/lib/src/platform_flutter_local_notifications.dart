@@ -236,15 +236,15 @@ class AndroidFlutterLocalNotificationsPlugin
   /// low on memory. The service is not stopped automatically -- you must call
   /// [stopForegroundService] to stop it.
   ///
-  /// If you just want a non-dismissible notification, use [show] with
-  /// [AndroidNotificationDetails.ongoing] set to true. Starting a foreground
-  /// service requires extra setup. Refer to the [Android Setup docs](https://pub.dev/packages/flutter_local_notifications#androidmanifestxml-setup)
+  /// Starting a foreground service requires extra setup. Refer to the [Android Setup docs](https://pub.dev/packages/flutter_local_notifications#androidmanifestxml-setup)
   /// for details. A foreground service's ID must not be zero.
   ///
   /// The provided notification will be displayed to indicate to the user that
   /// this service is running, and will be removed when [stopForegroundService]
   /// is called. To update the notification contents, call [show] with the same
-  /// ID after this function returns.
+  /// ID after this function returns. Starting with Android 13, the notification
+  /// will be dismissible by default. To change that, set
+  /// [AndroidNotificationDetails.ongoing] to true, but read the note there.
   ///
   /// `foregroundServiceType` is a set of [foreground service types](https://developer.android.com/develop/background-work/services/fg-service-types)
   /// relevant to this service. This set may be null but must not be empty, and
