@@ -47,8 +47,6 @@ void registerPlugins(NSObject<FlutterPluginRegistry>* registry) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   [GeneratedPluginRegistrant registerWithRegistry:self];
-
-  // Add this line
   [FlutterLocalNotificationsPlugin setPluginRegistrantCallback:registerPlugins];
 }
 ```
@@ -65,8 +63,8 @@ override func application(
   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
 ) -> Bool {
   // This is required to make any communication available in the action isolate.
-  FlutterLocalNotificationsPlugin.setPluginRegistrantCallback { (registry) in
-    GeneratedPluginRegistrant.register(with: registry)
+  FlutterLocalNotificationsPlugin.setPluginRegistrantCallback {
+    (registry) in GeneratedPluginRegistrant.register(with: registry)
   }
 
   // ...
