@@ -1,5 +1,6 @@
 ## [19.0.0-dev.2]
 * **Breaking change** [Android] Removed `AndroidServiceStartType` as it wasn't having any effect. Remove the parameter from your calls to `startForegroundService()`.
+* [Android] Clarified docs for [AndroidNotificationDetails.ongoing] that notifications are now always dismissible on Android 14+
 
 ## [19.0.0-dev.1]
 
