@@ -259,10 +259,6 @@ class AndroidFlutterLocalNotificationsPlugin
   /// The notification of the foreground service can be updated by
   /// simply calling this method multiple times.
   ///
-  /// Information on selecting an appropriate `startType` for your app's use
-  /// case should be taken from the official Android documentation, check [`Service.onStartCommand`](https://developer.android.com/reference/android/app/Service#onStartCommand(android.content.Intent,%20int,%20int)).
-  /// The there mentioned constants can be found in [AndroidServiceStartType].
-  ///
   /// The notification for the foreground service will not be dismissible
   /// and automatically removed when using [stopForegroundService].
   ///
@@ -278,7 +274,6 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<void> startForegroundService(int id, String? title, String? body,
       {AndroidNotificationDetails? notificationDetails,
       String? payload,
-      AndroidServiceStartType startType = AndroidServiceStartType.startSticky,
       Set<AndroidServiceForegroundType>? foregroundServiceTypes}) {
     validateId(id);
     if (id == 0) {
@@ -297,7 +292,6 @@ class AndroidFlutterLocalNotificationsPlugin
         'payload': payload ?? '',
         'platformSpecifics': notificationDetails?.toMap(),
       },
-      'startType': startType.index,
       'foregroundServiceTypes': foregroundServiceTypes
           ?.map((AndroidServiceForegroundType type) => type.value)
           .toList()

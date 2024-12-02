@@ -2171,7 +2171,7 @@ public class FlutterLocalNotificationsPlugin
 
   private void startForegroundService(MethodCall call, Result result) {
     Map<String, Object> notificationData = call.argument("notificationData");
-    Integer startType = call.<Integer>argument("startType");
+    Integer startType = START_NOT_STICKY;
     ArrayList<Integer> foregroundServiceTypes = call.argument("foregroundServiceTypes");
     if (foregroundServiceTypes == null || foregroundServiceTypes.size() != 0) {
       if (notificationData != null && startType != null) {
