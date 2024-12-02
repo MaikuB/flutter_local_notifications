@@ -15,24 +15,24 @@ Gradle is Android's build system, and controls important options during compilat
 
 This plugin relies on [desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) to take advantage of newer Java features on older versions of Android. Desugaring must be enabled in your _module_ build file, like this:
 
-```diff
+```gradle
 android {
   defaultConfig {
-+   multiDexEnabled true
+    multiDexEnabled true
   }
 
   compileOptions {
-+   coreLibraryDesugaringEnabled true
+    coreLibraryDesugaringEnabled true
   }
 }
 
 dependencies {
   // For AGP 7.4+
-+ coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
   // For AGP 7.3
-+ coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.3'
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.3'
   // For AGP 4.0 to 7.2
-+ coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.9'
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.9'
 }
 ```
 For more details, see the link above.
