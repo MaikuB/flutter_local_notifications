@@ -124,21 +124,6 @@ enum AndroidServiceForegroundType {
   final int value;
 }
 
-/// The available start types for an Android service.
-enum AndroidServiceStartType {
-  /// Corresponds to [`Service.START_STICKY_COMPATIBILITY`](https://developer.android.com/reference/android/app/Service#START_STICKY_COMPATIBILITY).
-  startStickyCompatibility,
-
-  /// Corresponds to [`Service.START_STICKY`](https://developer.android.com/reference/android/app/Service#START_STICKY).
-  startSticky,
-
-  /// Corresponds to [`Service.START_NOT_STICKY`](https://developer.android.com/reference/android/app/Service#START_NOT_STICKY).
-  startNotSticky,
-
-  /// Corresponds to [`Service.START_REDELIVER_INTENT`](https://developer.android.com/reference/android/app/Service#START_REDELIVER_INTENT).
-  startRedeliverIntent
-}
-
 /// The available importance levels for Android notifications.
 ///
 /// Required for Android 8.0 or newer.
