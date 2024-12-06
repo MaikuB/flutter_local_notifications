@@ -20,6 +20,12 @@ class LinuxFlutterLocalNotificationsPlugin
     LinuxNotificationManager manager,
   ) : _manager = manager;
 
+  /// Registers the Linux implementation.
+  static void registerWith() {
+    FlutterLocalNotificationsPlatform.instance =
+        LinuxFlutterLocalNotificationsPlugin();
+  }
+
   final LinuxNotificationManager _manager;
 
   /// Initializes the plugin.

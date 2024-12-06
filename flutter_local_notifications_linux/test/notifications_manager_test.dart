@@ -65,13 +65,13 @@ void main() {
       ).thenAnswer((_) async => platformInfo);
       when(
         mockStorage.forceReloadCache(),
-      ).thenAnswer((_) async => <void>{});
+      ).thenAnswer((_) async {});
       when(
         mockDbus.build(
           destination: 'org.freedesktop.Notifications',
           path: '/org/freedesktop/Notifications',
         ),
-      ).thenAnswer((_) => <void>{});
+      ).thenAnswer((_) {});
       when(
         mockDbus.subscribeSignal('ActionInvoked'),
       ).thenAnswer((_) => mockActionInvokedSignal);

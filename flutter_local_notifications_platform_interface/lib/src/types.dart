@@ -43,6 +43,7 @@ class ActiveNotification {
     this.body,
     this.payload,
     this.tag,
+    this.bigText,
   });
 
   /// The notification's id.
@@ -76,6 +77,11 @@ class ActiveNotification {
   ///
   /// Returned only on Android.
   final String? tag;
+
+  /// The notification's longer text displayed using big text style.
+  ///
+  /// Returned only on Android.
+  final String? bigText;
 }
 
 /// Details of a Notification Action that was triggered.
@@ -87,6 +93,7 @@ class NotificationResponse {
     this.actionId,
     this.input,
     this.payload,
+    this.data = const <String, dynamic>{},
   });
 
   /// The notification's id.
@@ -100,10 +107,18 @@ class NotificationResponse {
 
   /// The value of the input field if the notification action had an input
   /// field.
+  ///
+  /// On Windows, this is always null. Instead, [data] holds the values of
+  /// each input with the input's ID as the key.
   final String? input;
 
   /// The notification's payload.
   final String? payload;
+
+  /// Any other data returned by the platform.
+  ///
+  /// Returned only on Windows.
+  final Map<String, dynamic> data;
 
   /// The notification response type.
   final NotificationResponseType notificationResponseType;

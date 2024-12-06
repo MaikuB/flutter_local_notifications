@@ -4,15 +4,16 @@ publish_to: none
 
 dependencies:
   cupertino_icons: ^1.0.2
-  device_info_plus: ^8.0.0
+  device_info_plus: ^9.1.2
   flutter:
     sdk: flutter
   flutter_local_notifications:
     path: ../
   flutter_timezone: ^1.0.4
-  http: ^0.13.4
-  image: ^3.0.8
+  http: ^1.2.1
+  image: ^4.2.0
   path_provider: ^2.0.0
+  timezone: ^0.10.0
 
 dev_dependencies:
   flutter_driver:
@@ -21,14 +22,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-
-# The following overrides exist to ensure the example app builds with the latest code
-# of these packages as part of CI
-dependency_overrides:
-  flutter_local_notifications_linux:
-    path: ../../flutter_local_notifications_linux
-  flutter_local_notifications_platform_interface:
-    path: ../../flutter_local_notifications_platform_interface
+  msix: ^3.16.7
 
 flutter:
   uses-material-design: true
@@ -37,5 +31,17 @@ flutter:
     - sound/
 
 environment:
-  sdk: ">=2.15.0 <3.0.0"
-  flutter: ">=2.8.0"
+  sdk: ^3.1.0
+  flutter: ">=3.1.3"
+
+msix_config:
+  display_name: Flutter Local Notifications Example
+  identity_name: Com.Example.FlutterLocalNotificationsExample
+  msix_version: 1.0.0.0
+  store: false
+  install_certificate: false
+  output_name: example
+  toast_activator:
+    clsid: "d49b0314-ee7a-4626-bf79-97cdb8a991bb"
+    arguments: "msix-args"
+    display_name: "Flutter Local Notifications"
