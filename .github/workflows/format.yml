@@ -41,7 +41,10 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
       - name: Install latest clang-format
         run: |
           sudo apt install python3-pip -y
