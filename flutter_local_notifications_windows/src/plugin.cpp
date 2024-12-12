@@ -186,7 +186,7 @@ std::optional<bool> NativePlugin::checkIdentity() {
   } else if (error != ERROR_INSUFFICIENT_BUFFER) {
     return std::nullopt;
   }
-  std::vector<wchar_t> fullName;
+  std::vector<wchar_t> fullName(length);
   error = GetCurrentPackageFullName(&length, fullName.data());
   if (error != ERROR_SUCCESS) return std::nullopt;
   return true;
