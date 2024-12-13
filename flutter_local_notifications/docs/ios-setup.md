@@ -29,7 +29,7 @@ if #available(iOS 10.0, *) {
 
 ## Handling actions
 
-Starting with iOS 10, apps can define [actions](https://developer.apple.com/documentation/usernotifications/declaring-your-actionable-notification-types) in their notifications which allow users to interact with the notifications on a deeper level without needing to navigate through the app.
+Apps can define [actions](https://developer.apple.com/documentation/usernotifications/declaring-your-actionable-notification-types) in their notifications which allow users to interact with the notifications on a deeper level without needing to navigate through the app.
 
 A standard notification can be clicked, which opens the app in the standard way. A notification action, however, can get input from the user and pass it to a custom function, which can then open a specific page in the app or run a background task without opening the app at all.
 

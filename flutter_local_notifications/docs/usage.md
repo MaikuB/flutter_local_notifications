@@ -124,6 +124,8 @@ These same parameters will be present on most methods that show notifications. O
 
 ### Schedule a notification
 
+**Not supported on Linux**
+
 The [`zonedSchedule()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/zonedSchedule.html) method accepts the same five arguments as `show()`, but also accepts:
 
 - the `scheduledDate` to show the notification
@@ -133,7 +135,20 @@ The [`zonedSchedule()`](https://pub.dev/documentation/flutter_local_notification
 
 Note that the `scheduledDate` is not a regular `DateTime`, but rather a [`TZDateTime`](https://pub.dev/documentation/timezone/latest/timezone.standalone/TZDateTime-class.html) from `package:timezone` to ensure location data is incorporated into the notification delivery time. See above for how to set that up and get the user's current location.
 
+By default, notifications shown with this function will not repeat unless `matchDateTimeComponents` is provided, in which case the [`DateTimeComponents`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/DateTimeComponents.html) will specify how to repeat. For example, passing `DateTimeComponents.dayOfWeekAndTime` will make the notification repeat once a week, during the given date time.
+
+Where possible, try to use `periodicallyShowWithDuration()`. The previous example can be rewritten as
+
+```dart
+previouslyShowWithDuration(
+  // ...,
+  repeatIntervalDuration: const Duration(days: 7),
+)
+```
+
 ### Periodically show a notification
+
+**Not supported on Windows or Linux**
 
 To periodically show a notification, use [`periodicallyShowWithDuration()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/periodicallyShow.html). It takes the same arguments as `show()`, but also accepts a `repeatIntervalDuration` specifying how far apart these notifications should be.
 
