@@ -86,8 +86,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         final Pointer<Utf8> guid = settings.guid.toNativeUtf8(allocator: arena);
         final Pointer<Utf8> iconPath =
             settings.iconPath?.toNativeUtf8(allocator: arena) ?? nullptr;
-        final Pointer<NativeFunction<NativeNotificationCallbackFunction>>
-            callback =
+        final NativeNotificationCallback callback =
             NativeCallable<NativeNotificationCallbackFunction>.listener(
           _globalLaunchCallback,
         ).nativeFunction;
