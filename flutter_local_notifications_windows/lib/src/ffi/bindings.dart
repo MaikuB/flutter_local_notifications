@@ -331,7 +331,10 @@ final class NativeLaunchDetails extends ffi.Struct {
 
   /// What part of the notification launched the app.
   @ffi.UnsignedInt()
-  external int launchType;
+  external int launchTypeAsInt;
+
+  NativeLaunchType get launchType =>
+      NativeLaunchType.fromValue(launchTypeAsInt);
 
   /// The payload sent to the app by the notification. Usually the action that was pressed.
   external ffi.Pointer<pkg_ffi.Utf8> payload;
@@ -339,6 +342,17 @@ final class NativeLaunchDetails extends ffi.Struct {
   /// The IDs and values of any text inputs in the notification.
   external NativeStringMap data;
 }
+
+typedef NativeNotificationCallbackFunction = ffi.Void Function(
+    NativeLaunchDetails details);
+typedef DartNativeNotificationCallbackFunction = void Function(
+    NativeLaunchDetails details);
+
+/// A callback that is run with [NativeLaunchDetails] when a notification is pressed.
+///
+/// This may be called at app launch or even while the app is running.
+typedef NativeNotificationCallback
+    = ffi.Pointer<ffi.NativeFunction<NativeNotificationCallbackFunction>>;
 
 /// See: https://learn.microsoft.com/en-us/uwp/api/windows.ui.notifications.notificationupdateresult
 enum NativeUpdateResult {
@@ -357,13 +371,3 @@ enum NativeUpdateResult {
           throw ArgumentError("Unknown value for NativeUpdateResult: $value"),
       };
 }
-
-/// A callback that is run with [NativeLaunchDetails] when a notification is pressed.
-///
-/// This may be called at app launch or even while the app is running.
-typedef NativeNotificationCallback
-    = ffi.Pointer<ffi.NativeFunction<NativeNotificationCallbackFunction>>;
-typedef NativeNotificationCallbackFunction = ffi.Void Function(
-    NativeLaunchDetails details);
-typedef DartNativeNotificationCallbackFunction = void Function(
-    NativeLaunchDetails details);

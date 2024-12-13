@@ -89,10 +89,16 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         final Pointer<NativeFunction<NativeNotificationCallbackFunction>>
             callback =
             NativeCallable<NativeNotificationCallbackFunction>.listener(
-                    _globalLaunchCallback)
-                .nativeFunction;
-        final bool result =
-            _bindings.init(_plugin, appName, aumId, guid, iconPath, callback);
+          _globalLaunchCallback,
+        ).nativeFunction;
+        final bool result = _bindings.init(
+          _plugin,
+          appName,
+          aumId,
+          guid,
+          iconPath,
+          callback,
+        );
         _isReady = result;
         return result;
       });
@@ -114,9 +120,9 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
       _bindings.freeLaunchDetails(_details!);
     }
     _details = details;
-    final Map<String, String> data = details.data.toMap();
+    final Map<String, String> data = details.data.toDart();
     final NotificationResponse response = NotificationResponse(
-      notificationResponseType: getResponseType(details.launchType),
+      notificationResponseType: details.launchType.toDart(),
       payload: details.payload.toDartString(),
       actionId: details.payload.toDartString(),
       data: data,
@@ -190,11 +196,11 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     if (details == null) {
       return null;
     }
-    final Map<String, String> data = details.data.toMap();
+    final Map<String, String> data = details.data.toDart();
     return NotificationAppLaunchDetails(
       details.didLaunch,
       notificationResponse: NotificationResponse(
-        notificationResponseType: getResponseType(details.launchType),
+        notificationResponseType: details.launchType.toDart(),
         payload: details.payload.toDartString(),
         actionId: details.payload.toDartString(),
         data: data,
@@ -227,8 +233,13 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   }
 
   @override
-  Future<void> show(int id, String? title, String? body,
-          {String? payload, WindowsNotificationDetails? details}) async =>
+  Future<void> show(
+    int id,
+    String? title,
+    String? body, {
+    String? payload,
+    WindowsNotificationDetails? details,
+  }) async =>
       using((Arena arena) {
         if (!_isReady) {
           throw StateError(
@@ -359,7 +370,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         }
         final NativeUpdateResult result = _bindings.updateNotification(
             _plugin, id, bindings.toNativeMap(arena));
-        return getUpdateResult(result);
+        return result.toDart();
       });
 
   @override
