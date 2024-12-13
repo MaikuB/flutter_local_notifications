@@ -83,8 +83,9 @@ FFI_PLUGIN_EXPORT bool init(
   NativeNotificationCallback callback
 );
 
-/// Shows the XML as a notification with the given ID. See [updateNotification] for details on
-/// bindings.
+/// Shows the XML as a notification with the given ID.
+///
+/// See [updateNotification] for details on bindings.
 FFI_PLUGIN_EXPORT bool showNotification(
   NativePlugin* plugin, int id, char* xml, NativeStringMap bindings
 );

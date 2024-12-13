@@ -91,7 +91,9 @@ class NotificationsPluginBindings {
           ffi.Pointer<pkg_ffi.Utf8>,
           NativeNotificationCallback)>();
 
-  /// Shows the XML as a notification with the given ID. See [updateNotification] for details on bindings.
+  /// Shows the XML as a notification with the given ID.
+  ///
+  /// See [updateNotification] for details on bindings.
   bool showNotification(
     ffi.Pointer<NativePlugin> plugin,
     int id,
