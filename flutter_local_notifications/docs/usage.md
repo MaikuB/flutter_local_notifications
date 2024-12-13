@@ -52,15 +52,13 @@ The [`InitializationSettings`](https://pub.dev/documentation/flutter_local_notif
 
 #### The foreground handler
 
-A notification that is tapped when the app is in the foreground and are supposed, or a notification with an action that specifically launches the app, will trigger the `onDidReceiveNotificationResponse` callback passed to `initialize()`.
-
-This callback is guaranteed to be called when your Dart code is running and your app is in the foreground, so it may do anything a normal function will do.
+A notification that is tapped when the app is in the foreground and are supposed, or a notification with an action that specifically launches the app, will trigger the `onDidReceiveNotificationResponse` callback passed to `initialize()`. This callback is guaranteed to be called when your Dart code is running and your app is in the foreground, so it may do anything a normal function will do.
 
 The callback provides a [`NotificationResponse`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/NotificationResponse-class.html), which provides all sorts of information about the notification that was tapped. Continue reading to learn more about what each field corresponds to for a given notification.
 
 #### The background handler
 
-When the application is terminated and a notification is tapped that does not launch the app, the `onDidReceiveBackgroundNotification` callback is triggered. This callback also provides a `NotificationDetails`, like the foreground handler, but the callback provided must be able to run in the background, in another isolate.
+When the application is terminated and a notification is tapped that does not launch the app, the `onDidReceiveBackgroundNotification` callback is triggered. This callback also provides a `NotificationResponse`, like the foreground handler, but the callback provided must be able to run in the background, in another isolate.
 
 Specifically, the function must be a top-level or static function annotated with
 
@@ -70,9 +68,7 @@ Specifically, the function must be a top-level or static function annotated with
 
 which is needed to prevent Flutter from thinking the function is unused and stripping it from your release builds.
 
-This function can be run when your app is in the foreground or not, so it must be capable of running without using any plugins that may depend on Flutter initialization. Because the callback is run in another isolate, you cannot rely on any state or initialization performed in the main isolate, even from `main()`.
-
-Think of the background handler as an entirely new entrypoint for your app that must initialize minimal resources, perform just one task, then gracefully return.
+This function can be run when your app is in the foreground or not, so it must be capable of running without using any plugins that may depend on Flutter initialization. Because the callback is run in another isolate, you cannot rely on any state or initialization performed in the main isolate, even from `main()`. Think of the background handler as an entirely new entrypoint for your app that must initialize minimal resources, perform just one task, then gracefully return.
 
 ### Checking if a notification launched the app
 

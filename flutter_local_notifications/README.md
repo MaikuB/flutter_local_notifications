@@ -66,17 +66,6 @@ Note: the plugin requires Flutter SDK 3.13 at a minimum. The list of support pla
 ## ✨ Features
 
 * Mockable (plugin and API methods aren't static)
-* Display basic notifications
-* Scheduling when notifications should appear
-* Periodically show a notification (interval based)
-* Schedule a notification to be shown daily at a specified time
-* Schedule a notification to be shown weekly on a specified day and time
-* Retrieve a list of pending notification requests that have been scheduled to be shown in the future
-* Cancelling/removing notification by id or all of them
-* Specify a custom notification sound
-* Ability to handle when a user has tapped on a notification, when the app is in the foreground, background or is terminated
-* Determine if an app was launched due to tapping on a notification
-* [Android] Request permission to show notifications
 * [Android] Configuring the importance level
 * [Android] Configuring the priority
 * [Android] Customising the vibration pattern for notifications
@@ -114,20 +103,6 @@ Note: the plugin requires Flutter SDK 3.13 at a minimum. The list of support pla
 * [Windows] A full Dart API for all the options supported by toast notifications
 * [Windows] Can configure images, buttons, dropdowns, text input, and launch behavior
 * [Windows] Can dynamically update notifications after they've been shown
-
-## ⚠ Caveats and limitations
-
-The cross-platform facing API exposed by the `FlutterLocalNotificationsPlugin` class doesn't expose platform-specific methods as its goal is to provide an abstraction for all platforms. As such, platform-specific configuration is passed in as data. There are platform-specific implementations of the plugin that can be obtained by calling the [`resolvePlatformSpecificImplementation`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/resolvePlatformSpecificImplementation.html). An example of using this is provided in the section on requesting permissions on iOS. In spite of this, there may still be gaps that don't cover your use case and don't make sense to add as they don't fit with the plugin's architecture or goals. Developers can fork or maintain their own code for showing notifications in these situations.
-
-### Compatibility with firebase_messaging
-
-Previously, there were issues that prevented this plugin working properly with the `firebase_messaging` plugin. This meant that callbacks from each plugin might not be invoked. This has been resolved since version 6.0.13 of the `firebase_messaging` plugin so please make sure you are using more recent versions of the  `firebase_messaging` plugin and follow the steps covered in `firebase_messaging`'s readme file located [here](https://pub.dev/packages/firebase_messaging)
-
-### Scheduled Android notifications
-
-Some Android OEMs have their own customised Android OS that can prevent applications from running in the background. Consequently, scheduled notifications may not work when the application is in the background on certain devices (e.g. by Xiaomi, Huawei). If you experience problems like this then this would be the reason why. As it's a restriction imposed by the OS, this is not something that can be resolved by the plugin. Some devices may have setting that lets users control which applications run in the background. The steps for these can vary but it is still up to the users of your application to do given it's a setting on the phone itself. The site https://dontkillmyapp.com provides details on how to do this for various devices.
-
-It has been reported that Samsung's implementation of Android has imposed a maximum of 500 alarms that can be scheduled via the [Alarm Manager](https://developer.android.com/reference/android/app/AlarmManager) API and exceptions can occur when going over the limit.
 
 ### iOS pending notifications limit
 
