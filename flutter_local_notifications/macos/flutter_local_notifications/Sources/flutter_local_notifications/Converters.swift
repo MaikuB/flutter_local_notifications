@@ -27,4 +27,3 @@ public class Converters {
         return UNNotificationActionOptions(rawValue: result)
     }
 }
-
