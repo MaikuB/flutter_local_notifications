@@ -1,7 +1,7 @@
-#import "FlutterLocalNotificationsPlugin.h"
-#import "ActionEventSink.h"
-#import "Converters.h"
-#import "FlutterEngineManager.h"
+#import "./include/flutter_local_notifications/FlutterLocalNotificationsPlugin.h"
+#import "./include/flutter_local_notifications/ActionEventSink.h"
+#import "./include/flutter_local_notifications/Converters.h"
+#import "./include/flutter_local_notifications/FlutterEngineManager.h"
 
 @implementation FlutterLocalNotificationsPlugin {
   FlutterMethodChannel *_channel;
