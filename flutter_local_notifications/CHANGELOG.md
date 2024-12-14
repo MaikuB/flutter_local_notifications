@@ -1,6 +1,7 @@
 ## [19.0.0-dev.2]
 
 * [Windows] Fixed an issue that happens with MSIX app builds. Thanks to PR from [Levi Lesches](https://github.com/Levi-Lesches)
+* Removed duplicate important notice from the readme. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches)
 * Migrated example app to use Plugin DSL. Thanks to the PR from [Martin Bertele](https://github.com/martin-bertele)
 
 ## [19.0.0-dev.1]
