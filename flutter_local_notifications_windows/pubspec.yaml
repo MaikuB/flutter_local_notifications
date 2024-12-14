@@ -1,6 +1,6 @@
 name: flutter_local_notifications_windows
 description: Windows implementation of the flutter_local_notifications plugin
-version: 1.0.0-dev.1
+version: 1.0.0-dev.2
 homepage: https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications_windows
 
 environment:
