@@ -11,7 +11,7 @@ extension DarwinNotificationActionMapper on DarwinNotificationAction {
         'identifier': identifier,
         'title': title,
         'options': options
-            .map((e) => 1 << e.index) // ignore: always_specify_types
+            .map((e) => e.value) // ignore: always_specify_types
             .toList(),
         'type': type.name,
         if (buttonTitle != null) 'buttonTitle': buttonTitle!,
@@ -26,7 +26,7 @@ extension DarwinNotificationCategoryMapper on DarwinNotificationCategory {
             .map((e) => e.toMap()) // ignore: always_specify_types
             .toList(),
         'options': options
-            .map((e) => 1 << e.index) // ignore: always_specify_types
+            .map((e) => e.value) // ignore: always_specify_types
             .toList(),
       };
 }
