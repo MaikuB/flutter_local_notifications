@@ -2,7 +2,7 @@ import UserNotifications
 
 public class Converters {
     public static func parseNotificationCategoryOptions(_ options: [Any]?) -> UNNotificationCategoryOptions {
-        var result:UInt = 0
+        var result: UInt = 0
 
         for option in options ?? [] {
             guard let option = option as? NSNumber else {
@@ -15,7 +15,7 @@ public class Converters {
     }
 
     public static func parseNotificationActionOptions(_ options: [Any]?) -> UNNotificationActionOptions {
-        var result:UInt = 0
+        var result: UInt = 0
 
         for option in options ?? [] {
             guard let option = option as? NSNumber else {
