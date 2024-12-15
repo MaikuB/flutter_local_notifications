@@ -1,3 +1,8 @@
+## [19.0.0-dev.3]
+
+* [iOS][macOS] **Breaking changes** the `DarwinNotificationActionOption` and `DarwinNotificationCategoryOption` are now enhanced enums with values accessible through the `value` property that are exactly the same as their native representations. Previously a bitwise left shift operation was applied to the index value
+* [iOS][macOS] added Swift Package Manager support
+
 ## [19.0.0-dev.2]
 
 * [Windows] Fixed an issue that happens with MSIX app builds. Thanks to PR from [Levi Lesches](https://github.com/Levi-Lesches)
