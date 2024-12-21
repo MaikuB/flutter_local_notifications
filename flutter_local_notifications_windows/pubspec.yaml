@@ -9,7 +9,10 @@ environment:
 
 dependencies:
   ffi: ^2.1.2
-  flutter_local_notifications_platform_interface: ^8.1.0-dev.1
+  flutter_local_notifications_platform_interface: #^8.1.0-dev.1
+    git:
+        url: git@github.com:BadgerHobbs/flutter_local_notifications.git
+        path: flutter_local_notifications_platform_interface
   meta: ^1.11.0
   timezone: ^0.10.0
   xml: ^6.5.0
