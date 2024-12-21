@@ -10,7 +10,6 @@ flutter:
       linux:
         dartPluginClass: LinuxFlutterLocalNotificationsPlugin
 
-
 dependencies:
   dbus: ^0.7.8
   ffi: ^2.0.1
@@ -18,8 +17,8 @@ dependencies:
     sdk: flutter
   flutter_local_notifications_platform_interface: #^8.1.0-dev.1
     git:
-        url: git@github.com:BadgerHobbs/flutter_local_notifications.git
-        path: flutter_local_notifications_platform_interface
+      url: https://github.com/BadgerHobbs/flutter_local_notifications.git
+      path: flutter_local_notifications_platform_interface
   path: ^1.8.0
   xdg_directories: ">=0.2.0+1 <2.0.0"
 
