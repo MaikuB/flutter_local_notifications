@@ -2209,7 +2209,7 @@ class _HomePageState extends State<HomePage> {
     await showDialog<void>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              content: Text('Channel group with name '
+              content: const Text('Channel group with name '
                   '${androidNotificationChannelGroup.name} created'),
               actions: <Widget>[
                 TextButton(
@@ -2304,9 +2304,9 @@ class _HomePageState extends State<HomePage> {
     await showDialog<void>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-              content:
-                  Text('Channel with name ${androidNotificationChannel.name} '
-                      'created'),
+              content: const Text(
+                  'Channel with name ${androidNotificationChannel.name} '
+                  'created'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () {

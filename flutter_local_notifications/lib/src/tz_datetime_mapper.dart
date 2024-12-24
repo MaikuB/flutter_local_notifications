@@ -59,18 +59,20 @@ extension TZDateTimeMapper on TZDateTime {
 
 extension DateTimeComponentsUtils on DateTimeComponents {
   AndroidDateTimeComponents toAndroid() => switch (this) {
-    DateTimeComponents.dateAndTime => AndroidDateTimeComponents.dateAndTime,
-    DateTimeComponents.dayOfMonthAndTime => AndroidDateTimeComponents.dayOfMonthAndTime,
-    DateTimeComponents.dayOfWeekAndTime => AndroidDateTimeComponents.dayOfWeekAndTime,
-    DateTimeComponents.time => AndroidDateTimeComponents.time,
-  };
+        DateTimeComponents.dateAndTime => AndroidDateTimeComponents.dateAndTime,
+        DateTimeComponents.dayOfMonthAndTime =>
+          AndroidDateTimeComponents.dayOfMonthAndTime,
+        DateTimeComponents.dayOfWeekAndTime =>
+          AndroidDateTimeComponents.dayOfWeekAndTime,
+        DateTimeComponents.time => AndroidDateTimeComponents.time,
+      };
 }
 
 extension RepeatIntervalUtils on RepeatInterval {
   AndroidRepeatInterval toAndroid() => switch (this) {
-    RepeatInterval.daily => AndroidRepeatInterval.daily,
-    RepeatInterval.everyMinute => AndroidRepeatInterval.everyMinute,
-    RepeatInterval.hourly => AndroidRepeatInterval.hourly,
-    RepeatInterval.weekly => AndroidRepeatInterval.weekly,
-  };
+        RepeatInterval.daily => AndroidRepeatInterval.daily,
+        RepeatInterval.everyMinute => AndroidRepeatInterval.everyMinute,
+        RepeatInterval.hourly => AndroidRepeatInterval.hourly,
+        RepeatInterval.weekly => AndroidRepeatInterval.weekly,
+      };
 }

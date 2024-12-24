@@ -1,9 +1,12 @@
 @ConfigurePigeon(PigeonOptions(
   dartPackageName: 'flutter_local_notifications',
   dartOut: 'lib/src/platform_specifics/android.g.dart',
-  dartOptions: DartOptions(),
+  dartOptions: DartOptions(
+    copyrightHeader: <String>['ignore_for_file: type=lint'],
+  ),
   javaOptions: JavaOptions(),
-  javaOut: 'android/src/main/java/com/dexterous/flutterlocalnotifications/models/Messages.g.java',
+  javaOut:
+      'android/src/main/java/com/dexterous/flutterlocalnotifications/models/Messages.g.java',
 ))
 library;
 
@@ -1148,7 +1151,8 @@ class AndroidNotificationAppLaunchDetails {
 /// Details of a pending notification that has not been delivered.
 class AndroidPendingNotificationRequest {
   /// Constructs an instance of [AndroidPendingNotificationRequest].
-  const AndroidPendingNotificationRequest(this.id, this.title, this.body, this.payload);
+  const AndroidPendingNotificationRequest(
+      this.id, this.title, this.body, this.payload);
 
   /// The notification's id.
   final int id;
@@ -1391,9 +1395,11 @@ abstract class AndroidNotificationsPlugin {
 
   List<AndroidNotificationChannel>? getNotificationChannels();
 
-  void createNotificationChannelGroup(AndroidNotificationChannelGroup notificationChannelGroup);
+  void createNotificationChannelGroup(
+      AndroidNotificationChannelGroup notificationChannelGroup);
   void deleteNotificationChannelGroup(String groupId);
-  void createNotificationChannel(AndroidNotificationChannel notificationChannel);
+  void createNotificationChannel(
+      AndroidNotificationChannel notificationChannel);
   void deleteNotificationChannel(String channelId);
 
   void show(AndroidNotificationData data);
