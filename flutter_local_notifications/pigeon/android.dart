@@ -1163,7 +1163,6 @@ class AndroidPendingNotificationRequest {
   final String? payload;
 }
 
-
 /// Details of an active notification.
 class AndroidActiveNotification {
   /// Constructs an instance of [AndroidActiveNotification].
@@ -1295,8 +1294,8 @@ enum AndroidServiceForegroundType {
   foregroundServiceTypeSpecialUse;
 }
 
-class DateTimeWithTimezone {
-  const DateTimeWithTimezone({
+class AndroidDateTime {
+  const AndroidDateTime({
     required this.scheduledDateTime,
     required this.scheduledDateTimeIso8601,
     required this.timezoneName,
@@ -1383,7 +1382,7 @@ abstract class AndroidNotificationsPlugin {
   // ================== Android-Specific ==================
   void stopForegroundService();
 
-  bool initialize();
+  bool initialize(AndroidInitializationSettings settings);
   bool? requestExactAlarmsPermission();
   bool? requestFullScreenIntentPermission();
   bool? requestNotificationsPermission();
@@ -1403,18 +1402,19 @@ abstract class AndroidNotificationsPlugin {
     required AndroidNotificationData data,
     required AndroidRepeatInterval repeatInterval,
     required int calledAtMillisecondsSinceEpoch,
-    AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
+    required AndroidScheduleMode scheduleMode,
   });
 
   void periodicallyShowWithDuration({
     required AndroidNotificationData data,
     required int calledAtMillisecondsSinceEpoch,
     required int repeatIntervalMilliseconds,
+    required AndroidScheduleMode scheduleMode,
   });
 
   void zonedSchedule({
     required AndroidNotificationData data,
-    required DateTimeWithTimezone scheduledDate,
+    required AndroidDateTime scheduledDate,
     AndroidDateTimeComponents? matchDateTimeComponents,
   });
 
