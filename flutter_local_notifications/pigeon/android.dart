@@ -1,6 +1,6 @@
 @ConfigurePigeon(PigeonOptions(
   dartPackageName: 'flutter_local_notifications',
-  dartOut: 'lib/src/platform_specifics/android/messages.g.dart',
+  dartOut: 'lib/src/platform_specifics/android.g.dart',
   dartOptions: DartOptions(),
   javaOptions: JavaOptions(),
   javaOut: 'android/src/main/java/com/dexterous/flutterlocalnotifications/models/Messages.g.java',
@@ -1080,7 +1080,7 @@ class AndroidNotificationDetails {
 // ================== Notification Responses ==================
 
 /// The possible notification response types
-enum NotificationResponseType {
+enum AndroidNotificationResponseType {
   /// Indicates that a user has selected a notification.
   selectedNotification,
 
@@ -1089,9 +1089,9 @@ enum NotificationResponseType {
 }
 
 /// Details of a Notification Action that was triggered.
-class NotificationResponse {
-  /// Constructs an instance of [NotificationResponse]
-  const NotificationResponse({
+class AndroidNotificationResponse {
+  /// Constructs an instance of [AndroidNotificationResponse]
+  const AndroidNotificationResponse({
     required this.notificationResponseType,
     this.id,
     this.actionId,
@@ -1125,13 +1125,13 @@ class NotificationResponse {
   final Map<String, dynamic> data;
 
   /// The notification response type.
-  final NotificationResponseType notificationResponseType;
+  final AndroidNotificationResponseType notificationResponseType;
 }
 
 /// Contains details on the notification that launched the application.
-class NotificationAppLaunchDetails {
-  /// Constructs an instance of [NotificationAppLaunchDetails].
-  const NotificationAppLaunchDetails(
+class AndroidNotificationAppLaunchDetails {
+  /// Constructs an instance of [AndroidNotificationAppLaunchDetails].
+  const AndroidNotificationAppLaunchDetails(
     this.didNotificationLaunchApp, {
     this.notificationResponse,
   });
@@ -1140,15 +1140,15 @@ class NotificationAppLaunchDetails {
   final bool didNotificationLaunchApp;
 
   /// Contains details of the notification that launched the app.
-  final NotificationResponse? notificationResponse;
+  final AndroidNotificationResponse? notificationResponse;
 }
 
 // ================== Notification Plugin ==================
 
 /// Details of a pending notification that has not been delivered.
-class PendingNotificationRequest {
-  /// Constructs an instance of [PendingNotificationRequest].
-  const PendingNotificationRequest(this.id, this.title, this.body, this.payload);
+class AndroidPendingNotificationRequest {
+  /// Constructs an instance of [AndroidPendingNotificationRequest].
+  const AndroidPendingNotificationRequest(this.id, this.title, this.body, this.payload);
 
   /// The notification's id.
   final int id;
@@ -1165,9 +1165,9 @@ class PendingNotificationRequest {
 
 
 /// Details of an active notification.
-class ActiveNotification {
-  /// Constructs an instance of [ActiveNotification].
-  const ActiveNotification({
+class AndroidActiveNotification {
+  /// Constructs an instance of [AndroidActiveNotification].
+  const AndroidActiveNotification({
     this.id,
     this.groupKey,
     this.channelId,
@@ -1308,7 +1308,7 @@ class DateTimeWithTimezone {
 }
 
 /// The components of a date and time representations.
-enum DateTimeComponents {
+enum AndroidDateTimeComponents {
   /// The time.
   time,
 
@@ -1323,7 +1323,7 @@ enum DateTimeComponents {
 }
 
 /// The available intervals for periodically showing notifications.
-enum RepeatInterval {
+enum AndroidRepeatInterval {
   /// An interval for every minute.
   everyMinute,
 
@@ -1376,9 +1376,9 @@ abstract class AndroidNotificationsPlugin {
   void cancel(int id);
   void cancelAll();
 
-  NotificationAppLaunchDetails getNotificationAppLaunchDetails();
-  PendingNotificationRequest pendingNotificationRequests();
-  List<ActiveNotification> getActiveNotifications();
+  AndroidNotificationAppLaunchDetails getNotificationAppLaunchDetails();
+  AndroidPendingNotificationRequest pendingNotificationRequests();
+  List<AndroidActiveNotification> getActiveNotifications();
 
   // ================== Android-Specific ==================
   void stopForegroundService();
@@ -1401,7 +1401,7 @@ abstract class AndroidNotificationsPlugin {
 
   void periodicallyShow({
     required AndroidNotificationData data,
-    required RepeatInterval repeatInterval,
+    required AndroidRepeatInterval repeatInterval,
     required int calledAtMillisecondsSinceEpoch,
     AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
   });
@@ -1415,7 +1415,7 @@ abstract class AndroidNotificationsPlugin {
   void zonedSchedule({
     required AndroidNotificationData data,
     required DateTimeWithTimezone scheduledDate,
-    DateTimeComponents? matchDateTimeComponents,
+    AndroidDateTimeComponents? matchDateTimeComponents,
   });
 
   void startForegroundService({

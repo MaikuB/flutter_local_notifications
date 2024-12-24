@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_local_notifications/src/platform_specifics/android/enums.dart';
+import 'package:flutter_local_notifications/src/platform_specifics/android.g.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -47,9 +47,9 @@ void main() {
     });
 
     test('initialize', () async {
-      const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
-      const InitializationSettings initializationSettings =
+      final AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings(defaultIcon: 'app_icon');
+      final InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       expect(log, <Matcher>[
@@ -60,9 +60,9 @@ void main() {
     });
 
     test('show without Android-specific details', () async {
-      const AndroidInitializationSettings androidInitializationSettings =
-          AndroidInitializationSettings('app_icon');
-      const InitializationSettings initializationSettings =
+      final AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings(defaultIcon: 'app_icon');
+      final InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       await flutterLocalNotificationsPlugin.show(
@@ -79,16 +79,16 @@ void main() {
     });
 
     test('show with Android actions', () async {
-      const AndroidNotificationDetails androidNotificationDetails =
+      final AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
-        'channelId',
-        'channelName',
+        channelId: 'channelId',
+        channelName: 'channelName',
         channelDescription: 'channelDescription',
         actions: <AndroidNotificationAction>[
           AndroidNotificationAction(
-            'action1',
-            'Action 1',
-            titleColor: Color.fromARGB(255, 0, 127, 16),
+            id: 'action1',
+            name: 'Action 1',
+            titleColor: AndroidColor.fromARGB(255, 0, 127, 16),
             contextual: true,
             showsUserInterface: true,
             allowGeneratedReplies: true,
