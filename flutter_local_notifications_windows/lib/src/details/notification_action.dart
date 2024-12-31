@@ -51,7 +51,7 @@ enum WindowsActionPlacement {
 /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-action#attributes
 class WindowsAction {
   /// Constructs a Windows notification button from parameters.
-  WindowsAction({
+  const WindowsAction({
     required this.content,
     required this.arguments,
     this.activationType = WindowsActivationType.foreground,

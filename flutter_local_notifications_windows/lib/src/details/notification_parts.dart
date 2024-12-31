@@ -57,21 +57,13 @@ class WindowsImage extends WindowsNotificationPart {
   /// paths, not relative, which can be complicated if referring to MSIX assets.
   /// - For images that are bundled with your app but not through Flutter, use
   /// an `ms-appx` URI.
-  WindowsImage(
+  const WindowsImage(
     this.uri, {
     required this.altText,
     this.addQueryParams = false,
     this.placement,
     this.crop,
-  }) {
-    if (!_supportedSchemes.contains(uri.scheme)) {
-      throw UnsupportedError('WindowsImage.uri: Invalid uri. Check the docs');
-    }
-  }
-
-  static const Set<String> _supportedSchemes = <String>{
-    'file', 'http', 'https', 'ms-appx', 'ms-appdata',
-  };
+  });
 
   /// Creates a URI for a [Flutter asset](https://docs.flutter.dev/ui/assets/assets-and-images#loading-images).
   ///

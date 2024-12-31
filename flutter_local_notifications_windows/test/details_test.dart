@@ -51,7 +51,7 @@ void main() => group('Details:', () {
                 bindings: <String, String>{'message': 'Hello, Mr. Person'})));
 
       test('Actions', () {
-        final WindowsAction simpleAction =
+        const WindowsAction simpleAction =
             WindowsAction(content: 'Press me', arguments: '123');
         final WindowsAction complexAction = WindowsAction(
           content: 'content',
@@ -63,7 +63,7 @@ void main() => group('Details:', () {
           imageUri: WindowsImage.assetUri('test/icon.png'),
         );
         plugin
-          ..testDetails(WindowsNotificationDetails(
+          ..testDetails(const WindowsNotificationDetails(
               actions: <WindowsAction>[simpleAction]))
           ..testDetails(WindowsNotificationDetails(
               actions: <WindowsAction>[complexAction]))
@@ -167,7 +167,7 @@ void main() => group('Details:', () {
             WindowsSelection(id: 'item3', content: 'Item 3'),
           ],
         );
-        final WindowsAction action = WindowsAction(
+        const WindowsAction action = WindowsAction(
           content: 'Submit',
           arguments: 'submit',
           inputId: 'input',
@@ -182,10 +182,10 @@ void main() => group('Details:', () {
               inputs: List<WindowsInput>.filled(5, textInput),
             ),
           )
-          ..testDetails(WindowsNotificationDetails(
+          ..testDetails(const WindowsNotificationDetails(
               inputs: <WindowsInput>[textInput],
               actions: <WindowsAction>[action]))
-          ..testDetails(WindowsNotificationDetails(
+          ..testDetails(const WindowsNotificationDetails(
               inputs: <WindowsInput>[selection, textInput],
               actions: <WindowsAction>[action]));
         expect(

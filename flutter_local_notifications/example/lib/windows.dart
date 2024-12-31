@@ -142,7 +142,7 @@ Future<void> _showWindowsNotificationWithScenarios() async {
           scenario: WindowsNotificationScenario.alarm,
           actions: <WindowsAction>[
             WindowsAction(content: 'Button', arguments: 'button')
-          ]),
+          ],),
     ),
   );
   await flutterLocalNotificationsPlugin.show(
@@ -154,7 +154,7 @@ Future<void> _showWindowsNotificationWithScenarios() async {
           scenario: WindowsNotificationScenario.incomingCall,
           actions: <WindowsAction>[
             WindowsAction(content: 'Button', arguments: 'button')
-          ]),
+          ],),
     ),
   );
   await flutterLocalNotificationsPlugin.show(
@@ -205,8 +205,8 @@ Future<void> _showWindowsNotificationWithImages() =>
       NotificationDetails(
         windows: WindowsNotificationDetails(
           images: <WindowsImage>[
-            WindowsImage.asset(
-              'icons/4.0x/app_icon_density.png',
+            WindowsImage(
+              WindowsImage.assetUri('icons/4.0x/app_icon_density.png'),
               altText: 'A beautiful image',
             ),
           ],
@@ -225,15 +225,15 @@ Future<void> _showWindowsNotificationWithGroups() =>
           rows: <WindowsRow>[
             WindowsRow(<WindowsColumn>[
               WindowsColumn(<WindowsNotificationPart>[
-                WindowsImage.asset(
-                  'icons/coworker.png',
+                WindowsImage(
+                  WindowsImage.assetUri('icons/coworker.png'),
                   altText: 'A local image',
                 ),
                 const WindowsNotificationText(
-                    text: 'A local image', isCaption: true),
+                    text: 'A local image', isCaption: true,),
               ]),
               WindowsColumn(<WindowsNotificationPart>[
-                WindowsImage.network(
+                WindowsImage(
                   Uri.parse('https://picsum.photos/100'),
                   altText: 'A web image',
                 ),
