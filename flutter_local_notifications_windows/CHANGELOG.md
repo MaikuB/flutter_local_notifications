@@ -2,7 +2,7 @@
 
 * **Breaking change** Reworked the APIs around custom images and audio. Check the updated example for more details, but in short:
   * Instead of `WindowsNotificationAudio.fromFile()`, use `WindowsNotificationAudio.asset()`
-  * Instead of `WindowsImage.file()`, use `WindowsImage.asset()` or `WindowsImage.network()`
+  * Instead of `WindowsImage.file()`, use `WindowsImage()`. See the docs for what URIs are supported
 
 ## [1.0.0-dev.2]
 
