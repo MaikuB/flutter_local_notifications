@@ -15,6 +15,10 @@ dependencies:
   meta: ^1.11.0
   timezone: ^0.10.0
   xml: ^6.5.0
+  msix:
+    git:
+      url: https://github.com/Levi-Lesches/msix
+      ref: is-msix
 
 dev_dependencies:
   ffigen: ^13.0.0

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:msix/msix.dart';
 
 /// A text or image element in a Windows notification.
 ///
@@ -37,18 +38,19 @@ enum WindowsImageCrop {
 ///
 /// | URI | Debug | Release (EXE) | Release (MSIX) |
 /// |--------|--------|--------|--------|
-/// | `file:///` | ✅ | ✅| ✅ |
+/// | `file:///`   | ✅ | ✅ | 🟨 |
 /// | `http(s)://` | ❌ | ❌ | ✅ |
 /// | `ms-appx://` | ❌ | ❌ | ✅ |
-/// | `assetUri()` | ✅ | ❌ | ✅ |
+/// | `assetUri()` | ✅ | ✅ | ✅ |
 ///
 /// Each URI type has different uses:
-/// - For images that are known ahead of time and can be used as Flutter
-/// assets, use [assetUri], which will return a file URI in debug
-/// mode and an `ms-appx` URI in release mode, for the best of both worlds.
+/// - For Flutter assets, use [assetUri], which return the correct file URI
+/// for debug and release (exe) builds, and an `ms-appx` URI in MSIX builds.
 /// - For images from the web, use an `https` or `http` URI, but note that
 /// these only work in MSIX apps. If you need a network image without using
-/// MSIX, consider downloading it directly and using a file URI after.
+/// MSIX, consider downloading it directly and using a file URI after. Also
+/// note that showing the notification will cause the image to be downloaded,
+/// which could cause a small delay. Try to use small images.
 /// - For images that come from the user's device, or have to be retrieved at
 /// runtime, use a file URI, but as always, be aware of how paths might change
 /// from your device to your users. Note that file URIs must be absolute
@@ -67,13 +69,18 @@ class WindowsImage extends WindowsNotificationPart {
 
   /// Creates a URI for a [Flutter asset](https://docs.flutter.dev/ui/assets/assets-and-images#loading-images).
   ///
-  /// This URI resolves to a file URI in debug mode, and an `ms-appx` URI in
-  /// release mode. Note that this function just assumes your release build will
-  /// be packaged as an MSIX. It is highly recommended that you use an MSIX for
-  /// your release, but if you can't, don't use this function.
-  static Uri assetUri(String assetName) => kDebugMode
-      ? Uri.file(File(assetName).absolute.path, windows: true)
-      : Uri.parse('ms-appx:///data/flutter_assets/$assetName');
+  /// - In debug mode, resolves to a file URI to the asset itself
+  /// - In non-MSIX release builds, resolves to a file URI to the bundled asset
+  /// - In MSIX releases, resolves to an `ms-appx` URI from [Msix.assetUri].
+  static Uri assetUri(String assetName) {
+    if (kDebugMode) {
+      return Uri.file(File(assetName).absolute.path, windows: true);
+    } else if (Msix.hasPackageIdentity()) {
+      return Msix.assetUri(assetName);
+    } else {
+      return Uri.file(File('data/flutter_assets/$assetName').absolute.path, windows: true);
+    }
+  }
 
   /// Whether Windows should add URL query parameters when fetching the image.
   final bool addQueryParams;
