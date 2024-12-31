@@ -101,7 +101,9 @@ class WindowsNotificationAudio {
   /// Uses an audio file from a Flutter asset.
   ///
   /// Note that this will only work in release builds that have been packaged as
-  /// an MSIX installer. Currently, there is no way to test this in debug mode.
+  /// an MSIX installer. There is no way to play a custom audio file in debug
+  /// mode, but if you pass a [WindowsNotificationSound] for `debugModeFallback`
+  /// it will be used instead, which can still be useful.
   ///
   /// Windows supports the following formats: `.aac`, `.flac`, `.m4a`, `.mp3`,
   /// `.wav`, and `.wma`.
