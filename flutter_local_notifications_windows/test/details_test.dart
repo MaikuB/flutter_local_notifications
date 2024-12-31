@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
 import 'package:test/test.dart';
 
@@ -53,7 +51,7 @@ void main() => group('Details:', () {
                 bindings: <String, String>{'message': 'Hello, Mr. Person'})));
 
       test('Actions', () {
-        const WindowsAction simpleAction =
+        final WindowsAction simpleAction =
             WindowsAction(content: 'Press me', arguments: '123');
         final WindowsAction complexAction = WindowsAction(
           content: 'content',
@@ -62,10 +60,10 @@ void main() => group('Details:', () {
           buttonStyle: WindowsButtonStyle.success,
           inputId: 'input-id',
           tooltip: 'tooltip',
-          image: File('test/icon.png').absolute,
+          imageUri: WindowsImage.assetUri('test/icon.png'),
         );
         plugin
-          ..testDetails(const WindowsNotificationDetails(
+          ..testDetails(WindowsNotificationDetails(
               actions: <WindowsAction>[simpleAction]))
           ..testDetails(WindowsNotificationDetails(
               actions: <WindowsAction>[complexAction]))
@@ -93,8 +91,8 @@ void main() => group('Details:', () {
       test('Rows', () {
         const WindowsColumn emptyColumn =
             WindowsColumn(<WindowsNotificationPart>[]);
-        final WindowsImage image = WindowsImage.asset(
-          'test/icon.png',
+        final WindowsImage image = WindowsImage(
+          WindowsImage.assetUri('test/icon.png'),
           altText: 'an icon',
         );
         const WindowsNotificationText text =
@@ -132,11 +130,11 @@ void main() => group('Details:', () {
       });
 
       test('Images', () async {
-        final WindowsImage simpleImage = WindowsImage.asset(
-          'asset.png',
+        final WindowsImage simpleImage = WindowsImage(
+          WindowsImage.assetUri('asset.png'),
           altText: 'an icon',
         );
-        final WindowsImage complexImage = WindowsImage.network(
+        final WindowsImage complexImage = WindowsImage(
           Uri.parse('https://picsum.photos/500'),
           altText: 'an icon',
           addQueryParams: true,
@@ -169,7 +167,7 @@ void main() => group('Details:', () {
             WindowsSelection(id: 'item3', content: 'Item 3'),
           ],
         );
-        const WindowsAction action = WindowsAction(
+        final WindowsAction action = WindowsAction(
           content: 'Submit',
           arguments: 'submit',
           inputId: 'input',
@@ -184,10 +182,10 @@ void main() => group('Details:', () {
               inputs: List<WindowsInput>.filled(5, textInput),
             ),
           )
-          ..testDetails(const WindowsNotificationDetails(
+          ..testDetails(WindowsNotificationDetails(
               inputs: <WindowsInput>[textInput],
               actions: <WindowsAction>[action]))
-          ..testDetails(const WindowsNotificationDetails(
+          ..testDetails(WindowsNotificationDetails(
               inputs: <WindowsInput>[selection, textInput],
               actions: <WindowsAction>[action]));
         expect(

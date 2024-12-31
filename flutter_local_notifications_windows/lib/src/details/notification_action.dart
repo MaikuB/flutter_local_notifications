@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'notification_parts.dart';
 
 // NOTE: All enum values in this file have Windows RT-specific names.
 // If you change their Dart names, be sure to override [Enum.name].
@@ -51,13 +51,13 @@ enum WindowsActionPlacement {
 /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-action#attributes
 class WindowsAction {
   /// Constructs a Windows notification button from parameters.
-  const WindowsAction({
+  WindowsAction({
     required this.content,
     required this.arguments,
     this.activationType = WindowsActivationType.foreground,
     this.activationBehavior = WindowsNotificationBehavior.dismiss,
     this.placement,
-    this.image,
+    this.imageUri,
     this.inputId,
     this.buttonStyle,
     this.tooltip,
@@ -89,7 +89,9 @@ class WindowsAction {
   /// Images must be white with a transparent background, and should be
   /// 16x16 pixels with no padding. If you provide an image for one button,
   /// you should provide images for all your buttons.
-  final File? image;
+  ///
+  /// Check the docs for [WindowsImage] for an explanation of supported URIs.
+  final Uri? imageUri;
 
   /// The ID of an input box.
   ///
