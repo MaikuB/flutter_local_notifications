@@ -32,7 +32,7 @@ enum WindowsImageCrop {
 
 /// An image in a Windows notification.
 ///
-  /// Windows supports a few different URI types, and supports them differently
+/// Windows supports a few different URI types, and supports them differently
 /// depending on if your app is packaged as an MSIX. Refer to the following:
 ///
 /// | URI | Debug | Release (EXE) | Release (MSIX) |
@@ -72,8 +72,8 @@ class WindowsImage extends WindowsNotificationPart {
   /// be packaged as an MSIX. It is highly recommended that you use an MSIX for
   /// your release, but if you can't, don't use this function.
   static Uri assetUri(String assetName) => kDebugMode
-    ? Uri.file(File(assetName).absolute.path, windows: true)
-    : Uri.parse('ms-appx:///data/flutter_assets/$assetName');
+      ? Uri.file(File(assetName).absolute.path, windows: true)
+      : Uri.parse('ms-appx:///data/flutter_assets/$assetName');
 
   /// Whether Windows should add URL query parameters when fetching the image.
   final bool addQueryParams;

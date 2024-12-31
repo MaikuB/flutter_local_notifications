@@ -139,10 +139,11 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     null,
     const NotificationDetails(
       windows: WindowsNotificationDetails(
-          scenario: WindowsNotificationScenario.alarm,
-          actions: <WindowsAction>[
-            WindowsAction(content: 'Button', arguments: 'button')
-          ],),
+        scenario: WindowsNotificationScenario.alarm,
+        actions: <WindowsAction>[
+          WindowsAction(content: 'Button', arguments: 'button')
+        ],
+      ),
     ),
   );
   await flutterLocalNotificationsPlugin.show(
@@ -151,10 +152,11 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     null,
     const NotificationDetails(
       windows: WindowsNotificationDetails(
-          scenario: WindowsNotificationScenario.incomingCall,
-          actions: <WindowsAction>[
-            WindowsAction(content: 'Button', arguments: 'button')
-          ],),
+        scenario: WindowsNotificationScenario.incomingCall,
+        actions: <WindowsAction>[
+          WindowsAction(content: 'Button', arguments: 'button')
+        ],
+      ),
     ),
   );
   await flutterLocalNotificationsPlugin.show(
@@ -230,7 +232,9 @@ Future<void> _showWindowsNotificationWithGroups() =>
                   altText: 'A local image',
                 ),
                 const WindowsNotificationText(
-                    text: 'A local image', isCaption: true,),
+                  text: 'A local image',
+                  isCaption: true,
+                ),
               ]),
               WindowsColumn(<WindowsNotificationPart>[
                 WindowsImage(
