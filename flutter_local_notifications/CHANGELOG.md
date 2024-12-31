@@ -1,6 +1,6 @@
 ## [19.0.0-dev.4]
 
-* [Windows] Reworked the APIs around custom images and audio. Use the new `.asset()` or `.network()` constructors
+* [Windows] Reworked the APIs around custom images and audio. Use the new `.asset()` or `.network()` constructors. This is a breaking change from `19.0.0-dev.1`. 
 
 ## [19.0.0-dev.3]
 
