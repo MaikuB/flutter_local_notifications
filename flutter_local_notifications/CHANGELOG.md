@@ -1,6 +1,8 @@
 ## [19.0.0-dev.4]
 
-* [Windows] Reworked the APIs around custom images and audio. Use the new `.asset()` or `.network()` constructors. This is a breaking change from `19.0.0-dev.1`. 
+* [Windows] **Breaking change** Reworked the APIs around custom images and audio. Check the updated example for more details, but in short:
+  * Instead of `WindowsNotificationAudio.fromFile()`, use `WindowsNotificationAudio.asset()`
+  * Instead of `WindowsImage.file()`, use `WindowsImage.asset()` or `WindowsImage.network()`
 
 ## [19.0.0-dev.3]
 
