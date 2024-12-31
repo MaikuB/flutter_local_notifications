@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import "package:flutter/services.dart";
 
 /// A text or image element in a Windows notification.
 ///
@@ -42,16 +41,16 @@ class WindowsImage extends WindowsNotificationPart {
     this.crop,
   });
 
+  /// Creates a Windows notification image from a [Flutter asset](https://docs.flutter.dev/ui/assets/assets-and-images#loading-images).
   WindowsImage.asset(
     String assetName, {
     required this.altText,
     this.addQueryParams = false,
     this.placement,
     this.crop,
-  }) :
-    file = kDebugMode
-      ? Uri.file(File(assetName).absolute.path, windows: true)
-      : Uri.parse('ms-appx:///$assetName');
+  }) : file = kDebugMode
+            ? Uri.file(File(assetName).absolute.path, windows: true)
+            : Uri.parse('ms-appx:///$assetName');
 
   /// Allowed Uri schemes for [WindowsImage].
   static const Set<String> allowedSchemes = <String>{

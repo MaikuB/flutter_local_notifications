@@ -94,7 +94,7 @@ void main() => group('Details:', () {
         const WindowsColumn emptyColumn =
             WindowsColumn(<WindowsNotificationPart>[]);
         final WindowsImage image = WindowsImage.file(
-          Uri.parse('ms-appx:///test/icon.png'),
+            Uri.parse('ms-appx:///test/icon.png'),
             altText: 'an icon');
         const WindowsNotificationText text =
             WindowsNotificationText(text: 'Text');
