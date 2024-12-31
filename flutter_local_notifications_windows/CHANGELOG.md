@@ -1,3 +1,7 @@
+## [1.0.0-dev.3]
+
+* Reworked the APIs around custom images and audio. Use the new `.asset()` or `.network()` constructors
+
 ## [1.0.0-dev.2]
 
 * Fixed an issue that happens with MSIX app builds. Thanks to PR from [Levi Lesches](https://github.com/Levi-Lesches)
