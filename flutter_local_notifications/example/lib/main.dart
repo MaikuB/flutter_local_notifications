@@ -1331,8 +1331,10 @@ class _HomePageState extends State<HomePage> {
     );
     final WindowsNotificationDetails windowsNotificationDetails =
         WindowsNotificationDetails(
-      audio: WindowsNotificationAudio.preset(
-          sound: WindowsNotificationSound.alarm5),
+      audio: WindowsNotificationAudio.asset(
+        'sound/slow_spring_board.mp3',
+        debugModeFallback: WindowsNotificationSound.alarm5,
+      ),
     );
     final NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,

@@ -32,9 +32,9 @@ enum WindowsImageCrop {
 
 /// An image in a Windows notification.
 class WindowsImage extends WindowsNotificationPart {
-  /// Creates a Windows notification image.
-  const WindowsImage.file(
-    this.file, {
+  /// Creates a Windows notification image from a network image.
+  const WindowsImage.network(
+    this.uri, {
     required this.altText,
     this.addQueryParams = false,
     this.placement,
@@ -42,24 +42,18 @@ class WindowsImage extends WindowsNotificationPart {
   });
 
   /// Creates a Windows notification image from a [Flutter asset](https://docs.flutter.dev/ui/assets/assets-and-images#loading-images).
+  ///
+  /// In debug builds, this will use a `file:///` URI, but in release builds, it will use an
+  /// `ms-appx:///` URI. Note that release builds must be packaged in an MSIX installer to work.
   WindowsImage.asset(
     String assetName, {
     required this.altText,
     this.addQueryParams = false,
     this.placement,
     this.crop,
-  }) : file = kDebugMode
+  }) : uri = kDebugMode
             ? Uri.file(File(assetName).absolute.path, windows: true)
-            : Uri.parse('ms-appx:///$assetName');
-
-  /// Allowed Uri schemes for [WindowsImage].
-  static const Set<String> allowedSchemes = <String>{
-    'http',
-    'https',
-    'ms-appx',
-    'file',
-    'ms-appdata'
-  };
+            : Uri.parse('ms-appx:///data/flutter_assets/$assetName');
 
   /// Whether Windows should add URL query parameters when fetching the image.
   final bool addQueryParams;
@@ -68,7 +62,7 @@ class WindowsImage extends WindowsNotificationPart {
   final String altText;
 
   /// The source of the image.
-  final Uri file;
+  final Uri uri;
 
   /// Where this image will be placed. Null indicates below the notification.
   final WindowsImagePlacement? placement;

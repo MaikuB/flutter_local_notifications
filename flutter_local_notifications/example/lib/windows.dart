@@ -47,12 +47,6 @@ List<Widget> examples({
         },
       ),
       PaddedElevatedButton(
-        buttonText: 'Show notification with sound from file',
-        onPressed: () async {
-          await _showWindowsNotificationWithSound();
-        },
-      ),
-      PaddedElevatedButton(
         buttonText: 'Show notifications with columns',
         onPressed: () async {
           await _showWindowsNotificationWithGroups();
@@ -207,30 +201,15 @@ Future<void> _showWindowsNotificationWithImages() =>
     flutterLocalNotificationsPlugin.show(
       id++,
       'This notification has an image',
-      'You can show images from ms-appx, ms-appdata, http(s), or file URIs. See the columns example for more.',
+      'You can show images from assets or the network. See the columns example as well.',
       NotificationDetails(
         windows: WindowsNotificationDetails(
           images: <WindowsImage>[
-            WindowsImage.file(
-              Uri.parse(
-                  'ms-appx:///data/flutter_assets/icons/4.0x/app_icon_density.png'),
+            WindowsImage.asset(
+              'icons/4.0x/app_icon_density.png',
               altText: 'A beautiful image',
             ),
           ],
-        ),
-      ),
-    );
-
-Future<void> _showWindowsNotificationWithSound() =>
-    flutterLocalNotificationsPlugin.show(
-      id++,
-      'This notification has custom sound',
-      'Not just a Windows preset. Only ms-appx or ms-appdata URIs are allowed though',
-      NotificationDetails(
-        windows: WindowsNotificationDetails(
-          audio: WindowsNotificationAudio.fromFile(
-              file: Uri.parse(
-                  'ms-appx:///data/flutter_assets/sound/slow_spring_board.mp3')),
         ),
       ),
     );
@@ -239,23 +218,22 @@ Future<void> _showWindowsNotificationWithGroups() =>
     flutterLocalNotificationsPlugin.show(
       id++,
       'This notification has many groups',
-      'Each group stays together',
+      'Each group stays together. Web images only load in MSIX builds',
       NotificationDetails(
         windows: WindowsNotificationDetails(
           subtitle: 'Caption text is fainter',
           rows: <WindowsRow>[
             WindowsRow(<WindowsColumn>[
               WindowsColumn(<WindowsNotificationPart>[
-                WindowsImage.file(
-                  Uri.parse(
-                      'ms-appx:///data/flutter_assets/icons/coworker.png'),
+                WindowsImage.asset(
+                  'icons/coworker.png',
                   altText: 'A local image',
                 ),
                 const WindowsNotificationText(
                     text: 'A local image', isCaption: true),
               ]),
               WindowsColumn(<WindowsNotificationPart>[
-                WindowsImage.file(
+                WindowsImage.network(
                   Uri.parse('https://picsum.photos/100'),
                   altText: 'A web image',
                 ),

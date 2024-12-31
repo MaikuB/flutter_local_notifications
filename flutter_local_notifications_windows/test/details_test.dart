@@ -93,9 +93,10 @@ void main() => group('Details:', () {
       test('Rows', () {
         const WindowsColumn emptyColumn =
             WindowsColumn(<WindowsNotificationPart>[]);
-        final WindowsImage image = WindowsImage.file(
-            Uri.parse('ms-appx:///test/icon.png'),
-            altText: 'an icon');
+        final WindowsImage image = WindowsImage.asset(
+          'test/icon.png',
+          altText: 'an icon',
+        );
         const WindowsNotificationText text =
             WindowsNotificationText(text: 'Text');
         final WindowsColumn simpleColumn =
@@ -131,11 +132,11 @@ void main() => group('Details:', () {
       });
 
       test('Images', () async {
-        final WindowsImage simpleImage = WindowsImage.file(
-          Uri.parse('ms-appx:///asset.png'),
+        final WindowsImage simpleImage = WindowsImage.asset(
+          'asset.png',
           altText: 'an icon',
         );
-        final WindowsImage complexImage = WindowsImage.file(
+        final WindowsImage complexImage = WindowsImage.network(
           Uri.parse('https://picsum.photos/500'),
           altText: 'an icon',
           addQueryParams: true,
