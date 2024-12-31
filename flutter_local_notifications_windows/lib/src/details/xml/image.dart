@@ -18,7 +18,7 @@ extension ImageToXml on WindowsImage {
     builder.element(
       'image',
       attributes: <String, String>{
-        'src': Uri.file(file.absolute.path, windows: true).toFilePath(),
+        'src': file.toString(),
         'alt': altText,
         'addImageQuery': addQueryParams.toString(),
         if (placement != null) 'placement': placement!.name,

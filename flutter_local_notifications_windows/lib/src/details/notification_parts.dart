@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+import "package:flutter/services.dart";
+
 /// A text or image element in a Windows notification.
 ///
 /// Note: This should not be used for anything else as notification
@@ -39,6 +42,26 @@ class WindowsImage extends WindowsNotificationPart {
     this.crop,
   });
 
+  WindowsImage.asset(
+    String assetName, {
+    required this.altText,
+    this.addQueryParams = false,
+    this.placement,
+    this.crop,
+  }) :
+    file = kDebugMode
+      ? Uri.file(File(assetName).absolute.path, windows: true)
+      : Uri.parse('ms-appx:///$assetName');
+
+  /// Allowed Uri schemes for [WindowsImage].
+  static const Set<String> allowedSchemes = <String>{
+    'http',
+    'https',
+    'ms-appx',
+    'file',
+    'ms-appdata'
+  };
+
   /// Whether Windows should add URL query parameters when fetching the image.
   final bool addQueryParams;
 
@@ -46,7 +69,7 @@ class WindowsImage extends WindowsNotificationPart {
   final String altText;
 
   /// The source of the image.
-  final File file;
+  final Uri file;
 
   /// Where this image will be placed. Null indicates below the notification.
   final WindowsImagePlacement? placement;

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -45,6 +44,12 @@ List<Widget> examples({
         buttonText: 'Show notifications with image',
         onPressed: () async {
           await _showWindowsNotificationWithImages();
+        },
+      ),
+      PaddedElevatedButton(
+        buttonText: 'Show notification with sound from file',
+        onPressed: () async {
+          await _showWindowsNotificationWithSound();
         },
       ),
       PaddedElevatedButton(
@@ -202,15 +207,27 @@ Future<void> _showWindowsNotificationWithImages() =>
     flutterLocalNotificationsPlugin.show(
       id++,
       'This notification has an image',
-      'You can only show images from files',
+      'You can show images from ms-appx, ms-appdata, http(s), or file URIs. See the columns example for more.',
       NotificationDetails(
         windows: WindowsNotificationDetails(
           images: <WindowsImage>[
             WindowsImage.file(
-              File('./icons/4.0x/app_icon_density.png').absolute,
+              Uri.parse('ms-appx:///data/flutter_assets/icons/4.0x/app_icon_density.png'),
               altText: 'A beautiful image',
             ),
           ],
+        ),
+      ),
+    );
+
+Future<void> _showWindowsNotificationWithSound() =>
+    flutterLocalNotificationsPlugin.show(
+      id++,
+      'This notification has custom sound',
+      'Not just a Windows preset. Only ms-appx or ms-appdata URIs are allowed though',
+      NotificationDetails(
+        windows: WindowsNotificationDetails(
+          audio: WindowsNotificationAudio.fromFile(file: Uri.parse('ms-appx:///data/flutter_assets/sound/slow_spring_board.mp3')),
         ),
       ),
     );
@@ -226,16 +243,17 @@ Future<void> _showWindowsNotificationWithGroups() =>
           rows: <WindowsRow>[
             WindowsRow(<WindowsColumn>[
               WindowsColumn(<WindowsNotificationPart>[
-                WindowsImage.file(File('icons/coworker.png').absolute,
-                    altText: 'A coworker'),
+                WindowsImage.file(
+                  Uri.parse('ms-appx:///data/flutter_assets/icons/coworker.png'),
+                    altText: 'A local image',),
                 const WindowsNotificationText(
-                    text: 'A coworker', isCaption: true),
+                    text: 'A local image', isCaption: true),
               ]),
               WindowsColumn(<WindowsNotificationPart>[
                 WindowsImage.file(
-                    File('icons/4.0x/app_icon_density.png').absolute,
-                    altText: 'The icon'),
-                const WindowsNotificationText(text: 'The icon'),
+                    Uri.parse('https://picsum.photos/100'),
+                    altText: 'A web image',),
+                const WindowsNotificationText(text: 'A web image'),
               ]),
             ]),
           ],
