@@ -71,6 +71,13 @@ typedef enum NativeUpdateResult {
   notFound = 2,
 } NativeUpdateResult;
 
+/// Checks whether the current application has package identity.
+///
+/// This impacts whether apps can query active notifications or cancel them.
+/// For more details, see
+/// https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/package-identity-overview.
+FFI_PLUGIN_EXPORT bool hasPackageIdentity();
+
 /// Allocates a new plugin that must be released with [disposePlugin].
 FFI_PLUGIN_EXPORT NativePlugin* createPlugin();
 

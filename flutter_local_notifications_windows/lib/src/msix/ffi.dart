@@ -1,9 +1,8 @@
 import 'dart:ffi';
 import 'dart:io';
-import 'package:ffi/ffi.dart';
-import 'package:win32/win32.dart';
 
 import '../../flutter_local_notifications_windows.dart';
+import '../ffi/bindings.dart';
 
 /// Helpful methods to support MSIX and package identity.
 class MsixUtils {
@@ -25,21 +24,23 @@ class MsixUtils {
   /// depending on whether the app is running in debug, release, or as an MSIX.
   /// - [WindowsNotificationAudio.asset] takes an audio file to use for apps
   /// with package identity, and a preset fallbacks for apps without.
-  static bool hasPackageIdentity() => using((Arena arena) {
-        final bool? cached = _hasPackageIdentity;
-        if (cached != null) {
-          return cached;
-        } else if (!Platform.isWindows) {
-          return false;
-        } else if (IsWindows8OrGreater() != 1) {
-          return false;
-        }
-        final Pointer<Uint32> length = arena<Uint32>();
-        final int error = GetCurrentPackageFullName(length, nullptr);
-        final bool result = error != WIN32_ERROR.APPMODEL_ERROR_NO_PACKAGE;
-        _hasPackageIdentity = result;
-        return result;
-      });
+  static bool hasPackageIdentity() {
+    final bool? cached = _hasPackageIdentity;
+    if (cached != null) {
+      return cached;
+    } else if (!Platform.isWindows) {
+      return false;
+    } else {
+      final DynamicLibrary lib = DynamicLibrary.open(
+        'flutter_local_notifications_windows.dll',
+      );
+      final NotificationsPluginBindings bindings =
+          NotificationsPluginBindings(lib);
+      final bool result = bindings.hasPackageIdentity();
+      _hasPackageIdentity = result;
+      return result;
+    }
+  }
 
   static bool? _hasPackageIdentity;
 

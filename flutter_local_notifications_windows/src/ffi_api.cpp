@@ -8,6 +8,13 @@
 
 using winrt::Windows::Data::Xml::Dom::XmlDocument;
 
+bool hasPackageIdentity() {
+  if (!IsWindows8OrGreater()) return false;
+  uint32_t length = 0;
+  int error = GetCurrentPackageFullName(&length, nullptr);
+  return error != APPMODEL_ERROR_NO_PACKAGE;
+}
+
 NativePlugin* createPlugin() { return new NativePlugin(); }
 
 void disposePlugin(NativePlugin* plugin) { delete plugin; }
@@ -20,9 +27,7 @@ bool init(
   if (iconPath != nullptr) icon = string(iconPath);
   const auto didRegister = plugin->registerApp(aumId, appName, guid, icon, callback);
   if (!didRegister) return false;
-  const auto identity = plugin->checkIdentity();
-  if (!identity.has_value()) return false;
-  plugin->hasIdentity = identity.value();
+  plugin->hasIdentity = hasPackageIdentity();
   plugin->aumid = winrt::to_hstring(aumId);
   plugin->notifier = plugin->hasIdentity
     ? ToastNotificationManager::CreateToastNotifier()
