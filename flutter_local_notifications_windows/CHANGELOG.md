@@ -1,6 +1,6 @@
 ## [1.0.0-dev.3]
 
-* **Breaking change** Bumped the minimum Flutter SDK to `3.22.0` and Dart to `3.4.0`
+* **Breaking change** Bumped the minimum Flutter SDK to `3.24.0` and Dart to `3.5.0`
 * **Breaking change** Reworked the APIs around custom images and audio. Check the updated example for more details, but in short:
   * Instead of `WindowsNotificationAudio.fromFile()`, use `WindowsNotificationAudio.asset()`
   * Instead of `WindowsImage.file()`, use `WindowsImage()`. See the docs for what URIs are supported

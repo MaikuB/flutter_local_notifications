@@ -61,7 +61,7 @@ A cross platform plugin for displaying local notifications.
 * **Linux**. Uses the [Desktop Notifications Specification](https://specifications.freedesktop.org/notification-spec/)
 * **Windows** Uses the [C++/WinRT](https://learn.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/) implementation of [Toast Notifications](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/toast-notifications-overview)
 
-Note: the plugin requires Flutter SDK 3.22 at a minimum. The list of support platforms for Flutter 3.22 itself can be found [here](https://github.com/flutter/website/blob/ae27bea8bebdec2825698dca5da49d0c0ef6235b/src/_data/platforms.yml)
+Note: the plugin requires Flutter SDK 3.24 at a minimum. The list of support platforms for Flutter 3.24 itself can be found [here](https://github.com/flutter/website/blob/ee37ad99ab9aa95bf6b51311edea36c0f671ad78/src/_data/platforms.yml)
 
 ## ✨ Features
 

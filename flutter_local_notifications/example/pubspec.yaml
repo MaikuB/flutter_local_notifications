@@ -31,8 +31,8 @@ flutter:
     - sound/
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.5.0
+  flutter: ">=3.24.0"
 
 msix_config:
   display_name: Flutter Local Notifications Example
