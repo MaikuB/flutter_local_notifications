@@ -13,11 +13,65 @@ const WindowsInitializationSettings initSettings =
   guid: 'd49b0314-ee7a-4626-bf79-97cdb8a991bb',
 );
 
-List<Widget> examples({
-  required TextEditingController xmlController,
-  required VoidCallback showXmlNotification,
-}) =>
-    <Widget>[
+class _WindowsXmlBuilder extends StatefulWidget {
+  @override
+  _WindowsXmlBuilderState createState() => _WindowsXmlBuilderState();
+}
+
+class _WindowsXmlBuilderState extends State<_WindowsXmlBuilder> {
+  final TextEditingController xmlController = TextEditingController();
+  final Map<String, String> bindings = <String, String>{
+    'message': 'Hello, World!'
+  };
+
+  final FlutterLocalNotificationsWindows? plugin =
+      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+          FlutterLocalNotificationsWindows>();
+
+  String get xml => xmlController.text;
+
+  bool isValid = true;
+
+  void onPressed() {
+    setState(() => isValid = plugin?.isValidXml(xml) ?? false);
+    if (isValid) {
+      plugin?.showRawXml(id: id++, xml: xml, bindings: bindings);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        width: 500,
+        child: ExpansionTile(
+            title: const Text('Click to expand raw XML'),
+            children: <Widget>[
+              TextField(
+                maxLines: 20,
+                style: const TextStyle(fontFamily: 'RobotoMono'),
+                controller: xmlController,
+                onSubmitted: (_) => onPressed,
+                decoration: InputDecoration(
+                  hintText: 'Enter the raw xml',
+                  errorText: isValid ? null : 'Invalid XML',
+                  helperText: 'Bindings: {message} --> Hello, World!',
+                  constraints:
+                      const BoxConstraints.tightFor(width: 600, height: 480),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () => xmlController.clear(),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              PaddedElevatedButton(
+                buttonText: 'Show notification with raw XML',
+                onPressed: onPressed,
+              ),
+            ]),
+      );
+}
+
+List<Widget> examples() => <Widget>[
       const Text(
         'Windows-specific examples',
         style: TextStyle(fontWeight: FontWeight.bold),
@@ -86,33 +140,7 @@ List<Widget> examples({
           await _showWindowsNotificationWithHeader();
         },
       ),
-      PaddedElevatedButton(
-        buttonText: 'Show notification with raw XML',
-        onPressed: showXmlNotification,
-      ),
-      const SizedBox(height: 8),
-      SizedBox(
-        width: 500,
-        child: ExpansionTile(
-            title: const Text('Click to expand raw XML'),
-            children: <Widget>[
-              TextField(
-                maxLines: 20,
-                style: const TextStyle(fontFamily: 'RobotoMono'),
-                controller: xmlController,
-                decoration: InputDecoration(
-                  hintText: 'Enter the raw xml',
-                  helperText: 'Bindings: {message} --> Hello, World!',
-                  constraints:
-                      const BoxConstraints.tightFor(width: 600, height: 480),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () => xmlController.clear(),
-                  ),
-                ),
-              ),
-            ]),
-      ),
+      _WindowsXmlBuilder(),
     ];
 
 Future<void> _showWindowsNotificationWithDuration() async {

@@ -218,9 +218,6 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _linuxIconPathController =
       TextEditingController();
 
-  final TextEditingController _windowsRawXmlController =
-      TextEditingController();
-
   bool _notificationsEnabled = false;
 
   @override
@@ -966,11 +963,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                   ],
-                  if (!kIsWeb && Platform.isWindows)
-                    ...windows.examples(
-                      xmlController: _windowsRawXmlController,
-                      showXmlNotification: _showWindowsNotificationWithRawXml,
-                    ),
+                  if (!kIsWeb && Platform.isWindows) ...windows.examples(),
                 ],
               ),
             ),
@@ -2702,16 +2695,6 @@ class _HomePageState extends State<HomePage> {
       platformChannelSpecifics,
     );
   }
-
-  Future<void>? _showWindowsNotificationWithRawXml() =>
-      flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              FlutterLocalNotificationsWindows>()
-          ?.showRawXml(
-        id: id++,
-        xml: _windowsRawXmlController.text,
-        bindings: <String, String>{'message': 'Hello, World!'},
-      );
 }
 
 Future<void> _showLinuxNotificationWithBodyMarkup() async {
