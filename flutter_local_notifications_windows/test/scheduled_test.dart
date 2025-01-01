@@ -23,21 +23,6 @@ void main() => group('Schedules', () {
           (await plugin.pendingNotificationRequests()).length;
       late final Location location = getLocation('US/Eastern');
 
-      test('work with basic times', skip: true, () async {
-        await plugin.cancelAll();
-        expect(await countPending(), 0);
-        final TZDateTime now = TZDateTime.now(location);
-        final TZDateTime later = now.add(const Duration(days: 1));
-        expect(plugin.zonedSchedule(300, null, null, later, null), completes);
-        expect(await countPending(), 1);
-        expect(plugin.zonedSchedule(301, null, null, later, null), completes);
-        expect(await countPending(), 2);
-        expect(plugin.zonedSchedule(302, null, null, later, null), completes);
-        expect(await countPending(), 3);
-        await plugin.cancelAll();
-        expect(await countPending(), 0);
-      });
-
       test('do not work with earlier time', () async {
         final TZDateTime now = TZDateTime.now(location);
         final TZDateTime earlier = now.subtract(const Duration(days: 1));
