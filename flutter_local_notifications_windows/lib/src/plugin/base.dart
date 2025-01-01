@@ -22,8 +22,7 @@ abstract class WindowsNotificationsBase
 
   /// Shows a notification using raw XML passed to the Windows APIs.
   ///
-  /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
-  /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
+  /// To check if the XML is valid, use [isValidXml].
   Future<void> showRawXml({
     required int id,
     required String xml,
@@ -90,4 +89,10 @@ abstract class WindowsNotificationsBase
   /// configuration for Windows APIs.
   @visibleForTesting
   void enableMultithreading();
+
+  /// Checks if some XML is a valid Windows notification.
+  ///
+  /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
+  /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
+  bool isValidXml(String xml);
 }

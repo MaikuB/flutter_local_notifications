@@ -78,6 +78,8 @@ typedef enum NativeUpdateResult {
 /// https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/package-identity-overview.
 FFI_PLUGIN_EXPORT bool hasPackageIdentity();
 
+FFI_PLUGIN_EXPORT bool isValidXml(char* xml);
+
 /// Allocates a new plugin that must be released with [disposePlugin].
 FFI_PLUGIN_EXPORT NativePlugin* createPlugin();
 

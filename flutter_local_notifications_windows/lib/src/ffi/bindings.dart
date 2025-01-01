@@ -42,6 +42,20 @@ class NotificationsPluginBindings {
   late final _hasPackageIdentity =
       _hasPackageIdentityPtr.asFunction<bool Function()>();
 
+  bool isValidXml(
+    ffi.Pointer<pkg_ffi.Utf8> xml,
+  ) {
+    return _isValidXml(
+      xml,
+    );
+  }
+
+  late final _isValidXmlPtr =
+      _lookup<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<pkg_ffi.Utf8>)>>(
+          'isValidXml');
+  late final _isValidXml =
+      _isValidXmlPtr.asFunction<bool Function(ffi.Pointer<pkg_ffi.Utf8>)>();
+
   /// Allocates a new plugin that must be released with [disposePlugin].
   ffi.Pointer<NativePlugin> createPlugin() {
     return _createPlugin();

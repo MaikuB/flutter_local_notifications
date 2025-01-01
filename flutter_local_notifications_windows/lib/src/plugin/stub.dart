@@ -96,4 +96,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   @override
   @visibleForTesting
   void enableMultithreading() {}
+
+  @override
+  bool isValidXml(String xml) => false;
 }

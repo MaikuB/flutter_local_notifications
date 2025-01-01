@@ -37,6 +37,16 @@ bool init(
   return true;
 }
 
+bool isValidXml(char* xml) {
+  XmlDocument doc = XmlDocument();
+  try {
+    doc.LoadXml(winrt::to_hstring(xml));
+    return true;
+  } catch (winrt::hresult_error error) {
+    return false;
+  }
+}
+
 bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap bindings) {
   if (!plugin->isReady) return false;
   XmlDocument doc;

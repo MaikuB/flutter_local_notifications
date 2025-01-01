@@ -56,25 +56,26 @@ const String complexXml = '''
 </toast>
 ''';
 
-void main() => group('XML', () {
-      FlutterLocalNotificationsWindows().enableMultithreading();
+void main() {
+  group('XML', () {
+    FlutterLocalNotificationsWindows().enableMultithreading();
 
-      final FlutterLocalNotificationsWindows plugin =
-          FlutterLocalNotificationsWindows();
-      setUpAll(() => plugin.initialize(settings));
-      tearDownAll(() async {
-        await plugin.cancelAll();
-        plugin.dispose();
-      });
+    final FlutterLocalNotificationsWindows plugin =
+        FlutterLocalNotificationsWindows();
 
-      test('catches invalid XML', () async {
-        expect(plugin.showRawXml(id: 0, xml: emptyXml), throwsArgumentError);
-        expect(plugin.showRawXml(id: 1, xml: invalidXml), throwsArgumentError);
-        expect(
-            plugin.showRawXml(id: 2, xml: notWindowsXml), throwsArgumentError);
-        expect(
-            plugin.showRawXml(id: 3, xml: unmatchedXml), throwsArgumentError);
-        expect(plugin.showRawXml(id: 4, xml: validXml), completes);
-        expect(plugin.showRawXml(id: 5, xml: complexXml), completes);
-      });
+    setUpAll(() => plugin.initialize(settings));
+    tearDownAll(() async {
+      await plugin.cancelAll();
+      plugin.dispose();
     });
+
+    test('catches invalid XML', () async {
+      expect(plugin.isValidXml(emptyXml), isFalse);
+      expect(plugin.isValidXml(invalidXml), isFalse);
+      expect(plugin.isValidXml(notWindowsXml), isFalse);
+      expect(plugin.isValidXml(unmatchedXml), isFalse);
+      expect(plugin.isValidXml(validXml), isTrue);
+      expect(plugin.isValidXml(complexXml), isTrue);
+    });
+  });
+}

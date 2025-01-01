@@ -281,6 +281,12 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
       });
 
   @override
+  bool isValidXml(String xml) => using((Arena arena) {
+    final Pointer<Utf8> nativeXml = xml.toNativeUtf8(allocator: arena);
+    return _bindings.isValidXml(nativeXml);
+  });
+
+  @override
   Future<void> zonedSchedule(
     int id,
     String? title,
