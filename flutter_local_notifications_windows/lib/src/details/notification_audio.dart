@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:msix/msix.dart';
 
 /// A preset sound for a Windows notification.
 enum WindowsNotificationSound {
@@ -101,21 +101,20 @@ class WindowsNotificationAudio {
   /// Uses an audio file from a Flutter asset.
   ///
   /// Note that this will only work in release builds that have been packaged as
-  /// an MSIX installer. There is no way to play a custom audio file in debug
-  /// mode, but if you pass a [WindowsNotificationSound] for `debugModeFallback`
-  /// it will be used instead, which can still be useful.
+  /// an MSIX installer. If you pass a [WindowsNotificationSound] for `fallback`
+  /// it will be used in debug and releases without MSIX.
   ///
   /// Windows supports the following formats: `.aac`, `.flac`, `.m4a`, `.mp3`,
   /// `.wav`, and `.wma`.
   WindowsNotificationAudio.asset(
     String assetName, {
     this.shouldLoop = false,
-    WindowsNotificationSound debugModeFallback =
+    WindowsNotificationSound fallback =
         WindowsNotificationSound.defaultSound,
   })  : isSilent = false,
-        source = kDebugMode
-            ? debugModeFallback.name
-            : 'ms-appx:///data/flutter_assets/$assetName';
+        source = Msix.hasPackageIdentity()
+          ? Msix.assetUri(assetName).toString()
+          : fallback.name;
 
   /// Whether this audio should loop.
   final bool shouldLoop;

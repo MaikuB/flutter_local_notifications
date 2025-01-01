@@ -1333,7 +1333,7 @@ class _HomePageState extends State<HomePage> {
         WindowsNotificationDetails(
       audio: WindowsNotificationAudio.asset(
         'sound/slow_spring_board.mp3',
-        debugModeFallback: WindowsNotificationSound.alarm5,
+        fallback: WindowsNotificationSound.alarm5,
       ),
     );
     final NotificationDetails notificationDetails = NotificationDetails(
