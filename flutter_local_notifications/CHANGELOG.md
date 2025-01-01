@@ -4,6 +4,7 @@
   * Instead of `WindowsNotificationAudio.fromFile()`, use `WindowsNotificationAudio.asset()`
   * Instead of `WindowsImage.file()`, use `WindowsImage()`. See the docs for what URIs are supported
 * [Windows] Added `MsixUtils.hasPackageIdentity()` and `MsixUtils.assetUri()`. You shouldn't need to use `.assetUri()` directly, but it may be helpful to check `.hasPackageIdentity()` to know what features your application can support.
+* [Windows] Added `FlutterLocalNotificationsWindows.isValidXml()` for testing raw XML.
 
 ## [19.0.0-dev.3]
 
