@@ -34,6 +34,8 @@ void main() => group('Schedules', () {
         expect(await countPending(), 2);
         expect(plugin.zonedSchedule(302, null, null, later, null), completes);
         expect(await countPending(), 3);
+        await plugin.cancelAll();
+        expect(await countPending(), 0);
       });
 
       test('do not work with earlier time', () async {

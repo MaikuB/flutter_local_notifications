@@ -2,9 +2,11 @@ import 'package:flutter_local_notifications_windows/flutter_local_notifications_
 import 'package:test/test.dart';
 
 const WindowsInitializationSettings settings = WindowsInitializationSettings(
-    appName: 'test',
-    appUserModelId: 'com.test.test',
-    guid: 'a8c22b55-049e-422f-b30f-863694de08c8');
+  appName: 'test',
+  appUserModelId: 'com.test.test',
+  guid: 'a8c22b55-049e-422f-b30f-863694de08c8',
+);
+
 const String emptyXml = '';
 const String invalidXml = 'Blah blah blah';
 const String notWindowsXml = '<text>Hi<text>';
