@@ -22,6 +22,10 @@ List<Widget> examples({
         'Windows-specific examples',
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
+      if (MsixUtils.hasPackageIdentity())
+        const Text('Running as an MSIX, all features are available')
+      else
+        const Text('Running as an EXE, some features are not available'),
       PaddedElevatedButton(
         buttonText: 'Show short and long notifications notification',
         onPressed: () async {

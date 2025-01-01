@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:msix/msix.dart';
+import '../../flutter_local_notifications_windows.dart';
 
 /// A text or image element in a Windows notification.
 ///
@@ -38,9 +38,9 @@ enum WindowsImageCrop {
 ///
 /// | URI | Debug | Release (EXE) | Release (MSIX) |
 /// |--------|--------|--------|--------|
-/// | `file:///`   | ✅ | ✅ | 🟨 |
 /// | `http(s)://` | ❌ | ❌ | ✅ |
 /// | `ms-appx://` | ❌ | ❌ | ✅ |
+/// | `file:///`   | ✅ | ✅ | 🟨 |
 /// | `assetUri()` | ✅ | ✅ | ✅ |
 ///
 /// Each URI type has different uses:
@@ -75,8 +75,8 @@ class WindowsImage extends WindowsNotificationPart {
   static Uri assetUri(String assetName) {
     if (kDebugMode) {
       return Uri.file(File(assetName).absolute.path, windows: true);
-    } else if (Msix.hasPackageIdentity()) {
-      return Msix.assetUri(assetName);
+    } else if (MsixUtils.hasPackageIdentity()) {
+      return MsixUtils.assetUri(assetName);
     } else {
       return Uri.file(File('data/flutter_assets/$assetName').absolute.path, windows: true);
     }

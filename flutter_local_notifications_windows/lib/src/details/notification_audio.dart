@@ -1,4 +1,4 @@
-import 'package:msix/msix.dart';
+import '../../flutter_local_notifications_windows.dart';
 
 /// A preset sound for a Windows notification.
 enum WindowsNotificationSound {
@@ -112,8 +112,8 @@ class WindowsNotificationAudio {
     WindowsNotificationSound fallback =
         WindowsNotificationSound.defaultSound,
   })  : isSilent = false,
-        source = Msix.hasPackageIdentity()
-          ? Msix.assetUri(assetName).toString()
+        source = MsixUtils.hasPackageIdentity()
+          ? MsixUtils.assetUri(assetName).toString()
           : fallback.name;
 
   /// Whether this audio should loop.

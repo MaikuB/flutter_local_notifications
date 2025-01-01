@@ -14,11 +14,8 @@ dependencies:
   flutter_local_notifications_platform_interface: ^8.1.0-dev.1
   meta: ^1.11.0
   timezone: ^0.10.0
+  win32: ^5.10.0
   xml: ^6.5.0
-  msix:
-    git:
-      url: https://github.com/Levi-Lesches/msix
-      ref: is-msix
 
 dev_dependencies:
   ffigen: ^13.0.0
