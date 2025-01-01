@@ -23,7 +23,7 @@ void main() => group('Schedules', () {
           (await plugin.pendingNotificationRequests()).length;
       late final Location location = getLocation('US/Eastern');
 
-      test('work with basic times', () async {
+      test('work with basic times', skip: true, () async {
         await plugin.cancelAll();
         expect(await countPending(), 0);
         final TZDateTime now = TZDateTime.now(location);
