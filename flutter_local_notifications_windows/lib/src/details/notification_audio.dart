@@ -109,12 +109,11 @@ class WindowsNotificationAudio {
   WindowsNotificationAudio.asset(
     String assetName, {
     this.shouldLoop = false,
-    WindowsNotificationSound fallback =
-        WindowsNotificationSound.defaultSound,
+    WindowsNotificationSound fallback = WindowsNotificationSound.defaultSound,
   })  : isSilent = false,
         source = MsixUtils.hasPackageIdentity()
-          ? MsixUtils.assetUri(assetName).toString()
-          : fallback.name;
+            ? MsixUtils.assetUri(assetName).toString()
+            : fallback.name;
 
   /// Whether this audio should loop.
   final bool shouldLoop;

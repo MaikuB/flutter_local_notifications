@@ -27,23 +27,24 @@ class MsixUtils {
   /// - [WindowsNotificationAudio.asset] takes an audio file to use for apps
   /// with package identity, and a preset fallbacks for apps without.
   static bool hasPackageIdentity() => using((Arena arena) {
-    final bool? cached = _hasPackageIdentity;
-    if (cached != null) {
-      return cached;
-    } else if (!Platform.isWindows) {
-      return false;
-    } else if (IsWindows8OrGreater() != 1) {
-      return false;
-    }
-    final Pointer<Uint32> length = arena<Uint32>();
-    final int error = GetCurrentPackageFullName(length, nullptr);
-    final bool result = error != WIN32_ERROR.APPMODEL_ERROR_NO_PACKAGE;
-    _hasPackageIdentity = result;
-    return result;
-  });
+        final bool? cached = _hasPackageIdentity;
+        if (cached != null) {
+          return cached;
+        } else if (!Platform.isWindows) {
+          return false;
+        } else if (IsWindows8OrGreater() != 1) {
+          return false;
+        }
+        final Pointer<Uint32> length = arena<Uint32>();
+        final int error = GetCurrentPackageFullName(length, nullptr);
+        final bool result = error != WIN32_ERROR.APPMODEL_ERROR_NO_PACKAGE;
+        _hasPackageIdentity = result;
+        return result;
+      });
 
   static bool? _hasPackageIdentity;
 
   /// Gets an `ms-appx:///` URI from a [Flutter asset](https://docs.flutter.dev/ui/assets/assets-and-images).
-  static Uri assetUri(String path) => Uri.parse('ms-appx:///data/flutter_assets/$path');
+  static Uri assetUri(String path) =>
+      Uri.parse('ms-appx:///data/flutter_assets/$path');
 }

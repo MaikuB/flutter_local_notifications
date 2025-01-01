@@ -78,7 +78,10 @@ class WindowsImage extends WindowsNotificationPart {
     } else if (MsixUtils.hasPackageIdentity()) {
       return MsixUtils.assetUri(assetName);
     } else {
-      return Uri.file(File('data/flutter_assets/$assetName').absolute.path, windows: true);
+      return Uri.file(
+        File('data/flutter_assets/$assetName').absolute.path,
+        windows: true,
+      );
     }
   }
 
