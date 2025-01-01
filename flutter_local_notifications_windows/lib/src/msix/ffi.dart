@@ -5,7 +5,6 @@ import 'package:win32/win32.dart';
 
 import '../../flutter_local_notifications_windows.dart';
 
-// ignore: avoid_classes_with_only_static_members
 /// Helpful methods to support MSIX and package identity.
 class MsixUtils {
   /// Returns whether the current app was installed with an MSIX installer.
