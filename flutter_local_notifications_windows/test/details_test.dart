@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
+import 'package:flutter_local_notifications_windows/src/details/notification_to_xml.dart';
 import 'package:test/test.dart';
 
 const WindowsInitializationSettings settings = WindowsInitializationSettings(
@@ -10,11 +11,17 @@ const WindowsInitializationSettings settings = WindowsInitializationSettings(
 extension PluginUtils on FlutterLocalNotificationsWindows {
   static int id = 15;
 
-  Future<void> showDetails(WindowsNotificationDetails details) =>
-      show(id++, 'Title', 'Body', details: details);
-
-  void testDetails(WindowsNotificationDetails details) =>
-      expect(showDetails(details), completes);
+  void testDetails(WindowsNotificationDetails details) => expect(
+        isValidXml(
+          notificationToXml(
+            title: 'title',
+            body: 'body',
+            payload: 'payload',
+            details: details,
+          ),
+        ),
+        isTrue,
+      );
 }
 
 void main() => group('Details:', () {
@@ -70,11 +77,10 @@ void main() => group('Details:', () {
           ..testDetails(WindowsNotificationDetails(
               actions: List<WindowsAction>.filled(5, simpleAction)));
         expect(
-          plugin.showDetails(
-            WindowsNotificationDetails(
-              actions: List<WindowsAction>.filled(6, simpleAction),
-            ),
-          ),
+          () => notificationToXml(
+              details: WindowsNotificationDetails(
+            actions: List<WindowsAction>.filled(6, simpleAction),
+          )),
           throwsArgumentError,
         );
       });
@@ -189,8 +195,8 @@ void main() => group('Details:', () {
               inputs: <WindowsInput>[selection, textInput],
               actions: <WindowsAction>[action]));
         expect(
-          plugin.showDetails(
-            WindowsNotificationDetails(
+          () => notificationToXml(
+            details: WindowsNotificationDetails(
               inputs: List<WindowsInput>.filled(6, textInput),
             ),
           ),
@@ -198,7 +204,7 @@ void main() => group('Details:', () {
         );
       });
 
-      test('Progress', retry: 5, () async {
+      test('Progress', () async {
         final WindowsProgressBar simple = WindowsProgressBar(
           id: 'simple',
           status: 'Testing...',
@@ -243,5 +249,10 @@ void main() => group('Details:', () {
           expect(result, NotificationUpdateResult.success);
           await Future<void>.delayed(const Duration(milliseconds: 10));
         }
+        expect(
+          await plugin.updateProgressBar(
+              notificationId: 202, progressBar: dynamic),
+          NotificationUpdateResult.notFound,
+        );
       });
     });

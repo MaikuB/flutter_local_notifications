@@ -45,7 +45,7 @@ void main() => group('Bindings', () {
         );
       });
 
-      test('fail when notification has been cancelled', retry: 5, () async {
+      test('fail when notification has been cancelled', () async {
         await Future<void>.delayed(const Duration(milliseconds: 200));
         await plugin.show(503, '{title}', '{body}');
         final NotificationUpdateResult result =
