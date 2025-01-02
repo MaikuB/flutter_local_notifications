@@ -34,6 +34,7 @@ public class NotificationDetails implements Serializable {
   private static final String REPEAT_TIME = "repeatTime";
   private static final String PLATFORM_SPECIFICS = "platformSpecifics";
   private static final String AUTO_CANCEL = "autoCancel";
+  private static final String SELECTABLE = "selectable";
   private static final String ONGOING = "ongoing";
   private static final String SILENT = "silent";
   private static final String STYLE = "style";
@@ -155,6 +156,7 @@ public class NotificationDetails implements Serializable {
   public Boolean setAsGroupSummary;
   public Integer groupAlertBehavior;
   public Boolean autoCancel;
+  public Boolean selectable;
   public Boolean ongoing;
   public Boolean silent;
   public Integer day;
@@ -252,6 +254,7 @@ public class NotificationDetails implements Serializable {
         (Map<String, Object>) arguments.get(PLATFORM_SPECIFICS);
     if (platformChannelSpecifics != null) {
       notificationDetails.autoCancel = (Boolean) platformChannelSpecifics.get(AUTO_CANCEL);
+      notificationDetails.selectable = (Boolean) platformChannelSpecifics.get(SELECTABLE);
       notificationDetails.ongoing = (Boolean) platformChannelSpecifics.get(ONGOING);
       notificationDetails.silent = (Boolean) platformChannelSpecifics.get(SILENT);
       notificationDetails.style =
