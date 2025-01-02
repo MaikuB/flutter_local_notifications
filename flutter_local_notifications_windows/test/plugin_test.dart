@@ -18,8 +18,6 @@ const WindowsInitializationSettings badSettings = WindowsInitializationSettings(
 );
 
 void main() => group('Plugin', () {
-      // FlutterLocalNotificationsWindows().enableMultithreading();
-
       setUpAll(initializeTimeZones);
 
       test('initializes safely', () async {

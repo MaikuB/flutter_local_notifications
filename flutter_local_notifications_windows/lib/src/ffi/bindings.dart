@@ -298,18 +298,6 @@ class NotificationsPluginBindings {
           'freeLaunchDetails');
   late final _freeLaunchDetails =
       _freeLaunchDetailsPtr.asFunction<void Function(NativeLaunchDetails)>();
-
-  /// EXPERIMENTAL: Enables multithreading for this application.
-  ///
-  /// NOTE: This is only to make tests more stable and is not intended to be used in applications.
-  void enableMultithreading() {
-    return _enableMultithreading();
-  }
-
-  late final _enableMultithreadingPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function()>>('enableMultithreading');
-  late final _enableMultithreading =
-      _enableMultithreadingPtr.asFunction<void Function()>();
 }
 
 final class NativePlugin extends ffi.Opaque {}

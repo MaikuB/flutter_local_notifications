@@ -136,11 +136,6 @@ FFI_PLUGIN_EXPORT void freeDetailsArray(NativeNotificationDetails* ptr);
 /// Releases the memory associated with a [NativeLaunchDetails].
 FFI_PLUGIN_EXPORT void freeLaunchDetails(NativeLaunchDetails details);
 
-/// EXPERIMENTAL: Enables multithreading for this application.
-///
-/// NOTE: This is only to make tests more stable and is not intended to be used in applications.
-FFI_PLUGIN_EXPORT void enableMultithreading();
-
 #ifdef __cplusplus
 }
 #endif
