@@ -67,7 +67,7 @@ void main() => group('Details:', () {
           buttonStyle: WindowsButtonStyle.success,
           inputId: 'input-id',
           tooltip: 'tooltip',
-          imageUri: WindowsImage.assetUri('test/icon.png'),
+          imageUri: WindowsImage.getAssetUri('test/icon.png'),
         );
         plugin
           ..testDetails(const WindowsNotificationDetails(
@@ -98,7 +98,7 @@ void main() => group('Details:', () {
         const WindowsColumn emptyColumn =
             WindowsColumn(<WindowsNotificationPart>[]);
         final WindowsImage image = WindowsImage(
-          WindowsImage.assetUri('test/icon.png'),
+          WindowsImage.getAssetUri('test/icon.png'),
           altText: 'an icon',
         );
         const WindowsNotificationText text =
@@ -137,7 +137,7 @@ void main() => group('Details:', () {
 
       test('Images', () async {
         final WindowsImage simpleImage = WindowsImage(
-          WindowsImage.assetUri('asset.png'),
+          WindowsImage.getAssetUri('asset.png'),
           altText: 'an icon',
         );
         final WindowsImage complexImage = WindowsImage(

@@ -112,7 +112,7 @@ class WindowsNotificationAudio {
     WindowsNotificationSound fallback = WindowsNotificationSound.defaultSound,
   })  : isSilent = false,
         source = MsixUtils.hasPackageIdentity()
-            ? MsixUtils.assetUri(assetName).toString()
+            ? MsixUtils.getAssetUri(assetName).toString()
             : fallback.name;
 
   /// Whether this audio should loop.

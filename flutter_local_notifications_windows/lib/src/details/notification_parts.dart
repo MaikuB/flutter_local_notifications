@@ -41,10 +41,10 @@ enum WindowsImageCrop {
 /// | `http(s)://` | ❌ | ❌ | ✅ |
 /// | `ms-appx://` | ❌ | ❌ | ✅ |
 /// | `file:///`   | ✅ | ✅ | 🟨 |
-/// | `assetUri()` | ✅ | ✅ | ✅ |
+/// | `getAssetUri()` | ✅ | ✅ | ✅ |
 ///
 /// Each URI type has different uses:
-/// - For Flutter assets, use [assetUri], which return the correct file URI
+/// - For Flutter assets, use [getAssetUri], which return the correct file URI
 /// for debug and release (exe) builds, and an `ms-appx` URI in MSIX builds.
 /// - For images from the web, use an `https` or `http` URI, but note that
 /// these only work in MSIX apps. If you need a network image without using
@@ -67,16 +67,16 @@ class WindowsImage extends WindowsNotificationPart {
     this.crop,
   });
 
-  /// Creates a URI for a [Flutter asset](https://docs.flutter.dev/ui/assets/assets-and-images#loading-images).
+  /// Returns a URI for a [Flutter asset](https://docs.flutter.dev/ui/assets/assets-and-images#loading-images).
   ///
   /// - In debug mode, resolves to a file URI to the asset itself
   /// - In non-MSIX release builds, resolves to a file URI to the bundled asset
-  /// - In MSIX releases, resolves to an `ms-appx` URI from [Msix.assetUri].
-  static Uri assetUri(String assetName) {
+  /// - In MSIX releases, resolves to an `ms-appx` URI from [Msix.getAssetUri].
+  static Uri getAssetUri(String assetName) {
     if (kDebugMode) {
       return Uri.file(File(assetName).absolute.path, windows: true);
     } else if (MsixUtils.hasPackageIdentity()) {
-      return MsixUtils.assetUri(assetName);
+      return MsixUtils.getAssetUri(assetName);
     } else {
       return Uri.file(
         File('data/flutter_assets/$assetName').absolute.path,

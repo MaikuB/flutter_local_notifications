@@ -16,13 +16,13 @@ class MsixUtils {
   ///
   /// These functions will simply do nothing or return empty data in apps
   /// without package identity. Additionally:
-  /// - [WindowsImage.assetUri] will return a `file:///` or `ms-appx:///` URI,
+  /// - [WindowsImage.getAssetUri] will return a `file:///` or `ms-appx:///` URI,
   /// depending on whether the app is running in debug, release, or as an MSIX.
   /// - [WindowsNotificationAudio.asset] takes an audio file to use for apps
   /// with package identity, and a preset fallbacks for apps without.
   static bool hasPackageIdentity() => false; // platforms without FFI
 
   /// Gets an `ms-appx:///` URI from a [Flutter asset](https://docs.flutter.dev/ui/assets/assets-and-images).
-  static Uri assetUri(String path) =>
+  static Uri getAssetUri(String path) =>
       Uri.parse('ms-appx:///data/flutter_assets/$path');
 }

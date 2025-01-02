@@ -240,7 +240,7 @@ Future<void> _showWindowsNotificationWithImages() =>
         windows: WindowsNotificationDetails(
           images: <WindowsImage>[
             WindowsImage(
-              WindowsImage.assetUri('icons/4.0x/app_icon_density.png'),
+              WindowsImage.getAssetUri('icons/4.0x/app_icon_density.png'),
               altText: 'A beautiful image',
             ),
           ],
@@ -260,7 +260,7 @@ Future<void> _showWindowsNotificationWithGroups() =>
             WindowsRow(<WindowsColumn>[
               WindowsColumn(<WindowsNotificationPart>[
                 WindowsImage(
-                  WindowsImage.assetUri('icons/coworker.png'),
+                  WindowsImage.getAssetUri('icons/coworker.png'),
                   altText: 'A local image',
                 ),
                 const WindowsNotificationText(
