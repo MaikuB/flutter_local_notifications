@@ -9,7 +9,6 @@ const WindowsInitializationSettings settings = WindowsInitializationSettings(
     guid: 'a8c22b55-049e-422f-b30f-863694de08c8');
 
 void main() => group('Schedules', () {
-      FlutterLocalNotificationsWindows().enableMultithreading();
       final FlutterLocalNotificationsWindows plugin =
           FlutterLocalNotificationsWindows();
       setUpAll(initializeTimeZones);

@@ -13,7 +13,7 @@ const Map<String, String> bindings = <String, String>{
 };
 
 void main() => group('Bindings', () {
-      FlutterLocalNotificationsWindows().enableMultithreading();
+      // FlutterLocalNotificationsWindows().enableMultithreading();
       final FlutterLocalNotificationsWindows plugin =
           FlutterLocalNotificationsWindows();
       setUpAll(() => plugin.initialize(settings));

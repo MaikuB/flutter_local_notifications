@@ -1,5 +1,4 @@
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
-import 'package:meta/meta.dart';
 import 'package:timezone/timezone.dart';
 
 import '../details.dart';
@@ -81,14 +80,6 @@ abstract class WindowsNotificationsBase
     required int id,
     required Map<String, String> bindings,
   });
-
-  /// EXPERIMENTAL: Enables multithreading
-  ///
-  /// NOTE: This is only here to make tests more stable. This has not been
-  /// tested in an application as it conflicts with Flutter's preferred
-  /// configuration for Windows APIs.
-  @visibleForTesting
-  void enableMultithreading();
 
   /// Checks if some XML is a valid Windows notification.
   ///

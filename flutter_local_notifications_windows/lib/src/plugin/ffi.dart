@@ -1,7 +1,6 @@
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
-import 'package:meta/meta.dart';
 
 import '../details.dart';
 import '../details/notification_to_xml.dart';
@@ -367,8 +366,4 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
             _plugin, id, bindings.toNativeMap(arena));
         return getUpdateResult(result);
       });
-
-  @override
-  @visibleForTesting
-  void enableMultithreading() => _bindings.enableMultithreading();
 }
