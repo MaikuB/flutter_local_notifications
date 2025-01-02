@@ -218,9 +218,6 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _linuxIconPathController =
       TextEditingController();
 
-  final TextEditingController _windowsRawXmlController =
-      TextEditingController();
-
   bool _notificationsEnabled = false;
 
   @override
@@ -966,11 +963,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                   ],
-                  if (!kIsWeb && Platform.isWindows)
-                    ...windows.examples(
-                      xmlController: _windowsRawXmlController,
-                      showXmlNotification: _showWindowsNotificationWithRawXml,
-                    ),
+                  if (!kIsWeb && Platform.isWindows) ...windows.examples(),
                 ],
               ),
             ),
@@ -1061,7 +1054,7 @@ class _HomePageState extends State<HomePage> {
         WindowsAction(
           content: 'Image',
           arguments: 'image',
-          image: File('icons/coworker.png').absolute,
+          imageUri: WindowsImage.getAssetUri('icons/coworker.png'),
         ),
         const WindowsAction(
           content: 'Context',
@@ -1331,8 +1324,10 @@ class _HomePageState extends State<HomePage> {
     );
     final WindowsNotificationDetails windowsNotificationDetails =
         WindowsNotificationDetails(
-      audio: WindowsNotificationAudio.preset(
-          sound: WindowsNotificationSound.alarm5),
+      audio: WindowsNotificationAudio.asset(
+        'sound/slow_spring_board.mp3',
+        fallback: WindowsNotificationSound.alarm5,
+      ),
     );
     final NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
@@ -2700,16 +2695,6 @@ class _HomePageState extends State<HomePage> {
       platformChannelSpecifics,
     );
   }
-
-  Future<void>? _showWindowsNotificationWithRawXml() =>
-      flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              FlutterLocalNotificationsWindows>()
-          ?.showRawXml(
-        id: id++,
-        xml: _windowsRawXmlController.text,
-        bindings: <String, String>{'message': 'Hello, World!'},
-      );
 }
 
 Future<void> _showLinuxNotificationWithBodyMarkup() async {

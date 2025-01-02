@@ -1,3 +1,11 @@
+## [19.0.0-dev.4]
+
+* [Windows] **Breaking change** Reworked the APIs around custom images and audio. Check the updated example for more details, but in short:
+  * Instead of `WindowsNotificationAudio.fromFile()`, use `WindowsNotificationAudio.asset()`
+  * Instead of `WindowsImage.file()`, use `WindowsImage()`. See the docs for what URIs are supported
+* [Windows] Added `MsixUtils.hasPackageIdentity()` and `MsixUtils.assetUri()`. You shouldn't need to use `.assetUri()` directly, but it may be helpful to check `.hasPackageIdentity()` to know what features your application can support.
+* [Windows] Added `FlutterLocalNotificationsWindows.isValidXml()` for testing raw XML.
+
 ## [19.0.0-dev.3]
 
 * [iOS][macOS] **Breaking changes** the `DarwinNotificationActionOption` and `DarwinNotificationCategoryOption` are now enhanced enums with values accessible through the `value` property that are exactly the same as their native representations. Previously a bitwise left shift operation was applied to the index value
@@ -13,7 +21,7 @@
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.19.0 and Dart SDK requirement to 3.3.0
 * **Breaking change** [iOS] removed `uiLocalNotificationDateInterpretation` parameter from `zonedSchedule()` method. This was done as it actually no relevant as of the 18.0.0 that dropped support for iOS versions older than 10, which in turn meant that the deprecated `UILocalNotification` APIs from Apple were no longer used. The corresponding `UILocalNotificationDateInterpretation` enum has already been removed as well
-* [Windows] Added support for Windows. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches/) that continued from the contributions from 
+* [Windows] Added support for Windows. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches/) that continued from the contributions from
 * Bumped `timezone` dependency so that minimum version is now 0.10.0
 
 ## [18.0.1]
@@ -167,7 +175,7 @@
 # [15.1.0]
 
 * [iOS][macOS] added the ability to request provisional permissions. On iOS, this is only applicable to iOS 12 or newer. On macOS, this property is only applicable to macOS 10.14 or newer. Thanks to the PR from [Tokenyet](https://github.com/MaikuB/flutter_local_notifications/pull/2022)
- 
+
 # [15.0.1]
 
 * [Android] fixed issue [2033](https://github.com/MaikuB/flutter_local_notifications/issues/2033) where notifications on scheduled using older version of the plugin would fail to have the next subsequent ones scheduled. This issue started occuring in 14.0 where support for inexact notifications was added using the `ScheduleMode` enum that was added and resulted in the deprecation of `androidAllowWhileIdle`. A mechanism was added to help "migrate" old notifications that had `androidAllowWhileIdle` specified but didn't account for how there are recurring notifications that were scheduled using older versions of the plugin prior to `androidAllowWhile` being added. This was also released part of the 14.1.2 hotfix release
@@ -176,7 +184,7 @@
 
 * **Breaking change** removed deprecated `schedule()`, `showDailyAtTime()` and `showWeeklyAtDayAndTime()` methods. Notifications that were scheduled prior to this release should still work
 * **Breaking change** removed `Time` class
-* [Linux] **Breaking change** calling `zonedSchedule()` on Linux will now throw an `UnimplementedError` to align with how their is a Linux implementation but the method hasn't been implemented 
+* [Linux] **Breaking change** calling `zonedSchedule()` on Linux will now throw an `UnimplementedError` to align with how their is a Linux implementation but the method hasn't been implemented
 * [iOS][macOS] **Breaking change** added supported for banner and list presentation options for iOS and macOS that is applicable for iOS 14.0 or newer and macOS 11 or newer. This is a breaking change as the values default to true and the alert presentation option is no longer applicable on these OS versions as Apple has deprecated it to be replaced by the banner and list presentations. Please ensure that if you target these OS versions that you configure the options appropriately for your application.
 * [Android] updated tags used when writing error logs. For corrupt scheduled notifications and error is logged the tag is now `ScheduledNotifReceiver` instead of `ScheduledNotifReceiver`. When logging that exact alarm permissions have been revoked the the tag is now `FLTLocalNotifPlugin` instead of `notification`
 * Updated API documentation related to the iOS/macOS notification presentation options to include links to Apple's documentations to show what they correspond to
@@ -272,10 +280,10 @@
      ...
  }
  ```
- 
+
 # [12.0.4]
 
-* Fixed issue [1796](https://github.com/MaikuB/flutter_local_notifications/issues/1796) where a `java.lang.ClassCastException` may be thrown on some Android devices when the `onDidReceiveBackgroundNotificationResponse` has been specified when calling `initialize()` 
+* Fixed issue [1796](https://github.com/MaikuB/flutter_local_notifications/issues/1796) where a `java.lang.ClassCastException` may be thrown on some Android devices when the `onDidReceiveBackgroundNotificationResponse` has been specified when calling `initialize()`
 
 # [12.0.3+1]
 
@@ -299,7 +307,7 @@
 
 # [12.0.1]
 
-* [Android][iOS] fixed issue [1721](https://github.com/MaikuB/flutter_local_notifications/issues/1721) where a crash occurs upon tapping on a notification action fbut the `onDidReceiveBackgroundNotificationResponse` optional callback hasn't been specified. 
+* [Android][iOS] fixed issue [1721](https://github.com/MaikuB/flutter_local_notifications/issues/1721) where a crash occurs upon tapping on a notification action fbut the `onDidReceiveBackgroundNotificationResponse` optional callback hasn't been specified.
 * [iOS] suppressed deprecation warnings where plugin was Apple's old notification APIs to support older iOS devices
 
 # [12.0.0]
@@ -333,7 +341,7 @@
   * `GET_ACTIVE_NOTIFICATION_MESSAGING_STYLE_ERROR_CODE` -> `getActiveNotificationMessagingStyle`
   * `PERMISSION_REQUEST_IN_PROGRESS` -> `permissionRequestInProgress`
 * [Android] **Breaking change** the `category` of the `AndroidNotificationDetails` now requires an instance of the newly added `AndroidNotificationCategory` class instead of a string. This was to improve the discoverability of the APIs and improve the semantics as the category can specified in a similar fashion to using an enum value
-* **Breaking change** callbacks have now been reworked. There are now the following callbacks and both will pass an instance of the `NotificationResponse` class 
+* **Breaking change** callbacks have now been reworked. There are now the following callbacks and both will pass an instance of the `NotificationResponse` class
   * `onDidReceiveNotificationResponse`: invoked only when the app is running. This works for when a user has selected a notification or notification action. This replaces the `onSelectNotification` callback that existed before. For notification actions, the action needs to be configured to indicate the the app or user interface should be shown on invoking the action for this callback to be invoked i.e. by specifying the `DarwinNotificationActionOption.foreground` option on iOS and the `showsUserInterface` property on Android. On macOS and Linux, as there's no support for background isolates it will always invoke this callback
   * `onDidReceiveBackgroundNotificationResponse`: invoked on a background isolate for when a user has selected a notification action. This replaces the `onSelectNotificationAction` callback
 * **Breaking change** the `NotificationAppLaunchDetails` has been updated to contain an instance `NotificationResponse` class with the `payload` belonging to the `NotificationResponse` class. This is to allow knowing more details about what caused the app to launch e.g. if a notification action was used to do so
@@ -435,7 +443,7 @@
 # [9.2.0]
 
 * [Android] Added `areNotificationsEnabled()` method to `AndroidFlutterLocalNotificationsPlugin`. This allows querying if notifications are enabled for the app calling the method. Thanks to the PR from [Konstantin Pelz](https://github.com/komape)
-* [Linux] Fix `initialize()` returning null all the time instead of returning an appropriate boolean value to indicate if plugin has been initialised 
+* [Linux] Fix `initialize()` returning null all the time instead of returning an appropriate boolean value to indicate if plugin has been initialised
 
 # [9.1.5]
 
@@ -836,7 +844,7 @@ Please note that there are a number of breaking changes in this release to impro
   * `BitmapSource.Drawable` -> `DrawableResourceAndroidBitmap`
   * `BitmapSource.FilePath` -> `FilePathAndroidBitmap`
 
-  Each of these subclasses has a constructor that an argument referring to the bitmap itself. For example, if you previously had the following code 
+  Each of these subclasses has a constructor that an argument referring to the bitmap itself. For example, if you previously had the following code
 
     ```dart
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
@@ -888,7 +896,7 @@ Please note that there are a number of breaking changes in this release to impro
 * The `DefaultStyleInformation` class now implements the `StyleInformation` class instead of extending it
 * Where possible, classes in the plugins have been updated to provide `const` constructors
 * Updates to API docs and readme
-* Bump Android dependencies 
+* Bump Android dependencies
 * Fixed a grammar issue 0.9.1 changelog entry
 
 # [1.3.0]
@@ -1164,7 +1172,7 @@ Please note that there are a number of breaking changes in this release to impro
 
 # [0.4.2]
 
-* **Breaking change** Fix issue [127](https://github.com/MaikuB/flutter_local_notifications/issues/127) by changing plugin to Android Support Library version 27.1.1, compile and target SDK version to 27 due to issues Flutter has with API 28. 
+* **Breaking change** Fix issue [127](https://github.com/MaikuB/flutter_local_notifications/issues/127) by changing plugin to Android Support Library version 27.1.1, compile and target SDK version to 27 due to issues Flutter has with API 28.
 
 # [0.4.1+1]
 * Remove unused code in example app
@@ -1174,7 +1182,7 @@ Please note that there are a number of breaking changes in this release to impro
 * **Breaking change** renamed the `selectNotification` callback exposed by the `initialize` function to `onSelectNotification`
 * **Breaking change** renamed the `MessageHandler` typedef to `SelectNotificationCallback`
 * **Breaking change** updated plugin to Android Support Library version 28.0, compile and target SDK version to 28
-* Address issue [115](https://github.com/MaikuB/flutter_local_notifications/issues/115) by adding validation to the notification ID values. This ensure they're within the range of a 32-bit integer as notification IDs on Android need to be within that range. Note that an `ArgumentError` is thrown when a value is out of range. 
+* Address issue [115](https://github.com/MaikuB/flutter_local_notifications/issues/115) by adding validation to the notification ID values. This ensure they're within the range of a 32-bit integer as notification IDs on Android need to be within that range. Note that an `ArgumentError` is thrown when a value is out of range.
 * Updated the Android Integration section around registering receivers via the Android manifest as per the suggestion in [116](https://github.com/MaikuB/flutter_local_notifications/issues/116)
 * Updated version of the http dependency for used by the example app
 
