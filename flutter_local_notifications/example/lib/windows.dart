@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -14,15 +13,73 @@ const WindowsInitializationSettings initSettings =
   guid: 'd49b0314-ee7a-4626-bf79-97cdb8a991bb',
 );
 
-List<Widget> examples({
-  required TextEditingController xmlController,
-  required VoidCallback showXmlNotification,
-}) =>
-    <Widget>[
+class _WindowsXmlBuilder extends StatefulWidget {
+  @override
+  _WindowsXmlBuilderState createState() => _WindowsXmlBuilderState();
+}
+
+class _WindowsXmlBuilderState extends State<_WindowsXmlBuilder> {
+  final TextEditingController xmlController = TextEditingController();
+  final Map<String, String> bindings = <String, String>{
+    'message': 'Hello, World!'
+  };
+
+  final FlutterLocalNotificationsWindows? plugin =
+      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+          FlutterLocalNotificationsWindows>();
+
+  String get xml => xmlController.text;
+
+  bool isValid = true;
+
+  void onPressed() {
+    setState(() => isValid = plugin?.isValidXml(xml) ?? false);
+    if (isValid) {
+      plugin?.showRawXml(id: id++, xml: xml, bindings: bindings);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+        width: 500,
+        child: ExpansionTile(
+            title: const Text('Click to expand raw XML'),
+            children: <Widget>[
+              TextField(
+                maxLines: 20,
+                style: const TextStyle(fontFamily: 'RobotoMono'),
+                controller: xmlController,
+                onSubmitted: (_) => onPressed,
+                decoration: InputDecoration(
+                  hintText: 'Enter the raw xml',
+                  errorText: isValid ? null : 'Invalid XML',
+                  helperText: 'Bindings: {message} --> Hello, World!',
+                  constraints:
+                      const BoxConstraints.tightFor(width: 600, height: 480),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () => xmlController.clear(),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              PaddedElevatedButton(
+                buttonText: 'Show notification with raw XML',
+                onPressed: onPressed,
+              ),
+            ]),
+      );
+}
+
+List<Widget> examples() => <Widget>[
       const Text(
         'Windows-specific examples',
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
+      if (MsixUtils.hasPackageIdentity())
+        const Text('Running as an MSIX, all features are available')
+      else
+        const Text('Running as an EXE, some features are not available'),
       PaddedElevatedButton(
         buttonText: 'Show short and long notifications notification',
         onPressed: () async {
@@ -83,33 +140,7 @@ List<Widget> examples({
           await _showWindowsNotificationWithHeader();
         },
       ),
-      PaddedElevatedButton(
-        buttonText: 'Show notification with raw XML',
-        onPressed: showXmlNotification,
-      ),
-      const SizedBox(height: 8),
-      SizedBox(
-        width: 500,
-        child: ExpansionTile(
-            title: const Text('Click to expand raw XML'),
-            children: <Widget>[
-              TextField(
-                maxLines: 20,
-                style: const TextStyle(fontFamily: 'RobotoMono'),
-                controller: xmlController,
-                decoration: InputDecoration(
-                  hintText: 'Enter the raw xml',
-                  helperText: 'Bindings: {message} --> Hello, World!',
-                  constraints:
-                      const BoxConstraints.tightFor(width: 600, height: 480),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () => xmlController.clear(),
-                  ),
-                ),
-              ),
-            ]),
-      ),
+      _WindowsXmlBuilder(),
     ];
 
 Future<void> _showWindowsNotificationWithDuration() async {
@@ -140,10 +171,11 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     null,
     const NotificationDetails(
       windows: WindowsNotificationDetails(
-          scenario: WindowsNotificationScenario.alarm,
-          actions: <WindowsAction>[
-            WindowsAction(content: 'Button', arguments: 'button')
-          ]),
+        scenario: WindowsNotificationScenario.alarm,
+        actions: <WindowsAction>[
+          WindowsAction(content: 'Button', arguments: 'button')
+        ],
+      ),
     ),
   );
   await flutterLocalNotificationsPlugin.show(
@@ -152,10 +184,11 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     null,
     const NotificationDetails(
       windows: WindowsNotificationDetails(
-          scenario: WindowsNotificationScenario.incomingCall,
-          actions: <WindowsAction>[
-            WindowsAction(content: 'Button', arguments: 'button')
-          ]),
+        scenario: WindowsNotificationScenario.incomingCall,
+        actions: <WindowsAction>[
+          WindowsAction(content: 'Button', arguments: 'button')
+        ],
+      ),
     ),
   );
   await flutterLocalNotificationsPlugin.show(
@@ -202,12 +235,12 @@ Future<void> _showWindowsNotificationWithImages() =>
     flutterLocalNotificationsPlugin.show(
       id++,
       'This notification has an image',
-      'You can only show images from files',
+      'You can show images from assets or the network. See the columns example as well.',
       NotificationDetails(
         windows: WindowsNotificationDetails(
           images: <WindowsImage>[
-            WindowsImage.file(
-              File('./icons/4.0x/app_icon_density.png').absolute,
+            WindowsImage(
+              WindowsImage.getAssetUri('icons/4.0x/app_icon_density.png'),
               altText: 'A beautiful image',
             ),
           ],
@@ -219,23 +252,28 @@ Future<void> _showWindowsNotificationWithGroups() =>
     flutterLocalNotificationsPlugin.show(
       id++,
       'This notification has many groups',
-      'Each group stays together',
+      'Each group stays together. Web images only load in MSIX builds',
       NotificationDetails(
         windows: WindowsNotificationDetails(
           subtitle: 'Caption text is fainter',
           rows: <WindowsRow>[
             WindowsRow(<WindowsColumn>[
               WindowsColumn(<WindowsNotificationPart>[
-                WindowsImage.file(File('icons/coworker.png').absolute,
-                    altText: 'A coworker'),
+                WindowsImage(
+                  WindowsImage.getAssetUri('icons/coworker.png'),
+                  altText: 'A local image',
+                ),
                 const WindowsNotificationText(
-                    text: 'A coworker', isCaption: true),
+                  text: 'A local image',
+                  isCaption: true,
+                ),
               ]),
               WindowsColumn(<WindowsNotificationPart>[
-                WindowsImage.file(
-                    File('icons/4.0x/app_icon_density.png').absolute,
-                    altText: 'The icon'),
-                const WindowsNotificationText(text: 'The icon'),
+                WindowsImage(
+                  Uri.parse('https://picsum.photos/100'),
+                  altText: 'A web image',
+                ),
+                const WindowsNotificationText(text: 'A web image'),
               ]),
             ]),
           ],
