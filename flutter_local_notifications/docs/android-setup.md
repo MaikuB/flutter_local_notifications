@@ -15,7 +15,7 @@ Gradle is Android's build system, and controls important options during compilat
 
 This plugin relies on [desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) to take advantage of newer Java features on older versions of Android. Desugaring must be enabled in your _module_ build file, like this:
 
-```gradle
+```groovy
 android {
   defaultConfig {
     multiDexEnabled true
@@ -40,10 +40,10 @@ For more details, see the link above.
 > [!Warning]
 > There was [a crash](https://github.com/flutter/flutter/issues/110658) that used to occur on devices running Android 12L. Flutter has since fixed the issue in 3.24.0. If you are using an earlier version of Flutter, you'll need to add the following to your _module_ build file:
 >
-> ```gradle
+> ```groovy
 > dependencies {
->  implementation 'androidx.window:window:1.0.0'
->  implementation 'androidx.window:window-java:1.0.0'
+>    implementation 'androidx.window:window:1.0.0'
+>    implementation 'androidx.window:window-java:1.0.0'
 > }
 > ```
 
@@ -51,7 +51,7 @@ For more details, see the link above.
 
 This package uses AGP 7.3.1, so your package should use that version or higher. Make sure you are using the new declarative plugin syntax by following the guide [here](https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply), making sure to use an AGP plugin version of `7.3.1` or higher. Your `android/settings.gradle` file should have this:
 
-```gradle
+```groovy
 plugins {
   // Use 7.3.1 or higher
   id "com.android.application" version "7.3.1" apply false
@@ -62,7 +62,7 @@ plugins {
 
 This project requires Android SDK version 34 or higher. Make sure your _module_ build file sets `compileSdk` to 34 or higher:
 
-```gradle
+```groovy
 android {
   compileSdk 34
 }
@@ -188,13 +188,22 @@ Notification icons should be added as a [drawable resource](https://developer.an
 
 Notifications may also make use of [large icons](https://developer.android.com/develop/ui/views/notifications/expanded#image-style), such as album art or message attachments. When calling `show()`, pass a [`largeIcon`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationDetails/largeIcon.html) to the `AndroidNotificationDetails()` constructor. If you use a `DrawableResourceAndroidBitmap`, that indicates an image file in `/res/drawable`. Otherwise, use `FilePathAndroidBitmap` to point to any file.
 
-### Notification channels
+### Code and asset shrinking
+
+Flutter enables [code shrinking](https://developer.android.com/build/shrink-code) to minimize the release size, but this may lead to issues with [GSON](https://github.com/google/gson), a Java dependency used by this package. To fix this, copy the contents of [this file](https://github.com/google/gson/blob/main/examples/android-proguard-example/proguard.cfg) to `android/app/proguard-rules.pro`. If you use custom resources like icons or sounds, be sure to follow [these instructions](https://developer.android.com/build/shrink-code#keep-resources) to prevent them from getting deleted during the build process. You should also add the following lines to your _module build file_: 
+
+```groovy
+buildTypes {
+  release {
+    minifyEnabled true
+    shrinkResources false
+  }
+}
+```
+
+## Notification channels
 
 Android groups notifications of a similar purpose into [channels](https://developer.android.com/develop/ui/views/notifications#ManageChannels). Separate from "grouping", this is meant to allow users to customize how their notifications are shown, like "new message" or "upcoming deals". Using channels consistently will give users confidence and more options when changing settings. To put notifications in the same channel, simply use the same `channelId` in your calls to `show()`.
 
 > [!Note]
 > Notification sounds, vibration patterns, and importance levels are configured on the notification channel as a whole, not on each notification. These settings are finalized when the first notification of that channel is shown and cannot be changed. Instead, direct users to their system settings to make changes.
-
-## Code and asset shrinking
-
-Flutter enables [code shrinking](https://developer.android.com/build/shrink-code) to minimize the release size, but this may lead to issues with [GSON](https://github.com/google/gson), a Java dependency used by this package. To fix this, copy the contents of [this file](https://github.com/google/gson/blob/main/examples/android-proguard-example/proguard.cfg) to `android/app/proguard-rules.pro`. If you use custom resources like icons or sounds, be sure to follow [these instructions](https://developer.android.com/build/shrink-code#keep-resources) to prevent them from getting deleted during the build process.
