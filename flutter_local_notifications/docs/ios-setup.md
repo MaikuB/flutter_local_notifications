@@ -66,8 +66,12 @@ override func application(
   FlutterLocalNotificationsPlugin.setPluginRegistrantCallback {
     (registry) in GeneratedPluginRegistrant.register(with: registry)
   }
+  
+  if #available(iOS 10.0, *) {
+    UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
+  }
 
-  // ...
+  GeneratedPluginRegistrant.register(with: self)
   return super.application(application, didFinishLaunchingWithOptions: launchOptions)
 }
 ```
@@ -95,3 +99,7 @@ if(!UserDefaults.standard.bool(forKey: "Notification")) {
   UserDefaults.standard.set(true, forKey: "Notification")
 }
 ```
+
+## Interrupting Notifications
+
+The `InterruptionLevel` enum lets you control how much your notification should be allowed to interrupt the user. If you plan to use `InterruptionLevel.timeSensitive`, you'll need to [enable](https://help.apple.com/xcode/mac/current/#/dev88ff319e7) the time-sensitive capability. See the video [here](https://developer.apple.com/videos/play/wwdc2021/10091/) for more details. If you plan to use `InterruptionLevel.critical`, you'll need to [get approval](https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/) from Apple.
