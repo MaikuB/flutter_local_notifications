@@ -190,16 +190,10 @@ Notifications may also make use of [large icons](https://developer.android.com/d
 
 ### Code and asset shrinking
 
-Flutter enables [code shrinking](https://developer.android.com/build/shrink-code) to minimize the release size, but this may lead to issues with [GSON](https://github.com/google/gson), a Java dependency used by this package. To fix this, copy the contents of [this file](https://github.com/google/gson/blob/main/examples/android-proguard-example/proguard.cfg) to `android/app/proguard-rules.pro`. If you use custom resources like icons or sounds, be sure to follow [these instructions](https://developer.android.com/build/shrink-code#keep-resources) to prevent them from getting deleted during the build process. You should also add the following lines to your _module build file_: 
+Flutter enables [code shrinking](https://developer.android.com/build/shrink-code) to minimize the release size, but this may lead to issues with [GSON](https://github.com/google/gson), a Java dependency used by this package. To fix this, copy the contents of [this file](https://github.com/google/gson/blob/main/examples/android-proguard-example/proguard.cfg) to `android/app/proguard-rules.pro`.
 
-```groovy
-buildTypes {
-  release {
-    minifyEnabled true
-    shrinkResources false
-  }
-}
-```
+> [!Important]
+> If you use custom resources like icons or sounds, be sure to follow [these instructions](https://developer.android.com/build/shrink-code#keep-resources) to prevent them from getting deleted during the build process.
 
 ## Notification channels
 
