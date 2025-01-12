@@ -35,8 +35,9 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 void initTimezones() {
-  if (!Platform.isAndroid && !Platform.isIOS && !Platform.isMacOS) return;
+  if (kIsWeb || Platform.isLinux) return;
   tz.initializeTimeZones();
+  if (Platform.isWindows) return;
   final timeZoneName = await FlutterTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZoneName!));
 }
