@@ -1,3 +1,6 @@
+## [1.0.0-dev.4]
+* **Breaking change** Require Dart 3.4 and Flutter 3.22
+
 ## [1.0.0-dev.3]
 
 * **Breaking change** Reworked the APIs around custom images and audio. Check the updated example for more details, but in short:

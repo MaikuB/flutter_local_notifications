@@ -1,3 +1,6 @@
+## [19.0.0-dev.5]
+* **Breaking change** Require Dart 3.4 and Flutter 3.22
+
 ## [19.0.0-dev.4]
 
 * [Windows] **Breaking change** Reworked the APIs around custom images and audio. Check the updated example for more details, but in short:
@@ -19,7 +22,7 @@
 
 ## [19.0.0-dev.1]
 
-* **Breaking change** bumped minimum Flutter SDK requirement to 3.19.0 and Dart SDK requirement to 3.3.0
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.22.0 and Dart SDK requirement to 3.3.0
 * **Breaking change** [iOS] removed `uiLocalNotificationDateInterpretation` parameter from `zonedSchedule()` method. This was done as it actually no relevant as of the 18.0.0 that dropped support for iOS versions older than 10, which in turn meant that the deprecated `UILocalNotification` APIs from Apple were no longer used. The corresponding `UILocalNotificationDateInterpretation` enum has already been removed as well
 * [Windows] Added support for Windows. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches/) that continued from the contributions from
 * Bumped `timezone` dependency so that minimum version is now 0.10.0
