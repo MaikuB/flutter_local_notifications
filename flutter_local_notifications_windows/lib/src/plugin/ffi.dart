@@ -1,6 +1,6 @@
 import 'dart:ffi';
+
 import 'package:ffi/ffi.dart';
-import 'package:meta/meta.dart';
 
 import '../details.dart';
 import '../details/notification_to_xml.dart';
@@ -291,6 +291,12 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
       });
 
   @override
+  bool isValidXml(String xml) => using((Arena arena) {
+        final Pointer<Utf8> nativeXml = xml.toNativeUtf8(allocator: arena);
+        return _bindings.isValidXml(nativeXml);
+      });
+
+  @override
   Future<void> zonedSchedule(
     int id,
     String? title,
@@ -371,8 +377,4 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
             _plugin, id, bindings.toNativeMap(arena));
         return result.toDart();
       });
-
-  @override
-  @visibleForTesting
-  void enableMultithreading() => _bindings.enableMultithreading();
 }

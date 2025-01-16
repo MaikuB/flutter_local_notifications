@@ -1,5 +1,4 @@
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
-import 'package:meta/meta.dart';
 import 'package:timezone/timezone.dart';
 
 import '../details.dart';
@@ -22,8 +21,7 @@ abstract class WindowsNotificationsBase
 
   /// Shows a notification using raw XML passed to the Windows APIs.
   ///
-  /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
-  /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
+  /// To check if the XML is valid, use [isValidXml].
   Future<void> showRawXml({
     required int id,
     required String xml,
@@ -83,11 +81,9 @@ abstract class WindowsNotificationsBase
     required Map<String, String> bindings,
   });
 
-  /// EXPERIMENTAL: Enables multithreading
+  /// Checks if some XML is a valid Windows notification.
   ///
-  /// NOTE: This is only here to make tests more stable. This has not been
-  /// tested in an application as it conflicts with Flutter's preferred
-  /// configuration for Windows APIs.
-  @visibleForTesting
-  void enableMultithreading();
+  /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
+  /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
+  bool isValidXml(String xml);
 }

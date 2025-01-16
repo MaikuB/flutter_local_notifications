@@ -4,6 +4,8 @@
 #include <string>
 
 #include <windows.h>  // <-- This must be the first Windows header
+#include <appmodel.h>
+#include <VersionHelpers.h>
 #include <winrt/Windows.UI.Notifications.h>
 
 #include "ffi_api.h"
