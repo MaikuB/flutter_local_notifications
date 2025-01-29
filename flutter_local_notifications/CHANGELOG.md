@@ -1,3 +1,8 @@
+## [19.0.0-dev.5]
+
+* [Android] **Breaking change** bumped `compileSdk` to 35 and updated readme to mention this
+* Updated `compileSdk` and `targetSdkVersion` of example app to 35
+
 ## [19.0.0-dev.4]
 
 * [Windows] **Breaking change** Reworked the APIs around custom images and audio. Check the updated example for more details, but in short:
