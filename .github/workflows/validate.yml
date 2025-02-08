@@ -5,9 +5,6 @@ on:
     paths-ignore:
       - '**.md'
   push:
-    branches:
-      - master
-      - hotfix/*
     paths-ignore:
       - '**.md'
 
