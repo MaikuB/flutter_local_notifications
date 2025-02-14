@@ -1,3 +1,7 @@
+## [19.0.0-dev.6]
+
+* Bumped `flutter_timezone` dependency in example app
+* 
 ## [19.0.0-dev.5]
 
 * [Android] **Breaking change** bumped `compileSdk` to 35 and updated readme to mention this
