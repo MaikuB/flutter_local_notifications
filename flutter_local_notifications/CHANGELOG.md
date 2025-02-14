@@ -1,6 +1,7 @@
 ## [19.0.0-dev.6]
 
 *  **Breaking change** bumped minimum Flutter SDK requirement to 3.22.0 and Dart SDK requirement to 3.4.0
+*  Bumped `flutter_timezone` dependency in example app
 
 ## [19.0.0-dev.5]
 
