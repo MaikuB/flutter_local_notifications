@@ -1,11 +1,11 @@
 name: flutter_local_notifications_platform_interface
 description: A common platform interface for the flutter_local_notifications plugin.
-version: 8.1.0-dev.1
+version: 8.1.0-dev.2
 homepage: https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications_platform_interface
 
 environment:
-  sdk: ^3.1.0
-  flutter: ">=3.13.0"
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
 
 dependencies:
   plugin_platform_interface: ^2.0.0
