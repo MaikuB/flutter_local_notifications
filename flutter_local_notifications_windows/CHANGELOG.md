@@ -1,3 +1,7 @@
+## [1.0.0-dev.4]
+
+*  **Breaking change** bumped minimum Flutter SDK requirement to 3.22.0 and Dart SDK requirement to 3.4.0
+
 ## [1.0.0-dev.3]
 
 * **Breaking change** Reworked the APIs around custom images and audio. Check the updated example for more details, but in short:
