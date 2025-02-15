@@ -9,7 +9,7 @@ environment:
   flutter: ">=3.22.0"
 
 dependencies:
-  plugin_platform_interface: ^2.0.0
+  plugin_platform_interface: ^2.1.8
 
 dev_dependencies:
   flutter_test:
