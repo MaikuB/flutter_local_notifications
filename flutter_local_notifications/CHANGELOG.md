@@ -2,6 +2,8 @@
 
 *  **Breaking change** bumped minimum Flutter SDK requirement to 3.22.0 and Dart SDK requirement to 3.4.0
 *  Bumped `flutter_timezone` dependency in example app
+*  Updated example app's `AndroidManifest.xml` to request internet permissions so that release builds can download remote content
+*  [Android] bumped GSON dependency to 2.12. As a result of doing so, applications should no longer need ProGuard rules related to this plugin that were needed for release builds to function. The readme has been updated to remove the associated setup to reflect this. Thanks to the PR from [Koji Wakamiya](https://github.com/koji-1009)
 
 ## [19.0.0-dev.5]
 
