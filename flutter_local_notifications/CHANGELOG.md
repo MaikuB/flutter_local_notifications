@@ -4,6 +4,7 @@
 *  Bumped Android Gradle Plugin to 8.6.0 to align with the [minimum version](https://developer.android.com/build/releases/gradle-plugin#api-level-support) to use `compileSdk` version 35 (Android 15)
 *  [Android] bumped desugaring library to 2.1.4 and set Java compatibility to 11 instead of 8. Readme has been updated to reflect these changes  where`sourceCompatibility` and `targetCompability` should be set to JavaVersion.VERSION_11 (i.e. Java 11), and `jvmTarget` is set to `11`
 *  Bumped multiple dependencies in example app
+*  Bumped minimum `plugin_platform_interface` version to 2.1.8
 *  Updated example app's `AndroidManifest.xml` to request internet permissions so that release builds can download remote content
 *  [Android] bumped GSON dependency to 2.12. As a result of doing so, applications should no longer need ProGuard rules related to this plugin that were needed for release builds to function. The readme has been updated to remove the associated setup to reflect this. Thanks to the PR from [Koji Wakamiya](https://github.com/koji-1009)
 
