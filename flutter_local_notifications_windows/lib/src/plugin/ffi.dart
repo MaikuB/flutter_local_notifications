@@ -115,7 +115,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     _details = details;
     final Map<String, String> data = details.data.toMap();
     final NotificationResponse response = NotificationResponse(
-      notificationResponseType: getResponseType(details.launchType),
+      notificationResponseType: details.launchType.toDart(),
       payload: details.payload.toDartString(),
       actionId: details.payload.toDartString(),
       data: data,
@@ -193,7 +193,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     return NotificationAppLaunchDetails(
       details.didLaunch,
       notificationResponse: NotificationResponse(
-        notificationResponseType: getResponseType(details.launchType),
+        notificationResponseType: details.launchType.toDart(),
         payload: details.payload.toDartString(),
         actionId: details.payload.toDartString(),
         data: data,
@@ -364,6 +364,6 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         }
         final NativeUpdateResult result = _bindings.updateNotification(
             _plugin, id, bindings.toNativeMap(arena));
-        return getUpdateResult(result);
+        return result.toDart();
       });
 }
