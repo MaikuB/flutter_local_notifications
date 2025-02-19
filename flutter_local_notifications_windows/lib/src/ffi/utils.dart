@@ -17,26 +17,25 @@ extension NativeStringMapUtils on NativeStringMap {
       };
 }
 
-/// Gets the [NotificationResponseType] from a [NativeLaunchType].
-NotificationResponseType getResponseType(int launchType) {
-  switch (NativeLaunchType.fromValue(launchType)) {
-    case NativeLaunchType.notification:
-      return NotificationResponseType.selectedNotification;
-    case NativeLaunchType.action:
-      return NotificationResponseType.selectedNotificationAction;
-  }
+/// Helpful methods for [NativeLaunchType]s.
+extension NativeLaunchTypeUtils on NativeLaunchType {
+  /// Gets the [NotificationResponseType] from a [NativeLaunchType].
+  NotificationResponseType toDart() => switch (this) {
+        NativeLaunchType.notification =>
+          NotificationResponseType.selectedNotification,
+        NativeLaunchType.action =>
+          NotificationResponseType.selectedNotificationAction,
+      };
 }
 
-/// Gets the [NotificationUpdateResult] from a [NativeUpdateResult].
-NotificationUpdateResult getUpdateResult(NativeUpdateResult result) {
-  switch (result) {
-    case NativeUpdateResult.success:
-      return NotificationUpdateResult.success;
-    case NativeUpdateResult.failed:
-      return NotificationUpdateResult.error;
-    case NativeUpdateResult.notFound:
-      return NotificationUpdateResult.notFound;
-  }
+/// Helpful methods for [NativeUpdateResult]s.
+extension NativeUpdateResultUtils on NativeUpdateResult {
+  /// Gets the [NotificationUpdateResult] from a [NativeUpdateResult].
+  NotificationUpdateResult toDart() => switch (this) {
+        NativeUpdateResult.success => NotificationUpdateResult.success,
+        NativeUpdateResult.failed => NotificationUpdateResult.error,
+        NativeUpdateResult.notFound => NotificationUpdateResult.notFound,
+      };
 }
 
 /// Helpful methods on string maps.
