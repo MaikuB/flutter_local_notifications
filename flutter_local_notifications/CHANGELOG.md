@@ -1,3 +1,8 @@
+## [19.0.0-dev.7]
+
+* [iOS][macOS] **Breaking change** renamed `Converters` header and implementation to `FlutterLocalNotificationsConverters`. This would likely not affect any users of the plugin. Done to fix/mitigate issues [#2160](https://github.com/MaikuB/flutter_local_notifications/issues/2160) and [#2529](https://github.com/MaikuB/flutter_local_notifications/issues/2529) where the original name could clash
+* Restored and updated readme so that those using plugin versions 19 or lower has info on setting up Proguard rules. Thanks to the PR from [Koji Wakamiya](https://github.com/koji-1009)
+
 ## [19.0.0-dev.6]
 
 *  **Breaking change** bumped minimum Flutter SDK requirement to 3.22.0 and Dart SDK requirement to 3.4.0. The minimum supported Android version is now 5.0 (API level 21)
