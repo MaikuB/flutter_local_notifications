@@ -1,6 +1,6 @@
 import UserNotifications
 
-public class Converters {
+public class FlutterLocalNotificationsConverters {
     public static func parseNotificationCategoryOptions(_ options: [Any]?) -> UNNotificationCategoryOptions {
         var result: UInt = 0
 

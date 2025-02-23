@@ -277,7 +277,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                                 newActions.append(UNNotificationAction(
                                     identifier: identifier,
                                     title: title,
-                                    options: Converters.parseNotificationActionOptions(options)
+                                    options: FlutterLocalNotificationsConverters.parseNotificationActionOptions(options)
                                 ))
                             } else if type == "text" {
                                 let buttonTitle = action["buttonTitle"] as! String
@@ -285,7 +285,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                                 newActions.append(UNTextInputNotificationAction(
                                     identifier: identifier,
                                     title: title,
-                                    options: Converters.parseNotificationActionOptions(options),
+                                    options: FlutterLocalNotificationsConverters.parseNotificationActionOptions(options),
                                     textInputButtonTitle: buttonTitle,
                                     textInputPlaceholder: placeholder
                                 ))
@@ -299,7 +299,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                         intentIdentifiers: [],
                         hiddenPreviewsBodyPlaceholder: nil,
                         categorySummaryFormat: nil,
-                        options: Converters.parseNotificationCategoryOptions(category["options"] as! [NSNumber])
+                        options: FlutterLocalNotificationsConverters.parseNotificationCategoryOptions(category["options"] as! [NSNumber])
                     )
 
                     notificationCategories.insert(notificationCategory)

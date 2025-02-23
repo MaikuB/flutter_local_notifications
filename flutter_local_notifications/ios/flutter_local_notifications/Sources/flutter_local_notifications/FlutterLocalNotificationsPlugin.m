@@ -1,6 +1,6 @@
 #import "./include/flutter_local_notifications/FlutterLocalNotificationsPlugin.h"
 #import "./include/flutter_local_notifications/ActionEventSink.h"
-#import "./include/flutter_local_notifications/Converters.h"
+#import "./include/flutter_local_notifications/FlutterLocalNotificationsConverters.h"
 #import "./include/flutter_local_notifications/FlutterEngineManager.h"
 
 @implementation FlutterLocalNotificationsPlugin {
@@ -255,7 +255,7 @@ static FlutterError *getFlutterError(NSError *error) {
         NSString *identifier = action[@"identifier"];
         NSString *title = action[@"title"];
         UNNotificationActionOptions options =
-            [Converters parseNotificationActionOptions:action[@"options"]];
+            [FlutterLocalNotificationsConverters parseNotificationActionOptions:action[@"options"]];
 
         if ((options & UNNotificationActionOptionForeground) != 0) {
           [foregroundActionIdentifiers addObject:identifier];
@@ -282,7 +282,7 @@ static FlutterError *getFlutterError(NSError *error) {
           categoryWithIdentifier:category[@"identifier"]
                          actions:newActions
                intentIdentifiers:@[]
-                         options:[Converters parseNotificationCategoryOptions:
+                         options:[FlutterLocalNotificationsConverters parseNotificationCategoryOptions:
                                                  category[@"options"]]];
 
       [notificationCategories addObject:notificationCategory];

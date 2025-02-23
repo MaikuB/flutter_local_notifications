@@ -1,5 +1,5 @@
 //
-//  Converters.h
+//  FlutterLocalNotificationsFlutterLocalNotificationsConverters.h
 //  flutter_local_notifications
 //
 
@@ -8,7 +8,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Converters : NSObject
+@interface FlutterLocalNotificationsConverters : NSObject
 
 + (UNNotificationCategoryOptions)parseNotificationCategoryOptions:
     (NSArray *)options API_AVAILABLE(ios(10.0), macosx(10.14));
