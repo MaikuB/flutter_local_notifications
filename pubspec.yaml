@@ -31,4 +31,3 @@ flutter:
         pluginClass: FlutterLocalNotificationsPlugin
       windows:
         pluginClass: FlutterLocalNotificationsPlugin
-
