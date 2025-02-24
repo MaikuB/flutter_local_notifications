@@ -10,6 +10,7 @@ class DarwinInitializationSettings {
     this.requestBadgePermission = true,
     this.requestProvisionalPermission = false,
     this.requestCriticalPermission = false,
+    this.requestProvidesAppNotificationSettings = false,
     this.defaultPresentAlert = true,
     this.defaultPresentSound = true,
     this.defaultPresentBadge = true,
@@ -50,6 +51,19 @@ class DarwinInitializationSettings {
   ///
   /// Default value is 'false'.
   final bool requestCriticalPermission;
+
+  /// Request permission to provide custom notification settings UI.
+  ///
+  /// When enabled, the system displays a "Configure Notifications in {App}"
+  /// button in the notification's context menu (when swiping on a
+  /// notification and selecting Options). This allows your app to
+  /// present a custom UI for notification settings by handling the
+  /// appropriate delegate callback.
+  ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unauthorizationoptions/3040321-providesappnotificationsettings
+  ///
+  /// Default value is false.
+  final bool requestProvidesAppNotificationSettings;
 
   /// Configures the default setting on if an alert should be displayed when a
   /// notification is triggered while app is in the foreground.
