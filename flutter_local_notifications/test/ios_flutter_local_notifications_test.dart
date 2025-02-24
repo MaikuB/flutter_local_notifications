@@ -710,12 +710,12 @@ void main() {
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()!
           .requestPermissions(
-              sound: true,
-              alert: true,
-              badge: true,
-              provisional: true,
-              critical: true,
-              providesAppNotificationSettings: true);
+            sound: true,
+            badge: true,
+            alert: true,
+            provisional: true,
+            critical: true,
+            providesAppNotificationSettings: true);
       expect(log, <Matcher>[
         isMethodCall('requestPermissions', arguments: <String, Object>{
           'sound': true,

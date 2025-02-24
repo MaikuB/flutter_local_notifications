@@ -54,7 +54,7 @@ class DarwinInitializationSettings {
 
   /// Request permission to provide custom notification settings UI.
   ///
-  /// When enabled, the system displays a "Configure Notifications in {App}"
+  /// When enabled, the system displays a "Configure Notifications in <application name>"
   /// button in the notification's context menu (when swiping on a
   /// notification and selecting Options). This allows your app to
   /// present a custom UI for notification settings by handling the
@@ -63,6 +63,9 @@ class DarwinInitializationSettings {
   /// Corresponds to https://developer.apple.com/documentation/usernotifications/unauthorizationoptions/3040321-providesappnotificationsettings
   ///
   /// Default value is false.
+  ///
+  /// On iOS, this property is only applicable to iOS 12 or newer.
+  /// On macOS, this property is only applicable to macOS 10.14 or newer.
   final bool requestProvidesAppNotificationSettings;
 
   /// Configures the default setting on if an alert should be displayed when a

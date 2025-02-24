@@ -864,7 +864,7 @@ class MacOSFlutterLocalNotificationsPlugin
     bool critical = false,
     bool providesAppNotificationSettings = false,
   }) =>
-      _channel.invokeMethod<bool?>('requestPermissions', <String, bool?>{
+      _channel.invokeMethod<bool>('requestPermissions', <String, bool?>{
         'sound': sound,
         'alert': alert,
         'badge': badge,
