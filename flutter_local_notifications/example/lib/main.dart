@@ -219,6 +219,7 @@ class _HomePageState extends State<HomePage> {
       TextEditingController();
 
   bool _notificationsEnabled = false;
+  bool _isIOS12OrHigher = false;
 
   @override
   void initState() {
@@ -226,6 +227,44 @@ class _HomePageState extends State<HomePage> {
     _isAndroidPermissionGranted();
     _requestPermissions();
     _configureSelectNotificationSubject();
+    _checkIOSVersion();
+
+    // Add method channel handler for notification settings
+    const MethodChannel channel = MethodChannel(
+        'com.example.flutter_local_notifications_example/settings');
+    channel.setMethodCallHandler((MethodCall call) async {
+      if (call.method == 'showNotificationSettings') {
+        // Show a simple dialog for demonstration
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Notification Settings'),
+            content: const Text(
+                'This is a basic example of in-app notification settings UI'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Close'),
+              ),
+            ],
+          ),
+        );
+      }
+    });
+  }
+
+  Future<void> _checkIOSVersion() async {
+    if (Platform.isIOS) {
+      final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      final List<String> version = iosInfo.systemVersion.split('.');
+      if (version.isNotEmpty) {
+        final int? majorVersion = int.tryParse(version[0]);
+        setState(() {
+          _isIOS12OrHigher = majorVersion != null && majorVersion >= 12;
+        });
+      }
+    }
   }
 
   Future<void> _isAndroidPermissionGranted() async {
@@ -251,6 +290,7 @@ class _HomePageState extends State<HomePage> {
             alert: true,
             badge: true,
             sound: true,
+            providesAppNotificationSettings: false,
           );
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -706,10 +746,9 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                   ],
-                  if (!kIsWeb &&
-                      (Platform.isIOS || Platform.isMacOS)) ...<Widget>[
+                  if (Platform.isIOS) ...<Widget>[
                     const Text(
-                      'iOS and macOS-specific examples',
+                      'iOS-specific examples',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     PaddedElevatedButton(
@@ -783,6 +822,10 @@ class _HomePageState extends State<HomePage> {
                         await _showNotificationInNotificationCentreOnly();
                       },
                     ),
+                    _buildConfigureInAppToggle(),
+                    const SizedBox(
+                      height: 50,
+                    )
                   ],
                   if (!kIsWeb && Platform.isLinux) ...<Widget>[
                     const Text(
@@ -968,6 +1011,75 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+        ),
+      );
+
+  Widget _buildConfigureInAppToggle() => Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Expanded(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16, 16, 4, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Show 'Configure in App' context menu option:",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      '''
+• To access: view a notification on the lock screen, swipe left, and tap 'Options'
+• Requests 'providesAppNotificationSettings' permission (iOS 12+)
+• Tap is handled by 'userNotificationCenter(_:openSettingsFor:)' delegate method (not provided by plugin)
+• Note: Once enabled, this declaration cannot be revoked''',
+                      style: TextStyle(fontSize: 12, color: Colors.black87),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: FutureBuilder<NotificationsEnabledOptions?>(
+                future: flutterLocalNotificationsPlugin
+                    .resolvePlatformSpecificImplementation<
+                        IOSFlutterLocalNotificationsPlugin>()
+                    ?.checkPermissions(),
+                builder: (context, snapshot) {
+                  final enabled =
+                      snapshot.data?.isProvidesAppNotificationSettingsEnabled ??
+                          false;
+                  return Switch(
+                    value: enabled,
+                    onChanged: !Platform.isIOS || !_isIOS12OrHigher || enabled
+                        ? null
+                        : (bool value) async {
+                            final IOSFlutterLocalNotificationsPlugin? plugin =
+                                flutterLocalNotificationsPlugin
+                                    .resolvePlatformSpecificImplementation<
+                                        IOSFlutterLocalNotificationsPlugin>();
+                            if (plugin != null) {
+                              await plugin.requestPermissions(
+                                alert: true,
+                                badge: true,
+                                sound: true,
+                                providesAppNotificationSettings: true,
+                              );
+                              setState(() {});
+                            }
+                          },
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       );
 
