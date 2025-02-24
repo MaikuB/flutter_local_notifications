@@ -1032,38 +1032,38 @@ public class FlutterLocalNotificationsPlugin
     BigPictureStyleInformation bigPictureStyleInformation =
         (BigPictureStyleInformation) notificationDetails.styleInformation;
     NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
-    if (bigPictureStyleInformation.contentTitle != null) {
-      CharSequence contentTitle =
-          bigPictureStyleInformation.htmlFormatContentTitle
-              ? fromHtml(bigPictureStyleInformation.contentTitle)
-              : bigPictureStyleInformation.contentTitle;
-      bigPictureStyle.setBigContentTitle(contentTitle);
-    }
-    if (bigPictureStyleInformation.summaryText != null) {
-      CharSequence summaryText =
-          bigPictureStyleInformation.htmlFormatSummaryText
-              ? fromHtml(bigPictureStyleInformation.summaryText)
-              : bigPictureStyleInformation.summaryText;
-      bigPictureStyle.setSummaryText(summaryText);
-    }
+if (bigPictureStyleInformation.contentTitle != null) {
+    CharSequence contentTitle = bigPictureStyleInformation.htmlFormatContentTitle
+            ? fromHtml(bigPictureStyleInformation.contentTitle)
+            : bigPictureStyleInformation.contentTitle;
+    bigPictureStyle.setBigContentTitle(contentTitle);
+}
+if (bigPictureStyleInformation.summaryText != null) {
+    CharSequence summaryText = bigPictureStyleInformation.htmlFormatSummaryText
+            ? fromHtml(bigPictureStyleInformation.summaryText)
+            : bigPictureStyleInformation.summaryText;
+    bigPictureStyle.setSummaryText(summaryText);
+}
 
-    if (bigPictureStyleInformation.hideExpandedLargeIcon) {
-      bigPictureStyle.bigLargeIcon((Bitmap) null);
-    } else {
-      if (bigPictureStyleInformation.largeIcon != null) {
+if (bigPictureStyleInformation.hideExpandedLargeIcon) {
+    // Forziamo il cast di null a android.graphics.Bitmap per evitare ambiguità
+    bigPictureStyle.bigLargeIcon((android.graphics.Bitmap) null);
+} else {
+    if (bigPictureStyleInformation.largeIcon != null) {
         bigPictureStyle.bigLargeIcon(
             getBitmapFromSource(
                 context,
                 bigPictureStyleInformation.largeIcon,
                 bigPictureStyleInformation.largeIconBitmapSource));
-      }
     }
-    bigPictureStyle.bigPicture(
-        getBitmapFromSource(
-            context,
-            bigPictureStyleInformation.bigPicture,
-            bigPictureStyleInformation.bigPictureBitmapSource));
-    builder.setStyle(bigPictureStyle);
+}
+bigPictureStyle.bigPicture(
+    getBitmapFromSource(
+        context,
+        bigPictureStyleInformation.bigPicture,
+        bigPictureStyleInformation.bigPictureBitmapSource));
+builder.setStyle(bigPictureStyle);
+
   }
 
   private static void setInboxStyle(
