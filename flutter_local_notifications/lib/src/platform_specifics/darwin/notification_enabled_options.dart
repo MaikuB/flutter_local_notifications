@@ -10,6 +10,7 @@ class NotificationsEnabledOptions {
     required this.isBadgeEnabled,
     required this.isProvisionalEnabled,
     required this.isCriticalEnabled,
+    required this.isProvidesAppNotificationSettingsEnabled,
   });
 
   /// Whenever notifications are enabled.
@@ -33,4 +34,8 @@ class NotificationsEnabledOptions {
 
   /// Whenever critical notifications are enabled.
   final bool isCriticalEnabled;
+
+  /// Whether the system displays a "Configure Notifications in {App}" button
+  /// in the notification's context menu.
+  final bool isProvidesAppNotificationSettingsEnabled;
 }
