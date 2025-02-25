@@ -104,6 +104,7 @@ class AndroidNotificationDetails {
     this.channelDescription,
     this.icon,
     this.importance = Importance.defaultImportance,
+    this.channelBypassDnd = false,
     this.priority = Priority.defaultPriority,
     this.styleInformation,
     this.playSound = true,
@@ -175,6 +176,10 @@ class AndroidNotificationDetails {
 
   /// The importance of the notification.
   final Importance importance;
+
+  /// Whether the notification channel should attempt to bypass Do Not Disturb
+  /// settings
+  final bool channelBypassDnd;
 
   /// The priority of the notification
   final Priority priority;

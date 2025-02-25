@@ -13,6 +13,7 @@ class AndroidNotificationChannel {
     this.description,
     this.groupId,
     this.importance = Importance.defaultImportance,
+    this.bypassDnD = false,
     this.playSound = true,
     this.sound,
     this.enableVibration = true,
@@ -38,6 +39,10 @@ class AndroidNotificationChannel {
   /// The importance of the notification.
   final Importance importance;
 
+  /// Whether the notification channel should attempt to bypass Do Not Disturb
+  /// settings
+  final bool bypassDnD;
+
   /// Indicates if a sound should be played when the notification is displayed.
   ///
   /// Tied to the specified channel and cannot be changed after the channel has
@@ -54,7 +59,7 @@ class AndroidNotificationChannel {
 
   /// Indicates if vibration should be enabled when the notification is
   /// displayed.
-  //
+  ///
   /// Tied to the specified channel and cannot be changed after the channel has
   /// been created for the first time.
   final bool enableVibration;

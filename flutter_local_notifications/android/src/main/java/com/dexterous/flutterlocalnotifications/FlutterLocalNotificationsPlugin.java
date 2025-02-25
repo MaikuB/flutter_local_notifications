@@ -1215,6 +1215,15 @@ public class FlutterLocalNotificationsPlugin
       } else {
         notificationChannel.setSound(null, null);
       }
+
+      if (notificationChannelDetails.bypassDnd) {
+        if (notificationChannel.canBypassDnd()) {
+          notificationChannel.setBypassDnd(true);
+        } else {
+          Log.w(TAG, "Channel '" + notificationChannelDetails.name + "' was set to bypass Do Not Disturb but the OS prevents it.");
+        }
+      }
+
       notificationChannel.enableVibration(
           BooleanUtils.getValue(notificationChannelDetails.enableVibration));
       if (notificationChannelDetails.vibrationPattern != null

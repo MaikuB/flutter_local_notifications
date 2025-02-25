@@ -2673,6 +2673,7 @@ class _HomePageState extends State<HomePage> {
                         'description: ${channel.description}\n'
                         'groupId: ${channel.groupId}\n'
                         'importance: ${channel.importance.value}\n'
+                        'bypassDnD: ${channel.bypassDnD}\n'
                         'playSound: ${channel.playSound}\n'
                         'sound: ${channel.sound?.sound}\n'
                         'enableVibration: ${channel.enableVibration}\n'
