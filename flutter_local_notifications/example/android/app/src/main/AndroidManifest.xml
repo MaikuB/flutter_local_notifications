@@ -10,6 +10,9 @@
    <!-- NOTE: Special use was selected as it's the closest match for this example app.
         apps should specify the appropriate permission for their use cases. -->
    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+   <!-- NOTE: This permission isn't needed by the local notification plugin. It is only being
+        requested because the example app will download remote content to demonstrate some scenarios-->
+   <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="flutter_local_notifications_example"
         android:icon="@mipmap/ic_launcher">

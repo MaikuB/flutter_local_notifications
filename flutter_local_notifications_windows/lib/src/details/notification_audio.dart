@@ -1,7 +1,4 @@
-extension on Uri {
-  String get filename => pathSegments.last;
-  String get extension => pathSegments.last.split('.').last;
-}
+import '../../flutter_local_notifications_windows.dart';
 
 /// A preset sound for a Windows notification.
 enum WindowsNotificationSound {
@@ -101,41 +98,22 @@ class WindowsNotificationAudio {
   })  : isSilent = false,
         source = sound.name;
 
-  /// Audio from a file. See [allowedSchemes] and [allowedExtensions].
-  WindowsNotificationAudio.fromFile({
-    required Uri file,
+  /// Uses an audio file from a Flutter asset.
+  ///
+  /// Note that this will only work in release builds that have been packaged as
+  /// an MSIX installer. If you pass a [WindowsNotificationSound] for `fallback`
+  /// it will be used in debug and releases without MSIX.
+  ///
+  /// Windows supports the following formats: `.aac`, `.flac`, `.m4a`, `.mp3`,
+  /// `.wav`, and `.wma`.
+  WindowsNotificationAudio.asset(
+    String assetName, {
     this.shouldLoop = false,
+    WindowsNotificationSound fallback = WindowsNotificationSound.defaultSound,
   })  : isSilent = false,
-        source = file.toFilePath() {
-    if (!allowedSchemes.contains(file.scheme)) {
-      throw ArgumentError.value(
-        file.toString(),
-        'WindowsNotificationAudio.file',
-        'URI scheme must be one of the following schemes: $allowedSchemes',
-      );
-    }
-    if (!file.filename.contains('.') ||
-        !allowedExtensions.contains(file.extension)) {
-      throw ArgumentError.value(
-        file.toString(),
-        'WindowsNotificationAudio.file',
-        'File extension must be one of the following: $allowedExtensions',
-      );
-    }
-  }
-
-  /// Allowed Uri schemes for [WindowsNotificationAudio.fromFile].
-  static const Set<String> allowedSchemes = <String>{'ms-appx', 'ms-resource'};
-
-  /// Allowed file extensions for [WindowsNotificationAudio.fromFile].
-  static const Set<String> allowedExtensions = <String>{
-    'aac',
-    'flac',
-    'm4a',
-    'mp3',
-    'wav',
-    'wma'
-  };
+        source = MsixUtils.hasPackageIdentity()
+            ? MsixUtils.getAssetUri(assetName).toString()
+            : fallback.name;
 
   /// Whether this audio should loop.
   final bool shouldLoop;

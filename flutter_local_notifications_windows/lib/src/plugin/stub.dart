@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import '../details.dart';
 import 'base.dart';
 
@@ -94,6 +92,5 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
       NotificationUpdateResult.success;
 
   @override
-  @visibleForTesting
-  void enableMultithreading() {}
+  bool isValidXml(String xml) => false;
 }
