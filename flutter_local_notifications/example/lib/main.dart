@@ -229,14 +229,14 @@ class _HomePageState extends State<HomePage> {
     _configureSelectNotificationSubject();
 
     // Add method channel handler for notification settings
-    const MethodChannel channel = MethodChannel(
-        'com.example.flutter_local_notifications_example/settings');
-    channel.setMethodCallHandler((MethodCall call) async {
+    const MethodChannel(
+            'com.example.flutter_local_notifications_example/settings')
+        .setMethodCallHandler((MethodCall call) async {
       if (call.method == 'showNotificationSettings') {
         // Show a simple dialog for demonstration
-        showDialog(
+        await showDialog(
           context: context,
-          builder: (context) => AlertDialog(
+          builder: (BuildContext context) => AlertDialog(
             title: const Text('Notification Settings'),
             content: const Text(
                 'This is a basic example of in-app notification settings UI'),
