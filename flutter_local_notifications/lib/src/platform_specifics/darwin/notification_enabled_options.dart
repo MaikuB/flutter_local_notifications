@@ -35,7 +35,7 @@ class NotificationsEnabledOptions {
   /// Whenever critical notifications are enabled.
   final bool isCriticalEnabled;
 
-  /// Whether the system displays a "Configure Notifications in {App}" button
+  /// Whether the system displays a "Configure Notifications in <application name>" button
   /// in the notification's context menu.
   final bool isProvidesAppNotificationSettingsEnabled;
 }
