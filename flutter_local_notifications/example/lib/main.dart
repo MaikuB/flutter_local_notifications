@@ -748,7 +748,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                   if (Platform.isIOS) ...<Widget>[
                     const Text(
-                      'iOS-specific examples',
+                      'iOS and macOS-specific examples',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     PaddedElevatedButton(
