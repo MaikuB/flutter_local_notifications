@@ -20,6 +20,7 @@ import 'padded_button.dart';
 import 'plugin.dart';
 import 'repeating.dart' as repeating;
 import 'windows.dart' as windows;
+import 'configure_in_app_toggle.dart';
 
 /// Streams are created so that app can respond to notification-related events
 /// since the plugin is initialized in the `main` function
@@ -219,7 +220,6 @@ class _HomePageState extends State<HomePage> {
       TextEditingController();
 
   bool _notificationsEnabled = false;
-  bool _isIOS12OrHigher = false;
 
   @override
   void initState() {
@@ -227,7 +227,6 @@ class _HomePageState extends State<HomePage> {
     _isAndroidPermissionGranted();
     _requestPermissions();
     _configureSelectNotificationSubject();
-    _checkIOSVersion();
 
     // Add method channel handler for notification settings
     const MethodChannel channel = MethodChannel(
@@ -251,20 +250,6 @@ class _HomePageState extends State<HomePage> {
         );
       }
     });
-  }
-
-  Future<void> _checkIOSVersion() async {
-    if (Platform.isIOS) {
-      final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      final List<String> version = iosInfo.systemVersion.split('.');
-      if (version.isNotEmpty) {
-        final int? majorVersion = int.tryParse(version[0]);
-        setState(() {
-          _isIOS12OrHigher = majorVersion != null && majorVersion >= 12;
-        });
-      }
-    }
   }
 
   Future<void> _isAndroidPermissionGranted() async {
@@ -822,7 +807,10 @@ class _HomePageState extends State<HomePage> {
                         await _showNotificationInNotificationCentreOnly();
                       },
                     ),
-                    _buildConfigureInAppToggle(),
+                    ConfigureInAppToggle(
+                      flutterLocalNotificationsPlugin:
+                          flutterLocalNotificationsPlugin,
+                    ),
                     const SizedBox(
                       height: 50,
                     )
@@ -1011,75 +999,6 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-        ),
-      );
-
-  Widget _buildConfigureInAppToggle() => Container(
-        decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Expanded(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(16, 16, 4, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Show 'Configure in App' context menu option:",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      '''
-• To access: view a notification on the lock screen, swipe left, and tap 'Options'
-• Requests 'providesAppNotificationSettings' permission (iOS 12+)
-• Tap is handled by 'userNotificationCenter(_:openSettingsFor:)' delegate method (not provided by plugin)
-• Note: Once enabled, this declaration cannot be revoked''',
-                      style: TextStyle(fontSize: 12, color: Colors.black87),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: FutureBuilder<NotificationsEnabledOptions?>(
-                future: flutterLocalNotificationsPlugin
-                    .resolvePlatformSpecificImplementation<
-                        IOSFlutterLocalNotificationsPlugin>()
-                    ?.checkPermissions(),
-                builder: (context, snapshot) {
-                  final enabled =
-                      snapshot.data?.isProvidesAppNotificationSettingsEnabled ??
-                          false;
-                  return Switch(
-                    value: enabled,
-                    onChanged: !Platform.isIOS || !_isIOS12OrHigher || enabled
-                        ? null
-                        : (bool value) async {
-                            final IOSFlutterLocalNotificationsPlugin? plugin =
-                                flutterLocalNotificationsPlugin
-                                    .resolvePlatformSpecificImplementation<
-                                        IOSFlutterLocalNotificationsPlugin>();
-                            if (plugin != null) {
-                              await plugin.requestPermissions(
-                                alert: true,
-                                badge: true,
-                                sound: true,
-                                providesAppNotificationSettings: true,
-                              );
-                              setState(() {});
-                            }
-                          },
-                  );
-                },
-              ),
-            ),
-          ],
         ),
       );
 
