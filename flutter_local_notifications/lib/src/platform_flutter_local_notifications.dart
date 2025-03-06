@@ -499,6 +499,8 @@ class AndroidFlutterLocalNotificationsPlugin
         m['text'],
         DateTime.fromMillisecondsSinceEpoch(m['timestamp']),
         _personFromMap(m['person']),
+        dataMimeType: m['dataMimeType'],
+        dataUri: m['dataUri'],
       );
 
   AndroidIcon<Object>? _iconFromMap(Map<dynamic, dynamic>? m) {
