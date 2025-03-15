@@ -298,6 +298,7 @@ There have been reports that enabling desugaring may result in a Flutter apps cr
 
 <details>
 <summary>Groovy - build.gradle</summary>
+
 ```gradle
 dependencies {
     implementation 'androidx.window:window:1.0.0'
@@ -305,10 +306,12 @@ dependencies {
     ...
 }
 ```
+
 </details>
 
 <details>
 <summary>Kotlin - build.gradle.kts</summary>
+
 ```gradle
 dependencies {
     implementation("androidx.window:window:1.0.0")
@@ -316,6 +319,7 @@ dependencies {
     ...
 }
 ```
+
 </details>
 
 More information and other proposed solutions can be found in [Flutter issue #110658](https://github.com/flutter/flutter/issues/110658).
@@ -324,22 +328,26 @@ The plugin also requires that the `compileSdk` in your application's Gradle file
 
 <details>
 <summary>Groovy - build.gradle</summary>
+
 ```gradle
 android {
     compileSdk 35
     ...
 }
 ```
+
 </details>
 
 <details>
 <summary>Kotlin - build.gradle.kts</summary>
+
 ```kotlin
 android {
     compileSdk = 35
     ...
 }
 ```
+
 </details>
 
 ### AndroidManifest.xml setup
