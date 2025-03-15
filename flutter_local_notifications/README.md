@@ -195,33 +195,65 @@ Before proceeding, please make sure you are using the latest version of the plug
 
 ### Gradle setup
 
-Version 10+ on the plugin now relies on [desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) to support scheduled notifications with backwards compatibility on older versions of Android. Developers will need to update their application's Gradle file at `android/app/build.gradle`. Please see the link on desugaring for details but the main parts needed in this Gradle file would be
+Version 10+ on the plugin now relies on [desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) to support scheduled notifications with backwards compatibility on older versions of Android. Developers will need to update their application's Gradle file at `android/app/build.gradle`. Please see the link on desugaring for details but for convenience, you can expand below to see the relevant portions based on if your app has a `build.gradle` or `build.gradle.kts` file
+
+<details>
+<summary>Groovy - build.gradle</summary>
 
 ```gradle
 android {
-  defaultConfig {
-    multiDexEnabled true
-  }
+    defaultConfig {
+        multiDexEnabled true
+    }
 
-  compileOptions {
-    // Flag to enable support for the new language APIs
-    coreLibraryDesugaringEnabled true
-    // Sets Java compatibility to Java 11
-    sourceCompatibility JavaVersion.VERSION_11
-    targetCompatibility JavaVersion.VERSION_11
-  }
+    compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+        // Sets Java compatibility to Java 11
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
 
-  kotlinOptions {
-    jvmTarget = "11"
-  }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
 }
 
 dependencies {
-  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
 }
 ```
+</details>
 
-Note that the plugin uses Android Gradle plugin (AGP) 8.6.0 to leverage this functionality so to err on the safe side, applications should aim to use the same version at a **minimum**. For a Flutter app using the legacy `apply` script syntax, this is specified in `android/build.gradle` and the main parts would look similar to the following
+<details>
+<summary>Kotlin - build.gradle.kts</summary>
+
+```kotlin
+android {
+    defaultConfig {
+        multiDexEnabled = true
+    }
+
+    compileOptions {
+        // Flag to enable support for the new language APIs
+        isCoreLibraryDesugaringEnabled = true
+        // Sets Java compatibility to Java 11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+  
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
+    }
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+}
+```
+</details>
+
+Note that the plugin uses Android Gradle plugin (AGP) 8.6.0 to leverage this functionality so to err on the safe side, applications should aim to use the same version at a **minimum**. If your application uses a higher version then there's no need to use a lower AGP version. For a Flutter app using the legacy `apply` script syntax, this is specified in `android/build.gradle` and the main parts would look similar to the following
 
 ```gradle
 buildscript {
@@ -233,9 +265,39 @@ buildscript {
     }
 ```
 
-If your app is using the new declarative Plugin DSL syntax, please refer to the Flutter documentation [here](https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply) where they document where the AGP version can be specified
+
+If your app is using the new declarative [Plugin DSL syntax]((https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply), the file to update will be either `android/settings.gradle` or `android/settings.gradle.kts` and will be similar to the following
+
+<details>
+<summary>Groovy - settings.gradle</summary>
+
+```gradle
+plugins {
+    ...
+    id 'com.android.application' version '8.6.0' apply false
+    ...
+}
+```
+
+</details>
+
+<details>
+<summary>Kotlin - settings.gradle.kts</summary>
+
+```kotlin
+plugins {
+    ...
+    id("com.android.application") version "8.6.0" apply false
+    ...
+}
+```
+
+</details>
 
 There have been reports that enabling desugaring may result in a Flutter apps crashing on Android 12L and above. This would be an issue with Flutter itself, not the plugin. One possible fix is adding the [WindowManager library](https://developer.android.com/jetpack/androidx/releases/window) as a dependency:
+
+<details>
+<summary>Groovy - build.gradle</summary>
 
 ```gradle
 dependencies {
@@ -245,9 +307,27 @@ dependencies {
 }
 ```
 
+</details>
+
+<details>
+<summary>Kotlin - build.gradle.kts</summary>
+
+```gradle
+dependencies {
+    implementation("androidx.window:window:1.0.0")
+    implementation("androidx.window:window-java:1.0.0")
+    ...
+}
+```
+
+</details>
+
 More information and other proposed solutions can be found in [Flutter issue #110658](https://github.com/flutter/flutter/issues/110658).
 
 The plugin also requires that the `compileSdk` in your application's Gradle file is set to 35 at a minimum:
+
+<details>
+<summary>Groovy - build.gradle</summary>
 
 ```gradle
 android {
@@ -255,6 +335,20 @@ android {
     ...
 }
 ```
+
+</details>
+
+<details>
+<summary>Kotlin - build.gradle.kts</summary>
+
+```kotlin
+android {
+    compileSdk = 35
+    ...
+}
+```
+
+</details>
 
 ### AndroidManifest.xml setup
 
