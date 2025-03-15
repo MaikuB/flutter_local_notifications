@@ -195,7 +195,7 @@ Before proceeding, please make sure you are using the latest version of the plug
 
 ### Gradle setup
 
-Version 10+ on the plugin now relies on [desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) to support scheduled notifications with backwards compatibility on older versions of Android. Developers will need to update their application's Gradle file at `android/app/build.gradle`. Please see the link on desugaring for details but for convenience, you can expand below to see the relevant portions based on if your app has a `build.gradle` or `build.gradle.kt` file
+Version 10+ on the plugin now relies on [desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) to support scheduled notifications with backwards compatibility on older versions of Android. Developers will need to update their application's Gradle file at `android/app/build.gradle`. Please see the link on desugaring for details but for convenience, you can expand below to see the relevant portions based on if your app has a `build.gradle` or `build.gradle.kts` file
 
 <details>
 <summary>Groovy - build.gradle</summary>
@@ -226,7 +226,7 @@ dependencies {
 </details>
 
 <details>
-<summary>Kotlin - build.gradle.kt</summary>
+<summary>Kotlin - build.gradle.kts</summary>
 
 ```kotlin
 android {
