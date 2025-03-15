@@ -1,10 +1,7 @@
-## [9.0.0-dev.1]
+## [9.0.0]
 
 *  **Breaking change** bumped minimum Flutter SDK requirement to 3.22.0 and Dart SDK requirement to 3.4.0
 *  Bumped minimum `plugin_platform_interface` version to 2.1.8
-
-## [8.1.0-dev.1]
-
 * Added `data` property to `NotificationResponse` class to support notification actions on Windows. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches)
 
 ## [8.0.0]
