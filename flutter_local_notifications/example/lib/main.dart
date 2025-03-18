@@ -20,6 +20,7 @@ import 'padded_button.dart';
 import 'plugin.dart';
 import 'repeating.dart' as repeating;
 import 'windows.dart' as windows;
+import 'configure_in_app_toggle.dart';
 
 /// Streams are created so that app can respond to notification-related events
 /// since the plugin is initialized in the `main` function
@@ -226,6 +227,29 @@ class _HomePageState extends State<HomePage> {
     _isAndroidPermissionGranted();
     _requestPermissions();
     _configureSelectNotificationSubject();
+
+    // Add method channel handler for notification settings
+    const MethodChannel(
+            'com.example.flutter_local_notifications_example/settings')
+        .setMethodCallHandler((MethodCall call) async {
+      if (call.method == 'showNotificationSettings') {
+        // Show a simple dialog for demonstration
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Notification Settings'),
+            content: const Text(
+                'This is a basic example of in-app notification settings UI'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Close'),
+              ),
+            ],
+          ),
+        );
+      }
+    });
   }
 
   Future<void> _isAndroidPermissionGranted() async {
@@ -251,6 +275,7 @@ class _HomePageState extends State<HomePage> {
             alert: true,
             badge: true,
             sound: true,
+            providesAppNotificationSettings: false,
           );
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -706,8 +731,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                   ],
-                  if (!kIsWeb &&
-                      (Platform.isIOS || Platform.isMacOS)) ...<Widget>[
+                  if (Platform.isIOS) ...<Widget>[
                     const Text(
                       'iOS and macOS-specific examples',
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -783,6 +807,13 @@ class _HomePageState extends State<HomePage> {
                         await _showNotificationInNotificationCentreOnly();
                       },
                     ),
+                    ConfigureInAppToggle(
+                      flutterLocalNotificationsPlugin:
+                          flutterLocalNotificationsPlugin,
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    )
                   ],
                   if (!kIsWeb && Platform.isLinux) ...<Widget>[
                     const Text(

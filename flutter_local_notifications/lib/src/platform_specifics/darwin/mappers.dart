@@ -38,6 +38,8 @@ extension DarwinInitializationSettingsMapper on DarwinInitializationSettings {
         'requestBadgePermission': requestBadgePermission,
         'requestProvisionalPermission': requestProvisionalPermission,
         'requestCriticalPermission': requestCriticalPermission,
+        'requestProvidesAppNotificationSettings':
+            requestProvidesAppNotificationSettings,
         'defaultPresentAlert': defaultPresentAlert,
         'defaultPresentSound': defaultPresentSound,
         'defaultPresentBadge': defaultPresentBadge,
