@@ -266,7 +266,7 @@ buildscript {
 ```
 
 
-If your app is using the new declarative [Plugin DSL syntax]((https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply), the file to update will be either `android/settings.gradle` or `android/settings.gradle.kts` and will be similar to the following
+If your app is using the new declarative [Plugin DSL syntax](https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply), the file to update will be either `android/settings.gradle` or `android/settings.gradle.kts` and will be similar to the following
 
 <details>
 <summary>Groovy - settings.gradle</summary>
