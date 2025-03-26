@@ -105,6 +105,8 @@ public class NotificationDetails implements Serializable {
   private static final String VISIBILITY = "visibility";
 
   private static final String TICKER = "ticker";
+  private static final String BUBBLE_ACTIVITY = "bubbleActivity";
+  private static final String BUBBLE_EXTRA = "bubbleExtra";
   private static final String SCHEDULE_MODE = "scheduleMode";
   private static final String CATEGORY = "category";
   private static final String TIMEOUT_AFTER = "timeoutAfter";
@@ -172,6 +174,8 @@ public class NotificationDetails implements Serializable {
   public Integer ledOnMs;
   public Integer ledOffMs;
   public String ticker;
+  public String bubbleActivity;
+  public String bubbleExtra;
   public Integer visibility;
 
   @SerializedName(value = "scheduleMode", alternate = "allowWhileIdle")
@@ -278,6 +282,8 @@ public class NotificationDetails implements Serializable {
       readLedInformation(notificationDetails, platformChannelSpecifics);
       readLargeIconInformation(notificationDetails, platformChannelSpecifics);
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
+      notificationDetails.bubbleActivity = (String) platformChannelSpecifics.get(BUBBLE_ACTIVITY);
+      notificationDetails.bubbleExtra = (String) platformChannelSpecifics.get(BUBBLE_EXTRA);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
       if (platformChannelSpecifics.containsKey(SCHEDULE_MODE)) {
         notificationDetails.scheduleMode =
