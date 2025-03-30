@@ -273,6 +273,29 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _requestPermissionsWithCriticalAlert() async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+            critical: true,
+          );
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+            critical: true,
+          );
+    }
+  }
+
   void _configureSelectNotificationSubject() {
     selectNotificationStream.stream
         .listen((NotificationResponse? response) async {
@@ -721,9 +744,20 @@ class _HomePageState extends State<HomePage> {
                       onPressed: _requestPermissions,
                     ),
                     PaddedElevatedButton(
+                      buttonText:
+                          'Request permission with Critical Alert Permission',
+                      onPressed: _requestPermissionsWithCriticalAlert,
+                    ),
+                    PaddedElevatedButton(
                       buttonText: 'Show notification with subtitle',
                       onPressed: () async {
                         await _showNotificationWithSubtitle();
+                      },
+                    ),
+                    PaddedElevatedButton(
+                      buttonText: 'Show notification with critical sound',
+                      onPressed: () async {
+                        await _showNotificationWithCriticalSound();
                       },
                     ),
                     PaddedElevatedButton(
@@ -2693,6 +2727,24 @@ class _HomePageState extends State<HomePage> {
       'notification sound controlled by alarm volume',
       'alarm notification sound body',
       platformChannelSpecifics,
+    );
+  }
+
+  Future<void> _showNotificationWithCriticalSound() async {
+    const DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(
+      criticalSoundVolume: 0.2,
+      interruptionLevel: InterruptionLevel.critical,
+    );
+    const NotificationDetails notificationDetails = NotificationDetails(
+      iOS: darwinNotificationDetails,
+      macOS: darwinNotificationDetails,
+    );
+    await flutterLocalNotificationsPlugin.show(
+      id++,
+      'Critical sound notification title',
+      'Critical sound notification body',
+      notificationDetails,
     );
   }
 }
