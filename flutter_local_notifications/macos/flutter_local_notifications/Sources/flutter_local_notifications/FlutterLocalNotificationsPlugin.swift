@@ -54,6 +54,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let isBadgeEnabled = "isBadgeEnabled"
         static let isProvisionalEnabled = "isProvisionalEnabled"
         static let isCriticalEnabled = "isCriticalEnabled"
+        static let criticalSoundVolume = "criticalSoundVolume"
     }
 
     struct ErrorMessages {
@@ -543,7 +544,15 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         var presentList = persistedPresentationOptions[MethodCallArguments.presentList] as! Bool
         if let platformSpecifics = arguments[MethodCallArguments.platformSpecifics] as? [String: AnyObject] {
             if let sound = platformSpecifics[MethodCallArguments.sound] as? String {
-                content.sound = UNNotificationSound.init(named: UNNotificationSoundName.init(sound))
+                if #available(macOS 10.14, *) {
+                    if let requestCriticalPermission = arguments[MethodCallArguments.requestCriticalPermission] as? Bool,
+                       requestCriticalPermission,
+                       let volume = platformSpecifics[MethodCallArguments.criticalSoundVolume] as? NSNumber {
+                        content.sound = UNNotificationSound.criticalSoundNamed(UNNotificationSoundName(sound), withAudioVolume: volume.floatValue)
+                    } else {
+                        content.sound = UNNotificationSound(named: UNNotificationSoundName(sound))
+                    }
+                }
             }
             if let badgeNumber = platformSpecifics[MethodCallArguments.badgeNumber] as? NSNumber {
                 content.badge = badgeNumber

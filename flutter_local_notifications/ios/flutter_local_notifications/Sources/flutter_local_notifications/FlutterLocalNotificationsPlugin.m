@@ -105,6 +105,8 @@ NSString *const IS_BADGE_ENABLED = @"isBadgeEnabled";
 NSString *const IS_PROVISIONAL_ENABLED = @"isProvisionalEnabled";
 NSString *const IS_CRITICAL_ENABLED = @"isCriticalEnabled";
 
+NSString *const CRITICAL_SOUND_VOLUME = @"criticalSoundVolume";
+
 typedef NS_ENUM(NSInteger, RepeatInterval) {
   EveryMinute,
   Hourly,
@@ -677,7 +679,19 @@ static FlutterError *getFlutterError(NSError *error) {
       }
     }
     if ([self containsKey:SOUND forDictionary:platformSpecifics]) {
-      content.sound = [UNNotificationSound soundNamed:platformSpecifics[SOUND]];
+      NSString *soundName = platformSpecifics[SOUND];
+      if (@available(iOS 12.0, *)) {
+        if ([self containsKey:REQUEST_CRITICAL_PERMISSION forDictionary:arguments] &&
+            [arguments[REQUEST_CRITICAL_PERMISSION] boolValue] &&
+            [self containsKey:CRITICAL_SOUND_VOLUME forDictionary:platformSpecifics]) {
+          NSNumber *volume = platformSpecifics[CRITICAL_SOUND_VOLUME];
+          content.sound = [UNNotificationSound criticalSoundNamed:soundName withAudioVolume:[volume floatValue]];
+        } else {
+          content.sound = [UNNotificationSound soundNamed:soundName];
+        }
+      } else {
+        content.sound = [UNNotificationSound soundNamed:soundName];
+      }
     }
     if ([self containsKey:SUBTITLE forDictionary:platformSpecifics]) {
       content.subtitle = platformSpecifics[SUBTITLE];
