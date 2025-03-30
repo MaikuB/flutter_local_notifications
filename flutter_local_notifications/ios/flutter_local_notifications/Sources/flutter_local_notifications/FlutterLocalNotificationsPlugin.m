@@ -679,18 +679,17 @@ static FlutterError *getFlutterError(NSError *error) {
       }
     }
     if ([self containsKey:SOUND forDictionary:platformSpecifics]) {
-      NSString *soundName = platformSpecifics[SOUND];
-      if (@available(iOS 12.0, *)) {
-        if ([self containsKey:REQUEST_CRITICAL_PERMISSION forDictionary:arguments] &&
-            [arguments[REQUEST_CRITICAL_PERMISSION] boolValue] &&
-            [self containsKey:CRITICAL_SOUND_VOLUME forDictionary:platformSpecifics]) {
-          NSNumber *volume = platformSpecifics[CRITICAL_SOUND_VOLUME];
+      content.sound = [UNNotificationSound soundNamed:platformSpecifics[SOUND]];
+    }
+    if (@available(iOS 12.0, *)) {
+      if ([self containsKey:CRITICAL_SOUND_VOLUME forDictionary:platformSpecifics]) {
+        NSString *soundName = platformSpecifics[SOUND];
+        NSNumber *volume = platformSpecifics[CRITICAL_SOUND_VOLUME];
+        if (soundName) {
           content.sound = [UNNotificationSound criticalSoundNamed:soundName withAudioVolume:[volume floatValue]];
         } else {
-          content.sound = [UNNotificationSound soundNamed:soundName];
+          content.sound = [UNNotificationSound defaultCriticalSoundWithAudioVolume:[volume floatValue]];
         }
-      } else {
-        content.sound = [UNNotificationSound soundNamed:soundName];
       }
     }
     if ([self containsKey:SUBTITLE forDictionary:platformSpecifics]) {
