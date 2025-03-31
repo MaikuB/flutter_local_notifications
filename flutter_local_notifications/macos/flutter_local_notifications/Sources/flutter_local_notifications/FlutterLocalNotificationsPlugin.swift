@@ -544,7 +544,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         var presentList = persistedPresentationOptions[MethodCallArguments.presentList] as! Bool
         if let platformSpecifics = arguments[MethodCallArguments.platformSpecifics] as? [String: AnyObject] {
             if let sound = platformSpecifics[MethodCallArguments.sound] as? String {
-                content.sound = UNNotificationSound(named: UNNotificationSoundName(sound))
+              content.sound = UNNotificationSound.init(named: UNNotificationSoundName.init(sound))
             }
 
             if #available(macOS 10.14, *) {
