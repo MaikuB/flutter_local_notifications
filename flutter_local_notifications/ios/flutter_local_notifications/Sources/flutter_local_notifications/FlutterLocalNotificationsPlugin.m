@@ -683,12 +683,12 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     if (@available(iOS 12.0, *)) {
       if ([self containsKey:CRITICAL_SOUND_VOLUME forDictionary:platformSpecifics]) {
-        NSString *soundName = platformSpecifics[SOUND];
         NSNumber *volume = platformSpecifics[CRITICAL_SOUND_VOLUME];
-        if (soundName) {
-          content.sound = [UNNotificationSound criticalSoundNamed:soundName withAudioVolume:[volume floatValue]];
+        // NOTE: When converting from Flutter to Objective-C, doubleValue is typically used, but this function accepts a float. As the expected value falls between 0.0 and 0.1, we will cast it directly.
+        if ([self containsKey:SOUND forDictionary:platformSpecifics]) {
+          content.sound = [UNNotificationSound criticalSoundNamed:platformSpecifics[SOUND] withAudioVolume:(float)[volume doubleValue]];
         } else {
-          content.sound = [UNNotificationSound defaultCriticalSoundWithAudioVolume:[volume floatValue]];
+          content.sound = [UNNotificationSound defaultCriticalSoundWithAudioVolume:(float)[volume doubleValue]];
         }
       }
     }
