@@ -2733,8 +2733,10 @@ class _HomePageState extends State<HomePage> {
   Future<void> _showNotificationWithCriticalSound() async {
     const DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(
-      criticalSoundVolume: 0.2,
-      interruptionLevel: InterruptionLevel.critical,
+      // Between 0.0 and 1.0
+      criticalSoundVolume: 0.5,
+      // If sound is not specified, the default sound will be used
+      sound: 'slow_spring_board.aiff',
     );
     const NotificationDetails notificationDetails = NotificationDetails(
       iOS: darwinNotificationDetails,
