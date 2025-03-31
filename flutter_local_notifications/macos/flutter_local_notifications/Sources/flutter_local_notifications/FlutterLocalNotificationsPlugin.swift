@@ -543,8 +543,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         var presentBanner = persistedPresentationOptions[MethodCallArguments.presentBanner] as! Bool
         var presentList = persistedPresentationOptions[MethodCallArguments.presentList] as! Bool
         if let platformSpecifics = arguments[MethodCallArguments.platformSpecifics] as? [String: AnyObject] {
-            content.sound = UNNotificationSound(named: UNNotificationSoundName(sound))
-            
+            if let sound = platformSpecifics[MethodCallArguments.sound] as? String {
+                content.sound = UNNotificationSound(named: UNNotificationSoundName(sound))
+            }
+
             if #available(macOS 10.14, *) {
               if let volume = platformSpecifics[MethodCallArguments.criticalSoundVolume] as? NSNumber {
                     if let sound = platformSpecifics[MethodCallArguments.sound] as? String {
