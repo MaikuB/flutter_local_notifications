@@ -142,6 +142,7 @@ class DarwinNotificationDetails {
   final InterruptionLevel? interruptionLevel;
 
   /// The volume for playing the critical alert sound.
+  ///
   /// The value is between 0.0 and 1.0.
   /// This is only used when the notification is configured as a critical alert.
   /// Document: https://developer.apple.com/documentation/usernotifications/unnotificationsound/criticalsoundnamed(_:withaudiovolume:)
