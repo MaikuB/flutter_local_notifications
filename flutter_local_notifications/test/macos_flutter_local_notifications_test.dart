@@ -137,6 +137,7 @@ void main() {
           ],
           categoryIdentifier: 'category1',
           interruptionLevel: InterruptionLevel.timeSensitive,
+          criticalSoundVolume: 0.5,
         ),
       );
 
@@ -176,6 +177,7 @@ void main() {
               ],
               'categoryIdentifier': 'category1',
               'interruptionLevel': 2,
+              'criticalSoundVolume': 0.5,
             },
           },
         ),
@@ -250,6 +252,7 @@ void main() {
                     ],
                     'categoryIdentifier': null,
                     'interruptionLevel': null,
+                    'criticalSoundVolume': null,
                   },
                 }));
           });
@@ -376,6 +379,7 @@ void main() {
                         ],
                         'categoryIdentifier': null,
                         'interruptionLevel': null,
+                        'criticalSoundVolume': null,
                       },
                     }));
           });
@@ -449,6 +453,7 @@ void main() {
                 ],
                 'categoryIdentifier': null,
                 'interruptionLevel': null,
+                'criticalSoundVolume': null,
               },
             }));
       });
@@ -523,6 +528,7 @@ void main() {
                 ],
                 'categoryIdentifier': null,
                 'interruptionLevel': null,
+                'criticalSoundVolume': null,
               },
             },
           ),
@@ -600,6 +606,7 @@ void main() {
                 ],
                 'categoryIdentifier': null,
                 'interruptionLevel': null,
+                'criticalSoundVolume': null,
               },
             },
           ),
