@@ -745,7 +745,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     PaddedElevatedButton(
                       buttonText:
-                          'Request permission with Critical Alert Permission',
+                          'Request permission with critical alert permission',
                       onPressed: _requestPermissionsWithCriticalAlert,
                     ),
                     PaddedElevatedButton(
