@@ -237,6 +237,7 @@ void main() {
                 identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373'),
           ],
           categoryIdentifier: 'category1',
+          criticalSoundVolume: 0.5,
         ),
       );
 
@@ -270,6 +271,7 @@ void main() {
               ],
               'categoryIdentifier': 'category1',
               'interruptionLevel': null,
+              'criticalSoundVolume': 0.5,
             },
           }));
     });
@@ -343,6 +345,7 @@ void main() {
                     ],
                     'categoryIdentifier': null,
                     'interruptionLevel': null,
+                    'criticalSoundVolume': null,
                   },
                 },
               ),
@@ -470,6 +473,7 @@ void main() {
                     ],
                     'categoryIdentifier': null,
                     'interruptionLevel': null,
+                    'criticalSoundVolume': null,
                   },
                 },
               ),
@@ -543,6 +547,7 @@ void main() {
                 ],
                 'categoryIdentifier': null,
                 'interruptionLevel': null,
+                'criticalSoundVolume': null,
               },
             }));
       });
@@ -612,6 +617,7 @@ void main() {
                 ],
                 'categoryIdentifier': null,
                 'interruptionLevel': null,
+                'criticalSoundVolume': null,
               },
             }));
       });
@@ -682,6 +688,7 @@ void main() {
                 ],
                 'categoryIdentifier': null,
                 'interruptionLevel': null,
+                'criticalSoundVolume': null,
               },
             }));
       });
