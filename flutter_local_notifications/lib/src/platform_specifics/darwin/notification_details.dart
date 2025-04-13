@@ -150,6 +150,7 @@ class DarwinNotificationDetails {
   /// Subject to specific approval from Apple:
   /// https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/
   ///
-  /// This property is only applicable to iOS 12.0 or newer.
+  /// On iOS, this property is only applicable to iOS 12.0 or newer.
+  /// On macOS, this property is only applicable to macOS 10.14 or newer.
   final double? criticalSoundVolume;
 }
