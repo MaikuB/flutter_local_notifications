@@ -1,5 +1,9 @@
-## [19.0.0]
+## [19.1.0]
 
+* [iOS][macOS] added supported to specify the volume for critical alerts. Thanks to the PR from [bannzai](https://github.com/bannzai)
+* Updated Gradle setup information in the readme to clarify that desugaring needs to be enabled even if scheduled notifications aren't used
+
+## [19.0.0]
 
 * [Android] **Breaking change** bumped `compileSdk` to 35 and updated readme to mention this
 * [Android] bumped GSON dependency to 2.12. As a result of doing so, applications should no longer need ProGuard rules related to this plugin that were needed for release builds to function. The readme has been updated to remove the associated setup to reflect this. Thanks to the PR from [Koji Wakamiya](https://github.com/koji-1009)
