@@ -180,6 +180,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'channelShowBadge': channelShowBadge,
         'channelAction': channelAction.index,
         'importance': importance.value,
+        'channelBypassDnd': channelBypassDnd,
         'priority': priority.value,
         'playSound': playSound,
         'enableVibration': enableVibration,
