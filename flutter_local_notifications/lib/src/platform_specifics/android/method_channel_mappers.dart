@@ -45,6 +45,7 @@ extension AndroidNotificationChannelMapper on AndroidNotificationChannel {
         'groupId': groupId,
         'showBadge': showBadge,
         'importance': importance.value,
+        'bypassDnd': bypassDnd,
         'playSound': playSound,
         'enableVibration': enableVibration,
         'vibrationPattern': vibrationPattern,
