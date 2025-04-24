@@ -39,7 +39,6 @@ import android.util.Log;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
@@ -1919,8 +1918,12 @@ public class FlutterLocalNotificationsPlugin
     }
   }
 
-  @RequiresApi(api = VERSION_CODES.M)
   public void requestNotificationPolicyAccess(@NonNull PermissionRequestListener callback) {
+    if (VERSION.SDK_INT < VERSION_CODES.M) {
+      callback.complete(false);
+      return;
+    }
+
     if (permissionRequestProgress != PermissionRequestProgress.None) {
       callback.fail(PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE);
       return;
@@ -1943,8 +1946,12 @@ public class FlutterLocalNotificationsPlugin
     }
   }
 
-  @RequiresApi(api = VERSION_CODES.M)
   public void hasNotificationPolicyAccess(Result result) {
+    if (VERSION.SDK_INT < VERSION_CODES.M) {
+      result.success(false);
+      return;
+    }
+
     NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
     boolean isGranted = notificationManager.isNotificationPolicyAccessGranted();
     result.success(isGranted);

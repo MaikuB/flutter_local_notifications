@@ -188,10 +188,13 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<bool?> requestNotificationsPermission() async =>
       _channel.invokeMethod<bool>('requestNotificationsPermission');
 
-  /// Requests access to notification policy. Returns whether the
-  /// permission was granted.
+  /// Requests access to notification policy.
+  ///
+  /// Returns whether the permission was granted.
   ///
   /// This is required for channels that bypass DnD settings.
+  /// On Android versions before API level 23, this is a no-op and returns
+  /// false.
   ///
   /// See also:
   ///
@@ -200,6 +203,8 @@ class AndroidFlutterLocalNotificationsPlugin
       _channel.invokeMethod<bool>('requestNotificationPolicyAccess');
 
   /// Whether the app has access to notification policy.
+  ///
+  /// On Android versions before API level 23, this will always return false.
   ///
   /// See also:
   ///
