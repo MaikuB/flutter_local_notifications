@@ -547,15 +547,14 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
               content.sound = UNNotificationSound.init(named: UNNotificationSoundName.init(sound))
             }
 
-            if #available(macOS 10.14, *) {
-              if let volume = platformSpecifics[MethodCallArguments.criticalSoundVolume] as? NSNumber {
-                    if let sound = platformSpecifics[MethodCallArguments.sound] as? String {
-                        content.sound = UNNotificationSound.criticalSoundNamed(UNNotificationSoundName(sound), withAudioVolume: volume.floatValue)
-                    } else {
-                        content.sound = UNNotificationSound.defaultCriticalSound(withAudioVolume: volume.floatValue)
-                    }
+            if let volume = platformSpecifics[MethodCallArguments.criticalSoundVolume] as? NSNumber {
+                if let sound = platformSpecifics[MethodCallArguments.sound] as? String {
+                    content.sound = UNNotificationSound.criticalSoundNamed(UNNotificationSoundName(sound), withAudioVolume: volume.floatValue)
+                } else {
+                    content.sound = UNNotificationSound.defaultCriticalSound(withAudioVolume: volume.floatValue)
                 }
             }
+
             if let badgeNumber = platformSpecifics[MethodCallArguments.badgeNumber] as? NSNumber {
                 content.badge = badgeNumber
             }
