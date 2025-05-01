@@ -1,3 +1,7 @@
+## [vNext]
+
+* Bumped `msix` dev dependency in example app. This to fix the [issue](https://github.com/YehudaKremer/msix/issues/303) where the `msix` package stopped being able to created MSIX installers
+
 ## [19.1.0]
 
 * [iOS][macOS] added supported to specify the volume for critical alerts. Thanks to the PR from [bannzai](https://github.com/bannzai)
