@@ -2462,10 +2462,10 @@ class _HomePageState extends State<HomePage> {
         NotificationDetails(android: androidNotificationDetails);
 
     await flutterLocalNotificationsPlugin.show(
-      id++,
-      'I ignored dnd',
-      'I completely ignored dnd',
-      notificationDetails,
+      id: id++,
+      title: 'I ignored dnd',
+      body: 'I completely ignored dnd',
+      notificationDetails: notificationDetails,
     );
   }
 
