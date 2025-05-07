@@ -1221,10 +1221,11 @@ public class FlutterLocalNotificationsPlugin
       }
 
       if (BooleanUtils.getValue(notificationChannelDetails.bypassDnd)) {
-        notificationChannel.setBypassDnd(true);
-
         boolean isAccessGranted = notificationManager.isNotificationPolicyAccessGranted();
-        if (!isAccessGranted) {
+
+        if (isAccessGranted) {
+          notificationChannel.setBypassDnd(true);
+        } else {
           Log.w(TAG, "Channel '" + notificationChannelDetails.name + "' was set to bypass Do Not Disturb but the OS prevents it.");
         }
       }

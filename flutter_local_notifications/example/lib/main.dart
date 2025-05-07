@@ -2384,7 +2384,7 @@ class _HomePageState extends State<HomePage> {
 
     final bool? hasPolicyAccess =
         await androidPlugin?.hasNotificationPolicyAccess();
-    if (hasPolicyAccess == true) {
+    if (hasPolicyAccess ?? false) {
       await androidPlugin?.requestNotificationPolicyAccess();
     }
 
