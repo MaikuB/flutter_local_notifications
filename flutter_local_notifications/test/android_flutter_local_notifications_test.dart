@@ -66,7 +66,7 @@ void main() {
           InitializationSettings(android: androidInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       await flutterLocalNotificationsPlugin.show(
-          1, 'notification title', 'notification body', null);
+          id: 1, title: 'notification title', body: 'notification body');
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object?>{
@@ -110,11 +110,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-        1,
-        'notification title',
-        'notification body',
-        const NotificationDetails(android: androidNotificationDetails),
-      );
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
         log.last,
         isMethodCall(
@@ -235,10 +235,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          const NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -319,10 +320,11 @@ void main() {
               additionalFlags: Int32List.fromList(<int>[4, 32]));
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -404,10 +406,11 @@ void main() {
           AndroidNotificationDetails('channelId', 'channelName',
               channelDescription: 'channelDescription', when: timestamp);
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -490,10 +493,11 @@ void main() {
               when: timestamp,
               usesChronometer: true);
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -578,10 +582,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          const NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -667,10 +672,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          const NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -756,10 +762,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          const NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -844,10 +851,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          const NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -934,10 +942,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          const NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1039,10 +1048,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          const NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1138,10 +1148,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          const NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1243,10 +1254,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          const NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1340,10 +1352,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          const NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1441,10 +1454,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          const NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1533,10 +1547,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          const NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1622,10 +1637,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          const NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              const NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1718,10 +1734,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1843,10 +1860,11 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1,
-          'notification title',
-          'notification body',
-          NotificationDetails(android: androidNotificationDetails));
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          notificationDetails:
+              NotificationDetails(android: androidNotificationDetails));
       expect(
           log.last,
           isMethodCall('show', arguments: <String, Object>{
@@ -1950,11 +1968,12 @@ void main() {
                 AndroidNotificationDetails('channelId', 'channelName',
                     channelDescription: 'channelDescription');
             await flutterLocalNotificationsPlugin.periodicallyShow(
-              1,
-              'notification title',
-              'notification body',
-              repeatInterval,
-              const NotificationDetails(android: androidNotificationDetails),
+              id: 1,
+              title: 'notification title',
+              body: 'notification body',
+              repeatInterval: repeatInterval,
+              notificationDetails: const NotificationDetails(
+                  android: androidNotificationDetails),
               androidScheduleMode: AndroidScheduleMode.exact,
             );
 
@@ -2051,11 +2070,11 @@ void main() {
           expect(
               () async => await flutterLocalNotificationsPlugin
                       .periodicallyShowWithDuration(
-                    1,
-                    'notification title',
-                    'notification body',
-                    thirtySeconds,
-                    const NotificationDetails(
+                    id: 1,
+                    title: 'notification title',
+                    body: 'notification body',
+                    repeatDurationInterval: thirtySeconds,
+                    notificationDetails: const NotificationDetails(
                         android: androidNotificationDetails),
                   ),
               throwsA(isA<ArgumentError>()));
@@ -2083,11 +2102,12 @@ void main() {
                 AndroidNotificationDetails('channelId', 'channelName',
                     channelDescription: 'channelDescription');
             await flutterLocalNotificationsPlugin.periodicallyShowWithDuration(
-              1,
-              'notification title',
-              'notification body',
-              repeatDurationInterval,
-              const NotificationDetails(android: androidNotificationDetails),
+              id: 1,
+              title: 'notification title',
+              body: 'notification body',
+              repeatDurationInterval: repeatDurationInterval,
+              notificationDetails: const NotificationDetails(
+                  android: androidNotificationDetails),
             );
 
             expect(
@@ -2181,11 +2201,12 @@ void main() {
             AndroidNotificationDetails('channelId', 'channelName',
                 channelDescription: 'channelDescription');
         await flutterLocalNotificationsPlugin.zonedSchedule(
-            1,
-            'notification title',
-            'notification body',
-            scheduledDate,
-            const NotificationDetails(android: androidNotificationDetails),
+            id: 1,
+            title: 'notification title',
+            body: 'notification body',
+            scheduledDate: scheduledDate,
+            notificationDetails:
+                const NotificationDetails(android: androidNotificationDetails),
             androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle);
         expect(
             log.last,
@@ -2274,11 +2295,12 @@ void main() {
             AndroidNotificationDetails('channelId', 'channelName',
                 channelDescription: 'channelDescription');
         await flutterLocalNotificationsPlugin.zonedSchedule(
-            1,
-            'notification title',
-            'notification body',
-            scheduledDate,
-            const NotificationDetails(android: androidNotificationDetails),
+            id: 1,
+            title: 'notification title',
+            body: 'notification body',
+            scheduledDate: scheduledDate,
+            notificationDetails:
+                const NotificationDetails(android: androidNotificationDetails),
             androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             matchDateTimeComponents: DateTimeComponents.time);
         expect(
@@ -2369,11 +2391,12 @@ void main() {
             AndroidNotificationDetails('channelId', 'channelName',
                 channelDescription: 'channelDescription');
         await flutterLocalNotificationsPlugin.zonedSchedule(
-            1,
-            'notification title',
-            'notification body',
-            scheduledDate,
-            const NotificationDetails(android: androidNotificationDetails),
+            id: 1,
+            title: 'notification title',
+            body: 'notification body',
+            scheduledDate: scheduledDate,
+            notificationDetails:
+                const NotificationDetails(android: androidNotificationDetails),
             androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
         expect(
