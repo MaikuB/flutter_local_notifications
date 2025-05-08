@@ -230,11 +230,11 @@ class FlutterLocalNotificationsPlugin {
 
   /// Show a notification with an optional payload that will be passed back to
   /// the app when a notification is tapped.
-  Future<void> show(
-    int id,
+  Future<void> show({
+    required int id,
     String? title,
     String? body,
-    NotificationDetails? notificationDetails, {
+    NotificationDetails? notificationDetails,
     String? payload,
   }) async {
     if (kIsWeb) {
@@ -331,13 +331,13 @@ class FlutterLocalNotificationsPlugin {
   ///
   /// On Windows, this will only set a notification on the [scheduledDate], and
   /// not repeat, regardless of the value for [matchDateTimeComponents].
-  Future<void> zonedSchedule(
-    int id,
+  Future<void> zonedSchedule({
+    required int id,
+    required TZDateTime scheduledDate,
+    required NotificationDetails notificationDetails,
+    required AndroidScheduleMode androidScheduleMode,
     String? title,
     String? body,
-    TZDateTime scheduledDate,
-    NotificationDetails notificationDetails, {
-    required AndroidScheduleMode androidScheduleMode,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
@@ -391,13 +391,13 @@ class FlutterLocalNotificationsPlugin {
   /// On Android, this will also require additional setup for the app,
   /// especially in the app's `AndroidManifest.xml` file. Please see check the
   /// readme for further details.
-  Future<void> periodicallyShow(
-    int id,
+  Future<void> periodicallyShow({
+    required int id,
+    required RepeatInterval repeatInterval,
+    required NotificationDetails notificationDetails,
+    required AndroidScheduleMode androidScheduleMode,
     String? title,
     String? body,
-    RepeatInterval repeatInterval,
-    NotificationDetails notificationDetails, {
-    required AndroidScheduleMode androidScheduleMode,
     String? payload,
   }) async {
     if (kIsWeb) {
@@ -438,12 +438,12 @@ class FlutterLocalNotificationsPlugin {
   /// On Android, this will also require additional setup for the app,
   /// especially in the app's `AndroidManifest.xml` file. Please see check the
   /// readme for further details.
-  Future<void> periodicallyShowWithDuration(
-    int id,
+  Future<void> periodicallyShowWithDuration({
+    required int id,
+    required Duration repeatDurationInterval,
+    required NotificationDetails notificationDetails,
     String? title,
     String? body,
-    Duration repeatDurationInterval,
-    NotificationDetails notificationDetails, {
     AndroidScheduleMode androidScheduleMode = AndroidScheduleMode.exact,
     String? payload,
   }) async {
