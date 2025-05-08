@@ -104,6 +104,7 @@ class AndroidNotificationDetails {
     this.channelDescription,
     this.icon,
     this.importance = Importance.defaultImportance,
+    this.channelBypassDnd = false,
     this.priority = Priority.defaultPriority,
     this.styleInformation,
     this.playSound = true,
@@ -170,11 +171,19 @@ class AndroidNotificationDetails {
   final String? channelDescription;
 
   /// Whether notifications posted to this channel can appear as application
-  /// icon badges in a Launcher
+  /// icon badges in a Launcher.
   final bool channelShowBadge;
 
   /// The importance of the notification.
   final Importance importance;
+
+  /// Whether the notification channel should attempt to bypass Do Not Disturb
+  /// settings.
+  ///
+  /// You must acquire notification policy access by calling
+  /// [AndroidFlutterLocalNotificationsPlugin.requestNotificationPolicyAccess]
+  /// before setting this to true. Otherwise this value is ignored.
+  final bool channelBypassDnd;
 
   /// The priority of the notification
   final Priority priority;
@@ -317,7 +326,7 @@ class AndroidNotificationDetails {
   /// The action to take for managing notification channels.
   ///
   /// Defaults to creating the notification channel using the provided details
-  /// if it doesn't exist
+  /// if it doesn't exist.
   final AndroidNotificationChannelAction channelAction;
 
   /// Defines the notification visibility on the lockscreen.
@@ -405,7 +414,7 @@ class AndroidNotificationDetails {
   final int? number;
 
   /// The attribute describing what is the intended use of the audio signal,
-  /// such as alarm or ringtone set in [`AudioAttributes.Builder`](https://developer.android.com/reference/android/media/AudioAttributes.Builder#setUsage(int))
+  /// such as alarm or ringtone set in [`AudioAttributes.Builder`](https://developer.android.com/reference/android/media/AudioAttributes.Builder#setUsage(int)).
   /// https://developer.android.com/reference/android/media/AudioAttributes
   final AudioAttributesUsage audioAttributesUsage;
 }

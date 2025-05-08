@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spannable;
@@ -168,6 +169,8 @@ public class FlutterLocalNotificationsPlugin
 
   private static final String REQUEST_FULL_SCREEN_INTENT_PERMISSION_METHOD =
       "requestFullScreenIntentPermission";
+  private static final String REQUEST_NOTIFICATION_POLICY_ACCESS_METHOD = "requestNotificationPolicyAccess";
+  private static final String HAS_NOTIFICATION_POLICY_ACCESS_METHOD = "hasNotificationPolicyAccess";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
   private static final String INVALID_ICON_ERROR_CODE = "invalid_icon";
   private static final String INVALID_LARGE_ICON_ERROR_CODE = "invalid_large_icon";
@@ -211,6 +214,7 @@ public class FlutterLocalNotificationsPlugin
   static final int EXACT_ALARM_PERMISSION_REQUEST_CODE = 2;
 
   static final int FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE = 3;
+  static final int NOTIFICATION_POLICY_ACCESS_REQUEST_CODE = 4;
 
   private PermissionRequestListener callback;
 
@@ -1215,6 +1219,17 @@ public class FlutterLocalNotificationsPlugin
       } else {
         notificationChannel.setSound(null, null);
       }
+
+      if (BooleanUtils.getValue(notificationChannelDetails.bypassDnd)) {
+        boolean isAccessGranted = notificationManager.isNotificationPolicyAccessGranted();
+
+        if (isAccessGranted) {
+          notificationChannel.setBypassDnd(true);
+        } else {
+          Log.w(TAG, "Channel '" + notificationChannelDetails.name + "' was set to bypass Do Not Disturb but the OS prevents it.");
+        }
+      }
+
       notificationChannel.enableVibration(
           BooleanUtils.getValue(notificationChannelDetails.enableVibration));
       if (notificationChannelDetails.vibrationPattern != null
@@ -1474,6 +1489,22 @@ public class FlutterLocalNotificationsPlugin
                 result.error(PERMISSION_REQUEST_IN_PROGRESS_ERROR_CODE, message, null);
               }
             });
+        break;
+      case REQUEST_NOTIFICATION_POLICY_ACCESS_METHOD:
+        requestNotificationPolicyAccess(new PermissionRequestListener() {
+          @Override
+          public void complete(boolean granted) {
+            result.success(granted);
+          }
+
+          @Override
+          public void fail(String message) {
+            result.error(PERMISSION_REQUEST_IN_PROGRESS_ERROR_CODE, message, null);
+          }
+        });
+        break;
+      case HAS_NOTIFICATION_POLICY_ACCESS_METHOD:
+        hasNotificationPolicyAccess(result);
         break;
       case PERIODICALLY_SHOW_METHOD:
         repeat(call, result);
@@ -1888,6 +1919,45 @@ public class FlutterLocalNotificationsPlugin
     }
   }
 
+  public void requestNotificationPolicyAccess(@NonNull PermissionRequestListener callback) {
+    if (VERSION.SDK_INT < VERSION_CODES.M) {
+      callback.complete(false);
+      return;
+    }
+
+    if (permissionRequestProgress != PermissionRequestProgress.None) {
+      callback.fail(PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE);
+      return;
+    }
+
+    this.callback = callback;
+
+    NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+    boolean permissionGranted = notificationManager.isNotificationPolicyAccessGranted();
+
+    if (permissionGranted) {
+      this.callback.complete(true);
+      permissionRequestProgress = PermissionRequestProgress.None;
+    } else {
+      permissionRequestProgress = PermissionRequestProgress.RequestingNotificationPolicyAccess;
+      mainActivity.startActivityForResult(
+        new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS),
+        NOTIFICATION_POLICY_ACCESS_REQUEST_CODE
+      );
+    }
+  }
+
+  public void hasNotificationPolicyAccess(Result result) {
+    if (VERSION.SDK_INT < VERSION_CODES.M) {
+      result.success(false);
+      return;
+    }
+
+    NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+    boolean isGranted = notificationManager.isNotificationPolicyAccessGranted();
+    result.success(isGranted);
+  }
+
   @Override
   public boolean onRequestPermissionsResult(
       int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -2147,6 +2217,7 @@ public class FlutterLocalNotificationsPlugin
           channelPayload.put("sound", soundUri.toString());
         }
       }
+      channelPayload.put("bypassDnd", channel.canBypassDnd());
       channelPayload.put("enableVibration", channel.shouldVibrate());
       channelPayload.put("vibrationPattern", channel.getVibrationPattern());
       channelPayload.put("enableLights", channel.shouldShowLights());
@@ -2226,7 +2297,8 @@ public class FlutterLocalNotificationsPlugin
   public boolean onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     if (requestCode != NOTIFICATION_PERMISSION_REQUEST_CODE
         && requestCode != EXACT_ALARM_PERMISSION_REQUEST_CODE
-        && requestCode != FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE) {
+        && requestCode != FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE
+        && requestCode != NOTIFICATION_POLICY_ACCESS_REQUEST_CODE) {
       return false;
     }
 
@@ -2244,6 +2316,14 @@ public class FlutterLocalNotificationsPlugin
       NotificationManager notificationManager =
           (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
       this.callback.complete(notificationManager.canUseFullScreenIntent());
+      permissionRequestProgress = PermissionRequestProgress.None;
+    }
+
+    if (permissionRequestProgress == PermissionRequestProgress.RequestingNotificationPolicyAccess
+        && requestCode == NOTIFICATION_POLICY_ACCESS_REQUEST_CODE
+        && VERSION.SDK_INT >= VERSION_CODES.M) {
+      NotificationManager notificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+      this.callback.complete(notificationManager.isNotificationPolicyAccessGranted());
       permissionRequestProgress = PermissionRequestProgress.None;
     }
 
@@ -2268,6 +2348,7 @@ public class FlutterLocalNotificationsPlugin
   enum PermissionRequestProgress {
     None,
     RequestingNotificationPermission,
+    RequestingNotificationPolicyAccess,
     RequestingExactAlarmsPermission,
     RequestingFullScreenIntentPermission
   }

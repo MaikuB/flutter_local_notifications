@@ -296,6 +296,13 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _requestNotificationPolicyAccess() async {
+    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+        flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    await androidImplementation?.requestNotificationPolicyAccess();
+  }
+
   void _configureSelectNotificationSubject() {
     selectNotificationStream.stream
         .listen((NotificationResponse? response) async {
@@ -484,6 +491,10 @@ class _HomePageState extends State<HomePage> {
                     PaddedElevatedButton(
                       buttonText: 'Request permission (API 33+)',
                       onPressed: () => _requestPermissions(),
+                    ),
+                    PaddedElevatedButton(
+                      buttonText: 'Request notification policy access',
+                      onPressed: () => _requestNotificationPolicyAccess(),
                     ),
                     PaddedElevatedButton(
                       buttonText:
@@ -700,6 +711,19 @@ class _HomePageState extends State<HomePage> {
                       buttonText: 'Delete notification channel',
                       onPressed: () async {
                         await _deleteNotificationChannel();
+                      },
+                    ),
+                    PaddedElevatedButton(
+                      buttonText:
+                          'Create notification channel that ignores dnd',
+                      onPressed: () async {
+                        await _createNotificationChannelWithDndBypass();
+                      },
+                    ),
+                    PaddedElevatedButton(
+                      buttonText: 'Show notification that ignores dnd',
+                      onPressed: () async {
+                        await _showNotificationWithDndBypass();
                       },
                     ),
                     PaddedElevatedButton(
@@ -2347,6 +2371,57 @@ class _HomePageState extends State<HomePage> {
             ));
   }
 
+  Future<void> _createNotificationChannelWithDndBypass() async {
+    const AndroidNotificationChannel androidNotificationChannel =
+        AndroidNotificationChannel('your channel id 3', 'your channel name 3',
+            description: 'your channel description 3',
+            bypassDnd: true,
+            importance: Importance.max);
+
+    final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
+        flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+
+    final bool? hasPolicyAccess =
+        await androidPlugin?.hasNotificationPolicyAccess();
+    if (hasPolicyAccess ?? false) {
+      await androidPlugin?.requestNotificationPolicyAccess();
+    }
+
+    await androidPlugin?.createNotificationChannel(androidNotificationChannel);
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: Text(
+            'Channel with name ${androidNotificationChannel.name} created'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          )
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showNotificationWithDndBypass() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails('your channel id 3', 'your channel name 3',
+            channelDescription: 'your channel description 3',
+            channelBypassDnd: true,
+            importance: Importance.max);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
+
+    await flutterLocalNotificationsPlugin.show(
+      id++,
+      'I ignored dnd',
+      'I completely ignored dnd',
+      notificationDetails,
+    );
+  }
+
   Future<void> _areNotifcationsEnabledOnAndroid() async {
     final bool? areEnabled = await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -2673,6 +2748,7 @@ class _HomePageState extends State<HomePage> {
                         'description: ${channel.description}\n'
                         'groupId: ${channel.groupId}\n'
                         'importance: ${channel.importance.value}\n'
+                        'bypassDnd: ${channel.bypassDnd}\n'
                         'playSound: ${channel.playSound}\n'
                         'sound: ${channel.sound?.sound}\n'
                         'enableVibration: ${channel.enableVibration}\n'
