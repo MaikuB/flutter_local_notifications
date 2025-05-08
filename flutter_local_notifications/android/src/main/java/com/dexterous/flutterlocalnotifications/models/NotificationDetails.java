@@ -393,7 +393,8 @@ public class NotificationDetails implements Serializable {
       notificationDetails.channelDescription =
           (String) platformChannelSpecifics.get(CHANNEL_DESCRIPTION);
       notificationDetails.importance = (Integer) platformChannelSpecifics.get(IMPORTANCE);
-      notificationDetails.channelBypassDnd = (Boolean) platformChannelSpecifics.get(CHANNEL_BYPASS_DND);
+      notificationDetails.channelBypassDnd =
+          (Boolean) platformChannelSpecifics.get(CHANNEL_BYPASS_DND);
       notificationDetails.channelShowBadge =
           (Boolean) platformChannelSpecifics.get(CHANNEL_SHOW_BADGE);
       notificationDetails.channelAction =
