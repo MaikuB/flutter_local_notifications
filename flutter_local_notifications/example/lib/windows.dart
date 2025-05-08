@@ -145,19 +145,19 @@ List<Widget> examples() => <Widget>[
 
 Future<void> _showWindowsNotificationWithDuration() async {
   await flutterLocalNotificationsPlugin.show(
-    id++,
-    'This is a short notification',
-    'This will last about 7 seconds',
-    const NotificationDetails(
+    id: id++,
+    title: 'This is a short notification',
+    body: 'This will last about 7 seconds',
+    notificationDetails: const NotificationDetails(
       windows: WindowsNotificationDetails(
           duration: WindowsNotificationDuration.short),
     ),
   );
   await flutterLocalNotificationsPlugin.show(
-    id++,
-    'This is a long notification',
-    'This will last about 25 seconds',
-    const NotificationDetails(
+    id: id++,
+    title: 'This is a long notification',
+    body: 'This will last about 25 seconds',
+    notificationDetails: const NotificationDetails(
       windows: WindowsNotificationDetails(
           duration: WindowsNotificationDuration.long),
     ),
@@ -166,10 +166,9 @@ Future<void> _showWindowsNotificationWithDuration() async {
 
 Future<void> _showWindowsNotificationWithScenarios() async {
   await flutterLocalNotificationsPlugin.show(
-    id++,
-    'This is an alarm',
-    null,
-    const NotificationDetails(
+    id: id++,
+    title: 'This is an alarm',
+    notificationDetails: const NotificationDetails(
       windows: WindowsNotificationDetails(
         scenario: WindowsNotificationScenario.alarm,
         actions: <WindowsAction>[
@@ -179,10 +178,9 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     ),
   );
   await flutterLocalNotificationsPlugin.show(
-    id++,
-    'This is an incoming call',
-    null,
-    const NotificationDetails(
+    id: id++,
+    title: 'This is an incoming call',
+    notificationDetails: const NotificationDetails(
       windows: WindowsNotificationDetails(
         scenario: WindowsNotificationScenario.incomingCall,
         actions: <WindowsAction>[
@@ -192,10 +190,9 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     ),
   );
   await flutterLocalNotificationsPlugin.show(
-    id++,
-    'This is a reminder',
-    null,
-    const NotificationDetails(
+    id: id++,
+    title: 'This is a reminder',
+    notificationDetails: const NotificationDetails(
       windows: WindowsNotificationDetails(
           scenario: WindowsNotificationScenario.reminder,
           actions: <WindowsAction>[
@@ -204,10 +201,9 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     ),
   );
   await flutterLocalNotificationsPlugin.show(
-    id++,
-    'This is an urgent notification',
-    null,
-    const NotificationDetails(
+    id: id++,
+    title: 'This is an urgent notification',
+    notificationDetails: const NotificationDetails(
       windows: WindowsNotificationDetails(
           scenario: WindowsNotificationScenario.urgent,
           actions: <WindowsAction>[
@@ -219,10 +215,10 @@ Future<void> _showWindowsNotificationWithScenarios() async {
 
 Future<void> _showWindowsNotificationWithDetails() =>
     flutterLocalNotificationsPlugin.show(
-      id++,
-      'This one has more details',
-      'And a different timestamp!',
-      NotificationDetails(
+      id: id++,
+      title: 'This one has more details',
+      body: 'And a different timestamp!',
+      notificationDetails: NotificationDetails(
         windows: WindowsNotificationDetails(
           subtitle: 'This is the subtitle',
           timestamp:
@@ -233,10 +229,11 @@ Future<void> _showWindowsNotificationWithDetails() =>
 
 Future<void> _showWindowsNotificationWithImages() =>
     flutterLocalNotificationsPlugin.show(
-      id++,
-      'This notification has an image',
-      'You can show images from assets or the network. See the columns example as well.',
-      NotificationDetails(
+      id: id++,
+      title: 'This notification has an image',
+      body:
+          'You can show images from assets or the network. See the columns example as well.',
+      notificationDetails: NotificationDetails(
         windows: WindowsNotificationDetails(
           images: <WindowsImage>[
             WindowsImage(
@@ -250,10 +247,10 @@ Future<void> _showWindowsNotificationWithImages() =>
 
 Future<void> _showWindowsNotificationWithGroups() =>
     flutterLocalNotificationsPlugin.show(
-      id++,
-      'This notification has many groups',
-      'Each group stays together. Web images only load in MSIX builds',
-      NotificationDetails(
+      id: id++,
+      title: 'This notification has many groups',
+      body: 'Each group stays together. Web images only load in MSIX builds',
+      notificationDetails: NotificationDetails(
         windows: WindowsNotificationDetails(
           subtitle: 'Caption text is fainter',
           rows: <WindowsRow>[
@@ -294,10 +291,10 @@ Future<void> _showWindowsNotificationWithProgress() async {
       flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
           FlutterLocalNotificationsWindows>();
   await flutterLocalNotificationsPlugin.show(
-    notificationId,
-    'This notification has progress bars',
-    'You can have precise or indeterminate',
-    NotificationDetails(
+    id: notificationId,
+    title: 'This notification has progress bars',
+    body: 'You can have precise or indeterminate',
+    notificationDetails: NotificationDetails(
       windows: WindowsNotificationDetails(
         progressBars: <WindowsProgressBar>[
           WindowsProgressBar(
@@ -350,10 +347,10 @@ Future<void> _showWindowsNotificationWithDynamic() async {
       flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
           FlutterLocalNotificationsWindows>();
   await flutterLocalNotificationsPlugin.show(
-    notificationId,
-    'Dynamic content',
-    'This notification will be updated from Dart code',
-    const NotificationDetails(
+    id: notificationId,
+    title: 'Dynamic content',
+    body: 'This notification will be updated from Dart code',
+    notificationDetails: const NotificationDetails(
       windows: WindowsNotificationDetails(
         subtitle: '{stopwatch}',
       ),
@@ -376,10 +373,10 @@ Future<void> _showWindowsNotificationWithDynamic() async {
 
 Future<void> _showWindowsNotificationWithActivation() =>
     flutterLocalNotificationsPlugin.show(
-      id++,
-      'These buttons do different things',
-      'Click on each one!',
-      const NotificationDetails(
+      id: id++,
+      title: 'These buttons do different things',
+      body: 'Click on each one!',
+      notificationDetails: const NotificationDetails(
         windows: WindowsNotificationDetails(
           actions: <WindowsAction>[
             WindowsAction(
@@ -400,10 +397,10 @@ Future<void> _showWindowsNotificationWithActivation() =>
 
 Future<void> _showWindowsNotificationWithButtonStyle() =>
     flutterLocalNotificationsPlugin.show(
-      id++,
-      'Incoming call',
-      'Your best friend',
-      const NotificationDetails(
+      id: id++,
+      title: 'Incoming call',
+      body: 'Your best friend',
+      notificationDetails: const NotificationDetails(
         windows: WindowsNotificationDetails(
           actions: <WindowsAction>[
             WindowsAction(
@@ -428,18 +425,16 @@ Future<void> _showWindowsNotificationWithHeader() async {
     arguments: 'header-clicked',
   );
   await flutterLocalNotificationsPlugin.show(
-    id++,
-    'This is the first notification',
-    null,
-    const NotificationDetails(
+    id: id++,
+    title: 'This is the first notification',
+    notificationDetails: const NotificationDetails(
       windows: WindowsNotificationDetails(header: header),
     ),
   );
   await flutterLocalNotificationsPlugin.show(
-    id++,
-    'This is the second notification',
-    null,
-    const NotificationDetails(
+    id: id++,
+    title: 'This is the second notification',
+    notificationDetails: const NotificationDetails(
       windows: WindowsNotificationDetails(header: header),
     ),
   );
