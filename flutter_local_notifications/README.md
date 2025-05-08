@@ -431,11 +431,11 @@ Developers should also be across Google's requirements on using full-screen inte
 
 ### Bypassing Do Not Disturb (DnD)
 
-If your application needs the ability to send notifications that ignore the device's DnD mode settings, you must request these permissions from Android 6.0 onwards. You can do this using `AndroidFlutterNotificationsPlugin` by calling the `requestNotificationPolicyAccess()` method which will redirect the user to a settings page where your application may be explicitly whitelisted to bypass DnD.
+If your application needs the ability to send notifications that ignore the device's DnD mode settings, you must request these permissions from Android 6.0 onwards. You can do this using `AndroidFlutterNotificationsPlugin` by calling the `requestNotificationPolicyAccess()` method which will redirect the user to a settings page where your application may be explicitly whitelisted to bypass DnD. **This method _must_ be called before attempting to create a notification channel with `bypassDnd: true`.** Failing to do so will cause the `bypassDnd` argument to be treated as `false`.
 
 For notifications to then actually ignore the DnD-status of a device, the channel must be created with `bypassDnd: true`, or the first notification on a channel that creates it must be sent with `channelBypassDnd: true`.
 
-**NOTE:** This does _not_ ignore the device's silent mode! Should you have a use case where you must notify your users (for instance in an emergency), you might want to use a package like [`sound_mode`](https://pub.dev/packages/sound_mode) or write your own platform specific code to set the `RingerMode` of the device as well as change the notification stream's volume before and after the notification.
+**NOTE:** This does _not_ ignore the device's silent mode! Should you have a use case where you must notify your users (for instance in an emergency), you might want to use a package like [`sound_mode`](https://pub.dev/packages/sound_mode) or write your own platform-specific code to set the `RingerMode` of the device as well as change the notification stream's volume before and after the notification.
 
 ### Release build configuration
 
@@ -602,7 +602,7 @@ Developers should also note that whilst accessing plugins will work, on Android 
 
 **Specifying actions on notifications**:
 
-The notification actions are platform specific and you have to specify them differently for each platform.
+The notification actions are platform-specific and you have to specify them differently for each platform.
 
 On iOS/macOS, the actions are defined on a category, please see the configuration section for details.
 

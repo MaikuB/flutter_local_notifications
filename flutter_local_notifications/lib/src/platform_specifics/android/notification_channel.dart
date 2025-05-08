@@ -41,6 +41,10 @@ class AndroidNotificationChannel {
 
   /// Whether the notification channel should attempt to bypass Do Not Disturb
   /// settings.
+  ///
+  /// You must acquire notification policy access by calling
+  /// [AndroidFlutterLocalNotificationsPlugin.requestNotificationPolicyAccess]
+  /// before setting this to true. Otherwise this value is ignored.
   final bool bypassDnd;
 
   /// Indicates if a sound should be played when the notification is displayed.

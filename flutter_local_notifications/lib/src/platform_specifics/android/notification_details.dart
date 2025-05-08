@@ -179,6 +179,10 @@ class AndroidNotificationDetails {
 
   /// Whether the notification channel should attempt to bypass Do Not Disturb
   /// settings.
+  ///
+  /// You must acquire notification policy access by calling
+  /// [AndroidFlutterLocalNotificationsPlugin.requestNotificationPolicyAccess]
+  /// before setting this to true. Otherwise this value is ignored.
   final bool channelBypassDnd;
 
   /// The priority of the notification

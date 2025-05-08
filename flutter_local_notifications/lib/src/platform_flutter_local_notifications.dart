@@ -192,7 +192,11 @@ class AndroidFlutterLocalNotificationsPlugin
   ///
   /// Returns whether the permission was granted.
   ///
-  /// This is required for channels that bypass DnD settings.
+  /// This is required for channels that bypass DnD settings. Any attempt at
+  /// creating a notification channel with `bypassDnd: true` before access is
+  /// granted will print a warning and create the channel *without setting
+  /// bypassDnd*.
+  ///
   /// On Android versions before API level 23, this is a no-op and returns
   /// false.
   ///
