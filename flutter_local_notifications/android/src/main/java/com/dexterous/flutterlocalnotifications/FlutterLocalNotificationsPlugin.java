@@ -1608,6 +1608,7 @@ public class FlutterLocalNotificationsPlugin
         activeNotificationPayload.put("body", notification.extras.getCharSequence("android.text"));
         activeNotificationPayload.put(
             "bigText", notification.extras.getCharSequence("android.bigText"));
+
         activeNotificationsPayload.add(activeNotificationPayload);
       }
       result.success(activeNotificationsPayload);
@@ -2105,6 +2106,12 @@ public class FlutterLocalNotificationsPlugin
         msgPayload.put("text", msg.getText());
         msgPayload.put("timestamp", msg.getTimestamp());
         msgPayload.put("person", describePerson(msg.getPerson()));
+        if (msg.getDataUri() != null) {
+          msgPayload.put("dataUri", msg.getDataUri().toString());
+        }
+        if (msg.getDataMimeType() != null) {
+          msgPayload.put("dataMimeType", msg.getDataMimeType());
+        }
         messagesPayload.add(msgPayload);
       }
       stylePayload.put("messages", messagesPayload);
