@@ -1,5 +1,9 @@
-## [vNext]
+## [19.2.0]
 
+* [Android] added support to bypass have notifications bypass the device's Do Not Disturb (DnD) settings. Thanks the PR from [Michel v. Varendorff](https://github.com/mvarendorff2) that added the following changes
+  * The `hasNotificationPolicyAccess()` method that checks if the application can modify the notification policy
+  * The `requestNotificationPolicyAccess()` method that was added the `AndroidFlutterNotificationsPlugin` class. This can be used request access for the calling application modify the notification policy
+  * Added `bypassDnd` the property of the `AndroidNotificationChannel` class and `channelBypassDnd` to the `AndroidNotificationDetails` class. These can used to indicate if notifications associated with the channel can bypass the DnD settings of the device
 * Bumped `msix` dev dependency in example app. This to fix the [issue](https://github.com/YehudaKremer/msix/issues/303) where the `msix` package stopped being able to created MSIX installers
 
 ## [19.1.0]
