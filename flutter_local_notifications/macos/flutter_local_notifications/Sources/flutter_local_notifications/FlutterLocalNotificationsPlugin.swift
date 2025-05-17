@@ -57,14 +57,6 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let criticalSoundVolume = "criticalSoundVolume"
     }
 
-    struct ErrorMessages {
-        static let getActiveNotificationsErrorMessage = "macOS version must be 10.14 or newer to use getActiveNotifications"
-    }
-
-    struct ErrorCodes {
-        static let unsupportedOSVersion = "unsupported_os_version"
-    }
-
     struct DateFormatStrings {
         static let isoFormat = "yyyy-MM-dd'T'HH:mm:ss"
     }
@@ -584,37 +576,6 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
             result(dict)
         }
-    }
-
-    @available(macOS, introduced: 10.8, deprecated: 11.0)
-    func buildNSUserNotification(fromArguments arguments: [String: AnyObject]) -> NSUserNotification {
-        let notification = NSUserNotification.init()
-        notification.identifier = getIdentifier(fromArguments: arguments)
-        if let title = arguments[MethodCallArguments.title] as? String {
-            notification.title = title
-        }
-        if let subtitle = arguments[MethodCallArguments.subtitle] as? String {
-            notification.subtitle = subtitle
-        }
-        if let body = arguments[MethodCallArguments.body] as? String {
-            notification.informativeText = body
-        }
-        var presentSound = false
-        if let platformSpecifics = arguments[MethodCallArguments.platformSpecifics] as? [String: AnyObject] {
-            if let sound = platformSpecifics[MethodCallArguments.sound] as? String {
-                notification.soundName = sound
-            }
-
-            if !(platformSpecifics[MethodCallArguments.presentSound] is NSNull) && platformSpecifics[MethodCallArguments.presentSound] != nil {
-                presentSound = platformSpecifics[MethodCallArguments.presentSound] as! Bool
-            }
-
-        }
-        notification.userInfo = [MethodCallArguments.payload: arguments[MethodCallArguments.payload] as Any]
-        if presentSound && notification.soundName == nil {
-            notification.soundName = NSUserNotificationDefaultSoundName
-        }
-        return notification
     }
 
     func getIdentifier(fromArguments arguments: [String: AnyObject]) -> String {
