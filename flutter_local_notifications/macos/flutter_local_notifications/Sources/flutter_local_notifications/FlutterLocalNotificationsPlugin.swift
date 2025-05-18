@@ -227,7 +227,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     func configureNotificationCategories(_ arguments: [String: AnyObject],
                                          withCompletionHandler completionHandler: @escaping () -> Void) {
-        
+
         if let categories = arguments["notificationCategories"] as? [[String: AnyObject]] {
             var notificationCategories = Set<UNNotificationCategory>()
 
