@@ -2,7 +2,7 @@ import Cocoa
 import FlutterMacOS
 import UserNotifications
 
-public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNotificationCenterDelegate, NSUserNotificationCenterDelegate {
+public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNotificationCenterDelegate {
 
     struct MethodCallArguments {
         static let presentAlert = "presentAlert"
@@ -162,20 +162,6 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
             completionHandler()
         }
-    }
-
-    // MARK: - NSUserNotificationCenterDelegate
-
-    @available(macOS, introduced: 10.8, deprecated: 11.0)
-    public func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
-        if notification.activationType == .contentsClicked && notification.userInfo != nil && isAFlutterLocalNotification(userInfo: notification.userInfo!) {
-            handleSelectNotification(notificationId: Int(notification.identifier!)!, payload: notification.userInfo![MethodCallArguments.payload] as? String)
-        }
-    }
-
-    @available(macOS, introduced: 10.8, deprecated: 11.0)
-    public func userNotificationCenter(_ center: NSUserNotificationCenter, shouldPresent notification: NSUserNotification) -> Bool {
-        return true
     }
 
     // MARK: - FlutterPlugin implementation
