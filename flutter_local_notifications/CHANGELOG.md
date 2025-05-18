@@ -1,3 +1,8 @@
+## [19.2.1]
+
+* [macOS] removed redundant code that was only applicable on macOS versions lower than 10.14. This should be a non-functional change since 18.0.0 bumped the minimum Flutter SDK requirements that in turn required macOS 10.14 at a minimum. Thanks to the PR from [Blin Qipa](https://github.com/bqubique)
+* [Android] bumped robolectric dependency. This fixes an issue where some users reported receiving instances of `java.lang.NoClassDefFoundError` around the plugin's Android unit tests. Thanks to the PR from [Turtlepaw](https://github.com/Turtlepaw)
+
 ## [19.2.0]
 
 * [Android] added support to bypass have notifications bypass the device's Do Not Disturb (DnD) settings. Thanks the PR from [Michel v. Varendorff](https://github.com/mvarendorff2) that added the following changes
