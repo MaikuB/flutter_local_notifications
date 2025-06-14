@@ -9,8 +9,8 @@
 
 #import <Flutter/Flutter.h>
 
-#import "ActionEventSink.h"
-#import "FlutterEngineManager.h"
+#import "./include/flutter_local_notifications/ActionEventSink.h"
+#import "./include/flutter_local_notifications/FlutterEngineManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

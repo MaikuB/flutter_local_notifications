@@ -188,6 +188,35 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<bool?> requestNotificationsPermission() async =>
       _channel.invokeMethod<bool>('requestNotificationsPermission');
 
+  /// Requests access to notification policy.
+  ///
+  /// Returns whether the permission was granted.
+  ///
+  /// This is required for channels that bypass DnD settings. Any attempt at
+  /// creating a notification channel with `bypassDnd: true` before access is
+  /// granted will print a warning and create the channel *without setting
+  /// bypassDnd*.
+  ///
+  /// On Android versions before API level 23, this is a no-op and returns
+  /// false.
+  ///
+  /// See also:
+  ///
+  ///  * https://developer.android.com/reference/android/app/NotificationManager#isNotificationPolicyAccessGranted()
+  Future<bool?> requestNotificationPolicyAccess() async =>
+      _channel.invokeMethod<bool>('requestNotificationPolicyAccess');
+
+  /// Whether the app has access to notification policy.
+  ///
+  /// On Android versions before API level 23, this will always return false.
+  ///
+  /// See also:
+  ///
+  ///  * https://developer.android.com/reference/android/app/NotificationManager#isNotificationPolicyAccessGranted()
+  ///  * [requestNotificationPolicyAccess]
+  Future<bool?> hasNotificationPolicyAccess() async =>
+      _channel.invokeMethod<bool>('hasNotificationPolicyAccess');
+
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
   ///
@@ -534,6 +563,7 @@ class AndroidFlutterLocalNotificationsPlugin
               importance: Importance.values
                   // ignore: always_specify_types
                   .firstWhere((i) => i.value == a['importance']),
+              bypassDnd: a['bypassDnd'],
               playSound: a['playSound'],
               sound: _getNotificationChannelSound(a),
               enableLights: a['enableLights'],

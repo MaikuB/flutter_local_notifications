@@ -1,6 +1,6 @@
 import 'dart:ffi';
+
 import 'package:ffi/ffi.dart';
-import 'package:meta/meta.dart';
 
 import '../details.dart';
 import '../details/notification_to_xml.dart';
@@ -86,11 +86,10 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         final Pointer<Utf8> guid = settings.guid.toNativeUtf8(allocator: arena);
         final Pointer<Utf8> iconPath =
             settings.iconPath?.toNativeUtf8(allocator: arena) ?? nullptr;
-        final Pointer<NativeFunction<NativeNotificationCallbackFunction>>
-            callback =
+        final NativeNotificationCallback callback =
             NativeCallable<NativeNotificationCallbackFunction>.listener(
-                    _globalLaunchCallback)
-                .nativeFunction;
+          _globalLaunchCallback,
+        ).nativeFunction;
         final bool result =
             _bindings.init(_plugin, appName, aumId, guid, iconPath, callback);
         _isReady = result;
@@ -281,6 +280,12 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
       });
 
   @override
+  bool isValidXml(String xml) => using((Arena arena) {
+        final Pointer<Utf8> nativeXml = xml.toNativeUtf8(allocator: arena);
+        return _bindings.isValidXml(nativeXml);
+      });
+
+  @override
   Future<void> zonedSchedule(
     int id,
     String? title,
@@ -361,8 +366,4 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
             _plugin, id, bindings.toNativeMap(arena));
         return getUpdateResult(result);
       });
-
-  @override
-  @visibleForTesting
-  void enableMultithreading() => _bindings.enableMultithreading();
 }

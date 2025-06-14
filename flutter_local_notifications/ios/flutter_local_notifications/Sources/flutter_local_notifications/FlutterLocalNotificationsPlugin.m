@@ -1,7 +1,7 @@
-#import "FlutterLocalNotificationsPlugin.h"
-#import "ActionEventSink.h"
-#import "Converters.h"
-#import "FlutterEngineManager.h"
+#import "./include/flutter_local_notifications/FlutterLocalNotificationsPlugin.h"
+#import "./include/flutter_local_notifications/ActionEventSink.h"
+#import "./include/flutter_local_notifications/FlutterEngineManager.h"
+#import "./include/flutter_local_notifications/FlutterLocalNotificationsConverters.h"
 
 @implementation FlutterLocalNotificationsPlugin {
   FlutterMethodChannel *_channel;
@@ -104,6 +104,8 @@ NSString *const IS_ALERT_ENABLED = @"isAlertEnabled";
 NSString *const IS_BADGE_ENABLED = @"isBadgeEnabled";
 NSString *const IS_PROVISIONAL_ENABLED = @"isProvisionalEnabled";
 NSString *const IS_CRITICAL_ENABLED = @"isCriticalEnabled";
+
+NSString *const CRITICAL_SOUND_VOLUME = @"criticalSoundVolume";
 
 typedef NS_ENUM(NSInteger, RepeatInterval) {
   EveryMinute,
@@ -255,7 +257,8 @@ static FlutterError *getFlutterError(NSError *error) {
         NSString *identifier = action[@"identifier"];
         NSString *title = action[@"title"];
         UNNotificationActionOptions options =
-            [Converters parseNotificationActionOptions:action[@"options"]];
+            [FlutterLocalNotificationsConverters
+                parseNotificationActionOptions:action[@"options"]];
 
         if ((options & UNNotificationActionOptionForeground) != 0) {
           [foregroundActionIdentifiers addObject:identifier];
@@ -282,8 +285,9 @@ static FlutterError *getFlutterError(NSError *error) {
           categoryWithIdentifier:category[@"identifier"]
                          actions:newActions
                intentIdentifiers:@[]
-                         options:[Converters parseNotificationCategoryOptions:
-                                                 category[@"options"]]];
+                         options:[FlutterLocalNotificationsConverters
+                                     parseNotificationCategoryOptions:
+                                         category[@"options"]]];
 
       [notificationCategories addObject:notificationCategory];
     }
@@ -676,6 +680,23 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     if ([self containsKey:SOUND forDictionary:platformSpecifics]) {
       content.sound = [UNNotificationSound soundNamed:platformSpecifics[SOUND]];
+    }
+    if (@available(iOS 12.0, *)) {
+      if ([self containsKey:CRITICAL_SOUND_VOLUME
+              forDictionary:platformSpecifics]) {
+        NSNumber *volume = platformSpecifics[CRITICAL_SOUND_VOLUME];
+        // NOTE: When converting from Flutter to Objective-C, doubleValue is
+        // typically used, but this function accepts a float. As the expected
+        // value falls between 0.0 and 0.1, we will cast it directly.
+        if ([self containsKey:SOUND forDictionary:platformSpecifics]) {
+          content.sound = [UNNotificationSound
+              criticalSoundNamed:platformSpecifics[SOUND]
+                 withAudioVolume:(float)[volume doubleValue]];
+        } else {
+          content.sound = [UNNotificationSound
+              defaultCriticalSoundWithAudioVolume:(float)[volume doubleValue]];
+        }
+      }
     }
     if ([self containsKey:SUBTITLE forDictionary:platformSpecifics]) {
       content.subtitle = platformSpecifics[SUBTITLE];

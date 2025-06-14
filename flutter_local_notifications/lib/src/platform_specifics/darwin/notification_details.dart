@@ -18,6 +18,7 @@ class DarwinNotificationDetails {
     this.threadIdentifier,
     this.categoryIdentifier,
     this.interruptionLevel,
+    this.criticalSoundVolume,
   });
 
   /// Indicates if an alert should be display when the notification is triggered
@@ -139,4 +140,17 @@ class DarwinNotificationDetails {
   /// This property is only applicable to iOS 15.0 and macOS 12.0 or newer.
   /// https://developer.apple.com/documentation/usernotifications/unnotificationcontent/3747256-interruptionlevel
   final InterruptionLevel? interruptionLevel;
+
+  /// The volume for playing the critical alert sound.
+  ///
+  /// The value is between 0.0 and 1.0.
+  /// This is only used when the notification is configured as a critical alert.
+  /// Document: https://developer.apple.com/documentation/usernotifications/unnotificationsound/criticalsoundnamed(_:withaudiovolume:)
+  ///
+  /// Subject to specific approval from Apple:
+  /// https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/
+  ///
+  /// On iOS, this property is only applicable to iOS 12.0 or newer.
+  /// On macOS, this property is only applicable to macOS 10.14 or newer.
+  final double? criticalSoundVolume;
 }

@@ -32,7 +32,7 @@ scripts:
       scope: "*example*"
   test:unit:windows:
     description: Runs Windows-specific unit tests
-    run: melos exec -c 1 -- "dart test"
+    run: melos exec -c 1 -- "flutter test -j 1"
     packageFilters:
       scope: '*_windows'
   test:integration:

@@ -22,9 +22,7 @@ struct NativePlugin {
 
   /// Whether the current application has package identity (ie, was packaged with an MSIX).
   ///
-  /// This impacts whether apps can query active notifications or cancel them.
-  /// For more details, see
-  /// https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/package-identity-overview.
+  /// See [hasPackageIdentity].
   bool hasIdentity = false;
 
   /// The app user model ID. Used instead of package identity when [hasIdentity] is false.
@@ -43,11 +41,6 @@ struct NativePlugin {
 
   NativePlugin() {}
   ~NativePlugin() {}
-
-  /// Checks whether the current application has package identity. See [hasIdentity] for details.
-  ///
-  /// Returns true or false if the package has identity, or null if an error occurred.
-  std::optional<bool> checkIdentity();
 
   /// Registers the given [callback] to run when a notification is pressed.
   bool registerApp(

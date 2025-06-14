@@ -6,15 +6,18 @@ import 'package:timezone/standalone.dart';
 
 const WindowsInitializationSettings goodSettings =
     WindowsInitializationSettings(
-        appName: 'test',
-        appUserModelId: 'com.test.test',
-        guid: 'a8c22b55-049e-422f-b30f-863694de08c8');
+  appName: 'test',
+  appUserModelId: 'com.test.test',
+  guid: 'a8c22b55-049e-422f-b30f-863694de08c8',
+);
+
 const WindowsInitializationSettings badSettings = WindowsInitializationSettings(
-    appName: 'test', appUserModelId: 'com.test.test', guid: '123');
+  appName: 'test',
+  appUserModelId: 'com.test.test',
+  guid: '123',
+);
 
 void main() => group('Plugin', () {
-      FlutterLocalNotificationsWindows().enableMultithreading();
-
       setUpAll(initializeTimeZones);
 
       test('initializes safely', () async {
@@ -45,13 +48,18 @@ void main() => group('Plugin', () {
         expect(plugin.pendingNotificationRequests(), throwsStateError);
         expect(plugin.show(0, 'Title', 'Body'), throwsStateError);
         expect(plugin.showRawXml(id: 0, xml: ''), throwsStateError);
-        expect(plugin.updateBindings(id: 0, bindings: <String, String>{}),
-            throwsStateError);
         expect(
-            plugin.updateProgressBar(progressBar: progress, notificationId: 0),
-            throwsStateError);
+          plugin.updateBindings(id: 0, bindings: <String, String>{}),
+          throwsStateError,
+        );
         expect(
-            plugin.zonedSchedule(0, null, null, now, null), throwsStateError);
+          plugin.updateProgressBar(progressBar: progress, notificationId: 0),
+          throwsStateError,
+        );
+        expect(
+          plugin.zonedSchedule(0, null, null, now, null),
+          throwsStateError,
+        );
         plugin.dispose();
       });
 
@@ -70,11 +78,14 @@ void main() => group('Plugin', () {
         expect(plugin.pendingNotificationRequests(), throwsStateError);
         expect(plugin.show(0, 'Title', 'Body'), throwsStateError);
         expect(plugin.showRawXml(id: 0, xml: ''), throwsStateError);
-        expect(plugin.updateBindings(id: 0, bindings: <String, String>{}),
-            throwsStateError);
         expect(
-            plugin.updateProgressBar(progressBar: progress, notificationId: 0),
-            throwsStateError);
+          plugin.updateBindings(id: 0, bindings: <String, String>{}),
+          throwsStateError,
+        );
+        expect(
+          plugin.updateProgressBar(progressBar: progress, notificationId: 0),
+          throwsStateError,
+        );
         expect(
             plugin.zonedSchedule(0, null, null, now, null), throwsStateError);
         plugin.dispose();
@@ -85,11 +96,13 @@ void main() => group('Plugin', () {
             FlutterLocalNotificationsWindows();
         await plugin.initialize(goodSettings);
         expect(
-            plugin.periodicallyShow(0, null, null, RepeatInterval.everyMinute),
-            throwsUnsupportedError);
+          plugin.periodicallyShow(0, null, null, RepeatInterval.everyMinute),
+          throwsUnsupportedError,
+        );
         expect(
-            plugin.periodicallyShowWithDuration(0, null, null, Duration.zero),
-            throwsUnsupportedError);
+          plugin.periodicallyShowWithDuration(0, null, null, Duration.zero),
+          throwsUnsupportedError,
+        );
         plugin.dispose();
       });
     });
