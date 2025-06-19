@@ -46,7 +46,7 @@ scripts:
   build:example_android:
     run: |
       melos exec -c 1 -- \
-        "flutter build apk --debug"
+        "flutter build apk"
     description: Build a specific example app for Android.
     packageFilters:
       dirExists:
