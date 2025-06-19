@@ -1524,6 +1524,9 @@ public class FlutterLocalNotificationsPlugin
       case CANCEL_ALL_METHOD:
         cancelAllNotifications(result);
         break;
+      case CANCEL_ALL_PENDING_METHOD:
+        cancelAllPendingNotifications(result);
+        break;
       case PENDING_NOTIFICATION_REQUESTS_METHOD:
         pendingNotificationRequests(result);
         break;
@@ -1838,6 +1841,31 @@ public class FlutterLocalNotificationsPlugin
     saveScheduledNotifications(applicationContext, new ArrayList<>());
     result.success(null);
   }
+
+  private void cancelAllPendingNotifications(Result result) {
+    ArrayList<NotificationDetails> scheduledNotifications =
+        loadScheduledNotifications(applicationContext);
+
+    if (scheduledNotifications == null || scheduledNotifications.isEmpty()) {
+        result.success(null);
+        return;
+    }
+
+    AlarmManager alarmManager = getAlarmManager(applicationContext);
+    Intent intent = new Intent(applicationContext, ScheduledNotificationReceiver.class);
+
+    for (NotificationDetails scheduledNotification : scheduledNotifications) {
+      PendingIntent pendingIntent =
+          getBroadcastPendingIntent(applicationContext, scheduledNotification.id, intent);
+      if (pendingIntent != null && alarmManager != null) {
+          alarmManager.cancel(pendingIntent);
+      }
+    }
+
+    saveScheduledNotifications(applicationContext, new ArrayList<>());
+    result.success(null);
+  }
+
 
   public void requestNotificationsPermission(@NonNull PermissionRequestListener callback) {
     if (permissionRequestProgress != PermissionRequestProgress.None) {
