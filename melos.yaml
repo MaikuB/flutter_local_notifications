@@ -27,7 +27,7 @@ scripts:
         - test
   test:unit:android:
     description: Runs java unit tests
-    run: melos exec -c 1 -- "flutter build apk --debug --target-platform=android-arm64,android-x64 && cd android && ./gradlew flutter_local_notifications:testDebug"
+    run: melos exec -c 1 -- "flutter build apk --debug && cd android && ./gradlew flutter_local_notifications:testDebug"
     packageFilters:
       scope: "*example*"
   test:unit:windows:
@@ -46,7 +46,7 @@ scripts:
   build:example_android:
     run: |
       melos exec -c 1 -- \
-        "flutter build apk --debug --target-platform=android-arm64,android-x64"
+        "flutter build apk --debug --target-platform=android-arm,android-arm64,android-x64"
     description: Build a specific example app for Android.
     packageFilters:
       dirExists:
