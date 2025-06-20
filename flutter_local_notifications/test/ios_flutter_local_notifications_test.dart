@@ -748,6 +748,13 @@ void main() {
       expect(log, <Matcher>[isMethodCall('cancelAll', arguments: null)]);
     });
 
+    test('cancelAllPendingNotifications', () async {
+      await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+      expect(log, <Matcher>[
+        isMethodCall('cancelAllPendingNotifications', arguments: null)
+      ]);
+    });
+
     test('pendingNotificationRequests', () async {
       await flutterLocalNotificationsPlugin.pendingNotificationRequests();
       expect(log, <Matcher>[

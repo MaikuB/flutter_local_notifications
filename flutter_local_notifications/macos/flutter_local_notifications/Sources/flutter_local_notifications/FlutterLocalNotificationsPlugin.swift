@@ -180,6 +180,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             cancel(call, result)
         case "cancelAll":
             cancelAll(result)
+        case "cancelAllPendingNotifications":
+            cancelAllPendingNotifications(result)
         case "pendingNotificationRequests":
             pendingNotificationRequests(result)
         case "getActiveNotifications":
@@ -312,6 +314,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
         center.removeAllDeliveredNotifications()
+        result(nil)
+    }
+
+    func cancelAllPendingNotifications(_ result: @escaping FlutterResult) {
+        let center = UNUserNotificationCenter.current()
+        center.removeAllPendingNotificationRequests()
         result(nil)
     }
 
