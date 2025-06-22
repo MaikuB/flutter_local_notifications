@@ -1858,9 +1858,7 @@ public class FlutterLocalNotificationsPlugin
     for (NotificationDetails scheduledNotification : scheduledNotifications) {
       PendingIntent pendingIntent =
           getBroadcastPendingIntent(applicationContext, scheduledNotification.id, intent);
-      if (pendingIntent != null && alarmManager != null) {
-          alarmManager.cancel(pendingIntent);
-      }
+      alarmManager.cancel(pendingIntent);
     }
 
     saveScheduledNotifications(applicationContext, new ArrayList<>());
