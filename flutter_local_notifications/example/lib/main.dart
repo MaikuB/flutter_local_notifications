@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_shortcuts_new/flutter_shortcuts_new.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as image;
@@ -72,6 +73,17 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
     print(
         'notification action tapped with input: ${notificationResponse.input}');
   }
+}
+
+@pragma('vm:entry-point')
+void bubbleEntry() {
+  runApp(
+    const MaterialApp(
+      home: Scaffold(
+        body: Center(child: Text('This is your bubble UI')),
+      ),
+    ),
+  );
 }
 
 /// IMPORTANT: running the following code on its own won't work as there is
@@ -387,6 +399,11 @@ class _HomePageState extends State<HomePage> {
                       await _showNotificationCustomSound();
                     },
                   ),
+                  if (Platform.isAndroid)
+                    PaddedElevatedButton(
+                        buttonText:
+                            'Show notification with conversation bubble',
+                        onPressed: _showNotificationWithBubble),
                   if (kIsWeb || !Platform.isLinux) ...<Widget>[
                     PaddedElevatedButton(
                       buttonText:
@@ -1400,6 +1417,66 @@ class _HomePageState extends State<HomePage> {
       'custom sound notification body',
       notificationDetails,
     );
+  }
+
+  Future<void> _showNotificationWithBubble() async {
+    final FlutterShortcuts shortcuts = FlutterShortcuts();
+    const String shortcutId = 'my_conversation_shortcut';
+    const ShortcutItem item = ShortcutItem(
+        id: shortcutId,
+        action: 'some_action',
+        shortLabel: 'Conversation Shortcut',
+        icon: 'icons/coworker.png',
+        conversationShortcut: true);
+
+    await shortcuts.pushShortcutItem(shortcut: item);
+
+    final MessagingStyleInformation? activeStyleInfo =
+        await AndroidFlutterLocalNotificationsPlugin()
+            .getActiveNotificationMessagingStyle(0);
+
+    const Person person = Person(
+      name: 'Coworker',
+      key: '2',
+      uri: 'tel:9876543210',
+      icon: FlutterBitmapAssetAndroidIcon('icons/coworker.png'),
+    );
+
+    final Message message = Message(
+      'This is a test message',
+      DateTime.now(),
+      person,
+    );
+
+    activeStyleInfo?.messages?.add(message);
+
+    final MessagingStyleInformation style = activeStyleInfo ??
+        MessagingStyleInformation(person,
+            conversationTitle: 'Conversation',
+            messages: <Message>[message],
+            groupConversation: false);
+
+    final AndroidNotificationDetails details = AndroidNotificationDetails(
+        'messages', 'Message Received',
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: 'secondary_icon',
+        number: style.messages!.length,
+        subText: 'Test Message',
+        styleInformation: style,
+        shortcutId:
+            shortcutId, // Has to be same as the shortcut created earlier, in a real use case probably would be the ID of a chat room / user
+        ticker: 'Test Message',
+        bubble: BubbleMetadata(
+            'com.dexterous.flutter_local_notifications_example.BubbleActivity',
+            desiredHeight: 600,
+            autoExpand: false,
+            extra: 'bubble_extra_data'),
+        color: const Color.fromARGB(0xff, 0x53, 0x4c, 0xdd));
+
+    await flutterLocalNotificationsPlugin.show(
+        id, null, 'Test Message', NotificationDetails(android: details),
+        payload: 'some_message_payload');
   }
 
   Future<void> _showNotificationCustomVibrationIconLed() async {
