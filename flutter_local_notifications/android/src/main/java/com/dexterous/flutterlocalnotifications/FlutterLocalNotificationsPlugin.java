@@ -436,31 +436,28 @@ public class FlutterLocalNotificationsPlugin
     if (notificationDetails.bubbleActivity != null) {
       try {
         Class cls = Class.forName(notificationDetails.bubbleActivity);
-        Intent testIntent = new Intent(context, cls);
-        testIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent bubbleIntent = new Intent(context, cls);
+        bubbleIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         if (notificationDetails.bubbleExtra != null) {
           final Bundle extra = new Bundle();
           extra.putString("bubbleExtra", notificationDetails.bubbleExtra);
-          testIntent.putExtras(extra);
+          bubbleIntent.putExtras(extra);
         }
 
         int actionFlags = PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
-        PendingIntent bubbleIntent =
-            PendingIntent.getActivity(context, notificationDetails.id, testIntent, actionFlags);
+        PendingIntent pendingBubbleIntent =
+            PendingIntent.getActivity(context, notificationDetails.id, bubbleIntent, actionFlags);
 
         IconCompat icon =
             IconCompat.createWithResource(
                 context, getDrawableResourceId(context, notificationDetails.icon));
 
-        Log.e(TAG, "Created pending intent: $bubbleIntent");
-        Log.e(TAG, bubbleIntent.toString());
-
         if (!StringUtils.isNullOrEmpty(notificationDetails.shortcutId)) {
 
           var bubbleBuilder =
               new androidx.core.app.NotificationCompat.BubbleMetadata.Builder()
-                  .setIntent(bubbleIntent)
+                  .setIntent(pendingBubbleIntent)
                   .setIcon(icon);
 
           if (notificationDetails.bubbleDesiredHeight != null) {
