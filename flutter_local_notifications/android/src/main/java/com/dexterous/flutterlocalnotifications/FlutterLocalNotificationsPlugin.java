@@ -458,11 +458,20 @@ public class FlutterLocalNotificationsPlugin
 
         if (!StringUtils.isNullOrEmpty(notificationDetails.shortcutId)) {
 
-          androidx.core.app.NotificationCompat.BubbleMetadata bubbleData =
-              new androidx.core.app.NotificationCompat.BubbleMetadata.Builder(bubbleIntent, icon)
-                  .setDesiredHeight(600)
-                  .build();
+          var bubbleBuilder =
+              new androidx.core.app.NotificationCompat.BubbleMetadata.Builder()
+                  .setIntent(bubbleIntent)
+                  .setIcon(icon);
 
+          if(notificationDetails.bubbleDesiredHeight != null) {
+            bubbleBuilder.setDesiredHeight(notificationDetails.bubbleDesiredHeight);
+          }
+
+          if(notificationDetails.bubbleAutoExpand != null) {
+            bubbleBuilder.setAutoExpandBubble(notificationDetails.bubbleAutoExpand);
+          }
+
+          var bubbleData = bubbleBuilder.build();
           builder.setBubbleMetadata(bubbleData);
         }
       } catch (ClassNotFoundException e) {

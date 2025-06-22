@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'bitmap.dart';
+import 'bubble.dart';
 import 'enums.dart';
 import 'notification_sound.dart';
 import 'styles/style_information.dart';
@@ -135,8 +136,7 @@ class AndroidNotificationDetails {
     this.ledOnMs,
     this.ledOffMs,
     this.ticker,
-    this.bubbleActivity,
-    this.bubbleExtra,
+    this.bubble,
     this.visibility,
     this.timeoutAfter,
     this.category,
@@ -325,9 +325,9 @@ class AndroidNotificationDetails {
   /// Specifies the "ticker" text which is sent to accessibility services.
   final String? ticker;
 
-  final String? bubbleActivity;
-
-  final String? bubbleExtra;
+  /// Specifies BubbleMetadata to be passed to the notification, allowing use of
+  /// Android conversation bubbles api.
+  final BubbleMetadata? bubble;
 
   /// The action to take for managing notification channels.
   ///
