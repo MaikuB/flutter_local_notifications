@@ -442,12 +442,13 @@ class _HomePageState extends State<HomePage> {
                       await _cancelAllNotifications();
                     },
                   ),
-                  PaddedElevatedButton(
-                    buttonText: 'Cancel all pending notifications',
-                    onPressed: () async {
-                      await _cancelAllPendingNotifications();
-                    },
-                  ),
+                  if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
+                    PaddedElevatedButton(
+                      buttonText: 'Cancel all pending notifications',
+                      onPressed: () async {
+                        await _cancelAllPendingNotifications();
+                      },
+                    ),
                   if (!Platform.isWindows) ...repeating.examples(context),
                   const Divider(),
                   const Text(
