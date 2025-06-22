@@ -435,6 +435,50 @@ public class FlutterLocalNotificationsPlugin
     setProgress(notificationDetails, builder);
     setCategory(notificationDetails, builder);
     setTimeoutAfter(notificationDetails, builder);
+
+    if (notificationDetails.bubbleActivity != null) {
+      try {
+        Class cls = Class.forName(notificationDetails.bubbleActivity);
+        Intent bubbleIntent = new Intent(context, cls);
+        bubbleIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        if (notificationDetails.bubbleExtra != null) {
+          final Bundle extra = new Bundle();
+          extra.putString("bubbleExtra", notificationDetails.bubbleExtra);
+          bubbleIntent.putExtras(extra);
+        }
+
+        int actionFlags = PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT;
+        PendingIntent pendingBubbleIntent =
+            PendingIntent.getActivity(context, notificationDetails.id, bubbleIntent, actionFlags);
+
+        IconCompat icon =
+            IconCompat.createWithResource(
+                context, getDrawableResourceId(context, notificationDetails.icon));
+
+        if (!StringUtils.isNullOrEmpty(notificationDetails.shortcutId)) {
+
+          var bubbleBuilder =
+              new androidx.core.app.NotificationCompat.BubbleMetadata.Builder()
+                  .setIntent(pendingBubbleIntent)
+                  .setIcon(icon);
+
+          if (notificationDetails.bubbleDesiredHeight != null) {
+            bubbleBuilder.setDesiredHeight(notificationDetails.bubbleDesiredHeight);
+          }
+
+          if (notificationDetails.bubbleAutoExpand != null) {
+            bubbleBuilder.setAutoExpandBubble(notificationDetails.bubbleAutoExpand);
+          }
+
+          var bubbleData = bubbleBuilder.build();
+          builder.setBubbleMetadata(bubbleData);
+        }
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }
+    }
+
     Notification notification = builder.build();
     if (notificationDetails.additionalFlags != null
         && notificationDetails.additionalFlags.length > 0) {

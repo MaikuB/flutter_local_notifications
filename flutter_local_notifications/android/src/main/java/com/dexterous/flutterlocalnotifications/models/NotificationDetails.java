@@ -106,6 +106,10 @@ public class NotificationDetails implements Serializable {
   private static final String VISIBILITY = "visibility";
 
   private static final String TICKER = "ticker";
+  private static final String BUBBLE_ACTIVITY = "bubbleActivity";
+  private static final String BUBBLE_EXTRA = "bubbleExtra";
+  private static final String BUBBLE_AUTO_EXPAND = "bubbleAutoExpand";
+  private static final String BUBBLE_DESIRED_HEIGHT = "bubbleDesiredHeight";
   private static final String SCHEDULE_MODE = "scheduleMode";
   private static final String CATEGORY = "category";
   private static final String TIMEOUT_AFTER = "timeoutAfter";
@@ -174,6 +178,10 @@ public class NotificationDetails implements Serializable {
   public Integer ledOnMs;
   public Integer ledOffMs;
   public String ticker;
+  public String bubbleActivity;
+  public String bubbleExtra;
+  public Integer bubbleDesiredHeight;
+  public Boolean bubbleAutoExpand;
   public Integer visibility;
 
   @SerializedName(value = "scheduleMode", alternate = "allowWhileIdle")
@@ -280,6 +288,12 @@ public class NotificationDetails implements Serializable {
       readLedInformation(notificationDetails, platformChannelSpecifics);
       readLargeIconInformation(notificationDetails, platformChannelSpecifics);
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
+      notificationDetails.bubbleActivity = (String) platformChannelSpecifics.get(BUBBLE_ACTIVITY);
+      notificationDetails.bubbleExtra = (String) platformChannelSpecifics.get(BUBBLE_EXTRA);
+      notificationDetails.bubbleAutoExpand =
+          (Boolean) platformChannelSpecifics.get(BUBBLE_AUTO_EXPAND);
+      notificationDetails.bubbleDesiredHeight =
+          (Integer) platformChannelSpecifics.get(BUBBLE_DESIRED_HEIGHT);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
       if (platformChannelSpecifics.containsKey(SCHEDULE_MODE)) {
         notificationDetails.scheduleMode =
