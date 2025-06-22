@@ -442,6 +442,13 @@ class _HomePageState extends State<HomePage> {
                       await _cancelAllNotifications();
                     },
                   ),
+                  if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
+                    PaddedElevatedButton(
+                      buttonText: 'Cancel all pending notifications',
+                      onPressed: () async {
+                        await _cancelAllPendingNotifications();
+                      },
+                    ),
                   if (!Platform.isWindows) ...repeating.examples(context),
                   const Divider(),
                   const Text(
@@ -1889,6 +1896,10 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  Future<void> _cancelAllPendingNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
   }
 
   Future<void> _showOngoingNotification() async {

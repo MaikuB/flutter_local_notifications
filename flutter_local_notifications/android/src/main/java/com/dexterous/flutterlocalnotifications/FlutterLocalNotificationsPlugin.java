@@ -157,9 +157,10 @@ public class FlutterLocalNotificationsPlugin
   private static final String SHOW_METHOD = "show";
   private static final String CANCEL_METHOD = "cancel";
   private static final String CANCEL_ALL_METHOD = "cancelAll";
+  private static final String CANCEL_ALL_PENDING_NOTIFICATIONS_METHOD = "cancelAllPendingNotifications";
   private static final String ZONED_SCHEDULE_METHOD = "zonedSchedule";
   private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
-  private static final String PERIODICALLY_SHOW_WITH_DURATION = "periodicallyShowWithDuration";
+  private static final String PERIODICALLY_SHOW_WITH_DURATION_METHOD = "periodicallyShowWithDuration";
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
   private static final String REQUEST_NOTIFICATIONS_PERMISSION_METHOD =
@@ -1515,7 +1516,7 @@ public class FlutterLocalNotificationsPlugin
       case PERIODICALLY_SHOW_METHOD:
         repeat(call, result);
         break;
-      case PERIODICALLY_SHOW_WITH_DURATION:
+      case PERIODICALLY_SHOW_WITH_DURATION_METHOD:
         repeat(call, result);
         break;
       case CANCEL_METHOD:
@@ -1523,6 +1524,9 @@ public class FlutterLocalNotificationsPlugin
         break;
       case CANCEL_ALL_METHOD:
         cancelAllNotifications(result);
+        break;
+      case CANCEL_ALL_PENDING_NOTIFICATIONS_METHOD:
+        cancelAllPendingNotifications(result);
         break;
       case PENDING_NOTIFICATION_REQUESTS_METHOD:
         pendingNotificationRequests(result);
@@ -1838,6 +1842,29 @@ public class FlutterLocalNotificationsPlugin
     saveScheduledNotifications(applicationContext, new ArrayList<>());
     result.success(null);
   }
+
+  private void cancelAllPendingNotifications(Result result) {
+    ArrayList<NotificationDetails> scheduledNotifications =
+        loadScheduledNotifications(applicationContext);
+
+    if (scheduledNotifications == null || scheduledNotifications.isEmpty()) {
+        result.success(null);
+        return;
+    }
+
+    AlarmManager alarmManager = getAlarmManager(applicationContext);
+    Intent intent = new Intent(applicationContext, ScheduledNotificationReceiver.class);
+
+    for (NotificationDetails scheduledNotification : scheduledNotifications) {
+      PendingIntent pendingIntent =
+          getBroadcastPendingIntent(applicationContext, scheduledNotification.id, intent);
+      alarmManager.cancel(pendingIntent);
+    }
+
+    saveScheduledNotifications(applicationContext, new ArrayList<>());
+    result.success(null);
+  }
+
 
   public void requestNotificationsPermission(@NonNull PermissionRequestListener callback) {
     if (permissionRequestProgress != PermissionRequestProgress.None) {
