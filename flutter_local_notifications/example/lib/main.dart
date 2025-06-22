@@ -14,6 +14,7 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as image;
 import 'package:path_provider/path_provider.dart';
+import 'package:receive_intent/receive_intent.dart' as receive_intent;
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -76,11 +77,27 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 }
 
 @pragma('vm:entry-point')
-void bubbleEntry() {
+Future<void> bubbleEntry() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final receive_intent.Intent? intent =
+      await receive_intent.ReceiveIntent.getInitialIntent();
+  String? extraData;
+  if (intent?.extra?.containsKey('bubbleExtra') == true) {
+    extraData = intent!.extra!['bubbleExtra'] as String;
+  }
+
   runApp(
-    const MaterialApp(
+    MaterialApp(
       home: Scaffold(
-        body: Center(child: Text('This is your bubble UI')),
+        body: Center(
+            child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Text('This is your bubble UI'),
+            Text('created with extra data: $extraData'),
+          ],
+        )),
       ),
     ),
   );
@@ -1469,9 +1486,9 @@ class _HomePageState extends State<HomePage> {
         ticker: 'Test Message',
         bubble: BubbleMetadata(
             'com.dexterous.flutter_local_notifications_example.BubbleActivity',
-            desiredHeight: 600,
+            desiredHeight: 1000,
             autoExpand: false,
-            extra: 'bubble_extra_data'),
+            extra: 'my_bubble_extra_data'),
         color: const Color.fromARGB(0xff, 0x53, 0x4c, 0xdd));
 
     await flutterLocalNotificationsPlugin.show(
