@@ -463,11 +463,11 @@ public class FlutterLocalNotificationsPlugin
                   .setIntent(bubbleIntent)
                   .setIcon(icon);
 
-          if(notificationDetails.bubbleDesiredHeight != null) {
+          if (notificationDetails.bubbleDesiredHeight != null) {
             bubbleBuilder.setDesiredHeight(notificationDetails.bubbleDesiredHeight);
           }
 
-          if(notificationDetails.bubbleAutoExpand != null) {
+          if (notificationDetails.bubbleAutoExpand != null) {
             bubbleBuilder.setAutoExpandBubble(notificationDetails.bubbleAutoExpand);
           }
 

@@ -290,8 +290,10 @@ public class NotificationDetails implements Serializable {
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
       notificationDetails.bubbleActivity = (String) platformChannelSpecifics.get(BUBBLE_ACTIVITY);
       notificationDetails.bubbleExtra = (String) platformChannelSpecifics.get(BUBBLE_EXTRA);
-      notificationDetails.bubbleAutoExpand = (Boolean) platformChannelSpecifics.get(BUBBLE_AUTO_EXPAND);
-      notificationDetails.bubbleDesiredHeight = (Integer) platformChannelSpecifics.get(BUBBLE_DESIRED_HEIGHT);
+      notificationDetails.bubbleAutoExpand =
+          (Boolean) platformChannelSpecifics.get(BUBBLE_AUTO_EXPAND);
+      notificationDetails.bubbleDesiredHeight =
+          (Integer) platformChannelSpecifics.get(BUBBLE_DESIRED_HEIGHT);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
       if (platformChannelSpecifics.containsKey(SCHEDULE_MODE)) {
         notificationDetails.scheduleMode =
