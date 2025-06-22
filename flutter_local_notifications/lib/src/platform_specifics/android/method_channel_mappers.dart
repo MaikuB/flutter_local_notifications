@@ -216,6 +216,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'bubbleActivity': bubble?.activity,
         'bubbleExtra': bubble?.extra,
         'bubbleDesiredHeight': bubble?.desiredHeight,
+        'bubbleAutoExpand': bubble?.autoExpand,
         'visibility': visibility?.index,
         'timeoutAfter': timeoutAfter,
         'category': category?.name,
