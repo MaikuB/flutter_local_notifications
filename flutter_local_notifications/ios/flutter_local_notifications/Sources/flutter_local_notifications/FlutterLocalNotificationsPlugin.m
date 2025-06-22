@@ -26,8 +26,8 @@ NSString *const PERIODICALLY_SHOW_WITH_DURATION_METHOD =
     @"periodicallyShowWithDuration";
 NSString *const CANCEL_METHOD = @"cancel";
 NSString *const CANCEL_ALL_METHOD = @"cancelAll";
-NSString *const CANCEL_ALL_PENDING_METHOD = @"cancelAllPendingNotifications";
-NSString *const PENDING_NOTIFICATIONS_REQUESTS_METHOD =
+NSString *const CANCEL_ALL_PENDING_NOTIFICATIONS_METHOD = @"cancelAllPendingNotifications";
+NSString *const PENDING_NOTIFICATION_REQUESTS_METHOD =
     @"pendingNotificationRequests";
 NSString *const GET_ACTIVE_NOTIFICATIONS_METHOD = @"getActiveNotifications";
 NSString *const GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
@@ -186,7 +186,7 @@ static FlutterError *getFlutterError(NSError *error) {
     [self cancel:((NSNumber *)call.arguments) result:result];
   } else if ([CANCEL_ALL_METHOD isEqualToString:call.method]) {
     [self cancelAll:result];
-  } else if ([CANCEL_ALL_PENDING_METHOD isEqualToString:call.method]) {
+  } else if ([CANCEL_ALL_PENDING_NOTIFICATIONS_METHOD isEqualToString:call.method]) {
     [self cancelAllPendingNotifications:result];
   } else if ([GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD
                  isEqualToString:call.method]) {
@@ -198,7 +198,7 @@ static FlutterError *getFlutterError(NSError *error) {
     notificationAppLaunchDetails[@"notificationResponse"] =
         _launchNotificationResponseDict;
     result(notificationAppLaunchDetails);
-  } else if ([PENDING_NOTIFICATIONS_REQUESTS_METHOD
+  } else if ([PENDING_NOTIFICATION_REQUESTS_METHOD
                  isEqualToString:call.method]) {
     [self pendingNotificationRequests:result];
   } else if ([GET_ACTIVE_NOTIFICATIONS_METHOD isEqualToString:call.method]) {

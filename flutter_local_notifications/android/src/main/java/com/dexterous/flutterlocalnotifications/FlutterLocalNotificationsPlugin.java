@@ -157,10 +157,10 @@ public class FlutterLocalNotificationsPlugin
   private static final String SHOW_METHOD = "show";
   private static final String CANCEL_METHOD = "cancel";
   private static final String CANCEL_ALL_METHOD = "cancelAll";
-  private static final String CANCEL_ALL_PENDING_METHOD = "cancelAllPendingNotifications";
+  private static final String CANCEL_ALL_PENDING_NOTIFICATIONS_METHOD = "cancelAllPendingNotifications";
   private static final String ZONED_SCHEDULE_METHOD = "zonedSchedule";
   private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
-  private static final String PERIODICALLY_SHOW_WITH_DURATION = "periodicallyShowWithDuration";
+  private static final String PERIODICALLY_SHOW_WITH_DURATION_METHOD = "periodicallyShowWithDuration";
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
   private static final String REQUEST_NOTIFICATIONS_PERMISSION_METHOD =
@@ -1516,7 +1516,7 @@ public class FlutterLocalNotificationsPlugin
       case PERIODICALLY_SHOW_METHOD:
         repeat(call, result);
         break;
-      case PERIODICALLY_SHOW_WITH_DURATION:
+      case PERIODICALLY_SHOW_WITH_DURATION_METHOD:
         repeat(call, result);
         break;
       case CANCEL_METHOD:
@@ -1525,7 +1525,7 @@ public class FlutterLocalNotificationsPlugin
       case CANCEL_ALL_METHOD:
         cancelAllNotifications(result);
         break;
-      case CANCEL_ALL_PENDING_METHOD:
+      case CANCEL_ALL_PENDING_NOTIFICATIONS_METHOD:
         cancelAllPendingNotifications(result);
         break;
       case PENDING_NOTIFICATION_REQUESTS_METHOD:
