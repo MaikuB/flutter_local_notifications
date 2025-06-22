@@ -157,10 +157,12 @@ public class FlutterLocalNotificationsPlugin
   private static final String SHOW_METHOD = "show";
   private static final String CANCEL_METHOD = "cancel";
   private static final String CANCEL_ALL_METHOD = "cancelAll";
-  private static final String CANCEL_ALL_PENDING_NOTIFICATIONS_METHOD = "cancelAllPendingNotifications";
+  private static final String CANCEL_ALL_PENDING_NOTIFICATIONS_METHOD =
+      "cancelAllPendingNotifications";
   private static final String ZONED_SCHEDULE_METHOD = "zonedSchedule";
   private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
-  private static final String PERIODICALLY_SHOW_WITH_DURATION_METHOD = "periodicallyShowWithDuration";
+  private static final String PERIODICALLY_SHOW_WITH_DURATION_METHOD =
+      "periodicallyShowWithDuration";
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
   private static final String REQUEST_NOTIFICATIONS_PERMISSION_METHOD =
@@ -1848,8 +1850,8 @@ public class FlutterLocalNotificationsPlugin
         loadScheduledNotifications(applicationContext);
 
     if (scheduledNotifications == null || scheduledNotifications.isEmpty()) {
-        result.success(null);
-        return;
+      result.success(null);
+      return;
     }
 
     AlarmManager alarmManager = getAlarmManager(applicationContext);
@@ -1864,7 +1866,6 @@ public class FlutterLocalNotificationsPlugin
     saveScheduledNotifications(applicationContext, new ArrayList<>());
     result.success(null);
   }
-
 
   public void requestNotificationsPermission(@NonNull PermissionRequestListener callback) {
     if (permissionRequestProgress != PermissionRequestProgress.None) {
