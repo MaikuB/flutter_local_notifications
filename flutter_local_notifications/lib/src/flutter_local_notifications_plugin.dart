@@ -410,6 +410,7 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     required AndroidScheduleMode androidScheduleMode,
     String? payload,
+    int? repeatStartTime,
   }) async {
     if (kIsWeb) {
       return;
@@ -420,17 +421,22 @@ class FlutterLocalNotificationsPlugin {
           ?.periodicallyShow(id, title, body, repeatInterval,
               notificationDetails: notificationDetails.android,
               payload: payload,
-              scheduleMode: androidScheduleMode);
+              scheduleMode: androidScheduleMode,
+              repeatStartTime: repeatStartTime);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.periodicallyShow(id, title, body, repeatInterval,
-              notificationDetails: notificationDetails.iOS, payload: payload);
+              notificationDetails: notificationDetails.iOS,
+              payload: payload,
+              repeatStartTime: repeatStartTime);
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
           ?.periodicallyShow(id, title, body, repeatInterval,
-              notificationDetails: notificationDetails.macOS, payload: payload);
+              notificationDetails: notificationDetails.macOS,
+              payload: payload,
+              repeatStartTime: repeatStartTime);
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       throw UnsupportedError('Notifications do not repeat on Windows');
     } else {
@@ -457,6 +463,7 @@ class FlutterLocalNotificationsPlugin {
     NotificationDetails notificationDetails, {
     AndroidScheduleMode androidScheduleMode = AndroidScheduleMode.exact,
     String? payload,
+    int? repeatStartTime,
   }) async {
     if (kIsWeb) {
       return;
@@ -468,19 +475,24 @@ class FlutterLocalNotificationsPlugin {
               id, title, body, repeatDurationInterval,
               notificationDetails: notificationDetails.android,
               payload: payload,
-              scheduleMode: androidScheduleMode);
+              scheduleMode: androidScheduleMode,
+              repeatStartTime: repeatStartTime);
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
           ?.periodicallyShowWithDuration(
               id, title, body, repeatDurationInterval,
-              notificationDetails: notificationDetails.iOS, payload: payload);
+              notificationDetails: notificationDetails.iOS,
+              payload: payload,
+              repeatStartTime: repeatStartTime);
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
           ?.periodicallyShowWithDuration(
               id, title, body, repeatDurationInterval,
-              notificationDetails: notificationDetails.macOS, payload: payload);
+              notificationDetails: notificationDetails.macOS,
+              payload: payload,
+              repeatStartTime: repeatStartTime);
     } else {
       await FlutterLocalNotificationsPlatform.instance
           .periodicallyShowWithDuration(
