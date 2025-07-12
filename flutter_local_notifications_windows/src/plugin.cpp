@@ -32,14 +32,14 @@ struct NotificationActivationCallback :
       vector<StringMapEntry> entries;
       for (ULONG i = 0; i < count; i++) {
         auto item = data[i];
-        const std::string key = CW2A(item.Key);
-        const std::string value = CW2A(item.Value);
+        const std::string key = CW2A(item.Key, CP_UTF8);
+        const std::string value = CW2A(item.Value, CP_UTF8);
         const auto pair = StringMapEntry {toNativeString(key), toNativeString(value)};
         entries.push_back(pair);
       }
 
       const auto openedWithAction = args != nullptr;
-      const auto payload = string(CW2A(args));
+      const auto payload = string(CW2A(args, CP_UTF8));
       const auto launchType =
         openedWithAction ? NativeLaunchType::action : NativeLaunchType::notification;
       NativeLaunchDetails launchDetails;
