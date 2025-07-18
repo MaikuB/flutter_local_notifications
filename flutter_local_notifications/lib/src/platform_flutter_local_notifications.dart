@@ -388,13 +388,14 @@ class AndroidFlutterLocalNotificationsPlugin
     AndroidNotificationDetails? notificationDetails,
     String? payload,
     AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
+    int? repeatStartTime,
   }) async {
     validateId(id);
     await _channel.invokeMethod('periodicallyShow', <String, Object?>{
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': clock.now().millisecondsSinceEpoch,
+      'calledAt': repeatStartTime ?? clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics':
           _buildPlatformSpecifics(notificationDetails, scheduleMode),
@@ -411,6 +412,7 @@ class AndroidFlutterLocalNotificationsPlugin
     AndroidNotificationDetails? notificationDetails,
     String? payload,
     AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
+    int? repeatStartTime,
   }) async {
     validateId(id);
     validateRepeatDurationInterval(repeatDurationInterval);
@@ -419,7 +421,7 @@ class AndroidFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': clock.now().millisecondsSinceEpoch,
+      'calledAt': repeatStartTime ?? clock.now().millisecondsSinceEpoch,
       'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
       'platformSpecifics':
           _buildPlatformSpecifics(notificationDetails, scheduleMode),
@@ -789,13 +791,14 @@ class IOSFlutterLocalNotificationsPlugin
     RepeatInterval repeatInterval, {
     DarwinNotificationDetails? notificationDetails,
     String? payload,
+    int? repeatStartTime,
   }) async {
     validateId(id);
     await _channel.invokeMethod('periodicallyShow', <String, Object?>{
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': clock.now().millisecondsSinceEpoch,
+      'calledAt': repeatStartTime ?? clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
@@ -810,6 +813,7 @@ class IOSFlutterLocalNotificationsPlugin
     Duration repeatDurationInterval, {
     DarwinNotificationDetails? notificationDetails,
     String? payload,
+    int? repeatStartTime,
   }) async {
     validateId(id);
     validateRepeatDurationInterval(repeatDurationInterval);
@@ -818,7 +822,7 @@ class IOSFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': clock.now().millisecondsSinceEpoch,
+      'calledAt': repeatStartTime ?? clock.now().millisecondsSinceEpoch,
       'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
@@ -983,13 +987,14 @@ class MacOSFlutterLocalNotificationsPlugin
     RepeatInterval repeatInterval, {
     DarwinNotificationDetails? notificationDetails,
     String? payload,
+    int? repeatStartTime,
   }) async {
     validateId(id);
     await _channel.invokeMethod('periodicallyShow', <String, Object?>{
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': clock.now().millisecondsSinceEpoch,
+      'calledAt': repeatStartTime ?? clock.now().millisecondsSinceEpoch,
       'repeatInterval': repeatInterval.index,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
@@ -1004,6 +1009,7 @@ class MacOSFlutterLocalNotificationsPlugin
     Duration repeatDurationInterval, {
     DarwinNotificationDetails? notificationDetails,
     String? payload,
+    int? repeatStartTime,
   }) async {
     validateId(id);
     validateRepeatDurationInterval(repeatDurationInterval);
@@ -1012,7 +1018,7 @@ class MacOSFlutterLocalNotificationsPlugin
       'id': id,
       'title': title,
       'body': body,
-      'calledAt': clock.now().millisecondsSinceEpoch,
+      'calledAt': repeatStartTime ?? clock.now().millisecondsSinceEpoch,
       'repeatIntervalMilliseconds': repeatDurationInterval.inMilliseconds,
       'platformSpecifics': notificationDetails?.toMap(),
       'payload': payload ?? ''
