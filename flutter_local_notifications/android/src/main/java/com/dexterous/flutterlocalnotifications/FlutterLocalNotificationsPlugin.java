@@ -800,6 +800,9 @@ public class FlutterLocalNotificationsPlugin
       case Weekly:
         repeatInterval = 60000 * 60 * 24 * 7;
         break;
+      case EveryThirtyDays:
+        repeatInterval = 60000 * 60 * 24 * 30;
+        break;
       default:
         break;
     }
@@ -1327,6 +1330,11 @@ public class FlutterLocalNotificationsPlugin
         == ScheduledNotificationRepeatFrequency.Weekly) {
       LocalDateTime localDateTime =
           LocalDateTime.parse(notificationDetails.scheduledDateTime).plusWeeks(1);
+      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
+    } else if (notificationDetails.scheduledNotificationRepeatFrequency
+        == ScheduledNotificationRepeatFrequency.EveryThirtyDays) {
+      LocalDateTime localDateTime =
+          LocalDateTime.parse(notificationDetails.scheduledDateTime).plusDays(30);
       return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localDateTime);
     }
     return null;

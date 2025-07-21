@@ -64,6 +64,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     enum ScheduledNotificationRepeatFrequency: Int {
         case daily
         case weekly
+        case everyThirtyDays
     }
 
     enum DateTimeComponents: Int {
@@ -78,6 +79,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         case hourly
         case daily
         case weekly
+        case everyThirtyDays
     }
 
     var channel: FlutterMethodChannel
@@ -524,6 +526,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 return UNTimeIntervalNotificationTrigger.init(timeInterval: 60 * 60 * 24, repeats: true)
             case .weekly:
                 return UNTimeIntervalNotificationTrigger.init(timeInterval: 60 * 60 * 24 * 7, repeats: true)
+            }
+            case .everyThirtyDays:
+                return UNTimeIntervalNotificationTrigger.init(timeInterval: 60 * 60 * 24 * 30, repeats: true)
             }
         } else {
             let repeatIntervalSeconds = repeatIntervalMilliseconds! / 1000
