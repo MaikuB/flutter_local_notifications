@@ -196,6 +196,7 @@ void main() {
                   'inputs': <Object>[],
                   'cancelNotification': false,
                   'semanticAction': SemanticAction.markAsRead.value,
+                  'invisible': false,
                 },
                 <String, Object>{
                   'id': 'action2',
@@ -217,6 +218,7 @@ void main() {
                   ],
                   'cancelNotification': true,
                   'semanticAction': SemanticAction.none.value,
+                  'invisible': false,
                 }
               ],
             },

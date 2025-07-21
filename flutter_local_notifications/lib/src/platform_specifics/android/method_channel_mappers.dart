@@ -313,6 +313,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
                   .toList(),
               'cancelNotification': e.cancelNotification,
               'semanticAction': e.semanticAction.value,
+              'invisible': e.invisible,
             },
           )
           .toList(),

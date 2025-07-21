@@ -57,6 +57,7 @@ class AndroidNotificationAction {
     this.inputs = const <AndroidNotificationActionInput>[],
     this.cancelNotification = true,
     this.semanticAction = SemanticAction.none,
+    this.invisible = false,
   });
 
   /// This ID will be sent back in the action handler defined in
@@ -98,6 +99,9 @@ class AndroidNotificationAction {
   /// Sets the SemanticAction for this Action. A SemanticAction denotes what an
   /// Action's PendingIntent will do (eg. reply, mark as read, delete, etc).
   final SemanticAction semanticAction;
+
+  /// Sets the visibility of the action in the notification.
+  final bool invisible;
 }
 
 /// Contains notification details specific to Android.

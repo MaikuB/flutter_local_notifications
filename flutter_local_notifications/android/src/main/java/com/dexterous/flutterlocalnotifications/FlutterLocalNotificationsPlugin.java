@@ -380,7 +380,11 @@ public class FlutterLocalNotificationsPlugin
             actionBuilder.addRemoteInput(remoteInput.build());
           }
         }
-        builder.addAction(actionBuilder.build());
+        if (action.invisible) {
+          builder.addInvisibleAction(actionBuilder.build());
+        } else {
+          builder.addAction(actionBuilder.build());
+        }
       }
     }
 
