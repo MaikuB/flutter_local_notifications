@@ -386,6 +386,7 @@ For apps that need the following functionality please complete the following in 
             android:stopWithTask="false"
             android:foregroundServiceType="<foreground service types>">
     ```
+* To be able to create channels that ignore the device's Do Not Disturb mode, specify the `<uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />` permission between the `<manifest>` tags. Developers will also need to follow the instructions documented [here](#bypassing-do-not-disturb-dnd)
 
 Developers can refer to the example app's `AndroidManifest.xml` to help see what the end result may look like. Do note that the example app covers all the plugin's supported functionality so will request more permissions than your own app may need
 
@@ -428,13 +429,21 @@ Note that when a full-screen intent notification actually occurs (as opposed to 
 
 Developers should also be across Google's requirements on using full-screen intents. Please refer to their documentation [here](https://source.android.com/docs/core/permissions/fsi-limits) for more information. Should you app need request permissions, the `AndroidFlutterNotificationsPlugin` class exposes the `requestFullScreenIntentPermission()` method that can be used to do so.
 
+### Bypassing Do Not Disturb (DnD)
+
+If your application needs the ability to send notifications that ignore the device's DnD mode settings, you must request these permissions from Android 6.0 onwards. You can do this using `AndroidFlutterNotificationsPlugin` by calling the `requestNotificationPolicyAccess()` method which will redirect the user to a settings page where your application may be explicitly whitelisted to bypass DnD. **This method _must_ be called before attempting to create a notification channel with `bypassDnd: true`.** Failing to do so will cause the `bypassDnd` argument to be treated as `false`.
+
+For notifications to then actually ignore the DnD-status of a device, the channel must be created with `bypassDnd: true`, or the first notification on a channel that creates it must be sent with `channelBypassDnd: true`.
+
+**NOTE:** This does _not_ ignore the device's silent mode! Should you have a use case where you must notify your users (for instance in an emergency), you might want to use a package like [`sound_mode`](https://pub.dev/packages/sound_mode) or write your own platform-specific code to set the `RingerMode` of the device as well as change the notification stream's volume before and after the notification.
+
 ### Release build configuration
 
 ⚠️ Ensure that you have configured the resources that should be kept so that resources like your notification icons aren't discarded by the R8 compiler by following the instructions [here](https://developer.android.com/studio/build/shrink-code#keep-resources). If you have chosen to use `@mipmap/ic_launcher` as the notification icon (against the official Android guidance), be sure to include this in the `keep.xml` file. If you fail to do this, notifications might be broken. In the worst case they will never show, instead silently failing when the system looks for a resource that has been removed. If they do still show, you might not see the icon you specified. The configuration used by the example app can be found [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/keep.xml) where it is specifying that all drawable resources should be kept, as well as the file used to play a custom notification sound (sound file is located [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/src/main/res/raw/slow_spring_board.mp3)).
 
 #### ProGuard rules
 
-For flutter_local_notificaiton v19 and higher, the ProGuard rules are automatically provided by the GSON. The following documentation is for v18 and lower versions.
+For flutter_local_notifications v19 and higher, the ProGuard rules are automatically provided by the GSON. The following documentation is for v18 and lower versions.
 
 Before creating the release build of your app (which is the default setting when building an APK or app bundle) you will need to customise your ProGuard configuration file as per this [link](https://developer.android.com/studio/build/shrink-code#keep-code). Rules specific to the GSON dependency being used by the plugin will need to be added. These rules can be found [here](https://github.com/google/gson/blob/main/examples/android-proguard-example/proguard.cfg). Whilst the example app has a Proguard rules (`proguard-rules.pro`) [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/android/app/proguard-rules.pro), it is recommended that developers refer to the rules on the GSON repository in case they get updated over time.
 
@@ -593,7 +602,7 @@ Developers should also note that whilst accessing plugins will work, on Android 
 
 **Specifying actions on notifications**:
 
-The notification actions are platform specific and you have to specify them differently for each platform.
+The notification actions are platform-specific and you have to specify them differently for each platform.
 
 On iOS/macOS, the actions are defined on a category, please see the configuration section for details.
 

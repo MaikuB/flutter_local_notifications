@@ -1,3 +1,25 @@
+## [19.3.1]
+
+* [Windows] fixed issue [#2648](https://github.com/MaikuB/flutter_local_notifications/issues/2648) where non-ASCII characters in the notification payload were not being handled properly. Thanks to the PR from [yoyoIU](https://github.com/yoyo930021)
+* [Windows] fixed issue [#2651](https://github.com/MaikuB/flutter_local_notifications/issues/2651) where unresolved symbols occurred with changes in introduced in newer Windows SDKs. Thanks to the PR from [Sebastien](https://github.com/Sebastien-VZN)
+
+## [19.3.0]
+
+* [Android][iOS][macOS] added `cancelAllPendingNotifications()` method for cancelling all pending notifications that have been scheduled. Thanks to the PR from [Kwon Tae Hyung](https://github.com/TaeBbong)
+
+## [19.2.1]
+
+* [macOS] removed redundant code that was only applicable on macOS versions lower than 10.14. This should be a non-functional change since 18.0.0 bumped the minimum Flutter SDK requirements that in turn required macOS 10.14 at a minimum. Thanks to the PR from [Blin Qipa](https://github.com/bqubique)
+* [Android] bumped robolectric dependency. This fixes an issue where some users reported receiving instances of `java.lang.NoClassDefFoundError` around the plugin's Android unit tests. Thanks to the PR from [Turtlepaw](https://github.com/Turtlepaw)
+
+## [19.2.0]
+
+* [Android] added support to bypass have notifications bypass the device's Do Not Disturb (DnD) settings. Thanks the PR from [Michel v. Varendorff](https://github.com/mvarendorff2) that added the following changes
+  * The `hasNotificationPolicyAccess()` method that checks if the application can modify the notification policy
+  * The `requestNotificationPolicyAccess()` method that was added the `AndroidFlutterNotificationsPlugin` class. This can be used request access for the calling application modify the notification policy
+  * Added `bypassDnd` the property of the `AndroidNotificationChannel` class and `channelBypassDnd` to the `AndroidNotificationDetails` class. These can used to indicate if notifications associated with the channel can bypass the DnD settings of the device
+* Bumped `msix` dev dependency in example app. This to fix the [issue](https://github.com/YehudaKremer/msix/issues/303) where the `msix` package stopped being able to created MSIX installers
+
 ## [19.1.0]
 
 * [iOS][macOS] added supported to specify the volume for critical alerts. Thanks to the PR from [bannzai](https://github.com/bannzai)

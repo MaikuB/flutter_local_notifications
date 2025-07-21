@@ -13,6 +13,7 @@ public class NotificationChannelDetails implements Serializable {
   private static final String GROUP_ID = "groupId";
   private static final String SHOW_BADGE = "showBadge";
   private static final String IMPORTANCE = "importance";
+  private static final String BYPASS_DND = "bypassDnd";
   private static final String PLAY_SOUND = "playSound";
   private static final String SOUND = "sound";
   private static final String SOUND_SOURCE = "soundSource";
@@ -32,6 +33,7 @@ public class NotificationChannelDetails implements Serializable {
   public String groupId;
   public Boolean showBadge;
   public Integer importance;
+  public Boolean bypassDnd;
   public Boolean playSound;
   public String sound;
   public SoundSource soundSource;
@@ -49,6 +51,7 @@ public class NotificationChannelDetails implements Serializable {
     notificationChannel.description = (String) arguments.get(DESCRIPTION);
     notificationChannel.groupId = (String) arguments.get(GROUP_ID);
     notificationChannel.importance = (Integer) arguments.get(IMPORTANCE);
+    notificationChannel.bypassDnd = (Boolean) arguments.get(BYPASS_DND);
     notificationChannel.showBadge = (Boolean) arguments.get(SHOW_BADGE);
     notificationChannel.channelAction =
         NotificationChannelAction.values()[(Integer) arguments.get(CHANNEL_ACTION)];
@@ -82,6 +85,7 @@ public class NotificationChannelDetails implements Serializable {
     notificationChannel.name = notificationDetails.channelName;
     notificationChannel.description = notificationDetails.channelDescription;
     notificationChannel.importance = notificationDetails.importance;
+    notificationChannel.bypassDnd = notificationDetails.channelBypassDnd;
     notificationChannel.showBadge = notificationDetails.channelShowBadge;
     if (notificationDetails.channelAction == null) {
       notificationChannel.channelAction = NotificationChannelAction.CreateIfNotExists;

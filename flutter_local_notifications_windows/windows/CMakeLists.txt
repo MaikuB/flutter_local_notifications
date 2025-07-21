@@ -21,3 +21,4 @@ set(flutter_local_notifications_windows_bundled_libraries
   $<TARGET_FILE:flutter_local_notifications_windows>
   PARENT_SCOPE
 )
+target_link_libraries(flutter_local_notifications_windows PRIVATE runtimeobject)
