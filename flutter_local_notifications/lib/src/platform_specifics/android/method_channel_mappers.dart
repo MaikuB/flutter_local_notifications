@@ -312,7 +312,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
                       _convertInputToMap(input))
                   .toList(),
               'cancelNotification': e.cancelNotification,
-              'semanticAction': e.semanticAction,
+              'semanticAction': e.semanticAction.value,
             },
           )
           .toList(),
