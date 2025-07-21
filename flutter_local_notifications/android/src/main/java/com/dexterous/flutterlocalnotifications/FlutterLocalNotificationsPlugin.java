@@ -357,6 +357,10 @@ public class FlutterLocalNotificationsPlugin
           actionBuilder.setAllowGeneratedReplies(action.allowGeneratedReplies);
         }
 
+        if (action.semanticAction != null) {
+          actionBuilder.setSemanticAction(action.semanticAction);
+        }
+
         if (action.actionInputs != null) {
           for (NotificationActionInput input : action.actionInputs) {
             RemoteInput.Builder remoteInput =

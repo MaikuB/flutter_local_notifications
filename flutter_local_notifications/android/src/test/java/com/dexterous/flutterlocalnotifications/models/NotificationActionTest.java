@@ -30,6 +30,7 @@ public class NotificationActionTest {
     raw.put("showsUserInterface", true);
     raw.put("allowGeneratedReplies", true);
     raw.put("iconBitmapSource", 4);
+    raw.put("semanticAction", 1);
 
     final List<Map<String, Object>> inputs = new ArrayList<>();
     final Map<String, Object> aInput = new HashMap<>();
@@ -51,6 +52,7 @@ public class NotificationActionTest {
     assertEquals(true, action.contextual);
     assertEquals(true, action.showsUserInterface);
     assertEquals(true, action.allowGeneratedReplies);
+    assertEquals(1, action.semanticAction);
     assertEquals(IconSource.ByteArray, action.iconSource);
     assertEquals(
         new NotificationActionInput(

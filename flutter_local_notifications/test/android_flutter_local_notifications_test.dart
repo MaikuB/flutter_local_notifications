@@ -93,6 +93,7 @@ void main() {
             showsUserInterface: true,
             allowGeneratedReplies: true,
             cancelNotification: false,
+            semanticAction: 2,
           ),
           AndroidNotificationAction(
             'action2',
@@ -193,7 +194,8 @@ void main() {
                   'showsUserInterface': true,
                   'allowGeneratedReplies': true,
                   'inputs': <Object>[],
-                  'cancelNotification': false
+                  'cancelNotification': false,
+                  'semanticAction': 2,
                 },
                 <String, Object>{
                   'id': 'action2',
@@ -214,6 +216,7 @@ void main() {
                     }
                   ],
                   'cancelNotification': true,
+                  'semanticAction': 0,
                 }
               ],
             },
