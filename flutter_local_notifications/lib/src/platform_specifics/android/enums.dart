@@ -269,7 +269,7 @@ enum AudioAttributesUsage {
   final int value;
 }
 
-/// The available semantic actions for Android notifications.
+/// The available meanings that can be associated with a notification action.
 enum SemanticAction {
   /// Corresponds to [`Notification.Action.SEMANTIC_ACTION_NONE`](https://developer.android.com/reference/android/app/Notification.Action#SEMANTIC_ACTION_NONE).
   none(0),

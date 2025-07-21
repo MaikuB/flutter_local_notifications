@@ -96,8 +96,8 @@ class AndroidNotificationAction {
   /// selected.
   final bool cancelNotification;
 
-  /// Sets the SemanticAction for this Action. A SemanticAction denotes what an
-  /// Action's PendingIntent will do (eg. reply, mark as read, delete, etc).
+  /// The meaning to the action that hints at what the associated
+  /// PedingIntent will do.
   final SemanticAction semanticAction;
 
   /// Sets the visibility of the action in the notification.

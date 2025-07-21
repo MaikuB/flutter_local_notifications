@@ -94,6 +94,7 @@ void main() {
             allowGeneratedReplies: true,
             cancelNotification: false,
             semanticAction: SemanticAction.markAsRead,
+            invisible: true,
           ),
           AndroidNotificationAction(
             'action2',
@@ -196,7 +197,7 @@ void main() {
                   'inputs': <Object>[],
                   'cancelNotification': false,
                   'semanticAction': SemanticAction.markAsRead.value,
-                  'invisible': false,
+                  'invisible': true,
                 },
                 <String, Object>{
                   'id': 'action2',
