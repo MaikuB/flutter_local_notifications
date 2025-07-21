@@ -47,12 +47,12 @@ public class NotificationActionTest {
     assertEquals("id123", action.id);
     assertEquals(true, action.cancelNotification);
     assertEquals("abc", action.title);
-    assertEquals(new Integer(2071756158), action.titleColor);
+    assertEquals(Integer.valueOf(2071756158), action.titleColor);
     assertEquals("icon", action.icon);
     assertEquals(true, action.contextual);
     assertEquals(true, action.showsUserInterface);
     assertEquals(true, action.allowGeneratedReplies);
-    assertEquals(1, action.semanticAction);
+    assertEquals(Integer.valueOf(1), action.semanticAction);
     assertEquals(IconSource.ByteArray, action.iconSource);
     assertEquals(
         new NotificationActionInput(
