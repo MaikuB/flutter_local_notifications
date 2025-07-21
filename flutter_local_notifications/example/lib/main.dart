@@ -2639,7 +2639,9 @@ class _HomePageState extends State<HomePage> {
                   children: <Widget>[
                     Text('text: ${msg.text}\n'
                         'timestamp: ${msg.timestamp}\n'
-                        'person: ${_formatPerson(msg.person)}'),
+                        'person: ${_formatPerson(msg.person)}\n'
+                        'dataMimeType: ${msg.dataMimeType}\n'
+                        'dataUri: ${msg.dataUri}'),
                     const Divider(color: Colors.black),
                   ],
                 ),
