@@ -1081,12 +1081,8 @@ class _HomePageState extends State<HomePage> {
           // user tapped on a action (this mimics the behavior on iOS).
           cancelNotification: false,
         ),
-        AndroidNotificationAction(
-          'read',
-          'Mark as read',
-          semanticAction: SemanticAction.markAsRead,
-          invisible: true
-        ),
+        AndroidNotificationAction('read', 'Mark as read',
+            semanticAction: SemanticAction.markAsRead, invisible: true),
       ],
     );
 
