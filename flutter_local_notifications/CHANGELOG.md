@@ -1,6 +1,7 @@
 ## [19.4.0]
 
 * [Android] added ability to read `dataMimeType` and `dataUri` when calling `getActiveNotifications()` to read details of an active Android notification using the messaging style. Thanks to the PR from [Matt Bajorek](https://github.com/mattbajorek)
+* [Android] added support for Android semantic actions. Thanks to the PR from [Jared Szechy](https://github.com/szechyjs)
 
 ## [19.3.1]
 
