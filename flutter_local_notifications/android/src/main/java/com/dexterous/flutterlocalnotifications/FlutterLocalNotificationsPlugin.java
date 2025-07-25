@@ -1408,7 +1408,6 @@ public class FlutterLocalNotificationsPlugin
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     this.channel.setMethodCallHandler(null);
     this.channel = null;
-    this.applicationContext = null;
   }
 
   @Override
