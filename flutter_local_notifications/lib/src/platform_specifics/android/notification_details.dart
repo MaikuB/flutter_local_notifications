@@ -56,6 +56,8 @@ class AndroidNotificationAction {
     this.allowGeneratedReplies = false,
     this.inputs = const <AndroidNotificationActionInput>[],
     this.cancelNotification = true,
+    this.semanticAction = SemanticAction.none,
+    this.invisible = false,
   });
 
   /// This ID will be sent back in the action handler defined in
@@ -93,6 +95,13 @@ class AndroidNotificationAction {
   /// Set whether the notification should be canceled when this action is
   /// selected.
   final bool cancelNotification;
+
+  /// The meaning to the action that hints at what the associated
+  /// PedingIntent will do.
+  final SemanticAction semanticAction;
+
+  /// Sets the visibility of the action in the notification.
+  final bool invisible;
 }
 
 /// Contains notification details specific to Android.
