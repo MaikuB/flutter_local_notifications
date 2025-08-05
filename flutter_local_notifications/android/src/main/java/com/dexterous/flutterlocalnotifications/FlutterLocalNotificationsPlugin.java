@@ -1691,14 +1691,14 @@ public class FlutterLocalNotificationsPlugin
     if (mainActivity != null) {
       Intent launchIntent = mainActivity.getIntent();
       notificationLaunchedApp =
-              launchIntent != null
-                      && (SELECT_NOTIFICATION_ACTION.equals(launchIntent.getAction())
-                      || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.getAction()))
-                      && !launchedActivityFromHistory(launchIntent)
-                      && !isSelectedNotificationConsumed();
+          launchIntent != null
+              && (SELECT_NOTIFICATION_ACTION.equals(launchIntent.getAction())
+                  || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.getAction()))
+              && !launchedActivityFromHistory(launchIntent)
+              && !isSelectedNotificationConsumed();
       if (notificationLaunchedApp) {
         notificationAppLaunchDetails.put(
-                "notificationResponse", extractNotificationResponseMap(launchIntent));
+            "notificationResponse", extractNotificationResponseMap(launchIntent));
       }
     }
 
@@ -2389,30 +2389,31 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private void consumeSelectedNotification(Result result) {
-      if(mainActivity == null) {
-          return;
-      }
+    if (mainActivity == null) {
+      return;
+    }
 
-      Intent mainActivityIntent = mainActivity.getIntent();
-      String action = mainActivityIntent.getAction();
-      if(action == null) {
-          return;
-      }
-      boolean isSelectNotificationAction = action.equals(SELECT_NOTIFICATION_ACTION);
-      boolean isSelectForegroundNotificationAction =
-              action.equals(SELECT_FOREGROUND_NOTIFICATION_ACTION);
-      if(isSelectNotificationAction || isSelectForegroundNotificationAction) {
-          mainActivityIntent.putExtra(EXTRA_IS_SELECTED_NOTIFICATION_CONSUMED_KEY, true);
-      }
-      result.success(null);
+    Intent mainActivityIntent = mainActivity.getIntent();
+    String action = mainActivityIntent.getAction();
+    if (action == null) {
+      return;
+    }
+    boolean isSelectNotificationAction = action.equals(SELECT_NOTIFICATION_ACTION);
+    boolean isSelectForegroundNotificationAction =
+        action.equals(SELECT_FOREGROUND_NOTIFICATION_ACTION);
+    if (isSelectNotificationAction || isSelectForegroundNotificationAction) {
+      mainActivityIntent.putExtra(EXTRA_IS_SELECTED_NOTIFICATION_CONSUMED_KEY, true);
+    }
+    result.success(null);
   }
 
   private boolean isSelectedNotificationConsumed() {
-      if(mainActivity == null) {
-          return false;
-      }
-      return mainActivity.getIntent().getBooleanExtra(EXTRA_IS_SELECTED_NOTIFICATION_CONSUMED_KEY,
-              false);
+    if (mainActivity == null) {
+      return false;
+    }
+    return mainActivity
+        .getIntent()
+        .getBooleanExtra(EXTRA_IS_SELECTED_NOTIFICATION_CONSUMED_KEY, false);
   }
 
   private static class PluginException extends RuntimeException {
