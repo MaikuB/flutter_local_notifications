@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
 import android.text.Spannable;
@@ -157,9 +158,12 @@ public class FlutterLocalNotificationsPlugin
   private static final String SHOW_METHOD = "show";
   private static final String CANCEL_METHOD = "cancel";
   private static final String CANCEL_ALL_METHOD = "cancelAll";
+  private static final String CANCEL_ALL_PENDING_NOTIFICATIONS_METHOD =
+      "cancelAllPendingNotifications";
   private static final String ZONED_SCHEDULE_METHOD = "zonedSchedule";
   private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
-  private static final String PERIODICALLY_SHOW_WITH_DURATION = "periodicallyShowWithDuration";
+  private static final String PERIODICALLY_SHOW_WITH_DURATION_METHOD =
+      "periodicallyShowWithDuration";
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
   private static final String REQUEST_NOTIFICATIONS_PERMISSION_METHOD =
@@ -169,6 +173,9 @@ public class FlutterLocalNotificationsPlugin
 
   private static final String REQUEST_FULL_SCREEN_INTENT_PERMISSION_METHOD =
       "requestFullScreenIntentPermission";
+  private static final String REQUEST_NOTIFICATION_POLICY_ACCESS_METHOD =
+      "requestNotificationPolicyAccess";
+  private static final String HAS_NOTIFICATION_POLICY_ACCESS_METHOD = "hasNotificationPolicyAccess";
   private static final String METHOD_CHANNEL = "dexterous.com/flutter/local_notifications";
   private static final String INVALID_ICON_ERROR_CODE = "invalid_icon";
   private static final String INVALID_LARGE_ICON_ERROR_CODE = "invalid_large_icon";
@@ -213,6 +220,7 @@ public class FlutterLocalNotificationsPlugin
   static final int EXACT_ALARM_PERMISSION_REQUEST_CODE = 2;
 
   static final int FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE = 3;
+  static final int NOTIFICATION_POLICY_ACCESS_REQUEST_CODE = 4;
 
   private PermissionRequestListener callback;
 
@@ -351,6 +359,10 @@ public class FlutterLocalNotificationsPlugin
           actionBuilder.setAllowGeneratedReplies(action.allowGeneratedReplies);
         }
 
+        if (action.semanticAction != null) {
+          actionBuilder.setSemanticAction(action.semanticAction);
+        }
+
         if (action.actionInputs != null) {
           for (NotificationActionInput input : action.actionInputs) {
             RemoteInput.Builder remoteInput =
@@ -370,7 +382,11 @@ public class FlutterLocalNotificationsPlugin
             actionBuilder.addRemoteInput(remoteInput.build());
           }
         }
-        builder.addAction(actionBuilder.build());
+        if (action.invisible) {
+          builder.addInvisibleAction(actionBuilder.build());
+        } else {
+          builder.addAction(actionBuilder.build());
+        }
       }
     }
 
@@ -1217,6 +1233,21 @@ public class FlutterLocalNotificationsPlugin
       } else {
         notificationChannel.setSound(null, null);
       }
+
+      if (BooleanUtils.getValue(notificationChannelDetails.bypassDnd)) {
+        boolean isAccessGranted = notificationManager.isNotificationPolicyAccessGranted();
+
+        if (isAccessGranted) {
+          notificationChannel.setBypassDnd(true);
+        } else {
+          Log.w(
+              TAG,
+              "Channel '"
+                  + notificationChannelDetails.name
+                  + "' was set to bypass Do Not Disturb but the OS prevents it.");
+        }
+      }
+
       notificationChannel.enableVibration(
           BooleanUtils.getValue(notificationChannelDetails.enableVibration));
       if (notificationChannelDetails.vibrationPattern != null
@@ -1478,10 +1509,27 @@ public class FlutterLocalNotificationsPlugin
               }
             });
         break;
+      case REQUEST_NOTIFICATION_POLICY_ACCESS_METHOD:
+        requestNotificationPolicyAccess(
+            new PermissionRequestListener() {
+              @Override
+              public void complete(boolean granted) {
+                result.success(granted);
+              }
+
+              @Override
+              public void fail(String message) {
+                result.error(PERMISSION_REQUEST_IN_PROGRESS_ERROR_CODE, message, null);
+              }
+            });
+        break;
+      case HAS_NOTIFICATION_POLICY_ACCESS_METHOD:
+        hasNotificationPolicyAccess(result);
+        break;
       case PERIODICALLY_SHOW_METHOD:
         repeat(call, result);
         break;
-      case PERIODICALLY_SHOW_WITH_DURATION:
+      case PERIODICALLY_SHOW_WITH_DURATION_METHOD:
         repeat(call, result);
         break;
       case CANCEL_METHOD:
@@ -1489,6 +1537,9 @@ public class FlutterLocalNotificationsPlugin
         break;
       case CANCEL_ALL_METHOD:
         cancelAllNotifications(result);
+        break;
+      case CANCEL_ALL_PENDING_NOTIFICATIONS_METHOD:
+        cancelAllPendingNotifications(result);
         break;
       case PENDING_NOTIFICATION_REQUESTS_METHOD:
         pendingNotificationRequests(result);
@@ -1577,6 +1628,7 @@ public class FlutterLocalNotificationsPlugin
         activeNotificationPayload.put("body", notification.extras.getCharSequence("android.text"));
         activeNotificationPayload.put(
             "bigText", notification.extras.getCharSequence("android.bigText"));
+
         activeNotificationsPayload.add(activeNotificationPayload);
       }
       result.success(activeNotificationsPayload);
@@ -1809,6 +1861,28 @@ public class FlutterLocalNotificationsPlugin
     result.success(null);
   }
 
+  private void cancelAllPendingNotifications(Result result) {
+    ArrayList<NotificationDetails> scheduledNotifications =
+        loadScheduledNotifications(applicationContext);
+
+    if (scheduledNotifications == null || scheduledNotifications.isEmpty()) {
+      result.success(null);
+      return;
+    }
+
+    AlarmManager alarmManager = getAlarmManager(applicationContext);
+    Intent intent = new Intent(applicationContext, ScheduledNotificationReceiver.class);
+
+    for (NotificationDetails scheduledNotification : scheduledNotifications) {
+      PendingIntent pendingIntent =
+          getBroadcastPendingIntent(applicationContext, scheduledNotification.id, intent);
+      alarmManager.cancel(pendingIntent);
+    }
+
+    saveScheduledNotifications(applicationContext, new ArrayList<>());
+    result.success(null);
+  }
+
   public void requestNotificationsPermission(@NonNull PermissionRequestListener callback) {
     if (permissionRequestProgress != PermissionRequestProgress.None) {
       callback.fail(PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE);
@@ -1893,6 +1967,46 @@ public class FlutterLocalNotificationsPlugin
     } else {
       this.callback.complete(true);
     }
+  }
+
+  public void requestNotificationPolicyAccess(@NonNull PermissionRequestListener callback) {
+    if (VERSION.SDK_INT < VERSION_CODES.M) {
+      callback.complete(false);
+      return;
+    }
+
+    if (permissionRequestProgress != PermissionRequestProgress.None) {
+      callback.fail(PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE);
+      return;
+    }
+
+    this.callback = callback;
+
+    NotificationManager notificationManager =
+        (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+    boolean permissionGranted = notificationManager.isNotificationPolicyAccessGranted();
+
+    if (permissionGranted) {
+      this.callback.complete(true);
+      permissionRequestProgress = PermissionRequestProgress.None;
+    } else {
+      permissionRequestProgress = PermissionRequestProgress.RequestingNotificationPolicyAccess;
+      mainActivity.startActivityForResult(
+          new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS),
+          NOTIFICATION_POLICY_ACCESS_REQUEST_CODE);
+    }
+  }
+
+  public void hasNotificationPolicyAccess(Result result) {
+    if (VERSION.SDK_INT < VERSION_CODES.M) {
+      result.success(false);
+      return;
+    }
+
+    NotificationManager notificationManager =
+        (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+    boolean isGranted = notificationManager.isNotificationPolicyAccessGranted();
+    result.success(isGranted);
   }
 
   @Override
@@ -2035,6 +2149,12 @@ public class FlutterLocalNotificationsPlugin
         msgPayload.put("text", msg.getText());
         msgPayload.put("timestamp", msg.getTimestamp());
         msgPayload.put("person", describePerson(msg.getPerson()));
+        if (msg.getDataUri() != null) {
+          msgPayload.put("dataUri", msg.getDataUri().toString());
+        }
+        if (msg.getDataMimeType() != null) {
+          msgPayload.put("dataMimeType", msg.getDataMimeType());
+        }
         messagesPayload.add(msgPayload);
       }
       stylePayload.put("messages", messagesPayload);
@@ -2137,11 +2257,16 @@ public class FlutterLocalNotificationsPlugin
             channelPayload.put("sound", resource);
           } else {
             // Kept for backwards compatibility when the source resource used to be based on id
-            String resourceName =
-                applicationContext.getResources().getResourceEntryName(resourceId);
-            if (resourceName != null) {
-              channelPayload.put("soundSource", soundSources.indexOf(SoundSource.RawResource));
-              channelPayload.put("sound", resourceName);
+            try {
+              String resourceName =
+                  applicationContext.getResources().getResourceEntryName(resourceId);
+              if (resourceName != null) {
+                channelPayload.put("soundSource", soundSources.indexOf(SoundSource.RawResource));
+                channelPayload.put("sound", resourceName);
+              }
+            } catch (Exception e) {
+              channelPayload.put("sound", null);
+              channelPayload.put("playSound", false);
             }
           }
         } else {
@@ -2149,6 +2274,7 @@ public class FlutterLocalNotificationsPlugin
           channelPayload.put("sound", soundUri.toString());
         }
       }
+      channelPayload.put("bypassDnd", channel.canBypassDnd());
       channelPayload.put("enableVibration", channel.shouldVibrate());
       channelPayload.put("vibrationPattern", channel.getVibrationPattern());
       channelPayload.put("enableLights", channel.shouldShowLights());
@@ -2228,7 +2354,8 @@ public class FlutterLocalNotificationsPlugin
   public boolean onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     if (requestCode != NOTIFICATION_PERMISSION_REQUEST_CODE
         && requestCode != EXACT_ALARM_PERMISSION_REQUEST_CODE
-        && requestCode != FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE) {
+        && requestCode != FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE
+        && requestCode != NOTIFICATION_POLICY_ACCESS_REQUEST_CODE) {
       return false;
     }
 
@@ -2246,6 +2373,15 @@ public class FlutterLocalNotificationsPlugin
       NotificationManager notificationManager =
           (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
       this.callback.complete(notificationManager.canUseFullScreenIntent());
+      permissionRequestProgress = PermissionRequestProgress.None;
+    }
+
+    if (permissionRequestProgress == PermissionRequestProgress.RequestingNotificationPolicyAccess
+        && requestCode == NOTIFICATION_POLICY_ACCESS_REQUEST_CODE
+        && VERSION.SDK_INT >= VERSION_CODES.M) {
+      NotificationManager notificationManager =
+          (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+      this.callback.complete(notificationManager.isNotificationPolicyAccessGranted());
       permissionRequestProgress = PermissionRequestProgress.None;
     }
 
@@ -2297,6 +2433,7 @@ public class FlutterLocalNotificationsPlugin
   enum PermissionRequestProgress {
     None,
     RequestingNotificationPermission,
+    RequestingNotificationPolicyAccess,
     RequestingExactAlarmsPermission,
     RequestingFullScreenIntentPermission
   }

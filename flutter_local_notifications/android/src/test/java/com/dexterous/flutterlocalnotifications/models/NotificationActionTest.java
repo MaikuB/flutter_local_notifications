@@ -30,6 +30,7 @@ public class NotificationActionTest {
     raw.put("showsUserInterface", true);
     raw.put("allowGeneratedReplies", true);
     raw.put("iconBitmapSource", 4);
+    raw.put("semanticAction", 1);
 
     final List<Map<String, Object>> inputs = new ArrayList<>();
     final Map<String, Object> aInput = new HashMap<>();
@@ -46,11 +47,12 @@ public class NotificationActionTest {
     assertEquals("id123", action.id);
     assertEquals(true, action.cancelNotification);
     assertEquals("abc", action.title);
-    assertEquals(new Integer(2071756158), action.titleColor);
+    assertEquals(Integer.valueOf(2071756158), action.titleColor);
     assertEquals("icon", action.icon);
     assertEquals(true, action.contextual);
     assertEquals(true, action.showsUserInterface);
     assertEquals(true, action.allowGeneratedReplies);
+    assertEquals(Integer.valueOf(1), action.semanticAction);
     assertEquals(IconSource.ByteArray, action.iconSource);
     assertEquals(
         new NotificationActionInput(

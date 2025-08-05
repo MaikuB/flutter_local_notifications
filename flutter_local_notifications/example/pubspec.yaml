@@ -3,16 +3,17 @@ description: Demonstrates how to use the flutter_local_notifications plugin.
 publish_to: none
 
 dependencies:
-  cupertino_icons: ^1.0.2
-  device_info_plus: ^9.1.2
+  cupertino_icons: ^1.0.8
+  device_info_plus: ^11.3.0
   flutter:
     sdk: flutter
   flutter_local_notifications:
     path: ../
-  flutter_timezone: ^1.0.4
-  http: ^0.13.4
-  image: ^3.0.8
-  path_provider: ^2.0.0
+  flutter_timezone: ^4.0.1
+  http: ^1.3.0
+  image: ^4.5.2
+  path_provider: ^2.1.5
+  timezone: ^0.10.0
 
 dev_dependencies:
   flutter_driver:
@@ -21,6 +22,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  msix: ^3.16.9
 
 flutter:
   uses-material-design: true
@@ -29,5 +31,17 @@ flutter:
     - sound/
 
 environment:
-  sdk: ^3.1.0
-  flutter: ">=3.1.3"
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
+
+msix_config:
+  display_name: Flutter Local Notifications Example
+  identity_name: Com.Example.FlutterLocalNotificationsExample
+  msix_version: 1.0.0.0
+  store: false
+  install_certificate: false
+  output_name: example
+  toast_activator:
+    clsid: "d49b0314-ee7a-4626-bf79-97cdb8a991bb"
+    arguments: "msix-args"
+    display_name: "Flutter Local Notifications"

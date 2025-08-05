@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
+import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
 import 'package:timezone/timezone.dart';
 
 import 'initialization_settings.dart';
 import 'notification_details.dart';
 import 'platform_flutter_local_notifications.dart';
 import 'platform_specifics/android/schedule_mode.dart';
-import 'platform_specifics/ios/enums.dart';
 import 'types.dart';
 
 /// Provides cross-platform functionality for displaying local notifications.
@@ -25,21 +25,7 @@ class FlutterLocalNotificationsPlugin {
   /// Factory for create an instance of [FlutterLocalNotificationsPlugin].
   factory FlutterLocalNotificationsPlugin() => _instance;
 
-  FlutterLocalNotificationsPlugin._() {
-    if (kIsWeb) {
-      return;
-    }
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      FlutterLocalNotificationsPlatform.instance =
-          AndroidFlutterLocalNotificationsPlugin();
-    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      FlutterLocalNotificationsPlatform.instance =
-          IOSFlutterLocalNotificationsPlugin();
-    } else if (defaultTargetPlatform == TargetPlatform.macOS) {
-      FlutterLocalNotificationsPlatform.instance =
-          MacOSFlutterLocalNotificationsPlugin();
-    }
-  }
+  FlutterLocalNotificationsPlugin._();
 
   static final FlutterLocalNotificationsPlugin _instance =
       FlutterLocalNotificationsPlugin._();
@@ -82,6 +68,11 @@ class FlutterLocalNotificationsPlugin {
         T == LinuxFlutterLocalNotificationsPlugin &&
         FlutterLocalNotificationsPlatform.instance
             is LinuxFlutterLocalNotificationsPlugin) {
+      return FlutterLocalNotificationsPlatform.instance as T?;
+    } else if (defaultTargetPlatform == TargetPlatform.windows &&
+        T == FlutterLocalNotificationsWindows &&
+        FlutterLocalNotificationsPlatform.instance
+            is FlutterLocalNotificationsWindows) {
       return FlutterLocalNotificationsPlatform.instance as T?;
     }
 
@@ -181,6 +172,18 @@ class FlutterLocalNotificationsPlugin {
         initializationSettings.linux!,
         onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
       );
+    } else if (defaultTargetPlatform == TargetPlatform.windows) {
+      if (initializationSettings.windows == null) {
+        throw ArgumentError(
+            'Windows settings must be set when targeting Windows platform.');
+      }
+
+      return await resolvePlatformSpecificImplementation<
+              FlutterLocalNotificationsWindows>()
+          ?.initialize(
+        initializationSettings.windows!,
+        onNotificationReceived: onDidReceiveNotificationResponse,
+      );
     }
     return true;
   }
@@ -213,6 +216,10 @@ class FlutterLocalNotificationsPlugin {
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       return await resolvePlatformSpecificImplementation<
               MacOSFlutterLocalNotificationsPlugin>()
+          ?.getNotificationAppLaunchDetails();
+    } else if (defaultTargetPlatform == TargetPlatform.windows) {
+      return await resolvePlatformSpecificImplementation<
+              FlutterLocalNotificationsWindows>()
           ?.getNotificationAppLaunchDetails();
     } else {
       return await FlutterLocalNotificationsPlatform.instance
@@ -256,6 +263,11 @@ class FlutterLocalNotificationsPlugin {
           ?.show(id, title, body,
               notificationDetails: notificationDetails?.linux,
               payload: payload);
+    } else if (defaultTargetPlatform == TargetPlatform.windows) {
+      await resolvePlatformSpecificImplementation<
+              FlutterLocalNotificationsWindows>()
+          ?.show(id, title, body,
+              details: notificationDetails?.windows, payload: payload);
     } else {
       await FlutterLocalNotificationsPlatform.instance.show(id, title, body);
     }
@@ -290,6 +302,17 @@ class FlutterLocalNotificationsPlugin {
     await FlutterLocalNotificationsPlatform.instance.cancelAll();
   }
 
+  /// Cancels/removes all pending notifications.
+  ///
+  /// This only applies to notifications that have been scheduled.
+  ///
+  /// The method is supported on Android, iOS and macOS.
+  /// On other platforms, an [UnimplementedError] will be thrown.
+  Future<void> cancelAllPendingNotifications() async {
+    await FlutterLocalNotificationsPlatform.instance
+        .cancelAllPendingNotifications();
+  }
+
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
   ///
@@ -297,11 +320,6 @@ class FlutterLocalNotificationsPlugin {
   /// level (i.e. Android/iOS), the plugin needs to pass the time over the
   /// platform channel in yyyy-mm-dd hh:mm:ss format. Therefore, the precision
   /// is at the best to the second.
-  ///
-  /// The [uiLocalNotificationDateInterpretation] is for iOS versions older
-  /// than 10 as the APIs have limited support for time zones. With this
-  /// parameter, it is used to determine if the scheduled date should be
-  /// interpreted as absolute time or wall clock time.
   ///
   /// If a value for [matchDateTimeComponents] parameter is given, this tells
   /// the plugin to schedule a recurring notification that matches the
@@ -321,14 +339,15 @@ class FlutterLocalNotificationsPlugin {
   /// On Android, this will also require additional setup for the app,
   /// especially in the app's `AndroidManifest.xml` file. Please see check the
   /// readme for further details.
+  ///
+  /// On Windows, this will only set a notification on the [scheduledDate], and
+  /// not repeat, regardless of the value for [matchDateTimeComponents].
   Future<void> zonedSchedule(
     int id,
     String? title,
     String? body,
     TZDateTime scheduledDate,
     NotificationDetails notificationDetails, {
-    required UILocalNotificationDateInterpretation
-        uiLocalNotificationDateInterpretation,
     required AndroidScheduleMode androidScheduleMode,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
@@ -349,8 +368,6 @@ class FlutterLocalNotificationsPlugin {
               IOSFlutterLocalNotificationsPlugin>()
           ?.zonedSchedule(
               id, title, body, scheduledDate, notificationDetails.iOS,
-              uiLocalNotificationDateInterpretation:
-                  uiLocalNotificationDateInterpretation,
               payload: payload,
               matchDateTimeComponents: matchDateTimeComponents);
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
@@ -360,6 +377,17 @@ class FlutterLocalNotificationsPlugin {
               id, title, body, scheduledDate, notificationDetails.macOS,
               payload: payload,
               matchDateTimeComponents: matchDateTimeComponents);
+    } else if (defaultTargetPlatform == TargetPlatform.windows) {
+      await resolvePlatformSpecificImplementation<
+              FlutterLocalNotificationsWindows>()
+          ?.zonedSchedule(
+        id,
+        title,
+        body,
+        scheduledDate,
+        notificationDetails.windows,
+        payload: payload,
+      );
     } else {
       throw UnimplementedError('zonedSchedule() has not been implemented');
     }
@@ -403,6 +431,8 @@ class FlutterLocalNotificationsPlugin {
               MacOSFlutterLocalNotificationsPlugin>()
           ?.periodicallyShow(id, title, body, repeatInterval,
               notificationDetails: notificationDetails.macOS, payload: payload);
+    } else if (defaultTargetPlatform == TargetPlatform.windows) {
+      throw UnsupportedError('Notifications do not repeat on Windows');
     } else {
       await FlutterLocalNotificationsPlatform.instance
           .periodicallyShow(id, title, body, repeatInterval);
@@ -471,6 +501,10 @@ class FlutterLocalNotificationsPlugin {
   /// - macOS: macOS 10.14 or newer
   ///
   /// On Linux it will throw an [UnimplementedError].
+  ///
+  /// On Windows, your application must be packaged as an MSIX to be able
+  /// to use this API. If not, this function will return an empty list.
+  /// For more details, see: https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/modernize-wpf-tutorial-5
   Future<List<ActiveNotification>> getActiveNotifications() =>
       FlutterLocalNotificationsPlatform.instance.getActiveNotifications();
 }

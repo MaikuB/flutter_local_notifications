@@ -1,14 +1,8 @@
 export 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
+// Exports what's defined in platform interface but hide helper methods
 export 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart'
-    show
-        DidReceiveBackgroundNotificationResponseCallback,
-        DidReceiveNotificationResponseCallback,
-        PendingNotificationRequest,
-        ActiveNotification,
-        RepeatInterval,
-        NotificationAppLaunchDetails,
-        NotificationResponse,
-        NotificationResponseType;
+    hide validateId, validateRepeatDurationInterval;
+export 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
 
 export 'src/flutter_local_notifications_plugin.dart';
 export 'src/initialization_settings.dart';
@@ -43,6 +37,6 @@ export 'src/platform_specifics/darwin/notification_category.dart';
 export 'src/platform_specifics/darwin/notification_category_option.dart';
 export 'src/platform_specifics/darwin/notification_details.dart';
 export 'src/platform_specifics/darwin/notification_enabled_options.dart';
-export 'src/platform_specifics/ios/enums.dart';
+
 export 'src/typedefs.dart';
 export 'src/types.dart';

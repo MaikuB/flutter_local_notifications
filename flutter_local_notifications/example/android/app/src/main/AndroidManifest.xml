@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.dexterous.flutter_local_notifications_example">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
    <uses-permission android:name="android.permission.VIBRATE" />
    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
@@ -7,6 +6,14 @@
         Developers will need to check if their own app needs to use SCHEDULE_EXACT_ALARM instead -->
    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+   <!-- NOTE: Special use was selected as it's the closest match for this example app.
+        apps should specify the appropriate permission for their use cases. -->
+   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+   <!-- NOTE: This permission isn't needed by the local notification plugin. It is only being
+        requested because the example app will download remote content to demonstrate some scenarios-->
+   <uses-permission android:name="android.permission.INTERNET"/>
+   <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
    <application
         android:label="flutter_local_notifications_example"
         android:icon="@mipmap/ic_launcher">
@@ -44,7 +51,10 @@
         <service
             android:name="com.dexterous.flutterlocalnotifications.ForegroundService"        
             android:exported="false"
-            android:stopWithTask="false"/>
+            android:stopWithTask="false"
+            android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="To demonstrate how to use foreground services to show notifications"/>
+        </service>
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver" />
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">

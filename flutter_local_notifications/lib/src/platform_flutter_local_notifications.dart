@@ -24,8 +24,6 @@ import 'platform_specifics/darwin/initialization_settings.dart';
 import 'platform_specifics/darwin/mappers.dart';
 import 'platform_specifics/darwin/notification_details.dart';
 import 'platform_specifics/darwin/notification_enabled_options.dart';
-import 'platform_specifics/ios/enums.dart';
-import 'typedefs.dart';
 import 'types.dart';
 import 'tz_datetime_mapper.dart';
 
@@ -45,6 +43,11 @@ class MethodChannelFlutterLocalNotificationsPlugin
   Future<void> cancelAll() => _channel.invokeMethod('cancelAll');
 
   @override
+  Future<void> cancelAllPendingNotifications() async {
+    await _channel.invokeMethod('cancelAllPendingNotifications');
+  }
+
+  @override
   Future<NotificationAppLaunchDetails?>
       getNotificationAppLaunchDetails() async {
     final Map<dynamic, dynamic>? result =
@@ -53,8 +56,9 @@ class MethodChannelFlutterLocalNotificationsPlugin
         result != null && result.containsKey('notificationResponse')
             ? result['notificationResponse']
             : null;
-    return result != null
-        ? NotificationAppLaunchDetails(
+    return result == null
+        ? null
+        : NotificationAppLaunchDetails(
             result['notificationLaunchedApp'],
             notificationResponse: notificationResponse == null
                 ? null
@@ -67,9 +71,11 @@ class MethodChannelFlutterLocalNotificationsPlugin
                     payload: notificationResponse.containsKey('payload')
                         ? notificationResponse['payload']
                         : null,
+                    data: Map<String, dynamic>.from(
+                      notificationResponse['data'] ?? <String, dynamic>{},
+                    ),
                   ),
-          )
-        : null;
+          );
   }
 
   @override
@@ -108,7 +114,13 @@ class MethodChannelFlutterLocalNotificationsPlugin
 /// Android implementation of the local notifications plugin.
 class AndroidFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
-  DidReceiveNotificationResponseCallback? _ondidReceiveNotificationResponse;
+  /// Registers this implementation as the plugin instance.
+  static void registerWith() {
+    FlutterLocalNotificationsPlatform.instance =
+        AndroidFlutterLocalNotificationsPlugin();
+  }
+
+  DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
 
   /// Initializes the plugin.
   ///
@@ -132,7 +144,7 @@ class AndroidFlutterLocalNotificationsPlugin
     DidReceiveBackgroundNotificationResponseCallback?
         onDidReceiveBackgroundNotificationResponse,
   }) async {
-    _ondidReceiveNotificationResponse = onDidReceiveNotificationResponse;
+    _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
     _channel.setMethodCallHandler(_handleMethod);
 
     final Map<String, Object> arguments = initializationSettings.toMap();
@@ -181,6 +193,35 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<bool?> requestNotificationsPermission() async =>
       _channel.invokeMethod<bool>('requestNotificationsPermission');
 
+  /// Requests access to notification policy.
+  ///
+  /// Returns whether the permission was granted.
+  ///
+  /// This is required for channels that bypass DnD settings. Any attempt at
+  /// creating a notification channel with `bypassDnd: true` before access is
+  /// granted will print a warning and create the channel *without setting
+  /// bypassDnd*.
+  ///
+  /// On Android versions before API level 23, this is a no-op and returns
+  /// false.
+  ///
+  /// See also:
+  ///
+  ///  * https://developer.android.com/reference/android/app/NotificationManager#isNotificationPolicyAccessGranted()
+  Future<bool?> requestNotificationPolicyAccess() async =>
+      _channel.invokeMethod<bool>('requestNotificationPolicyAccess');
+
+  /// Whether the app has access to notification policy.
+  ///
+  /// On Android versions before API level 23, this will always return false.
+  ///
+  /// See also:
+  ///
+  ///  * https://developer.android.com/reference/android/app/NotificationManager#isNotificationPolicyAccessGranted()
+  ///  * [requestNotificationPolicyAccess]
+  Future<bool?> hasNotificationPolicyAccess() async =>
+      _channel.invokeMethod<bool>('hasNotificationPolicyAccess');
+
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
   ///
@@ -225,7 +266,7 @@ class AndroidFlutterLocalNotificationsPlugin
   /// a foreground service with a notification id of 0.
   ///
   /// Since not all users of this plugin need such a service, it was not
-  /// added to this plugins Android manifest. Thie means you have to add
+  /// added to this plugins Android manifest. This means you have to add
   /// it if you want to use the foreground service functionality. Add the
   /// foreground service permission to your apps `AndroidManifest.xml` like
   /// described in the [official Android documentation](https://developer.android.com/guide/components/foreground-services#request-foreground-service-permissions):
@@ -252,11 +293,11 @@ class AndroidFlutterLocalNotificationsPlugin
   /// The notification of the foreground service can be updated by
   /// simply calling this method multiple times.
   ///
-  /// Information on selecting an appropriate `startType` for your app's usecase
-  /// should be taken from the official Android documentation, check [`Service.onStartCommand`](https://developer.android.com/reference/android/app/Service#onStartCommand(android.content.Intent,%20int,%20int)).
+  /// Information on selecting an appropriate `startType` for your app's use
+  /// case should be taken from the official Android documentation, check [`Service.onStartCommand`](https://developer.android.com/reference/android/app/Service#onStartCommand(android.content.Intent,%20int,%20int)).
   /// The there mentioned constants can be found in [AndroidServiceStartType].
   ///
-  /// The notification for the foreground service will not be dismissable
+  /// The notification for the foreground service will not be dismissible
   /// and automatically removed when using [stopForegroundService].
   ///
   /// `foregroundServiceType` is a set of foreground service types to apply to
@@ -501,6 +542,8 @@ class AndroidFlutterLocalNotificationsPlugin
         m['text'],
         DateTime.fromMillisecondsSinceEpoch(m['timestamp']),
         _personFromMap(m['person']),
+        dataMimeType: m['dataMimeType'],
+        dataUri: m['dataUri'],
       );
 
   AndroidIcon<Object>? _iconFromMap(Map<dynamic, dynamic>? m) {
@@ -536,6 +579,7 @@ class AndroidFlutterLocalNotificationsPlugin
               importance: Importance.values
                   // ignore: always_specify_types
                   .firstWhere((i) => i.value == a['importance']),
+              bypassDnd: a['bypassDnd'],
               playSound: a['playSound'],
               sound: _getNotificationChannelSound(a),
               enableLights: a['enableLights'],
@@ -585,7 +629,7 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<void> _handleMethod(MethodCall call) async {
     switch (call.method) {
       case 'didReceiveNotificationResponse':
-        _ondidReceiveNotificationResponse?.call(
+        _onDidReceiveNotificationResponse?.call(
           NotificationResponse(
             id: call.arguments['notificationId'],
             actionId: call.arguments['actionId'],
@@ -605,8 +649,13 @@ class AndroidFlutterLocalNotificationsPlugin
 /// iOS implementation of the local notifications plugin.
 class IOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
+  /// Registers this implementation as the plugin instance.
+  static void registerWith() {
+    FlutterLocalNotificationsPlatform.instance =
+        IOSFlutterLocalNotificationsPlugin();
+  }
+
   DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
-  DidReceiveLocalNotificationCallback? _onDidReceiveLocalNotification;
 
   /// Initializes the plugin.
   ///
@@ -642,8 +691,6 @@ class IOSFlutterLocalNotificationsPlugin
         onDidReceiveBackgroundNotificationResponse,
   }) async {
     _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
-    _onDidReceiveLocalNotification =
-        initializationSettings.onDidReceiveLocalNotification;
     _channel.setMethodCallHandler(_handleMethod);
 
     final Map<String, Object> arguments = initializationSettings.toMap();
@@ -694,32 +741,17 @@ class IOSFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified time in the
   /// future in a specific time zone.
-  ///
-  /// Due to the limited support for time zones provided the UILocalNotification
-  /// APIs used on devices using iOS versions older than 10, the
-  /// [uiLocalNotificationDateInterpretation] is needed to control how
-  /// [scheduledDate] is interpreted. See official docs at
-  /// https://developer.apple.com/documentation/uikit/uilocalnotification/1616659-timezone
-  /// for more details. Note that due to this limited support, it's likely that
-  /// on older iOS devices, there will still be issues with daylight saving time
-  /// except for when the time zone used in the [scheduledDate] matches the
-  /// device's time zone and [uiLocalNotificationDateInterpretation] is set to
-  /// [UILocalNotificationDateInterpretation.wallClockTime].
   Future<void> zonedSchedule(
     int id,
     String? title,
     String? body,
     TZDateTime scheduledDate,
     DarwinNotificationDetails? notificationDetails, {
-    required UILocalNotificationDateInterpretation
-        uiLocalNotificationDateInterpretation,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
-    ArgumentError.checkNotNull(uiLocalNotificationDateInterpretation,
-        'uiLocalNotificationDateInterpretation');
     final Map<String, Object?> serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? <String, Object>{};
     await _channel.invokeMethod(
@@ -730,8 +762,6 @@ class IOSFlutterLocalNotificationsPlugin
           'body': body,
           'platformSpecifics': serializedPlatformSpecifics,
           'payload': payload ?? '',
-          'uiLocalNotificationDateInterpretation':
-              uiLocalNotificationDateInterpretation.index,
         }
           ..addAll(scheduledDate.toMap())
           ..addAll(matchDateTimeComponents == null
@@ -820,13 +850,6 @@ class IOSFlutterLocalNotificationsPlugin
           ),
         );
         break;
-      case 'didReceiveLocalNotification':
-        _onDidReceiveLocalNotification!(
-            call.arguments['id'],
-            call.arguments['title'],
-            call.arguments['body'],
-            call.arguments['payload']);
-        break;
       default:
         return await Future<void>.error('Method not defined');
     }
@@ -836,6 +859,12 @@ class IOSFlutterLocalNotificationsPlugin
 /// macOS implementation of the local notifications plugin.
 class MacOSFlutterLocalNotificationsPlugin
     extends MethodChannelFlutterLocalNotificationsPlugin {
+  /// Registers this implementation as the plugin instance.
+  static void registerWith() {
+    FlutterLocalNotificationsPlatform.instance =
+        MacOSFlutterLocalNotificationsPlugin();
+  }
+
   DidReceiveNotificationResponseCallback? _onDidReceiveNotificationResponse;
 
   /// Initializes the plugin.
@@ -1037,7 +1066,7 @@ void _evaluateBackgroundNotificationCallback(
     final CallbackHandle? callback = PluginUtilities.getCallbackHandle(
         didReceiveBackgroundNotificationResponseCallback);
     assert(callback != null, '''
-          The backgroundHandler needs to be either a static function or a top 
+          The backgroundHandler needs to be either a static function or a top
           level function to be accessible as a Flutter entry point.''');
 
     final CallbackHandle? dispatcher =

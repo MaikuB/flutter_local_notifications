@@ -78,6 +78,14 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
     throw UnimplementedError('cancelAll() has not been implemented');
   }
 
+  /// Cancels/removes all pending notifications.
+  ///
+  /// This only applies to notifications that have been scheduled.
+  Future<void> cancelAllPendingNotifications() async {
+    throw UnimplementedError(
+        'cancelAllPendingNotifications() has not been implemented');
+  }
+
   /// Returns a list of notifications pending to be delivered/shown
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() {
     throw UnimplementedError(
@@ -87,10 +95,10 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   /// Returns the list of active notifications shown by the application that
   /// haven't been dismissed/removed.
   ///
-  /// Throws a [PlatformException] with an `unsupported_os_version` error code
-  /// when the OS version is older than what is supported to have results
-  /// returned. On platforms that don't support the method at all,
-  /// it will throw an [UnimplementedError].
+  /// Throws a [PlatformException](https://api.flutter.dev/flutter/services/PlatformException-class.html)
+  /// with an `unsupported_os_version` error code when the OS version is older
+  /// than what is supported to have results returned. On platforms that don't
+  /// support the method at all, it will throw an [UnimplementedError].
   Future<List<ActiveNotification>> getActiveNotifications() {
     throw UnimplementedError(
         'getActiveNotifications() has not been implemented');
