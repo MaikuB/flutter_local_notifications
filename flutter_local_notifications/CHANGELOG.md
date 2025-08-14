@@ -1,3 +1,7 @@
+## [vNext]
+
+* Updated the Android release build configuration section to point to the latest [location](https://developer.android.com/topic/performance/app-optimization/customize-which-resources-to-keep) of the official Android docs on how to configure which resources (e.g. notification icons) are kept so they are not discarded by the Android compiler. It has also been reworded to make it clearer that this applies to all Android resources 
+
 ## [19.4.0]
 
 * [Android] added ability to read `dataMimeType` and `dataUri` when calling `getActiveNotifications()` to read details of an active Android notification using the messaging style. Thanks to the PR from [Matt Bajorek](https://github.com/mattbajorek)
