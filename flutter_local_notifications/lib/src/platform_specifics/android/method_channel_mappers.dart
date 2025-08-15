@@ -60,6 +60,15 @@ extension AndroidNotificationChannelMapper on AndroidNotificationChannel {
       }..addAll(_convertNotificationSoundToMap(sound));
 }
 
+extension AndroidNotificationTitleStyleMapper on AndroidNotificationTitleStyle {
+  Map<String, Object?> toMap() => <String, Object?>{
+        'color': color,
+        'sizeSp': sizeSp,
+        'bold': bold,
+        'italic': italic,
+      };
+}
+
 Map<String, Object> _convertNotificationSoundToMap(
     AndroidNotificationSound? sound) {
   if (sound is RawResourceAndroidNotificationSound) {
@@ -224,6 +233,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'colorized': colorized,
         'number': number,
         'audioAttributesUsage': audioAttributesUsage.value,
+        'titleStyle': titleStyle?.toMap(),
       }
         ..addAll(_convertActionsToMap(actions))
         ..addAll(_convertStyleInformationToMap())

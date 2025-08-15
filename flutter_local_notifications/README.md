@@ -38,6 +38,7 @@ A cross platform plugin for displaying local notifications.
    - [Handling notifications whilst the app is in the foreground](#handling-notifications-whilst-the-app-is-in-the-foreground)
 - **[❓ Usage](#-usage)**
    - [Notification Actions](#notification-actions)
+   - [[Android] Title text styling (API 24+)](#android-title-text-styling-api-24)
    - [Example app](#example-app)
    - [API reference](#api-reference)
 - **[Initialisation](#initialisation)**
@@ -629,6 +630,29 @@ Future<void> _showNotificationWithActions() async {
 ```
 
 Each notification will have a internal ID & an public action title.
+
+### [Android] Title text styling (API 24+)
+
+Style only the notification title on Android 7.0+ using a decorated custom
+layout. Older Android versions will silently fall back to the default system
+template.
+
+```dart
+final androidDetails = AndroidNotificationDetails(
+  'reminders',
+  'Reminders',
+  titleStyle: const AndroidNotificationTitleStyle(
+    color: 0xFF58CC02,
+    sizeSp: 16,
+    bold: true,
+    italic: false,
+  ),
+);
+```
+
+> [!NOTE]
+> This only affects the title text. Ensure sufficient contrast for
+> accessibility.
 
 ### Example app
 
