@@ -17,6 +17,7 @@ import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 import com.dexterous.flutterlocalnotifications.utils.LongUtils;
 import com.google.gson.annotations.SerializedName;
 import com.dexterous.flutterlocalnotifications.models.TitleStyle;
+import com.dexterous.flutterlocalnotifications.models.DescriptionStyle;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -130,6 +131,7 @@ public class NotificationDetails implements Serializable {
   private static final String NUMBER = "number";
   private static final String AUDIO_ATTRIBUTES_USAGE = "audioAttributesUsage";
   private static final String TITLE_STYLE = "titleStyle";
+  private static final String DESCRIPTION_STYLE = "descriptionStyle";
 
   public Integer id;
   public String title;
@@ -201,6 +203,7 @@ public class NotificationDetails implements Serializable {
   public Integer number;
   public Integer audioAttributesUsage;
   public TitleStyle titleStyle;
+  public DescriptionStyle descriptionStyle;
 
   // Note: this is set on the Android to save details about the icon that should
   // be used when
@@ -262,6 +265,7 @@ public class NotificationDetails implements Serializable {
         Object s = m.get("sizeSp");
         Object b = m.get("bold");
         Object i = m.get("italic");
+        Object p = m.get("iconSpacingDp");
         if (c instanceof Number)
           ts.color = ((Number) c).intValue();
         if (s instanceof Number)
@@ -270,7 +274,31 @@ public class NotificationDetails implements Serializable {
           ts.bold = (Boolean) b;
         if (i instanceof Boolean)
           ts.italic = (Boolean) i;
+        if (p instanceof Number){
+          ts.iconSpacingDp = ((Number) p).doubleValue();
+        } else {
+          ts.iconSpacingDp = 0;
+        }
         notificationDetails.titleStyle = ts;
+      }
+      Object rawDesc = platformChannelSpecifics.get(DESCRIPTION_STYLE);
+      if (rawDesc instanceof Map) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> m = (Map<String, Object>) rawDesc;
+        DescriptionStyle ds = new DescriptionStyle();
+        Object c = m.get("color");
+        Object s = m.get("sizeSp");
+        Object b = m.get("bold");
+        Object i = m.get("italic");
+        if (c instanceof Number)
+          ds.color = ((Number) c).intValue();
+        if (s instanceof Number)
+          ds.sizeSp = ((Number) s).doubleValue();
+        if (b instanceof Boolean)
+          ds.bold = (Boolean) b;
+        if (i instanceof Boolean)
+          ds.italic = (Boolean) i;
+        notificationDetails.descriptionStyle = ds;
       }
       notificationDetails.autoCancel = (Boolean) platformChannelSpecifics.get(AUTO_CANCEL);
       notificationDetails.ongoing = (Boolean) platformChannelSpecifics.get(ONGOING);

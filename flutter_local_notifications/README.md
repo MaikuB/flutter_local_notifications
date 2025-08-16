@@ -641,17 +641,24 @@ template.
 final androidDetails = AndroidNotificationDetails(
   'reminders',
   'Reminders',
-  titleStyle: const AndroidNotificationTitleStyle(
-    color: 0xFF58CC02,
-    sizeSp: 16,
-    bold: true,
-    italic: false,
+    titleStyle: const AndroidNotificationTitleStyle(
+        color: 0xFF58CC02,
+        sizeSp: 16,
+        bold: true,
+        italic: false,
+        iconSpacing: 2,
+    ),
+    descriptionStyle: const AndroidNotificationDescriptionStyle(
+        color: 0xFFFF0000,
+        sizeSp: 14,
+        bold: false,
+        italic: true,
   ),
 );
 ```
 
 > [!NOTE]
-> This only affects the title text. Ensure sufficient contrast for
+> These options affect the title and body text respectively. Ensure sufficient contrast for
 > accessibility.
 
 ### Example app

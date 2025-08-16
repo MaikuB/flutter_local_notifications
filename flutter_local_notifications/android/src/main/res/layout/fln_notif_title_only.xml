@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp">
+    android:paddingStart="@dimen/fln_padding_start"
+    android:paddingEnd="@dimen/fln_padding_end"
+    android:paddingTop="@dimen/fln_padding_top"
+    android:paddingBottom="@dimen/fln_padding_bottom">
 
     <!-- Title (styled via RemoteViews) -->
     <TextView

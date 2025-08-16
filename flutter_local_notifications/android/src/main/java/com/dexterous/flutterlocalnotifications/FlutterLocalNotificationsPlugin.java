@@ -210,7 +210,8 @@ public class FlutterLocalNotificationsPlugin
   private static String fmtTitleStyle(com.dexterous.flutterlocalnotifications.models.TitleStyle ts) {
     if (ts == null)
       return "<null>";
-    return "color=" + ts.color + " sizeSp=" + ts.sizeSp + " bold=" + ts.bold + " italic=" + ts.italic;
+      return "color=" + ts.color + " sizeSp=" + ts.sizeSp + " bold=" + ts.bold + " italic=" + ts.italic
+        + " iconSpacingDp=" + ts.iconSpacingDp;
   }
 
   private static com.dexterous.flutterlocalnotifications.models.TitleStyle debugFallbackStyle() {
@@ -219,6 +220,7 @@ public class FlutterLocalNotificationsPlugin
     ts.sizeSp = 18.0;
     ts.bold = Boolean.TRUE;
     ts.italic = Boolean.FALSE;
+    ts.iconSpacingDp = 0;
     return ts;
   }
 
@@ -277,18 +279,19 @@ public class FlutterLocalNotificationsPlugin
     PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, flags);
     DefaultStyleInformation defaultStyleInformation = (DefaultStyleInformation) notificationDetails.styleInformation;
     final boolean canCustom = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N;
-    final com.dexterous.flutterlocalnotifications.models.TitleStyle received = notificationDetails.titleStyle;
-    android.util.Log.d("FLN-TitleStyle", "ANDROID RECEIVED " + fmtTitleStyle(received)
-        + " sdk=" + android.os.Build.VERSION.SDK_INT + " title=" + notificationDetails.title);
+    final com.dexterous.flutterlocalnotifications.models.TitleStyle receivedTitle = notificationDetails.titleStyle;
+    final com.dexterous.flutterlocalnotifications.models.DescriptionStyle receivedDesc = notificationDetails.descriptionStyle;
 
-    // TEMP: keep custom path alive even if titleStyle is null, so we can see
-    // something
-    final com.dexterous.flutterlocalnotifications.models.TitleStyle effective = (canCustom && received == null)
-        ? debugFallbackStyle()
-        : received;
 
-    final RemoteViews customView = TitleStyler.INSTANCE.build(context, notificationDetails.title,
-        notificationDetails.body, effective);
+
+    final com.dexterous.flutterlocalnotifications.models.TitleStyle effectiveTitle = (canCustom && receivedTitle == null && receivedDesc != null) ? debugFallbackStyle() : receivedTitle;
+
+    final boolean useCustom = canCustom && (effectiveTitle != null || receivedDesc != null);
+    final RemoteViews customView =
+        useCustom
+            ? TitleStyler.INSTANCE.build(
+                context, notificationDetails.title, notificationDetails.body, effectiveTitle, receivedDesc)
+            : null;
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(context, notificationDetails.channelId)
         .setTicker(notificationDetails.ticker)

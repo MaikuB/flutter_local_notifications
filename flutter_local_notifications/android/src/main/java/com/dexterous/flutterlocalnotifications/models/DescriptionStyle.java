@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 @Keep
-public class TitleStyle implements Serializable {
+public class DescriptionStyle implements Serializable {
   @SerializedName("color")
   public Integer color;
 
@@ -17,8 +17,4 @@ public class TitleStyle implements Serializable {
 
   @SerializedName("italic")
   public Boolean italic;
-
-  // Distance in DP between the notification's icon and the title/body.
-  @SerializedName("iconSpacingDp")
-  public Double iconSpacingDp;
 }

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'enums.dart';
 import 'initialization_settings.dart';
 import 'message.dart';
@@ -38,35 +39,89 @@ extension AndroidNotificationChannelGroupMapper
 }
 
 extension AndroidNotificationChannelMapper on AndroidNotificationChannel {
-  Map<String, Object?> toMap() => <String, Object?>{
-        'id': id,
-        'name': name,
-        'description': description,
-        'groupId': groupId,
-        'showBadge': showBadge,
-        'importance': importance.value,
-        'bypassDnd': bypassDnd,
-        'playSound': playSound,
-        'enableVibration': enableVibration,
-        'vibrationPattern': vibrationPattern,
-        'enableLights': enableLights,
-        'ledColorAlpha': ledColor?.alpha,
-        'ledColorRed': ledColor?.red,
-        'ledColorGreen': ledColor?.green,
-        'ledColorBlue': ledColor?.blue,
-        'audioAttributesUsage': audioAttributesUsage.value,
-        'channelAction':
-            AndroidNotificationChannelAction.createIfNotExists.index,
-      }..addAll(_convertNotificationSoundToMap(sound));
+  Map<String, Object?> toMap() {
+    final Color? color = ledColor;
+
+    // Convert normalized channels (0.0–1.0) to 8-bit ints (0–255).
+    final int? alpha8 =
+        color != null ? ((color.a * 255.0).round() & 0xff) : null;
+    final int? red8 = color != null ? ((color.r * 255.0).round() & 0xff) : null;
+    final int? green8 =
+        color != null ? ((color.g * 255.0).round() & 0xff) : null;
+    final int? blue8 =
+        color != null ? ((color.b * 255.0).round() & 0xff) : null;
+
+    final Map<String, Object?> map = <String, Object?>{
+      'id': id,
+      'name': name,
+      'description': description,
+      'groupId': groupId,
+      'showBadge': showBadge,
+      'importance': importance.value,
+      'bypassDnd': bypassDnd,
+      'playSound': playSound,
+      'enableVibration': enableVibration,
+      'vibrationPattern': vibrationPattern,
+      'enableLights': enableLights,
+      'ledColorAlpha': alpha8,
+      'ledColorRed': red8,
+      'ledColorGreen': green8,
+      'ledColorBlue': blue8,
+      'audioAttributesUsage': audioAttributesUsage.value,
+      'channelAction': AndroidNotificationChannelAction.createIfNotExists.index,
+    }..addAll(_convertNotificationSoundToMap(sound));
+
+    return map;
+  }
 }
 
 extension AndroidNotificationTitleStyleMapper on AndroidNotificationTitleStyle {
-  Map<String, Object?> toMap() => <String, Object?>{
-        'color': color,
-        'sizeSp': sizeSp,
-        'bold': bold,
-        'italic': italic,
-      };
+  Map<String, Object?> toMap() {
+    final Map<String, Object?> map = <String, Object?>{};
+    if (color != null) {
+      assert(color! >= 0 && color! <= 0xFFFFFFFF);
+      map['color'] = color;
+    }
+    if (sizeSp != null) {
+      map['sizeSp'] = sizeSp;
+    }
+    if (bold != null) {
+      map['bold'] = bold;
+    }
+    if (italic != null) {
+      map['italic'] = italic;
+    }
+    if (iconSpacing != null) {
+      assert(iconSpacing! >= 0);
+      map['iconSpacingDp'] = iconSpacing;
+    }
+    assert(map.keys.toSet().length == map.length);
+    assert(map.values.every((Object? v) => v != null));
+    return map;
+  }
+}
+
+extension AndroidNotificationDescriptionStyleMapper
+    on AndroidNotificationDescriptionStyle {
+  Map<String, Object?> toMap() {
+    final Map<String, Object?> map = <String, Object?>{};
+    if (color != null) {
+      assert(color! >= 0 && color! <= 0xFFFFFFFF);
+      map['color'] = color;
+    }
+    if (sizeSp != null) {
+      map['sizeSp'] = sizeSp;
+    }
+    if (bold != null) {
+      map['bold'] = bold;
+    }
+    if (italic != null) {
+      map['italic'] = italic;
+    }
+    assert(map.keys.toSet().length == map.length);
+    assert(map.values.every((Object? v) => v != null));
+    return map;
+  }
 }
 
 Map<String, Object> _convertNotificationSoundToMap(
@@ -182,63 +237,73 @@ extension MessagingStyleInformationMapper on MessagingStyleInformation {
 }
 
 extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
-  Map<String, Object?> toMap() => <String, Object?>{
-        'icon': icon,
-        'channelId': channelId,
-        'channelName': channelName,
-        'channelDescription': channelDescription,
-        'channelShowBadge': channelShowBadge,
-        'channelAction': channelAction.index,
-        'importance': importance.value,
-        'channelBypassDnd': channelBypassDnd,
-        'priority': priority.value,
-        'playSound': playSound,
-        'enableVibration': enableVibration,
-        'vibrationPattern': vibrationPattern,
-        'groupKey': groupKey,
-        'setAsGroupSummary': setAsGroupSummary,
-        'groupAlertBehavior': groupAlertBehavior.index,
-        'autoCancel': autoCancel,
-        'ongoing': ongoing,
-        'silent': silent,
-        'colorAlpha': color?.alpha,
-        'colorRed': color?.red,
-        'colorGreen': color?.green,
-        'colorBlue': color?.blue,
-        'onlyAlertOnce': onlyAlertOnce,
-        'showWhen': showWhen,
-        'when': when,
-        'usesChronometer': usesChronometer,
-        'chronometerCountDown': chronometerCountDown,
-        'showProgress': showProgress,
-        'maxProgress': maxProgress,
-        'progress': progress,
-        'indeterminate': indeterminate,
-        'enableLights': enableLights,
-        'ledColorAlpha': ledColor?.alpha,
-        'ledColorRed': ledColor?.red,
-        'ledColorGreen': ledColor?.green,
-        'ledColorBlue': ledColor?.blue,
-        'ledOnMs': ledOnMs,
-        'ledOffMs': ledOffMs,
-        'ticker': ticker,
-        'visibility': visibility?.index,
-        'timeoutAfter': timeoutAfter,
-        'category': category?.name,
-        'fullScreenIntent': fullScreenIntent,
-        'shortcutId': shortcutId,
-        'additionalFlags': additionalFlags,
-        'subText': subText,
-        'tag': tag,
-        'colorized': colorized,
-        'number': number,
-        'audioAttributesUsage': audioAttributesUsage.value,
-        'titleStyle': titleStyle?.toMap(),
-      }
-        ..addAll(_convertActionsToMap(actions))
-        ..addAll(_convertStyleInformationToMap())
-        ..addAll(_convertNotificationSoundToMap(sound))
-        ..addAll(_convertLargeIconToMap());
+  Map<String, Object?> toMap() {
+    final Color? c = color, lc = ledColor; // cache to enable promotion
+    return <String, Object?>{
+      'icon': icon,
+      'channelId': channelId,
+      'channelName': channelName,
+      'channelDescription': channelDescription,
+      'channelShowBadge': channelShowBadge,
+      'channelAction': channelAction.index,
+      'importance': importance.value,
+      'channelBypassDnd': channelBypassDnd,
+      'priority': priority.value,
+      'playSound': playSound,
+      'enableVibration': enableVibration,
+      'vibrationPattern': vibrationPattern,
+      'groupKey': groupKey,
+      'setAsGroupSummary': setAsGroupSummary,
+      'groupAlertBehavior': groupAlertBehavior.index,
+      'autoCancel': autoCancel,
+      'ongoing': ongoing,
+      'silent': silent,
+
+      // color (nullable) — use a/r/g/b doubles -> 0–255 ints
+      'colorAlpha': c != null ? ((c.a * 255.0).round() & 0xff) : null,
+      'colorRed': c != null ? ((c.r * 255.0).round() & 0xff) : null,
+      'colorGreen': c != null ? ((c.g * 255.0).round() & 0xff) : null,
+      'colorBlue': c != null ? ((c.b * 255.0).round() & 0xff) : null,
+
+      'onlyAlertOnce': onlyAlertOnce,
+      'showWhen': showWhen,
+      'when': when,
+      'usesChronometer': usesChronometer,
+      'chronometerCountDown': chronometerCountDown,
+      'showProgress': showProgress,
+      'maxProgress': maxProgress,
+      'progress': progress,
+      'indeterminate': indeterminate,
+      'enableLights': enableLights,
+
+      // ledColor (nullable) — also switch off deprecated getters
+      'ledColorAlpha': lc != null ? ((lc.a * 255.0).round() & 0xff) : null,
+      'ledColorRed': lc != null ? ((lc.r * 255.0).round() & 0xff) : null,
+      'ledColorGreen': lc != null ? ((lc.g * 255.0).round() & 0xff) : null,
+      'ledColorBlue': lc != null ? ((lc.b * 255.0).round() & 0xff) : null,
+
+      'ledOnMs': ledOnMs,
+      'ledOffMs': ledOffMs,
+      'ticker': ticker,
+      'visibility': visibility?.index,
+      'timeoutAfter': timeoutAfter,
+      'category': category?.name,
+      'fullScreenIntent': fullScreenIntent,
+      'shortcutId': shortcutId,
+      'additionalFlags': additionalFlags,
+      'subText': subText,
+      'tag': tag,
+      'colorized': colorized,
+      'number': number,
+      'audioAttributesUsage': audioAttributesUsage.value,
+      'titleStyle': titleStyle?.toMap(),
+      'descriptionStyle': descriptionStyle?.toMap(),
+    }
+      ..addAll(_convertActionsToMap(actions))
+      ..addAll(_convertStyleInformationToMap())
+      ..addAll(_convertNotificationSoundToMap(sound))
+      ..addAll(_convertLargeIconToMap());
+  }
 
   Map<String, Object?> _convertStyleInformationToMap() {
     if (styleInformation is BigPictureStyleInformation) {
@@ -306,10 +371,18 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
             (AndroidNotificationAction e) => <String, dynamic>{
               'id': e.id,
               'title': e.title,
-              'titleColorAlpha': e.titleColor?.alpha,
-              'titleColorRed': e.titleColor?.red,
-              'titleColorGreen': e.titleColor?.green,
-              'titleColorBlue': e.titleColor?.blue,
+              'titleColorAlpha': e.titleColor != null
+                  ? ((e.titleColor!.a * 255.0).round() & 0xff)
+                  : null,
+              'titleColorRed': e.titleColor != null
+                  ? ((e.titleColor!.r * 255.0).round() & 0xff)
+                  : null,
+              'titleColorGreen': e.titleColor != null
+                  ? ((e.titleColor!.g * 255.0).round() & 0xff)
+                  : null,
+              'titleColorBlue': e.titleColor != null
+                  ? ((e.titleColor!.b * 255.0).round() & 0xff)
+                  : null,
               if (e.icon != null) ...<String, Object>{
                 'icon': e.icon!.data,
                 'iconBitmapSource': e.icon!.source.index,
