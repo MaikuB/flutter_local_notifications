@@ -277,7 +277,7 @@ public class NotificationDetails implements Serializable {
         if (p instanceof Number){
           ts.iconSpacingDp = ((Number) p).doubleValue();
         } else {
-          ts.iconSpacingDp = 0;
+          ts.iconSpacingDp = 0d;
         }
         notificationDetails.titleStyle = ts;
       }

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:ui';
 import 'enums.dart';
 import 'initialization_settings.dart';
@@ -44,12 +46,13 @@ extension AndroidNotificationChannelMapper on AndroidNotificationChannel {
 
     // Convert normalized channels (0.0–1.0) to 8-bit ints (0–255).
     final int? alpha8 =
-        color != null ? ((color.a * 255.0).round() & 0xff) : null;
-    final int? red8 = color != null ? ((color.r * 255.0).round() & 0xff) : null;
+        color != null ? ((color.alpha * 255.0).round() & 0xff) : null;
+    final int? red8 =
+        color != null ? ((color.red * 255.0).round() & 0xff) : null;
     final int? green8 =
-        color != null ? ((color.g * 255.0).round() & 0xff) : null;
+        color != null ? ((color.green * 255.0).round() & 0xff) : null;
     final int? blue8 =
-        color != null ? ((color.b * 255.0).round() & 0xff) : null;
+        color != null ? ((color.blue * 255.0).round() & 0xff) : null;
 
     final Map<String, Object?> map = <String, Object?>{
       'id': id,
@@ -260,10 +263,10 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
       'silent': silent,
 
       // color (nullable) — use a/r/g/b doubles -> 0–255 ints
-      'colorAlpha': c != null ? ((c.a * 255.0).round() & 0xff) : null,
-      'colorRed': c != null ? ((c.r * 255.0).round() & 0xff) : null,
-      'colorGreen': c != null ? ((c.g * 255.0).round() & 0xff) : null,
-      'colorBlue': c != null ? ((c.b * 255.0).round() & 0xff) : null,
+      'colorAlpha': c != null ? ((c.alpha * 255.0).round() & 0xff) : null,
+      'colorRed': c != null ? ((c.red * 255.0).round() & 0xff) : null,
+      'colorGreen': c != null ? ((c.green * 255.0).round() & 0xff) : null,
+      'colorBlue': c != null ? ((c.blue * 255.0).round() & 0xff) : null,
 
       'onlyAlertOnce': onlyAlertOnce,
       'showWhen': showWhen,
@@ -277,10 +280,10 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
       'enableLights': enableLights,
 
       // ledColor (nullable) — also switch off deprecated getters
-      'ledColorAlpha': lc != null ? ((lc.a * 255.0).round() & 0xff) : null,
-      'ledColorRed': lc != null ? ((lc.r * 255.0).round() & 0xff) : null,
-      'ledColorGreen': lc != null ? ((lc.g * 255.0).round() & 0xff) : null,
-      'ledColorBlue': lc != null ? ((lc.b * 255.0).round() & 0xff) : null,
+      'ledColorAlpha': lc != null ? ((lc.alpha * 255.0).round() & 0xff) : null,
+      'ledColorRed': lc != null ? ((lc.red * 255.0).round() & 0xff) : null,
+      'ledColorGreen': lc != null ? ((lc.green * 255.0).round() & 0xff) : null,
+      'ledColorBlue': lc != null ? ((lc.blue * 255.0).round() & 0xff) : null,
 
       'ledOnMs': ledOnMs,
       'ledOffMs': ledOffMs,
@@ -372,16 +375,16 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
               'id': e.id,
               'title': e.title,
               'titleColorAlpha': e.titleColor != null
-                  ? ((e.titleColor!.a * 255.0).round() & 0xff)
+                  ? ((e.titleColor!.alpha * 255.0).round() & 0xff)
                   : null,
               'titleColorRed': e.titleColor != null
-                  ? ((e.titleColor!.r * 255.0).round() & 0xff)
+                  ? ((e.titleColor!.red * 255.0).round() & 0xff)
                   : null,
               'titleColorGreen': e.titleColor != null
-                  ? ((e.titleColor!.g * 255.0).round() & 0xff)
+                  ? ((e.titleColor!.green * 255.0).round() & 0xff)
                   : null,
               'titleColorBlue': e.titleColor != null
-                  ? ((e.titleColor!.b * 255.0).round() & 0xff)
+                  ? ((e.titleColor!.blue * 255.0).round() & 0xff)
                   : null,
               if (e.icon != null) ...<String, Object>{
                 'icon': e.icon!.data,

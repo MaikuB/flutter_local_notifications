@@ -220,7 +220,7 @@ public class FlutterLocalNotificationsPlugin
     ts.sizeSp = 18.0;
     ts.bold = Boolean.TRUE;
     ts.italic = Boolean.FALSE;
-    ts.iconSpacingDp = 0;
+    ts.iconSpacingDp = 0d;
     return ts;
   }
 
