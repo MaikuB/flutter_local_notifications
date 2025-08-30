@@ -43,6 +43,11 @@ class MethodChannelFlutterLocalNotificationsPlugin
   Future<void> cancelAll() => _channel.invokeMethod('cancelAll');
 
   @override
+  Future<void> cancelAllPendingNotifications() async {
+    await _channel.invokeMethod('cancelAllPendingNotifications');
+  }
+
+  @override
   Future<NotificationAppLaunchDetails?>
       getNotificationAppLaunchDetails() async {
     final Map<dynamic, dynamic>? result =
@@ -528,6 +533,8 @@ class AndroidFlutterLocalNotificationsPlugin
         m['text'],
         DateTime.fromMillisecondsSinceEpoch(m['timestamp']),
         _personFromMap(m['person']),
+        dataMimeType: m['dataMimeType'],
+        dataUri: m['dataUri'],
       );
 
   AndroidIcon<Object>? _iconFromMap(Map<dynamic, dynamic>? m) {

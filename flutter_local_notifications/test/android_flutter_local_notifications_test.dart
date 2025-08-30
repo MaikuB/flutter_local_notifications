@@ -93,6 +93,8 @@ void main() {
             showsUserInterface: true,
             allowGeneratedReplies: true,
             cancelNotification: false,
+            semanticAction: SemanticAction.markAsRead,
+            invisible: true,
           ),
           AndroidNotificationAction(
             'action2',
@@ -193,7 +195,9 @@ void main() {
                   'showsUserInterface': true,
                   'allowGeneratedReplies': true,
                   'inputs': <Object>[],
-                  'cancelNotification': false
+                  'cancelNotification': false,
+                  'semanticAction': SemanticAction.markAsRead.value,
+                  'invisible': true,
                 },
                 <String, Object>{
                   'id': 'action2',
@@ -214,6 +218,8 @@ void main() {
                     }
                   ],
                   'cancelNotification': true,
+                  'semanticAction': SemanticAction.none.value,
+                  'invisible': false,
                 }
               ],
             },
@@ -2616,6 +2622,13 @@ void main() {
     test('cancelAll', () async {
       await flutterLocalNotificationsPlugin.cancelAll();
       expect(log, <Matcher>[isMethodCall('cancelAll', arguments: null)]);
+    });
+
+    test('cancelAllPendingNotifications', () async {
+      await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+      expect(log, <Matcher>[
+        isMethodCall('cancelAllPendingNotifications', arguments: null)
+      ]);
     });
 
     test('pendingNotificationRequests', () async {
