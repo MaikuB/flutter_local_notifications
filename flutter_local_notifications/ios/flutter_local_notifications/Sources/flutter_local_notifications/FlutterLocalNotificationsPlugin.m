@@ -2,6 +2,7 @@
 #import "./include/flutter_local_notifications/ActionEventSink.h"
 #import "./include/flutter_local_notifications/FlutterEngineManager.h"
 #import "./include/flutter_local_notifications/FlutterLocalNotificationsConverters.h"
+#import "./include/flutter_local_notifications/FLNChannelBlocker.h"
 
 @implementation FlutterLocalNotificationsPlugin {
   FlutterMethodChannel *_channel;
@@ -144,6 +145,8 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 
   [registrar addMethodCallDelegate:instance channel:channel];
+
+  [FLNChannelBlocker installBlocker];
 }
 
 + (void)setPluginRegistrantCallback:(FlutterPluginRegistrantCallback)callback {
