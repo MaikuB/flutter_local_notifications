@@ -1,3 +1,7 @@
+## [19.4.2]
+
+* [Windows] fixed issue where non-ASCII characters for the notification [application name](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsInitializationSettings/appName.html) weren't being displayed properly. Thanks to the PR from [yoyoIU](https://github.com/yoyo930021)
+
 ## [19.4.1]
 
 * [Android] fixed issue [#2675](https://github.com/MaikuB/flutter_local_notifications/issues/2675) where addition of `invisible` flag to notification actions could cause scheduled notifications with actions created prior to 19.4.0 to fail to show

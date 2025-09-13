@@ -1,3 +1,7 @@
+## [1.0.3]
+
+* Fixed issue where non-ASCII characters for the notification [application name](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsInitializationSettings/appName.html) weren't being displayed properly. Thanks to the PR from [yoyoIU](https://github.com/yoyo930021)
+
 ## [1.0.2]
 
 * Fixed issue [#2648](https://github.com/MaikuB/flutter_local_notifications/issues/2648) where non-ASCII characters in the notification payload were not being handled properly. Thanks to the PR from [yoyoIU](https://github.com/yoyo930021)
