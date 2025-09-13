@@ -132,8 +132,7 @@ void UpdateRegistry(
   {
     const std::wstring wAppName = utf8_to_wstring(appName);
     winrt::check_win32(RegSetValueExW(
-      appInfoKey.get(), L"DisplayName", 0, REG_SZ,
-      reinterpret_cast<const BYTE*>(wAppName.c_str()),
+      appInfoKey.get(), L"DisplayName", 0, REG_SZ, reinterpret_cast<const BYTE*>(wAppName.c_str()),
       static_cast<DWORD>(wAppName.size() * sizeof(wchar_t))
     ));
   }
@@ -142,8 +141,7 @@ void UpdateRegistry(
     const auto v = iconPath.value();
     const std::wstring wIcon = utf8_to_wstring(v);
     winrt::check_win32(RegSetValueExW(
-      appInfoKey.get(), L"IconUri", 0, REG_SZ,
-      reinterpret_cast<const BYTE*>(wIcon.c_str()),
+      appInfoKey.get(), L"IconUri", 0, REG_SZ, reinterpret_cast<const BYTE*>(wIcon.c_str()),
       static_cast<DWORD>(wIcon.size() * sizeof(wchar_t))
     ));
   }
