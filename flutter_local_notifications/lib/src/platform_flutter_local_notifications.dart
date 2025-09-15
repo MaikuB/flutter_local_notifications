@@ -147,7 +147,7 @@ class AndroidFlutterLocalNotificationsPlugin
     _onDidReceiveNotificationResponse = onDidReceiveNotificationResponse;
     _channel.setMethodCallHandler(_handleMethod);
 
-    final Map<String, Object> arguments = initializationSettings.toMap();
+    final Map<String, Object?> arguments = initializationSettings.toMap();
 
     _evaluateBackgroundNotificationCallback(
         onDidReceiveBackgroundNotificationResponse, arguments);
@@ -1051,7 +1051,7 @@ class MacOSFlutterLocalNotificationsPlugin
 void _evaluateBackgroundNotificationCallback(
   DidReceiveBackgroundNotificationResponseCallback?
       didReceiveBackgroundNotificationResponseCallback,
-  Map<String, Object> arguments,
+  Map<String, Object?> arguments,
 ) {
   if (didReceiveBackgroundNotificationResponseCallback != null) {
     final CallbackHandle? callback = PluginUtilities.getCallbackHandle(
