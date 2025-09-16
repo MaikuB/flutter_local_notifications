@@ -17,8 +17,8 @@ extension type JSNotificationData(JSObject _) implements JSObject {
 
   NotificationResponse get response {
     final NotificationResponseType type = action.isEmpty
-      ? NotificationResponseType.selectedNotification
-      : NotificationResponseType.selectedNotificationAction;
+        ? NotificationResponseType.selectedNotification
+        : NotificationResponseType.selectedNotificationAction;
 
     return NotificationResponse(
       id: int.parse(id),

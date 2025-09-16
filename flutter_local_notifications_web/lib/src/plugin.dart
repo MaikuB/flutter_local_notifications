@@ -10,14 +10,12 @@ import 'utils.dart';
 void onNotificationClicked(MessageEvent event) {
   final JSNotificationData data = event.data as JSNotificationData;
   final NotificationResponse response = data.response;
-  WebFlutterLocalNotificationsPlugin.instance
-    ?._userCallback?.call(response);
+  WebFlutterLocalNotificationsPlugin.instance?._userCallback?.call(response);
 }
 
 /// Web implementation of the local notifications plugin.
 class WebFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
-
   /// Registers the web plugin with the platform interface.
   static void registerWith(_) {
     FlutterLocalNotificationsPlatform.instance =
@@ -80,7 +78,8 @@ class WebFlutterLocalNotificationsPlugin
     final ServiceWorkerContainer serviceWorker = window.navigator.serviceWorker;
     _registration = await serviceWorker.getRegistration().toDart;
     await _registration?.unregister().toDart;
-    const String jsPath = './assets/packages/flutter_local_notifications_web/web/notifications_service_worker.js';
+    const String jsPath =
+        './assets/packages/flutter_local_notifications_web/web/notifications_service_worker.js';
     _registration = await serviceWorker.register(jsPath.toJS).toDart;
 
     // Subscribe to messages from the service worker
@@ -99,9 +98,8 @@ class WebFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<NotificationAppLaunchDetails?> getNotificationAppLaunchDetails()
-    async
-  {
+  Future<NotificationAppLaunchDetails?>
+      getNotificationAppLaunchDetails() async {
     final Uri uri = Uri.parse(window.location.toString());
     final Map<String, String> query = uri.queryParameters;
     final String? id = query['notification_id'];
@@ -116,8 +114,8 @@ class WebFlutterLocalNotificationsPlugin
         true,
         notificationResponse: NotificationResponse(
           notificationResponseType: action.isEmpty
-            ? NotificationResponseType.selectedNotification
-            : NotificationResponseType.selectedNotificationAction,
+              ? NotificationResponseType.selectedNotification
+              : NotificationResponseType.selectedNotificationAction,
           id: int.parse(id),
           input: reply.nullIfEmpty,
           payload: payload.nullIfEmpty,

@@ -117,8 +117,8 @@ class FlutterLocalNotificationsPlugin {
       return resolvePlatformSpecificImplementation<
               WebFlutterLocalNotificationsPlugin>()
           ?.initialize(
-            onNotificationReceived: onDidReceiveNotificationResponse,
-          );
+        onNotificationReceived: onDidReceiveNotificationResponse,
+      );
     }
 
     if (defaultTargetPlatform == TargetPlatform.android) {
@@ -204,8 +204,9 @@ class FlutterLocalNotificationsPlugin {
   Future<NotificationAppLaunchDetails?>
       getNotificationAppLaunchDetails() async {
     if (kIsWeb) {
-      return await resolvePlatformSpecificImplementation<WebFlutterLocalNotificationsPlugin>()
-        ?.getNotificationAppLaunchDetails();
+      return await resolvePlatformSpecificImplementation<
+              WebFlutterLocalNotificationsPlugin>()
+          ?.getNotificationAppLaunchDetails();
     } else if (defaultTargetPlatform == TargetPlatform.android) {
       return await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()

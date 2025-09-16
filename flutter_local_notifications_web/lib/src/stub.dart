@@ -8,7 +8,8 @@ class WebFlutterLocalNotificationsPlugin
   /// Initializes the plugin.
   Future<bool?> initialize({
     DidReceiveNotificationResponseCallback? onNotificationReceived,
-  }) async => null;
+  }) async =>
+      null;
 
   /// Requests permission to use the plugin.
   Future<bool> requestNotificationsPermission() async => false;

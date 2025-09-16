@@ -164,9 +164,10 @@ Future<void> main() async {
     onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
   );
 
-  final NotificationAppLaunchDetails? notificationAppLaunchDetails = Platform.isLinux
-    ? null
-    : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  final NotificationAppLaunchDetails? notificationAppLaunchDetails = Platform
+          .isLinux
+      ? null
+      : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   String initialRoute = HomePage.routeName;
   NotificationResponse? initialNotification;
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
@@ -179,7 +180,9 @@ Future<void> main() async {
       initialRoute: initialRoute,
       routes: <String, WidgetBuilder>{
         HomePage.routeName: (_) => HomePage(notificationAppLaunchDetails),
-        SecondPage.routeName: (_) => SecondPage.withResponse(initialNotification)
+        SecondPage.routeName: (_) => SecondPage.withResponse(
+              initialNotification,
+            )
       },
     ),
   );
@@ -3086,10 +3089,7 @@ Future<LinuxServerCapabilities> getLinuxCapabilities() =>
         .getCapabilities();
 
 class SecondPage extends StatefulWidget {
-  const SecondPage.withResponse(
-    this.response,
-    {Key? key}
-  ) : super(key: key);
+  const SecondPage.withResponse(this.response, {Key? key}) : super(key: key);
 
   static const String routeName = '/secondPage';
 
@@ -3102,28 +3102,28 @@ class SecondPage extends StatefulWidget {
 class SecondPageState extends State<SecondPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('Second Screen'),
-    ),
-    body: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text('Notification ID: ${widget.response?.id}'),
-          Text('Payload: ${widget.response?.payload}'),
-          Text('Action ID: ${widget.response?.actionId}'),
-          Text('Input: ${widget.response?.input}'),
-          Text('Data (Windows only): ${widget.response?.data}'),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Go back!'),
+        appBar: AppBar(
+          title: const Text('Second Screen'),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text('Notification ID: ${widget.response?.id}'),
+              Text('Payload: ${widget.response?.payload}'),
+              Text('Action ID: ${widget.response?.actionId}'),
+              Text('Input: ${widget.response?.input}'),
+              Text('Data (Windows only): ${widget.response?.data}'),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Go back!'),
+              ),
+            ],
           ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }
 
 class _InfoValueString extends StatelessWidget {

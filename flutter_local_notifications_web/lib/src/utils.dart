@@ -32,16 +32,16 @@ extension on WebNotificationAction {
   // Since it is not standard, the Dart API does not support it.
   // See: https://github.com/whatwg/notifications/pull/132
   NotificationAction toJs() => <String, dynamic>{
-    'action': action,
-    'title': title,
-    'icon': icon?.toString(),
-    'type': type.jsValue,
-  }.jsify() as NotificationAction;
+        'action': action,
+        'title': title,
+        'icon': icon?.toString(),
+        'type': type.jsValue,
+      }.jsify() as NotificationAction;
 }
 
 extension NullableWebNotificationDetailsUtils on WebNotificationDetails? {
   List<WebNotificationAction> get _actions =>
-    this?.actions ?? <WebNotificationAction>[];
+      this?.actions ?? <WebNotificationAction>[];
 
   NotificationOptions toJs(int id, String? payload) {
     final NotificationOptions options = NotificationOptions(
@@ -49,8 +49,7 @@ extension NullableWebNotificationDetailsUtils on WebNotificationDetails? {
       tag: id.toString(),
       // -----------------------------
       actions: <NotificationAction>[
-        for (final WebNotificationAction action in _actions)
-          action.toJs(),
+        for (final WebNotificationAction action in _actions) action.toJs(),
       ].toJS,
       badge: this?.badgeUrl.toString() ?? '',
       body: this?.body ?? '',
