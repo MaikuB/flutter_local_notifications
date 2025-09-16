@@ -1,7 +1,9 @@
 /// The type of action for a web notification.
 ///
 /// This is a non-standard extension of `showNotification()`s `options.actions`
-/// parameter. The proposal can be found [here](https://github.com/whatwg/notifications/pull/132).
+/// parameter that allows for buttons and text inputs.
+///
+/// The proposal can be found [here](https://github.com/whatwg/notifications/pull/132).
 ///
 /// Web actions themselves are hardly supported at the time of writing. See
 /// [WebNotificationAction] for more details.
