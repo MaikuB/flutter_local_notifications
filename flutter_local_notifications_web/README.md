@@ -2,6 +2,10 @@
 
 A new Flutter plugin project.
 
+## Notes
+
+Only works with `-d web-server`
+
 ## Getting Started
 
 This project is a starting point for a Flutter

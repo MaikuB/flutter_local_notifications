@@ -4,17 +4,29 @@ import 'package:flutter_local_notifications_platform_interface/flutter_local_not
 import 'package:web/web.dart';
 
 import 'details.dart';
+import 'handler.dart';
 import 'utils.dart';
+
+void onNotificationClicked(MessageEvent event) {
+  final JSNotificationData data = event.data as JSNotificationData;
+  final NotificationResponse response = data.response;
+  WebFlutterLocalNotificationsPlugin.instance
+    ?._userCallback?.call(response);
+}
 
 /// Web implementation of the local notifications plugin.
 class WebFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
+
   /// Registers the web plugin with the platform interface.
   static void registerWith(_) {
     FlutterLocalNotificationsPlatform.instance =
         WebFlutterLocalNotificationsPlugin();
   }
 
+  static WebFlutterLocalNotificationsPlugin? instance;
+
+  DidReceiveNotificationResponseCallback? _userCallback;
   ServiceWorkerRegistration? _registration;
 
   @override
@@ -50,25 +62,29 @@ class WebFlutterLocalNotificationsPlugin
     await _registration!
         .showNotification(
           title ?? 'This is a notification',
-          details.toJs(id),
+          details.toJs(id, payload),
         )
         .toDart;
   }
 
   /// Initializes the plugin.
-  Future<bool?> initialize() async {
-    // Get the service worker registration
-    final ServiceWorkerContainer serviceWorker = window.navigator.serviceWorker;
-    _registration = await serviceWorker.getRegistration().toDart;
-    if (_registration == null) {
-      return false;
-    }
+  Future<bool?> initialize({
+    DidReceiveNotificationResponseCallback? onNotificationReceived,
+  }) async {
+    instance = this;
+    _userCallback = onNotificationReceived;
 
     // Replace the default Flutter service worker with our own.
     // This isn't supported at build time yet and so must be done at runtime.
     // See: https://github.com/flutter/flutter/issues/145828
-    await _registration!.unregister().toDart;
-    await serviceWorker.register('/notifications_service_worker.js'.toJS).toDart;
+    final ServiceWorkerContainer serviceWorker = window.navigator.serviceWorker;
+    _registration = await serviceWorker.getRegistration().toDart;
+    await _registration?.unregister().toDart;
+    const String jsPath = './assets/packages/flutter_local_notifications_web/web/notifications_service_worker.js';
+    _registration = await serviceWorker.register(jsPath.toJS).toDart;
+
+    // Subscribe to messages from the service worker
+    serviceWorker.onmessage = onNotificationClicked.toJS;
 
     return true;
   }

@@ -50,8 +50,6 @@ class ReceivedNotification {
   final Map<String, dynamic>? data;
 }
 
-String? selectedNotificationPayload;
-
 /// A notification action which triggers a url launch event
 const String urlLaunchActionId = 'id_1';
 
@@ -171,9 +169,9 @@ Future<void> main() async {
       ? null
       : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   String initialRoute = HomePage.routeName;
+  NotificationResponse? initialNotification;
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
-    selectedNotificationPayload =
-        notificationAppLaunchDetails!.notificationResponse?.payload;
+    initialNotification = notificationAppLaunchDetails!.notificationResponse;
     initialRoute = SecondPage.routeName;
   }
 
@@ -182,7 +180,7 @@ Future<void> main() async {
       initialRoute: initialRoute,
       routes: <String, WidgetBuilder>{
         HomePage.routeName: (_) => HomePage(notificationAppLaunchDetails),
-        SecondPage.routeName: (_) => SecondPage(selectedNotificationPayload)
+        SecondPage.routeName: (_) => SecondPage.withResponse(initialNotification)
       },
     ),
   );
@@ -315,8 +313,7 @@ class _HomePageState extends State<HomePage> {
     selectNotificationStream.stream
         .listen((NotificationResponse? response) async {
       await Navigator.of(context).push(MaterialPageRoute<void>(
-        builder: (BuildContext context) =>
-            SecondPage(response?.payload, data: response?.data),
+        builder: (BuildContext context) => SecondPage.withResponse(response),
       ));
     });
   }
@@ -3090,53 +3087,44 @@ Future<LinuxServerCapabilities> getLinuxCapabilities() =>
         .getCapabilities();
 
 class SecondPage extends StatefulWidget {
-  const SecondPage(
-    this.payload, {
-    this.data,
-    Key? key,
-  }) : super(key: key);
+  const SecondPage.withResponse(
+    this.response,
+    {Key? key}
+  ) : super(key: key);
 
   static const String routeName = '/secondPage';
 
-  final String? payload;
-  final Map<String, dynamic>? data;
+  final NotificationResponse? response;
 
   @override
   State<StatefulWidget> createState() => SecondPageState();
 }
 
 class SecondPageState extends State<SecondPage> {
-  String? _payload;
-  Map<String, dynamic>? _data;
-
-  @override
-  void initState() {
-    super.initState();
-    _payload = widget.payload;
-    _data = widget.data;
-  }
-
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('Second Screen'),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text('payload ${_payload ?? ''}'),
-              Text('data ${_data ?? ''}'),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('Go back!'),
-              ),
-            ],
+    appBar: AppBar(
+      title: const Text('Second Screen'),
+    ),
+    body: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text('Notification ID: ${widget.response?.id}'),
+          Text('Payload: ${widget.response?.payload}'),
+          Text('Action ID: ${widget.response?.actionId}'),
+          Text('Input: ${widget.response?.input}'),
+          Text('Data (Windows only): ${widget.response?.data}'),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Go back!'),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }
 
 class _InfoValueString extends StatelessWidget {

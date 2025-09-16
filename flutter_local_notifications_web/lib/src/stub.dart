@@ -6,7 +6,9 @@ import 'details.dart';
 class WebFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
   /// Initializes the plugin.
-  Future<bool?> initialize() async => null;
+  Future<bool?> initialize({
+    DidReceiveNotificationResponseCallback? onNotificationReceived,
+  }) async => null;
 
   /// Requests permission to use the plugin.
   Future<bool> requestNotificationsPermission() async => false;

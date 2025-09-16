@@ -28,3 +28,6 @@ flutter:
       web:
         pluginClass: WebFlutterLocalNotificationsPlugin
         fileName: "flutter_local_notifications_web.dart"
+
+  assets:
+    - web/notifications_service_worker.js

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'package:web/web.dart';
 
@@ -7,7 +8,8 @@ import 'details.dart';
 
 extension JSNotificationUtils on Notification {
   /// Gets the ID of the notification.
-  int? get id => jsonDecode(data.toString())?['id'];
+  int? get id => int.tryParse(tag);
+  String? get payload => jsonDecode(data.toString())?['payload'];
 }
 
 extension ServiceWorkerUtils on ServiceWorkerRegistration {
@@ -24,23 +26,34 @@ extension WebNotificationDetailsUtils on WebNotificationDetails {
         ].toJS;
 }
 
+extension on WebNotificationAction {
+  // There is a WHATWG proposal to add text input notifications.
+  // Most browsers support this even though it is not standardized.
+  // Since it is not standard, the Dart API does not support it.
+  // See: https://github.com/whatwg/notifications/pull/132
+  NotificationAction toJs() => <String, dynamic>{
+    'action': action,
+    'title': title,
+    'icon': icon?.toString(),
+    'type': type.jsValue,
+  }.jsify() as NotificationAction;
+}
+
 extension NullableWebNotificationDetailsUtils on WebNotificationDetails? {
-  NotificationOptions toJs(int id) {
+  List<WebNotificationAction> get _actions =>
+    this?.actions ?? <WebNotificationAction>[];
+
+  NotificationOptions toJs(int id, String? payload) {
     final NotificationOptions options = NotificationOptions(
+      data: <String, dynamic>{'payload': payload}.jsify(),
+      tag: id.toString(),
+      // -----------------------------
       actions: <NotificationAction>[
-        for (final WebNotificationAction action
-            in this?.actions ?? <WebNotificationAction>[])
-          // THis workaround is here because not all browsers support this
-          <String, dynamic>{
-            'action': action.action,
-            'title': action.title,
-            'icon': action.icon?.toString(),
-            'type': action.type.jsValue,
-          }.jsify() as NotificationAction,
+        for (final WebNotificationAction action in _actions)
+          action.toJs(),
       ].toJS,
       badge: this?.badgeUrl.toString() ?? '',
       body: this?.body ?? '',
-      data: jsonEncode(<String, int>{'id': id}).toJS,
       dir: this?.direction.jsValue ?? WebNotificationDirection.auto.jsValue,
       icon: this?.iconUrl.toString() ?? '',
       image: this?.imageUrl.toString() ?? '',
@@ -48,7 +61,6 @@ extension NullableWebNotificationDetailsUtils on WebNotificationDetails? {
       renotify: this?.renotify ?? false,
       requireInteraction: this?.requireInteraction ?? false,
       silent: this?.isSilent,
-      tag: this?.tag ?? '',
       timestamp: (this?.timestamp ?? DateTime.now()).millisecondsSinceEpoch,
     );
 
@@ -58,4 +70,10 @@ extension NullableWebNotificationDetailsUtils on WebNotificationDetails? {
     }
     return options;
   }
+}
+
+extension WebNotificationEventUtils on NotificationEvent {
+  // Support for getting text input.
+  // See: https://github.com/whatwg/notifications/pull/132
+  String? get reply => (this['reply'] as JSString).toDart;
 }

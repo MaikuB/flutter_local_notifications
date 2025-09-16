@@ -1,18 +1,19 @@
 <html>
   <head>
     <script>
+      async function init() {
+        let registration = await window.navigator.serviceWorker.getRegistration();
+        if (registration != null) await registration.unregister();
+        await window.navigator.serviceWorker.register("flutter_service_worker.js");
+        window.navigator.serviceWorker.addEventListener("message", (event) => {
+          console.log("Received event: ");
+          console.log(event);
+        });
+      }
 
       async function notify() {
         let registration = await window.navigator.serviceWorker.getRegistration();
-        if (registration == null) {
-          registration = await window.navigator.serviceWorker.register("flutter_service_worker.js");
-          registration = await window.navigator.serviceWorker.getRegistration();
-        }
         let result = await Notification.requestPermission();
-        alert(`User said: ${result}`);
-        window.navigator.serviceWorker.addEventListener("notificationclick", function(event) {
-          alert("Got a click");
-        });
         registration.showNotification("Hello World!", {
           actions: [
             {action: "action1", title: "Action 1"},
@@ -23,6 +24,7 @@
           requireInteraction: true,
         },);
       }
+      init();
     </script>
   </head>
   <body>
