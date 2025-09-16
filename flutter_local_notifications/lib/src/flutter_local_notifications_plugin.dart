@@ -204,9 +204,9 @@ class FlutterLocalNotificationsPlugin {
   Future<NotificationAppLaunchDetails?>
       getNotificationAppLaunchDetails() async {
     if (kIsWeb) {
-      return null;
-    }
-    if (defaultTargetPlatform == TargetPlatform.android) {
+      return await resolvePlatformSpecificImplementation<WebFlutterLocalNotificationsPlugin>()
+        ?.getNotificationAppLaunchDetails();
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
       return await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.getNotificationAppLaunchDetails();

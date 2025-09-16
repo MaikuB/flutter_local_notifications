@@ -20,7 +20,8 @@
             {action: "action2", title: "Action 2"},
           ],
           body: "This was sent from JS",
-          data: "/path/to/notif",
+          data: {payload: "/path/to/notif"},
+          tag: "1",
           requireInteraction: true,
         },);
       }

@@ -99,6 +99,35 @@ class WebFlutterLocalNotificationsPlugin
   }
 
   @override
+  Future<NotificationAppLaunchDetails?> getNotificationAppLaunchDetails()
+    async
+  {
+    final Uri uri = Uri.parse(window.location.toString());
+    final Map<String, String> query = uri.queryParameters;
+    final String? id = query['notification_id'];
+    final String? payload = query['notification_payload'];
+    final String? action = query['notification_action'];
+    final String? reply = query['notification_reply'];
+    window.history.replaceState(null, '', '/');
+    if (id == null || payload == null || action == null || reply == null) {
+      return null;
+    } else {
+      return NotificationAppLaunchDetails(
+        true,
+        notificationResponse: NotificationResponse(
+          notificationResponseType: action.isEmpty
+            ? NotificationResponseType.selectedNotification
+            : NotificationResponseType.selectedNotificationAction,
+          id: int.parse(id),
+          input: reply.nullIfEmpty,
+          payload: payload.nullIfEmpty,
+          actionId: action.nullIfEmpty,
+        ),
+      );
+    }
+  }
+
+  @override
   Future<List<ActiveNotification>> getActiveNotifications() async {
     if (_registration == null) {
       return <ActiveNotification>[];
