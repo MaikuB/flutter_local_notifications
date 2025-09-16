@@ -55,11 +55,6 @@ class WebFlutterLocalNotificationsPlugin
         'WebNotificationDetails: Cannot specify both silent and a vibration '
         'pattern',
       );
-    } else if (details?.renotify == true && details?.tag == null) {
-      throw ArgumentError(
-        'WebNotificationDetails: If you specify renotify, you must also '
-        'specify a tag',
-      );
     } else if (_registration!.active == null) {
       throw StateError(
         'FlutterLocalNotifications.show(): There is no active service worker. '
