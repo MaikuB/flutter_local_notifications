@@ -7,7 +7,16 @@ import 'details.dart';
 import 'handler.dart';
 import 'utils.dart';
 
-void onNotificationClicked(MessageEvent event) {
+/// Called when a notification has been clicked.
+///
+/// Notification clicks are handled by service workers. See `web/notification_service_worker.js`
+/// for the source code there. When the service worker receives the
+/// [NotificationEvent], it uses [Client.postMessage] to send a message back to
+/// the currently open window/tab, if there is any.
+///
+/// This function creates a [NotificationResponse] object and calls the user's
+/// callback they provided to [WebFlutterLocalNotificationsPlugin.initialize].
+void _onNotificationClicked(MessageEvent event) {
   final JSNotificationData data = event.data as JSNotificationData;
   final NotificationResponse response = data.response;
   WebFlutterLocalNotificationsPlugin.instance?._userCallback?.call(response);
@@ -22,6 +31,7 @@ class WebFlutterLocalNotificationsPlugin
         WebFlutterLocalNotificationsPlugin();
   }
 
+  /// The currently loaded web plugin object, if any.
   static WebFlutterLocalNotificationsPlugin? instance;
 
   DidReceiveNotificationResponseCallback? _userCallback;
@@ -83,7 +93,7 @@ class WebFlutterLocalNotificationsPlugin
     _registration = await serviceWorker.register(jsPath.toJS).toDart;
 
     // Subscribe to messages from the service worker
-    serviceWorker.onmessage = onNotificationClicked.toJS;
+    serviceWorker.onmessage = _onNotificationClicked.toJS;
 
     return true;
   }

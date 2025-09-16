@@ -91,3 +91,12 @@ extension WebNotificationEventUtils on NotificationEvent {
   /// See [WebNotificationActionType] for details.
   String? get reply => (this['reply'] as JSString).toDart;
 }
+
+/// Helpful methods on strings.
+extension StringUtils on String {
+  /// Returns null if this string is empty.
+  ///
+  /// Useful because JavaScript might prefer to represent a blank option with an
+  /// empty string, while Dart users would prefer `null` instead.
+  String? get nullIfEmpty => isEmpty ? null : this;
+}
