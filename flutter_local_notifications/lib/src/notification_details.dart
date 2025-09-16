@@ -1,9 +1,9 @@
 import 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
+import 'package:flutter_local_notifications_web/flutter_local_notifications_web.dart';
 import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
 
 import 'platform_specifics/android/notification_details.dart';
 import 'platform_specifics/darwin/notification_details.dart';
-import 'platform_specifics/web/details.dart';
 
 /// Contains notification details specific to each platform.
 class NotificationDetails {

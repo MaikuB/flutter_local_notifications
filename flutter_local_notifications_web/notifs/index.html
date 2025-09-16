@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <script>
+
+      async function notify() {
+        let registration = await window.navigator.serviceWorker.getRegistration();
+        if (registration == null) {
+          registration = await window.navigator.serviceWorker.register("flutter_service_worker.js");
+          registration = await window.navigator.serviceWorker.getRegistration();
+        }
+        let result = await Notification.requestPermission();
+        alert(`User said: ${result}`);
+        window.navigator.serviceWorker.addEventListener("notificationclick", function(event) {
+          alert("Got a click");
+        });
+        registration.showNotification("Hello World!", {
+          actions: [
+            {action: "action1", title: "Action 1"},
+            {action: "action2", title: "Action 2"},
+          ],
+          body: "This was sent from JS",
+          data: "/path/to/notif",
+          requireInteraction: true,
+        },);
+      }
+    </script>
+  </head>
+  <body>
+    <button onclick="notify()">Click me!</button>
+  </body>
+</html>

@@ -2,6 +2,7 @@ export 'package:flutter_local_notifications_linux/flutter_local_notifications_li
 // Exports what's defined in platform interface but hide helper methods
 export 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart'
     hide validateId, validateRepeatDurationInterval;
+export 'package:flutter_local_notifications_web/flutter_local_notifications_web.dart';
 export 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
 
 export 'src/flutter_local_notifications_plugin.dart';
@@ -40,4 +41,3 @@ export 'src/platform_specifics/darwin/notification_enabled_options.dart';
 
 export 'src/typedefs.dart';
 export 'src/types.dart';
-export 'src/web_flutter_local_notifications.dart';

@@ -1,0 +1,30 @@
+name: flutter_local_notifications_web
+description: "A new Flutter plugin project."
+version: 1.0.0
+homepage:
+
+environment:
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_local_notifications_platform_interface: ^9.0.0
+  web: ^1.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  plugin:
+    platforms:
+      web:
+        pluginClass: WebFlutterLocalNotificationsPlugin
+        fileName: "flutter_local_notifications_web.dart"

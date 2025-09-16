@@ -12,6 +12,9 @@ dependencies:
     sdk: flutter
   flutter_local_notifications_linux: ^6.0.0
   flutter_local_notifications_windows: ^1.0.3
+  # flutter_local_notifications_web: ^1.0.0
+  flutter_local_notifications_web:
+    path: ../flutter_local_notifications_web
   flutter_local_notifications_platform_interface: ^9.1.0
   timezone: ^0.10.0
   universal_platform: ^1.1.0
@@ -42,8 +45,7 @@ flutter:
       windows:
         default_package: flutter_local_notifications_windows
       web:
-        pluginClass: WebFlutterLocalNotificationsPlugin
-        fileName: "src/web_flutter_local_notifications.dart"
+        default_package: flutter_local_notifications_web
 
 environment:
   sdk: ^3.4.0
