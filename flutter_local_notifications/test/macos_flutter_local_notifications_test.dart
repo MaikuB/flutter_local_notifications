@@ -137,6 +137,7 @@ void main() {
           ],
           categoryIdentifier: 'category1',
           interruptionLevel: InterruptionLevel.timeSensitive,
+          criticalSoundVolume: 0.5,
         ),
       );
 
@@ -176,6 +177,7 @@ void main() {
               ],
               'categoryIdentifier': 'category1',
               'interruptionLevel': 2,
+              'criticalSoundVolume': 0.5,
             },
           },
         ),
@@ -250,6 +252,7 @@ void main() {
                     ],
                     'categoryIdentifier': null,
                     'interruptionLevel': null,
+                    'criticalSoundVolume': null,
                   },
                 }));
           });
@@ -376,6 +379,7 @@ void main() {
                         ],
                         'categoryIdentifier': null,
                         'interruptionLevel': null,
+                        'criticalSoundVolume': null,
                       },
                     }));
           });
@@ -449,6 +453,7 @@ void main() {
                 ],
                 'categoryIdentifier': null,
                 'interruptionLevel': null,
+                'criticalSoundVolume': null,
               },
             }));
       });
@@ -523,6 +528,7 @@ void main() {
                 ],
                 'categoryIdentifier': null,
                 'interruptionLevel': null,
+                'criticalSoundVolume': null,
               },
             },
           ),
@@ -600,6 +606,7 @@ void main() {
                 ],
                 'categoryIdentifier': null,
                 'interruptionLevel': null,
+                'criticalSoundVolume': null,
               },
             },
           ),
@@ -660,6 +667,13 @@ void main() {
     test('cancelAll', () async {
       await flutterLocalNotificationsPlugin.cancelAll();
       expect(log, <Matcher>[isMethodCall('cancelAll', arguments: null)]);
+    });
+
+    test('cancelAllPendingNotifications', () async {
+      await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+      expect(log, <Matcher>[
+        isMethodCall('cancelAllPendingNotifications', arguments: null)
+      ]);
     });
 
     test('pendingNotificationRequests', () async {

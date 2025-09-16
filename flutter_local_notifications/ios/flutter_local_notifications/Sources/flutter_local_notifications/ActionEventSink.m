@@ -5,7 +5,7 @@
 //  Created by Sebastian Roth on 11/1/20.
 //
 
-#import "ActionEventSink.h"
+#import "./include/flutter_local_notifications/ActionEventSink.h"
 
 @interface ActionEventSink () {
   NSMutableArray<NSDictionary *> *cache;

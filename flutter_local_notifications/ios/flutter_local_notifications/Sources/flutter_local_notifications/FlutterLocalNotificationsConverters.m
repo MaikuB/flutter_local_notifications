@@ -1,6 +1,6 @@
-#import "Converters.h"
+#import "./include/flutter_local_notifications/FlutterLocalNotificationsConverters.h"
 
-@implementation Converters
+@implementation FlutterLocalNotificationsConverters
 
 + (UNNotificationCategoryOptions)parseNotificationCategoryOptions:
     (NSArray *)options {

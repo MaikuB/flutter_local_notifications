@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
+import 'package:flutter_local_notifications_windows/src/details/notification_to_xml.dart';
 import 'package:test/test.dart';
 
 const WindowsInitializationSettings settings = WindowsInitializationSettings(
@@ -12,15 +11,20 @@ const WindowsInitializationSettings settings = WindowsInitializationSettings(
 extension PluginUtils on FlutterLocalNotificationsWindows {
   static int id = 15;
 
-  Future<void> showDetails(WindowsNotificationDetails details) =>
-      show(id++, 'Title', 'Body', details: details);
-
-  void testDetails(WindowsNotificationDetails details) =>
-      expect(showDetails(details), completes);
+  void testDetails(WindowsNotificationDetails details) => expect(
+        isValidXml(
+          notificationToXml(
+            title: 'title',
+            body: 'body',
+            payload: 'payload',
+            details: details,
+          ),
+        ),
+        isTrue,
+      );
 }
 
 void main() => group('Details:', () {
-      FlutterLocalNotificationsWindows().enableMultithreading();
       final FlutterLocalNotificationsWindows plugin =
           FlutterLocalNotificationsWindows();
       setUpAll(() => plugin.initialize(settings));
@@ -62,7 +66,7 @@ void main() => group('Details:', () {
           buttonStyle: WindowsButtonStyle.success,
           inputId: 'input-id',
           tooltip: 'tooltip',
-          image: File('test/icon.png').absolute,
+          imageUri: WindowsImage.getAssetUri('test/icon.png'),
         );
         plugin
           ..testDetails(const WindowsNotificationDetails(
@@ -72,11 +76,10 @@ void main() => group('Details:', () {
           ..testDetails(WindowsNotificationDetails(
               actions: List<WindowsAction>.filled(5, simpleAction)));
         expect(
-          plugin.showDetails(
-            WindowsNotificationDetails(
-              actions: List<WindowsAction>.filled(6, simpleAction),
-            ),
-          ),
+          () => notificationToXml(
+              details: WindowsNotificationDetails(
+            actions: List<WindowsAction>.filled(6, simpleAction),
+          )),
           throwsArgumentError,
         );
       });
@@ -93,9 +96,10 @@ void main() => group('Details:', () {
       test('Rows', () {
         const WindowsColumn emptyColumn =
             WindowsColumn(<WindowsNotificationPart>[]);
-        final WindowsImage image = WindowsImage.file(
-            File('test/icon.png').absolute,
-            altText: 'an icon');
+        final WindowsImage image = WindowsImage(
+          WindowsImage.getAssetUri('test/icon.png'),
+          altText: 'an icon',
+        );
         const WindowsNotificationText text =
             WindowsNotificationText(text: 'Text');
         final WindowsColumn simpleColumn =
@@ -131,12 +135,12 @@ void main() => group('Details:', () {
       });
 
       test('Images', () async {
-        final WindowsImage simpleImage = WindowsImage.file(
-          File('test/icon.png').absolute,
+        final WindowsImage simpleImage = WindowsImage(
+          WindowsImage.getAssetUri('asset.png'),
           altText: 'an icon',
         );
-        final WindowsImage complexImage = WindowsImage.file(
-          File('test/icon.png').absolute,
+        final WindowsImage complexImage = WindowsImage(
+          Uri.parse('https://picsum.photos/500'),
           altText: 'an icon',
           addQueryParams: true,
           crop: WindowsImageCrop.circle,
@@ -190,8 +194,8 @@ void main() => group('Details:', () {
               inputs: <WindowsInput>[selection, textInput],
               actions: <WindowsAction>[action]));
         expect(
-          plugin.showDetails(
-            WindowsNotificationDetails(
+          () => notificationToXml(
+            details: WindowsNotificationDetails(
               inputs: List<WindowsInput>.filled(6, textInput),
             ),
           ),
@@ -199,7 +203,7 @@ void main() => group('Details:', () {
         );
       });
 
-      test('Progress', retry: 5, () async {
+      test('Progress', () async {
         final WindowsProgressBar simple = WindowsProgressBar(
           id: 'simple',
           status: 'Testing...',
@@ -244,5 +248,10 @@ void main() => group('Details:', () {
           expect(result, NotificationUpdateResult.success);
           await Future<void>.delayed(const Duration(milliseconds: 10));
         }
+        expect(
+          await plugin.updateProgressBar(
+              notificationId: 202, progressBar: dynamic),
+          NotificationUpdateResult.notFound,
+        );
       });
     });

@@ -4,6 +4,8 @@
 #include <string>
 
 #include <windows.h>  // <-- This must be the first Windows header
+#include <appmodel.h>
+#include <VersionHelpers.h>
 #include <winrt/Windows.UI.Notifications.h>
 
 #include "ffi_api.h"
@@ -21,4 +23,5 @@ NativeStringMap toNativeMap(vector<StringMapEntry> entries);
 /// Parses a [NativeStringMap] into a WinRT [NotificationData].
 NotificationData dataFromMap(NativeStringMap map);
 
+std::wstring utf8_to_wstring(const std::string& utf8);
 winrt::guid parseGuid(const std::string& guidString);

@@ -71,6 +71,15 @@ typedef enum NativeUpdateResult {
   notFound = 2,
 } NativeUpdateResult;
 
+/// Checks whether the current application has package identity.
+///
+/// This impacts whether apps can query active notifications or cancel them.
+/// For more details, see
+/// https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/package-identity-overview.
+FFI_PLUGIN_EXPORT bool hasPackageIdentity();
+
+FFI_PLUGIN_EXPORT bool isValidXml(char* xml);
+
 /// Allocates a new plugin that must be released with [disposePlugin].
 FFI_PLUGIN_EXPORT NativePlugin* createPlugin();
 
@@ -126,11 +135,6 @@ FFI_PLUGIN_EXPORT void freeDetailsArray(NativeNotificationDetails* ptr);
 
 /// Releases the memory associated with a [NativeLaunchDetails].
 FFI_PLUGIN_EXPORT void freeLaunchDetails(NativeLaunchDetails details);
-
-/// EXPERIMENTAL: Enables multithreading for this application.
-///
-/// NOTE: This is only to make tests more stable and is not intended to be used in applications.
-FFI_PLUGIN_EXPORT void enableMultithreading();
 
 #ifdef __cplusplus
 }

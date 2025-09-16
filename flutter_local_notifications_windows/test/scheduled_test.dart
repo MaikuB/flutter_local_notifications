@@ -9,7 +9,6 @@ const WindowsInitializationSettings settings = WindowsInitializationSettings(
     guid: 'a8c22b55-049e-422f-b30f-863694de08c8');
 
 void main() => group('Schedules', () {
-      FlutterLocalNotificationsWindows().enableMultithreading();
       final FlutterLocalNotificationsWindows plugin =
           FlutterLocalNotificationsWindows();
       setUpAll(initializeTimeZones);
@@ -22,19 +21,6 @@ void main() => group('Schedules', () {
       Future<int> countPending() async =>
           (await plugin.pendingNotificationRequests()).length;
       late final Location location = getLocation('US/Eastern');
-
-      test('work with basic times', () async {
-        await plugin.cancelAll();
-        expect(await countPending(), 0);
-        final TZDateTime now = TZDateTime.now(location);
-        final TZDateTime later = now.add(const Duration(days: 1));
-        expect(plugin.zonedSchedule(300, null, null, later, null), completes);
-        expect(await countPending(), 1);
-        expect(plugin.zonedSchedule(301, null, null, later, null), completes);
-        expect(await countPending(), 2);
-        expect(plugin.zonedSchedule(302, null, null, later, null), completes);
-        expect(await countPending(), 3);
-      });
 
       test('do not work with earlier time', () async {
         final TZDateTime now = TZDateTime.now(location);

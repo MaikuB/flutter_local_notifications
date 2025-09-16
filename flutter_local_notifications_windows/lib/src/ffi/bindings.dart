@@ -28,6 +28,34 @@ class NotificationsPluginBindings {
           lookup)
       : _lookup = lookup;
 
+  /// Checks whether the current application has package identity.
+  ///
+  /// This impacts whether apps can query active notifications or cancel them.
+  /// For more details, see
+  /// https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/package-identity-overview.
+  bool hasPackageIdentity() {
+    return _hasPackageIdentity();
+  }
+
+  late final _hasPackageIdentityPtr =
+      _lookup<ffi.NativeFunction<ffi.Bool Function()>>('hasPackageIdentity');
+  late final _hasPackageIdentity =
+      _hasPackageIdentityPtr.asFunction<bool Function()>();
+
+  bool isValidXml(
+    ffi.Pointer<pkg_ffi.Utf8> xml,
+  ) {
+    return _isValidXml(
+      xml,
+    );
+  }
+
+  late final _isValidXmlPtr =
+      _lookup<ffi.NativeFunction<ffi.Bool Function(ffi.Pointer<pkg_ffi.Utf8>)>>(
+          'isValidXml');
+  late final _isValidXml =
+      _isValidXmlPtr.asFunction<bool Function(ffi.Pointer<pkg_ffi.Utf8>)>();
+
   /// Allocates a new plugin that must be released with [disposePlugin].
   ffi.Pointer<NativePlugin> createPlugin() {
     return _createPlugin();
@@ -91,7 +119,8 @@ class NotificationsPluginBindings {
           ffi.Pointer<pkg_ffi.Utf8>,
           NativeNotificationCallback)>();
 
-  /// Shows the XML as a notification with the given ID. See [updateNotification] for details on bindings.
+  /// Shows the XML as a notification with the given ID. See [updateNotification] for details on
+  /// bindings.
   bool showNotification(
     ffi.Pointer<NativePlugin> plugin,
     int id,
@@ -269,18 +298,6 @@ class NotificationsPluginBindings {
           'freeLaunchDetails');
   late final _freeLaunchDetails =
       _freeLaunchDetailsPtr.asFunction<void Function(NativeLaunchDetails)>();
-
-  /// EXPERIMENTAL: Enables multithreading for this application.
-  ///
-  /// NOTE: This is only to make tests more stable and is not intended to be used in applications.
-  void enableMultithreading() {
-    return _enableMultithreading();
-  }
-
-  late final _enableMultithreadingPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function()>>('enableMultithreading');
-  late final _enableMultithreading =
-      _enableMultithreadingPtr.asFunction<void Function()>();
 }
 
 final class NativePlugin extends ffi.Opaque {}

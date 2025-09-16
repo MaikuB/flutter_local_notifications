@@ -8,17 +8,10 @@ extension ImageToXml on WindowsImage {
   ///
   /// See: https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-image
   void buildXml(XmlBuilder builder) {
-    if (!file.isAbsolute) {
-      throw ArgumentError.value(
-        file.path,
-        'WindowsImage.file',
-        'File path must be absolute',
-      );
-    }
     builder.element(
       'image',
       attributes: <String, String>{
-        'src': Uri.file(file.absolute.path, windows: true).toFilePath(),
+        'src': uri.toString(),
         'alt': altText,
         'addImageQuery': addQueryParams.toString(),
         if (placement != null) 'placement': placement!.name,
