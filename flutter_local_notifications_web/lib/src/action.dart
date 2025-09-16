@@ -1,7 +1,10 @@
 /// The type of action for a web notification.
 ///
-/// Note: This is not standard yet, see: https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification#browser_compatibility
-/// Notably, Firefox and Safari do not support this yet.
+/// This is a non-standard extension of `showNotification()`s `options.actions`
+/// parameter. The proposal can be found [here](https://github.com/whatwg/notifications/pull/132).
+///
+/// Web actions themselves are hardly supported at the time of writing. See
+/// [WebNotificationAction] for more details.
 enum WebNotificationActionType {
   /// This action is a button the user can press.
   button('button'),
@@ -16,6 +19,11 @@ enum WebNotificationActionType {
 }
 
 /// A means for a user to interact with a web notification.
+///
+/// See: [`options.actions`](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification#actions)
+///
+/// Note: This is not standard yet, see: https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification#browser_compatibility
+/// Notably, Firefox and Safari do not support this yet.
 class WebNotificationAction {
   /// A const constructor.
   const WebNotificationAction({
