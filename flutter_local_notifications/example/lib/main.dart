@@ -169,8 +169,9 @@ Future<void> main() async {
 
   if (kIsWeb) {
     hasPermission = flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<WebFlutterLocalNotificationsPlugin>()
-      ?.hasPermission;
+        .resolvePlatformSpecificImplementation<
+            WebFlutterLocalNotificationsPlugin>()
+        ?.hasPermission;
   }
 
   final NotificationAppLaunchDetails? notificationAppLaunchDetails = Platform

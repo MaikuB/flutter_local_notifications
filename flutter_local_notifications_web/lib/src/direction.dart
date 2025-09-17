@@ -12,6 +12,7 @@ enum WebNotificationDirection {
   rightToLeft('rtl');
 
   const WebNotificationDirection(this.jsValue);
+
   /// A string value to pass to JavaScript functions.
   final String jsValue;
 }

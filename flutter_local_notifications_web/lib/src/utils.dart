@@ -24,8 +24,7 @@ extension WebNotificationDetailsUtils on WebNotificationDetails {
   JSArray<JSNumber>? get vibrationPatternMs => vibrationPattern == null
       ? null
       : <JSNumber>[
-          for (final int duration in vibrationPattern!)
-            duration.toJS,
+          for (final int duration in vibrationPattern!) duration.toJS,
         ].toJS;
 }
 
@@ -75,7 +74,6 @@ extension NullableWebNotificationDetailsUtils on WebNotificationDetails? {
       silent: this?.isSilent,
       timestamp: (this?.timestamp ?? DateTime.now()).millisecondsSinceEpoch,
     );
-
 
     final JSArray<JSNumber>? vibration = this?.vibrationPatternMs;
     if (vibration != null) {
