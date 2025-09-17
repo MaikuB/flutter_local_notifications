@@ -24,8 +24,8 @@ extension WebNotificationDetailsUtils on WebNotificationDetails {
   JSArray<JSNumber>? get vibrationPatternMs => vibrationPattern == null
       ? null
       : <JSNumber>[
-          for (final Duration duration in vibrationPattern!)
-            duration.inMilliseconds.toJS,
+          for (final int duration in vibrationPattern!)
+            duration.toJS,
         ].toJS;
 }
 
@@ -56,7 +56,7 @@ extension NullableWebNotificationDetailsUtils on WebNotificationDetails? {
       this?.actions ?? <WebNotificationAction>[];
 
   /// Converts these nullable details to a JS [NotificationOptions] object.
-  NotificationOptions toJs(int id, String? payload) {
+  NotificationOptions toJs(int id, String? body, String? payload) {
     final NotificationOptions options = NotificationOptions(
       data: <String, dynamic>{'payload': payload}.jsify(),
       tag: id.toString(),
@@ -65,7 +65,7 @@ extension NullableWebNotificationDetailsUtils on WebNotificationDetails? {
         for (final WebNotificationAction action in _actions) action.toJs(),
       ].toJS,
       badge: this?.badgeUrl.toString() ?? '',
-      body: this?.body ?? '',
+      body: body ?? '',
       dir: this?.direction.jsValue ?? WebNotificationDirection.auto.jsValue,
       icon: this?.iconUrl.toString() ?? '',
       image: this?.imageUrl.toString() ?? '',
@@ -76,10 +76,12 @@ extension NullableWebNotificationDetailsUtils on WebNotificationDetails? {
       timestamp: (this?.timestamp ?? DateTime.now()).millisecondsSinceEpoch,
     );
 
+
     final JSArray<JSNumber>? vibration = this?.vibrationPatternMs;
     if (vibration != null) {
       options.vibrate = vibration;
     }
+
     return options;
   }
 }

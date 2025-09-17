@@ -11,7 +11,10 @@ class WebFlutterLocalNotificationsPlugin
   }) async =>
       null;
 
-  /// Requests permission to use the plugin.
+  /// Requests notification permission from the browser.
+  ///
+  /// Be sure to only request permissions in response to a user gesture, or it
+  /// may be automatically rejected.
   Future<bool> requestNotificationsPermission() async => false;
 
   @override
@@ -20,4 +23,7 @@ class WebFlutterLocalNotificationsPlugin
   @override
   Future<void> show(int id, String? title, String? body,
       {String? payload, WebNotificationDetails? details}) async {}
+
+  /// Whether the user has granted permission to show notifications.
+  bool get hasPermission => false;
 }

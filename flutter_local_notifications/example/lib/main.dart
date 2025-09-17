@@ -20,6 +20,7 @@ import 'package:universal_platform/universal_platform.dart';
 import 'padded_button.dart';
 import 'plugin.dart';
 import 'repeating.dart' as repeating;
+import 'web.dart' as web;
 import 'windows.dart' as windows;
 
 typedef Platform = UniversalPlatform;
@@ -61,6 +62,8 @@ const String darwinNotificationCategoryText = 'textCategory';
 
 /// Defines a iOS/MacOS notification category for plain actions.
 const String darwinNotificationCategoryPlain = 'plainCategory';
+
+bool? hasPermission;
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
@@ -163,6 +166,12 @@ Future<void> main() async {
     onDidReceiveNotificationResponse: selectNotificationStream.add,
     onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
   );
+
+  if (kIsWeb) {
+    hasPermission = flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<WebFlutterLocalNotificationsPlugin>()
+      ?.hasPermission;
+  }
 
   final NotificationAppLaunchDetails? notificationAppLaunchDetails = Platform
           .isLinux
@@ -1040,6 +1049,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                   if (!kIsWeb && Platform.isWindows) ...windows.examples(),
+                  if (kIsWeb) ...web.examples(hasPermission),
                 ],
               ),
             ),
@@ -1935,6 +1945,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
+    id = 0;
   }
 
   Future<void> _cancelAllPendingNotifications() async {

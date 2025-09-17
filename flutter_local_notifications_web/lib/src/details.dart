@@ -15,7 +15,6 @@ class WebNotificationDetails {
     this.actions = const <WebNotificationAction>[],
     this.direction = WebNotificationDirection.auto,
     this.badgeUrl,
-    this.body,
     this.iconUrl,
     this.lang,
     this.requireInteraction = false,
@@ -35,9 +34,6 @@ class WebNotificationDetails {
   /// An optional URL to a monochrome icon to show next to the title.
   final Uri? badgeUrl;
 
-  /// An optional body text to show in the notification.
-  final String? body;
-
   /// An optional URL to an image to show as the app icon.
   final Uri? iconUrl;
 
@@ -54,6 +50,14 @@ class WebNotificationDetails {
   final bool isSilent;
 
   /// Whether the user should be notified if this notification is replaced.
+  ///
+  /// If this is false, the new notification will replace this one silently. If
+  /// this is true, the device will notify the user any time the notification is
+  /// updated.
+  ///
+  /// For exmaple, when updating a loading notification, you want each update to
+  /// occur silently. But if you have a notification that represents a chat
+  /// thread, you'd want it to update when a new message is sent.
   final bool renotify;
 
   /// The timestamp of the event that caused this notification.
@@ -72,5 +76,8 @@ class WebNotificationDetails {
   /// For examples, see:
   /// - https://developer.mozilla.org/en-US/docs/Web/API/Vibration_API#vibration_patterns
   /// - https://web.dev/articles/push-notifications-display-a-notification#vibrate
-  final List<Duration>? vibrationPattern;
+  ///
+  /// Note: This is not supported on Android as vibration patterns are set by
+  /// the notification channel, not an individual notification.
+  final List<int>? vibrationPattern;
 }

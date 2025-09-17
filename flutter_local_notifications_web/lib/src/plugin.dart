@@ -45,7 +45,7 @@ class WebFlutterLocalNotificationsPlugin
         'FlutterLocalNotifications.show(): You must call initialize() before '
         'calling this method',
       );
-    } else if (Notification.permission != 'granted') {
+    } else if (!hasPermission) {
       throw StateError(
         'FlutterLocalNotifications.show(): You must request notifications '
         'permissions first',
@@ -64,8 +64,8 @@ class WebFlutterLocalNotificationsPlugin
 
     await _registration!
         .showNotification(
-          title ?? 'This is a notification',
-          details.toJs(id, payload),
+          title ?? '',
+          details.toJs(id, body, payload),
         )
         .toDart;
   }
@@ -95,12 +95,19 @@ class WebFlutterLocalNotificationsPlugin
 
   /// Requests notification permission from the browser.
   ///
-  /// It is highly recommended and sometimes required that this be called only
-  /// in response to a user gesture, and not automatically.
+  /// Be sure to only request permissions in response to a user gesture, or it
+  /// may be automatically rejected.
   Future<bool> requestNotificationsPermission() async {
     final JSString result = await Notification.requestPermission().toDart;
     return result.toDart == 'granted';
   }
+
+  /// Whether the user has granted permission to show notifications.
+  ///
+  /// If this is false, you must call [requestNotificationsPermission]. Be sure
+  /// to only request permissions in response to a user gesture, or it may be
+  /// automatically rejected.
+  bool get hasPermission => Notification.permission == 'granted';
 
   @override
   Future<NotificationAppLaunchDetails?>
