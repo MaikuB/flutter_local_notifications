@@ -1,22 +1,60 @@
 # flutter_local_notifications_web
 
-A new Flutter plugin project.
+The web implementation of the `flutter_local_notifications` package.
 
 ## Notes
 
-Only works with `-d web-server`
+- If you are debugging with `flutter run -d chrome`, you will see notifications but they will not respond to being clicked! This is due to the private debugging window that Flutter opens, and they will respond properly in release builds. To test notification handlers, make sure to use `flutter run -d web-server`. If you find that hot reload is broken with `-d web-server`, try to test as much as possible with `-d chrome`.
+- **You must request notification permissions before showing notifications -- but only in response to a user interaction.** If you try to request perimssions automatically, like on loading a page, not only may your request be automatically denied, but the browser may deem your site as abusive and no longer show any more prompts to the user, and just block everything going forward.
+- Notification actions are supported by Chrome and Edge, but not Firefox or Safari. They may catch up soon, but text input fields use a standards _proposal_, not an accepted standard, and so may only work on Chrome for a while.
+- Notifications with custom vibration are unsupported on Android browsers.
+- Scheduled / periodic notifications are unsupported.
 
-## Getting Started
+## Using the plugin
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/to/develop-plugins),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+### Initialize the plugin
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```dart
+final plugin = FlutterLocalNotificationsPlugin();
+await plugin.initialize();
 
-The plugin project was generated without specifying the `--platforms` flag, no platforms are currently supported.
-To add platforms, run `flutter create -t plugin --platforms <platforms> .` in this directory.
-You can also find a detailed instruction on how to add platforms in the `pubspec.yaml` at https://flutter.dev/to/pubspec-plugin-platforms.
+if (!plugin.hasPermission) {
+  // IMPORTANT: Only call this after a button press!
+  await plugin.requestNotificationsPermission();
+}
+```
+
+### Show a notification
+
+```dart
+var id = 0;  // increment this every time you show a notification
+await plugin.show(id, "Title", "Body text", null);
+```
+
+### Use web-specific details
+```dart
+final webDetails = WebNotificationDetails(requireInteraction: true);
+final details = NotificationDetails(web: webDetails);
+await plugin.show(id, "Title", "Body text", details);
+```
+
+### Respond to notifications
+```dart
+// Handle incoming notifications when your site is open
+void handleNotification(NotificationResponse notification) {
+  print("User clicked on notification: ${notification.id}");
+}
+
+final plugin = FlutterLocalNotificationsPlugin();
+await plugin.initialize(onNotificationReceived: handleNotification);
+
+// When your site is closed, clicking the notification will launch your site
+//  with special query parameters that include the notification details.
+// When your site is opened, check if it was because of a notification:
+final launchDetails = await plugin.getNotificationAppLaunchDetails();
+if (launchDetails != null) {
+  // The site was launched because a notification was clicked
+  final notification = launchDetails.notificationResponse;
+  print("User clicked on notification: ${notification.id}")
+}
+```

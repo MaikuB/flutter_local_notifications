@@ -82,7 +82,6 @@ class WebFlutterLocalNotificationsPlugin
     // See: https://github.com/flutter/flutter/issues/145828
     final ServiceWorkerContainer serviceWorker = window.navigator.serviceWorker;
     _registration = await serviceWorker.getRegistration().toDart;
-    await _registration?.unregister().toDart;
     const String jsPath =
         './assets/packages/flutter_local_notifications_web/web/notifications_service_worker.js';
     _registration = await serviceWorker.register(jsPath.toJS).toDart;
