@@ -169,8 +169,8 @@ The `onDidReceiveNotificationResponse` callback runs on the main isolate of the 
 ### Web limitations
 
 - If you are debugging with `flutter run -d chrome`, you will see notifications but they will not respond to being clicked! This is due to the private debugging window that Flutter opens, and they will respond properly in release builds. To test notification handlers, make sure to use `flutter run -d web-server`. If you find that hot reload is broken with `-d web-server`, try to test as much as possible with `-d chrome`.
-- ***\*****You must request notification permissions before showing notifications -- but only in response to a user interaction.*****\*** If you try to request permissions automatically, like on loading a page, not only may your request be automatically denied, but the browser may deem your site as abusive and no longer show any more prompts to the user, and just block everything going forward.
-- Notification actions are supported by Chrome and Edge, but not Firefox or Safari. They may catch up soon, but text input fields use a standards *_**proposal**_*, not an accepted standard, and so may only work on Chrome for a while.
+- **You must request notification permissions before showing notifications -- but only in response to a user interaction.** If you try to request permissions automatically, like on loading a page, not only may your request be automatically denied, but the browser may deem your site as abusive and no longer show any more prompts to the user, and just block everything going forward.
+- Notification actions are supported by Chrome and Edge, but not Firefox or Safari. They may catch up soon, but text input fields use a standards _proposal_, not an accepted standard, and so may only work on Chrome for a while.
 
 - Browsers don't support scheduled or repeating notifications, and browsers on Android do not support custom vibration.
 
@@ -187,7 +187,7 @@ Due to some limitations on iOS with how it treats null values in dictionaries, a
 | macOS    | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/macos_notification.png"> |
 | Linux    | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/gnome_linux_notification.png"> <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/kde_linux_notification.png"> |
 | Windows  | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/windows_notification.png"> |
-| Web      | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/web_notification.png"> |
+| Web      | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/web_notifications.png"> |
 
 
 ## 👏 Acknowledgements
