@@ -4,6 +4,7 @@ packages:
   - flutter_local_notifications
   - flutter_local_notifications_linux
   - flutter_local_notifications_windows
+  - flutter_local_notifications_web
   - flutter_local_notifications_platform_interface
   - flutter_local_notifications/example/
 
@@ -87,6 +88,15 @@ scripts:
     packageFilters:
       dirExists:
         - windows
+      scope: "*example*"
+  build:example_web:
+    run: |
+      melos exec -c 1 -- \
+        "flutter build web"
+    description: Build a specific example app for Web.
+    packageFilters:
+      dirExists:
+        - web
       scope: "*example*"
 
   clean:

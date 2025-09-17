@@ -231,6 +231,52 @@ jobs:
           cd f\e
           dart pub get
           dart run msix:create
+  build_example_web_stable:
+    name: Build Web example app (stable channel)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - name: Install Tools
+        run: |
+          dart pub global activate melos
+          melos bootstrap
+      # Windows has a filename length limit, which this repo just hits
+      # This saves us precious characters during the compilation
+      - name: Rename directory
+        run: |
+          move flutter_local_notifications f
+          move f\example f\e
+      - name: Build
+        run: |
+          cd fflutter_local_notifications/example
+          dart pub get
+          flutter build web
+  build_example_web_3_22:
+    name: Build Web example app (3.22)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.22.0
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+      - name: Install Tools
+        run: |
+          dart pub global activate melos
+          melos bootstrap
+          move f\example f\e
+      - name: Build
+        run: |
+          cd fflutter_local_notifications/example
+          dart pub get
+          flutter build web
   unit_tests_dart:
     name: Run all unit tests except for Windows (Dart)
     runs-on: ubuntu-latest
