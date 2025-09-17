@@ -17,6 +17,7 @@ class NotificationDetails {
     this.web,
   });
 
+  /// Notification details for web.
   final WebNotificationDetails? web;
 
   /// Notification details for Android.
