@@ -18,7 +18,7 @@ import 'utils.dart';
 /// This is the object sent by the service worker via [Client.postMessage].
 extension type JSNotificationData(JSObject _) implements JSObject {
   /// A string rperesenting the [NotificationAction.action], if any.
-  external String action;
+  external String? action;
 
   /// A string representing the [Notification.tag];
   external String id;
@@ -31,7 +31,7 @@ extension type JSNotificationData(JSObject _) implements JSObject {
 
   /// The [NotificationResponse] that corresponds to this object.
   NotificationResponse get response {
-    final NotificationResponseType type = action.isEmpty
+    final NotificationResponseType type = (action?.isEmpty ?? true)
         ? NotificationResponseType.selectedNotification
         : NotificationResponseType.selectedNotificationAction;
 
@@ -39,7 +39,7 @@ extension type JSNotificationData(JSObject _) implements JSObject {
       id: int.parse(id),
       input: reply?.nullIfEmpty,
       payload: payload?.nullIfEmpty,
-      actionId: action.nullIfEmpty,
+      actionId: action?.nullIfEmpty,
       notificationResponseType: type,
     );
   }
