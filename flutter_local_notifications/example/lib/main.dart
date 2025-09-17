@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' hide Platform;
 // ignore: unnecessary_import
 import 'dart:typed_data';
 
@@ -15,11 +15,16 @@ import 'package:image/image.dart' as image;
 import 'package:path_provider/path_provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:universal_platform/universal_platform.dart';
 
 import 'padded_button.dart';
 import 'plugin.dart';
 import 'repeating.dart' as repeating;
+import 'web_stub.dart' if (dart.library.js_interop) 'web.dart';
+
 import 'windows.dart' as windows;
+
+typedef Platform = UniversalPlatform;
 
 /// Streams are created so that app can respond to notification-related events
 /// since the plugin is initialized in the `main` function
@@ -47,8 +52,6 @@ class ReceivedNotification {
   final Map<String, dynamic>? data;
 }
 
-String? selectedNotificationPayload;
-
 /// A notification action which triggers a url launch event
 const String urlLaunchActionId = 'id_1';
 
@@ -60,6 +63,8 @@ const String darwinNotificationCategoryText = 'textCategory';
 
 /// Defines a iOS/MacOS notification category for plain actions.
 const String darwinNotificationCategoryPlain = 'plainCategory';
+
+bool? hasPermission;
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
@@ -163,14 +168,21 @@ Future<void> main() async {
     onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
   );
 
-  final NotificationAppLaunchDetails? notificationAppLaunchDetails = !kIsWeb &&
-          Platform.isLinux
+  if (kIsWeb) {
+    hasPermission = flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            WebFlutterLocalNotificationsPlugin>()
+        ?.hasPermission;
+  }
+
+  final NotificationAppLaunchDetails? notificationAppLaunchDetails = Platform
+          .isLinux
       ? null
       : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   String initialRoute = HomePage.routeName;
+  NotificationResponse? initialNotification;
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
-    selectedNotificationPayload =
-        notificationAppLaunchDetails!.notificationResponse?.payload;
+    initialNotification = notificationAppLaunchDetails!.notificationResponse;
     initialRoute = SecondPage.routeName;
   }
 
@@ -179,7 +191,9 @@ Future<void> main() async {
       initialRoute: initialRoute,
       routes: <String, WidgetBuilder>{
         HomePage.routeName: (_) => HomePage(notificationAppLaunchDetails),
-        SecondPage.routeName: (_) => SecondPage(selectedNotificationPayload)
+        SecondPage.routeName: (_) => SecondPage.withResponse(
+              initialNotification,
+            )
       },
     ),
   );
@@ -270,6 +284,11 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         _notificationsEnabled = grantedNotificationPermission ?? false;
       });
+    } else if (kIsWeb) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              WebFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission();
     }
   }
 
@@ -307,8 +326,7 @@ class _HomePageState extends State<HomePage> {
     selectNotificationStream.stream
         .listen((NotificationResponse? response) async {
       await Navigator.of(context).push(MaterialPageRoute<void>(
-        builder: (BuildContext context) =>
-            SecondPage(response?.payload, data: response?.data),
+        builder: (BuildContext context) => SecondPage.withResponse(response),
       ));
     });
   }
@@ -381,13 +399,14 @@ class _HomePageState extends State<HomePage> {
                       await _showNotificationWithNoBody();
                     },
                   ),
-                  PaddedElevatedButton(
-                    buttonText: 'Show notification with custom sound',
-                    onPressed: () async {
-                      await _showNotificationCustomSound();
-                    },
-                  ),
-                  if (kIsWeb || !Platform.isLinux) ...<Widget>[
+                  if (Platform.isAndroid)
+                    PaddedElevatedButton(
+                      buttonText: 'Show notification with custom sound',
+                      onPressed: () async {
+                        await _showNotificationCustomSound();
+                      },
+                    ),
+                  if (!kIsWeb && !Platform.isLinux) ...<Widget>[
                     PaddedElevatedButton(
                       buttonText:
                           'Schedule notification to appear in 5 seconds '
@@ -410,26 +429,28 @@ class _HomePageState extends State<HomePage> {
                         await _checkPendingNotificationRequests();
                       },
                     ),
+                  ],
+                  if (!Platform.isLinux)
                     PaddedElevatedButton(
                       buttonText: 'Get active notifications',
                       onPressed: () async {
                         await _getActiveNotifications();
                       },
                     ),
-                  ],
                   PaddedElevatedButton(
                     buttonText: 'Show notification from silent channel',
                     onPressed: () async {
                       await _showNotificationWithNoSound();
                     },
                   ),
-                  PaddedElevatedButton(
-                    buttonText:
-                        'Show silent notification from channel with sound',
-                    onPressed: () async {
-                      await _showNotificationSilently();
-                    },
-                  ),
+                  if (!kIsWeb)
+                    PaddedElevatedButton(
+                      buttonText:
+                          'Show silent notification from channel with sound',
+                      onPressed: () async {
+                        await _showNotificationSilently();
+                      },
+                    ),
                   PaddedElevatedButton(
                     buttonText: 'Cancel latest notification',
                     onPressed: () async {
@@ -449,7 +470,8 @@ class _HomePageState extends State<HomePage> {
                         await _cancelAllPendingNotifications();
                       },
                     ),
-                  if (!Platform.isWindows) ...repeating.examples(context),
+                  if (!Platform.isWindows && !kIsWeb)
+                    ...repeating.examples(context),
                   const Divider(),
                   const Text(
                     'Notifications with actions',
@@ -476,7 +498,7 @@ class _HomePageState extends State<HomePage> {
                         await _showNotificationWithTextAction();
                       },
                     ),
-                  if (!Platform.isLinux)
+                  if (!Platform.isLinux && !kIsWeb)
                     PaddedElevatedButton(
                       buttonText: 'Show notification with text choice',
                       onPressed: () async {
@@ -1029,6 +1051,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                   if (!kIsWeb && Platform.isWindows) ...windows.examples(),
+                  if (kIsWeb) ...webExamples(hasPermission),
                 ],
               ),
             ),
@@ -1110,24 +1133,35 @@ class _HomePageState extends State<HomePage> {
       ],
     );
 
-    final WindowsNotificationDetails windowsNotificationsDetails =
-        WindowsNotificationDetails(
-      subtitle: 'Click the three dots for another button',
-      actions: <WindowsAction>[
-        const WindowsAction(
-          content: 'Text',
-          arguments: 'text',
-        ),
-        WindowsAction(
-          content: 'Image',
-          arguments: 'image',
-          imageUri: WindowsImage.getAssetUri('icons/coworker.png'),
-        ),
-        const WindowsAction(
-          content: 'Context',
-          arguments: 'context',
-          placement: WindowsActionPlacement.contextMenu,
-        ),
+    final WindowsNotificationDetails? windowsNotificationsDetails = kIsWeb
+        ? null
+        : WindowsNotificationDetails(
+            subtitle: 'Click the three dots for another button',
+            actions: <WindowsAction>[
+              const WindowsAction(
+                content: 'Text',
+                arguments: 'text',
+              ),
+              WindowsAction(
+                content: 'Image',
+                arguments: 'image',
+                imageUri: WindowsImage.getAssetUri('icons/coworker.png'),
+              ),
+              const WindowsAction(
+                content: 'Context',
+                arguments: 'context',
+                placement: WindowsActionPlacement.contextMenu,
+              ),
+            ],
+          );
+
+    final WebNotificationDetails webDetails = WebNotificationDetails(
+      actions: <WebNotificationAction>[
+        const WebNotificationAction(action: 'Text', title: 'text'),
+        WebNotificationAction(
+            action: 'Image',
+            title: 'image',
+            icon: Uri.parse('https://picsum.photos/200')),
       ],
     );
 
@@ -1137,6 +1171,7 @@ class _HomePageState extends State<HomePage> {
       macOS: macOSNotificationDetails,
       linux: linuxNotificationDetails,
       windows: windowsNotificationsDetails,
+      web: webDetails,
     );
     await flutterLocalNotificationsPlugin.show(
         id++, 'plain title', 'plain body', notificationDetails,
@@ -1184,11 +1219,21 @@ class _HomePageState extends State<HomePage> {
       ],
     );
 
+    const WebNotificationDetails webDetails = WebNotificationDetails(
+      actions: <WebNotificationAction>[
+        WebNotificationAction(
+            action: 'text',
+            title: 'Send a reply',
+            type: WebNotificationActionType.textInput),
+      ],
+    );
+
     const NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
       iOS: darwinNotificationDetails,
       macOS: darwinNotificationDetails,
       windows: windowsNotificationDetails,
+      web: webDetails,
     );
 
     await flutterLocalNotificationsPlugin.show(id++, 'Text Input Notification',
@@ -1479,11 +1524,14 @@ class _HomePageState extends State<HomePage> {
     );
     final WindowsNotificationDetails windowsDetails =
         WindowsNotificationDetails(audio: WindowsNotificationAudio.silent());
+    const WebNotificationDetails webDetails =
+        WebNotificationDetails(isSilent: true);
     final NotificationDetails notificationDetails = NotificationDetails(
         windows: windowsDetails,
         android: androidNotificationDetails,
         iOS: darwinNotificationDetails,
-        macOS: darwinNotificationDetails);
+        macOS: darwinNotificationDetails,
+        web: webDetails);
     await flutterLocalNotificationsPlugin.show(
         id++, '<b>silent</b> title', '<b>silent</b> body', notificationDetails);
   }
@@ -1899,6 +1947,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
+    id = 0;
   }
 
   Future<void> _cancelAllPendingNotifications() async {
@@ -3053,32 +3102,17 @@ Future<LinuxServerCapabilities> getLinuxCapabilities() =>
         .getCapabilities();
 
 class SecondPage extends StatefulWidget {
-  const SecondPage(
-    this.payload, {
-    this.data,
-    Key? key,
-  }) : super(key: key);
+  const SecondPage.withResponse(this.response, {Key? key}) : super(key: key);
 
   static const String routeName = '/secondPage';
 
-  final String? payload;
-  final Map<String, dynamic>? data;
+  final NotificationResponse? response;
 
   @override
   State<StatefulWidget> createState() => SecondPageState();
 }
 
 class SecondPageState extends State<SecondPage> {
-  String? _payload;
-  Map<String, dynamic>? _data;
-
-  @override
-  void initState() {
-    super.initState();
-    _payload = widget.payload;
-    _data = widget.data;
-  }
-
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -3088,8 +3122,11 @@ class SecondPageState extends State<SecondPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text('payload ${_payload ?? ''}'),
-              Text('data ${_data ?? ''}'),
+              Text('Notification ID: ${widget.response?.id}'),
+              Text('Payload: ${widget.response?.payload}'),
+              Text('Action ID: ${widget.response?.actionId}'),
+              Text('Input: ${widget.response?.input}'),
+              Text('Data (Windows only): ${widget.response?.data}'),
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
