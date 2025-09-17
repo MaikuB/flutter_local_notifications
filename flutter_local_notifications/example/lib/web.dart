@@ -6,7 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'padded_button.dart';
 import 'plugin.dart';
 
-List<Widget> examples(bool? hasPermission) => <Widget>[
+List<Widget> webExamples(bool? hasPermission) => <Widget>[
       const Text(
         'Windows-specific examples',
         style: TextStyle(fontWeight: FontWeight.bold),

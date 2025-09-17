@@ -20,7 +20,7 @@ import 'package:universal_platform/universal_platform.dart';
 import 'padded_button.dart';
 import 'plugin.dart';
 import 'repeating.dart' as repeating;
-import 'web_stub.dart' as web
+import 'web_stub.dart'
   if (dart.library.js_interop) 'web.dart';
 
 import 'windows.dart' as windows;
@@ -1052,7 +1052,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                   if (!kIsWeb && Platform.isWindows) ...windows.examples(),
-                  if (kIsWeb) ...web.examples(hasPermission),
+                  if (kIsWeb) ...webExamples(hasPermission),
                 ],
               ),
             ),
