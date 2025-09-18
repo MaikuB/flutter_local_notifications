@@ -6,6 +6,7 @@ import android.os.Build.VERSION_CODES;
 
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
+import android.util.Log;
 
 import com.dexterous.flutterlocalnotifications.models.styles.BigPictureStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInformation;
@@ -15,6 +16,8 @@ import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInfor
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 import com.dexterous.flutterlocalnotifications.utils.LongUtils;
 import com.google.gson.annotations.SerializedName;
+import com.dexterous.flutterlocalnotifications.models.TitleStyle;
+import com.dexterous.flutterlocalnotifications.models.DescriptionStyle;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -117,8 +120,7 @@ public class NotificationDetails implements Serializable {
 
   private static final String SCHEDULED_DATE_TIME = "scheduledDateTime";
   private static final String TIME_ZONE_NAME = "timeZoneName";
-  private static final String SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY =
-      "scheduledNotificationRepeatFrequency";
+  private static final String SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY = "scheduledNotificationRepeatFrequency";
   private static final String MATCH_DATE_TIME_COMPONENTS = "matchDateTimeComponents";
 
   private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
@@ -128,6 +130,8 @@ public class NotificationDetails implements Serializable {
   private static final String COLORIZED = "colorized";
   private static final String NUMBER = "number";
   private static final String AUDIO_ATTRIBUTES_USAGE = "audioAttributesUsage";
+  private static final String TITLE_STYLE = "titleStyle";
+  private static final String DESCRIPTION_STYLE = "descriptionStyle";
 
   public Integer id;
   public String title;
@@ -198,8 +202,11 @@ public class NotificationDetails implements Serializable {
   public Boolean colorized;
   public Integer number;
   public Integer audioAttributesUsage;
+  public TitleStyle titleStyle;
+  public DescriptionStyle descriptionStyle;
 
-  // Note: this is set on the Android to save details about the icon that should be used when
+  // Note: this is set on the Android to save details about the icon that should
+  // be used when
   // re-hydrating scheduled notifications when a device has been restarted.
   public Integer iconResourceId;
 
@@ -212,13 +219,12 @@ public class NotificationDetails implements Serializable {
     notificationDetails.scheduledDateTime = (String) arguments.get(SCHEDULED_DATE_TIME);
     notificationDetails.timeZoneName = (String) arguments.get(TIME_ZONE_NAME);
     if (arguments.containsKey(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)) {
-      notificationDetails.scheduledNotificationRepeatFrequency =
-          ScheduledNotificationRepeatFrequency.values()[
-              (Integer) arguments.get(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)];
+      notificationDetails.scheduledNotificationRepeatFrequency = ScheduledNotificationRepeatFrequency
+          .values()[(Integer) arguments.get(SCHEDULED_NOTIFICATION_REPEAT_FREQUENCY)];
     }
     if (arguments.containsKey(MATCH_DATE_TIME_COMPONENTS)) {
-      notificationDetails.matchDateTimeComponents =
-          DateTimeComponents.values()[(Integer) arguments.get(MATCH_DATE_TIME_COMPONENTS)];
+      notificationDetails.matchDateTimeComponents = DateTimeComponents
+          .values()[(Integer) arguments.get(MATCH_DATE_TIME_COMPONENTS)];
     }
     if (arguments.containsKey(MILLISECONDS_SINCE_EPOCH)) {
       notificationDetails.millisecondsSinceEpoch = (Long) arguments.get(MILLISECONDS_SINCE_EPOCH);
@@ -227,12 +233,10 @@ public class NotificationDetails implements Serializable {
       notificationDetails.calledAt = (Long) arguments.get(CALLED_AT);
     }
     if (arguments.containsKey(REPEAT_INTERVAL)) {
-      notificationDetails.repeatInterval =
-          RepeatInterval.values()[(Integer) arguments.get(REPEAT_INTERVAL)];
+      notificationDetails.repeatInterval = RepeatInterval.values()[(Integer) arguments.get(REPEAT_INTERVAL)];
     }
     if (arguments.containsKey(REPEAT_INTERVAL_MILLISECONDS)) {
-      notificationDetails.repeatIntervalMilliseconds =
-          (Integer) arguments.get(REPEAT_INTERVAL_MILLISECONDS);
+      notificationDetails.repeatIntervalMilliseconds = (Integer) arguments.get(REPEAT_INTERVAL_MILLISECONDS);
     }
     if (arguments.containsKey(REPEAT_TIME)) {
       @SuppressWarnings("unchecked")
@@ -250,30 +254,68 @@ public class NotificationDetails implements Serializable {
   private static void readPlatformSpecifics(
       Map<String, Object> arguments, NotificationDetails notificationDetails) {
     @SuppressWarnings("unchecked")
-    Map<String, Object> platformChannelSpecifics =
-        (Map<String, Object>) arguments.get(PLATFORM_SPECIFICS);
+    Map<String, Object> platformChannelSpecifics = (Map<String, Object>) arguments.get(PLATFORM_SPECIFICS);
     if (platformChannelSpecifics != null) {
+      Object rawTitle = platformChannelSpecifics.get(TITLE_STYLE);
+      if (rawTitle instanceof Map) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> m = (Map<String, Object>) rawTitle;
+        TitleStyle ts = new TitleStyle();
+        Object c = m.get("color");
+        Object s = m.get("sizeSp");
+        Object b = m.get("bold");
+        Object i = m.get("italic");
+        Object p = m.get("iconSpacingDp");
+        if (c instanceof Number)
+          ts.color = ((Number) c).intValue();
+        if (s instanceof Number)
+          ts.sizeSp = ((Number) s).doubleValue();
+        if (b instanceof Boolean)
+          ts.bold = (Boolean) b;
+        if (i instanceof Boolean)
+          ts.italic = (Boolean) i;
+        if (p instanceof Number){
+          ts.iconSpacingDp = ((Number) p).doubleValue();
+        } else {
+          ts.iconSpacingDp = 0d;
+        }
+        notificationDetails.titleStyle = ts;
+      }
+      Object rawDesc = platformChannelSpecifics.get(DESCRIPTION_STYLE);
+      if (rawDesc instanceof Map) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> m = (Map<String, Object>) rawDesc;
+        DescriptionStyle ds = new DescriptionStyle();
+        Object c = m.get("color");
+        Object s = m.get("sizeSp");
+        Object b = m.get("bold");
+        Object i = m.get("italic");
+        if (c instanceof Number)
+          ds.color = ((Number) c).intValue();
+        if (s instanceof Number)
+          ds.sizeSp = ((Number) s).doubleValue();
+        if (b instanceof Boolean)
+          ds.bold = (Boolean) b;
+        if (i instanceof Boolean)
+          ds.italic = (Boolean) i;
+        notificationDetails.descriptionStyle = ds;
+      }
       notificationDetails.autoCancel = (Boolean) platformChannelSpecifics.get(AUTO_CANCEL);
       notificationDetails.ongoing = (Boolean) platformChannelSpecifics.get(ONGOING);
       notificationDetails.silent = (Boolean) platformChannelSpecifics.get(SILENT);
-      notificationDetails.style =
-          NotificationStyle.values()[(Integer) platformChannelSpecifics.get(STYLE)];
+      notificationDetails.style = NotificationStyle.values()[(Integer) platformChannelSpecifics.get(STYLE)];
       readStyleInformation(notificationDetails, platformChannelSpecifics);
       notificationDetails.icon = (String) platformChannelSpecifics.get(ICON);
       notificationDetails.priority = (Integer) platformChannelSpecifics.get(PRIORITY);
       readSoundInformation(notificationDetails, platformChannelSpecifics);
-      notificationDetails.enableVibration =
-          (Boolean) platformChannelSpecifics.get(ENABLE_VIBRATION);
-      notificationDetails.vibrationPattern =
-          (long[]) platformChannelSpecifics.get(VIBRATION_PATTERN);
+      notificationDetails.enableVibration = (Boolean) platformChannelSpecifics.get(ENABLE_VIBRATION);
+      notificationDetails.vibrationPattern = (long[]) platformChannelSpecifics.get(VIBRATION_PATTERN);
       readGroupingInformation(notificationDetails, platformChannelSpecifics);
       notificationDetails.onlyAlertOnce = (Boolean) platformChannelSpecifics.get(ONLY_ALERT_ONCE);
       notificationDetails.showWhen = (Boolean) platformChannelSpecifics.get(SHOW_WHEN);
       notificationDetails.when = LongUtils.parseLong(platformChannelSpecifics.get(WHEN));
-      notificationDetails.usesChronometer =
-          (Boolean) platformChannelSpecifics.get(USES_CHRONOMETER);
-      notificationDetails.chronometerCountDown =
-          (Boolean) platformChannelSpecifics.get(CHRONOMETER_COUNT_DOWN);
+      notificationDetails.usesChronometer = (Boolean) platformChannelSpecifics.get(USES_CHRONOMETER);
+      notificationDetails.chronometerCountDown = (Boolean) platformChannelSpecifics.get(CHRONOMETER_COUNT_DOWN);
       readProgressInformation(notificationDetails, platformChannelSpecifics);
       readColor(notificationDetails, platformChannelSpecifics);
       readChannelInformation(notificationDetails, platformChannelSpecifics);
@@ -282,27 +324,22 @@ public class NotificationDetails implements Serializable {
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
       if (platformChannelSpecifics.containsKey(SCHEDULE_MODE)) {
-        notificationDetails.scheduleMode =
-            ScheduleMode.valueOf((String) platformChannelSpecifics.get(SCHEDULE_MODE));
+        notificationDetails.scheduleMode = ScheduleMode.valueOf((String) platformChannelSpecifics.get(SCHEDULE_MODE));
       }
-      notificationDetails.timeoutAfter =
-          LongUtils.parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
+      notificationDetails.timeoutAfter = LongUtils.parseLong(platformChannelSpecifics.get(TIMEOUT_AFTER));
       notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
-      notificationDetails.fullScreenIntent =
-          (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
+      notificationDetails.fullScreenIntent = (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
       notificationDetails.shortcutId = (String) platformChannelSpecifics.get(SHORTCUT_ID);
       notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
       notificationDetails.subText = (String) platformChannelSpecifics.get(SUB_TEXT);
       notificationDetails.tag = (String) platformChannelSpecifics.get(TAG);
       notificationDetails.colorized = (Boolean) platformChannelSpecifics.get(COLORIZED);
       notificationDetails.number = (Integer) platformChannelSpecifics.get(NUMBER);
-      notificationDetails.audioAttributesUsage =
-          (Integer) platformChannelSpecifics.get(AUDIO_ATTRIBUTES_USAGE);
+      notificationDetails.audioAttributesUsage = (Integer) platformChannelSpecifics.get(AUDIO_ATTRIBUTES_USAGE);
 
       if (platformChannelSpecifics.containsKey(ACTIONS)) {
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> inputActions =
-            (List<Map<String, Object>>) platformChannelSpecifics.get(ACTIONS);
+        List<Map<String, Object>> inputActions = (List<Map<String, Object>>) platformChannelSpecifics.get(ACTIONS);
         if (inputActions != null && !inputActions.isEmpty()) {
           notificationDetails.actions = new ArrayList<>();
           for (Map<String, Object> input : inputActions) {
@@ -344,10 +381,8 @@ public class NotificationDetails implements Serializable {
   private static void readGroupingInformation(
       NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
     notificationDetails.groupKey = (String) platformChannelSpecifics.get(GROUP_KEY);
-    notificationDetails.setAsGroupSummary =
-        (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
-    notificationDetails.groupAlertBehavior =
-        (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
+    notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
+    notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);
   }
 
   private static void readSoundInformation(
@@ -390,24 +425,19 @@ public class NotificationDetails implements Serializable {
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
       notificationDetails.channelId = (String) platformChannelSpecifics.get(CHANNEL_ID);
       notificationDetails.channelName = (String) platformChannelSpecifics.get(CHANNEL_NAME);
-      notificationDetails.channelDescription =
-          (String) platformChannelSpecifics.get(CHANNEL_DESCRIPTION);
+      notificationDetails.channelDescription = (String) platformChannelSpecifics.get(CHANNEL_DESCRIPTION);
       notificationDetails.importance = (Integer) platformChannelSpecifics.get(IMPORTANCE);
-      notificationDetails.channelBypassDnd =
-          (Boolean) platformChannelSpecifics.get(CHANNEL_BYPASS_DND);
-      notificationDetails.channelShowBadge =
-          (Boolean) platformChannelSpecifics.get(CHANNEL_SHOW_BADGE);
-      notificationDetails.channelAction =
-          NotificationChannelAction.values()[
-              (Integer) platformChannelSpecifics.get(CHANNEL_ACTION)];
+      notificationDetails.channelBypassDnd = (Boolean) platformChannelSpecifics.get(CHANNEL_BYPASS_DND);
+      notificationDetails.channelShowBadge = (Boolean) platformChannelSpecifics.get(CHANNEL_SHOW_BADGE);
+      notificationDetails.channelAction = NotificationChannelAction
+          .values()[(Integer) platformChannelSpecifics.get(CHANNEL_ACTION)];
     }
   }
 
   @SuppressWarnings("unchecked")
   private static void readStyleInformation(
       NotificationDetails notificationDetails, Map<String, Object> platformSpecifics) {
-    Map<String, Object> styleInformation =
-        (Map<String, Object>) platformSpecifics.get(STYLE_INFORMATION);
+    Map<String, Object> styleInformation = (Map<String, Object>) platformSpecifics.get(STYLE_INFORMATION);
     DefaultStyleInformation defaultStyleInformation = getDefaultStyleInformation(styleInformation);
     if (notificationDetails.style == NotificationStyle.Default) {
       notificationDetails.styleInformation = defaultStyleInformation;
@@ -433,16 +463,14 @@ public class NotificationDetails implements Serializable {
     String conversationTitle = (String) styleInformation.get(CONVERSATION_TITLE);
     Boolean groupConversation = (Boolean) styleInformation.get(GROUP_CONVERSATION);
     PersonDetails person = readPersonDetails((Map<String, Object>) styleInformation.get(PERSON));
-    ArrayList<MessageDetails> messages =
-        readMessages((ArrayList<Map<String, Object>>) styleInformation.get(MESSAGES));
-    notificationDetails.styleInformation =
-        new MessagingStyleInformation(
-            person,
-            conversationTitle,
-            groupConversation,
-            messages,
-            defaultStyleInformation.htmlFormatTitle,
-            defaultStyleInformation.htmlFormatBody);
+    ArrayList<MessageDetails> messages = readMessages((ArrayList<Map<String, Object>>) styleInformation.get(MESSAGES));
+    notificationDetails.styleInformation = new MessagingStyleInformation(
+        person,
+        conversationTitle,
+        groupConversation,
+        messages,
+        defaultStyleInformation.htmlFormatTitle,
+        defaultStyleInformation.htmlFormatBody);
   }
 
   private static PersonDetails readPersonDetails(Map<String, Object> person) {
@@ -488,16 +516,15 @@ public class NotificationDetails implements Serializable {
     @SuppressWarnings("unchecked")
     ArrayList<String> lines = (ArrayList<String>) styleInformation.get(LINES);
     Boolean htmlFormatLines = (Boolean) styleInformation.get(HTML_FORMAT_LINES);
-    notificationDetails.styleInformation =
-        new InboxStyleInformation(
-            defaultStyleInformation.htmlFormatTitle,
-            defaultStyleInformation.htmlFormatBody,
-            contentTitle,
-            htmlFormatContentTitle,
-            summaryText,
-            htmlFormatSummaryText,
-            lines,
-            htmlFormatLines);
+    notificationDetails.styleInformation = new InboxStyleInformation(
+        defaultStyleInformation.htmlFormatTitle,
+        defaultStyleInformation.htmlFormatBody,
+        contentTitle,
+        htmlFormatContentTitle,
+        summaryText,
+        htmlFormatSummaryText,
+        lines,
+        htmlFormatLines);
   }
 
   private static void readBigTextStyleInformation(
@@ -510,16 +537,15 @@ public class NotificationDetails implements Serializable {
     Boolean htmlFormatContentTitle = (Boolean) styleInformation.get(HTML_FORMAT_CONTENT_TITLE);
     String summaryText = (String) styleInformation.get(SUMMARY_TEXT);
     Boolean htmlFormatSummaryText = (Boolean) styleInformation.get(HTML_FORMAT_SUMMARY_TEXT);
-    notificationDetails.styleInformation =
-        new BigTextStyleInformation(
-            defaultStyleInformation.htmlFormatTitle,
-            defaultStyleInformation.htmlFormatBody,
-            bigText,
-            htmlFormatBigText,
-            contentTitle,
-            htmlFormatContentTitle,
-            summaryText,
-            htmlFormatSummaryText);
+    notificationDetails.styleInformation = new BigTextStyleInformation(
+        defaultStyleInformation.htmlFormatTitle,
+        defaultStyleInformation.htmlFormatBody,
+        bigText,
+        htmlFormatBigText,
+        contentTitle,
+        htmlFormatContentTitle,
+        summaryText,
+        htmlFormatSummaryText);
   }
 
   private static void readBigPictureStyleInformation(
@@ -533,28 +559,25 @@ public class NotificationDetails implements Serializable {
     Object largeIcon = styleInformation.get(LARGE_ICON);
     BitmapSource largeIconBitmapSource = null;
     if (styleInformation.containsKey(LARGE_ICON_BITMAP_SOURCE)) {
-      Integer largeIconBitmapSourceArgument =
-          (Integer) styleInformation.get(LARGE_ICON_BITMAP_SOURCE);
+      Integer largeIconBitmapSourceArgument = (Integer) styleInformation.get(LARGE_ICON_BITMAP_SOURCE);
       largeIconBitmapSource = BitmapSource.values()[largeIconBitmapSourceArgument];
     }
     Object bigPicture = styleInformation.get(BIG_PICTURE);
-    Integer bigPictureBitmapSourceArgument =
-        (Integer) styleInformation.get(BIG_PICTURE_BITMAP_SOURCE);
+    Integer bigPictureBitmapSourceArgument = (Integer) styleInformation.get(BIG_PICTURE_BITMAP_SOURCE);
     BitmapSource bigPictureBitmapSource = BitmapSource.values()[bigPictureBitmapSourceArgument];
     Boolean showThumbnail = (Boolean) styleInformation.get(HIDE_EXPANDED_LARGE_ICON);
-    notificationDetails.styleInformation =
-        new BigPictureStyleInformation(
-            defaultStyleInformation.htmlFormatTitle,
-            defaultStyleInformation.htmlFormatBody,
-            contentTitle,
-            htmlFormatContentTitle,
-            summaryText,
-            htmlFormatSummaryText,
-            largeIcon,
-            largeIconBitmapSource,
-            bigPicture,
-            bigPictureBitmapSource,
-            showThumbnail);
+    notificationDetails.styleInformation = new BigPictureStyleInformation(
+        defaultStyleInformation.htmlFormatTitle,
+        defaultStyleInformation.htmlFormatBody,
+        contentTitle,
+        htmlFormatContentTitle,
+        summaryText,
+        htmlFormatSummaryText,
+        largeIcon,
+        largeIconBitmapSource,
+        bigPicture,
+        bigPictureBitmapSource,
+        showThumbnail);
   }
 
   private static DefaultStyleInformation getDefaultStyleInformation(
