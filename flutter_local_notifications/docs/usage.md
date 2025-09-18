@@ -15,7 +15,9 @@ In such cases, the plugin offers a method, [`resolvePlatformSpecificImplementati
 For example, to request [alarm permissions](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/requestExactAlarmsPermission.html) on Android:
 
 ```dart
-plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+plugin
+  .resolvePlatformSpecificImplementation
+  <AndroidFlutterLocalNotificationsPlugin>()
   ?.requestExactAlarmsPermission();
 ```
 

@@ -7,11 +7,16 @@ While this plugin handles some of the setup, other settings are required on a pr
 
 If you have already made modifications to these files, please be extra careful and pay attention to context to avoid losing your changes. As always, it is recommended to version control your application to avoid losing changes.
 
+If something isn't clear, keep in mind the [example app](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications/example) has all of this setup done already, so you can use it as a reference.
+
+This guide will only handle the setup that comes before compiling your application. For details on what this plugin can do and how to use it, see the [Darwin Usage Guide](darwin-usage.md).
+
 ## General setup
 
 To start, add the following lines to the `application` method. The exact code differs between languages.
 
-For Objective-C (`ios/Runner/AppDelegate.m`):
+<details>
+<summary>Objective-C - <code>ios/Runner/AppDelegate.m</code></summary>
 
 ```objc
 if (@available(iOS 10.0, *)) {
@@ -19,13 +24,18 @@ if (@available(iOS 10.0, *)) {
 }
 ```
 
-For Swift (`ios/Runner/AppDelegate.swift`):
+</details>
+
+<details>
+<summary>Swift - <code>ios/Runner/AppDelegate.swift</code></summary>
 
 ```swift
 if #available(iOS 10.0, *) {
   UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
 }
 ```
+
+</details>
 
 ## Handling actions
 
@@ -35,7 +45,8 @@ A standard notification can be clicked, which opens the app in the standard way.
 
 To enable actions in your app, you must hook Flutter into the launch process. Normally, Flutter will do this for you in regular apps, but since actions can open your app in a non-standard way, you must perform the following setup.
 
-Objective-C (`ios/Runner/AppDelegate.m`):
+<details>
+<summary>Objective-C - <code>ios/Runner/AppDelegate.m</code></summary>
 
 ```objc
 // Required to handle notification actions
@@ -51,6 +62,12 @@ void registerPlugins(NSObject<FlutterPluginRegistry>* registry) {
 }
 ```
 
+</details>
+
+<details>
+<summary>Swift - <code>ios/Runner/AppDelegate.swift</code></summary>
+
+
 Swift (`ios/Runner/AppDelegate.swift`):
 
 ```swift
@@ -62,11 +79,12 @@ override func application(
   _ application: UIApplication,
   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
 ) -> Bool {
+
   // This is required to make any communication available in the action isolate.
   FlutterLocalNotificationsPlugin.setPluginRegistrantCallback {
     (registry) in GeneratedPluginRegistrant.register(with: registry)
   }
-  
+
   if #available(iOS 10.0, *) {
     UNUserNotificationCenter.current().delegate = self as UNUserNotificationCenterDelegate
   }
@@ -76,13 +94,14 @@ override func application(
 }
 ```
 
+</details>
+
 ## Clearing notifications on reinstall
 
-On some devices, if the user uninstalls the app without cancelling their repeating notifications, the app may reschedule those notifications if it's reinstalled.
+On some devices (older than iOS 10), if the user uninstalls the app without cancelling their repeating notifications, the app may reschedule those notifications if it's reinstalled. To prevent this, add the following code to the `didFinishLaunchingWithOptions()` method of the `AppDelegate` class.
 
-To prevent this, add the following code to the `didFinishLaunchingWithOptions()` method of the `AppDelegate` class.
-
-Objective-C (`ios/Runner/AppDelegate.m`):
+<details>
+<summary>Objective-C - <code>ios/Runner/AppDelegate.m</code></summary>
 
 ```objc
 if(![[NSUserDefaults standardUserDefaults]objectForKey:@"Notification"]){
@@ -91,7 +110,10 @@ if(![[NSUserDefaults standardUserDefaults]objectForKey:@"Notification"]){
 }
 ```
 
-Swift (`ios/Runner/AppDelegate.swift`):
+</details>
+
+<details>
+<summary>Swift - <code>ios/Runner/AppDelegate.swift</code></summary>
 
 ```swift
 if(!UserDefaults.standard.bool(forKey: "Notification")) {
@@ -100,6 +122,4 @@ if(!UserDefaults.standard.bool(forKey: "Notification")) {
 }
 ```
 
-## Interrupting Notifications
-
-The `InterruptionLevel` enum lets you control how much your notification should be allowed to interrupt the user. If you plan to use `InterruptionLevel.timeSensitive`, you'll need to [enable](https://help.apple.com/xcode/mac/current/#/dev88ff319e7) the time-sensitive capability. See the video [here](https://developer.apple.com/videos/play/wwdc2021/10091/) for more details. If you plan to use `InterruptionLevel.critical`, you'll need to [get approval](https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/) from Apple.
+</details>
