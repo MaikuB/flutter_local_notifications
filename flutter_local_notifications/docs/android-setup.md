@@ -7,13 +7,26 @@ While this plugin handles some of the setup, other settings are required on a pr
 
 If you have already made modifications to these files, please be extra careful and pay attention to context to avoid losing your changes. As always, it is recommended to version control your application to avoid losing changes.
 
-## Gradle Setup
+If something isn't clear, keep in mind the [example app](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications/example) has all of this setup done already, so you can use it as a reference.
+
+This guide will only handle the setup that comes before compiling your application. For details on what this plugin can do and how to use it, see the [Android Usage Guide](android-usage.md).
+
+## Gradle and Kotlin
 
 Gradle is Android's build system, and controls important options during compilation. There are two similarly named files, The **Project build file** (`android/build.gradle`), and the **Module build file** (`android/app/build.gradle`). Pay close attention to which one is being referred to in the following sections before making modifications.
+
+Gradle files also come in two syntaxes:
+1. Groovy (legacy): `build.gradle`
+2. Kotlin (recommended): `build.gradle.kts`
+
+It is recommended to switch to Kotlin, and new apps created with `flutter create` come with the Kotlin style by default. At the time of writing, however, there are [known performance issues](https://github.com/gradle/gradle/issues/15886) with Kotlin, and switching to Groovy will take time, so these docs will have both styles for reference. If you're looking to migrate, see [this guide](https://developer.android.com/build/migrate-to-kotlin-dsl) from Android and [this guide](https://docs.gradle.org/current/userguide/migrating_from_groovy_to_kotlin_dsl.html) from Gradle.
 
 ### Java Desugaring
 
 This plugin relies on [desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) to take advantage of newer Java features on older versions of Android. Desugaring must be enabled in your _module_ build file, like this:
+
+<details>
+<summary>Groovy - `android/app/build.gradle`</summary>
 
 ```groovy
 android {
@@ -23,50 +36,121 @@ android {
 
   compileOptions {
     coreLibraryDesugaringEnabled true
+    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility JavaVersion.VERSION_11
+  }
+
+  kotlinOptions {
+    jvmTarget = "11"
   }
 }
 
 dependencies {
-  // For AGP 7.4+
-  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
-  // For AGP 7.3
-  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.3'
-  // For AGP 4.0 to 7.2
-  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.9'
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
 }
 ```
-For more details, see the link above.
+
+</details>
+
+<details>
+<summary>Kotlin - `android/app/build.gradle.kts`</summary>
+
+```kotlin
+android {
+  defaultConfig {
+    multiDexEnabled = true
+  }
+
+  compileOptions {
+    isCoreLibraryDesugaringEnabled = true
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+  }
+
+  kotlinOptions {
+    jvmTarget = JavaVersion.VERSION_11.toString()
+  }
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+}
+```
+
+</details>
 
 > [!Warning]
-> There was [a crash](https://github.com/flutter/flutter/issues/110658) that used to occur on devices running Android 12L. Flutter has since fixed the issue in 3.24.0. If you are using an earlier version of Flutter, you'll need to add the following to your _module_ build file:
->
-> ```groovy
-> dependencies {
->    implementation 'androidx.window:window:1.0.0'
->    implementation 'androidx.window:window-java:1.0.0'
-> }
-> ```
+> There was [a crash](https://github.com/flutter/flutter/issues/110658) that used to occur on devices running Android 12L and above. Flutter has since fixed the issue in 3.24.0. If you are using an earlier version of Flutter, you'll need to add it manually to your _module_ build file:
+
+<details><summary>Groovy - `android/app/build.gradle`</summary>
+
+```groovy
+dependencies {
+  implementation 'androidx.window:window:1.0.0'
+  implementation 'androidx.window:window-java:1.0.0'
+}
+```
+
+</details>
+
+<details><summary>Kotlin - `android/app/build.gradle.kts`</summary>
+
+```kotlin
+dependencies {
+  implementation("androidx.window:window:1.0.0")
+  implementation("androidx.window:window-java:1.0.0")
+}
+```
+
+</details>
 
 ### Upgrading the Android Gradle Plugin
 
-This package uses AGP 7.3.1, so your package should use that version or higher. Make sure you are using the new declarative plugin syntax by following the guide [here](https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply), making sure to use an AGP plugin version of `7.3.1` or higher. Your `android/settings.gradle` file should have this:
+This package uses the Android Gradle Plugin (AGP) version 8.6.0, so your application should use that version or higher. Make sure you are using the new declarative plugin syntax by following the guide [here](https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply), making sure to use an AGP plugin version of `8.6.0` or higher. Your `android/settings.gradle` file should have this:
+
+<details><summary>Groovy - `settings.gradle`</summary>
 
 ```groovy
 plugins {
-  // Use 7.3.1 or higher
-  id "com.android.application" version "7.3.1" apply false
+  id "com.android.application" version "8.6.0" apply false
 }
 ```
+
+</details>
+
+<details><summary>Kotlin - `settings.gradle.kts`</summary>
+
+```kotlin
+plugins {
+  id("com.android.application") version "8.6.0" apply false
+}
+```
+
+</details>
 
 ### Upgrading your minimum Android SDK
 
-This project requires Android SDK version 34 or higher. Make sure your _module_ build file sets `compileSdk` to 34 or higher:
+This plugin requires Android SDK version 35 or higher. Make sure your _module_ build file sets `compileSdk` to 34 or higher:
+
+<details><summary>Groovy - `android/app/build.gradle`</summary>
 
 ```groovy
 android {
-  compileSdk 34
+  compileSdk 35
 }
 ```
+
+</details>
+
+<details><summary>Kotlin - `android/app/build.gradle.kts`</summary>
+
+```kotlin
+android {
+  compileSdk = 35
+}
+```
+
+</details>
 
 ## AndroidManifest.xml Setup
 
@@ -102,7 +186,7 @@ Next, add the following receiver inside the `<application>` tag so that the plug
 
 By default, Android will only schedule notifications with approximate precision to save power in idle mode. Exact timing differences are not given by the Android docs, but in general, you should not expect your notification to arrive within the exact minute you set it.
 
-> [!Caution]
+> [!Warning]
 > Scheduling exact alarms prevents the Android OS from being able to properly optimize the device's energy usage and idle time, and can lead to noticeably worse battery life for your users. Carefully consider whether you actually need these permissions and be mindful of users with lower-performing hardware.
 
 > [!Note]
@@ -111,7 +195,7 @@ By default, Android will only schedule notifications with approximate precision 
 If you need that level of precision, [you'll need another permission](https://developer.android.com/about/versions/14/changes/schedule-exact-alarms). For example, calendar and alarm apps are encouraged to use these. Take a moment to consider your app's circumstances:
 
 - Exact scheduling is a core requirement for your app. In this case, you'll need the [`USE_EXACT_ALARM`](https://developer.android.com/reference/android/Manifest.permission#USE_EXACT_ALARM) permission, which won't require user consent in-app but may subject your app to more stringent app store reviews.
-- Exact scheduling is a nice-to-have addition for your app that users can opt-out of. In this case, you'll want to use the [`SCHEDULE_EXACT_ALARM`](https://developer.android.com/reference/android/Manifest.permission#SCHEDULE_EXACT_ALARM). This permission will need to be granted by the user using [`requestExactAlarmsPermission()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/requestExactAlarmsPermission.html) function in Dart. This permission can be revoked at any time by the user or system, so use [`canScheduleExactNotifications()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/canScheduleExactNotifications.html) to check at run-time if you still have this permission.
+- Exact scheduling is a nice-to-have addition for your app that users can opt-out of. In this case, you'll want to use the [`SCHEDULE_EXACT_ALARM`](https://developer.android.com/reference/android/Manifest.permission#SCHEDULE_EXACT_ALARM) permission. This permission will need to be granted by the user using [`requestExactAlarmsPermission()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/requestExactAlarmsPermission.html) function in Dart. This permission can be revoked at any time by the user or system, so use [`canScheduleExactNotifications()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/canScheduleExactNotifications.html) to check at run-time if you still have this permission.
 
 In any case, add the appropriate permission to your manifest, under the top-level `<manifest>` tag.
 
@@ -182,22 +266,32 @@ Foreground services require additions to the manifest. First, you must request t
 </manifest>
 ```
 
+### Bypassing Do Not Disturb
+
+If your app will create notifications that will bypass Do Not Disturb, you'll need to declare a special permission in your manifest:
+
+```xml
+<uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+```
+
+You'll also need to request permission at runtime with [`requestNotificationPolicyAccess()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/requestNotificationPolicyAccess.html). See the Android usage guide for more details.
+
+## Code and asset shrinking
+
+Flutter enables [code shrinking](https://developer.android.com/build/shrink-code) to minimize the release size by default. This means code and assets that were not determined to be used will automatically be stripped from your compiled application in release mode. This can be fine for Java code, but icons and other assets may be removed as well. Whether you're using the app icon for notifications (the default) or a custom icon, this can affect your app and your notifications or icons may not show.
+
+Be sure to follow the instructions [here](https://developer.android.com/topic/performance/app-optimization/customize-which-resources-to-keep) to protect your application from these problems. Make sure to include any icons or sounds you bundle with your app. If you're using your app icon for notifications, be sure to include `@mipmap/ic_launcher` in your `keep.xml` file as well.
+
+> [!WARNING]
+>
+> Code shrinking can affect the  [GSON](https://github.com/google/gson) package as well, a Java dependency used by this plugin. Version 19.0.0 of this package includes the necessary ProGuard rules to protect it, but if you're using an earlier version, you'll need to manually copy the contents of [this file](https://github.com/google/gson/blob/main/examples/android-proguard-example/proguard.cfg) to `android/app/proguard-rules.pro`.
+
 ## Custom notification icons and sounds
 
 Notification icons should be added as a [drawable resource](https://developer.android.com/guide/topics/resources/drawable-resource), just like app icons. By default, the app's own icon is `@mipmap/ic_launcher`, and any such value can be passed directly to the `AndroidNotificationDetails()` constructor. For more details on creating custom notification icons, [see the docs](https://developer.android.com/studio/write/create-app-icons#create-notification). Custom notification sounds should be added to the `res/raw` directory.
 
-Notifications may also make use of [large icons](https://developer.android.com/develop/ui/views/notifications/expanded#image-style), such as album art or message attachments. When calling `show()`, pass a [`largeIcon`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationDetails/largeIcon.html) to the `AndroidNotificationDetails()` constructor. If you use a `DrawableResourceAndroidBitmap`, that indicates an image file in `/res/drawable`. Otherwise, use `FilePathAndroidBitmap` to point to any file.
+Notifications may also make use of [large icons](https://developer.android.com/develop/ui/views/notifications/expanded#image-style), such as album art or message attachments. When calling `show()`, pass a [`largeIcon`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationDetails/largeIcon.html) to the `AndroidNotificationDetails()` constructor. Use a `DrawableResourceAndroidBitmap` to indicate an image file in `/res/drawable`, or use `FilePathAndroidBitmap` to point to any file.
 
-### Code and asset shrinking
-
-Flutter enables [code shrinking](https://developer.android.com/build/shrink-code) to minimize the release size, but this may lead to issues with [GSON](https://github.com/google/gson), a Java dependency used by this package. To fix this, copy the contents of [this file](https://github.com/google/gson/blob/main/examples/android-proguard-example/proguard.cfg) to `android/app/proguard-rules.pro`.
-
-> [!Important]
-> If you use custom resources like icons or sounds, be sure to follow [these instructions](https://developer.android.com/build/shrink-code#keep-resources) to prevent them from getting deleted during the build process.
-
-## Notification channels
-
-Android groups notifications of a similar purpose into [channels](https://developer.android.com/develop/ui/views/notifications#ManageChannels). Separate from "grouping", this is meant to allow users to customize how their notifications are shown, like "new message" or "upcoming deals". Using channels consistently will give users confidence and more options when changing settings. To put notifications in the same channel, simply use the same `channelId` in your calls to `show()`.
-
-> [!Note]
-> Notification sounds, vibration patterns, and importance levels are configured on the notification channel as a whole, not on each notification. These settings are finalized when the first notification of that channel is shown and cannot be changed. Instead, direct users to their system settings to make changes.
+> [!Warning]
+>
+> Since these assets are only referred to at runtime, Android Studio might decide these assets are "unused" and remove them from your app in release mode. Be sure to follow the instructions in the previous section to preserve them.
