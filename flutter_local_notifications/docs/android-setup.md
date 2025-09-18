@@ -26,7 +26,7 @@ It is recommended to switch to Kotlin, and new apps created with `flutter create
 This plugin relies on [desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) to take advantage of newer Java features on older versions of Android. Desugaring must be enabled in your _module_ build file, like this:
 
 <details>
-<summary>Groovy - `android/app/build.gradle`</summary>
+<summary>Groovy - <code>android/app/build.gradle</code></summary>
 
 ```groovy
 android {
@@ -53,7 +53,7 @@ dependencies {
 </details>
 
 <details>
-<summary>Kotlin - `android/app/build.gradle.kts`</summary>
+<summary>Kotlin - <code>android/app/build.gradle.kts</code></summary>
 
 ```kotlin
 android {
@@ -82,7 +82,7 @@ dependencies {
 > [!Warning]
 > There was [a crash](https://github.com/flutter/flutter/issues/110658) that used to occur on devices running Android 12L and above. Flutter has since fixed the issue in 3.24.0. If you are using an earlier version of Flutter, you'll need to add it manually to your _module_ build file:
 
-<details><summary>Groovy - `android/app/build.gradle`</summary>
+<details><summary>Groovy - <code>android/app/build.gradle</code></summary>
 
 ```groovy
 dependencies {
@@ -93,7 +93,7 @@ dependencies {
 
 </details>
 
-<details><summary>Kotlin - `android/app/build.gradle.kts`</summary>
+<details><summary>Kotlin - <code>android/app/build.gradle.kts</code></summary>
 
 ```kotlin
 dependencies {
@@ -108,7 +108,7 @@ dependencies {
 
 This package uses the Android Gradle Plugin (AGP) version 8.6.0, so your application should use that version or higher. Make sure you are using the new declarative plugin syntax by following the guide [here](https://docs.flutter.dev/release/breaking-changes/flutter-gradle-plugin-apply), making sure to use an AGP plugin version of `8.6.0` or higher. Your `android/settings.gradle` file should have this:
 
-<details><summary>Groovy - `settings.gradle`</summary>
+<details><summary>Groovy - <code>settings.gradle</code></summary>
 
 ```groovy
 plugins {
@@ -118,7 +118,7 @@ plugins {
 
 </details>
 
-<details><summary>Kotlin - `settings.gradle.kts`</summary>
+<details><summary>Kotlin - <code>settings.gradle.kts</code></summary>
 
 ```kotlin
 plugins {
@@ -132,7 +132,7 @@ plugins {
 
 This plugin requires Android SDK version 35 or higher. Make sure your _module_ build file sets `compileSdk` to 34 or higher:
 
-<details><summary>Groovy - `android/app/build.gradle`</summary>
+<details><summary>Groovy - <code>android/app/build.gradle</code></summary>
 
 ```groovy
 android {
@@ -142,7 +142,7 @@ android {
 
 </details>
 
-<details><summary>Kotlin - `android/app/build.gradle.kts`</summary>
+<details><summary>Kotlin - <code>android/app/build.gradle.kts</code></summary>
 
 ```kotlin
 android {
