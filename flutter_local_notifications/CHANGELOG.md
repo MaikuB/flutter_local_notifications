@@ -1,28 +1,63 @@
-## [19.0.0-dev.4]
+## [19.4.2]
 
-* [Windows] **Breaking change** Reworked the APIs around custom images and audio. Check the updated example for more details, but in short:
-  * Instead of `WindowsNotificationAudio.fromFile()`, use `WindowsNotificationAudio.asset()`
-  * Instead of `WindowsImage.file()`, use `WindowsImage()`. See the docs for what URIs are supported
-* [Windows] Added `MsixUtils.hasPackageIdentity()` and `MsixUtils.assetUri()`. You shouldn't need to use `.assetUri()` directly, but it may be helpful to check `.hasPackageIdentity()` to know what features your application can support.
-* [Windows] Added `FlutterLocalNotificationsWindows.isValidXml()` for testing raw XML.
+* [Windows] fixed issue where non-ASCII characters for the notification [application name](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsInitializationSettings/appName.html) weren't being displayed properly. Thanks to the PR from [yoyoIU](https://github.com/yoyo930021)
 
-## [19.0.0-dev.3]
+## [19.4.1]
 
+* [Android] fixed issue [#2675](https://github.com/MaikuB/flutter_local_notifications/issues/2675) where addition of `invisible` flag to notification actions could cause scheduled notifications with actions created prior to 19.4.0 to fail to show
+* Updated the Android release build configuration section to point to the latest [location](https://developer.android.com/topic/performance/app-optimization/customize-which-resources-to-keep) of the official Android docs on how to configure which resources (e.g. notification icons) are kept so they are not discarded by the Android compiler. It has also been reworded to make it clearer that this applies to all Android resources 
+
+## [19.4.0]
+
+* [Android] added ability to read `dataMimeType` and `dataUri` when calling `getActiveNotifications()` to read details of an active Android notification using the messaging style. Thanks to the PR from [Matt Bajorek](https://github.com/mattbajorek)
+* [Android] added support for Android semantic actions. Thanks to the PR from [Jared Szechy](https://github.com/szechyjs)
+
+## [19.3.1]
+
+* [Windows] fixed issue [#2648](https://github.com/MaikuB/flutter_local_notifications/issues/2648) where non-ASCII characters in the notification payload were not being handled properly. Thanks to the PR from [yoyoIU](https://github.com/yoyo930021)
+* [Windows] fixed issue [#2651](https://github.com/MaikuB/flutter_local_notifications/issues/2651) where unresolved symbols occurred with changes in introduced in newer Windows SDKs. Thanks to the PR from [Sebastien](https://github.com/Sebastien-VZN)
+
+## [19.3.0]
+
+* [Android][iOS][macOS] added `cancelAllPendingNotifications()` method for cancelling all pending notifications that have been scheduled. Thanks to the PR from [Kwon Tae Hyung](https://github.com/TaeBbong)
+
+## [19.2.1]
+
+* [macOS] removed redundant code that was only applicable on macOS versions lower than 10.14. This should be a non-functional change since 18.0.0 bumped the minimum Flutter SDK requirements that in turn required macOS 10.14 at a minimum. Thanks to the PR from [Blin Qipa](https://github.com/bqubique)
+* [Android] bumped robolectric dependency. This fixes an issue where some users reported receiving instances of `java.lang.NoClassDefFoundError` around the plugin's Android unit tests. Thanks to the PR from [Turtlepaw](https://github.com/Turtlepaw)
+
+## [19.2.0]
+
+* [Android] added support to bypass have notifications bypass the device's Do Not Disturb (DnD) settings. Thanks the PR from [Michel v. Varendorff](https://github.com/mvarendorff2) that added the following changes
+  * The `hasNotificationPolicyAccess()` method that checks if the application can modify the notification policy
+  * The `requestNotificationPolicyAccess()` method that was added the `AndroidFlutterNotificationsPlugin` class. This can be used request access for the calling application modify the notification policy
+  * Added `bypassDnd` the property of the `AndroidNotificationChannel` class and `channelBypassDnd` to the `AndroidNotificationDetails` class. These can used to indicate if notifications associated with the channel can bypass the DnD settings of the device
+* Bumped `msix` dev dependency in example app. This to fix the [issue](https://github.com/YehudaKremer/msix/issues/303) where the `msix` package stopped being able to created MSIX installers
+
+## [19.1.0]
+
+* [iOS][macOS] added supported to specify the volume for critical alerts. Thanks to the PR from [bannzai](https://github.com/bannzai)
+* Updated Gradle setup information in the readme to clarify that desugaring needs to be enabled even if scheduled notifications aren't used
+
+## [19.0.0]
+
+* [Android] **Breaking change** bumped `compileSdk` to 35 and updated readme to mention this
+* [Android] bumped GSON dependency to 2.12. As a result of doing so, applications should no longer need ProGuard rules related to this plugin that were needed for release builds to function. The readme has been updated to remove the associated setup to reflect this. Thanks to the PR from [Koji Wakamiya](https://github.com/koji-1009)
+* [Android] bumped Android Gradle Plugin to 8.6.0 to align with the [minimum version](https://developer.android.com/build/releases/gradle-plugin#api-level-support) to use `compileSdk` version 35 (Android 15)
+* [Android] bumped desugaring library to 2.1.4 and set Java compatibility to 11 instead of 8. Readme has been updated to reflect these changes  where`sourceCompatibility` and `targetCompability` should be set to JavaVersion.VERSION_11 (i.e. Java 11), and `jvmTarget` is set to `11`
+* [iOS] **Breaking change** removed `uiLocalNotificationDateInterpretation` parameter from `zonedSchedule()` method. This was done as it actually no relevant as of the 18.0.0 that dropped support for iOS versions older than 10, which in turn meant that the deprecated `UILocalNotification` APIs from Apple were no longer used. The corresponding `UILocalNotificationDateInterpretation` enum has already been removed as well
 * [iOS][macOS] **Breaking changes** the `DarwinNotificationActionOption` and `DarwinNotificationCategoryOption` are now enhanced enums with values accessible through the `value` property that are exactly the same as their native representations. Previously a bitwise left shift operation was applied to the index value
+* [iOS][macOS] **Breaking change** renamed `Converters` header and implementation to `FlutterLocalNotificationsConverters`. This would likely not affect any users of the plugin. Done to fix/mitigate issues [#2160](https://github.com/MaikuB/flutter_local_notifications/issues/2160) and [#2529](https://github.com/MaikuB/flutter_local_notifications/issues/2529) where the original name could clash
 * [iOS][macOS] added Swift Package Manager support
-
-## [19.0.0-dev.2]
-
-* [Windows] Fixed an issue that happens with MSIX app builds. Thanks to PR from [Levi Lesches](https://github.com/Levi-Lesches)
-* Removed duplicate important notice from the readme. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches)
-* Migrated example app to use Plugin DSL. Thanks to the PR from [Martin Bertele](https://github.com/martin-bertele)
-
-## [19.0.0-dev.1]
-
-* **Breaking change** bumped minimum Flutter SDK requirement to 3.19.0 and Dart SDK requirement to 3.3.0
-* **Breaking change** [iOS] removed `uiLocalNotificationDateInterpretation` parameter from `zonedSchedule()` method. This was done as it actually no relevant as of the 18.0.0 that dropped support for iOS versions older than 10, which in turn meant that the deprecated `UILocalNotification` APIs from Apple were no longer used. The corresponding `UILocalNotificationDateInterpretation` enum has already been removed as well
-* [Windows] Added support for Windows. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches/) that continued from the contributions from
+* [Windows] Added support for Windows. Thanks to PR [Levi Lesches](https://github.com/Levi-Lesches) that continued the work done initially done by [Kenneth](https://github.com/kennethnym) and [lightrabbit](https://github.com/lightrabbit)
+*  **Breaking change** bumped minimum Flutter SDK requirement to 3.22.0 and Dart SDK requirement to 3.4.0. The minimum supported Android version is now 5.0 (API level 21)
 * Bumped `timezone` dependency so that minimum version is now 0.10.0
+* Bumped multiple dependencies in example app
+* Bumped minimum `plugin_platform_interface` version to 2.1.8
+* Updated example app's `AndroidManifest.xml` to request internet permissions so that release builds can download remote content
+* Migrated example app to use Plugin DSL. Thanks to the PR from [Martin Bertele](https://github.com/martin-bertele)
+* Updated `compileSdk` and `targetSdkVersion` of example app to 35
+
 
 ## [18.0.1]
 

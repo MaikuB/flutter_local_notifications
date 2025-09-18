@@ -32,14 +32,14 @@ struct NotificationActivationCallback :
       vector<StringMapEntry> entries;
       for (ULONG i = 0; i < count; i++) {
         auto item = data[i];
-        const std::string key = CW2A(item.Key);
-        const std::string value = CW2A(item.Value);
+        const std::string key = CW2A(item.Key, CP_UTF8);
+        const std::string value = CW2A(item.Value, CP_UTF8);
         const auto pair = StringMapEntry {toNativeString(key), toNativeString(value)};
         entries.push_back(pair);
       }
 
       const auto openedWithAction = args != nullptr;
-      const auto payload = string(CW2A(args));
+      const auto payload = string(CW2A(args, CP_UTF8));
       const auto launchType =
         openedWithAction ? NativeLaunchType::action : NativeLaunchType::notification;
       NativeLaunchDetails launchDetails;
@@ -129,16 +129,20 @@ void UpdateRegistry(
     nullptr
   ));
 
-  winrt::check_win32(RegSetValueExA(
-    appInfoKey.get(), "DisplayName", 0, REG_SZ, reinterpret_cast<const BYTE*>(appName.c_str()),
-    static_cast<uint32_t>(appName.size() + 1 * sizeof(char))
-  ));
+  {
+    const std::wstring wAppName = utf8_to_wstring(appName);
+    winrt::check_win32(RegSetValueExW(
+      appInfoKey.get(), L"DisplayName", 0, REG_SZ, reinterpret_cast<const BYTE*>(wAppName.c_str()),
+      static_cast<DWORD>(wAppName.size() * sizeof(wchar_t))
+    ));
+  }
 
   if (iconPath.has_value()) {
     const auto v = iconPath.value();
-    winrt::check_win32(RegSetValueExA(
-      appInfoKey.get(), "IconUri", 0, REG_SZ, reinterpret_cast<const BYTE*>(v.c_str()),
-      static_cast<uint32_t>(v.size() + 1 * sizeof(char))
+    const std::wstring wIcon = utf8_to_wstring(v);
+    winrt::check_win32(RegSetValueExW(
+      appInfoKey.get(), L"IconUri", 0, REG_SZ, reinterpret_cast<const BYTE*>(wIcon.c_str()),
+      static_cast<DWORD>(wIcon.size() * sizeof(wchar_t))
     ));
   }
 

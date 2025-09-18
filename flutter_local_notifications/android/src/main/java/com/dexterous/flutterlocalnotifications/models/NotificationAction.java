@@ -83,6 +83,8 @@ public class NotificationAction implements Serializable {
   private static final String SHOWS_USER_INTERFACE = "showsUserInterface";
   private static final String ALLOW_GENERATED_REPLIES = "allowGeneratedReplies";
   private static final String CANCEL_NOTIFICATION = "cancelNotification";
+  private static final String SEMANTIC_ACTION = "semanticAction";
+  private static final String INVISIBLE = "invisible";
 
   public final String id;
   public final String title;
@@ -92,6 +94,8 @@ public class NotificationAction implements Serializable {
   @Nullable public final Boolean contextual;
   @Nullable public final Boolean showsUserInterface;
   @Nullable public final Boolean allowGeneratedReplies;
+  @Nullable public final Integer semanticAction;
+  @Nullable public final Boolean invisible;
   @Nullable public final IconSource iconSource;
   // actionInputs is annotated as nullable as the Flutter API use to allow this to be nullable
   // before null-safety was added in
@@ -116,6 +120,8 @@ public class NotificationAction implements Serializable {
     contextual = (Boolean) arguments.get(CONTEXTUAL);
     showsUserInterface = (Boolean) arguments.get(SHOWS_USER_INTERFACE);
     allowGeneratedReplies = (Boolean) arguments.get(ALLOW_GENERATED_REPLIES);
+    semanticAction = (Integer) arguments.get(SEMANTIC_ACTION);
+    invisible = (Boolean) arguments.get(INVISIBLE);
 
     Integer iconSourceIndex = (Integer) arguments.get(ICON_SOURCE);
     if (iconSourceIndex != null) {

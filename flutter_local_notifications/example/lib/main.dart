@@ -273,6 +273,36 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _requestPermissionsWithCriticalAlert() async {
+    if (Platform.isIOS || Platform.isMacOS) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+            critical: true,
+          );
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+            critical: true,
+          );
+    }
+  }
+
+  Future<void> _requestNotificationPolicyAccess() async {
+    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+        flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    await androidImplementation?.requestNotificationPolicyAccess();
+  }
+
   void _configureSelectNotificationSubject() {
     selectNotificationStream.stream
         .listen((NotificationResponse? response) async {
@@ -412,6 +442,13 @@ class _HomePageState extends State<HomePage> {
                       await _cancelAllNotifications();
                     },
                   ),
+                  if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
+                    PaddedElevatedButton(
+                      buttonText: 'Cancel all pending notifications',
+                      onPressed: () async {
+                        await _cancelAllPendingNotifications();
+                      },
+                    ),
                   if (!Platform.isWindows) ...repeating.examples(context),
                   const Divider(),
                   const Text(
@@ -461,6 +498,10 @@ class _HomePageState extends State<HomePage> {
                     PaddedElevatedButton(
                       buttonText: 'Request permission (API 33+)',
                       onPressed: () => _requestPermissions(),
+                    ),
+                    PaddedElevatedButton(
+                      buttonText: 'Request notification policy access',
+                      onPressed: () => _requestNotificationPolicyAccess(),
                     ),
                     PaddedElevatedButton(
                       buttonText:
@@ -680,6 +721,19 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     PaddedElevatedButton(
+                      buttonText:
+                          'Create notification channel that ignores dnd',
+                      onPressed: () async {
+                        await _createNotificationChannelWithDndBypass();
+                      },
+                    ),
+                    PaddedElevatedButton(
+                      buttonText: 'Show notification that ignores dnd',
+                      onPressed: () async {
+                        await _showNotificationWithDndBypass();
+                      },
+                    ),
+                    PaddedElevatedButton(
                       buttonText: 'Get notification channels',
                       onPressed: () async {
                         await _getNotificationChannels();
@@ -721,9 +775,20 @@ class _HomePageState extends State<HomePage> {
                       onPressed: _requestPermissions,
                     ),
                     PaddedElevatedButton(
+                      buttonText:
+                          'Request permission with critical alert permission',
+                      onPressed: _requestPermissionsWithCriticalAlert,
+                    ),
+                    PaddedElevatedButton(
                       buttonText: 'Show notification with subtitle',
                       onPressed: () async {
                         await _showNotificationWithSubtitle();
+                      },
+                    ),
+                    PaddedElevatedButton(
+                      buttonText: 'Show notification with critical sound',
+                      onPressed: () async {
+                        await _showNotificationWithCriticalSound();
                       },
                     ),
                     PaddedElevatedButton(
@@ -1016,6 +1081,8 @@ class _HomePageState extends State<HomePage> {
           // user tapped on a action (this mimics the behavior on iOS).
           cancelNotification: false,
         ),
+        AndroidNotificationAction('read', 'Mark as read',
+            semanticAction: SemanticAction.markAsRead, invisible: true),
       ],
     );
 
@@ -1095,6 +1162,7 @@ class _HomePageState extends State<HomePage> {
               label: 'Enter a message',
             ),
           ],
+          semanticAction: SemanticAction.reply,
         ),
       ],
     );
@@ -1833,6 +1901,10 @@ class _HomePageState extends State<HomePage> {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
 
+  Future<void> _cancelAllPendingNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+  }
+
   Future<void> _showOngoingNotification() async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
@@ -2313,6 +2385,57 @@ class _HomePageState extends State<HomePage> {
             ));
   }
 
+  Future<void> _createNotificationChannelWithDndBypass() async {
+    const AndroidNotificationChannel androidNotificationChannel =
+        AndroidNotificationChannel('your channel id 3', 'your channel name 3',
+            description: 'your channel description 3',
+            bypassDnd: true,
+            importance: Importance.max);
+
+    final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
+        flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+
+    final bool? hasPolicyAccess =
+        await androidPlugin?.hasNotificationPolicyAccess();
+    if (hasPolicyAccess ?? false) {
+      await androidPlugin?.requestNotificationPolicyAccess();
+    }
+
+    await androidPlugin?.createNotificationChannel(androidNotificationChannel);
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: Text(
+            'Channel with name ${androidNotificationChannel.name} created'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          )
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showNotificationWithDndBypass() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails('your channel id 3', 'your channel name 3',
+            channelDescription: 'your channel description 3',
+            channelBypassDnd: true,
+            importance: Importance.max);
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
+
+    await flutterLocalNotificationsPlugin.show(
+      id++,
+      'I ignored dnd',
+      'I completely ignored dnd',
+      notificationDetails,
+    );
+  }
+
   Future<void> _areNotifcationsEnabledOnAndroid() async {
     final bool? areEnabled = await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -2519,7 +2642,9 @@ class _HomePageState extends State<HomePage> {
                   children: <Widget>[
                     Text('text: ${msg.text}\n'
                         'timestamp: ${msg.timestamp}\n'
-                        'person: ${_formatPerson(msg.person)}'),
+                        'person: ${_formatPerson(msg.person)}\n'
+                        'dataMimeType: ${msg.dataMimeType}\n'
+                        'dataUri: ${msg.dataUri}'),
                     const Divider(color: Colors.black),
                   ],
                 ),
@@ -2639,6 +2764,7 @@ class _HomePageState extends State<HomePage> {
                         'description: ${channel.description}\n'
                         'groupId: ${channel.groupId}\n'
                         'importance: ${channel.importance.value}\n'
+                        'bypassDnd: ${channel.bypassDnd}\n'
                         'playSound: ${channel.playSound}\n'
                         'sound: ${channel.sound?.sound}\n'
                         'enableVibration: ${channel.enableVibration}\n'
@@ -2693,6 +2819,26 @@ class _HomePageState extends State<HomePage> {
       'notification sound controlled by alarm volume',
       'alarm notification sound body',
       platformChannelSpecifics,
+    );
+  }
+
+  Future<void> _showNotificationWithCriticalSound() async {
+    const DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(
+      // Between 0.0 and 1.0
+      criticalSoundVolume: 0.5,
+      // If sound is not specified, the default sound will be used
+      sound: 'slow_spring_board.aiff',
+    );
+    const NotificationDetails notificationDetails = NotificationDetails(
+      iOS: darwinNotificationDetails,
+      macOS: darwinNotificationDetails,
+    );
+    await flutterLocalNotificationsPlugin.show(
+      id++,
+      'Critical sound notification title',
+      'Critical sound notification body',
+      notificationDetails,
     );
   }
 }

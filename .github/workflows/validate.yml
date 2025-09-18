@@ -24,7 +24,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.19.0
+          flutter-version: 3.22.0
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
@@ -67,7 +67,7 @@ jobs:
       - name: Build
         run: melos run build:example_android
   build_example_android_3_19:
-      name: Build Android example app (3.19)
+      name: Build Android example app (3.22)
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
@@ -78,7 +78,7 @@ jobs:
         - uses: subosito/flutter-action@v2
           with:
             channel: stable
-            flutter-version: 3.19.0
+            flutter-version: 3.22.0
             cache: true
             cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
         - name: Install Tools
@@ -100,14 +100,14 @@ jobs:
       - name: Build
         run: melos run build:example_ios
   build_example_ios_3_19:
-    name: Build iOS example app (3.19)
+    name: Build iOS example app (3.22)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.19.0
+          flutter-version: 3.22.0
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
@@ -129,14 +129,14 @@ jobs:
       - name: Build
         run: melos run build:example_macos
   build_example_macos_3_19:
-    name: Build macOS example app (3.19)
+    name: Build macOS example app (3.22)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.19.0
+          flutter-version: 3.22.0
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
@@ -162,14 +162,14 @@ jobs:
       - name: Build
         run: melos run build:example_linux
   build_example_linux_3_19:
-    name: Build Linux example app (3.19)
+    name: Build Linux example app (3.22)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.19.0
+          flutter-version: 3.22.0
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
@@ -206,14 +206,14 @@ jobs:
           dart pub get
           dart run msix:create
   build_example_windows_3_19:
-    name: Build Windows example app (3.19)
+    name: Build Windows example app (3.22)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.19.0
+          flutter-version: 3.22.0
           cache: true
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
@@ -283,31 +283,35 @@ jobs:
           .\build.bat
       - name: Run Tests
         run: melos run test:unit:windows
-  integration_tests_android:
-    name: Run integration tests (Android)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
-      - name: Install Tools
-        run: ./.github/workflows/scripts/install-tools.sh
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-      - uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          script: melos run test:integration
+  # integration_tests_android:
+  #   name: Run integration tests (Android)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-java@v4
+  #       with:
+  #         distribution: 'zulu'
+  #         java-version: '17'
+  #     - uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: stable
+  #         cache: true
+  #         cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+  #     - name: Install Tools
+  #       run: ./.github/workflows/scripts/install-tools.sh
+  #     - name: Install Linux dependendencies
+  #       run: |
+  #         sudo apt-get update -y
+  #         sudo apt-get install -y libgtk-3-dev
+  #     - name: Enable KVM
+  #       run: |
+  #         echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+  #         sudo udevadm control --reload-rules
+  #         sudo udevadm trigger --name-match=kvm
+  #     - uses: reactivecircus/android-emulator-runner@v2
+  #       with:
+  #         api-level: 29
+  #         script: melos run test:integration
   integration_tests_ios:
     name: Run integration tests (iOS)
     runs-on: macos-latest
@@ -323,7 +327,7 @@ jobs:
       - uses: futureware-tech/simulator-action@v3
         id: simulator-action
         with:
-          model: 'iPhone 15'
+          model: 'iPhone 16'
       - run: |
           brew tap wix/brew
           brew install applesimutils

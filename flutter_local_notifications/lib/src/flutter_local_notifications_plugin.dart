@@ -302,6 +302,17 @@ class FlutterLocalNotificationsPlugin {
     await FlutterLocalNotificationsPlatform.instance.cancelAll();
   }
 
+  /// Cancels/removes all pending notifications.
+  ///
+  /// This only applies to notifications that have been scheduled.
+  ///
+  /// The method is supported on Android, iOS and macOS.
+  /// On other platforms, an [UnimplementedError] will be thrown.
+  Future<void> cancelAllPendingNotifications() async {
+    await FlutterLocalNotificationsPlatform.instance
+        .cancelAllPendingNotifications();
+  }
+
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
   ///
