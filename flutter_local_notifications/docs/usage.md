@@ -34,16 +34,12 @@ The platform-specific features will be described in more detail in their respect
 The different platforms share a lot of functionality, but also differ wildly in how they implement it. To that end, this plugin offers a [`NotificationDetails`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/NotificationDetails-class.html) class that allows you to pass platform-specific notification details for every method. For example:
 
 ```dart
-final androidDetails = AndroidNotificationDetails(silent: true);
-final darwinDetails = DarwinNotificationDetails(presentSound: false);
-final linuxDetails = LinuxNotificationDetails(suppressSound: true);
-final windowsDetails = WindowsNotificationDetails(audio: WindowsNotificationAudio.silent());
 final details = NotificationDetails(
-	android: androidDetails,
-  iOS: darwinDetails,
-  macOS: darwinDetails,
-  linux: linuxDetails,
-  windows: windowsDetails,
+	android: AndroidNotificationDetails(silent: true),
+  iOS: DarwinNotificationDetails(presentSound: false),
+  macOS: DarwinNotificationDetails(presentSound: false),
+  linux: LinuxNotificationDetails(suppressSound: true),
+  windows: WindowsNotificationDetails(audio: WindowsNotificationAudio.silent()),
 );
 
 await plugin.show(0, "This is a quiet notification", "Very quiet indeed", details);
