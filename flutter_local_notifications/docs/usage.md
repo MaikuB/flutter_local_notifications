@@ -83,7 +83,7 @@ final initSettings = InitializationSettings(
   macOS: DarwinInitializationSettings(requestSoundPermission: true),
   linux: LinuxInitializationSettings(defaultActionName: "Open"),
   windows: WindowsInitializationSettings(
-    apppName: "My Application",
+    appName: "My Application",
     appUserModelId: "com.developerName.applicationName",
     // Search online for GUID generators to make your own
     guid: "d49b0314-ee7a-4626-bf79-97cdb8a991bb",
@@ -196,7 +196,7 @@ The [`zonedSchedule()`](https://pub.dev/documentation/flutter_local_notification
 
 - an optional `matchDateTimeComponents`, which tells the OS whether and how to periodically schedule this notification
 
-Note that the `scheduledDate` is not a regular `DateTime`, but rather a [`TZDateTime`](https://pub.dev/documentation/timezone/latest/timezone.standalone/TZDateTime-class.html) from `package:timezone` to ensure location data is incorporated into the notification delivery time. See above for how to set that up and get the user's current location. For example: 
+Note that the `scheduledDate` is not a regular `DateTime`, but rather a [`TZDateTime`](https://pub.dev/documentation/timezone/latest/timezone.standalone/TZDateTime-class.html) from `package:timezone` to ensure location data is incorporated into the notification delivery time. See above for how to set that up and get the user's current location. For example:
 
 ```dart
 await plugin.zonedSchedule(
@@ -214,7 +214,7 @@ By default, notifications shown with this function will not repeat unless `match
 
 **Not supported on Linux, Windows, or the Web**
 
-To periodically show a notification, use [`periodicallyShowWithDuration()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/periodicallyShow.html). It takes the same arguments as `show()`, but also accepts a `repeatIntervalDuration` specifying how far apart these notifications should be and an `androidScheduleMode` as explained above. For example: 
+To periodically show a notification, use [`periodicallyShowWithDuration()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/periodicallyShow.html). It takes the same arguments as `show()`, but also accepts a `repeatIntervalDuration` specifying how far apart these notifications should be and an `androidScheduleMode` as explained above. For example:
 
 ```dart
 await plugin.periodicallyShowWithDuration(
