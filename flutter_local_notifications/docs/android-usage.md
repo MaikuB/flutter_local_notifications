@@ -97,7 +97,7 @@ This next section will deal with requesting permissions. As noted in the general
 
 ### Requesting notification permissions
 
-You will need permissions to show notifications at all. Be sure to call `androidPlugin?.requestNotificationsPermission` sometime after calling `initialize()`, but before calling any method that shows or schedules a notification. You can use `androidPlugin?.areNotificationsEnabled()` to check your permissions at runtime.
+You will need permissions to show notifications at all. Be sure to call `androidPlugin?.requestNotificationsPermission()` sometime after calling `initialize()`, but before calling any method that shows or schedules a notification. You can use `androidPlugin?.areNotificationsEnabled()` to check your permissions at runtime.
 
 ### Bypassing Do Not Disturb
 

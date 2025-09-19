@@ -1,4 +1,4 @@
-# Windows Usage Guide
+# Linux Usage Guide
 
 > [!Important] 
 >
@@ -31,7 +31,7 @@ On Linux, notifications are shown by sending D-Bus messages to a notifications s
 
 - `actions`: Notification Actions (see below)
 - `body`: Whether the `body` parameter to `show()` will be respected
-- `persistence`: The server will keep showing the notification until the user dismisses it
+- `persistence`: Whether to show the notification until the user dismisses it
 - `sound`: Whether the server can play sounds
 
 ## Showing notifications
@@ -98,6 +98,8 @@ To use a custom sound, specify `LinuxInitializationSettings.defaultSound` for ev
 - `AssetsLinuxSound`, which takes a Flutter asset
 - `ThemeLinuxSound`, which takes one of [these](https://www.freedesktop.org/wiki/Specifications/sound-theme-spec/) pre-defined sound names
 
-### Limitations
+## Limitations
 
-Scheduling and repeating notifications are not supported on Linux.
+- Scheduling and repeating notifications are not supported on Linux.
+
+- All notifications are sent to the main `onDidReceiveNotificationResponse` handler, which runs on the main isolate of the running application and cannot be launched in the background if the application is not running. To respond to notification clicks after the application is terminated, [register your application as D-Bus activatable](https://wiki.gnome.org/HowDoI/DBusApplicationLaunching). This is not feasible to do in this plugin since plugins are loaded after the application, so `getNotificationAppLaunchDetails()` wouldn't be possible to implement correctly.

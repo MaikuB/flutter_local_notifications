@@ -263,3 +263,7 @@ To see notifications that are still being shown but have not been dismissed or c
 ### Check scheduled notifications
 
 To check for notifications that were scheduled for the future and have yet to be shown, use [`pendingNotificationRequests()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/pendingNotificationRequests.html). This function returns a list of [`PendingNotificationRequest`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/PendingNotificationRequest/PendingNotificationRequest.html`) objects, which provide information about the notification's ID, title, body, and payload. This is not supported on Linux and the Web, and will instead return an empty list.
+
+## Testing
+
+This class is based on the [`FlutterLocalNotificationsPlugin`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin-class.html). If you need to write unit tests involving this plugin, just mock out that class (and any of the platform-specific plugin classes you may have used) for your tests. If a platform-specific implementation of the plugin is required for your tests, use the [debugDefaultTargetPlatformOverride](https://api.flutter.dev/flutter/foundation/debugDefaultTargetPlatformOverride.html) property provided by the Flutter framework.
