@@ -6,6 +6,17 @@ import 'package:flutter_local_notifications_platform_interface/flutter_local_not
 import '../details.dart';
 import '../plugin/base.dart';
 import 'bindings.dart';
+import 'mock.dart';
+
+/// Whether unit tests are running and to not use the real DLL files.
+bool isUnitTest = false;
+
+/// Gets the correct DLL bindings based on [isUnitTest].
+NotificationsPluginBindings getBindings() => isUnitTest
+    ? MockBindings()
+    : NotificationsPluginBindings(
+        DynamicLibrary.open('flutter_local_notifications_windows.dll'),
+      );
 
 /// Helpful methods on native string maps.
 extension NativeStringMapUtils on NativeStringMap {
