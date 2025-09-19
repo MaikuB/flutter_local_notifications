@@ -109,7 +109,7 @@ To have a notification bypass Do Not Disturb:
 - Show a notification with a `channelId` that corresponds to that channel
 - You can use `androidPlugin?.hasNotificationPolicyAccess()` to check your permission at runtime
 
-> [!NOTE]
+> [!Important]
 >
 > Bypassing Do Not Disturb does not mean the device's volume will be increased or vibration will be enabled, just that the notification will appear on-screen. In an emergency, the user may have sound and vibration disabled and won't notice your notification. Use a different package to enable sound and vibration if you need it. 
 
@@ -160,7 +160,7 @@ Most notification presentation options are set on the notification channel inste
 
 ### Notification actions
 
-Notifications can sometimes be used to accept user input and act on their behalf without necessarily opening the app. See [this section](./usage.md#notification-actions) of the General Usage Guide for details, and [this section](./usage.md#the-initialize-function) on how to respond to action interactions. See [`AndroidNotificationAction`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationAction-class.html) for the full API, or the following examples: 
+Notifications can sometimes be used to accept user input and act on their behalf without necessarily opening the app. See [this section](./android-setup#using-notification-actions) of the Android Setup Guide, [this section](./usage.md#notification-actions) of the General Usage Guide for details, and [this section](./usage.md#the-initialize-function) on how to respond to action interactions. See [`AndroidNotificationAction`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationAction-class.html) for the full API, or the following examples: 
 
 ```dart
 final actionsDetails = AndroidNotificationDetails("my-channel",
