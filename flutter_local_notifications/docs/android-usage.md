@@ -1,10 +1,17 @@
-# Android Usage
+# Android Usage Guide
 
 > [!IMPORTANT]
 >
 > Make sure to read the [Android Setup Guide](./android-setup.md) and [General Usage Guide](./usage.md) first.
 
-This guide will explore all the features this plugin has available for apps running on Android. Some features can only be called on the Android plugin, not the general plugin. See the general usage guide for how to get that at runtime. The rest of this guide will refer to the regular plugin class as `plugin`, and the Android plugin as `androidPlugin`. 
+This guide will explore all the features this plugin has available for apps running on Android. Some features can only be called on the Android plugin, not the general plugin. The rest of this guide will assume the following:
+
+```dart
+final plugin = FlutterLocalNotificationsPlugin();
+final androidPlugin = plugin
+  .resolvePlatformSpecificImplementation
+  <AndroidFlutterLocalNotificationsPlugin>();
+```
 
 While some of these methods will have their arguments, return types, and usage spelled out in detail, this document is meant to complement the [API reference](https://pub.dev/documentation/flutter_local_notifications/latest/index.html) on Pub. If you're looking for more details, nuances, or information about a function's signature, refer to the reference. Remember you can also check the [example app](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications/example) for a pretty thorough reference of what this plugin can do.
 

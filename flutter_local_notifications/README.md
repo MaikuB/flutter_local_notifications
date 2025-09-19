@@ -5,9 +5,6 @@
 
 A cross platform plugin for displaying local notifications.
 
->[!IMPORTANT]
-> Given how quickly the Flutter ecosystem evolves, the minimum Flutter SDK version will be bumped occasionally to make it easier to maintain the plugin. Note that the official plugins already follow a similar approach. If this affects your applications (e.g., you need to support an older OS version), you may need to consider maintaining your own fork.
-
 ## 📱 Supported platforms
 
 * **Android+**. Uses the [NotificationCompat APIs](https://developer.android.com/reference/androidx/core/app/NotificationCompat) so it can be run older Android devices
@@ -18,54 +15,9 @@ A cross platform plugin for displaying local notifications.
 
 Note: the plugin requires Flutter SDK 3.22 at a minimum. The list of support platforms for Flutter 3.22 itself can be found [here](https://github.com/flutter/website/blob/4fa26a1e909a2243fa18e4d101192bb5d400fcf2/src/_data/platforms.yml)
 
-## ✨ Features
-
-* Mockable (plugin and API methods aren't static)
-* [Android] Configuring the importance level
-* [Android] Configuring the priority
-* [Android] Customising the vibration pattern for notifications
-* [Android] Configure the default icon for all notifications
-* [Android] Configure the icon for each notification (overrides the default when specified)
-* [Android] Configure the large icon for each notification. The icon can be a drawable or a file on the device
-* [Android] Formatting notification content via [HTML markup](https://developer.android.com/guide/topics/resources/string-resource.html#StylingWithHTML)
-* [Android] Support for the following notification styles
-    * Big picture
-    * Big text
-    * Inbox
-    * Messaging
-    * Media
-        * While media playback control using a `MediaSession.Token` is not supported, with this style you let Android treat the `largeIcon` bitmap as album artwork
-* [Android] Group notifications
-* [Android] Show progress notifications
-* [Android] Configure notification visibility on the lockscreen
-* [Android] Ability to create and delete notification channels
-* [Android] Retrieve the list of active notifications
-* [Android] Full-screen intent notifications
-* [Android] Start a foreground service
-* [Android] Ability to check if notifications are enabled
-* [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
-* [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
-* [iOS and macOS 10.14 or newer] Ability to check if notifications are enabled with specific type check
-* [Linux] Ability to to use themed/Flutter Assets icons and sound
-* [Linux] Ability to to set the category
-* [Linux] Configuring the urgency
-* [Linux] Configuring the timeout (depends on system implementation)
-* [Linux] Ability to set custom notification location (depends on system implementation)
-* [Linux] Ability to set custom hints
-* [Linux] Ability to suppress sound
-* [Linux] Resident and transient notifications
-* [Windows] Can show raw XML (see the [Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer))
-* [Windows] A full Dart API for all the options supported by toast notifications
-* [Windows] Can configure images, buttons, dropdowns, text input, and launch behavior
-* [Windows] Can dynamically update notifications after they've been shown
-
 ### iOS pending notifications limit
 
 There is a limit imposed by iOS where it will only keep the 64 notifications that were last set on any iOS versions newer than 9. On iOS versions 9 and older, the 64 notifications that fire soonest are kept. [See here for more details.](https://ileyf.cn.openradar.appspot.com/38065340)
-
-### Updating application badge
-
-This plugin provides a way to update the badge count of your notifications, but doesn't support APIs for directly setting the badge count without showing a notification, and may not work on all Android launchers. If you need this for your application, consider using the [`app_badge_plus`](https://pub.dev/packages/app_badge_plus) plugin.
 
 ### Custom notification sounds
 
@@ -76,16 +28,6 @@ This plugin provides a way to update the badge count of your notifications, but 
 Capabilities depend on the system notification server implementation, therefore, not all features listed in `LinuxNotificationDetails` may be supported. One of the ways to check some capabilities is to call the `LinuxFlutterLocalNotificationsPlugin.getCapabilities()` method.
 
 The `onDidReceiveNotificationResponse` callback runs on the main isolate of the running application and cannot be launched in the background if the application is not running. To respond to notification after the application is terminated, your application should be registered as DBus activatable (please see [DBusApplicationLaunching](https://wiki.gnome.org/HowDoI/DBusApplicationLaunching) for more information), and register action before activating the application. This is difficult to do in a plugin because plugins instantiate during application activation, so `getNotificationAppLaunchDetails` can't be implemented without changing the main user application.
-
-## 📷 Screenshots
-
-| Platform | Screenshot                                                                                                                                                                                                                      |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Android  | <img height="480" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/android_notification.png">                                                                                                       |
-| iOS      | <img height="414" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/ios_notification.png">                                                                                                           |
-| macOS    | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/macos_notification.png">                                                                                                                      |
-| Linux    | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/gnome_linux_notification.png"> <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/kde_linux_notification.png"> |
-| Windows  | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/windows_notification.png">                                                                                                                    |
 
 
 ## 👏 Acknowledgements
@@ -177,23 +119,6 @@ await flutterLocalNotificationsPlugin.initialize(initializationSettings,
 
 Initialisation can be done in the `main` function of your application or can be done within the first page shown in your app. Developers can refer to the example app that has code for the initialising within the `main` function. The code above has been simplified for explaining the concepts. Here we have specified the default icon to use for notifications on Android (refer to the *Android setup* section) and designated the function (`onDidReceiveNotificationResponse`) that should fire when a notification has been tapped on via the `onDidReceiveNotificationResponse` callback. Specifying this callback is entirely optional but here it will trigger navigation to another page and display the payload associated with the notification. This callback **cannot** be used to handle when a notification launched an app. Use the `getNotificationAppLaunchDetails` method when the app starts if you need to handle when a notification triggering the launch for an app e.g. change the home route of the app for deep-linking.
 
-Note that all settings are nullable, because we don't want to force developers so specify settings for platforms they don't target. You will get a runtime ArgumentError Exception if you forgot to pass the settings for the platform you target.
-
-```dart
-void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) async {
-    final String? payload = notificationResponse.payload;
-    if (notificationResponse.payload != null) {
-      debugPrint('notification payload: $payload');
-    }
-    await Navigator.push(
-      context,
-      MaterialPageRoute<void>(builder: (context) => SecondScreen(payload)),
-    );
-}
-```
-
-In the real world, this payload could represent the id of the item you want to display the details of. Once the initialisation is complete, then you can manage the displaying of notifications. Note that this callback is only intended to work when the app is running. For scenarios where your application needs to handle when a notification launched the app refer to [here](#getting-details-on-if-the-app-was-launched-via-a-notification-created-by-this-plugin)
-
 The `DarwinInitializationSettings` class provides default settings on how the notification be presented when it is triggered and the application is in the foreground on iOS/macOS. There are optional named parameters that can be modified to suit your application's purposes. Here, it is omitted and the default values for these named properties is set such that all presentation options (alert, sound, badge) are enabled.
 
 The `LinuxInitializationSettings` class requires a name for the default action that calls the `onDidReceiveNotificationResponse` callback when the notification is clicked.
@@ -262,26 +187,6 @@ final bool result = await flutterLocalNotificationsPlugin
 
 Here the call to `flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()` returns the iOS implementation of the plugin that contains APIs specific to iOS if the application is running on iOS. Similarly, the macOS implementation is returned by calling `flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<MacOSFlutterLocalNotificationsPlugin>()`. The `?.` operator is used as the result will be null when run on other platforms. Developers may alternatively choose to guard this call by checking the platform their application is running on.
 
-### Displaying a notification
-
-```dart
-const AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails('your channel id', 'your channel name',
-        channelDescription: 'your channel description',
-        importance: Importance.max,
-        priority: Priority.high,
-        ticker: 'ticker');
-const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-await flutterLocalNotificationsPlugin.show(
-    0, 'plain title', 'plain body', notificationDetails,
-    payload: 'item x');
-```
-
-Here, the first argument is the id of notification and is common to all methods that would result in a notification being shown. This is typically set a unique value per notification as using the same id multiple times would result in a notification being updated/overwritten.
-
-The details specific to the Android platform are also specified. This includes the channel details that is required for Android 8.0+. Whilst not shown, it's possible to specify details for iOS and macOS as well using the optional `iOS` and `macOS` named parameters if needed. The payload has been specified ('item x'), that will passed back through your application when the user has tapped on a notification. Note that for Android devices that notifications will only in appear in the tray and won't appear as a toast aka heads-up notification unless things like the priority/importance has been set appropriately. Refer to the Android docs (https://developer.android.com/guide/topics/ui/notifiers/notifications.html#Heads-up) for additional information. The "ticker" text is passed here is optional and specific to Android. This allows for text to be shown in the status bar on older versions of Android when the notification is shown.
-
 ### Grouping notifications
 
 #### iOS
@@ -291,65 +196,6 @@ For iOS, you can specify `threadIdentifier` in `DarwinNotificationDetails`. Noti
 ```dart
 const DarwinNotificationDetails iOSPlatformChannelSpecifics =
     DarwinNotificationDetails(threadIdentifier: 'thread_id');
-```
-
-#### Android
-
-This is a "translation" of the sample available at https://developer.android.com/training/notify-user/group.html
-
-```dart
-const String groupKey = 'com.android.example.WORK_EMAIL';
-const String groupChannelId = 'grouped channel id';
-const String groupChannelName = 'grouped channel name';
-const String groupChannelDescription = 'grouped channel description';
-// example based on https://developer.android.com/training/notify-user/group.html
-const AndroidNotificationDetails firstNotificationAndroidSpecifics =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        importance: Importance.max,
-        priority: Priority.high,
-        groupKey: groupKey);
-const NotificationDetails firstNotificationPlatformSpecifics =
-    NotificationDetails(android: firstNotificationAndroidSpecifics);
-await flutterLocalNotificationsPlugin.show(1, 'Alex Faarborg',
-    'You will not believe...', firstNotificationPlatformSpecifics);
-const AndroidNotificationDetails secondNotificationAndroidSpecifics =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        importance: Importance.max,
-        priority: Priority.high,
-        groupKey: groupKey);
-const NotificationDetails secondNotificationPlatformSpecifics =
-    NotificationDetails(android: secondNotificationAndroidSpecifics);
-await flutterLocalNotificationsPlugin.show(
-    2,
-    'Jeff Chang',
-    'Please join us to celebrate the...',
-    secondNotificationPlatformSpecifics);
-
-// Create the summary notification to support older devices that pre-date
-/// Android 7.0 (API level 24).
-///
-/// Recommended to create this regardless as the behaviour may vary as
-/// mentioned in https://developer.android.com/training/notify-user/group
-const List<String> lines = <String>[
-    'Alex Faarborg  Check this out',
-    'Jeff Chang    Launch Party'
-];
-const InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
-    lines,
-    contentTitle: '2 messages',
-    summaryText: 'janedoe@example.com');
-const AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        styleInformation: inboxStyleInformation,
-        groupKey: groupKey,
-        setAsGroupSummary: true);
-const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-await flutterLocalNotificationsPlugin.show(
-    3, 'Attention', 'Two messages', notificationDetails);
 ```
 
 ## 📈 Testing
