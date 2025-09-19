@@ -1,5 +1,6 @@
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
+import 'package:flutter_local_notifications_windows/src/ffi/utils.dart';
 import 'package:test/test.dart';
 import 'package:timezone/data/latest_all.dart';
 import 'package:timezone/standalone.dart';
@@ -18,6 +19,7 @@ const WindowsInitializationSettings badSettings = WindowsInitializationSettings(
 );
 
 void main() => group('Plugin', () {
+      isUnitTest = true;
       setUpAll(initializeTimeZones);
 
       test('initializes safely', () async {
