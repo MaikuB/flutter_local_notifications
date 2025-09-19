@@ -112,6 +112,7 @@ There are *many* features supported by all the platforms, but here are the most 
 | Bypass Do Not Disturb             | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark:   | :heavy_check_mark:   |
 
 \* Linux features are dependent on the device's [notification server capabilities](./docs/linux-usage.md#server-capabilities)
+
 \*\* Permissions not required for Linux and Windows devices
 
 ## Need help?

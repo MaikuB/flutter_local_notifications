@@ -4,7 +4,7 @@
 >
 > Make sure to read the [iOS Setup Guide](./ios-setup.md) and [General Usage Guide](./usage.md) first.
 
-This guide will explore all the features this plugin has available for apps running on Darwin platforms – iOS and MacOS. Some features can only be called on the Darwin plugins, not the general plugin. See the general usage guide for how to get that at runtime. The rest of this guide will assume the following. 
+This guide will explore all the features this plugin has available for apps running on Darwin platforms – iOS and MacOS. Some features can only be called on the Darwin plugins, not the general plugin. See the general usage guide for how to get that at runtime. The rest of this guide will assume the following.
 
 ```dart
 final plugin = FlutterLocalNotificationsPlugin();
@@ -17,7 +17,7 @@ final macOSPlugin = plugin
 final darwinPlugin = iOSPlugin;  // or macOSPlugin
 ```
 
-Both plugins support the same features, but you will still need to call the same methods on both plugins if your application will run on both platforms. 
+Both plugins support the same features, but you will still need to call the same methods on both plugins if your application will run on both platforms.
 
 While some of these methods will have their arguments, return types, and usage spelled out in detail, this document is meant to complement the [API reference](https://pub.dev/documentation/flutter_local_notifications/latest/index.html) on Pub. If you're looking for more details, nuances, or information about a function's signature, refer to the reference. Remember you can also check the [example app](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications/example) for a pretty thorough reference of what this plugin can do.
 
@@ -31,30 +31,30 @@ While some of these methods will have their arguments, return types, and usage s
 
 When the app is in the foreground, the device will, by default, not show the notification. To override this behavior, customize `DarwinInitializationSettings` (all of these default to `true`)
 
-- `defaultPresentBadge`: gives the app icon a badge 
+- `defaultPresentBadge`: gives the app icon a badge
 - `defaultPresentBanner`: shows a notification banner on-screen
 - `defaultPresentList`: adds the notification to the Notification Center
 - `defaultPresentSound`: plays a notification sound
 
 ### Notification actions
 
-Notifications can sometimes be used to accept user input and act on their behalf without necessarily opening the app. See [this section](./ios-setup#handling-actions) of the iOS Setup Guide, [this section](./usage.md#notification-actions) of the General Usage Guide, and [this section](./usage.md#the-initialize-function) on how to respond to action interactions. 
+Notifications can sometimes be used to accept user input and act on their behalf without necessarily opening the app. See [this section](./ios-setup#handling-actions) of the iOS Setup Guide, [this section](./usage.md#notification-actions) of the General Usage Guide, and [this section](./usage.md#the-initialize-function) on how to respond to action interactions.
 
-On Darwin, you must declare your actions in `DarwinInitializationSettings` with the `notificationCategories` field, which takes a list of [`DarwinNotificationCategory`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/DarwinNotificationCategory-class.html) objects, each with their own list of [`DarwinNotificationAction`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/DarwinNotificationAction-class.html)s. Categories are defined for similar types of notifications, like new emails, interesting sales, and more. Each category will have the same set of actions. Here are some examples: 
+On Darwin, you must declare your actions in `DarwinInitializationSettings` with the `notificationCategories` field, which takes a list of [`DarwinNotificationCategory`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/DarwinNotificationCategory-class.html) objects, each with their own list of [`DarwinNotificationAction`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/DarwinNotificationAction-class.html)s. Categories are defined for similar types of notifications, like new emails, interesting sales, and more. Each category will have the same set of actions. Here are some examples:
 
 ```dart
 // Set up the actions
 final hotNewDeal = DarwinNotificationCategory(
-	"new-promo",
+  "new-promo",
   actions: [
     DarwinNotificationAction(
-      "purchase", "Buy this!", 
+      "purchase", "Buy this!",
       options: {DarwinNotificationActionOption.foreground},
     ),
   ],
 ),
 final newMessage = DarwinNotificationCategory(
-	"new-message", 
+  "new-message",
   actions: [
     DarwinNotificationAction.text(
       "reply", "Reply", buttonTitle: "Send a reply",
@@ -86,14 +86,14 @@ await plugin.initialize(
 final dealDetails = DarwinNotificationDetails(categoryIdentifier: "new-promo");
 await plugin.show(
   1, "A Hot New Deal!", "Look what's on sale!",
-	payload: "deal_id_123",
-	NotificationDetails(iOS: dealDetails, macOS: dealDetails),
+  payload: "deal_id_123",
+  NotificationDetails(iOS: dealDetails, macOS: dealDetails),
 );
 ```
 
 ## Requesting permissions
 
-This next section will deal with requesting permissions. As noted in the general usage guide, requesting permissions is a very sensitive process in terms of user experience, and must be done only when necessary and only after informing the user of why you need the permissions. If the user rejects your request – which they might if they feel annoyed or don't understand why you need it – Android will stop showing your requests to the user and start blocking them automatically. If this happens, you will need to prompt the user to go to the settings themselves and grant your app permissions manually. 
+This next section will deal with requesting permissions. As noted in the general usage guide, requesting permissions is a very sensitive process in terms of user experience, and must be done only when necessary and only after informing the user of why you need the permissions. If the user rejects your request – which they might if they feel annoyed or don't understand why you need it – Android will stop showing your requests to the user and start blocking them automatically. If this happens, you will need to prompt the user to go to the settings themselves and grant your app permissions manually.
 
 > [!Important]
 >
@@ -109,7 +109,7 @@ You will need permissions to show notifications at all. Be sure to call [`reques
 
 ### Provisional Notifications
 
-Instead of asking for broad permissions right away, you can request [provisional permissions](https://developer.apple.com/documentation/usernotifications/asking-permission-to-use-notifications#Use-provisional-authorization-to-send-trial-notifications) instead. This will allow your app to send notifications quietly in a way that doesn't disturb the user – instead of a banner or sound, your notification will be sent straight to the Notification Center. These notifications will also come with a prompt to the user if they want to keep allowing more notifications or turn them off, which can either grant or deny your broader permissions automatically.  
+Instead of asking for broad permissions right away, you can request [provisional permissions](https://developer.apple.com/documentation/usernotifications/asking-permission-to-use-notifications#Use-provisional-authorization-to-send-trial-notifications) instead. This will allow your app to send notifications quietly in a way that doesn't disturb the user – instead of a banner or sound, your notification will be sent straight to the Notification Center. These notifications will also come with a prompt to the user if they want to keep allowing more notifications or turn them off, which can either grant or deny your broader permissions automatically.
 
 ```dart
 // Either right away
@@ -130,7 +130,7 @@ If you have notifications that are important enough to need to bypass Do Not Dis
 
 > [!Important]
 >
-> Bypassing Do Not Disturb does not mean the device's volume will be increased or vibration will be enabled, just that the notification will appear on-screen. In an emergency, the user may have sound and vibration disabled and won't notice your notification. Use a different package to enable sound and vibration if you need it. 
+> Bypassing Do Not Disturb does not mean the device's volume will be increased or vibration will be enabled, just that the notification will appear on-screen. In an emergency, the user may have sound and vibration disabled and won't notice your notification. Use a different package to enable sound and vibration if you need it.
 
 ## Showing notifications
 

@@ -1,6 +1,6 @@
 # Linux Usage Guide
 
-> [!Important] 
+> [!Important]
 >
 > Make sure to read the [General Usage Guide](./usage.md) first.
 >
@@ -23,11 +23,11 @@ The `LinuxInitializationSettings` object takes a few parameters
 - `defaultActionName` (required): The default text to show for the available action
 - `defaultIcon`: The default icon for all notifications (see below for icon types)
 - `defaultSound`: The default sound for all notifications (see below for sound types)
-- `defaultSuppressSound`: Asks the notification server to not play any sounds 
+- `defaultSuppressSound`: Asks the notification server to not play any sounds
 
 ### Server capabilities
 
-On Linux, notifications are shown by sending D-Bus messages to a notifications server that implements the [Desktop Notifications Specification](https://specifications.freedesktop.org/notification-spec/). In order to stay server-agnostic, you can query the server ahead of time with [`linuxPlugin?.getCapabilities()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/LinuxFlutterLocalNotificationsPlugin/getCapabilities.html) to find out what features it supports. That function returns a list of [`LinuxServerCapabilities`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/LinuxServerCapabilities-class.html) that describe what kinds of features it supports. You can then decide to not use certain features if you know the server does not support them. Notable capabilities to watch out for include: 
+On Linux, notifications are shown by sending D-Bus messages to a notifications server that implements the [Desktop Notifications Specification](https://specifications.freedesktop.org/notification-spec/). In order to stay server-agnostic, you can query the server ahead of time with [`linuxPlugin?.getCapabilities()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/LinuxFlutterLocalNotificationsPlugin/getCapabilities.html) to find out what features it supports. That function returns a list of [`LinuxServerCapabilities`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/LinuxServerCapabilities-class.html) that describe what kinds of features it supports. You can then decide to not use certain features if you know the server does not support them. Notable capabilities to watch out for include:
 
 - `actions`: Notification Actions (see below)
 - `body`: Whether the `body` parameter to `show()` will be respected
@@ -38,7 +38,7 @@ On Linux, notifications are shown by sending D-Bus messages to a notifications s
 
 ### Presentation options
 
-The [`LinuxNotificationDetails`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/LinuxNotificationDetails-class.html) class provides a lot of options, including: 
+The [`LinuxNotificationDetails`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/LinuxNotificationDetails-class.html) class provides a lot of options, including:
 
 - `icon` and `sound`: see below
 - `category` and `urgency`: pre-defined options that describe the type of message
@@ -47,7 +47,7 @@ The [`LinuxNotificationDetails`](https://pub.dev/documentation/flutter_local_not
 
 ### Markup
 
-If the server supports the `bodyMarkup` capability, you may use the following HTML tags in your body: 
+If the server supports the `bodyMarkup` capability, you may use the following HTML tags in your body:
 
 - `<b>Bold text</b>`
 - `<i>Italic text</i>`
@@ -60,23 +60,23 @@ If the server supports the `bodyImages` capability, you may include images in yo
 
 ### Notification Actions
 
-Notifications can sometimes be used to accept user input and act on their behalf without necessarily opening the app. See [this section](./usage.md#notification-actions) of the General Usage Guide, and [this section](./usage.md#the-initialize-function) on how to respond to action interactions. Here is an example of button actions: 
+Notifications can sometimes be used to accept user input and act on their behalf without necessarily opening the app. See [this section](./usage.md#notification-actions) of the General Usage Guide, and [this section](./usage.md#the-initialize-function) on how to respond to action interactions. Here is an example of button actions:
 ```dart
 void onNotifcationTapped(NotificationResponse response) {
-	switch (response.actionId) {
+  switch (response.actionId) {
     "delete-message": deleteMessage(id: response.payload);
     "mark-as-read": markMessageAsRead(id: response.payload);
   }
 }
 
 final details = LinuxNotificationDetails(
-	actions: [
+  actions: [
     LinuxNotificationAction(key: "delete-message", label: "Delete message"),
     LinuxNotificationAction(label: "mark-as-read", label: "Mark as Read"),
   ],
 );
 await plugin.show(
-	2, "New message from Alice", "Hey, are you free?",
+  2, "New message from Alice", "Hey, are you free?",
   NotificationDetails(linux: details),
   payload: "message_ID_123",
 );

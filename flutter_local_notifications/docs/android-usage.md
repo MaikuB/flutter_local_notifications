@@ -21,7 +21,7 @@ While some of these methods will have their arguments, return types, and usage s
 
 ## Initialization
 
-Android only has one option to configure – the default app icon. The icon should be added as a [drawable resource](https://developer.android.com/guide/topics/resources/drawable-resource), saved in `android/app/src/main/res/drawable`, preferable as a PNG or WEBP file. Specify the name of the icon without the file extension. For example, for a resource saved as `res/drawable/app_icon.png`, your `initialize()` call should look like this: 
+Android only has one option to configure – the default app icon. The icon should be added as a [drawable resource](https://developer.android.com/guide/topics/resources/drawable-resource), saved in `android/app/src/main/res/drawable`, preferable as a PNG or WEBP file. Specify the name of the icon without the file extension. For example, for a resource saved as `res/drawable/app_icon.png`, your `initialize()` call should look like this:
 
 ```dart
 final settings = InitializationSettings(
@@ -32,7 +32,7 @@ await plugin.initialize(settings);
 
 ## Notification channels
 
-Android groups notifications of a similar purpose into [notification channels](https://developer.android.com/develop/ui/views/notifications#ManageChannels). Separate from notification grouping, this is meant to allow users to customize how their notifications are shown, like "new message" or "upcoming deals". Using channels consistently will give users confidence and more options when changing settings, and will allow them to silence some notifications without missing on others. 
+Android groups notifications of a similar purpose into [notification channels](https://developer.android.com/develop/ui/views/notifications#ManageChannels). Separate from notification grouping, this is meant to allow users to customize how their notifications are shown, like "new message" or "upcoming deals". Using channels consistently will give users confidence and more options when changing settings, and will allow them to silence some notifications without missing on others.
 
 > [!IMPORTANT]
 >
@@ -44,7 +44,7 @@ To create a notification channel, use [`createNotificationChannel`](https://pub.
 
 ```dart
 final chatChannel = AndroidNotificationChannel(
-	"chat-messages", "Chat Messages",
+  "chat-messages", "Chat Messages",
   description: "New messages in private chats",
   importance: Importance.high,
   // ...
@@ -57,7 +57,7 @@ await androidPlugin?.createNotificationChannel(channel);
 
 ### Notification channel options
 
-Notification channels support the following options. These options may only be set when the channel is being created, and may not be changed later. If you need to, you can delete the channel and recreate it, or guide the user to change it themselves. You can call `getNotificationChannels()` to get a list of channels, but note that users may change these options at any time in the settings, so the options may not be the same as when you created them.  
+Notification channels support the following options. These options may only be set when the channel is being created, and may not be changed later. If you need to, you can delete the channel and recreate it, or guide the user to change it themselves. You can call `getNotificationChannels()` to get a list of channels, but note that users may change these options at any time in the settings, so the options may not be the same as when you created them.
 
 - `description`: will be shown to the user in the settings app, but not in the notifications themselves
 - `groupId`: which notification channel group this channel belongs to (see below)
@@ -74,10 +74,10 @@ If you have a lot of channels, you can also choose to use notification channel g
 
 ```dart
 final chatsGroup = AndroidNotificationChannelGroup(
-	"all-chats", "All Chats", description: "All your chat messages",
+  "all-chats", "All Chats", description: "All your chat messages",
 );
 final privateChats = AndroidNotificationChannel(
-	"private-chats", "Private Chats", groupId: "all-chats",
+  "private-chats", "Private Chats", groupId: "all-chats",
 );
 final publicChats = AndroidNotificationChannel(
   "group-chats", "Group Chats", groupId: "all-chats",
@@ -89,11 +89,11 @@ await androidPlugin?.createNotificationChannelGroup(publicChats);
 
 > [!NOTE]
 >
-> Once you've added a channel to a group, you cannot change it. If necessary, first delete the channels and groups using `deleteNotificationChannel()` and `deleteNotificationChannelGroup()`, then re-create them the way you want them. 
+> Once you've added a channel to a group, you cannot change it. If necessary, first delete the channels and groups using `deleteNotificationChannel()` and `deleteNotificationChannelGroup()`, then re-create them the way you want them.
 
 ## Permissions
 
-This next section will deal with requesting permissions. As noted in the general usage guide, requesting permissions is a very sensitive process in terms of user experience, and must be done only when necessary and only after informing the user of why you need the permissions. If the user rejects your request – which they might if they feel annoyed or don't understand why you need it – Android will stop showing your requests to the user and start blocking them automatically. If this happens, you will need to prompt the user to go to the settings themselves and grant your app permissions manually. 
+This next section will deal with requesting permissions. As noted in the general usage guide, requesting permissions is a very sensitive process in terms of user experience, and must be done only when necessary and only after informing the user of why you need the permissions. If the user rejects your request – which they might if they feel annoyed or don't understand why you need it – Android will stop showing your requests to the user and start blocking them automatically. If this happens, you will need to prompt the user to go to the settings themselves and grant your app permissions manually.
 
 ### Requesting notification permissions
 
@@ -101,7 +101,7 @@ You will need permissions to show notifications at all. Be sure to call `android
 
 ### Bypassing Do Not Disturb
 
-To have a notification bypass Do Not Disturb: 
+To have a notification bypass Do Not Disturb:
 
 - Follow [this section](./android-setup.md#bypassing-do-not-disturb) of the Android Setup Guide
 - After calling `plugin.initialize()`, call [`androidPlugin?.requestNotificationPolicyAccess()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/requestNotificationPolicyAccess.html)
@@ -111,11 +111,11 @@ To have a notification bypass Do Not Disturb:
 
 > [!Important]
 >
-> Bypassing Do Not Disturb does not mean the device's volume will be increased or vibration will be enabled, just that the notification will appear on-screen. In an emergency, the user may have sound and vibration disabled and won't notice your notification. Use a different package to enable sound and vibration if you need it. 
+> Bypassing Do Not Disturb does not mean the device's volume will be increased or vibration will be enabled, just that the notification will appear on-screen. In an emergency, the user may have sound and vibration disabled and won't notice your notification. Use a different package to enable sound and vibration if you need it.
 
 ### Showing full screen notifications
 
-Some notifications need the user's full and complete attention, like a finished timer, an ongoing alarm, or incoming call. These notifications can take over the screen entirely and show a custom UI. Since they can be very invasive, they also require special permissions. 
+Some notifications need the user's full and complete attention, like a finished timer, an ongoing alarm, or incoming call. These notifications can take over the screen entirely and show a custom UI. Since they can be very invasive, they also require special permissions.
 
 - Follow [this section](./android-setup.md#full-screen-notifications) of the Android Setup Guide
 - After calling `plugin.initialize()`, call [`androidPlugin?.requestFullScreenIntentPermission()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/requestFullScreenIntentPermission.html)
@@ -126,9 +126,9 @@ Some notifications need the user's full and complete attention, like a finished 
 
 > [!NOTE]
 >
-> Starting with API Level 34 (Android 14), only applications that provide call or alarm functionality will receive this permission. If the user is actively using the device, they will receive a heads-up notification instead. 
+> Starting with API Level 34 (Android 14), only applications that provide call or alarm functionality will receive this permission. If the user is actively using the device, they will receive a heads-up notification instead.
 
-If the system chooses to show a full-screen notification, your app will be launched and `onDidReceiveNotificationResponse` will fire, allowing your app to show a special UI based on the notification. 
+If the system chooses to show a full-screen notification, your app will be launched and `onDidReceiveNotificationResponse` will fire, allowing your app to show a special UI based on the notification.
 
 ### Scheduling with precision
 
@@ -148,7 +148,7 @@ Using `zonedSchedule()` or `periodicallyShowWithDuration()` will cause your noti
 
 ### Presentation options
 
-Most notification presentation options are set on the notification channel instead of the notification itself (see above). See [`AndroidNotificationDetails`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationDetails-class.html) for all available fields. Notable options include: 
+Most notification presentation options are set on the notification channel instead of the notification itself (see above). See [`AndroidNotificationDetails`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationDetails-class.html) for all available fields. Notable options include:
 
 - `icon`: use a custom icon for this notification. To use custom icons, see [this section](./android-setup.md#custom-icons-and-sounds) of the Android Setup Guide.
 - `showProgress`: show a loading bar
@@ -160,21 +160,22 @@ Most notification presentation options are set on the notification channel inste
 
 ### Notification actions
 
-Notifications can sometimes be used to accept user input and act on their behalf without necessarily opening the app. See [this section](./android-setup#using-notification-actions) of the Android Setup Guide, [this section](./usage.md#notification-actions) of the General Usage Guide for details, and [this section](./usage.md#the-initialize-function) on how to respond to action interactions. See [`AndroidNotificationAction`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationAction-class.html) for the full API, or the following examples: 
+Notifications can sometimes be used to accept user input and act on their behalf without necessarily opening the app. See [this section](./android-setup#using-notification-actions) of the Android Setup Guide, [this section](./usage.md#notification-actions) of the General Usage Guide for details, and [this section](./usage.md#the-initialize-function) on how to respond to action interactions. See [`AndroidNotificationAction`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationAction-class.html) for the full API, or the following examples:
 
 ```dart
-final actionsDetails = AndroidNotificationDetails("my-channel",
+final actionsDetails = AndroidNotificationDetails(
+  "my-channel", "My Channel Name",
   actions: [
     // A basic button
     AndroidNotificationAction("button-id", "Button 1"),
-    // A text field 
+    // A text field
     AndroidNotificationAction(
-    	"text-field-id", "Press to open text box",
+      "text-field-id", "Press to open text box",
       inputs: [
         AndroidNotificationActionInput(label: "Enter a message"),
       ],
     ),
-		// Multiple choice
+    // Multiple choice
     AndroidNotificationAction(
       "choice-id", "Choose your favorite fruit",
       inputs: [

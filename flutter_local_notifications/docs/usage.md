@@ -33,7 +33,7 @@ The different platforms share a lot of functionality, but also differ wildly in 
 
 ```dart
 final details = NotificationDetails(
-	android: AndroidNotificationDetails(silent: true),
+  android: AndroidNotificationDetails(silent: true),
   iOS: DarwinNotificationDetails(presentSound: false),
   macOS: DarwinNotificationDetails(presentSound: false),
   linux: LinuxNotificationDetails(suppressSound: true),
@@ -76,7 +76,7 @@ The [`initialize()`](https://pub.dev/documentation/flutter_local_notifications/l
 ```dart
 // 1. The initialization settings
 final initSettings = InitializationSettings(
-	android: AndroidInitializationSettings("app_icon"),
+  android: AndroidInitializationSettings("app_icon"),
   iOS: DarwinInitializationSettings(requestSoundPermission: true),
   macOS: DarwinInitializationSettings(requestSoundPermission: true),
   linux: LinuxInitializationSettings(defaultActionName: "Open"),
@@ -103,7 +103,7 @@ void onNotificationTapBackground(NotificationResponse response) {
 
 final plugin = FlutterLocalNotificationsPlugin();
 await plugin = await plugin.initialize(
-	initSettings,
+  initSettings,
   onDidReceiveNotificationResponse: onNotificationTap,
   onDidReceiveBackgroundNotificationResponse: onNotificationTapBackground,
 );
@@ -200,7 +200,7 @@ Note that the `scheduledDate` is not a regular `DateTime`, but rather a [`TZDate
 
 ```dart
 await plugin.zonedSchedule(
-	0, "Your event is now!", "This is a body",
+  0, "Your event is now!", "This is a body",
   tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
   NotificationDetails(...),
   androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -220,7 +220,7 @@ To periodically show a notification, use [`periodicallyShowWithDuration()`](http
 
 ```dart
 await plugin.periodicallyShowWithDuration(
-	0, "Have you moved today?", "Exercise is important!",
+  0, "Have you moved today?", "Exercise is important!",
   Duration(hours: 1),
   NotificationDetails(...),
   androidScheduleMode: AndroidScheduleMode.inexact,

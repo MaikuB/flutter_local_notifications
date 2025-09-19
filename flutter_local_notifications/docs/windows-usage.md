@@ -82,20 +82,20 @@ Notifications can sometimes be used to accept user input and act on their behalf
 final markReadButton = WindowsAction(content: "Mark as Read", arguments: "mark-read");
 
 final deleteButton = WindowsAction(
-	content: "Delete",
+  content: "Delete",
   arguments: "delete-message",
   buttonStyle: WindowsButtonStyle.critical,
   tooltip: "Delete this message",
 );
 
 final respondTextInput = WindowsTextInput(
-	id: "reply-message",
+  id: "reply-message",
   placeHoldContent: "Enter a message...",
   title: "Reply",
 );
 
 final presetSelection = WindowsSelection(
-	id: "reply-message",
+  id: "reply-message",
   title: "Respond with a preset message",
   items: [
     WindowsSelection(id: "reply1", content: "Hello!"),
@@ -104,13 +104,13 @@ final presetSelection = WindowsSelection(
 );
 
 final details = WindowsNotificationDetails(
-	actions: [markReadButton, deleteButton],
+  actions: [markReadButton, deleteButton],
   inputs: [respondTextInput, presetSelection],
 );
 
 await plugin.show(
   1, "Alice sent you a message", "Hey! Are you ready?",
-	NotificationDetails(windows: details),
+  NotificationDetails(windows: details),
   payload: "message_ID_123",
 );
 
