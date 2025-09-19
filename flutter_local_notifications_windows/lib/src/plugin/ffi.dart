@@ -327,7 +327,6 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     int id,
     String xml,
     TZDateTime scheduledDate,
-    WindowsNotificationDetails? details,
   ) async =>
       using((Arena arena) {
         if (!_isReady) {

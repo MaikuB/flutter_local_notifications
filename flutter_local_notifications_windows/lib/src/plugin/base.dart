@@ -55,7 +55,6 @@ abstract class WindowsNotificationsBase
     int id,
     String xml,
     TZDateTime scheduledDate,
-    WindowsNotificationDetails? details,
   );
 
   /// Updates the progress bar in the notification with the given ID.
