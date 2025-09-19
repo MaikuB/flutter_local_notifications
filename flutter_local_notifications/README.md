@@ -89,9 +89,9 @@ await plugin.show(
 
 ### Gallery
 
-| <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/android_notification.png" style="zoom:50%;" /> | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/ios_notification.png" style="zoom:50%;" /> | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/gnome_linux_notification.png" style="zoom:200%;" /> |
+| <img src="https://github.com/Levi-Lesches/flutter_local_notifications/raw/readme-refactor/images/android_notification.png" style="zoom:50%;" /> | <img src="https://github.com/Levi-Lesches/flutter_local_notifications/raw/readme-refactor/images/ios_notification.png" style="zoom:50%;" /> | <img src="https://github.com/Levi-Lesches/flutter_local_notifications/raw/readme-refactor/images/gnome_linux_notification.png" style="zoom:200%;" /> |
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/kde_linux_notification.png" style="zoom:200%;" /> | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/macos_notification.png" style="zoom:50%;" /> | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/windows_notification.png" style="zoom:200%;" /> |
+| <img src="https://github.com/Levi-Lesches/flutter_local_notifications/raw/readme-refactor/images/kde_linux_notification.png" style="zoom:200%;" /> | <img src="https://github.com/Levi-Lesches/flutter_local_notifications/raw/readme-refactor/images/macos_notification.png" style="zoom:50%;" /> | <img src="https://github.com/Levi-Lesches/flutter_local_notifications/raw/readme-refactor/images/windows_notification.png" style="zoom:200%;" /> |
 
 ## Supported Features
 
