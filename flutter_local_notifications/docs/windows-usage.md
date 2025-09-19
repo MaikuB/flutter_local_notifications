@@ -23,9 +23,9 @@ While some of these methods will have their arguments, return types, and usage s
 
 ## Initialization
 
-The `WindowsInitializationSettings` object has a few parameters that need to match the ones provided in your MSIX configuration. Refer to [this table](./windows-setup.md#setting-up-msix) in the setup guide for details. If you're not using an MSIX package, then these values can be whatever you want them to be, but they must still be valid and properly formatted. The following is a full example: 
+The `WindowsInitializationSettings` object has a few parameters that need to match the ones provided in your MSIX configuration. Refer to [this table](./windows-setup.md#setting-up-msix) in the setup guide for details. If you're not using an MSIX package, then these values can be whatever you want them to be, but they must still be valid and properly formatted. The following is a full example:
 
-```yaml 
+```yaml
 # pubspec.yaml
 msix_config:
   display_name: Flutter Local Notifications Example
@@ -60,12 +60,12 @@ await plugin.initialize(InitializationSettings(windows: windowsSettings);
 
 ### Presentation options
 
-The [`WindowsNotificationDetails`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsNotificationDetails-class.html) class supports a number of options, including: 
+The [`WindowsNotificationDetails`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsNotificationDetails-class.html) class supports a number of options, including:
 
 - `actions` and `inputs` – see below
 - `images`: a list of [`WindowsImage`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsImage-class.html)s, either shown regularly or used to override the app icon
 - `rows`: a list of [`WindowsRow`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsRow-class.html)s and columns that group images and text together
-- `progressBars`: a list of [`WindowsProgressBar`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsProgressBar-class.html)s 
+- `progressBars`: a list of [`WindowsProgressBar`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsProgressBar-class.html)s
 - `header`: uses a custom ID that can be used to group multiple notifications together
 - `audio`: a [`WindowsNotificationAudio`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsNotificationAudio-class.html) to play, or `WindowsNotificationAudio.silent()`
 - `duration`: describes how long the notification should stick around for
@@ -78,6 +78,9 @@ The example app has a [separate file](https://github.com/MaikuB/flutter_local_no
 ### Notification Actions
 
 Notifications can sometimes be used to accept user input and act on their behalf without necessarily opening the app. See [this section](./usage.md#notification-actions) of the General Usage Guide, and [this section](./usage.md#the-initialize-function) on how to respond to action interactions. Here is an example of a few different types of actions in a notification
+
+<details>
+<summary>Expand to see a full example</summary>
 
 ```dart
 final markReadButton = WindowsAction(content: "Mark as Read", arguments: "mark-read");
@@ -120,7 +123,7 @@ void onNotificationTapped(NotificationResponse response) {
   switch (response.actionId) {
     case "delete-message": deleteMessage(messageId);
     case "mark-read": markRead(messageID, true);
-    case "reply-message": 
+    case "reply-message":
       // Inputs on Windows are in NotificationResponse.data
       final reply = response.data["reply-message"];
       replyToMessage(messageId, reply);
@@ -128,17 +131,19 @@ void onNotificationTapped(NotificationResponse response) {
 }
 ```
 
+</details>
+
 ### Custom images and sounds
 
-images can come from different sources: the web, MSIX bundles, files on the user's device, or Flutter assets. See the documentation for [`WindowsImage`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsImage-class.html) for complete details on when each time of source is usable. 
+images can come from different sources: the web, MSIX bundles, files on the user's device, or Flutter assets. See the documentation for [`WindowsImage`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsImage-class.html) for complete details on when each time of source is usable.
 
 Sounds can either be one of the [`WindowsNotificationSound`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsNotificationSound.html) presets, or a Flutter asset using [`WindowsNotificationAudio.asset()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsNotificationAudio/WindowsNotificationAudio.asset.html). When used in an MSIX package, this constructor will automatically convert the resource to an `ms-appx://` URI, and use a fallback preset sound in debug or non-packaged releases.
 
 ### Custom XML
 
-Windows notifications are sent in the form of an XML schema, which the Windows SDK has to parse and verify. Using the `WindowsNotificationDetails` class in this library lets you skip that and build your notification with pure Dart code, but if you wanted to use raw XML for some unsupported or custom behavior, you can: 
+Windows notifications are sent in the form of an XML schema, which the Windows SDK has to parse and verify. Using the `WindowsNotificationDetails` class in this library lets you skip that and build your notification with pure Dart code, but if you wanted to use raw XML for some unsupported or custom behavior, you can:
 
-- `windowsPlugin?.isValidXml()` will validate that the XML is indeed valid Windows XML 
+- `windowsPlugin?.isValidXml()` will validate that the XML is indeed valid Windows XML
 - `windowsPlugin?.showRawXml()` is equivalent to `plugin.show()`, but with raw XML instead of details
 - `windowsPlugin?.zonedScheduleRawXml()` is equivalent to `zonedSchedule()` but with raw XML
 
@@ -152,7 +157,7 @@ Any time you need to supply a text value, like `title`, `body`, `subtitle`, or e
 await plugin.show(1, "Alice sent you a message", null, null);
 ```
 
-You can use 
+You can use
 
 ```dart
 final bindings = {"sender": "Alice"};
@@ -168,11 +173,11 @@ You can then update the bindings at any time, and the notification will be updat
 await windowsPlugin?.updateBindings({"sender": "Bob"});
 ```
 
-You can also use this to update progress bars in real-time, though there is a special method for that: 
+You can also use this to update progress bars in real-time, though there is a special method for that:
 
 ```dart
 final progressBar = WindowsProgressBar(
-  id: "downloading-progress", 
+  id: "downloading-progress",
   status: "Downloading...",
   value: null,  // null=indeterminate, ie no progress yet
   label: "Downloading...",  // note: no progress yet
@@ -192,5 +197,4 @@ void updateDownloadProgress(int percentage) {
 
 - Without package identity, `getActiveNotifications()` will always return an empty list
 - Without package identity, `cancel()` will not work, use `cancelAll()` or `cancelPendingNotifications()`
-- Windows does not support repeating notifications. Trying to use `periodicallyShow()` or `periodicallyShowWithDuration()` will result in an `UnsupportedError`. 
-
+- Windows does not support repeating notifications. Trying to use `periodicallyShow()` or `periodicallyShowWithDuration()` will result in an `UnsupportedError`.
