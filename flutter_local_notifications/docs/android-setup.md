@@ -207,7 +207,7 @@ In any case, add the appropriate permission to your manifest, under the top-leve
 
 Do not request both permissions, choose only one.
 
-### Using full-screen notifications
+### Full-screen notifications
 
 Some apps may need to take over the screen to show their notifications, such as alarms or incoming calls. This requires some modifications to your manifestL
 
@@ -286,7 +286,7 @@ Be sure to follow the instructions [here](https://developer.android.com/topic/pe
 >
 > Code shrinking can affect the  [GSON](https://github.com/google/gson) package as well, a Java dependency used by this plugin. Version 19.0.0 of this package includes the necessary ProGuard rules to protect it, but if you're using an earlier version, you'll need to manually copy the contents of [this file](https://github.com/google/gson/blob/main/examples/android-proguard-example/proguard.cfg) to `android/app/proguard-rules.pro`.
 
-## Custom notification icons and sounds
+## Custom icons and sounds
 
 Notification icons should be added as a [drawable resource](https://developer.android.com/guide/topics/resources/drawable-resource), just like app icons. By default, the app's own icon is `@mipmap/ic_launcher`, and any such value can be passed directly to the `AndroidNotificationDetails()` constructor. For more details on creating custom notification icons, [see the docs](https://developer.android.com/studio/write/create-app-icons#create-notification). Custom notification sounds should be added to the `res/raw` directory.
 

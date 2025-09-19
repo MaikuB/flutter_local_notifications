@@ -1,4 +1,4 @@
-# Cross-platform usage
+# General usage
 
 While each platform inherently supports different types of notifications and features, there is quite a lot of functionality that can be accessed on all platforms. This page describes how to work with the common features, and access platform-specific ones.
 
@@ -26,8 +26,6 @@ await androidPlugin?.requestExactAlarmsPermission();
 ```
 
 For a description of the features associated with each platform, see their respective usage guides. The rest of this document will focus primarily on features that are common to all platforms and accessible on the "main" plugin.
-
-The platform-specific features will be described in more detail in their respective usage guides.
 
 ### The different details classes
 
@@ -185,7 +183,9 @@ These same parameters will be present on most methods that show notifications. O
 
 ### Schedule a notification
 
-**Not supported on Linux or the Web**
+> [!NOTE]
+>
+> Not supported on Linux or the Web
 
 The [`zonedSchedule()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/zonedSchedule.html) method accepts the same five arguments as `show()`, but also accepts:
 
@@ -212,7 +212,9 @@ By default, notifications shown with this function will not repeat unless `match
 
 ### Periodically show a notification
 
-**Not supported on Linux, Windows, or the Web**
+> [!Note]
+>
+> Not supported on Linux, Windows, or the Web
 
 To periodically show a notification, use [`periodicallyShowWithDuration()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/periodicallyShow.html). It takes the same arguments as `show()`, but also accepts a `repeatIntervalDuration` specifying how far apart these notifications should be and an `androidScheduleMode` as explained above. For example:
 
