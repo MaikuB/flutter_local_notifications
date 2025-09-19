@@ -158,4 +158,3 @@ The [`DarwinNotificationDetails`](https://pub.dev/documentation/flutter_local_no
 
 - `getNotificationAppLaunchDetails()` will always return null prior to MacOS 10.14
 - iOS will only schedule up to 64 notifications at a time
-- 
