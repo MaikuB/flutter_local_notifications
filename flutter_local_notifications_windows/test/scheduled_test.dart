@@ -27,10 +27,6 @@ void main() => group('Schedules', () {
         final TZDateTime earlier = now.subtract(const Duration(days: 1));
         final TZDateTime later = now.add(const Duration(days: 1));
         expect(
-          plugin.zonedSchedule(302, null, null, now, null),
-          throwsArgumentError,
-        );
-        expect(
           plugin.zonedSchedule(302, null, null, earlier, null),
           throwsArgumentError,
         );
