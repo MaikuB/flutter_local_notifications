@@ -17,10 +17,6 @@ final windowsPlugin = plugin
 
 While some of these methods will have their arguments, return types, and usage spelled out in detail, this document is meant to complement the [API reference](https://pub.dev/documentation/flutter_local_notifications/latest/index.html) on Pub. If you're looking for more details, nuances, or information about a function's signature, refer to the reference. Remember you can also check the [example app](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications/example) for a pretty thorough reference of what this plugin can do.
 
-> [!IMPORTANT]
->
-> Make sure to read [this section]()
-
 ## Initialization
 
 The `WindowsInitializationSettings` object has a few parameters that need to match the ones provided in your MSIX configuration. Refer to [this table](./windows-setup.md#setting-up-msix) in the setup guide for details. If you're not using an MSIX package, then these values can be whatever you want them to be, but they must still be valid and properly formatted. The following is a full example:
