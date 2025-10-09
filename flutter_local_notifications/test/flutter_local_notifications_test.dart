@@ -40,7 +40,9 @@ void main() {
       expect(map['requestProvidesAppNotificationSettings'], true);
     });
 
-    test('permission check returns correct value', () async {
+    test(
+        'NotificationsEnabledOptions stores '
+        'providesAppNotificationSettings value', () async {
       const NotificationsEnabledOptions options = NotificationsEnabledOptions(
         isEnabled: true,
         isSoundEnabled: true,
