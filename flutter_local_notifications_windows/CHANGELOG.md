@@ -1,19 +1,15 @@
-## [1.0.0-dev.4]
+## [1.0.3]
 
-*  **Breaking change** bumped minimum Flutter SDK requirement to 3.22.0 and Dart SDK requirement to 3.4.0
+* Fixed issue where non-ASCII characters for the notification [application name](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsInitializationSettings/appName.html) weren't being displayed properly. Thanks to the PR from [yoyoIU](https://github.com/yoyo930021)
 
-## [1.0.0-dev.3]
+## [1.0.2]
 
-* **Breaking change** Reworked the APIs around custom images and audio. Check the updated example for more details, but in short:
-  * Instead of `WindowsNotificationAudio.fromFile()`, use `WindowsNotificationAudio.asset()`
-  * Instead of `WindowsImage.file()`, use `WindowsImage()`. See the docs for what URIs are supported
-* [Windows] Added `MsixUtils.hasPackageIdentity()` and `MsixUtils.assetUri()`. You shouldn't need to use `.assetUri()` directly, but it may be helpful to check `.hasPackageIdentity()` to know what features your application can support.
-* [Windows] Added `FlutterLocalNotificationsWindows.isValidXml()` for testing raw XML.
+* Fixed issue [#2648](https://github.com/MaikuB/flutter_local_notifications/issues/2648) where non-ASCII characters in the notification payload were not being handled properly. Thanks to the PR from [yoyoIU](https://github.com/yoyo930021)
 
-## [1.0.0-dev.2]
+## [1.0.1]
 
-* Fixed an issue that happens with MSIX app builds. Thanks to PR from [Levi Lesches](https://github.com/Levi-Lesches)
+* Fixed issue [#2651](https://github.com/MaikuB/flutter_local_notifications/issues/2651) where unresolved symbols occurred with changes in introduced in newer Windows SDKs. Thanks to the PR from [Sebastien](https://github.com/Sebastien-VZN)
 
-## [1.0.0-dev.1]
+## [1.0.0]
 
-* Initial prerelease for Windows. Thanks to PR [Levi Lesches](https://github.com/Levi-Lesches) that continued the work done initially done by [Kenneth](https://github.com/kennethnym) and[lightrabbit](https://github.com/lightrabbit)
+* Initial release for Windows. Thanks to PR [Levi Lesches](https://github.com/Levi-Lesches) that continued the work done initially done by [Kenneth](https://github.com/kennethnym) and [lightrabbit](https://github.com/lightrabbit)

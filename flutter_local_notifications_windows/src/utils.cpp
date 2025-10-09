@@ -27,6 +27,15 @@ NotificationData dataFromMap(NativeStringMap map) {
   return data;
 }
 
+std::wstring utf8_to_wstring(const std::string& utf8) {
+  int len = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, nullptr, 0);
+  winrt::check_win32(len != 0 ? ERROR_SUCCESS : GetLastError());
+  std::wstring wstr(static_cast<size_t>(len), L'\0');
+  int len2 = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, wstr.data(), len);
+  winrt::check_win32(len2 != 0 ? ERROR_SUCCESS : GetLastError());
+  return wstr;
+}
+
 constexpr uint8_t hex_to_uint(const char c) {
   if (c >= '0' && c <= '9') {
     return static_cast<uint8_t>(c - '0');

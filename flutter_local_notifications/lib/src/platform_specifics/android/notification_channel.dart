@@ -13,6 +13,7 @@ class AndroidNotificationChannel {
     this.description,
     this.groupId,
     this.importance = Importance.defaultImportance,
+    this.bypassDnd = false,
     this.playSound = true,
     this.sound,
     this.enableVibration = true,
@@ -38,6 +39,14 @@ class AndroidNotificationChannel {
   /// The importance of the notification.
   final Importance importance;
 
+  /// Whether the notification channel should attempt to bypass Do Not Disturb
+  /// settings.
+  ///
+  /// You must acquire notification policy access by calling
+  /// [AndroidFlutterLocalNotificationsPlugin.requestNotificationPolicyAccess]
+  /// before setting this to true. Otherwise this value is ignored.
+  final bool bypassDnd;
+
   /// Indicates if a sound should be played when the notification is displayed.
   ///
   /// Tied to the specified channel and cannot be changed after the channel has
@@ -54,7 +63,7 @@ class AndroidNotificationChannel {
 
   /// Indicates if vibration should be enabled when the notification is
   /// displayed.
-  //
+  ///
   /// Tied to the specified channel and cannot be changed after the channel has
   /// been created for the first time.
   final bool enableVibration;
@@ -79,11 +88,11 @@ class AndroidNotificationChannel {
   final Color? ledColor;
 
   /// Whether notifications posted to this channel can appear as application
-  /// icon badges in a Launcher
+  /// icon badges in a Launcher.
   final bool showBadge;
 
   /// The attribute describing what is the intended use of the audio signal,
-  /// such as alarm or ringtone set in [`AudioAttributes.Builder`](https://developer.android.com/reference/android/media/AudioAttributes.Builder#setUsage(int))
+  /// such as alarm or ringtone set in [`AudioAttributes.Builder`](https://developer.android.com/reference/android/media/AudioAttributes.Builder#setUsage(int)).
   /// https://developer.android.com/reference/android/media/AudioAttributes
   final AudioAttributesUsage audioAttributesUsage;
 }

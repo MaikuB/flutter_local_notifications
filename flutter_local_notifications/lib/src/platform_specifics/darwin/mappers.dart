@@ -85,5 +85,6 @@ extension DarwinNotificationDetailsMapper on DarwinNotificationDetails {
             ?.map((a) => a.toMap()) // ignore: always_specify_types
             .toList(),
         'categoryIdentifier': categoryIdentifier,
+        'criticalSoundVolume': criticalSoundVolume,
       };
 }
