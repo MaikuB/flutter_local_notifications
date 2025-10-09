@@ -780,6 +780,7 @@ void main() {
             alert: true,
             provisional: true,
             critical: true,
+            providesAppNotificationSettings: true,
           );
       expect(log, <Matcher>[
         isMethodCall('requestPermissions', arguments: <String, Object?>{
@@ -788,7 +789,7 @@ void main() {
           'badge': true,
           'provisional': true,
           'critical': true,
-          'providesAppNotificationSettings': false
+          'providesAppNotificationSettings': true
         })
       ]);
     });
