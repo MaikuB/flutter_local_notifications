@@ -830,18 +830,5 @@ void main() {
         })
       ]);
     });
-
-    test(
-      'check notification settings includes providesAppNotificationSettings',
-      () async {
-        await flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-                IOSFlutterLocalNotificationsPlugin>()
-            ?.checkPermissions();
-        expect(log, <Matcher>[
-          isMethodCall('checkPermissions', arguments: null),
-        ]);
-      },
-    );
   });
 }

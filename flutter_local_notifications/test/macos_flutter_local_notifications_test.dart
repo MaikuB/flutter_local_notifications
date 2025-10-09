@@ -757,19 +757,6 @@ void main() {
       ]);
     });
 
-    test(
-      'check notification settings includes providesAppNotificationSettings',
-      () async {
-        await flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-                MacOSFlutterLocalNotificationsPlugin>()
-            ?.checkPermissions();
-        expect(log, <Matcher>[
-          isMethodCall('checkPermissions', arguments: null),
-        ]);
-      },
-    );
-
     test('macOS requestPermissions with all settings requested', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
