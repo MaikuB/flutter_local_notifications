@@ -1,6 +1,7 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 /// A widget that displays a toggle for enabling the "Configure in App" option
@@ -51,13 +52,13 @@ class _ConfigureInAppToggleState extends State<ConfigureInAppToggle> {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+          children: <Widget>[
             const Expanded(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(16, 16, 4, 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: <Widget>[
                     Text(
                       "Show 'Configure in App' context menu option:",
                       style: TextStyle(fontSize: 14),
@@ -82,8 +83,9 @@ class _ConfigureInAppToggleState extends State<ConfigureInAppToggle> {
                     .resolvePlatformSpecificImplementation<
                         IOSFlutterLocalNotificationsPlugin>()
                     ?.checkPermissions(),
-                builder: (context, snapshot) {
-                  final enabled =
+                builder: (BuildContext context,
+                    AsyncSnapshot<NotificationsEnabledOptions?> snapshot) {
+                  final bool enabled =
                       snapshot.data?.isProvidesAppNotificationSettingsEnabled ??
                           false;
                   return Switch(

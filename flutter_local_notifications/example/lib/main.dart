@@ -16,11 +16,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'configure_in_app_toggle.dart';
 import 'padded_button.dart';
 import 'plugin.dart';
 import 'repeating.dart' as repeating;
 import 'windows.dart' as windows;
-import 'configure_in_app_toggle.dart';
 
 /// Streams are created so that app can respond to notification-related events
 /// since the plugin is initialized in the `main` function
@@ -240,7 +240,7 @@ class _HomePageState extends State<HomePage> {
             title: const Text('Notification Settings'),
             content: const Text(
                 'This is a basic example of in-app notification settings UI'),
-            actions: [
+            actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text('Close'),
@@ -275,7 +275,6 @@ class _HomePageState extends State<HomePage> {
             alert: true,
             badge: true,
             sound: true,
-            providesAppNotificationSettings: false,
           );
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<

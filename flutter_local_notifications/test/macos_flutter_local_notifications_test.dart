@@ -782,7 +782,7 @@ void main() {
             critical: true,
           );
       expect(log, <Matcher>[
-        isMethodCall('requestPermissions', arguments: {
+        isMethodCall('requestPermissions', arguments: <String, Object?>{
           'sound': true,
           'alert': true,
           'badge': true,

@@ -1,10 +1,9 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_local_notifications/src/platform_specifics/darwin/mappers.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:flutter_local_notifications/src/platform_specifics/darwin/initialization_settings.dart';
-import 'package:flutter_local_notifications/src/platform_specifics/darwin/mappers.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -19,13 +18,13 @@ void main() {
 
   group('providesAppNotificationSettings tests', () {
     test('initialization defaults to false', () {
-      final DarwinInitializationSettings settings =
+      const DarwinInitializationSettings settings =
           DarwinInitializationSettings();
       expect(settings.requestProvidesAppNotificationSettings, false);
     });
 
     test('initialization can be set to true', () {
-      final DarwinInitializationSettings settings =
+      const DarwinInitializationSettings settings =
           DarwinInitializationSettings(
         requestProvidesAppNotificationSettings: true,
       );
@@ -33,7 +32,7 @@ void main() {
     });
 
     test('maps correctly to platform specific map', () {
-      final DarwinInitializationSettings settings =
+      const DarwinInitializationSettings settings =
           DarwinInitializationSettings(
         requestProvidesAppNotificationSettings: true,
       );
@@ -42,7 +41,7 @@ void main() {
     });
 
     test('permission check returns correct value', () async {
-      final NotificationsEnabledOptions options = NotificationsEnabledOptions(
+      const NotificationsEnabledOptions options = NotificationsEnabledOptions(
         isEnabled: true,
         isSoundEnabled: true,
         isAlertEnabled: true,
