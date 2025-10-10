@@ -1427,7 +1427,7 @@ public class FlutterLocalNotificationsPlugin
       }else if(SELECT_NOTIFICATION.equals(mainActivityIntent.getAction())){
         Map<String, Object> notificationResponse = extractNotificationResponseMap(mainActivityIntent);
         if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.getAction())) {
-          processForegroundNotificationAction(intent, notificationResponse);
+          processForegroundNotificationAction(mainActivityIntent, notificationResponse);
         }
         channel.invokeMethod("didReceiveNotificationResponse", notificationResponse);
       }
