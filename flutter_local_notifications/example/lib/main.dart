@@ -784,7 +784,8 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                   ],
-                  if (Platform.isIOS) ...<Widget>[
+                  if (!kIsWeb &&
+                      (Platform.isIOS || Platform.isMacOS)) ...<Widget>[
                     const Text(
                       'iOS and macOS-specific examples',
                       style: TextStyle(fontWeight: FontWeight.bold),
