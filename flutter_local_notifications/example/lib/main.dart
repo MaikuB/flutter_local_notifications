@@ -872,15 +872,13 @@ class _HomePageState extends State<HomePage> {
                         await _showNotificationInNotificationCentreOnly();
                       },
                     ),
-                    if (Platform.isIOS) ...<Widget>[
-                      ConfigureInAppToggle(
-                        flutterLocalNotificationsPlugin:
-                            flutterLocalNotificationsPlugin,
-                      ),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                    ],
+                    ConfigureInAppToggle(
+                      flutterLocalNotificationsPlugin:
+                          flutterLocalNotificationsPlugin,
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    )
                   ],
                   if (!kIsWeb && Platform.isLinux) ...<Widget>[
                     const Text(
