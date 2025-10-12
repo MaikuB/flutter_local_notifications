@@ -54,12 +54,17 @@ class DarwinInitializationSettings {
 
   /// Request permission to provide custom notification settings UI.
   ///
-  /// When enabled, the system displays a
+  /// When enabled on iOS, the system displays a
   /// "Configure Notifications in <application name>" button in the
   /// notification's context menu (when swiping on a notification and
   /// selecting Options). This allows your app to present a custom UI
   /// for notification settings by handling the appropriate delegate
   /// callback.
+  ///
+  /// **Note on macOS:** While the API is available on macOS 10.14+, the
+  /// UI button does not appear to be displayed in practice, despite proper
+  /// implementation of the delegate method. The API is supported for
+  /// consistency with iOS, but may not result in visible UI changes on macOS.
   ///
   /// Corresponds to https://developer.apple.com/documentation/usernotifications/unauthorizationoptions/3040321-providesappnotificationsettings
   ///

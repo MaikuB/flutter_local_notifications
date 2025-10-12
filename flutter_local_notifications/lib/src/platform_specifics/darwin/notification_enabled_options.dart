@@ -35,8 +35,13 @@ class NotificationsEnabledOptions {
   /// Whenever critical notifications are enabled.
   final bool isCriticalEnabled;
 
-  /// Whether the system displays a
+  /// Whether the app has requested providesAppNotificationSettings permission.
+  ///
+  /// On iOS, when true, the system displays a
   /// "Configure Notifications in <application name>" button in the
   /// notification's context menu.
+  ///
+  /// On macOS, the permission can be requested and this value reports
+  /// correctly, but the UI button does not appear in practice.
   final bool isProvidesAppNotificationSettingsEnabled;
 }
