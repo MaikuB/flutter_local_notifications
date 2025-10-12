@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 /// A widget that displays a toggle for enabling the "Configure in App" option
-/// for iOS and macOS notifications.
+/// for iOS notifications (iOS 12+ only).
 class ConfigureInAppToggle extends StatefulWidget {
   /// Creates a ConfigureInAppToggle widget.
   const ConfigureInAppToggle({
@@ -21,36 +21,26 @@ class ConfigureInAppToggle extends StatefulWidget {
 }
 
 class _ConfigureInAppToggleState extends State<ConfigureInAppToggle> {
-  bool _isSupportedVersion = false;
+  bool _isIOS12OrHigher = false;
 
   @override
   void initState() {
     super.initState();
-    _checkPlatformVersion();
+    _checkIOSVersion();
   }
 
-  /// Checks if the device is running a supported OS version.
-  /// iOS 12.0+ or macOS 10.14+
-  Future<void> _checkPlatformVersion() async {
-    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-
+  /// Checks if the device is running iOS 12 or higher.
+  Future<void> _checkIOSVersion() async {
     if (Platform.isIOS) {
+      final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
       final List<String> version = iosInfo.systemVersion.split('.');
       if (version.isNotEmpty) {
         final int? majorVersion = int.tryParse(version[0]);
         setState(() {
-          _isSupportedVersion = majorVersion != null && majorVersion >= 12;
+          _isIOS12OrHigher = majorVersion != null && majorVersion >= 12;
         });
       }
-    } else if (Platform.isMacOS) {
-      final MacOsDeviceInfo macInfo = await deviceInfo.macOsInfo;
-      final int version = macInfo.majorVersion;
-      final int minorVersion = macInfo.minorVersion;
-      setState(() {
-        _isSupportedVersion =
-            version > 10 || (version == 10 && minorVersion >= 14);
-      });
     }
   }
 
@@ -76,9 +66,8 @@ class _ConfigureInAppToggleState extends State<ConfigureInAppToggle> {
                     SizedBox(height: 8),
                     Text(
                       '''
-• iOS: swipe left on a notification and tap 'Options'
-• macOS: right-click on a notification
-• Requests 'providesAppNotificationSettings' permission (iOS 12+ / macOS 10.14+)
+• To access: view a notification on the lock screen, swipe left, and tap 'Options'
+• Requests 'providesAppNotificationSettings' permission (iOS 12+)
 • Tap is handled by 'userNotificationCenter(_:openSettingsFor:)' delegate method (not provided by plugin)
 • Note: Once enabled, this declaration cannot be revoked''',
                       style: TextStyle(fontSize: 12, color: Colors.black87),
@@ -90,15 +79,10 @@ class _ConfigureInAppToggleState extends State<ConfigureInAppToggle> {
             Padding(
               padding: const EdgeInsets.only(right: 16),
               child: FutureBuilder<NotificationsEnabledOptions?>(
-                future: Platform.isIOS
-                    ? widget.flutterLocalNotificationsPlugin
-                        .resolvePlatformSpecificImplementation<
-                            IOSFlutterLocalNotificationsPlugin>()
-                        ?.checkPermissions()
-                    : widget.flutterLocalNotificationsPlugin
-                        .resolvePlatformSpecificImplementation<
-                            MacOSFlutterLocalNotificationsPlugin>()
-                        ?.checkPermissions(),
+                future: widget.flutterLocalNotificationsPlugin
+                    .resolvePlatformSpecificImplementation<
+                        IOSFlutterLocalNotificationsPlugin>()
+                    ?.checkPermissions(),
                 builder: (BuildContext context,
                     AsyncSnapshot<NotificationsEnabledOptions?> snapshot) {
                   final bool enabled =
@@ -106,38 +90,22 @@ class _ConfigureInAppToggleState extends State<ConfigureInAppToggle> {
                           false;
                   return Switch(
                     value: enabled,
-                    onChanged: !_isSupportedVersion || enabled
+                    onChanged: !Platform.isIOS || !_isIOS12OrHigher || enabled
                         ? null
                         : (bool value) async {
-                            if (Platform.isIOS) {
-                              final IOSFlutterLocalNotificationsPlugin? plugin =
-                                  widget.flutterLocalNotificationsPlugin
-                                      .resolvePlatformSpecificImplementation<
-                                          IOSFlutterLocalNotificationsPlugin>();
-                              if (plugin != null) {
-                                await plugin.requestPermissions(
-                                  alert: true,
-                                  badge: true,
-                                  sound: true,
-                                  providesAppNotificationSettings: true,
-                                );
-                              }
-                            } else if (Platform.isMacOS) {
-                              final MacOSFlutterLocalNotificationsPlugin?
-                                  plugin = widget
-                                      .flutterLocalNotificationsPlugin
-                                      .resolvePlatformSpecificImplementation<
-                                          MacOSFlutterLocalNotificationsPlugin>();
-                              if (plugin != null) {
-                                await plugin.requestPermissions(
-                                  alert: true,
-                                  badge: true,
-                                  sound: true,
-                                  providesAppNotificationSettings: true,
-                                );
-                              }
+                            final IOSFlutterLocalNotificationsPlugin? plugin =
+                                widget.flutterLocalNotificationsPlugin
+                                    .resolvePlatformSpecificImplementation<
+                                        IOSFlutterLocalNotificationsPlugin>();
+                            if (plugin != null) {
+                              await plugin.requestPermissions(
+                                alert: true,
+                                badge: true,
+                                sound: true,
+                                providesAppNotificationSettings: true,
+                              );
+                              setState(() {});
                             }
-                            setState(() {});
                           },
                   );
                 },
