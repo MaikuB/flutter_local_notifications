@@ -51,6 +51,7 @@ void main() {
           'requestBadgePermission': true,
           'requestProvisionalPermission': false,
           'requestCriticalPermission': false,
+          'requestProvidesAppNotificationSettings': false,
           'defaultPresentAlert': true,
           'defaultPresentSound': true,
           'defaultPresentBadge': true,
@@ -83,6 +84,7 @@ void main() {
           'requestBadgePermission': false,
           'requestProvisionalPermission': false,
           'requestCriticalPermission': false,
+          'requestProvidesAppNotificationSettings': false,
           'defaultPresentAlert': false,
           'defaultPresentSound': false,
           'defaultPresentBadge': false,
@@ -626,6 +628,7 @@ void main() {
           'alert': false,
           'provisional': false,
           'critical': false,
+          'providesAppNotificationSettings': false
         })
       ]);
     });
@@ -640,15 +643,19 @@ void main() {
             provisional: true,
             critical: true,
           );
-      expect(log, <Matcher>[
-        isMethodCall('requestPermissions', arguments: <String, Object>{
-          'sound': true,
-          'badge': true,
-          'alert': true,
-          'provisional': true,
-          'critical': true,
-        })
-      ]);
+      expect(
+        log,
+        <Matcher>[
+          isMethodCall('requestPermissions', arguments: <String, Object?>{
+            'sound': true,
+            'badge': true,
+            'alert': true,
+            'provisional': true,
+            'critical': true,
+            'providesAppNotificationSettings': false,
+          })
+        ],
+      );
     });
 
     test('checkPermissions', () async {
@@ -693,6 +700,84 @@ void main() {
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
       expect(log, <Matcher>[
         isMethodCall('getNotificationAppLaunchDetails', arguments: null)
+      ]);
+    });
+
+    test('initialize with providesAppNotificationSettings', () async {
+      const DarwinInitializationSettings macOSInitializationSettings =
+          DarwinInitializationSettings(
+        requestProvidesAppNotificationSettings: true,
+      );
+      const InitializationSettings initializationSettings =
+          InitializationSettings(macOS: macOSInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      expect(log, <Matcher>[
+        isMethodCall(
+          'initialize',
+          arguments: <String, Object>{
+            'requestAlertPermission': true,
+            'requestSoundPermission': true,
+            'requestBadgePermission': true,
+            'requestProvisionalPermission': false,
+            'requestCriticalPermission': false,
+            'requestProvidesAppNotificationSettings': true,
+            'defaultPresentAlert': true,
+            'defaultPresentSound': true,
+            'defaultPresentBadge': true,
+            'defaultPresentBanner': true,
+            'defaultPresentList': true,
+            'notificationCategories': <String>[],
+          },
+        ),
+      ]);
+    });
+
+    test('requestPermissions with providesAppNotificationSettings', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+            providesAppNotificationSettings: true,
+          );
+      expect(log, <Matcher>[
+        isMethodCall(
+          'requestPermissions',
+          arguments: <String, Object>{
+            'sound': true,
+            'alert': true,
+            'badge': true,
+            'provisional': false,
+            'critical': false,
+            'providesAppNotificationSettings': true,
+          },
+        ),
+      ]);
+    });
+
+    test('macOS requestPermissions with all settings requested', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              MacOSFlutterLocalNotificationsPlugin>()!
+          .requestPermissions(
+            sound: true,
+            badge: true,
+            alert: true,
+            provisional: true,
+            critical: true,
+            providesAppNotificationSettings: true,
+          );
+      expect(log, <Matcher>[
+        isMethodCall('requestPermissions', arguments: <String, Object?>{
+          'sound': true,
+          'alert': true,
+          'badge': true,
+          'provisional': true,
+          'critical': true,
+          'providesAppNotificationSettings': true
+        })
       ]);
     });
   });

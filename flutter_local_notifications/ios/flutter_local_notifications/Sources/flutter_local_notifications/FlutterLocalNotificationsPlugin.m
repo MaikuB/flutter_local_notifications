@@ -49,6 +49,7 @@ NSString *const REQUEST_BADGE_PERMISSION = @"requestBadgePermission";
 NSString *const REQUEST_PROVISIONAL_PERMISSION =
     @"requestProvisionalPermission";
 NSString *const REQUEST_CRITICAL_PERMISSION = @"requestCriticalPermission";
+NSString *const REQUEST_PROVIDES_APP_NOTIFICATION_SETTINGS = @"requestProvidesAppNotificationSettings";
 NSString *const DEFAULT_PRESENT_ALERT = @"defaultPresentAlert";
 NSString *const DEFAULT_PRESENT_SOUND = @"defaultPresentSound";
 NSString *const DEFAULT_PRESENT_BADGE = @"defaultPresentBadge";
@@ -59,6 +60,7 @@ NSString *const ALERT_PERMISSION = @"alert";
 NSString *const BADGE_PERMISSION = @"badge";
 NSString *const PROVISIONAL_PERMISSION = @"provisional";
 NSString *const CRITICAL_PERMISSION = @"critical";
+NSString *const PROVIDES_APP_NOTIFICATION_SETTINGS = @"providesAppNotificationSettings";
 NSString *const CALLBACK_DISPATCHER = @"callbackDispatcher";
 NSString *const ON_NOTIFICATION_CALLBACK_DISPATCHER =
     @"onNotificationCallbackDispatcher";
@@ -106,6 +108,7 @@ NSString *const IS_ALERT_ENABLED = @"isAlertEnabled";
 NSString *const IS_BADGE_ENABLED = @"isBadgeEnabled";
 NSString *const IS_PROVISIONAL_ENABLED = @"isProvisionalEnabled";
 NSString *const IS_CRITICAL_ENABLED = @"isCriticalEnabled";
+NSString *const IS_PROVIDES_APP_NOTIFICATION_SETTINGS_ENABLED = @"isProvidesAppNotificationSettingsEnabled";
 
 NSString *const CRITICAL_SOUND_VOLUME = @"criticalSoundVolume";
 
@@ -347,6 +350,7 @@ static FlutterError *getFlutterError(NSError *error) {
   bool requestedBadgePermission = false;
   bool requestedProvisionalPermission = false;
   bool requestedCriticalPermission = false;
+  bool requestedProvidesAppNotificationSettings = false;
   NSMutableDictionary *presentationOptions = [[NSMutableDictionary alloc] init];
   if ([self containsKey:DEFAULT_PRESENT_ALERT forDictionary:arguments]) {
     presentationOptions[PRESENT_ALERT] =
@@ -394,6 +398,10 @@ static FlutterError *getFlutterError(NSError *error) {
     requestedCriticalPermission =
         [arguments[REQUEST_CRITICAL_PERMISSION] boolValue];
   }
+  if ([self containsKey:REQUEST_PROVIDES_APP_NOTIFICATION_SETTINGS forDictionary:arguments]) {
+    requestedProvidesAppNotificationSettings =
+        [arguments[REQUEST_PROVIDES_APP_NOTIFICATION_SETTINGS] boolValue];
+  }
 
   if ([self containsKey:@"dispatcher_handle" forDictionary:arguments] &&
       [self containsKey:@"callback_handle" forDictionary:arguments]) {
@@ -412,19 +420,20 @@ static FlutterError *getFlutterError(NSError *error) {
                                  badgePermission:requestedBadgePermission
                            provisionalPermission:requestedProvisionalPermission
                               criticalPermission:requestedCriticalPermission
-                                          result:result];
+                  providesAppNotificationSettings:requestedProvidesAppNotificationSettings
+                                         result:result];
                   }];
 
   _initialized = true;
 }
 - (void)requestPermissions:(NSDictionary *_Nonnull)arguments
-
                     result:(FlutterResult _Nonnull)result {
   bool soundPermission = false;
   bool alertPermission = false;
   bool badgePermission = false;
   bool provisionalPermission = false;
   bool criticalPermission = false;
+  bool providesAppNotificationSettings = false;
   if ([self containsKey:SOUND_PERMISSION forDictionary:arguments]) {
     soundPermission = [arguments[SOUND_PERMISSION] boolValue];
   }
@@ -440,11 +449,15 @@ static FlutterError *getFlutterError(NSError *error) {
   if ([self containsKey:CRITICAL_PERMISSION forDictionary:arguments]) {
     criticalPermission = [arguments[CRITICAL_PERMISSION] boolValue];
   }
+  if ([self containsKey:PROVIDES_APP_NOTIFICATION_SETTINGS forDictionary:arguments]) {
+    providesAppNotificationSettings = [arguments[PROVIDES_APP_NOTIFICATION_SETTINGS] boolValue];
+  }
   [self requestPermissionsImpl:soundPermission
                alertPermission:alertPermission
                badgePermission:badgePermission
          provisionalPermission:provisionalPermission
             criticalPermission:criticalPermission
+providesAppNotificationSettings:providesAppNotificationSettings
                         result:result];
 }
 
@@ -453,9 +466,10 @@ static FlutterError *getFlutterError(NSError *error) {
                badgePermission:(bool)badgePermission
          provisionalPermission:(bool)provisionalPermission
             criticalPermission:(bool)criticalPermission
+providesAppNotificationSettings:(bool)providesAppNotificationSettings
                         result:(FlutterResult _Nonnull)result {
   if (!soundPermission && !alertPermission && !badgePermission &&
-      !criticalPermission) {
+      !criticalPermission && !providesAppNotificationSettings) {
     result(@NO);
     return;
   }
@@ -478,6 +492,9 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     if (criticalPermission) {
       authorizationOptions += UNAuthorizationOptionCriticalAlert;
+    }
+    if (providesAppNotificationSettings) {
+      authorizationOptions += UNAuthorizationOptionProvidesAppNotificationSettings;
     }
   }
   [center requestAuthorizationWithOptions:(authorizationOptions)
@@ -502,12 +519,14 @@ static FlutterError *getFlutterError(NSError *error) {
     BOOL isBadgeEnabled = settings.badgeSetting == UNNotificationSettingEnabled;
     BOOL isProvisionalEnabled = false;
     BOOL isCriticalEnabled = false;
+    BOOL isProvidesAppNotificationSettingsEnabled = false;
 
     if (@available(iOS 12.0, *)) {
       isProvisionalEnabled =
           settings.authorizationStatus == UNAuthorizationStatusProvisional;
       isCriticalEnabled =
           settings.criticalAlertSetting == UNNotificationSettingEnabled;
+      isProvidesAppNotificationSettingsEnabled = settings.providesAppNotificationSettings;
     }
 
     NSDictionary *dict = @{
@@ -517,6 +536,7 @@ static FlutterError *getFlutterError(NSError *error) {
       IS_BADGE_ENABLED : @(isBadgeEnabled),
       IS_PROVISIONAL_ENABLED : @(isProvisionalEnabled),
       IS_CRITICAL_ENABLED : @(isCriticalEnabled),
+      IS_PROVIDES_APP_NOTIFICATION_SETTINGS_ENABLED : @(isProvidesAppNotificationSettingsEnabled),
     };
 
     result(dict);
