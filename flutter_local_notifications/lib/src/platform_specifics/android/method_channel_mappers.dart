@@ -13,6 +13,20 @@ import 'styles/inbox_style_information.dart';
 import 'styles/media_style_information.dart';
 import 'styles/messaging_style_information.dart';
 
+// This file is using members that were deprecated in Flutter 3.27,
+// but this package supports Flutter 3.22, and the replacement members
+// were also not added until 3.27, so we have to stick with what we have.
+// ignore_for_file: deprecated_member_use
+
+// When Flutter 3.27 is the new minimum, use these instead:
+// extension on Color {
+//   // These original getters were deprecated.
+//   int get alpha2 => (a * 255.0).round();
+//   int get red2 => (r * 255.0).round();
+//   int get green2 => (g * 255.0).round();
+//   int get blue2 => (b * 255.0).round();
+// }
+
 // ignore_for_file: avoid_as, public_member_api_docs
 extension AndroidInitializationSettingsMapper on AndroidInitializationSettings {
   Map<String, Object> toMap() => <String, Object>{'defaultIcon': defaultIcon};
