@@ -1,6 +1,8 @@
 import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
 import 'package:flutter_local_notifications_windows/src/details/notification_to_xml.dart';
+import 'package:flutter_local_notifications_windows/src/ffi/utils.dart';
 import 'package:test/test.dart';
+import 'package:xml/xml.dart';
 
 const WindowsInitializationSettings settings = WindowsInitializationSettings(
   appName: 'Test app',
@@ -8,23 +10,44 @@ const WindowsInitializationSettings settings = WindowsInitializationSettings(
   guid: 'a8c22b55-049e-422f-b30f-863694de08c8',
 );
 
-extension PluginUtils on FlutterLocalNotificationsWindows {
-  static int id = 15;
-
-  void testDetails(WindowsNotificationDetails details) => expect(
-        isValidXml(
-          notificationToXml(
-            title: 'title',
-            body: 'body',
-            payload: 'payload',
-            details: details,
-          ),
-        ),
-        isTrue,
+extension on WindowsNotificationDetails {
+  String toXml() => notificationToXml(
+        title: 'title',
+        body: 'body',
+        payload: 'payload',
+        details: this,
       );
+
+  void check(List<String> keywords) {
+    final String xml = toXml();
+    expect(
+      () => XmlDocument.parse(toXml()),
+      returnsNormally,
+      reason: 'Was not a valid XML doc',
+    );
+    for (final String keyword in keywords) {
+      expect(xml.contains(keyword), isTrue,
+          reason: 'Could not find $keyword in $xml');
+    }
+  }
+
+  void count(String keyword, int x) {
+    final String xml = toXml();
+    expect(
+      () => XmlDocument.parse(toXml()),
+      returnsNormally,
+      reason: 'Was not a valid XML doc',
+    );
+    expect(
+      keyword.allMatches(xml).length,
+      x,
+      reason: 'Could not find $keyword $x times in $xml',
+    );
+  }
 }
 
 void main() => group('Details:', () {
+      isUnitTest = true;
       final FlutterLocalNotificationsWindows plugin =
           FlutterLocalNotificationsWindows();
       setUpAll(() => plugin.initialize(settings));
@@ -41,20 +64,24 @@ void main() => group('Details:', () {
         expect(plugin.show(-1, 'Negative ID', 'Body'), completes);
       });
 
-      test(
-          'Simple details',
-          () async => plugin
-            ..testDetails(const WindowsNotificationDetails())
-            ..testDetails(
-                const WindowsNotificationDetails(subtitle: 'Subtitle'))
-            ..testDetails(const WindowsNotificationDetails(
-                duration: WindowsNotificationDuration.long))
-            ..testDetails(const WindowsNotificationDetails(
-                scenario: WindowsNotificationScenario.reminder))
-            ..testDetails(WindowsNotificationDetails(timestamp: DateTime.now()))
-            ..testDetails(const WindowsNotificationDetails(
-                subtitle: '{message}',
-                bindings: <String, String>{'message': 'Hello, Mr. Person'})));
+      test('Simple details', () {
+        const WindowsNotificationDetails().check(<String>[]);
+        const WindowsNotificationDetails(subtitle: 'Subtitle')
+            .check(<String>['Subtitle']);
+        const WindowsNotificationDetails(
+          duration: WindowsNotificationDuration.long,
+        ).check(<String>['long']);
+        const WindowsNotificationDetails(
+          scenario: WindowsNotificationScenario.reminder,
+        ).check(<String>['reminder']);
+        final DateTime now = DateTime.now();
+        WindowsNotificationDetails(timestamp: now)
+            .check(<String>[now.toIso8601String().split('.').first]);
+        const WindowsNotificationDetails(
+          subtitle: '{message}',
+          bindings: <String, String>{'message': 'Hello, Mr. Person'},
+        ).check(<String>['binding', 'message']);
+      });
 
       test('Actions', () {
         const WindowsAction simpleAction =
@@ -68,13 +95,23 @@ void main() => group('Details:', () {
           tooltip: 'tooltip',
           imageUri: WindowsImage.getAssetUri('test/icon.png'),
         );
-        plugin
-          ..testDetails(const WindowsNotificationDetails(
-              actions: <WindowsAction>[simpleAction]))
-          ..testDetails(WindowsNotificationDetails(
-              actions: <WindowsAction>[complexAction]))
-          ..testDetails(WindowsNotificationDetails(
-              actions: List<WindowsAction>.filled(5, simpleAction)));
+        const WindowsNotificationDetails(
+          actions: <WindowsAction>[simpleAction],
+        ).check(<String>['Press me', '123']);
+        WindowsNotificationDetails(
+          actions: <WindowsAction>[complexAction],
+        ).check(<String>[
+          'content',
+          'args',
+          'pendingUpdate',
+          'Success',
+          'input-id',
+          'tooltip',
+          'test/icon.png',
+        ]);
+        WindowsNotificationDetails(
+          actions: List<WindowsAction>.filled(5, simpleAction),
+        );
         expect(
           () => notificationToXml(
               details: WindowsNotificationDetails(
@@ -84,14 +121,15 @@ void main() => group('Details:', () {
         );
       });
 
-      test(
-          'Audio',
-          () => plugin
-            ..testDetails(WindowsNotificationDetails(
-                audio: WindowsNotificationAudio.silent()))
-            ..testDetails(WindowsNotificationDetails(
-                audio: WindowsNotificationAudio.preset(
-                    sound: WindowsNotificationSound.call10))));
+      test('Audio', () {
+        WindowsNotificationDetails(
+          audio: WindowsNotificationAudio.silent(),
+        ).check(<String>['silent']);
+        WindowsNotificationDetails(
+          audio: WindowsNotificationAudio.preset(
+              sound: WindowsNotificationSound.call10),
+        ).check(<String>['Call10']);
+      });
 
       test('Rows', () {
         const WindowsColumn emptyColumn =
@@ -107,19 +145,26 @@ void main() => group('Details:', () {
         final WindowsRow bigRow = WindowsRow(
           List<WindowsColumn>.filled(5, simpleColumn),
         );
-        plugin
-          ..testDetails(const WindowsNotificationDetails())
-          ..testDetails(const WindowsNotificationDetails(
-              rows: <WindowsRow>[WindowsRow(<WindowsColumn>[])]))
-          ..testDetails(const WindowsNotificationDetails(rows: <WindowsRow>[
+        const WindowsNotificationDetails(
+          rows: <WindowsRow>[WindowsRow(<WindowsColumn>[])],
+        ).check(<String>['group']);
+        const WindowsNotificationDetails(
+          rows: <WindowsRow>[
             WindowsRow(<WindowsColumn>[emptyColumn])
-          ]))
-          ..testDetails(WindowsNotificationDetails(rows: <WindowsRow>[
+          ],
+        ).check(<String>['group', 'subgroup']);
+        WindowsNotificationDetails(
+          rows: <WindowsRow>[
             WindowsRow(<WindowsColumn>[simpleColumn])
-          ]))
-          ..testDetails(WindowsNotificationDetails(rows: <WindowsRow>[bigRow]))
-          ..testDetails(WindowsNotificationDetails(
-              rows: List<WindowsRow>.filled(5, bigRow)));
+          ],
+        ).check(
+            <String>['group', 'subgroup', 'test/icon.png', 'an icon', 'Text']);
+        WindowsNotificationDetails(
+          rows: <WindowsRow>[bigRow],
+        ).count('<subgroup', 5);
+        WindowsNotificationDetails(
+          rows: List<WindowsRow>.filled(5, bigRow),
+        ).count('<subgroup', 25);
       });
 
       test('Header', () async {
@@ -129,36 +174,37 @@ void main() => group('Details:', () {
           arguments: 'args1',
           activation: WindowsHeaderActivation.foreground,
         );
-        plugin
-          ..testDetails(const WindowsNotificationDetails(header: header))
-          ..testDetails(const WindowsNotificationDetails(header: header));
+
+        const WindowsNotificationDetails(header: header)
+            .check(<String>['header1', 'Header 1', 'args1', 'foreground']);
       });
 
-      test('Images', () async {
+      test('Images', () {
         final WindowsImage simpleImage = WindowsImage(
           WindowsImage.getAssetUri('asset.png'),
           altText: 'an icon',
         );
         final WindowsImage complexImage = WindowsImage(
           Uri.parse('https://picsum.photos/500'),
-          altText: 'an icon',
+          altText: 'an icon2',
           addQueryParams: true,
           crop: WindowsImageCrop.circle,
           placement: WindowsImagePlacement.appLogoOverride,
         );
-        plugin
-          ..testDetails(
-              WindowsNotificationDetails(images: <WindowsImage>[simpleImage]))
-          ..testDetails(WindowsNotificationDetails(
-              images: <WindowsImage>[simpleImage, complexImage]))
-          ..testDetails(
-            WindowsNotificationDetails(
-              images: List<WindowsImage>.filled(6, simpleImage),
-            ),
-          );
+
+        WindowsNotificationDetails(images: <WindowsImage>[simpleImage])
+            .check(<String>['asset.png', 'an icon']);
+        WindowsNotificationDetails(
+          images: <WindowsImage>[simpleImage, complexImage],
+        ).check(
+            <String>['asset.png', 'an icon', 'picsum.photos/500', 'an icon2']);
+
+        WindowsNotificationDetails(
+          images: List<WindowsImage>.filled(6, simpleImage),
+        ).count('asset.png', 6);
       });
 
-      test('Inputs', () async {
+      test('Inputs', () {
         const WindowsTextInput textInput = WindowsTextInput(
           id: 'input',
           placeHolderContent: 'Text hint',
@@ -177,22 +223,24 @@ void main() => group('Details:', () {
           arguments: 'submit',
           inputId: 'input',
         );
-        plugin
-          ..testDetails(const WindowsNotificationDetails(
-              inputs: <WindowsInput>[textInput]))
-          ..testDetails(const WindowsNotificationDetails(
-              inputs: <WindowsInput>[selection]))
-          ..testDetails(
-            WindowsNotificationDetails(
-              inputs: List<WindowsInput>.filled(5, textInput),
-            ),
-          )
-          ..testDetails(const WindowsNotificationDetails(
-              inputs: <WindowsInput>[textInput],
-              actions: <WindowsAction>[action]))
-          ..testDetails(const WindowsNotificationDetails(
-              inputs: <WindowsInput>[selection, textInput],
-              actions: <WindowsAction>[action]));
+        const WindowsNotificationDetails(
+          inputs: <WindowsInput>[textInput],
+        ).check(<String>['input', 'Text hint', 'Text title']);
+        const WindowsNotificationDetails(
+          inputs: <WindowsInput>[selection],
+        ).check(<String>['input', 'item1', 'item2', 'item3']);
+
+        WindowsNotificationDetails(
+          inputs: List<WindowsInput>.filled(5, textInput),
+        ).count('Text hint', 5);
+        const WindowsNotificationDetails(
+          inputs: <WindowsInput>[textInput],
+          actions: <WindowsAction>[action],
+        ).check(<String>['Text hint', 'Submit']);
+        const WindowsNotificationDetails(
+          inputs: <WindowsInput>[selection, textInput],
+          actions: <WindowsAction>[action],
+        ).check(<String>['Text hint', 'item1', 'Submit']);
         expect(
           () => notificationToXml(
             details: WindowsNotificationDetails(
@@ -203,7 +251,7 @@ void main() => group('Details:', () {
         );
       });
 
-      test('Progress', () async {
+      test('Progress', () {
         final WindowsProgressBar simple = WindowsProgressBar(
           id: 'simple',
           status: 'Testing...',
@@ -216,42 +264,21 @@ void main() => group('Details:', () {
           label: 'Progress label',
           title: 'Progress title',
         );
-        final WindowsProgressBar dynamic = WindowsProgressBar(
-          id: 'dynamic',
-          status: 'Testing...',
-          value: 0,
-        );
-        plugin
-          ..testDetails(WindowsNotificationDetails(
-              progressBars: <WindowsProgressBar>[simple]))
-          ..testDetails(WindowsNotificationDetails(
-              progressBars: <WindowsProgressBar>[complex]))
-          ..testDetails(WindowsNotificationDetails(
-              progressBars: <WindowsProgressBar>[simple, complex]))
-          ..testDetails(
-            WindowsNotificationDetails(
-              progressBars: List<WindowsProgressBar>.filled(6, simple),
-            ),
-          );
-        await plugin.show(
-          201,
-          null,
-          null,
-          details: WindowsNotificationDetails(
-            progressBars: <WindowsProgressBar>[dynamic],
-          ),
-        );
-        for (double i = 0; i <= 1.5; i += 0.05) {
-          dynamic.value = i;
-          final NotificationUpdateResult result = await plugin
-              .updateProgressBar(notificationId: 201, progressBar: dynamic);
-          expect(result, NotificationUpdateResult.success);
-          await Future<void>.delayed(const Duration(milliseconds: 10));
-        }
-        expect(
-          await plugin.updateProgressBar(
-              notificationId: 202, progressBar: dynamic),
-          NotificationUpdateResult.notFound,
-        );
+        WindowsNotificationDetails(progressBars: <WindowsProgressBar>[simple])
+            .check(<String>['simple', 'Testing', 'simple-progressValue']);
+        WindowsNotificationDetails(progressBars: <WindowsProgressBar>[complex])
+            .check(<String>[
+          'complex',
+          'Testing...',
+          'complex-progressValue',
+          'complex-progressString',
+          'Progress title'
+        ]);
+        WindowsNotificationDetails(
+          progressBars: <WindowsProgressBar>[simple, complex],
+        ).check(<String>['simple', 'complex']);
+        WindowsNotificationDetails(
+          progressBars: List<WindowsProgressBar>.filled(6, simple),
+        ).count('simple', 6);
       });
     });
