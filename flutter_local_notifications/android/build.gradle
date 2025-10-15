@@ -32,7 +32,7 @@ android {
 
     defaultConfig {
         multiDexEnabled true
-        minSdkVersion 21
+        minSdkVersion 24
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
