@@ -21,7 +21,7 @@ import flutter_local_notifications
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
-  
+
   /// Called when user taps "Configure in App" button in notification's context menu
   /// This delegate method is only called if the app has requested and been granted 
   /// providesAppNotificationSettings permission.
@@ -35,7 +35,7 @@ import flutter_local_notifications
       let channel = FlutterMethodChannel(
           name: "com.example.flutter_local_notifications_example/settings",
           binaryMessenger: controller.binaryMessenger)
-      
+
       channel.invokeMethod("showNotificationSettings", arguments: nil)
   }
 }
