@@ -324,7 +324,7 @@ jobs:
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
-      - uses: futureware-tech/simulator-action@v3
+      - uses: futureware-tech/simulator-action@v4
         id: simulator-action
         with:
           model: 'iPhone 16'
