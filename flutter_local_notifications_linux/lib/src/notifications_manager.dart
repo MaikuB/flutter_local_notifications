@@ -369,6 +369,34 @@ class LinuxNotificationManager {
       },
     );
 
+    _dbus.subscribeSignal(_DBusMethodsSpec.notificationReplied).listen(
+         (DBusSignal s) async {
+        if (s.signature != DBusSignature('us')) {
+          return;
+        }
+
+        final int systemId = (s.values[0] as DBusUint32).value;
+        final String text = (s.values[1] as DBusString).value;
+
+        final LinuxNotificationInfo? notify =
+            await _storage.getBySystemId(systemId);
+        if (notify == null) {
+          return;
+        }
+
+        _onDidReceiveNotificationResponse?.call(
+          NotificationResponse(
+            id: notify.id,
+            actionId: 'inline-reply',
+            payload: notify.payload,
+            input: text,
+            notificationResponseType:
+                NotificationResponseType.selectedNotificationAction,
+          ),
+        );
+      },
+    );
+
     _dbus.subscribeSignal(_DBusMethodsSpec.notificationClosed).listen(
       (DBusSignal s) async {
         if (s.signature != DBusSignature('uu')) {
@@ -393,6 +421,7 @@ class _DBusMethodsSpec {
   static const String notify = 'Notify';
   static const String closeNotification = 'CloseNotification';
   static const String actionInvoked = 'ActionInvoked';
+  static const String notificationReplied = 'NotificationReplied';
   static const String notificationClosed = 'NotificationClosed';
   static const String getCapabilities = 'GetCapabilities';
 }
