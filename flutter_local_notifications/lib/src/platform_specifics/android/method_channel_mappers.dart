@@ -1,3 +1,4 @@
+import 'dart:ui';
 
 import 'enums.dart';
 import 'initialization_settings.dart';
@@ -13,20 +14,6 @@ import 'styles/default_style_information.dart';
 import 'styles/inbox_style_information.dart';
 import 'styles/media_style_information.dart';
 import 'styles/messaging_style_information.dart';
-
-// This file is using members that were deprecated in Flutter 3.27,
-// but this package supports Flutter 3.22, and the replacement members
-// were also not added until 3.27, so we have to stick with what we have.
-// ignore_for_file: deprecated_member_use
-
-// When Flutter 3.27 is the new minimum, use these instead:
-// extension on Color {
-//   // These original getters were deprecated.
-//   int get alpha2 => (a * 255.0).round();
-//   int get red2 => (r * 255.0).round();
-//   int get green2 => (g * 255.0).round();
-//   int get blue2 => (b * 255.0).round();
-// }
 
 // ignore_for_file: avoid_as, public_member_api_docs
 extension AndroidInitializationSettingsMapper on AndroidInitializationSettings {
@@ -65,10 +52,10 @@ extension AndroidNotificationChannelMapper on AndroidNotificationChannel {
         'enableVibration': enableVibration,
         'vibrationPattern': vibrationPattern,
         'enableLights': enableLights,
-        'ledColorAlpha': ledColor?.alpha,
-        'ledColorRed': ledColor?.red,
-        'ledColorGreen': ledColor?.green,
-        'ledColorBlue': ledColor?.blue,
+        'ledColorAlpha': ledColor?.alpha2,
+        'ledColorRed': ledColor?.red2,
+        'ledColorGreen': ledColor?.green2,
+        'ledColorBlue': ledColor?.blue2,
         'audioAttributesUsage': audioAttributesUsage.value,
         'channelAction':
             AndroidNotificationChannelAction.createIfNotExists.index,
@@ -207,10 +194,10 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'autoCancel': autoCancel,
         'ongoing': ongoing,
         'silent': silent,
-        'colorAlpha': color?.alpha,
-        'colorRed': color?.red,
-        'colorGreen': color?.green,
-        'colorBlue': color?.blue,
+        'colorAlpha': color?.alpha2,
+        'colorRed': color?.red2,
+        'colorGreen': color?.green2,
+        'colorBlue': color?.blue2,
         'onlyAlertOnce': onlyAlertOnce,
         'showWhen': showWhen,
         'when': when,
@@ -221,10 +208,10 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'progress': progress,
         'indeterminate': indeterminate,
         'enableLights': enableLights,
-        'ledColorAlpha': ledColor?.alpha,
-        'ledColorRed': ledColor?.red,
-        'ledColorGreen': ledColor?.green,
-        'ledColorBlue': ledColor?.blue,
+        'ledColorAlpha': ledColor?.alpha2,
+        'ledColorRed': ledColor?.red2,
+        'ledColorGreen': ledColor?.green2,
+        'ledColorBlue': ledColor?.blue2,
         'ledOnMs': ledOnMs,
         'ledOffMs': ledOffMs,
         'ticker': ticker,
@@ -311,10 +298,10 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
             (AndroidNotificationAction e) => <String, dynamic>{
               'id': e.id,
               'title': e.title,
-              'titleColorAlpha': e.titleColor?.alpha,
-              'titleColorRed': e.titleColor?.red,
-              'titleColorGreen': e.titleColor?.green,
-              'titleColorBlue': e.titleColor?.blue,
+              'titleColorAlpha': e.titleColor?.alpha2,
+              'titleColorRed': e.titleColor?.red2,
+              'titleColorGreen': e.titleColor?.green2,
+              'titleColorBlue': e.titleColor?.blue2,
               if (e.icon != null) ...<String, Object>{
                 'icon': e.icon!.data,
                 'iconBitmapSource': e.icon!.source.index,
@@ -343,4 +330,12 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
         'label': input.label,
         'allowedMimeType': input.allowedMimeTypes.toList(),
       };
+}
+
+extension on Color {
+  // These original getters were deprecated.
+  int get alpha2 => (a * 255.0).round();
+  int get red2 => (r * 255.0).round();
+  int get green2 => (g * 255.0).round();
+  int get blue2 => (b * 255.0).round();
 }
