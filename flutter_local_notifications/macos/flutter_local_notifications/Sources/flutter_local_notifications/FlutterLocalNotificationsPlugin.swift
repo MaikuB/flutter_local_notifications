@@ -16,6 +16,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let requestBadgePermission = "requestBadgePermission"
         static let requestProvisionalPermission = "requestProvisionalPermission"
         static let requestCriticalPermission = "requestCriticalPermission"
+        static let requestProvidesAppNotificationSettings = "requestProvidesAppNotificationSettings"
         static let defaultPresentAlert = "defaultPresentAlert"
         static let defaultPresentSound = "defaultPresentSound"
         static let defaultPresentBadge = "defaultPresentBadge"
@@ -26,6 +27,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let badge = "badge"
         static let provisional = "provisional"
         static let critical = "critical"
+        static let providesAppNotificationSettings = "providesAppNotificationSettings"
         static let notificationLaunchedApp = "notificationLaunchedApp"
         static let id = "id"
         static let title = "title"
@@ -54,6 +56,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let isBadgeEnabled = "isBadgeEnabled"
         static let isProvisionalEnabled = "isProvisionalEnabled"
         static let isCriticalEnabled = "isCriticalEnabled"
+        static let isProvidesAppNotificationSettingsEnabled = "isProvidesAppNotificationSettingsEnabled"
         static let criticalSoundVolume = "criticalSoundVolume"
     }
 
@@ -212,6 +215,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         let requestedBadgePermission = arguments[MethodCallArguments.requestBadgePermission] as! Bool
         let requestProvisionalPermission = arguments[MethodCallArguments.requestProvisionalPermission] as! Bool
         let requestedCriticalPermission = arguments[MethodCallArguments.requestCriticalPermission] as! Bool
+        let requestedProvidesAppNotificationSettings = arguments[MethodCallArguments.requestProvidesAppNotificationSettings] as! Bool
 
         configureNotificationCategories(arguments) {
             self.requestPermissionsImpl(
@@ -220,6 +224,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 badgePermission: requestedBadgePermission,
                 provisionalPermission: requestProvisionalPermission,
                 criticalPermission: requestedCriticalPermission,
+                providesAppNotificationSettings: requestedProvidesAppNotificationSettings,
                 result: result
             )
         }
@@ -293,8 +298,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         let requestedBadgePermission = arguments[MethodCallArguments.badge] as! Bool
         let requestedProvisionalPermission = arguments[MethodCallArguments.provisional] as! Bool
         let requestedCriticalPermission = arguments[MethodCallArguments.critical] as! Bool
+        let requestedProvidesAppNotificationSettings = arguments[MethodCallArguments.providesAppNotificationSettings] as! Bool
 
-        requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, provisionalPermission: requestedProvisionalPermission, criticalPermission: requestedCriticalPermission, result: result)
+        requestPermissionsImpl(soundPermission: requestedSoundPermission, alertPermission: requestedAlertPermission, badgePermission: requestedBadgePermission, provisionalPermission: requestedProvisionalPermission, criticalPermission: requestedCriticalPermission, providesAppNotificationSettings: requestedProvidesAppNotificationSettings, result: result)
     }
 
     func getNotificationAppLaunchDetails(_ result: @escaping FlutterResult) {
@@ -531,8 +537,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         }
     }
 
-    func requestPermissionsImpl(soundPermission: Bool, alertPermission: Bool, badgePermission: Bool, provisionalPermission: Bool, criticalPermission: Bool, result: @escaping FlutterResult) {
-        if !soundPermission && !alertPermission && !badgePermission && !provisionalPermission && !criticalPermission {
+    func requestPermissionsImpl(soundPermission: Bool, alertPermission: Bool, badgePermission: Bool, provisionalPermission: Bool, criticalPermission: Bool, providesAppNotificationSettings: Bool, result: @escaping FlutterResult) {
+        if !soundPermission && !alertPermission && !badgePermission && !provisionalPermission && !criticalPermission && !providesAppNotificationSettings {
             result(false)
             return
         }
@@ -552,6 +558,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         if criticalPermission {
             options.insert(.criticalAlert)
         }
+        if providesAppNotificationSettings {
+            options.insert(.providesAppNotificationSettings)
+        }
         UNUserNotificationCenter.current().requestAuthorization(options: options) { (granted, _) in
             result(granted)
         }
@@ -565,7 +574,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
                 MethodCallArguments.isAlertEnabled: settings.alertSetting == .enabled,
                 MethodCallArguments.isBadgeEnabled: settings.badgeSetting == .enabled,
                 MethodCallArguments.isProvisionalEnabled: settings.authorizationStatus == .provisional,
-                MethodCallArguments.isCriticalEnabled: settings.criticalAlertSetting == .enabled
+                MethodCallArguments.isCriticalEnabled: settings.criticalAlertSetting == .enabled,
+                MethodCallArguments.isProvidesAppNotificationSettingsEnabled: settings.providesAppNotificationSettings
             ]
 
             result(dict)

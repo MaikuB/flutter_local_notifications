@@ -52,6 +52,7 @@ void main() {
           'requestBadgePermission': true,
           'requestProvisionalPermission': false,
           'requestCriticalPermission': false,
+          'requestProvidesAppNotificationSettings': false,
           'defaultPresentAlert': true,
           'defaultPresentSound': true,
           'defaultPresentBadge': true,
@@ -111,6 +112,7 @@ void main() {
           'requestBadgePermission': true,
           'requestProvisionalPermission': false,
           'requestCriticalPermission': false,
+          'requestProvidesAppNotificationSettings': false,
           'defaultPresentAlert': true,
           'defaultPresentSound': true,
           'defaultPresentBadge': true,
@@ -187,6 +189,7 @@ void main() {
           'requestBadgePermission': false,
           'requestProvisionalPermission': false,
           'requestCriticalPermission': false,
+          'requestProvidesAppNotificationSettings': false,
           'defaultPresentAlert': false,
           'defaultPresentSound': false,
           'defaultPresentBadge': false,
@@ -705,20 +708,21 @@ void main() {
           'alert': false,
           'provisional': false,
           'critical': false,
+          'providesAppNotificationSettings': false
         })
       ]);
     });
-    test('requestPermissions with all settings requested', () async {
+    test('iOS requestPermissions with all settings requested', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()!
           .requestPermissions(
-            sound: true,
-            badge: true,
-            alert: true,
-            provisional: true,
-            critical: true,
-          );
+              sound: true,
+              badge: true,
+              alert: true,
+              provisional: true,
+              critical: true,
+              providesAppNotificationSettings: true);
       expect(log, <Matcher>[
         isMethodCall('requestPermissions', arguments: <String, Object>{
           'sound': true,
@@ -726,6 +730,7 @@ void main() {
           'alert': true,
           'provisional': true,
           'critical': true,
+          'providesAppNotificationSettings': true,
         })
       ]);
     });
@@ -772,6 +777,57 @@ void main() {
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
       expect(log, <Matcher>[
         isMethodCall('getNotificationAppLaunchDetails', arguments: null)
+      ]);
+    });
+
+    test('initialize with providesAppNotificationSettings', () async {
+      const DarwinInitializationSettings iosInitializationSettings =
+          DarwinInitializationSettings(
+        requestProvidesAppNotificationSettings: true,
+      );
+      const InitializationSettings initializationSettings =
+          InitializationSettings(iOS: iosInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      expect(log, <Matcher>[
+        isMethodCall(
+          'initialize',
+          arguments: <String, Object>{
+            'requestAlertPermission': true,
+            'requestSoundPermission': true,
+            'requestBadgePermission': true,
+            'requestProvisionalPermission': false,
+            'requestCriticalPermission': false,
+            'requestProvidesAppNotificationSettings': true,
+            'defaultPresentAlert': true,
+            'defaultPresentSound': true,
+            'defaultPresentBadge': true,
+            'defaultPresentBanner': true,
+            'defaultPresentList': true,
+            'notificationCategories': <String>[],
+          },
+        ),
+      ]);
+    });
+
+    test('iOS requestPermissions with providesAppNotificationSettings',
+        () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()!
+          .requestPermissions(
+              sound: true,
+              alert: true,
+              badge: true,
+              providesAppNotificationSettings: true);
+      expect(log, <Matcher>[
+        isMethodCall('requestPermissions', arguments: <String, Object>{
+          'sound': true,
+          'alert': true,
+          'badge': true,
+          'provisional': false,
+          'critical': false,
+          'providesAppNotificationSettings': true
+        })
       ]);
     });
   });
