@@ -81,7 +81,6 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     int id,
     String xml,
     TZDateTime scheduledDate,
-    WindowsNotificationDetails? details,
   ) async {}
 
   @override
