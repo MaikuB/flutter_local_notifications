@@ -58,6 +58,6 @@ jobs:
           ~/.local/bin/clang-format *.cpp *.hpp *.h -i
           # git diff --exit-code || (git commit --all -m "Clang Format" && git push)
 
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: Clang format
