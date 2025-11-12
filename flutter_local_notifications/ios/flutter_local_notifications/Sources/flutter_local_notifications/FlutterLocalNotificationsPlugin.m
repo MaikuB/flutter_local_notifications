@@ -49,6 +49,7 @@ NSString *const REQUEST_BADGE_PERMISSION = @"requestBadgePermission";
 NSString *const REQUEST_PROVISIONAL_PERMISSION =
     @"requestProvisionalPermission";
 NSString *const REQUEST_CRITICAL_PERMISSION = @"requestCriticalPermission";
+NSString *const REQUEST_CARPLAY_PERMISSION = @"requestCarPlayPermission";
 NSString *const REQUEST_PROVIDES_APP_NOTIFICATION_SETTINGS =
     @"requestProvidesAppNotificationSettings";
 NSString *const DEFAULT_PRESENT_ALERT = @"defaultPresentAlert";
@@ -112,6 +113,7 @@ NSString *const IS_PROVISIONAL_ENABLED = @"isProvisionalEnabled";
 NSString *const IS_CRITICAL_ENABLED = @"isCriticalEnabled";
 NSString *const IS_PROVIDES_APP_NOTIFICATION_SETTINGS_ENABLED =
     @"isProvidesAppNotificationSettingsEnabled";
+NSString *const IS_CAR_PLAY_ENABLED = @"isCarPlayEnabled";
 
 NSString *const CRITICAL_SOUND_VOLUME = @"criticalSoundVolume";
 
@@ -353,6 +355,8 @@ static FlutterError *getFlutterError(NSError *error) {
   bool requestedBadgePermission = false;
   bool requestedProvisionalPermission = false;
   bool requestedCriticalPermission = false;
+  bool requestedCarPlayPermission = false;
+  bool carPlayPermissionSpecified = false;
   bool requestedProvidesAppNotificationSettings = false;
   NSMutableDictionary *presentationOptions = [[NSMutableDictionary alloc] init];
   if ([self containsKey:DEFAULT_PRESENT_ALERT forDictionary:arguments]) {
@@ -401,6 +405,11 @@ static FlutterError *getFlutterError(NSError *error) {
     requestedCriticalPermission =
         [arguments[REQUEST_CRITICAL_PERMISSION] boolValue];
   }
+  if ([self containsKey:REQUEST_CARPLAY_PERMISSION forDictionary:arguments]) {
+    carPlayPermissionSpecified = true;
+    requestedCarPlayPermission =
+        [arguments[REQUEST_CARPLAY_PERMISSION] boolValue];
+  }
   if ([self containsKey:REQUEST_PROVIDES_APP_NOTIFICATION_SETTINGS
           forDictionary:arguments]) {
     requestedProvidesAppNotificationSettings =
@@ -426,6 +435,8 @@ static FlutterError *getFlutterError(NSError *error) {
                                       requestedProvisionalPermission
                                      criticalPermission:
                                          requestedCriticalPermission
+                                      carPlayPermission:requestedCarPlayPermission
+                                 carPlayPermissionSpecified:carPlayPermissionSpecified
                         providesAppNotificationSettings:
                             requestedProvidesAppNotificationSettings
                                                  result:result];
@@ -440,6 +451,8 @@ static FlutterError *getFlutterError(NSError *error) {
   bool badgePermission = false;
   bool provisionalPermission = false;
   bool criticalPermission = false;
+  bool requestCarPlayPermission = false;
+  bool carPlayPermissionSpecified = false;
   bool providesAppNotificationSettings = false;
   if ([self containsKey:SOUND_PERMISSION forDictionary:arguments]) {
     soundPermission = [arguments[SOUND_PERMISSION] boolValue];
@@ -456,6 +469,12 @@ static FlutterError *getFlutterError(NSError *error) {
   if ([self containsKey:CRITICAL_PERMISSION forDictionary:arguments]) {
     criticalPermission = [arguments[CRITICAL_PERMISSION] boolValue];
   }
+  if ([self containsKey:REQUEST_CARPLAY_PERMISSION forDictionary:arguments]) {
+    carPlayPermissionSpecified = true;
+    requestCarPlayPermission =
+        [arguments[REQUEST_CARPLAY_PERMISSION] boolValue];
+
+  }
   if ([self containsKey:PROVIDES_APP_NOTIFICATION_SETTINGS
           forDictionary:arguments]) {
     providesAppNotificationSettings =
@@ -466,6 +485,8 @@ static FlutterError *getFlutterError(NSError *error) {
                       badgePermission:badgePermission
                 provisionalPermission:provisionalPermission
                    criticalPermission:criticalPermission
+                   carPlayPermission:requestCarPlayPermission
+              carPlayPermissionSpecified:carPlayPermissionSpecified
       providesAppNotificationSettings:providesAppNotificationSettings
                                result:result];
 }
@@ -475,6 +496,8 @@ static FlutterError *getFlutterError(NSError *error) {
                     badgePermission:(bool)badgePermission
               provisionalPermission:(bool)provisionalPermission
                  criticalPermission:(bool)criticalPermission
+                 carPlayPermission:(bool)carPlayPermission
+            carPlayPermissionSpecified:(bool)carPlayPermissionSpecified
     providesAppNotificationSettings:(bool)providesAppNotificationSettings
                              result:(FlutterResult _Nonnull)result {
   if (!soundPermission && !alertPermission && !badgePermission &&
@@ -494,6 +517,11 @@ static FlutterError *getFlutterError(NSError *error) {
   }
   if (badgePermission) {
     authorizationOptions += UNAuthorizationOptionBadge;
+  }
+  if (@available(iOS 10.0, *)) {
+    if (carPlayPermissionSpecified && carPlayPermission) {
+      authorizationOptions += UNAuthorizationOptionCarPlay;
+    }
   }
   if (@available(iOS 12.0, *)) {
     if (provisionalPermission) {
@@ -530,6 +558,7 @@ static FlutterError *getFlutterError(NSError *error) {
     BOOL isProvisionalEnabled = false;
     BOOL isCriticalEnabled = false;
     BOOL isProvidesAppNotificationSettingsEnabled = false;
+    BOOL isCarPlayEnabled = false;
 
     if (@available(iOS 12.0, *)) {
       isProvisionalEnabled =
@@ -538,6 +567,11 @@ static FlutterError *getFlutterError(NSError *error) {
           settings.criticalAlertSetting == UNNotificationSettingEnabled;
       isProvidesAppNotificationSettingsEnabled =
           settings.providesAppNotificationSettings;
+    }
+
+    if (@available(iOS 10.0, *)) {
+      isCarPlayEnabled =
+          settings.carPlaySetting == UNNotificationSettingEnabled;
     }
 
     NSDictionary *dict = @{
@@ -549,6 +583,7 @@ static FlutterError *getFlutterError(NSError *error) {
       IS_CRITICAL_ENABLED : @(isCriticalEnabled),
       IS_PROVIDES_APP_NOTIFICATION_SETTINGS_ENABLED :
           @(isProvidesAppNotificationSettingsEnabled),
+      IS_CAR_PLAY_ENABLED : @(isCarPlayEnabled),
     };
 
     result(dict);
