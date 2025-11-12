@@ -51,6 +51,16 @@ extension DarwinInitializationSettingsMapper on DarwinInitializationSettings {
       };
 }
 
+extension IOSInitializationSettingsMapper on IOSInitializationSettings {
+  Map<String, Object> toMap() {
+    final DarwinInitializationSettings darwinSettings = 
+        this as DarwinInitializationSettings;
+    final Map<String, Object> map = darwinSettings.toMap();
+    map['requestCarPlayPermission'] = requestCarPlayPermission;
+    return map;
+  }
+}
+
 extension on DarwinNotificationAttachmentThumbnailClippingRect {
   Map<String, Object> toMap() => <String, Object>{
         'x': x,

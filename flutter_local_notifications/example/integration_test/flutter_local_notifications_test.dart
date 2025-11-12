@@ -8,8 +8,8 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('app_icon');
-  const DarwinInitializationSettings initializationSettingsIOS =
-      DarwinInitializationSettings();
+  const IOSInitializationSettings initializationSettingsIOS =
+      IOSInitializationSettings();
   const DarwinInitializationSettings initializationSettingsMacOS =
       DarwinInitializationSettings();
   final LinuxInitializationSettings initializationSettingsLinux =
