@@ -6,7 +6,7 @@
 >
 > Specifically, [this section](./windows-setup.md#msix-packaging) of the Windows Setup Guide describes the concept of **package identity**, without which your app will have some limitations. Setting up package identity is preferred.
 
-This guide will explore all the features this plugin has available for apps running on Windows. Some features can only be called on the Windows plugin, not the general plugin. The rest of this guide will assume the following:
+This guide will explore all the features this plugin has available for apps running on Windows. Some features can only be called on the Windows plugin, not the general plugin. You can obtain an instance of the Windows plugin like so:
 
 ```dart
 final plugin = FlutterLocalNotificationsPlugin();

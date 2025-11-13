@@ -4,20 +4,21 @@
 >
 > Make sure to read the [iOS Setup Guide](./ios-setup.md) and [General Usage Guide](./usage.md) first.
 
-This guide will explore all the features this plugin has available for apps running on Darwin platforms – iOS and MacOS. Some features can only be called on the Darwin plugins, not the general plugin. See the general usage guide for how to get that at runtime. The rest of this guide will assume the following.
+This guide will explore all the features this plugin has available for apps running on Darwin platforms – iOS and MacOS. Some features can only be called on the Darwin plugins, not the general plugin. You can obtain an instance of the iOS and MacOS plugins like so:
 
 ```dart
 final plugin = FlutterLocalNotificationsPlugin();
+
 final iOSPlugin = plugin
   .resolvePlatformSpecificImplementation
   <IOSFlutterLocalNotificationsPlugin>();
+
 final macOSPlugin = plugin
   .resolvePlatformSpecificImplementation
   <MacOSFlutterLocalNotificationsPlugin>();
-final darwinPlugin = iOSPlugin;  // or macOSPlugin
 ```
 
-Both plugins support the same features, but you will still need to call the same methods on both plugins if your application will run on both platforms.
+Both plugins support the same features, but you will still need to call the same methods on both plugins if your application will run on both platforms. The rest of this guide will refer to `darwinPlugin` in place of `iOSPlugin` or `macOSPlugin`.
 
 While some of these methods will have their arguments, return types, and usage spelled out in detail, this document is meant to complement the [API reference](https://pub.dev/documentation/flutter_local_notifications/latest/index.html) on Pub. If you're looking for more details, nuances, or information about a function's signature, refer to the reference. Remember you can also check the [example app](https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications/example) for a pretty thorough reference of what this plugin can do.
 

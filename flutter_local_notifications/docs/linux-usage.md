@@ -5,7 +5,7 @@
 > Make sure to read the [General Usage Guide](./usage.md) first.
 >
 
-This guide will explore all the features this plugin has available for apps running on Linux. Some features can only be called on the Linux plugin, not the general plugin. The rest of this guide will assume the following:
+This guide will explore all the features this plugin has available for apps running on Linux. Some features can only be called on the Linux plugin, not the general plugin. You can obtain an instance of the Linux plugin like so:
 
 ```dart
 final plugin = FlutterLocalNotificationsPlugin();

@@ -4,7 +4,7 @@
 >
 > Make sure to read the [Android Setup Guide](./android-setup.md) and [General Usage Guide](./usage.md) first.
 
-This guide will explore all the features this plugin has available for apps running on Android. Some features can only be called on the Android plugin, not the general plugin. The rest of this guide will assume the following:
+This guide will explore all the features this plugin has available for apps running on Android. Some features can only be called on the Android plugin, not the general plugin. You can obtain an instance of the Android plugin like so:
 
 ```dart
 final plugin = FlutterLocalNotificationsPlugin();
@@ -57,16 +57,33 @@ await androidPlugin?.createNotificationChannel(channel);
 
 ### Notification channel options
 
-Notification channels support the following options. These options may only be set when the channel is being created, and may not be changed later. If you need to, you can delete the channel and recreate it, or guide the user to change it themselves. You can call `getNotificationChannels()` to get a list of channels, but note that users may change these options at any time in the settings, so the options may not be the same as when you created them.
+Notification channels support the following options:
 
 - `description`: will be shown to the user in the settings app, but not in the notifications themselves
 - `groupId`: which notification channel group this channel belongs to (see below)
-- `importance`: how important notifications in this channel should be
+- `importance`: how important notifications in this channel should be (see below)
 - `bypassDnd`: whether notifications in this group should bypass Do Not Disturb mode (see below)
 - `playSound` , `sound`, and `audioAttributesUsage`: what sound notifications in this group will play. To use custom sounds, see [this section](./android-setup.md#custom-icons-and-sounds)
 - `enableVibration` and `vibrationPattern`: how and whether the device should vibrate
 - `enableLights` and `ledColor`: whether the device's LED should glow and with what color
 - `showBadge`: whether the app should show a badge with these notifications
+
+These options may only be set when the channel is being created, and may not be changed later. If you need to, you can delete the channel and recreate it, or guide the user to change it themselves. 
+
+You can call `getNotificationChannels()` to get a list of channels and read their settings. Keep in mind that users can modify notification channels at any time in the settings app, so these options may change from when the channel was first created. If you need to be sure what the options are set to, it's best to read them in real-time. 
+
+### Notification importance
+
+Notifications can show with varying levels of intrusiveness depending on their [importance](https://developer.android.com/develop/ui/views/notifications#importance). On API level 25 and below, the importance of a notification is determined by a its `AndroidNotificationDetails.priority`. On API level 26 and above, a notification's _channel_ determines its importance via `AndroidNotificationChannel.importance`. The following values are available for both: 
+
+- low: a silent notification that doesn't appear in the top status bar
+- medium: appears in the status bar but is silent
+- high: appears in the status bar and makes a sound
+- urgent: appears as a heads-up notification and makes a sound
+
+Keep in mind that, like all other options, users can change notification appearance via the settings app. To avoid users getting annoyed by your app and possibly blocking all notifications, try to use granular channels with appropriate settings for each. For example, using high priority channels for user messages but low or medium priority for promotional messages. 
+
+See the tables at [here](https://m2.material.io/design/platform-guidance/android-notifications.html#settings) and [here](https://developer.android.com/develop/ui/views/notifications/channels#importance) for more guidance.
 
 ### Notification channel groups
 
@@ -93,7 +110,7 @@ await androidPlugin?.createNotificationChannelGroup(publicChats);
 
 ## Permissions
 
-This next section will deal with requesting permissions. As noted in the general usage guide, requesting permissions is a very sensitive process in terms of user experience, and must be done only when necessary and only after informing the user of why you need the permissions. If the user rejects your request – which they might if they feel annoyed or don't understand why you need it – Android will stop showing your requests to the user and start blocking them automatically. If this happens, you will need to prompt the user to go to the settings themselves and grant your app permissions manually.
+This section will deal with requesting permissions. As noted in the [general usage guide](./usage.md#requesting-permission), requesting permissions is a very sensitive process in terms of user experience. It must be done only when necessary and only after informing the user of why you need the permissions. If, for whatever reason, the user rejects your request, Android may stop showing your requests to the user and start blocking them automatically. 
 
 ### Requesting notification permissions
 
@@ -140,6 +157,20 @@ Using `zonedSchedule()` or `periodicallyShowWithDuration()` will cause your noti
 - called `zonedSchedule()` or `periodicallyShow()` with the `scheduleMode` parameter
 - You can use `androidPlugin?.canScheduleExactNotifications()` to check your permission at runtime
 
+### Blocked requests
+
+If your permission requests are denied enough times, Android will start blocking them automatically. The corresponding methods will return immediately without prompting the user. At this point, you will need to prompt the user to go to the settings themselves and grant your app permissions manually. 
+
+You can handle the general case by checking the return value of the `requestXXXPermission()` methods. If it's false, save that and don't request again until the user presses a button directly. Also consider leaving in-app guidance on how to navigate the settings app. Alternatively, you can detect and handle the blocked case more directly with another plugin like [`permission_handler`](https://pub.dev/packages/permission_handler): 
+
+```dart
+if (await Permission.notification.isPermanentlyDenied) {
+  // Prompt the user in-app, then take them to the settings page
+  openAppSettings();
+}
+// check also: accessNotificationPolicy, criticalAlerts, scheduleExactAlarm
+```
+
 ## Showing Notifications
 
 > [!IMPORTANT]
@@ -148,7 +179,7 @@ Using `zonedSchedule()` or `periodicallyShowWithDuration()` will cause your noti
 
 ### Presentation options
 
-Most notification presentation options are set on the notification channel instead of the notification itself (see above). See [`AndroidNotificationDetails`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationDetails-class.html) for all available fields. Notable options include:
+Most notification presentation options are set on the notification channel instead of the notification itself (see above). The following is a sample of some notable fields that are available on each notification. See [`AndroidNotificationDetails`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationDetails-class.html) for all available fields.
 
 - `icon`: use a custom icon for this notification. To use custom icons, see [this section](./android-setup.md#custom-icons-and-sounds) of the Android Setup Guide.
 - `showProgress`: show a loading bar
@@ -189,7 +220,7 @@ final actionsDetails = AndroidNotificationDetails(
 );
 ```
 
-### Foreground Services
+### Foreground services
 
 A [foreground service](https://developer.android.com/develop/background-work/services/foreground-services) indicates ongoing work in the form of a notification. You can use [`AndroidNotificationDetails.ongoing`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationDetails/ongoing.html) to specify if the notification should be non-dismissible, but a foreground service does more than that, including requesting to the device that your application be given a higher priority, even in the background. Note that this plugin does not implement logic in Dart to actually perform the operations, but rather just shows the service notification itself.
 
