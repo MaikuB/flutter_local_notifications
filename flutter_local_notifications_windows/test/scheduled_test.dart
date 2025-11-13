@@ -1,5 +1,5 @@
 import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
-import 'package:flutter_local_notifications_windows/src/ffi/utils.dart';
+import 'package:flutter_local_notifications_windows/src/ffi/mock.dart';
 import 'package:test/test.dart';
 import 'package:timezone/data/latest_all.dart';
 import 'package:timezone/standalone.dart';
@@ -10,9 +10,8 @@ const WindowsInitializationSettings settings = WindowsInitializationSettings(
     guid: 'a8c22b55-049e-422f-b30f-863694de08c8');
 
 void main() => group('Schedules', () {
-      isUnitTest = true;
-      final FlutterLocalNotificationsWindows plugin =
-          FlutterLocalNotificationsWindows();
+        final FlutterLocalNotificationsWindows plugin =
+            FlutterLocalNotificationsWindows.withBindings(MockBindings());
       setUpAll(initializeTimeZones);
       setUpAll(() => plugin.initialize(settings));
       tearDownAll(() async {

@@ -1,6 +1,6 @@
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
-import 'package:flutter_local_notifications_windows/src/ffi/utils.dart';
+import 'package:flutter_local_notifications_windows/src/ffi/mock.dart';
 import 'package:test/test.dart';
 import 'package:timezone/data/latest_all.dart';
 import 'package:timezone/standalone.dart';
@@ -19,12 +19,11 @@ const WindowsInitializationSettings badSettings = WindowsInitializationSettings(
 );
 
 void main() => group('Plugin', () {
-      isUnitTest = true;
       setUpAll(initializeTimeZones);
 
       test('initializes safely', () async {
         final FlutterLocalNotificationsWindows plugin =
-            FlutterLocalNotificationsWindows();
+            FlutterLocalNotificationsWindows.withBindings(MockBindings());
         final bool result = await plugin.initialize(goodSettings);
         expect(result, isTrue);
         plugin.dispose();
@@ -32,14 +31,14 @@ void main() => group('Plugin', () {
 
       test('catches bad GUIDs', () async {
         final FlutterLocalNotificationsWindows plugin =
-            FlutterLocalNotificationsWindows();
+            FlutterLocalNotificationsWindows.withBindings(MockBindings());
         expect(plugin.initialize(badSettings), throwsArgumentError);
         plugin.dispose();
       });
 
       test('cannot be used before initializing', () async {
         final FlutterLocalNotificationsWindows plugin =
-            FlutterLocalNotificationsWindows();
+            FlutterLocalNotificationsWindows.withBindings(MockBindings());
         final WindowsProgressBar progress =
             WindowsProgressBar(id: 'progress', status: 'Testing', value: 0);
         final TZDateTime now = TZDateTime.local(2024, 7, 18);
@@ -67,7 +66,7 @@ void main() => group('Plugin', () {
 
       test('cannot be used after disposed', () async {
         final FlutterLocalNotificationsWindows plugin =
-            FlutterLocalNotificationsWindows();
+            FlutterLocalNotificationsWindows.withBindings(MockBindings());
         final WindowsProgressBar progress =
             WindowsProgressBar(id: 'progress', status: 'Testing', value: 0);
         final TZDateTime now = TZDateTime.local(2024, 7, 18);
@@ -95,7 +94,7 @@ void main() => group('Plugin', () {
 
       test('does not support repeating notifications', () async {
         final FlutterLocalNotificationsWindows plugin =
-            FlutterLocalNotificationsWindows();
+            FlutterLocalNotificationsWindows.withBindings(MockBindings());
         await plugin.initialize(goodSettings);
         expect(
           plugin.periodicallyShow(0, null, null, RepeatInterval.everyMinute),

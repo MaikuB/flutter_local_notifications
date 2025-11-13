@@ -1,6 +1,6 @@
 import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
 import 'package:flutter_local_notifications_windows/src/details/notification_to_xml.dart';
-import 'package:flutter_local_notifications_windows/src/ffi/utils.dart';
+import 'package:flutter_local_notifications_windows/src/ffi/mock.dart';
 import 'package:test/test.dart';
 import 'package:xml/xml.dart';
 
@@ -47,9 +47,9 @@ extension on WindowsNotificationDetails {
 }
 
 void main() => group('Details:', () {
-      isUnitTest = true;
       final FlutterLocalNotificationsWindows plugin =
-          FlutterLocalNotificationsWindows();
+          FlutterLocalNotificationsWindows
+            .withBindings(MockBindings());
       setUpAll(() => plugin.initialize(settings));
       tearDownAll(() async {
         await plugin.cancelAll();
