@@ -10,8 +10,8 @@ const WindowsInitializationSettings settings = WindowsInitializationSettings(
     guid: 'a8c22b55-049e-422f-b30f-863694de08c8');
 
 void main() => group('Schedules', () {
-        final FlutterLocalNotificationsWindows plugin =
-            FlutterLocalNotificationsWindows.withBindings(MockBindings());
+      final FlutterLocalNotificationsWindows plugin =
+          FlutterLocalNotificationsWindows.withBindings(MockBindings());
       setUpAll(initializeTimeZones);
       setUpAll(() => plugin.initialize(settings));
       tearDownAll(() async {

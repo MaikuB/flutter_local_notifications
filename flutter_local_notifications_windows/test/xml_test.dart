@@ -61,8 +61,8 @@ const String complexXml = '''
 
 void main() {
   group('XML', () {
-        final FlutterLocalNotificationsWindows plugin =
-            FlutterLocalNotificationsWindows.withBindings(MockBindings());
+    final FlutterLocalNotificationsWindows plugin =
+        FlutterLocalNotificationsWindows.withBindings(MockBindings());
 
     setUpAll(() => plugin.initialize(settings));
     tearDownAll(() async {

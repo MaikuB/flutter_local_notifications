@@ -48,8 +48,7 @@ extension on WindowsNotificationDetails {
 
 void main() => group('Details:', () {
       final FlutterLocalNotificationsWindows plugin =
-          FlutterLocalNotificationsWindows
-            .withBindings(MockBindings());
+          FlutterLocalNotificationsWindows.withBindings(MockBindings());
       setUpAll(() => plugin.initialize(settings));
       tearDownAll(() async {
         await plugin.cancelAll();

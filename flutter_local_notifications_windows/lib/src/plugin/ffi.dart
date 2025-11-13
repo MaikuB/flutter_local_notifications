@@ -37,10 +37,9 @@ bool _checkXml(String xml) {
 /// The Windows implementation of `package:flutter_local_notifications`.
 class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   /// Creates an instance of the native plugin.
-  FlutterLocalNotificationsWindows() :
-    _bindings = NotificationsPluginBindings(
-      DynamicLibrary.open('flutter_local_notifications_windows.dll')
-    );
+  FlutterLocalNotificationsWindows()
+      : _bindings = NotificationsPluginBindings(
+            DynamicLibrary.open('flutter_local_notifications_windows.dll'));
 
   /// Creates an instance of this plugin with the given (mocked) bindings.
   @visibleForTesting
