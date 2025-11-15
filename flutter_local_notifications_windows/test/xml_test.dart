@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
+import 'package:flutter_local_notifications_windows/src/ffi/mock.dart';
 import 'package:test/test.dart';
 
 const WindowsInitializationSettings settings = WindowsInitializationSettings(
@@ -61,7 +62,7 @@ const String complexXml = '''
 void main() {
   group('XML', () {
     final FlutterLocalNotificationsWindows plugin =
-        FlutterLocalNotificationsWindows();
+        FlutterLocalNotificationsWindows.withBindings(MockBindings());
 
     setUpAll(() => plugin.initialize(settings));
     tearDownAll(() async {

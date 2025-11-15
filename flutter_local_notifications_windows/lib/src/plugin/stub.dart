@@ -1,8 +1,22 @@
+import 'package:meta/meta.dart';
+
 import '../details.dart';
+import '../ffi/bindings.dart';
 import 'base.dart';
 
 /// The Windows implementation of `package:flutter_local_notifications`.
 class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
+  /// Creates an instance of this plugin.
+  FlutterLocalNotificationsWindows();
+
+  /// Creates an instance of this plugin with the given (mocked) bindings.
+  @visibleForTesting
+  FlutterLocalNotificationsWindows.withBindings(
+    // Needed in this file due to conditional imports
+    // ignore: avoid_unused_constructor_parameters
+    NotificationsPluginBindings bindings,
+  );
+
   @override
   Future<bool> initialize(
     WindowsInitializationSettings settings, {
