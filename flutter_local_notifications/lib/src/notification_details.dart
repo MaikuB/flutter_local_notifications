@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart';
+import 'package:flutter_local_notifications_web/flutter_local_notifications_web.dart';
 import 'package:flutter_local_notifications_windows/flutter_local_notifications_windows.dart';
 
 import 'platform_specifics/android/notification_details.dart';
@@ -13,7 +14,11 @@ class NotificationDetails {
     this.macOS,
     this.linux,
     this.windows,
+    this.web,
   });
+
+  /// Notification details for web.
+  final WebNotificationDetails? web;
 
   /// Notification details for Android.
   final AndroidNotificationDetails? android;
