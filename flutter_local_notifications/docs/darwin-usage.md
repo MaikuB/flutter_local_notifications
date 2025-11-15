@@ -94,11 +94,11 @@ await plugin.show(
 
 ## Requesting permissions
 
-This next section will deal with requesting permissions. As noted in the general usage guide, requesting permissions is a very sensitive process in terms of user experience, and must be done only when necessary and only after informing the user of why you need the permissions. If the user rejects your request – which they might if they feel annoyed or don't understand why you need it – Android will stop showing your requests to the user and start blocking them automatically. If this happens, you will need to prompt the user to go to the settings themselves and grant your app permissions manually.
+This section will deal with requesting permissions. As noted in the [general usage guide](./usage.md#requesting-permission), requesting permissions is a very sensitive process in terms of user experience. It must be done only when necessary and only after informing the user of why you need the permissions. If, for whatever reason, the user rejects your request, the OS may stop showing your requests to the user and start blocking them automatically. 
 
 > [!Important]
 >
-> By default, `DarwinInitializationSettings` defaults to `true` for `requestAlertPermission`, `requestBadgePermission`, `requestListPermission`, and `requestSoundPermission`. You should set those all to false explicitly and follow the guidance below instead ([GitHub issue](https://github.com/MaikuB/flutter_local_notifications/issues/2693))
+> By default, `DarwinInitializationSettings` defaults to `true` for `requestAlertPermission`, `requestBadgePermission`, `requestListPermission`, and `requestSoundPermission`. This can be useful to get everything working while testing or setting up. In production, set these all to false and follow the guidance below instead ([GitHub issue](https://github.com/MaikuB/flutter_local_notifications/issues/2693))
 
 ### Notification Permissions
 
