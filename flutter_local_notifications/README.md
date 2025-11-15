@@ -468,6 +468,9 @@ if #available(iOS 10.0, *) {
 }
 ```
 
+> [!NOTE]
+> Apple and the Flutter team have provided news where after iOS 26, the next major release will enforce new requirements for applications. The migration instructions from the Flutter team can be found [here](uiscenedelegate). If your application will follow these instructions to use the UIScene lifecycle, then ensure you follow their instructions that involves moving logic like the above to the appropriate method (i.e. `didInitializeImplicitFlutterEngine`)
+
 ### Handling notifications whilst the app is in the foreground
 
 By design, iOS applications *do not* display notifications while the app is in the foreground unless configured to do so.
@@ -539,6 +542,9 @@ override func application(
   return super.application(application, didFinishLaunchingWithOptions: launchOptions)
 }
 ```
+
+> [!NOTE]
+> Apple and the Flutter team have provided news where after iOS 26, the next major release will enforce new requirements for applications. The migration instructions from the Flutter team can be found [here](uiscenedelegate). If your application will follow these instructions to use the UIScene lifecycle, then ensure you follow their instructions that involves moving logic like the above to the appropriate method (i.e. `didInitializeImplicitFlutterEngine`)
 
 On iOS/macOS, notification actions need to be configured before the app is started using the `initialize` method
 
