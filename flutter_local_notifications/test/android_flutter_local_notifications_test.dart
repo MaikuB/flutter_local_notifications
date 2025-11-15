@@ -42,10 +42,265 @@ void main() {
       });
     });
 
+    test('show with Android title style', () async {
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        titleStyle: AndroidNotificationTitleStyle(
+          color: 0xFF58CC02,
+          sizeSp: 16,
+          bold: true,
+          italic: true,
+          iconSpacing: 10,
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+        1,
+        'notification title',
+        'notification body',
+        const NotificationDetails(android: androidNotificationDetails),
+      );
+
+      final Map<Object?, Object?> arguments =
+          log.last.arguments as Map<Object?, Object?>;
+      final Map<String, Object?> platformSpecifics = Map<String, Object?>.from(
+        arguments['platformSpecifics'] as Map<Object?, Object?>,
+      );
+      expect(platformSpecifics['titleStyle'], <String, Object?>{
+        'color': 0xFF58CC02,
+        'sizeSp': 16,
+        'bold': true,
+        'italic': true,
+        'iconSpacingDp': 10,
+      });
+    });
+
     tearDown(() {
       log.clear();
     });
 
+    test('show with Android title style color only', () async {
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        titleStyle: AndroidNotificationTitleStyle(
+          color: 0xFF0000FF,
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+        2,
+        'notification title',
+        'notification body',
+        const NotificationDetails(android: androidNotificationDetails),
+      );
+
+      final Map<Object?, Object?> arguments =
+          log.last.arguments as Map<Object?, Object?>;
+      final Map<String, Object?> platformSpecifics = Map<String, Object?>.from(
+        arguments['platformSpecifics'] as Map<Object?, Object?>,
+      );
+      expect(platformSpecifics['titleStyle'], <String, Object?>{
+        'color': 0xFF0000FF,
+        'iconSpacingDp': 0,
+      });
+      expect(platformSpecifics['channelId'], 'channelId');
+    });
+
+    test('show with Android description style', () async {
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        descriptionStyle: AndroidNotificationDescriptionStyle(
+          color: 0xFF58CC02,
+          sizeSp: 16,
+          bold: true,
+          italic: true,
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+        6,
+        'notification title',
+        'notification body',
+        const NotificationDetails(android: androidNotificationDetails),
+      );
+
+      final Map<Object?, Object?> arguments =
+          log.last.arguments as Map<Object?, Object?>;
+      final Map<String, Object?> platformSpecifics = Map<String, Object?>.from(
+        arguments['platformSpecifics'] as Map<Object?, Object?>,
+      );
+      expect(platformSpecifics['descriptionStyle'], <String, Object?>{
+        'color': 0xFF58CC02,
+        'sizeSp': 16,
+        'bold': true,
+        'italic': true,
+      });
+    });
+
+    test('show with Android description style color only', () async {
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        descriptionStyle: AndroidNotificationDescriptionStyle(
+          color: 0xFF0000FF,
+        ),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+        7,
+        'notification title',
+        'notification body',
+        const NotificationDetails(android: androidNotificationDetails),
+      );
+
+      final Map<Object?, Object?> arguments =
+          log.last.arguments as Map<Object?, Object?>;
+      final Map<String, Object?> platformSpecifics = Map<String, Object?>.from(
+        arguments['platformSpecifics'] as Map<Object?, Object?>,
+      );
+      expect(platformSpecifics['descriptionStyle'], <String, Object?>{
+        'color': 0xFF0000FF,
+      });
+      expect(platformSpecifics['channelId'], 'channelId');
+    });
+
+    test('show with Android description style negative size', () {
+      expect(
+        () => flutterLocalNotificationsPlugin.show(
+          8,
+          'notification title',
+          'notification body',
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              'channelId',
+              'channelName',
+              descriptionStyle: AndroidNotificationDescriptionStyle(
+                sizeSp: -10,
+              ),
+            ),
+          ),
+        ),
+        throwsAssertionError,
+      );
+    });
+
+    test('show with Android description style bold and italic separately',
+        () async {
+      const AndroidNotificationDetails boldDetails = AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        descriptionStyle: AndroidNotificationDescriptionStyle(bold: true),
+      );
+      const AndroidNotificationDetails italicDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        descriptionStyle: AndroidNotificationDescriptionStyle(italic: true),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+        9,
+        'title',
+        'body',
+        const NotificationDetails(android: boldDetails),
+      );
+      final Map<Object?, Object?> boldArgs =
+          log.last.arguments as Map<Object?, Object?>;
+      final Map<String, Object?> boldSpecifics = Map<String, Object?>.from(
+        boldArgs['platformSpecifics'] as Map<Object?, Object?>,
+      );
+      expect(boldSpecifics['descriptionStyle'], <String, Object?>{
+        'bold': true,
+      });
+      expect(boldSpecifics['channelId'], 'channelId');
+
+      await flutterLocalNotificationsPlugin.show(
+        10,
+        'title',
+        'body',
+        const NotificationDetails(android: italicDetails),
+      );
+      final Map<Object?, Object?> italicArgs =
+          log.last.arguments as Map<Object?, Object?>;
+      final Map<String, Object?> italicSpecifics = Map<String, Object?>.from(
+        italicArgs['platformSpecifics'] as Map<Object?, Object?>,
+      );
+      expect(italicSpecifics['descriptionStyle'], <String, Object?>{
+        'italic': true,
+      });
+      expect(italicSpecifics['channelId'], 'channelId');
+    });
+
+    test('show with Android title style negative size', () {
+      expect(
+        () => flutterLocalNotificationsPlugin.show(
+          3,
+          'notification title',
+          'notification body',
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              'channelId',
+              'channelName',
+              titleStyle: AndroidNotificationTitleStyle(
+                sizeSp: -10,
+              ),
+            ),
+          ),
+        ),
+        throwsAssertionError,
+      );
+    });
+
+    test('show with Android title style bold and italic separately', () async {
+      const AndroidNotificationDetails boldDetails = AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        titleStyle: AndroidNotificationTitleStyle(bold: true),
+      );
+      const AndroidNotificationDetails italicDetails =
+          AndroidNotificationDetails(
+        'channelId',
+        'channelName',
+        titleStyle: AndroidNotificationTitleStyle(italic: true),
+      );
+
+      await flutterLocalNotificationsPlugin.show(
+        4,
+        'title',
+        'body',
+        const NotificationDetails(android: boldDetails),
+      );
+      final Map<Object?, Object?> boldArgs =
+          log.last.arguments as Map<Object?, Object?>;
+      final Map<String, Object?> boldSpecifics = Map<String, Object?>.from(
+        boldArgs['platformSpecifics'] as Map<Object?, Object?>,
+      );
+      expect(boldSpecifics['titleStyle'],
+          <String, Object?>{'bold': true, 'iconSpacingDp': 0.0});
+      expect(boldSpecifics['channelId'], 'channelId');
+
+      await flutterLocalNotificationsPlugin.show(
+        5,
+        'title',
+        'body',
+        const NotificationDetails(android: italicDetails),
+      );
+      final Map<Object?, Object?> italicArgs =
+          log.last.arguments as Map<Object?, Object?>;
+      final Map<String, Object?> italicSpecifics = Map<String, Object?>.from(
+        italicArgs['platformSpecifics'] as Map<Object?, Object?>,
+      );
+      expect(italicSpecifics['titleStyle'],
+          <String, Object?>{'italic': true, 'iconSpacingDp': 0.0});
+      expect(italicSpecifics['channelId'], 'channelId');
+    });
     test('initialize', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
@@ -183,6 +438,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
               'actions': <Map<String, Object>>[
                 <String, Object>{
                   'id': 'action1',
@@ -310,6 +567,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -395,6 +654,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -481,6 +742,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -568,6 +831,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -659,6 +924,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -749,6 +1016,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -837,6 +1106,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -926,6 +1197,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -1024,6 +1297,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -1132,6 +1407,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -1230,6 +1507,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -1338,6 +1617,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -1433,6 +1714,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -1535,6 +1818,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -1622,6 +1907,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -1712,6 +1999,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -1827,6 +2116,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -1955,6 +2246,8 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
+              'titleStyle': null,
+              'descriptionStyle': null,
             },
           }));
     });
@@ -2050,6 +2343,8 @@ void main() {
                     'colorized': false,
                     'number': null,
                     'audioAttributesUsage': 5,
+                    'titleStyle': null,
+                    'descriptionStyle': null,
                   },
                 }));
           });
@@ -2185,6 +2480,8 @@ void main() {
                         'colorized': false,
                         'number': null,
                         'audioAttributesUsage': 5,
+                        'titleStyle': null,
+                        'descriptionStyle': null,
                       },
                     }));
           });
@@ -2282,6 +2579,8 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
+                'titleStyle': null,
+                'descriptionStyle': null,
               },
             }));
       });
@@ -2378,6 +2677,8 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
+                'titleStyle': null,
+                'descriptionStyle': null,
               },
             }));
       });
@@ -2475,6 +2776,8 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
+                'titleStyle': null,
+                'descriptionStyle': null,
               },
             }));
       });
@@ -2786,6 +3089,8 @@ void main() {
                   'colorized': true,
                   'number': null,
                   'audioAttributesUsage': 5,
+                  'titleStyle': null,
+                  'descriptionStyle': null,
                 },
               },
               'startType': AndroidServiceStartType.startSticky.index,

@@ -104,6 +104,69 @@ class AndroidNotificationAction {
   final bool invisible;
 }
 
+/// Android-only options to style the *title* text using a custom layout.
+///
+/// Effective on Android API 24+; ignored below that.
+class AndroidNotificationTitleStyle {
+  /// Constructs an instance of [AndroidNotificationTitleStyle].
+  const AndroidNotificationTitleStyle({
+    this.color,
+    this.sizeSp,
+    this.bold,
+    this.italic,
+    this.iconSpacing = 0,
+  })  : assert(sizeSp == null || sizeSp > 0),
+        assert(color == null || (color >= 0 && color <= 0xFFFFFFFF)),
+        assert(iconSpacing == null || iconSpacing >= 0);
+
+  /// 32-bit ARGB color (e.g., 0xFF58CC02). Null => platform default.
+  final int? color;
+
+  /// Font size in SP (logical scaled pixels). Negative or zero values are
+  /// ignored on Android.
+  final double? sizeSp;
+
+  /// Whether to render title in bold. Defaults to null (platform default).
+  final bool? bold;
+
+  /// Whether to render title in italic. Defaults to null (platform default).
+  final bool? italic;
+
+  /// Distance in dp between the notification's icon and the title/body.
+  /// Defaults to 0.
+  final double? iconSpacing;
+}
+
+/// Android-only options to style the notification body text using a custom
+/// layout.
+///
+/// Effective on Android API 24+; ignored below that.
+class AndroidNotificationDescriptionStyle {
+  /// Constructs an instance of [AndroidNotificationDescriptionStyle].
+  const AndroidNotificationDescriptionStyle({
+    this.color,
+    this.sizeSp,
+    this.bold,
+    this.italic,
+  })  : assert(sizeSp == null || sizeSp > 0),
+        assert(color == null || (color >= 0 && color <= 0xFFFFFFFF));
+
+  /// 32-bit ARGB color (e.g., 0xFF58CC02). Null => platform default.
+  final int? color;
+
+  /// Font size in SP (logical scaled pixels). Negative or zero values are
+  /// ignored on Android.
+  final double? sizeSp;
+
+  /// Whether to render the description in bold. Defaults to null (platform
+  /// default).
+  final bool? bold;
+
+  /// Whether to render the description in italic. Defaults to null (platform
+  /// default).
+  final bool? italic;
+}
+
 /// Contains notification details specific to Android.
 class AndroidNotificationDetails {
   /// Constructs an instance of [AndroidNotificationDetails].
@@ -156,6 +219,8 @@ class AndroidNotificationDetails {
     this.colorized = false,
     this.number,
     this.audioAttributesUsage = AudioAttributesUsage.notification,
+    this.titleStyle,
+    this.descriptionStyle,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -426,4 +491,11 @@ class AndroidNotificationDetails {
   /// such as alarm or ringtone set in [`AudioAttributes.Builder`](https://developer.android.com/reference/android/media/AudioAttributes.Builder#setUsage(int)).
   /// https://developer.android.com/reference/android/media/AudioAttributes
   final AudioAttributesUsage audioAttributesUsage;
+
+  /// If set, uses a `DecoratedCustomViewStyle` with a custom `RemoteViews`
+  /// to render the title with the given style (API 24+ only).
+  final AndroidNotificationTitleStyle? titleStyle;
+
+  /// Android-only options to style the notification body/description text.
+  final AndroidNotificationDescriptionStyle? descriptionStyle;
 }
