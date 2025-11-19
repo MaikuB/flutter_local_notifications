@@ -94,7 +94,7 @@ await plugin.show(
 
 ## Requesting permissions
 
-This section will deal with requesting permissions. As noted in the [general usage guide](./usage.md#requesting-permission), requesting permissions is a very sensitive process in terms of user experience. It must be done only when necessary and only after informing the user of why you need the permissions. If, for whatever reason, the user rejects your request, the OS may stop showing your requests to the user and start blocking them automatically. 
+This section will deal with requesting permissions. As noted in the [general usage guide](./usage.md#requesting-permission), requesting permissions is a very sensitive process in terms of user experience. It must be done only when necessary and only after informing the user of why you need the permissions. If, for whatever reason, the user rejects your request, the OS may stop showing your requests to the user and start blocking them automatically. See Apple's guidance [here](https://developer.apple.com/documentation/usernotifications/asking-permission-to-use-notifications#Explicitly-request-authorization-in-context)
 
 > [!Important]
 >
@@ -102,15 +102,11 @@ This section will deal with requesting permissions. As noted in the [general usa
 
 ### Notification Permissions
 
-You will need permissions to show notifications at all. Be sure to call [`requestPermissions()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/MacOSFlutterLocalNotificationsPlugin/requestPermissions.html) sometime after calling `initialize()`, but before calling any method that shows or schedules a notification. You can use [`checkPermissions()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/MacOSFlutterLocalNotificationsPlugin/checkPermissions.html) to check your permissions at runtime.
-
-> [!NOTE]
->
-> Use this method instead of setting fields like `DarwinInitializationSettings.requestSoundPermission`. You want to wait until the very last minute to request permissions, preferably until the user has initiated an action themselves. If users feel like the notification request is helping them complete an action, they are more likely to grant it as opposed to when it feels spammy. See Apple's guidance [here](https://developer.apple.com/documentation/usernotifications/asking-permission-to-use-notifications#Explicitly-request-authorization-in-context).
+You will need permissions to show notifications at all. Be sure to call [`requestPermissions()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/IOSFlutterLocalNotificationsPlugin/requestPermissions.html) sometime after calling `initialize()`, but before calling any method that shows or schedules a notification. You can use [`checkPermissions()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/IOSFlutterLocalNotificationsPlugin/checkPermissions.html) to check your permissions at runtime.
 
 ### Provisional Notifications
 
-Instead of asking for broad permissions right away, you can request [provisional permissions](https://developer.apple.com/documentation/usernotifications/asking-permission-to-use-notifications#Use-provisional-authorization-to-send-trial-notifications) instead. This will allow your app to send notifications quietly in a way that doesn't disturb the user – instead of a banner or sound, your notification will be sent straight to the Notification Center. These notifications will also come with a prompt to the user if they want to keep allowing more notifications or turn them off, which can either grant or deny your broader permissions automatically.
+Instead of asking for broad permissions right away, you can request [provisional permissions](https://developer.apple.com/documentation/usernotifications/asking-permission-to-use-notifications#Use-provisional-authorization-to-send-trial-notifications) instead. This will allow your app to send notifications quietly in a way that doesn't disturb the user – instead of a banner or sound, your notification will be sent straight to the Notification Center. Unlike regular permission requests, provisional permissions are granted automatically and without prompting the user. 
 
 ```dart
 // Either right away
@@ -118,6 +114,8 @@ final darwinSettings = DarwinInitializationSettings(requestProvisionalPermission
 // Or when you need it
 await darwinPlugin?.requestPermissions(provisional: true);
 ```
+
+These notifications will also come with a prompt to the user if they want to keep allowing more notifications. The user's choice can either grant or deny your broader permissions automatically, making the process more seamless. You can use `checkPermissions()` at any time to see if the user granted or denied permissions, or if they are still provisional. 
 
 ### Bypassing Do Not Disturb
 
@@ -127,7 +125,7 @@ If you have notifications that are important enough to need to bypass Do Not Dis
 - Include `critical: true` in your `requestPermissions()` call
 - Send a notification with `InterruptionLevel.critical`
 
- enum lets you control how much your notification should be allowed to interrupt the user. If you plan to use `InterruptionLevel.timeSensitive`, you'll need to [enable](https://help.apple.com/xcode/mac/current/#/dev88ff319e7) the time-sensitive capability. See the video [here](https://developer.apple.com/videos/play/wwdc2021/10091/) for more details. If you plan to use `InterruptionLevel.critical`, you'll need to [get approval](https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/) from Apple.
+The `InterruptionLevel` enum lets you control how much your notification should be allowed to interrupt the user. If you plan to use `InterruptionLevel.timeSensitive`, you'll need to [enable](https://help.apple.com/xcode/mac/current/#/dev88ff319e7) the time-sensitive capability via XCode. See the video [here](https://developer.apple.com/videos/play/wwdc2021/10091/) for more details. If you plan to use `InterruptionLevel.critical`, you'll need to [get approval](https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/) from Apple.
 
 > [!Important]
 >

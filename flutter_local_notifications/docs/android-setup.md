@@ -130,7 +130,7 @@ plugins {
 
 ### Upgrading your minimum Android SDK
 
-This plugin requires Android SDK version 35 or higher. Make sure your _module_ build file sets `compileSdk` to 34 or higher:
+This plugin requires Android SDK version 35 or higher. Make sure your _module_ build file sets `compileSdk` to 35 or higher:
 
 <details><summary>Groovy - <code>android/app/build.gradle</code></summary>
 
@@ -154,7 +154,7 @@ android {
 
 ## AndroidManifest.xml Setup
 
-While Gradle is used to compile your app, [the Android Manifest](https://developer.android.com/guide/topics/manifest/manifest-intro) is used to install and run your app. In this context, the manifest is responsible for declaring what permissions will be needed by the app. The manifest is located at `android/src/main/AndroidManifest.xml`.
+While the Gradle files describe how to compile your app, [the Android manifest file](https://developer.android.com/guide/topics/manifest/manifest-intro) describes how to install your app on a user's device. One responsibility of the manifest is declaring what permissions an app needs and how it responds to external interactions. The manifest file is located at `android/src/main/AndroidManifest.xml`.
 
 This plugin has its own manifest that requires the [`POST_NOTIFICATIONS`](https://developer.android.com/reference/android/Manifest.permission#POST_NOTIFICATIONS) and [`VIBRATE`](https://developer.android.com/reference/android/Manifest.permission#VIBRATE) permissions, but apps that need more advanced functionality must add them as needed. Note that some permissions might require special consent from the user or subject your app to special review from the Play Store.
 
@@ -184,32 +184,36 @@ Next, add the following receiver inside the `<application>` tag so that the plug
 
 ### Scheduling with precision
 
-By default, Android will only schedule notifications with approximate precision to save power in idle mode. Exact timing differences are not given by the Android docs, but in general, you should not expect your notification to arrive within the exact minute you set it.
-
-> [!Warning]
-> Scheduling exact alarms prevents the Android OS from being able to properly optimize the device's energy usage and idle time, and can lead to noticeably worse battery life for your users. Carefully consider whether you actually need these permissions and be mindful of users with lower-performing hardware.
-
-> [!Note]
-> Some Android device manufacturers implement non-standard app-killing behavior to extend battery life more aggressively than what the Android docs suggest. This behavior, if it applies to your app, is at the OS level and cannot be prevented by this plugin. See [this site]( https://dontkillmyapp.com) for a rundown of such manufacturers and what you can do for your users.
+By default, Android will only schedule notifications with approximate precision to save power in idle mode. Exact timing differences are not given by the Android docs, but in general, you should not expect your notification to arrive within the exact minute you set it. 
 
 If you need that level of precision, [you'll need another permission](https://developer.android.com/about/versions/14/changes/schedule-exact-alarms). For example, calendar and alarm apps are encouraged to use these. Take a moment to consider your app's circumstances:
 
 - Exact scheduling is a core requirement for your app. In this case, you'll need the [`USE_EXACT_ALARM`](https://developer.android.com/reference/android/Manifest.permission#USE_EXACT_ALARM) permission, which won't require user consent in-app but may subject your app to more stringent app store reviews.
 - Exact scheduling is a nice-to-have addition for your app that users can opt-out of. In this case, you'll want to use the [`SCHEDULE_EXACT_ALARM`](https://developer.android.com/reference/android/Manifest.permission#SCHEDULE_EXACT_ALARM) permission. This permission will need to be granted by the user using [`requestExactAlarmsPermission()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/requestExactAlarmsPermission.html) function in Dart. This permission can be revoked at any time by the user or system, so use [`canScheduleExactNotifications()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/canScheduleExactNotifications.html) to check at run-time if you still have this permission.
 
-In any case, add the appropriate permission to your manifest, under the top-level `<manifest>` tag.
+> [!Warning]
+>
+> Scheduling with precision prevents the Android OS from being able to properly optimize the device's energy usage and idle time, and can lead to noticeably worse battery life for your users. Carefully consider whether you actually need these permissions and be mindful of users with lower-performing hardware.
+
+Choose the appropriate permission to add to your manifest, under the top-level `<manifest>` tag.
 
 ```xml
-<!-- Choose the permission most appropriate for your app -->
+<!-- If exact scheduling is a core requirement for your app -->
 <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+```
+
+```xml
+<!-- If exact scheduling is an optional feature of your app -->
 <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 ```
 
-Do not request both permissions, choose only one.
+> [!note]
+>
+> Some Android device manufacturers implement non-standard app-killing behavior to extend battery life more aggressively than what the Android docs suggest. This behavior, if it applies to your app, is at the OS level and cannot be prevented by this plugin. See [this site]( https://dontkillmyapp.com) for a rundown of such manufacturers and what you can do for your users.
 
 ### Full-screen notifications
 
-Some apps may need to take over the screen to show their notifications, such as alarms or incoming calls. This requires some modifications to your manifestL
+Some apps may need to take over the screen to show their notifications, such as alarms or incoming calls. This requires some modifications to your manifest:
 
 ```xml
 <manifest ...>
@@ -227,7 +231,7 @@ Some apps may need to take over the screen to show their notifications, such as 
 </manifest>
 ```
 
-The [Android docs](https://source.android.com/docs/core/permissions/fsi-limits) indicate that this permission will be automatically revoked for apps that do not provide calling or alarm functionality, so use this permission sparingly. To request the permission at runtime, use [`requestFullScreenIntentPermission()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/requestFullScreenIntentPermission.html) in your Dart code. A Dart function to check this permission at runtime [does not yet exist](https://github.com/MaikuB/flutter_local_notifications/issues/2478).
+The [Android docs](https://source.android.com/docs/core/permissions/fsi-limits) indicate that this permission will be automatically revoked for apps that do not provide calling or alarm functionality, so use this permission only for those features. To request the permission at runtime, use [`requestFullScreenIntentPermission()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/requestFullScreenIntentPermission.html) in your Dart code. A Dart function to check this permission at runtime [does not yet exist](https://github.com/MaikuB/flutter_local_notifications/issues/2478).
 
 ### Using notification actions
 
@@ -245,7 +249,7 @@ A [foreground service](https://developer.android.com/develop/background-work/ser
 
 Android defines many different types of foreground services. These are just predefined categories and not limitations, but it can still be useful to let the system know what type of service you're running. Refer to [this page](https://developer.android.com/develop/background-work/services/fg-service-types) to find all the different types of services.
 
-At runtime, use [`startForegroundService()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/startForegroundService.html) and pass the appropriate service types, if any. The system will check if you have the necessary permissions for each service type and reject your request if not. The prerequisite permissions can be found at the link above. When you're done, use `stopForegroundService()`.
+At runtime, use [`startForegroundService()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/startForegroundService.html) and pass the appropriate service types, if any. The system will check if you have the necessary permissions for each service type and reject your request if not. The prerequisite permissions can be found at the link above. When you're done, use [`stopForegroundService()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidFlutterLocalNotificationsPlugin/stopForegroundService.html).
 
 Foreground services require additions to the manifest. First, you must request the `FOREGROUND_SERVICE` permission, along with special permissions for each service type. Then, you must register the plugin service as shown below, adding any service types you may need. The exact names for each service type can be found at the link above.
 
@@ -284,13 +288,13 @@ Be sure to follow the instructions [here](https://developer.android.com/topic/pe
 
 > [!WARNING]
 >
-> Code shrinking can affect the  [GSON](https://github.com/google/gson) package as well, a Java dependency used by this plugin. Version 19.0.0 of this package includes the necessary ProGuard rules to protect it, but if you're using an earlier version, you'll need to manually copy the contents of [this file](https://github.com/google/gson/blob/main/examples/android-proguard-example/proguard.cfg) to `android/app/proguard-rules.pro`.
+> Code shrinking can affect the [GSON](https://github.com/google/gson) package as well, a Java dependency used by this plugin. Version 19.0.0 of this package includes the necessary ProGuard rules to protect it, but if you're using an earlier version, you'll need to manually copy the contents of [this file](https://github.com/google/gson/blob/main/examples/android-proguard-example/proguard.cfg) to `android/app/proguard-rules.pro`.
 
 ## Custom icons and sounds
 
 Notification icons should be added as a [drawable resource](https://developer.android.com/guide/topics/resources/drawable-resource), just like app icons. By default, the app's own icon is `@mipmap/ic_launcher`, and any such value can be passed directly to the `AndroidNotificationDetails()` constructor. For more details on creating custom notification icons, [see the docs](https://developer.android.com/studio/write/create-app-icons#create-notification). Custom notification sounds should be added to the `res/raw` directory.
 
-Notifications may also make use of [large icons](https://developer.android.com/develop/ui/views/notifications/expanded#image-style), such as album art or message attachments. When calling `show()`, pass a [`largeIcon`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationDetails/largeIcon.html) to the `AndroidNotificationDetails()` constructor. Use a `DrawableResourceAndroidBitmap` to indicate an image file in `/res/drawable`, or use `FilePathAndroidBitmap` to point to any file.
+Notifications may also make use of [large icons](https://developer.android.com/develop/ui/views/notifications/expanded#image-style), such as album art or message attachments. When showing a notification, pass a [`largeIcon`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/AndroidNotificationDetails/largeIcon.html) to the `AndroidNotificationDetails()` constructor. Use a `DrawableResourceAndroidBitmap` to indicate an image file in `/res/drawable`, or use `FilePathAndroidBitmap` to point to any file.
 
 > [!Warning]
 >
