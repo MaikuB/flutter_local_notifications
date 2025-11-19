@@ -13,7 +13,7 @@ This guide will only handle the setup that comes before compiling your applicati
 
 ## MSIX packaging
 
-The [MSIX packaging format](https://learn.microsoft.com/en-us/windows/msix/overview) is a relatively new technique to package and distribute modern Windows apps. An MSIX installs an app onto the system as if it were downloaded from the Windows store (indeed, Windows store apps are packaged with MSIX). MSIX installers can also be used to update an existing application while preserving user data, making them really convenient.
+The [MSIX packaging format](https://learn.microsoft.com/en-us/windows/msix/overview) is a relatively new technique to package and distribute modern Windows apps. An MSIX installs an app onto the system as if it were downloaded from the Windows store. All Windows store apps are packaged with MSIX. MSIX installers can also be used to update an existing application while preserving user data, making them really convenient. For more details, see the Flutter documentation on [releasing for Windows](https://docs.flutter.dev/deployment/windows).
 
 However, their relevance here goes beyond convenience: Windows [restricts](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/modernize-packaged-apps) some APIs to apps that have "package identity", ie, have been installed using an MSIX installer. That restriction includes notifications. Specifically, the following methods behave differently without package identity:
 

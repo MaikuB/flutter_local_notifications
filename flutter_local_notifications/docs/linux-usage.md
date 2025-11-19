@@ -86,17 +86,17 @@ await plugin.show(
 
 To use a custom icon, specify `LinuxInitializationSettings.defaultIcon` for every notification, or override on a per-notification basis with `LinuxNotificationDetails.icon`. Icons can be one of:
 
-- `AssetsLinuxIcon`, which take a Flutter asset
-- `ByteDataLinuxIcon`, which takes a [`LinuxRawIconData`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/LinuxRawIconData-class.html)
-- `ThemeLinuxIcon`, which takes one of [these](https://www.freedesktop.org/wiki/Specifications/icon-naming-spec/) pre-defined icon names
-- `FilePathLinuxIcon`, which takes am image from a `file://` URI or absolute path
+- `AssetsLinuxIcon`: which take a Flutter asset
+- `ByteDataLinuxIcon`: which takes a [`LinuxRawIconData`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/LinuxRawIconData-class.html)
+- `ThemeLinuxIcon`: which takes one of [these](https://www.freedesktop.org/wiki/Specifications/icon-naming-spec/) pre-defined icon names
+- `FilePathLinuxIcon`: which takes am image from a `file://` URI or absolute path
 
 ### Custom sounds
 
 To use a custom sound, specify `LinuxInitializationSettings.defaultSound` for every notification, or override on a per-notification basis with `LinuxNotificationDetails.sound`. Sounds can be:
 
-- `AssetsLinuxSound`, which takes a Flutter asset
-- `ThemeLinuxSound`, which takes one of [these](https://www.freedesktop.org/wiki/Specifications/sound-theme-spec/) pre-defined sound names
+- `AssetsLinuxSound`: which takes a Flutter asset
+- `ThemeLinuxSound`: which takes one of [these](https://www.freedesktop.org/wiki/Specifications/sound-theme-spec/) pre-defined sound names
 
 ## Limitations
 

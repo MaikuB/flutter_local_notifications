@@ -131,17 +131,17 @@ void onNotificationTapped(NotificationResponse response) {
 
 ### Custom images and sounds
 
-images can come from different sources: the web, MSIX bundles, files on the user's device, or Flutter assets. See the documentation for [`WindowsImage`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsImage-class.html) for complete details on when each time of source is usable.
+Images can come from different sources: the web, MSIX bundles, files on the user's device, or Flutter assets. See the documentation for [`WindowsImage`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsImage-class.html) for complete details on when each time of source is usable.
 
 Sounds can either be one of the [`WindowsNotificationSound`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsNotificationSound.html) presets, or a Flutter asset using [`WindowsNotificationAudio.asset()`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsNotificationAudio/WindowsNotificationAudio.asset.html). When used in an MSIX package, this constructor will automatically convert the resource to an `ms-appx://` URI, and use a fallback preset sound in debug or non-packaged releases.
 
 ### Custom XML
 
-Windows notifications are sent in the form of an XML schema, which the Windows SDK has to parse and verify. Using the `WindowsNotificationDetails` class in this library lets you skip that and build your notification with pure Dart code, but if you wanted to use raw XML for some unsupported or custom behavior, you can:
+Windows notifications are sent in the form of an XML schema, which the Windows SDK has to parse and verify. Using the `WindowsNotificationDetails` class in this library lets you skip that and build your notification with pure Dart code, but if you wanted to use raw XML for some unsupported or custom behavior, you can call the following methods:
 
-- `windowsPlugin?.isValidXml()` will validate that the XML is indeed valid Windows XML
-- `windowsPlugin?.showRawXml()` is equivalent to `plugin.show()`, but with raw XML instead of details
-- `windowsPlugin?.zonedScheduleRawXml()` is equivalent to `zonedSchedule()` but with raw XML
+- `windowsPlugin?.isValidXml()`: validates that the XML is indeed valid Windows XML
+- `windowsPlugin?.showRawXml()`: is equivalent to `plugin.show()`, but with raw XML instead of details
+- `windowsPlugin?.zonedScheduleRawXml()`: is equivalent to `zonedSchedule()` but with raw XML
 
 For more information, see the [Windows docs](https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root). To test your XML during development, use the [Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer), or input it into the text field in the Windows example app.
 

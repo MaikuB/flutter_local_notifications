@@ -98,6 +98,10 @@ override func application(
 
 ## Clearing notifications on reinstall
 
+> [!Note]
+>
+> **This section is only relevant for iOS devices before iOS 9 or earlier.** Flutter 3.0 is the last stable version with best-effort support for iOS 9 and 10, and Flutter 3.3 raised the minimum version to iOS 11. If your app uses Flutter 3.3 or later, or targets iOS 10 or later, skip this section.
+
 On some devices (older than iOS 10), if the user uninstalls the app without cancelling their repeating notifications, the app may reschedule those notifications if it's reinstalled. To prevent this, add the following code to the `didFinishLaunchingWithOptions()` method of the `AppDelegate` class.
 
 <details>
