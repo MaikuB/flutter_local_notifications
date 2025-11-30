@@ -42,5 +42,5 @@ flutter:
         default_package: flutter_local_notifications_windows
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.8.0
+  flutter: ">=3.32.0"

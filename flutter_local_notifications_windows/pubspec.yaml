@@ -5,8 +5,8 @@ homepage: https://github.com/MaikuB/flutter_local_notifications/tree/master/flut
 issue_tracker: https://github.com/MaikuB/flutter_local_notifications/issues
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.8.0
+  flutter: ">=3.32.0"
 
 dependencies:
   flutter:
