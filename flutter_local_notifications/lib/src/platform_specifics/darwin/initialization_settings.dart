@@ -160,3 +160,34 @@ class DarwinInitializationSettings {
   /// On macOS, this is only applicable to macOS 10.14 or newer.
   final List<DarwinNotificationCategory> notificationCategories;
 }
+
+/// Plugin initialization settings for iOS
+class IOSInitializationSettings extends DarwinInitializationSettings {
+  /// Constructs an instance of [IOSInitializationSettings].
+  const IOSInitializationSettings({
+    super.requestAlertPermission = true,
+    super.requestSoundPermission = true,
+    super.requestBadgePermission = true,
+    super.requestProvisionalPermission = false,
+    super.requestCriticalPermission = false,
+    super.requestProvidesAppNotificationSettings = false,
+    this.requestCarPlayPermission = false,
+    super.defaultPresentAlert = true,
+    super.defaultPresentSound = true,
+    super.defaultPresentBadge = true,
+    super.defaultPresentBanner = true,
+    super.defaultPresentList = true,
+    super.notificationCategories = const <DarwinNotificationCategory>[],
+  });
+
+  /// Request permission to show notifications on CarPlay.
+  ///
+  /// This permission allows the app to display notifications on the CarPlay
+  /// interface when connected to a compatible vehicle.
+  ///
+  /// Default value is false.
+  ///
+  /// This property is only applicable to iOS 10.0 or newer and is iOS-only.
+  /// CarPlay is not available on macOS.
+  final bool requestCarPlayPermission;
+}

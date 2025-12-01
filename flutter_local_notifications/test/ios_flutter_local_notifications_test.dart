@@ -40,8 +40,8 @@ void main() {
     });
 
     test('initialize with default parameter values', () async {
-      const DarwinInitializationSettings iosInitializationSettings =
-          DarwinInitializationSettings();
+      const IOSInitializationSettings iosInitializationSettings =
+          IOSInitializationSettings();
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -52,6 +52,7 @@ void main() {
           'requestBadgePermission': true,
           'requestProvisionalPermission': false,
           'requestCriticalPermission': false,
+          'requestCarPlayPermission': false,
           'requestProvidesAppNotificationSettings': false,
           'defaultPresentAlert': true,
           'defaultPresentSound': true,
@@ -64,8 +65,8 @@ void main() {
     });
 
     test('initialize with notification categories', () async {
-      final DarwinInitializationSettings iosInitializationSettings =
-          DarwinInitializationSettings(
+      final IOSInitializationSettings iosInitializationSettings =
+          IOSInitializationSettings(
         notificationCategories: <DarwinNotificationCategory>[
           DarwinNotificationCategory(
             'category1',
@@ -112,6 +113,7 @@ void main() {
           'requestBadgePermission': true,
           'requestProvisionalPermission': false,
           'requestCriticalPermission': false,
+          'requestCarPlayPermission': false,
           'requestProvidesAppNotificationSettings': false,
           'defaultPresentAlert': true,
           'defaultPresentSound': true,
@@ -168,8 +170,8 @@ void main() {
       ]);
     });
     test('initialize with all settings off', () async {
-      const DarwinInitializationSettings iosInitializationSettings =
-          DarwinInitializationSettings(
+      const IOSInitializationSettings iosInitializationSettings =
+          IOSInitializationSettings(
         requestAlertPermission: false,
         requestBadgePermission: false,
         requestSoundPermission: false,
@@ -189,6 +191,7 @@ void main() {
           'requestBadgePermission': false,
           'requestProvisionalPermission': false,
           'requestCriticalPermission': false,
+          'requestCarPlayPermission': false,
           'requestProvidesAppNotificationSettings': false,
           'defaultPresentAlert': false,
           'defaultPresentSound': false,
@@ -200,9 +203,80 @@ void main() {
       ]);
     });
 
-    test('show without iOS-specific details', () async {
-      const DarwinInitializationSettings iosInitializationSettings =
+    test('initialize with CarPlay permission enabled', () async {
+      const IOSInitializationSettings iosInitializationSettings =
+          IOSInitializationSettings(
+        requestCarPlayPermission: true,
+      );
+      const InitializationSettings initializationSettings =
+          InitializationSettings(iOS: iosInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      expect(log, <Matcher>[
+        isMethodCall('initialize', arguments: <String, Object>{
+          'requestAlertPermission': true,
+          'requestSoundPermission': true,
+          'requestBadgePermission': true,
+          'requestProvisionalPermission': false,
+          'requestCriticalPermission': false,
+          'requestCarPlayPermission': true,
+          'requestProvidesAppNotificationSettings': false,
+          'defaultPresentAlert': true,
+          'defaultPresentSound': true,
+          'defaultPresentBadge': true,
+          'defaultPresentBanner': true,
+          'defaultPresentList': true,
+          'notificationCategories': <String>[],
+        })
+      ]);
+    });
+
+    test('initialize with DarwinInitializationSettings excludes CarPlay', () async {
+      const DarwinInitializationSettings darwinInitializationSettings =
           DarwinInitializationSettings();
+      const InitializationSettings initializationSettings =
+          InitializationSettings(iOS: darwinInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      expect(log, <Matcher>[
+        isMethodCall('initialize', arguments: <String, Object>{
+          'requestAlertPermission': true,
+          'requestSoundPermission': true,
+          'requestBadgePermission': true,
+          'requestProvisionalPermission': false,
+          'requestCriticalPermission': false,
+          'requestProvidesAppNotificationSettings': false,
+          'defaultPresentAlert': true,
+          'defaultPresentSound': true,
+          'defaultPresentBadge': true,
+          'defaultPresentBanner': true,
+          'defaultPresentList': true,
+          'notificationCategories': <String>[],
+          // Note: requestCarPlayPermission should NOT be present
+        })
+      ]);
+    });
+
+    test('IOSInitializationSettings inherits from DarwinInitializationSettings', () async {
+      const IOSInitializationSettings iosInitializationSettings =
+          IOSInitializationSettings(
+        requestAlertPermission: false,
+        requestSoundPermission: false,
+        requestBadgePermission: false,
+        requestCarPlayPermission: true,
+      );
+      
+      // Test that IOSInitializationSettings is a DarwinInitializationSettings
+      expect(iosInitializationSettings, isA<DarwinInitializationSettings>());
+      
+      // Test that CarPlay permission is specific to iOS
+      expect(iosInitializationSettings.requestCarPlayPermission, true);
+      expect(iosInitializationSettings.requestAlertPermission, false);
+      expect(iosInitializationSettings.requestSoundPermission, false);
+      expect(iosInitializationSettings.requestBadgePermission, false);
+    });
+
+    test('show without iOS-specific details', () async {
+      const IOSInitializationSettings iosInitializationSettings =
+          IOSInitializationSettings();
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -220,8 +294,8 @@ void main() {
     });
 
     test('show with iOS-specific details', () async {
-      const DarwinInitializationSettings iosInitializationSettings =
-          DarwinInitializationSettings();
+      const IOSInitializationSettings iosInitializationSettings =
+          IOSInitializationSettings();
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -284,8 +358,8 @@ void main() {
       for (final RepeatInterval repeatInterval in RepeatInterval.values) {
         test('$repeatInterval', () async {
           await withClock(Clock.fixed(now), () async {
-            const DarwinInitializationSettings iosInitializationSettings =
-                DarwinInitializationSettings();
+            const IOSInitializationSettings iosInitializationSettings =
+                IOSInitializationSettings();
             const InitializationSettings initializationSettings =
                 InitializationSettings(iOS: iosInitializationSettings);
             await flutterLocalNotificationsPlugin
@@ -364,8 +438,8 @@ void main() {
       const Duration thirtySeconds = Duration(seconds: 30);
       test('$thirtySeconds', () async {
         await withClock(Clock.fixed(now), () async {
-          const DarwinInitializationSettings iosInitializationSettings =
-              DarwinInitializationSettings();
+      const IOSInitializationSettings iosInitializationSettings =
+          IOSInitializationSettings();
           const InitializationSettings initializationSettings =
               InitializationSettings(iOS: iosInitializationSettings);
           await flutterLocalNotificationsPlugin
@@ -411,8 +485,8 @@ void main() {
       for (final Duration repeatDurationInterval in repeatDurationIntervals) {
         test('$repeatDurationInterval', () async {
           await withClock(Clock.fixed(now), () async {
-            const DarwinInitializationSettings iosInitializationSettings =
-                DarwinInitializationSettings();
+            const IOSInitializationSettings iosInitializationSettings =
+                IOSInitializationSettings();
             const InitializationSettings initializationSettings =
                 InitializationSettings(iOS: iosInitializationSettings);
             await flutterLocalNotificationsPlugin
@@ -488,8 +562,8 @@ void main() {
 
     group('zonedSchedule', () {
       test('no repeat frequency', () async {
-        const DarwinInitializationSettings iosInitializationSettings =
-            DarwinInitializationSettings();
+        const IOSInitializationSettings iosInitializationSettings =
+            IOSInitializationSettings();
         const InitializationSettings initializationSettings =
             InitializationSettings(iOS: iosInitializationSettings);
         await flutterLocalNotificationsPlugin
@@ -556,8 +630,8 @@ void main() {
       });
 
       test('match time components', () async {
-        const DarwinInitializationSettings iosInitializationSettings =
-            DarwinInitializationSettings();
+        const IOSInitializationSettings iosInitializationSettings =
+            IOSInitializationSettings();
         const InitializationSettings initializationSettings =
             InitializationSettings(iOS: iosInitializationSettings);
         await flutterLocalNotificationsPlugin
@@ -626,8 +700,8 @@ void main() {
       });
 
       test('match day of week and time components', () async {
-        const DarwinInitializationSettings iosInitializationSettings =
-            DarwinInitializationSettings();
+        const IOSInitializationSettings iosInitializationSettings =
+            IOSInitializationSettings();
         const InitializationSettings initializationSettings =
             InitializationSettings(iOS: iosInitializationSettings);
         await flutterLocalNotificationsPlugin
@@ -708,6 +782,7 @@ void main() {
           'alert': false,
           'provisional': false,
           'critical': false,
+          'carPlay': false,
           'providesAppNotificationSettings': false
         })
       ]);
@@ -730,6 +805,7 @@ void main() {
           'alert': true,
           'provisional': true,
           'critical': true,
+          'carPlay': false,
           'providesAppNotificationSettings': true,
         })
       ]);
@@ -781,8 +857,8 @@ void main() {
     });
 
     test('initialize with providesAppNotificationSettings', () async {
-      const DarwinInitializationSettings iosInitializationSettings =
-          DarwinInitializationSettings(
+      const IOSInitializationSettings iosInitializationSettings =
+          IOSInitializationSettings(
         requestProvidesAppNotificationSettings: true,
       );
       const InitializationSettings initializationSettings =
@@ -797,6 +873,7 @@ void main() {
             'requestBadgePermission': true,
             'requestProvisionalPermission': false,
             'requestCriticalPermission': false,
+            'requestCarPlayPermission': false,
             'requestProvidesAppNotificationSettings': true,
             'defaultPresentAlert': true,
             'defaultPresentSound': true,
@@ -826,7 +903,30 @@ void main() {
           'badge': true,
           'provisional': false,
           'critical': false,
+          'carPlay': false,
           'providesAppNotificationSettings': true
+        })
+      ]);
+    });
+
+    test('iOS requestPermissions with CarPlay enabled', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()!
+          .requestPermissions(
+              sound: true,
+              alert: true,
+              badge: true,
+              carPlay: true);
+      expect(log, <Matcher>[
+        isMethodCall('requestPermissions', arguments: <String, Object>{
+          'sound': true,
+          'alert': true,
+          'badge': true,
+          'provisional': false,
+          'critical': false,
+          'carPlay': true,
+          'providesAppNotificationSettings': false
         })
       ]);
     });
