@@ -132,6 +132,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String CALLBACK_HANDLE = "callback_handle";
   private static final String DRAWABLE = "drawable";
   private static final String DEFAULT_ICON = "defaultIcon";
+  private static final String FLUTTER_ACTIVITY = "flutterActivity";
   private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
   private static final String SELECT_FOREGROUND_NOTIFICATION_ACTION =
       "SELECT_FOREGROUND_NOTIFICATION";
@@ -1001,6 +1002,14 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private static Intent getLaunchIntent(Context context) {
+    SharedPreferences sharedPreferences =
+          context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+    String flutterActivity = sharedPreferences.getString(FLUTTER_ACTIVITY, null);
+    if (!StringUtils.isNullOrEmpty(flutterActivity)) {
+      Intent result = new Intent();
+      result.setClassName(context, flutterActivity);
+      return result;
+    }
     String packageName = context.getPackageName();
     PackageManager packageManager = context.getPackageManager();
     return packageManager.getLaunchIntentForPackage(packageName);
@@ -1707,6 +1716,7 @@ public class FlutterLocalNotificationsPlugin
       return;
     }
 
+    String flutterActivity = (String) arguments.get(FLUTTER_ACTIVITY);
     Long dispatcherHandle = LongUtils.parseLong(call.argument(DISPATCHER_HANDLE));
     Long callbackHandle = LongUtils.parseLong(call.argument(CALLBACK_HANDLE));
     if (dispatcherHandle != null && callbackHandle != null) {
@@ -1716,7 +1726,9 @@ public class FlutterLocalNotificationsPlugin
     SharedPreferences sharedPreferences =
         applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
-    editor.putString(DEFAULT_ICON, defaultIcon).apply();
+    editor.putString(DEFAULT_ICON, defaultIcon)
+            .putString(FLUTTER_ACTIVITY, flutterActivity)
+            .apply();
     result.success(true);
   }
 
