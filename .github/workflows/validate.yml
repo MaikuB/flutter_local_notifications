@@ -328,8 +328,10 @@ jobs:
         id: simulator-action
         with:
           model: 'iPhone 16'
-      - run: |
+      - name: Install applesimutils
+        run: |
           brew tap wix/brew
           brew install applesimutils
-          applesimutils --byId ${{ steps.simulator-action.outputs.udid}} --bundle com.dexterous.flutterLocalNotificationsExample --setPermissions notifications=YES
+      - name: Grant notification permissions
+        run: applesimutils --byId ${{ steps.simulator-action.outputs.udid}} --bundle com.dexterous.flutterLocalNotificationsExample --setPermissions notifications=YES
       - run: melos run test:integration
