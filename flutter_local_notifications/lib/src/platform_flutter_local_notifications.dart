@@ -58,26 +58,28 @@ class MethodChannelFlutterLocalNotificationsPlugin
         result != null && result.containsKey('notificationResponse')
         ? result['notificationResponse']
         : null;
-    return result == null
-        ? null
-        : NotificationAppLaunchDetails(
-            result['notificationLaunchedApp'],
-            notificationResponse: notificationResponse == null
-                ? null
-                : NotificationResponse(
-                    id: notificationResponse['notificationId'],
-                    actionId: notificationResponse['actionId'],
-                    input: notificationResponse['input'],
-                    notificationResponseType: NotificationResponseType
-                        .values[notificationResponse['notificationResponseType']],
-                    payload: notificationResponse.containsKey('payload')
-                        ? notificationResponse['payload']
-                        : null,
-                    data: Map<String, dynamic>.from(
-                      notificationResponse['data'] ?? <String, dynamic>{},
-                    ),
-                  ),
-          );
+    if (result == null) {
+      return null;
+    } else {
+      return NotificationAppLaunchDetails(
+        result['notificationLaunchedApp'],
+        notificationResponse: notificationResponse == null
+            ? null
+            : NotificationResponse(
+                id: notificationResponse['notificationId'],
+                actionId: notificationResponse['actionId'],
+                input: notificationResponse['input'],
+                notificationResponseType: NotificationResponseType
+                    .values[notificationResponse['notificationResponseType']],
+                payload: notificationResponse.containsKey('payload')
+                    ? notificationResponse['payload']
+                    : null,
+                data: Map<String, dynamic>.from(
+                  notificationResponse['data'] ?? <String, dynamic>{},
+                ),
+              ),
+      );
+    }
   }
 
   @override
@@ -85,8 +87,8 @@ class MethodChannelFlutterLocalNotificationsPlugin
     final List<Map<dynamic, dynamic>>? pendingNotifications = await _channel
         .invokeListMethod('pendingNotificationRequests');
     return pendingNotifications
-            // ignore: always_specify_types
             ?.map(
+              // ignore: always_specify_types
               (p) => PendingNotificationRequest(
                 p['id'],
                 p['title'],
@@ -103,8 +105,8 @@ class MethodChannelFlutterLocalNotificationsPlugin
     final List<Map<dynamic, dynamic>>? activeNotifications = await _channel
         .invokeListMethod('getActiveNotifications');
     return activeNotifications
-            // ignore: always_specify_types
             ?.map(
+              // ignore: always_specify_types
               (p) => ActiveNotification(
                 id: p['id'],
                 channelId: p['channelId'],
@@ -334,7 +336,8 @@ class AndroidFlutterLocalNotificationsPlugin
       throw ArgumentError.value(
         id,
         'id',
-        'The id of a notification used for an Android foreground service must not be 0!',
+        'The id of a notification used for an Android foreground service must '
+            'not be 0!',
       ); // ignore: lines_longer_than_80_chars
     }
     if (foregroundServiceTypes?.isEmpty ?? false) {
@@ -584,8 +587,8 @@ class AndroidFlutterLocalNotificationsPlugin
         .invokeListMethod('getNotificationChannels');
 
     return notificationChannels
-        // ignore: always_specify_types
         ?.map(
+          // ignore: always_specify_types
           (a) => AndroidNotificationChannel(
             a['id'],
             a['name'],
