@@ -1,6 +1,8 @@
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
+import 'package:meta/meta.dart';
+import 'package:xml/xml.dart';
 
 import '../details.dart';
 import '../details/notification_to_xml.dart';
@@ -22,10 +24,28 @@ extension on String {
       this[23] == '-';
 }
 
+/// Does a basic syntax check on XML.
+bool _checkXml(String xml) {
+  try {
+    XmlDocument.parse(xml);
+    return true;
+  } on XmlFormatException {
+    return false;
+  }
+}
+
 /// The Windows implementation of `package:flutter_local_notifications`.
 class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   /// Creates an instance of the native plugin.
-  FlutterLocalNotificationsWindows();
+  FlutterLocalNotificationsWindows()
+      : _bindings = NotificationsPluginBindings(
+            DynamicLibrary.open('flutter_local_notifications_windows.dll'));
+
+  /// Creates an instance of this plugin with the given (mocked) bindings.
+  @visibleForTesting
+  FlutterLocalNotificationsWindows.withBindings(
+    this._bindings,
+  );
 
   /// Registers the Windows implementation with Flutter.
   static void registerWith() {
@@ -37,11 +57,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   static FlutterLocalNotificationsWindows? instance;
 
   /// The FFI generated bindings to the native code.
-  late final NotificationsPluginBindings _bindings =
-      NotificationsPluginBindings(_library);
-
-  final DynamicLibrary _library =
-      DynamicLibrary.open('flutter_local_notifications_windows.dll');
+  final NotificationsPluginBindings _bindings;
 
   /// A pointer to the C++ handler class.
   late final Pointer<NativePlugin> _plugin;
@@ -281,6 +297,9 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
 
   @override
   bool isValidXml(String xml) => using((Arena arena) {
+        if (!_checkXml(xml)) {
+          return false;
+        }
         final Pointer<Utf8> nativeXml = xml.toNativeUtf8(allocator: arena);
         return _bindings.isValidXml(nativeXml);
       });
