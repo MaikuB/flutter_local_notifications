@@ -8,10 +8,10 @@ import 'plugin.dart';
 
 const WindowsInitializationSettings initSettings =
     WindowsInitializationSettings(
-  appName: 'Flutter Local Notifications Example',
-  appUserModelId: 'Com.Dexterous.FlutterLocalNotificationsExample',
-  guid: 'd49b0314-ee7a-4626-bf79-97cdb8a991bb',
-);
+      appName: 'Flutter Local Notifications Example',
+      appUserModelId: 'Com.Dexterous.FlutterLocalNotificationsExample',
+      guid: 'd49b0314-ee7a-4626-bf79-97cdb8a991bb',
+    );
 
 class _WindowsXmlBuilder extends StatefulWidget {
   @override
@@ -21,12 +21,14 @@ class _WindowsXmlBuilder extends StatefulWidget {
 class _WindowsXmlBuilderState extends State<_WindowsXmlBuilder> {
   final TextEditingController xmlController = TextEditingController();
   final Map<String, String> bindings = <String, String>{
-    'message': 'Hello, World!'
+    'message': 'Hello, World!',
   };
 
   final FlutterLocalNotificationsWindows? plugin =
-      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-          FlutterLocalNotificationsWindows>();
+      flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            FlutterLocalNotificationsWindows
+          >();
 
   String get xml => xmlController.text;
 
@@ -41,107 +43,107 @@ class _WindowsXmlBuilderState extends State<_WindowsXmlBuilder> {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        width: 500,
-        child: ExpansionTile(
-            title: const Text('Click to expand raw XML'),
-            children: <Widget>[
-              TextField(
-                maxLines: 20,
-                style: const TextStyle(fontFamily: 'RobotoMono'),
-                controller: xmlController,
-                onSubmitted: (_) => onPressed,
-                decoration: InputDecoration(
-                  hintText: 'Enter the raw xml',
-                  errorText: isValid ? null : 'Invalid XML',
-                  helperText: 'Bindings: {message} --> Hello, World!',
-                  constraints:
-                      const BoxConstraints.tightFor(width: 600, height: 480),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () => xmlController.clear(),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              PaddedElevatedButton(
-                buttonText: 'Show notification with raw XML',
-                onPressed: onPressed,
-              ),
-            ]),
-      );
+    width: 500,
+    child: ExpansionTile(
+      title: const Text('Click to expand raw XML'),
+      children: <Widget>[
+        TextField(
+          maxLines: 20,
+          style: const TextStyle(fontFamily: 'RobotoMono'),
+          controller: xmlController,
+          onSubmitted: (_) => onPressed,
+          decoration: InputDecoration(
+            hintText: 'Enter the raw xml',
+            errorText: isValid ? null : 'Invalid XML',
+            helperText: 'Bindings: {message} --> Hello, World!',
+            constraints: const BoxConstraints.tightFor(width: 600, height: 480),
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () => xmlController.clear(),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        PaddedElevatedButton(
+          buttonText: 'Show notification with raw XML',
+          onPressed: onPressed,
+        ),
+      ],
+    ),
+  );
 }
 
 List<Widget> examples() => <Widget>[
-      const Text(
-        'Windows-specific examples',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-      if (MsixUtils.hasPackageIdentity())
-        const Text('Running as an MSIX, all features are available')
-      else
-        const Text('Running as an EXE, some features are not available'),
-      PaddedElevatedButton(
-        buttonText: 'Show short and long notifications notification',
-        onPressed: () async {
-          await _showWindowsNotificationWithDuration();
-        },
-      ),
-      PaddedElevatedButton(
-        buttonText: 'Show different scenarios',
-        onPressed: () async {
-          await _showWindowsNotificationWithScenarios();
-        },
-      ),
-      PaddedElevatedButton(
-        buttonText: 'Show notifications with some detail',
-        onPressed: () async {
-          await _showWindowsNotificationWithDetails();
-        },
-      ),
-      PaddedElevatedButton(
-        buttonText: 'Show notifications with image',
-        onPressed: () async {
-          await _showWindowsNotificationWithImages();
-        },
-      ),
-      PaddedElevatedButton(
-        buttonText: 'Show notifications with columns',
-        onPressed: () async {
-          await _showWindowsNotificationWithGroups();
-        },
-      ),
-      PaddedElevatedButton(
-        buttonText: 'Show notifications with progress bar',
-        onPressed: () async {
-          await _showWindowsNotificationWithProgress();
-        },
-      ),
-      PaddedElevatedButton(
-        buttonText: 'Show notifications with dynamic content',
-        onPressed: () async {
-          await _showWindowsNotificationWithDynamic();
-        },
-      ),
-      PaddedElevatedButton(
-        buttonText: 'Show notification with activation',
-        onPressed: () async {
-          await _showWindowsNotificationWithActivation();
-        },
-      ),
-      PaddedElevatedButton(
-        buttonText: 'Show notification with button styles',
-        onPressed: () async {
-          await _showWindowsNotificationWithButtonStyle();
-        },
-      ),
-      PaddedElevatedButton(
-        buttonText: 'Show notifications in a group',
-        onPressed: () async {
-          await _showWindowsNotificationWithHeader();
-        },
-      ),
-      _WindowsXmlBuilder(),
-    ];
+  const Text(
+    'Windows-specific examples',
+    style: TextStyle(fontWeight: FontWeight.bold),
+  ),
+  if (MsixUtils.hasPackageIdentity())
+    const Text('Running as an MSIX, all features are available')
+  else
+    const Text('Running as an EXE, some features are not available'),
+  PaddedElevatedButton(
+    buttonText: 'Show short and long notifications notification',
+    onPressed: () async {
+      await _showWindowsNotificationWithDuration();
+    },
+  ),
+  PaddedElevatedButton(
+    buttonText: 'Show different scenarios',
+    onPressed: () async {
+      await _showWindowsNotificationWithScenarios();
+    },
+  ),
+  PaddedElevatedButton(
+    buttonText: 'Show notifications with some detail',
+    onPressed: () async {
+      await _showWindowsNotificationWithDetails();
+    },
+  ),
+  PaddedElevatedButton(
+    buttonText: 'Show notifications with image',
+    onPressed: () async {
+      await _showWindowsNotificationWithImages();
+    },
+  ),
+  PaddedElevatedButton(
+    buttonText: 'Show notifications with columns',
+    onPressed: () async {
+      await _showWindowsNotificationWithGroups();
+    },
+  ),
+  PaddedElevatedButton(
+    buttonText: 'Show notifications with progress bar',
+    onPressed: () async {
+      await _showWindowsNotificationWithProgress();
+    },
+  ),
+  PaddedElevatedButton(
+    buttonText: 'Show notifications with dynamic content',
+    onPressed: () async {
+      await _showWindowsNotificationWithDynamic();
+    },
+  ),
+  PaddedElevatedButton(
+    buttonText: 'Show notification with activation',
+    onPressed: () async {
+      await _showWindowsNotificationWithActivation();
+    },
+  ),
+  PaddedElevatedButton(
+    buttonText: 'Show notification with button styles',
+    onPressed: () async {
+      await _showWindowsNotificationWithButtonStyle();
+    },
+  ),
+  PaddedElevatedButton(
+    buttonText: 'Show notifications in a group',
+    onPressed: () async {
+      await _showWindowsNotificationWithHeader();
+    },
+  ),
+  _WindowsXmlBuilder(),
+];
 
 Future<void> _showWindowsNotificationWithDuration() async {
   await flutterLocalNotificationsPlugin.show(
@@ -150,7 +152,8 @@ Future<void> _showWindowsNotificationWithDuration() async {
     'This will last about 7 seconds',
     const NotificationDetails(
       windows: WindowsNotificationDetails(
-          duration: WindowsNotificationDuration.short),
+        duration: WindowsNotificationDuration.short,
+      ),
     ),
   );
   await flutterLocalNotificationsPlugin.show(
@@ -159,7 +162,8 @@ Future<void> _showWindowsNotificationWithDuration() async {
     'This will last about 25 seconds',
     const NotificationDetails(
       windows: WindowsNotificationDetails(
-          duration: WindowsNotificationDuration.long),
+        duration: WindowsNotificationDuration.long,
+      ),
     ),
   );
 }
@@ -173,7 +177,7 @@ Future<void> _showWindowsNotificationWithScenarios() async {
       windows: WindowsNotificationDetails(
         scenario: WindowsNotificationScenario.alarm,
         actions: <WindowsAction>[
-          WindowsAction(content: 'Button', arguments: 'button')
+          WindowsAction(content: 'Button', arguments: 'button'),
         ],
       ),
     ),
@@ -186,7 +190,7 @@ Future<void> _showWindowsNotificationWithScenarios() async {
       windows: WindowsNotificationDetails(
         scenario: WindowsNotificationScenario.incomingCall,
         actions: <WindowsAction>[
-          WindowsAction(content: 'Button', arguments: 'button')
+          WindowsAction(content: 'Button', arguments: 'button'),
         ],
       ),
     ),
@@ -197,10 +201,11 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     null,
     const NotificationDetails(
       windows: WindowsNotificationDetails(
-          scenario: WindowsNotificationScenario.reminder,
-          actions: <WindowsAction>[
-            WindowsAction(content: 'Button', arguments: 'button')
-          ]),
+        scenario: WindowsNotificationScenario.reminder,
+        actions: <WindowsAction>[
+          WindowsAction(content: 'Button', arguments: 'button'),
+        ],
+      ),
     ),
   );
   await flutterLocalNotificationsPlugin.show(
@@ -209,10 +214,11 @@ Future<void> _showWindowsNotificationWithScenarios() async {
     null,
     const NotificationDetails(
       windows: WindowsNotificationDetails(
-          scenario: WindowsNotificationScenario.urgent,
-          actions: <WindowsAction>[
-            WindowsAction(content: 'Button', arguments: 'button')
-          ]),
+        scenario: WindowsNotificationScenario.urgent,
+        actions: <WindowsAction>[
+          WindowsAction(content: 'Button', arguments: 'button'),
+        ],
+      ),
     ),
   );
 }
@@ -225,28 +231,29 @@ Future<void> _showWindowsNotificationWithDetails() =>
       NotificationDetails(
         windows: WindowsNotificationDetails(
           subtitle: 'This is the subtitle',
-          timestamp:
-              DateTime.now().subtract(const Duration(hours: 2, minutes: 5)),
+          timestamp: DateTime.now().subtract(
+            const Duration(hours: 2, minutes: 5),
+          ),
         ),
       ),
     );
 
-Future<void> _showWindowsNotificationWithImages() =>
-    flutterLocalNotificationsPlugin.show(
-      id++,
-      'This notification has an image',
-      'You can show images from assets or the network. See the columns example as well.',
-      NotificationDetails(
-        windows: WindowsNotificationDetails(
-          images: <WindowsImage>[
-            WindowsImage(
-              WindowsImage.getAssetUri('icons/4.0x/app_icon_density.png'),
-              altText: 'A beautiful image',
-            ),
-          ],
+Future<void>
+_showWindowsNotificationWithImages() => flutterLocalNotificationsPlugin.show(
+  id++,
+  'This notification has an image',
+  'You can show images from assets or the network. See the columns example as well.',
+  NotificationDetails(
+    windows: WindowsNotificationDetails(
+      images: <WindowsImage>[
+        WindowsImage(
+          WindowsImage.getAssetUri('icons/4.0x/app_icon_density.png'),
+          altText: 'A beautiful image',
         ),
-      ),
-    );
+      ],
+    ),
+  ),
+);
 
 Future<void> _showWindowsNotificationWithGroups() =>
     flutterLocalNotificationsPlugin.show(
@@ -283,16 +290,22 @@ Future<void> _showWindowsNotificationWithGroups() =>
 
 Future<void> _showWindowsNotificationWithProgress() async {
   final WindowsProgressBar fastProgress = WindowsProgressBar(
-      id: 'fast-progress', status: 'Updating quickly...', value: 0);
+    id: 'fast-progress',
+    status: 'Updating quickly...',
+    value: 0,
+  );
   final WindowsProgressBar slowProgress = WindowsProgressBar(
-      id: 'slow-progress',
-      status: 'Updating slowly...',
-      value: 0,
-      label: '0 / 10');
+    id: 'slow-progress',
+    status: 'Updating slowly...',
+    value: 0,
+    label: '0 / 10',
+  );
   final int notificationId = id++;
   final FlutterLocalNotificationsWindows? windows =
-      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-          FlutterLocalNotificationsWindows>();
+      flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            FlutterLocalNotificationsWindows
+          >();
   await flutterLocalNotificationsPlugin.show(
     notificationId,
     'This notification has progress bars',
@@ -313,11 +326,12 @@ Future<void> _showWindowsNotificationWithProgress() async {
             value: 0.75,
           ),
           WindowsProgressBar(
-              id: 'discrete',
-              title: 'This has discrete progress',
-              status: 'Syncing...',
-              value: 0.75,
-              label: '9/12 complete'),
+            id: 'discrete',
+            title: 'This has discrete progress',
+            status: 'Syncing...',
+            value: 0.75,
+            label: '9/12 complete',
+          ),
           fastProgress,
           slowProgress,
         ],
@@ -337,9 +351,13 @@ Future<void> _showWindowsNotificationWithProgress() async {
     count = count.clamp(0, 50);
     slowProgress.label = '$count / 50';
     await windows?.updateProgressBar(
-        notificationId: notificationId, progressBar: fastProgress);
+      notificationId: notificationId,
+      progressBar: fastProgress,
+    );
     await windows?.updateProgressBar(
-        notificationId: notificationId, progressBar: slowProgress);
+      notificationId: notificationId,
+      progressBar: slowProgress,
+    );
   });
 }
 
@@ -347,22 +365,22 @@ Future<void> _showWindowsNotificationWithDynamic() async {
   final DateTime start = DateTime.now();
   final int notificationId = id++;
   final FlutterLocalNotificationsWindows? windows =
-      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-          FlutterLocalNotificationsWindows>();
+      flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            FlutterLocalNotificationsWindows
+          >();
   await flutterLocalNotificationsPlugin.show(
     notificationId,
     'Dynamic content',
     'This notification will be updated from Dart code',
     const NotificationDetails(
-      windows: WindowsNotificationDetails(
-        subtitle: '{stopwatch}',
-      ),
+      windows: WindowsNotificationDetails(subtitle: '{stopwatch}'),
     ),
   );
   Map<String, String> getBindings() => <String, String>{
-        'stopwatch':
-            'Elapsed time: ${DateTime.now().difference(start).inSeconds} seconds',
-      };
+    'stopwatch':
+        'Elapsed time: ${DateTime.now().difference(start).inSeconds} seconds',
+  };
   await windows?.updateBindings(id: notificationId, bindings: getBindings());
   Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
     if (timer.tick > 10) {

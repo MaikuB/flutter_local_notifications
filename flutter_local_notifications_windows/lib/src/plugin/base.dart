@@ -64,11 +64,7 @@ abstract class WindowsNotificationsBase
   Future<NotificationUpdateResult> updateProgressBar({
     required int notificationId,
     required WindowsProgressBar progressBar,
-  }) =>
-      updateBindings(
-        id: notificationId,
-        bindings: progressBar.data,
-      );
+  }) => updateBindings(id: notificationId, bindings: progressBar.data);
 
   /// Updates any data binding in the given notification.
   ///

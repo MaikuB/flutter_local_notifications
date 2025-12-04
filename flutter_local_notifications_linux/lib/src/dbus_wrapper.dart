@@ -8,10 +8,7 @@ class DBusWrapper {
   late final String _destination;
 
   /// Build an instance of [DBusRemoteObject]
-  void build({
-    required String destination,
-    required String path,
-  }) {
+  void build({required String destination, required String path}) {
     _destination = destination;
     _object = DBusRemoteObject(
       DBusClient.session(),
@@ -34,19 +31,21 @@ class DBusWrapper {
     bool noReplyExpected = false,
     bool noAutoStart = false,
     bool allowInteractiveAuthorization = false,
-  }) =>
-      _object.callMethod(
-        interface,
-        name,
-        values,
-        replySignature: replySignature,
-        noReplyExpected: noReplyExpected,
-        noAutoStart: noAutoStart,
-        allowInteractiveAuthorization: allowInteractiveAuthorization,
-      );
+  }) => _object.callMethod(
+    interface,
+    name,
+    values,
+    replySignature: replySignature,
+    noReplyExpected: noReplyExpected,
+    noAutoStart: noAutoStart,
+    allowInteractiveAuthorization: allowInteractiveAuthorization,
+  );
 
   /// Creates a stream of signal with the given [name].
   DBusRemoteObjectSignalStream subscribeSignal(String name) =>
       DBusRemoteObjectSignalStream(
-          object: _object, interface: _destination, name: name);
+        object: _object,
+        interface: _destination,
+        name: name,
+      );
 }

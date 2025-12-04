@@ -15,11 +15,9 @@ const String _kFileName = 'notification_plugin_cache.json';
 /// The storage data exists within the user session.
 class NotificationStorage {
   /// Constructs an instance of of [NotificationStorageImpl].
-  NotificationStorage({
-    LinuxPlatformInfo? platformInfo,
-    FileSystem? fs,
-  })  : _platformInfo = platformInfo ?? LinuxPlatformInfo(),
-        _fs = fs ?? LocalFileSystem();
+  NotificationStorage({LinuxPlatformInfo? platformInfo, FileSystem? fs})
+    : _platformInfo = platformInfo ?? LinuxPlatformInfo(),
+      _fs = fs ?? LocalFileSystem();
 
   final LinuxPlatformInfo _platformInfo;
   final FileSystem _fs;
@@ -114,8 +112,9 @@ class NotificationStorage {
         final dynamic json = jsonDecode(jsonStr);
         if (json is List) {
           for (final dynamic j in json) {
-            final LinuxNotificationInfo info =
-                LinuxNotificationInfo.fromJson(j);
+            final LinuxNotificationInfo info = LinuxNotificationInfo.fromJson(
+              j,
+            );
             cache.insert(info);
           }
         } else {
@@ -149,8 +148,8 @@ class NotificationStorage {
 
 class _Cache {
   _Cache()
-      : _infoMap = <int, LinuxNotificationInfo>{},
-        _systemIdMap = <int, int>{};
+    : _infoMap = <int, LinuxNotificationInfo>{},
+      _systemIdMap = <int, int>{};
 
   final Map<int, LinuxNotificationInfo> _infoMap;
 

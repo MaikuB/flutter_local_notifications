@@ -10,8 +10,9 @@ extension TZDateTimeMapper on TZDateTime {
       return '0$n';
     }
 
-    final String offsetMinutesComponent =
-        twoDigits(timeZoneOffset.inMinutes.remainder(60));
+    final String offsetMinutesComponent = twoDigits(
+      timeZoneOffset.inMinutes.remainder(60),
+    );
     final int offsetHoursComponent =
         (timeZoneOffset.inMicroseconds ~/ Duration.microsecondsPerHour).abs();
     final String iso8601OffsetComponent =
