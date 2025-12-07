@@ -1,6 +1,7 @@
 ## [2.0.0-dev.1]
 
 * **Breaking change** removed the `details` parameter from the `zonedScheduleRawXml()` method as it was not actually used. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches)
+* Added `flutter_lints` to apply linter rules
 
 ## [1.0.3]
 
