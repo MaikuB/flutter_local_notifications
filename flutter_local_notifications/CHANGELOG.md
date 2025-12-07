@@ -1,5 +1,7 @@
-## [vNext]
+## [20.0.0-dev.1]
 
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.32.0 and Dart SDK requirement to 3.8.0
+* [Windows] **Breaking change** removed the `details` parameter from the `zonedScheduleRawXml()` method as it was not actually used. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches)
 * Updated readme with information for developers that plan to move to use the UIScene lifecycle
 
 ## [19.5.0]

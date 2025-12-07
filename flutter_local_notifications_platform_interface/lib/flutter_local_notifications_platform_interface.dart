@@ -29,15 +29,20 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
 
   /// Returns info on if a notification had been used to launch the application.
   Future<NotificationAppLaunchDetails?>
-      getNotificationAppLaunchDetails() async {
+  getNotificationAppLaunchDetails() async {
     throw UnimplementedError(
-        'getNotificationAppLaunchDetails() has not been implemented');
+      'getNotificationAppLaunchDetails() has not been implemented',
+    );
   }
 
   /// Show a notification with an optional payload that will be passed back to
   /// the app when a notification is tapped on.
-  Future<void> show(int id, String? title, String? body,
-      {String? payload}) async {
+  Future<void> show(
+    int id,
+    String? title,
+    String? body, {
+    String? payload,
+  }) async {
     throw UnimplementedError('show() has not been implemented');
   }
 
@@ -47,7 +52,11 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   /// notification will be an hour after the method has been called and then
   /// every hour after that.
   Future<void> periodicallyShow(
-      int id, String? title, String? body, RepeatInterval repeatInterval) {
+    int id,
+    String? title,
+    String? body,
+    RepeatInterval repeatInterval,
+  ) {
     throw UnimplementedError('periodicallyShow() has not been implemented');
   }
 
@@ -60,9 +69,14 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   ///
   /// [repeatDurationInterval] must be at least one minute.
   Future<void> periodicallyShowWithDuration(
-      int id, String? title, String? body, Duration repeatDurationInterval) {
+    int id,
+    String? title,
+    String? body,
+    Duration repeatDurationInterval,
+  ) {
     throw UnimplementedError(
-        'periodicallyShowWithDuration() has not been implemented');
+      'periodicallyShowWithDuration() has not been implemented',
+    );
   }
 
   /// Cancels/removes the notification with the specified id.
@@ -83,13 +97,15 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   /// This only applies to notifications that have been scheduled.
   Future<void> cancelAllPendingNotifications() async {
     throw UnimplementedError(
-        'cancelAllPendingNotifications() has not been implemented');
+      'cancelAllPendingNotifications() has not been implemented',
+    );
   }
 
   /// Returns a list of notifications pending to be delivered/shown
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() {
     throw UnimplementedError(
-        'pendingNotificationRequest() has not been implemented');
+      'pendingNotificationRequest() has not been implemented',
+    );
   }
 
   /// Returns the list of active notifications shown by the application that
@@ -101,6 +117,7 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   /// support the method at all, it will throw an [UnimplementedError].
   Future<List<ActiveNotification>> getActiveNotifications() {
     throw UnimplementedError(
-        'getActiveNotifications() has not been implemented');
+      'getActiveNotifications() has not been implemented',
+    );
   }
 }

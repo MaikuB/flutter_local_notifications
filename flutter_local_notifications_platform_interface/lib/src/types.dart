@@ -10,14 +10,18 @@ enum RepeatInterval {
   daily,
 
   /// Weekly interval.
-  weekly
+  weekly,
 }
 
 /// Details of a pending notification that has not been delivered.
 class PendingNotificationRequest {
   /// Constructs an instance of [PendingNotificationRequest].
   const PendingNotificationRequest(
-      this.id, this.title, this.body, this.payload);
+    this.id,
+    this.title,
+    this.body,
+    this.payload,
+  );
 
   /// The notification's id.
   final int id;

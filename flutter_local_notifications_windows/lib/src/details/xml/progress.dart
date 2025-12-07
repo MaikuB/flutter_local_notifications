@@ -8,14 +8,14 @@ extension ProgressBarToXml on WindowsProgressBar {
   ///
   /// See: https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-progress
   void buildXml(XmlBuilder builder) => builder.element(
-        'progress',
-        attributes: <String, String>{
-          'status': status,
-          'value': '{$id-progressValue}',
-          if (title != null) 'title': title!,
-          if (label != null) 'valueStringOverride': '{$id-progressString}',
-        },
-      );
+    'progress',
+    attributes: <String, String>{
+      'status': status,
+      'value': '{$id-progressValue}',
+      if (title != null) 'title': title!,
+      if (label != null) 'valueStringOverride': '{$id-progressString}',
+    },
+  );
 
   /// The data bindings for this progress bar.
   ///
@@ -24,7 +24,7 @@ extension ProgressBarToXml on WindowsProgressBar {
   /// dynamically later by calling
   /// [FlutterLocalNotificationsWindows.updateProgressBar].
   Map<String, String> get data => <String, String>{
-        '$id-progressValue': value?.toString() ?? 'indeterminate',
-        if (label != null) '$id-progressString': label!,
-      };
+    '$id-progressValue': value?.toString() ?? 'indeterminate',
+    if (label != null) '$id-progressString': label!,
+  };
 }

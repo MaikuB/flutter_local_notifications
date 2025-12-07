@@ -74,12 +74,10 @@ class LinuxHintDictValue<K extends LinuxHintValue, V extends LinuxHintValue>
 
   /// Constructs an instance of [LinuxHintDictValue].
   LinuxHintDictValue.stringVariant(Map<String, V> value)
-      : value = value.map(
-          (String key, V value) => MapEntry<K, V>(
-            LinuxHintStringValue(key) as K,
-            value,
-          ),
-        );
+    : value = value.map(
+        (String key, V value) =>
+            MapEntry<K, V>(LinuxHintStringValue(key) as K, value),
+      );
 
   @override
   LinuxHintValueType get type => LinuxHintValueType.dict;

@@ -13,8 +13,9 @@ class LinuxPlatformInfo {
   /// Returns all platform-specific info
   Future<LinuxPlatformInfoData> getAll() async {
     try {
-      final String exePath =
-          await File('/proc/self/exe').resolveSymbolicLinks();
+      final String exePath = await File(
+        '/proc/self/exe',
+      ).resolveSymbolicLinks();
       final String processName = path.basenameWithoutExtension(exePath);
       final String appPath = path.dirname(exePath);
       final String assetPath = path.join(appPath, 'data', 'flutter_assets');

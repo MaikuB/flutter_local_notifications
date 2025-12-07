@@ -10,7 +10,7 @@ class LinuxNotificationTimeout {
   /// Constructs an instance of [LinuxNotificationTimeout]
   /// with a given [Duration] value.
   LinuxNotificationTimeout.fromDuration(Duration duration)
-      : value = duration.inMilliseconds;
+    : value = duration.inMilliseconds;
 
   /// Constructs an instance of [LinuxNotificationTimeout]
   /// with a [value] equal to `-1`.

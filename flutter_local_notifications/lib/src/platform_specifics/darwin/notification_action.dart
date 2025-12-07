@@ -25,13 +25,12 @@ class DarwinNotificationAction {
     String title, {
     Set<DarwinNotificationActionOption> options =
         const <DarwinNotificationActionOption>{},
-  }) =>
-      DarwinNotificationAction._(
-        _DarwinNotificationActionType.plain,
-        identifier,
-        title,
-        options: options,
-      );
+  }) => DarwinNotificationAction._(
+    _DarwinNotificationActionType.plain,
+    identifier,
+    title,
+    options: options,
+  );
 
   /// Creates a `UNTextInputNotificationAction` to collect user defined input.
   factory DarwinNotificationAction.text(
@@ -41,15 +40,14 @@ class DarwinNotificationAction {
     String? placeholder,
     Set<DarwinNotificationActionOption> options =
         const <DarwinNotificationActionOption>{},
-  }) =>
-      DarwinNotificationAction._(
-        _DarwinNotificationActionType.text,
-        identifier,
-        title,
-        buttonTitle: buttonTitle,
-        placeholder: placeholder,
-        options: options,
-      );
+  }) => DarwinNotificationAction._(
+    _DarwinNotificationActionType.text,
+    identifier,
+    title,
+    buttonTitle: buttonTitle,
+    placeholder: placeholder,
+    options: options,
+  );
 
   const DarwinNotificationAction._(
     this.type,
