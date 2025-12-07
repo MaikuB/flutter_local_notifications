@@ -16,7 +16,6 @@ class LinuxNotificationInfo {
     final List<dynamic>? actionsJson = json['actions'] as List<dynamic>?;
     final List<LinuxNotificationActionInfo>? actions = actionsJson
         ?.map(
-          // ignore: avoid_annotating_with_dynamic
           (dynamic json) => LinuxNotificationActionInfo.fromJson(
             json as Map<String, dynamic>,
           ),

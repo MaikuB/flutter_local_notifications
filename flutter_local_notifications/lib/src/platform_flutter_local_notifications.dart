@@ -88,7 +88,6 @@ class MethodChannelFlutterLocalNotificationsPlugin
         .invokeListMethod('pendingNotificationRequests');
     return pendingNotifications
             ?.map(
-              // ignore: always_specify_types
               (p) => PendingNotificationRequest(
                 p['id'],
                 p['title'],
@@ -106,7 +105,6 @@ class MethodChannelFlutterLocalNotificationsPlugin
         .invokeListMethod('getActiveNotifications');
     return activeNotifications
             ?.map(
-              // ignore: always_specify_types
               (p) => ActiveNotification(
                 id: p['id'],
                 channelId: p['channelId'],
@@ -338,7 +336,7 @@ class AndroidFlutterLocalNotificationsPlugin
         'id',
         'The id of a notification used for an Android foreground service must '
             'not be 0!',
-      ); // ignore: lines_longer_than_80_chars
+      );
     }
     if (foregroundServiceTypes?.isEmpty ?? false) {
       throw ArgumentError.value(
@@ -536,9 +534,9 @@ class AndroidFlutterLocalNotificationsPlugin
       _personFromMap(m['person'])!,
       conversationTitle: m['conversationTitle'],
       groupConversation: m['groupConversation'],
-      messages:
-          // ignore: always_specify_types
-          m['messages']?.map<Message>((m) => _messageFromMap(m))?.toList(),
+      messages: m['messages']
+          ?.map<Message>((m) => _messageFromMap(m))
+          ?.toList(),
     );
   }
 
@@ -588,16 +586,15 @@ class AndroidFlutterLocalNotificationsPlugin
 
     return notificationChannels
         ?.map(
-          // ignore: always_specify_types
           (a) => AndroidNotificationChannel(
             a['id'],
             a['name'],
             description: a['description'],
             groupId: a['groupId'],
             showBadge: a['showBadge'],
-            importance: Importance.values
-                // ignore: always_specify_types
-                .firstWhere((i) => i.value == a['importance']),
+            importance: Importance.values.firstWhere(
+              (i) => i.value == a['importance'],
+            ),
             bypassDnd: a['bypassDnd'],
             playSound: a['playSound'],
             sound: _getNotificationChannelSound(a),
@@ -606,7 +603,6 @@ class AndroidFlutterLocalNotificationsPlugin
             vibrationPattern: a['vibrationPattern'],
             ledColor: Color(a['ledColor']),
             audioAttributesUsage: AudioAttributesUsage.values.firstWhere(
-              // ignore: always_specify_types
               (e) => e.value == a['audioAttributesUsage'],
               orElse: () => AudioAttributesUsage.notification,
             ),

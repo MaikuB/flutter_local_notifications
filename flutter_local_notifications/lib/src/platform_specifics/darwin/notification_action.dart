@@ -1,17 +1,5 @@
+import 'notification_action_type.dart';
 import 'notification_action_option.dart';
-
-/// Describes the notification action type.
-///
-/// This type is used internally.
-enum _DarwinNotificationActionType {
-  /// Corresponds to the `UNNotificationAction` type defined at
-  /// https://developer.apple.com/documentation/usernotifications/unnotificationaction
-  plain,
-
-  /// Corresponds to the `UNTextInputNotificationAction` type defined at
-  /// https://developer.apple.com/documentation/usernotifications/untextinputnotificationaction
-  text,
-}
 
 /// Describes the notification action itself.
 ///
@@ -26,7 +14,7 @@ class DarwinNotificationAction {
     Set<DarwinNotificationActionOption> options =
         const <DarwinNotificationActionOption>{},
   }) => DarwinNotificationAction._(
-    _DarwinNotificationActionType.plain,
+    DarwinNotificationActionType.plain,
     identifier,
     title,
     options: options,
@@ -41,7 +29,7 @@ class DarwinNotificationAction {
     Set<DarwinNotificationActionOption> options =
         const <DarwinNotificationActionOption>{},
   }) => DarwinNotificationAction._(
-    _DarwinNotificationActionType.text,
+    DarwinNotificationActionType.text,
     identifier,
     title,
     buttonTitle: buttonTitle,
@@ -59,7 +47,7 @@ class DarwinNotificationAction {
   });
 
   /// Notification Action type.
-  final _DarwinNotificationActionType type;
+  final DarwinNotificationActionType type;
 
   /// The unique string that your app uses to identify the action.
   final String identifier;

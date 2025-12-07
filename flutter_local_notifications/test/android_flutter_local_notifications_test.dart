@@ -1,6 +1,3 @@
-// ignore: unnecessary_import
-import 'dart:typed_data';
-
 import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

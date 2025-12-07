@@ -73,7 +73,6 @@ class NotificationStorage {
   /// Returns `true` if the operation succeeded.
   Future<bool> removeByIdList(List<int> idList) async {
     final _Cache cache = await _readInfoMap();
-    // ignore: prefer_foreach
     for (final int id in idList) {
       cache.removeById(id);
     }
@@ -137,9 +136,7 @@ class NotificationStorage {
       }
       final String jsonStr = jsonEncode(infoList);
       storageFile.writeAsStringSync(jsonStr);
-    } on IOException catch (e) {
-      // ignore: avoid_print
-      print('Error saving preferences to disk: $e');
+    } on IOException {
       return false;
     }
     return true;

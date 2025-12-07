@@ -26,13 +26,9 @@ import 'notifications_manager_test.mocks.dart';
 
 class FakeStreamSubscription<T> extends Fake implements StreamSubscription<T> {}
 
-// ignore: one_member_abstracts
 abstract class DidReceiveNotificationResponseCallback {
   Future<dynamic> call(NotificationResponse notificationResponse);
 }
-
-/*class MockDidReceiveNotificationResponseCallback extends Mock
-    implements _DidReceiveNotificationResponseCallback {}*/
 
 void main() {
   group('Notifications manager |', () {
@@ -1079,7 +1075,7 @@ void main() {
       await manager.initialize(
         initSettings,
         onDidReceiveNotificationResponse:
-            mockDidReceiveNotificationResponseCallback,
+            mockDidReceiveNotificationResponseCallback.call,
       );
       await Future.forEach(
         completers,
@@ -1221,7 +1217,7 @@ void main() {
       await manager.initialize(
         initSettings,
         onDidReceiveNotificationResponse:
-            mockDidReceiveNotificationResponseCallback,
+            mockDidReceiveNotificationResponseCallback.call,
       );
       await Future.forEach(
         completers,

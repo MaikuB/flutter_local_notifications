@@ -1,6 +1,5 @@
 import 'package:timezone/timezone.dart';
 
-// ignore_for_file: public_member_api_docs
 extension TZDateTimeMapper on TZDateTime {
   Map<String, Object> toMap() {
     String twoDigits(int n) {
