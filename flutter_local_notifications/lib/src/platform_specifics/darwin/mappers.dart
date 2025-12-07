@@ -4,15 +4,11 @@ import 'notification_attachment.dart';
 import 'notification_category.dart';
 import 'notification_details.dart';
 
-// ignore_for_file: public_member_api_docs
-
 extension DarwinNotificationActionMapper on DarwinNotificationAction {
   Map<String, Object> toMap() => <String, Object>{
     'identifier': identifier,
     'title': title,
-    'options': options
-        .map((e) => e.value) // ignore: always_specify_types
-        .toList(),
+    'options': options.map((e) => e.value).toList(),
     'type': type.name,
     if (buttonTitle != null) 'buttonTitle': buttonTitle!,
     if (placeholder != null) 'placeholder': placeholder!,
@@ -22,12 +18,8 @@ extension DarwinNotificationActionMapper on DarwinNotificationAction {
 extension DarwinNotificationCategoryMapper on DarwinNotificationCategory {
   Map<String, Object> toMap() => <String, Object>{
     'identifier': identifier,
-    'actions': actions
-        .map((e) => e.toMap()) // ignore: always_specify_types
-        .toList(),
-    'options': options
-        .map((e) => e.value) // ignore: always_specify_types
-        .toList(),
+    'actions': actions.map((e) => e.toMap()).toList(),
+    'options': options.map((e) => e.value).toList(),
   };
 }
 
@@ -46,7 +38,7 @@ extension DarwinInitializationSettingsMapper on DarwinInitializationSettings {
     'defaultPresentBanner': defaultPresentBanner,
     'defaultPresentList': defaultPresentList,
     'notificationCategories': notificationCategories
-        .map((e) => e.toMap()) // ignore: always_specify_types
+        .map((e) => e.toMap())
         .toList(),
   };
 }
@@ -81,9 +73,7 @@ extension DarwinNotificationDetailsMapper on DarwinNotificationDetails {
     'badgeNumber': badgeNumber,
     'threadIdentifier': threadIdentifier,
     'interruptionLevel': interruptionLevel?.index,
-    'attachments': attachments
-        ?.map((a) => a.toMap()) // ignore: always_specify_types
-        .toList(),
+    'attachments': attachments?.map((a) => a.toMap()).toList(),
     'categoryIdentifier': categoryIdentifier,
     'criticalSoundVolume': criticalSoundVolume,
   };

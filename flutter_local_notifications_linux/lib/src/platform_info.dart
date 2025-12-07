@@ -50,7 +50,6 @@ class LinuxPlatformInfo {
         assetsPath: assetPath,
         runtimePath: runtimeDir.path,
       );
-      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       return const LinuxPlatformInfoData();
     }

@@ -23,5 +23,5 @@ String convertDateToISO8601String(tz.TZDateTime dateTime) {
     return '${sign}000$absN';
   }
 
-  return '${fourDigits(dateTime.year)}-${twoDigits(dateTime.month)}-${twoDigits(dateTime.day)}T${twoDigits(dateTime.hour)}:${twoDigits(dateTime.minute)}:${twoDigits(dateTime.second)}'; // ignore: lines_longer_than_80_chars
+  return '${fourDigits(dateTime.year)}-${twoDigits(dateTime.month)}-${twoDigits(dateTime.day)}T${twoDigits(dateTime.hour)}:${twoDigits(dateTime.minute)}:${twoDigits(dateTime.second)}';
 }

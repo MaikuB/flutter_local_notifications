@@ -15,7 +15,6 @@ import 'styles/inbox_style_information.dart';
 import 'styles/media_style_information.dart';
 import 'styles/messaging_style_information.dart';
 
-// ignore_for_file: avoid_as, public_member_api_docs
 extension AndroidInitializationSettingsMapper on AndroidInitializationSettings {
   Map<String, Object> toMap() => <String, Object>{'defaultIcon': defaultIcon};
 }
@@ -177,9 +176,7 @@ extension MessagingStyleInformationMapper on MessagingStyleInformation {
         'person': person.toMap(),
         'conversationTitle': conversationTitle,
         'groupConversation': groupConversation,
-        'messages': messages
-            ?.map((m) => m.toMap()) // ignore: always_specify_types
-            .toList(),
+        'messages': messages?.map((m) => m.toMap()).toList(),
       });
 }
 

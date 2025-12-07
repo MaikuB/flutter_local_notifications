@@ -1,5 +1,3 @@
-// ignore_for_file: always_specify_types
-
 import 'package:flutter_local_notifications/src/platform_specifics/darwin/mappers.dart';
 import 'package:flutter_local_notifications/src/platform_specifics/darwin/notification_action.dart';
 import 'package:flutter_local_notifications/src/platform_specifics/darwin/notification_action_option.dart';
