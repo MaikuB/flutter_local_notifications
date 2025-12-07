@@ -176,9 +176,9 @@ class LinuxNotificationManager {
     if (details?.resident ?? false) {
       hints['resident'] = const DBusBoolean(true);
     }
-    final bool? suppressSound =
+    final bool suppressSound =
         details?.suppressSound ?? initSettings.defaultSuppressSound;
-    if (suppressSound ?? false) {
+    if (suppressSound) {
       hints['suppress-sound'] = const DBusBoolean(true);
     }
     if (details?.transient ?? false) {
@@ -341,11 +341,8 @@ class LinuxNotificationManager {
           ),
         );
       } else {
-        final LinuxNotificationActionInfo? actionInfo = notify.actions
+        final LinuxNotificationActionInfo actionInfo = notify.actions
             .firstWhere((LinuxNotificationActionInfo a) => a.key == actionKey);
-        if (actionInfo == null) {
-          return;
-        }
         _onDidReceiveNotificationResponse?.call(
           NotificationResponse(
             id: notify.id,

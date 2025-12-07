@@ -1079,7 +1079,7 @@ void main() {
       await manager.initialize(
         initSettings,
         onDidReceiveNotificationResponse:
-            mockDidReceiveNotificationResponseCallback,
+            mockDidReceiveNotificationResponseCallback.call,
       );
       await Future.forEach(
         completers,
@@ -1221,7 +1221,7 @@ void main() {
       await manager.initialize(
         initSettings,
         onDidReceiveNotificationResponse:
-            mockDidReceiveNotificationResponseCallback,
+            mockDidReceiveNotificationResponseCallback.call,
       );
       await Future.forEach(
         completers,
