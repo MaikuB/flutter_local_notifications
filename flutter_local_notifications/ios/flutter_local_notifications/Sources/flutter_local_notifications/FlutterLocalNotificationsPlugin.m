@@ -474,7 +474,6 @@ static FlutterError *getFlutterError(NSError *error) {
     carPlayPermissionSpecified = true;
     requestCarPlayPermission =
         [arguments[CARPLAY_PERMISSION] boolValue];
-
   }
   if ([self containsKey:PROVIDES_APP_NOTIFICATION_SETTINGS
           forDictionary:arguments]) {
