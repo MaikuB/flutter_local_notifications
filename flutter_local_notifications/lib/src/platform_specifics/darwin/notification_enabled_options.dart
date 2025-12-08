@@ -48,6 +48,6 @@ class NotificationsEnabledOptions {
 
   /// Whether CarPlay notifications are enabled.
   ///
-  /// Available on iOS 10.0 and later.
+  ///  This property is only applicable to iOS 10 or newer.
   final bool isCarPlayEnabled;
 }
