@@ -705,7 +705,7 @@ final InitializationSettings initializationSettings = InitializationSettings(
 When `requestCarPlayPermission` is set to `true`, the plugin will request CarPlay notification permissions if the device supports it (iOS 10.0+). This allows your app's notifications to appear on the CarPlay interface when the device is connected to a compatible vehicle.
 
 **Important considerations:**
-- CarPlay permissions are only available on iOS 10.0 and later
+- CarPlay permissions are only available on iOS 10.0 or newer
 - The permission request will be silently ignored on unsupported devices
 - CarPlay notifications follow the same content guidelines as regular iOS notifications
 - Test CarPlay integration using the iOS Simulator's CarPlay mode
