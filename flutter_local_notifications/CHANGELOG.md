@@ -1,3 +1,7 @@
+## [20.0.0-dev.2]
+
+* [Android] updated Java compatibility version to 17
+
 ## [20.0.0-dev.1]
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.32.0 and Dart SDK requirement to 3.8.0
