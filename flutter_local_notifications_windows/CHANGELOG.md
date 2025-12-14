@@ -1,6 +1,6 @@
 ## [2.0.0-dev.2]
 
-* Bumped `ffigen` and regenerated bindings
+* Bumped `ffigen` and regenerated bindings. Credits to [Levi Lesches](https://github.com/Levi-Lesches) who originally looked at this before the plugin had its minimum Flutter version bumped
 
 ## [2.0.0-dev.1]
 
