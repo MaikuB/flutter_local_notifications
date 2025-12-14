@@ -17,8 +17,8 @@ extension NativeStringMapUtils on NativeStringMap {
 }
 
 /// Gets the [NotificationResponseType] from a [NativeLaunchType].
-NotificationResponseType getResponseType(int launchType) {
-  switch (NativeLaunchType.fromValue(launchType)) {
+NotificationResponseType getResponseType(NativeLaunchType launchType) {
+  switch (launchType) {
     case NativeLaunchType.notification:
       return NotificationResponseType.selectedNotification;
     case NativeLaunchType.action:
