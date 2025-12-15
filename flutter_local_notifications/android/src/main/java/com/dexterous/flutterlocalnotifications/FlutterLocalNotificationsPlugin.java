@@ -92,8 +92,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import io.flutter.FlutterInjector;
+import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.loader.FlutterLoader;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -119,6 +121,7 @@ public class FlutterLocalNotificationsPlugin
         PluginRegistry.ActivityResultListener,
         FlutterPlugin,
         ActivityAware {
+  public static Consumer<FlutterEngine> configureFlutterEngine = null;
 
   static final String PAYLOAD = "payload";
   static final String NOTIFICATION_ID = "notificationId";
