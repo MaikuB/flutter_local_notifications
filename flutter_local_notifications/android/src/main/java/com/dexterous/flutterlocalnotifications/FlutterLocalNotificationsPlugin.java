@@ -121,8 +121,6 @@ public class FlutterLocalNotificationsPlugin
         PluginRegistry.ActivityResultListener,
         FlutterPlugin,
         ActivityAware {
-  public static Consumer<FlutterEngine> configureFlutterEngine = null;
-
   static final String PAYLOAD = "payload";
   static final String NOTIFICATION_ID = "notificationId";
   static final String NOTIFICATION_TAG = "notificationTag";
@@ -222,6 +220,12 @@ public class FlutterLocalNotificationsPlugin
 
   static final int FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE = 3;
   static final int NOTIFICATION_POLICY_ACCESS_REQUEST_CODE = 4;
+
+  static Consumer<FlutterEngine> configureFlutterEngine = null;
+
+  public static void setConfigureFlutterEngineCallback(Consumer<FlutterEngine> callback) {
+    configureFlutterEngine = callback;
+  }
 
   private PermissionRequestListener callback;
 
