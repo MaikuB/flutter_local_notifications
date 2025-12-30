@@ -17,7 +17,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   void dispose() {}
 
   @override
-  Future<void> cancel(int id) async {}
+  Future<void> cancel({required int id}) async {}
 
   @override
   Future<void> cancelAll() async {}
@@ -35,28 +35,28 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   pendingNotificationRequests() async => <PendingNotificationRequest>[];
 
   @override
-  Future<void> periodicallyShow(
-    int id,
+  Future<void> periodicallyShow({
+    required int id,
     String? title,
     String? body,
-    RepeatInterval repeatInterval,
-  ) async {}
+    required RepeatInterval repeatInterval,
+  }) async {}
 
   @override
-  Future<void> periodicallyShowWithDuration(
-    int id,
+  Future<void> periodicallyShowWithDuration({
+    required int id,
     String? title,
     String? body,
-    Duration repeatDurationInterval,
-  ) async {}
+    required Duration repeatDurationInterval,
+  }) async {}
 
   @override
-  Future<void> show(
-    int id,
+  Future<void> show({
+    required int id,
     String? title,
-    String? body, {
+    String? body,
     String? payload,
-    WindowsNotificationDetails? details,
+    WindowsNotificationDetails? notificationDetails,
   }) async {}
 
   @override
@@ -67,12 +67,12 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   }) async {}
 
   @override
-  Future<void> zonedSchedule(
-    int id,
+  Future<void> zonedSchedule({
+    required int id,
     String? title,
     String? body,
-    TZDateTime scheduledDate,
-    WindowsNotificationDetails? details, {
+    required TZDateTime scheduledDate,
+    WindowsNotificationDetails? notificationDetails,
     String? payload,
   }) async {}
 

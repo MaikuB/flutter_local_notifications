@@ -44,12 +44,12 @@ void main() => group('Plugin', () {
       value: 0,
     );
     final TZDateTime now = TZDateTime.local(2024, 7, 18);
-    expect(plugin.cancel(0), throwsStateError);
+    expect(plugin.cancel(id: 0), throwsStateError);
     expect(plugin.cancelAll(), throwsStateError);
     expect(plugin.getActiveNotifications(), throwsStateError);
     expect(plugin.getNotificationAppLaunchDetails(), throwsStateError);
     expect(plugin.pendingNotificationRequests(), throwsStateError);
-    expect(plugin.show(0, 'Title', 'Body'), throwsStateError);
+    expect(plugin.show(id: 0, title: 'Title', body: 'Body'), throwsStateError);
     expect(plugin.showRawXml(id: 0, xml: ''), throwsStateError);
     expect(
       plugin.updateBindings(id: 0, bindings: <String, String>{}),
@@ -59,7 +59,16 @@ void main() => group('Plugin', () {
       plugin.updateProgressBar(progressBar: progress, notificationId: 0),
       throwsStateError,
     );
-    expect(plugin.zonedSchedule(0, null, null, now, null), throwsStateError);
+    expect(
+      plugin.zonedSchedule(
+        id: 0,
+        title: null,
+        body: null,
+        scheduledDate: now,
+        payload: null,
+      ),
+      throwsStateError,
+    );
     plugin.dispose();
   });
 
@@ -74,12 +83,12 @@ void main() => group('Plugin', () {
     final TZDateTime now = TZDateTime.local(2024, 7, 18);
     await plugin.initialize(goodSettings);
     plugin.dispose();
-    expect(plugin.cancel(0), throwsStateError);
+    expect(plugin.cancel(id: 0), throwsStateError);
     expect(plugin.cancelAll(), throwsStateError);
     expect(plugin.getActiveNotifications(), throwsStateError);
     expect(plugin.getNotificationAppLaunchDetails(), throwsStateError);
     expect(plugin.pendingNotificationRequests(), throwsStateError);
-    expect(plugin.show(0, 'Title', 'Body'), throwsStateError);
+    expect(plugin.show(id: 0, title: 'Title', body: 'Body'), throwsStateError);
     expect(plugin.showRawXml(id: 0, xml: ''), throwsStateError);
     expect(
       plugin.updateBindings(id: 0, bindings: <String, String>{}),
@@ -89,7 +98,16 @@ void main() => group('Plugin', () {
       plugin.updateProgressBar(progressBar: progress, notificationId: 0),
       throwsStateError,
     );
-    expect(plugin.zonedSchedule(0, null, null, now, null), throwsStateError);
+    expect(
+      plugin.zonedSchedule(
+        id: 0,
+        title: null,
+        body: null,
+        scheduledDate: now,
+        payload: null,
+      ),
+      throwsStateError,
+    );
     plugin.dispose();
   });
 
@@ -98,11 +116,21 @@ void main() => group('Plugin', () {
         FlutterLocalNotificationsWindows();
     await plugin.initialize(goodSettings);
     expect(
-      plugin.periodicallyShow(0, null, null, RepeatInterval.everyMinute),
+      plugin.periodicallyShow(
+        id: 0,
+        title: null,
+        body: null,
+        repeatInterval: RepeatInterval.everyMinute,
+      ),
       throwsUnsupportedError,
     );
     expect(
-      plugin.periodicallyShowWithDuration(0, null, null, Duration.zero),
+      plugin.periodicallyShowWithDuration(
+        id: 0,
+        title: null,
+        body: null,
+        repeatDurationInterval: Duration.zero,
+      ),
       throwsUnsupportedError,
     );
     plugin.dispose();

@@ -217,10 +217,9 @@ void main() {
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       await flutterLocalNotificationsPlugin.show(
-        1,
-        'notification title',
-        'notification body',
-        null,
+        id: 1,
+        title: 'notification title',
+        body: 'notification body',
       );
       expect(
         log.last,
@@ -265,10 +264,10 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-        1,
-        'notification title',
-        'notification body',
-        notificationDetails,
+        id: 1,
+        title: 'notification title',
+        body: 'notification body',
+        notificationDetails: notificationDetails,
       );
 
       expect(
@@ -339,11 +338,11 @@ void main() {
             );
 
             await flutterLocalNotificationsPlugin.periodicallyShow(
-              1,
-              'notification title',
-              'notification body',
-              repeatInterval,
-              notificationDetails,
+              id: 1,
+              title: 'notification title',
+              body: 'notification body',
+              repeatInterval: repeatInterval,
+              notificationDetails: notificationDetails,
               androidScheduleMode: AndroidScheduleMode.exact,
             );
 
@@ -423,11 +422,11 @@ void main() {
           expect(
             () async => await flutterLocalNotificationsPlugin
                 .periodicallyShowWithDuration(
-                  1,
-                  'notification title',
-                  'notification body',
-                  thirtySeconds,
-                  notificationDetails,
+                  id: 1,
+                  title: 'notification title',
+                  body: 'notification body',
+                  repeatDurationInterval: thirtySeconds,
+                  notificationDetails: notificationDetails,
                 ),
             throwsA(isA<ArgumentError>()),
           );
@@ -470,11 +469,11 @@ void main() {
             );
 
             await flutterLocalNotificationsPlugin.periodicallyShowWithDuration(
-              1,
-              'notification title',
-              'notification body',
-              repeatDurationInterval,
-              notificationDetails,
+              id: 1,
+              title: 'notification title',
+              body: 'notification body',
+              repeatDurationInterval: repeatDurationInterval,
+              notificationDetails: notificationDetails,
             );
 
             expect(
@@ -552,11 +551,11 @@ void main() {
         );
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          1,
-          'notification title',
-          'notification body',
-          scheduledDate,
-          notificationDetails,
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          scheduledDate: scheduledDate,
+          notificationDetails: notificationDetails,
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         );
 
@@ -631,11 +630,11 @@ void main() {
         );
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          1,
-          'notification title',
-          'notification body',
-          scheduledDate,
-          notificationDetails,
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          scheduledDate: scheduledDate,
+          notificationDetails: notificationDetails,
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           matchDateTimeComponents: DateTimeComponents.time,
         );
@@ -712,11 +711,11 @@ void main() {
         );
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          1,
-          'notification title',
-          'notification body',
-          scheduledDate,
-          notificationDetails,
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          scheduledDate: scheduledDate,
+          notificationDetails: notificationDetails,
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
         );

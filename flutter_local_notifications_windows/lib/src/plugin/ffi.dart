@@ -132,7 +132,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   }
 
   @override
-  Future<void> cancel(int id) async {
+  Future<void> cancel({required int id}) async {
     if (!_isReady) {
       throw StateError(
         'Flutter Local Notifications must be initialized before use',
@@ -212,36 +212,36 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   }
 
   @override
-  Future<void> periodicallyShow(
-    int id,
+  Future<void> periodicallyShow({
+    required int id,
     String? title,
     String? body,
-    RepeatInterval repeatInterval,
-  ) async {
+    required RepeatInterval repeatInterval,
+  }) async {
     throw UnsupportedError(
       'Windows devices cannot periodically show notifications',
     );
   }
 
   @override
-  Future<void> periodicallyShowWithDuration(
-    int id,
+  Future<void> periodicallyShowWithDuration({
+    required int id,
     String? title,
     String? body,
-    Duration repeatDurationInterval,
-  ) async {
+    required Duration repeatDurationInterval,
+  }) async {
     throw UnsupportedError(
       'Windows devices cannot periodically show notifications',
     );
   }
 
   @override
-  Future<void> show(
-    int id,
+  Future<void> show({
+    required int id,
     String? title,
-    String? body, {
+    String? body,
     String? payload,
-    WindowsNotificationDetails? details,
+    WindowsNotificationDetails? notificationDetails,
   }) async => using((Arena arena) {
     if (!_isReady) {
       throw StateError(
@@ -249,9 +249,9 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
       );
     }
     final Map<String, String> bindings = <String, String>{
-      if (details != null) ...details.bindings,
+      if (notificationDetails != null) ...notificationDetails.bindings,
       for (final WindowsProgressBar progressBar
-          in details?.progressBars ?? <WindowsProgressBar>[])
+          in notificationDetails?.progressBars ?? <WindowsProgressBar>[])
         ...progressBar.data,
     };
     final NativeStringMap nativeMap = bindings.toNativeMap(arena);
@@ -259,7 +259,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
       title: title,
       body: body,
       payload: payload,
-      details: details,
+      notificationDetails: notificationDetails,
     );
     final bool result = _bindings.showNotification(
       _plugin,
@@ -303,12 +303,12 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   });
 
   @override
-  Future<void> zonedSchedule(
-    int id,
+  Future<void> zonedSchedule({
+    required int id,
     String? title,
     String? body,
-    TZDateTime scheduledDate,
-    WindowsNotificationDetails? details, {
+    required TZDateTime scheduledDate,
+    WindowsNotificationDetails? notificationDetails,
     String? payload,
   }) async => using((Arena arena) {
     if (!_isReady) {
@@ -326,7 +326,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
       title: title,
       body: body,
       payload: payload,
-      details: details,
+      notificationDetails: notificationDetails,
     );
     final int secondsSinceEpoch = scheduledDate.millisecondsSinceEpoch ~/ 1000;
     _bindings.scheduleNotification(

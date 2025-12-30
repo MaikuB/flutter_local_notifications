@@ -29,21 +29,21 @@ abstract class WindowsNotificationsBase
   });
 
   @override
-  Future<void> show(
-    int id,
+  Future<void> show({
+    required int id,
     String? title,
-    String? body, {
+    String? body,
     String? payload,
-    WindowsNotificationDetails? details,
+    WindowsNotificationDetails? notificationDetails,
   });
 
   /// Schedules a notification to appear at the given date and time.
-  Future<void> zonedSchedule(
-    int id,
+  Future<void> zonedSchedule({
+    required int id,
     String? title,
     String? body,
-    TZDateTime scheduledDate,
-    WindowsNotificationDetails? details, {
+    required TZDateTime scheduledDate,
+    WindowsNotificationDetails? notificationDetails,
     String? payload,
   });
 
