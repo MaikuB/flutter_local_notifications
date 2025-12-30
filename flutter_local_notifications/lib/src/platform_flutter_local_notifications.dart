@@ -35,7 +35,7 @@ const MethodChannel _channel = MethodChannel(
 class MethodChannelFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
   @override
-  Future<void> cancel(int id) {
+  Future<void> cancel({required int id}) {
     validateId(id);
     return _channel.invokeMethod('cancel', id);
   }
@@ -243,12 +243,12 @@ class AndroidFlutterLocalNotificationsPlugin
   /// This will also require additional setup for the app, especially in the
   /// app's `AndroidManifest.xml` file. Please see check the readme for further
   /// details.
-  Future<void> zonedSchedule(
-    int id,
+  Future<void> zonedSchedule({
+    required int id,
     String? title,
     String? body,
-    TZDateTime scheduledDate,
-    AndroidNotificationDetails? notificationDetails, {
+    required TZDateTime scheduledDate,
+    AndroidNotificationDetails? notificationDetails,
     required AndroidScheduleMode scheduleMode,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
@@ -320,10 +320,10 @@ class AndroidFlutterLocalNotificationsPlugin
   /// Note that `foregroundServiceType` (the parameter in this method)
   /// must be a subset of the `android:foregroundServiceType`
   /// defined in your `AndroidManifest.xml` (the one from the section above)!
-  Future<void> startForegroundService(
-    int id,
+  Future<void> startForegroundService({
+    required int id,
     String? title,
-    String? body, {
+    String? body,
     AndroidNotificationDetails? notificationDetails,
     String? payload,
     AndroidServiceStartType startType = AndroidServiceStartType.startSticky,
@@ -372,10 +372,10 @@ class AndroidFlutterLocalNotificationsPlugin
       _channel.invokeMethod('stopForegroundService');
 
   @override
-  Future<void> show(
-    int id,
+  Future<void> show({
+    required int id,
     String? title,
-    String? body, {
+    String? body,
     AndroidNotificationDetails? notificationDetails,
     String? payload,
   }) {
@@ -399,11 +399,11 @@ class AndroidFlutterLocalNotificationsPlugin
   /// app's `AndroidManifest.xml` file. Please see check the readme for further
   /// details.
   @override
-  Future<void> periodicallyShow(
-    int id,
+  Future<void> periodicallyShow({
+    required int id,
     String? title,
     String? body,
-    RepeatInterval repeatInterval, {
+    required RepeatInterval repeatInterval,
     AndroidNotificationDetails? notificationDetails,
     String? payload,
     AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
@@ -424,11 +424,11 @@ class AndroidFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> periodicallyShowWithDuration(
-    int id,
+  Future<void> periodicallyShowWithDuration({
+    required int id,
     String? title,
     String? body,
-    Duration repeatDurationInterval, {
+    required Duration repeatDurationInterval,
     AndroidNotificationDetails? notificationDetails,
     String? payload,
     AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
@@ -467,7 +467,7 @@ class AndroidFlutterLocalNotificationsPlugin
   /// then the notification that matches both the id and the tag will
   /// be canceled. `tag` has no effect on other platforms.
   @override
-  Future<void> cancel(int id, {String? tag}) async {
+  Future<void> cancel({required int id, String? tag}) async {
     validateId(id);
 
     return _channel.invokeMethod('cancel', <String, Object?>{
@@ -796,10 +796,10 @@ class IOSFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> show(
-    int id,
+  Future<void> show({
+    required int id,
     String? title,
-    String? body, {
+    String? body,
     DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) {
@@ -814,11 +814,11 @@ class IOSFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> periodicallyShow(
-    int id,
+  Future<void> periodicallyShow({
+    required int id,
     String? title,
     String? body,
-    RepeatInterval repeatInterval, {
+    required RepeatInterval repeatInterval,
     DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) async {
@@ -835,11 +835,11 @@ class IOSFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> periodicallyShowWithDuration(
-    int id,
+  Future<void> periodicallyShowWithDuration({
+    required int id,
     String? title,
     String? body,
-    Duration repeatDurationInterval, {
+    required Duration repeatDurationInterval,
     DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) async {
@@ -961,12 +961,12 @@ class MacOSFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
-  Future<void> zonedSchedule(
-    int id,
+  Future<void> zonedSchedule({
+    required int id,
     String? title,
     String? body,
-    TZDateTime scheduledDate,
-    DarwinNotificationDetails? notificationDetails, {
+    required TZDateTime scheduledDate,
+    DarwinNotificationDetails? notificationDetails,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
@@ -995,10 +995,10 @@ class MacOSFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> show(
-    int id,
+  Future<void> show({
+    required int id,
     String? title,
-    String? body, {
+    String? body,
     DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) {
@@ -1013,11 +1013,11 @@ class MacOSFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> periodicallyShow(
-    int id,
+  Future<void> periodicallyShow({
+    required int id,
     String? title,
     String? body,
-    RepeatInterval repeatInterval, {
+    required RepeatInterval repeatInterval,
     DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) async {
@@ -1034,11 +1034,11 @@ class MacOSFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> periodicallyShowWithDuration(
-    int id,
+  Future<void> periodicallyShowWithDuration({
+    required int id,
     String? title,
     String? body,
-    Duration repeatDurationInterval, {
+    required Duration repeatDurationInterval,
     DarwinNotificationDetails? notificationDetails,
     String? payload,
   }) async {

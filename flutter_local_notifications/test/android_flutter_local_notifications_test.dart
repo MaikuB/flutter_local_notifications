@@ -2915,7 +2915,11 @@ void main() {
           .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
           >()!
-          .startForegroundService(1, 'notification title', 'notification body');
+          .startForegroundService(
+            id: 1,
+            title: 'notification title',
+            body: 'notification body',
+          );
       expect(
         log.last,
         isMethodCall(
@@ -2976,9 +2980,9 @@ void main() {
             AndroidFlutterLocalNotificationsPlugin
           >()!
           .startForegroundService(
-            1,
-            'colored background notification title',
-            'colored background notification body',
+            id: 1,
+            title: 'colored background notification title',
+            body: 'colored background notification body',
             notificationDetails: androidPlatformChannelSpecifics,
           );
       expect(

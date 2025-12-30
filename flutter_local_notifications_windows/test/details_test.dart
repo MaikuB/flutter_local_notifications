@@ -17,7 +17,7 @@ extension PluginUtils on FlutterLocalNotificationsWindows {
         title: 'title',
         body: 'body',
         payload: 'payload',
-        details: details,
+        notificationDetails: details,
       ),
     ),
     isTrue,
@@ -34,11 +34,11 @@ void main() => group('Details:', () {
   });
 
   test('No details', () async {
-    expect(plugin.show(100, null, null), completes);
-    expect(plugin.show(101, 'Title', null), completes);
-    expect(plugin.show(102, null, 'Body'), completes);
-    expect(plugin.show(103, 'Title', 'Body'), completes);
-    expect(plugin.show(-1, 'Negative ID', 'Body'), completes);
+    expect(plugin.show(id: 100, title: null, body: null), completes);
+    expect(plugin.show(id: 101, title: 'Title', body: null), completes);
+    expect(plugin.show(id: 102, title: null, body: 'Body'), completes);
+    expect(plugin.show(id: 103, title: 'Title', body: 'Body'), completes);
+    expect(plugin.show(id: -1, title: 'Negative ID', body: 'Body'), completes);
   });
 
   test(
@@ -95,7 +95,7 @@ void main() => group('Details:', () {
       );
     expect(
       () => notificationToXml(
-        details: WindowsNotificationDetails(
+        notificationDetails: WindowsNotificationDetails(
           actions: List<WindowsAction>.filled(6, simpleAction),
         ),
       ),
@@ -246,7 +246,7 @@ void main() => group('Details:', () {
       );
     expect(
       () => notificationToXml(
-        details: WindowsNotificationDetails(
+        notificationDetails: WindowsNotificationDetails(
           inputs: List<WindowsInput>.filled(6, textInput),
         ),
       ),
@@ -290,10 +290,10 @@ void main() => group('Details:', () {
         ),
       );
     await plugin.show(
-      201,
-      null,
-      null,
-      details: WindowsNotificationDetails(
+      id: 201,
+      title: null,
+      body: null,
+      notificationDetails: WindowsNotificationDetails(
         progressBars: <WindowsProgressBar>[dynamic],
       ),
     );

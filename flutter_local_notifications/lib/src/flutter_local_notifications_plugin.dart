@@ -261,9 +261,9 @@ class FlutterLocalNotificationsPlugin {
             AndroidFlutterLocalNotificationsPlugin
           >()
           ?.show(
-            id,
-            title,
-            body,
+            id: id,
+            title: title,
+            body: body,
             notificationDetails: notificationDetails?.android,
             payload: payload,
           );
@@ -272,9 +272,9 @@ class FlutterLocalNotificationsPlugin {
             IOSFlutterLocalNotificationsPlugin
           >()
           ?.show(
-            id,
-            title,
-            body,
+            id: id,
+            title: title,
+            body: body,
             notificationDetails: notificationDetails?.iOS,
             payload: payload,
           );
@@ -283,9 +283,9 @@ class FlutterLocalNotificationsPlugin {
             MacOSFlutterLocalNotificationsPlugin
           >()
           ?.show(
-            id,
-            title,
-            body,
+            id: id,
+            title: title,
+            body: body,
             notificationDetails: notificationDetails?.macOS,
             payload: payload,
           );
@@ -294,9 +294,9 @@ class FlutterLocalNotificationsPlugin {
             LinuxFlutterLocalNotificationsPlugin
           >()
           ?.show(
-            id,
-            title,
-            body,
+            id: id,
+            title: title,
+            body: body,
             notificationDetails: notificationDetails?.linux,
             payload: payload,
           );
@@ -305,14 +305,19 @@ class FlutterLocalNotificationsPlugin {
             FlutterLocalNotificationsWindows
           >()
           ?.show(
-            id,
-            title,
-            body,
-            details: notificationDetails?.windows,
+            id: id,
+            title: title,
+            body: body,
+            notificationDetails: notificationDetails?.windows,
             payload: payload,
           );
     } else {
-      await FlutterLocalNotificationsPlatform.instance.show(id, title, body);
+      await FlutterLocalNotificationsPlatform.instance.show(
+        id: id,
+        title: title,
+        body: body,
+        payload: payload,
+      );
     }
   }
 
@@ -332,9 +337,9 @@ class FlutterLocalNotificationsPlugin {
       await resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
           >()
-          ?.cancel(id, tag: tag);
+          ?.cancel(id: id, tag: tag);
     } else {
-      await FlutterLocalNotificationsPlatform.instance.cancel(id);
+      await FlutterLocalNotificationsPlatform.instance.cancel(id: id);
     }
   }
 
@@ -404,11 +409,11 @@ class FlutterLocalNotificationsPlugin {
             AndroidFlutterLocalNotificationsPlugin
           >()!
           .zonedSchedule(
-            id,
-            title,
-            body,
-            scheduledDate,
-            notificationDetails.android,
+            id: id,
+            title: title,
+            body: body,
+            scheduledDate: scheduledDate,
+            notificationDetails: notificationDetails.android,
             payload: payload,
             scheduleMode: androidScheduleMode,
             matchDateTimeComponents: matchDateTimeComponents,
@@ -431,11 +436,11 @@ class FlutterLocalNotificationsPlugin {
             MacOSFlutterLocalNotificationsPlugin
           >()
           ?.zonedSchedule(
-            id,
-            title,
-            body,
-            scheduledDate,
-            notificationDetails.macOS,
+            id: id,
+            title: title,
+            body: body,
+            scheduledDate: scheduledDate,
+            notificationDetails: notificationDetails.macOS,
             payload: payload,
             matchDateTimeComponents: matchDateTimeComponents,
           );
@@ -444,11 +449,11 @@ class FlutterLocalNotificationsPlugin {
             FlutterLocalNotificationsWindows
           >()
           ?.zonedSchedule(
-            id,
-            title,
-            body,
-            scheduledDate,
-            notificationDetails.windows,
+            id: id,
+            title: title,
+            body: body,
+            scheduledDate: scheduledDate,
+            notificationDetails: notificationDetails.windows,
             payload: payload,
           );
     } else {
@@ -482,10 +487,10 @@ class FlutterLocalNotificationsPlugin {
             AndroidFlutterLocalNotificationsPlugin
           >()
           ?.periodicallyShow(
-            id,
-            title,
-            body,
-            repeatInterval,
+            id: id,
+            title: title,
+            body: body,
+            repeatInterval: repeatInterval,
             notificationDetails: notificationDetails.android,
             payload: payload,
             scheduleMode: androidScheduleMode,
@@ -495,10 +500,10 @@ class FlutterLocalNotificationsPlugin {
             IOSFlutterLocalNotificationsPlugin
           >()
           ?.periodicallyShow(
-            id,
-            title,
-            body,
-            repeatInterval,
+            id: id,
+            title: title,
+            body: body,
+            repeatInterval: repeatInterval,
             notificationDetails: notificationDetails.iOS,
             payload: payload,
           );
@@ -507,10 +512,10 @@ class FlutterLocalNotificationsPlugin {
             MacOSFlutterLocalNotificationsPlugin
           >()
           ?.periodicallyShow(
-            id,
-            title,
-            body,
-            repeatInterval,
+            id: id,
+            title: title,
+            body: body,
+            repeatInterval: repeatInterval,
             notificationDetails: notificationDetails.macOS,
             payload: payload,
           );
@@ -518,10 +523,10 @@ class FlutterLocalNotificationsPlugin {
       throw UnsupportedError('Notifications do not repeat on Windows');
     } else {
       await FlutterLocalNotificationsPlatform.instance.periodicallyShow(
-        id,
-        title,
-        body,
-        repeatInterval,
+        id: id,
+        title: title,
+        body: body,
+        repeatInterval: repeatInterval,
       );
     }
   }
@@ -553,10 +558,10 @@ class FlutterLocalNotificationsPlugin {
             AndroidFlutterLocalNotificationsPlugin
           >()
           ?.periodicallyShowWithDuration(
-            id,
-            title,
-            body,
-            repeatDurationInterval,
+            id: id,
+            title: title,
+            body: body,
+            repeatDurationInterval: repeatDurationInterval,
             notificationDetails: notificationDetails.android,
             payload: payload,
             scheduleMode: androidScheduleMode,
@@ -566,10 +571,10 @@ class FlutterLocalNotificationsPlugin {
             IOSFlutterLocalNotificationsPlugin
           >()
           ?.periodicallyShowWithDuration(
-            id,
-            title,
-            body,
-            repeatDurationInterval,
+            id: id,
+            title: title,
+            body: body,
+            repeatDurationInterval: repeatDurationInterval,
             notificationDetails: notificationDetails.iOS,
             payload: payload,
           );
@@ -578,20 +583,20 @@ class FlutterLocalNotificationsPlugin {
             MacOSFlutterLocalNotificationsPlugin
           >()
           ?.periodicallyShowWithDuration(
-            id,
-            title,
-            body,
-            repeatDurationInterval,
+            id: id,
+            title: title,
+            body: body,
+            repeatDurationInterval: repeatDurationInterval,
             notificationDetails: notificationDetails.macOS,
             payload: payload,
           );
     } else {
       await FlutterLocalNotificationsPlatform.instance
           .periodicallyShowWithDuration(
-            id,
-            title,
-            body,
-            repeatDurationInterval,
+            id: id,
+            title: title,
+            body: body,
+            repeatDurationInterval: repeatDurationInterval,
           );
     }
   }

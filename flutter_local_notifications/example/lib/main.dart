@@ -2723,9 +2723,9 @@ class _HomePageState extends State<HomePage> {
           AndroidFlutterLocalNotificationsPlugin
         >()
         ?.startForegroundService(
-          1,
-          'plain title',
-          'plain body',
+          id: 1,
+          title: 'plain title',
+          body: 'plain body',
           notificationDetails: androidNotificationDetails,
           payload: 'item x',
         );
@@ -2750,9 +2750,9 @@ class _HomePageState extends State<HomePage> {
           AndroidFlutterLocalNotificationsPlugin
         >()
         ?.startForegroundService(
-          1,
-          'colored background text title',
-          'colored background text body',
+          id: 1,
+          title: 'colored background text title',
+          body: 'colored background text body',
           notificationDetails: androidPlatformChannelSpecifics,
           payload: 'item x',
         );
