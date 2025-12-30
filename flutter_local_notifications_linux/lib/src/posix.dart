@@ -4,14 +4,14 @@ import 'dart:ffi' as ffi;
 class Posix {
   /// Constructs an instance of [Posix].
   Posix() {
-    final ffi.DynamicLibrary _dylib = ffi.DynamicLibrary.open('libc.so.6');
-    getpid = _dylib
+    final ffi.DynamicLibrary dylib = ffi.DynamicLibrary.open('libc.so.6');
+    getpid = dylib
         .lookup<ffi.NativeFunction<ffi.Int32 Function()>>('getpid')
         .asFunction();
-    getsid = _dylib
+    getsid = dylib
         .lookup<ffi.NativeFunction<ffi.Int32 Function(ffi.Int32 pid)>>('getsid')
         .asFunction();
-    getuid = _dylib
+    getuid = dylib
         .lookup<ffi.NativeFunction<ffi.Uint32 Function()>>('getuid')
         .asFunction();
   }

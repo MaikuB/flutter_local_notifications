@@ -34,8 +34,9 @@ class MsixUtils {
       final DynamicLibrary lib = DynamicLibrary.open(
         'flutter_local_notifications_windows.dll',
       );
-      final NotificationsPluginBindings bindings =
-          NotificationsPluginBindings(lib);
+      final NotificationsPluginBindings bindings = NotificationsPluginBindings(
+        lib,
+      );
       final bool result = bindings.hasPackageIdentity();
       _hasPackageIdentity = result;
       return result;

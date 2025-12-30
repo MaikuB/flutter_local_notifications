@@ -15,9 +15,11 @@ class LinuxNotificationInfo {
   factory LinuxNotificationInfo.fromJson(Map<String, dynamic> json) {
     final List<dynamic>? actionsJson = json['actions'] as List<dynamic>?;
     final List<LinuxNotificationActionInfo>? actions = actionsJson
-        // ignore: avoid_annotating_with_dynamic
-        ?.map((dynamic json) =>
-            LinuxNotificationActionInfo.fromJson(json as Map<String, dynamic>))
+        ?.map(
+          (dynamic json) => LinuxNotificationActionInfo.fromJson(
+            json as Map<String, dynamic>,
+          ),
+        )
         .toList();
     return LinuxNotificationInfo(
       id: json['id'] as int,
@@ -43,12 +45,13 @@ class LinuxNotificationInfo {
 
   /// Returns the object as a key-value map
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'id': id,
-        'systemId': systemId,
-        'payload': payload,
-        'actions':
-            actions.map((LinuxNotificationActionInfo a) => a.toJson()).toList(),
-      };
+    'id': id,
+    'systemId': systemId,
+    'payload': payload,
+    'actions': actions
+        .map((LinuxNotificationActionInfo a) => a.toJson())
+        .toList(),
+  };
 
   /// Creates a copy of this object,
   /// but with the given fields replaced with the new values.
@@ -57,13 +60,12 @@ class LinuxNotificationInfo {
     int? systemId,
     String? payload,
     List<LinuxNotificationActionInfo>? actions,
-  }) =>
-      LinuxNotificationInfo(
-        id: id ?? this.id,
-        systemId: systemId ?? this.systemId,
-        payload: payload ?? this.payload,
-        actions: actions ?? this.actions,
-      );
+  }) => LinuxNotificationInfo(
+    id: id ?? this.id,
+    systemId: systemId ?? this.systemId,
+    payload: payload ?? this.payload,
+    actions: actions ?? this.actions,
+  );
 
   @override
   bool operator ==(Object other) {
@@ -87,9 +89,7 @@ class LinuxNotificationInfo {
 @immutable
 class LinuxNotificationActionInfo {
   /// Constructs an instance of [LinuxNotificationActionInfo].
-  const LinuxNotificationActionInfo({
-    required this.key,
-  });
+  const LinuxNotificationActionInfo({required this.key});
 
   /// Constructs an instance of [LinuxNotificationActionInfo] from [json].
   factory LinuxNotificationActionInfo.fromJson(Map<String, dynamic> json) =>
@@ -103,10 +103,7 @@ class LinuxNotificationActionInfo {
 
   /// Creates a copy of this object,
   /// but with the given fields replaced with the new values.
-  LinuxNotificationActionInfo copyWith({
-    String? key,
-    String? payload,
-  }) =>
+  LinuxNotificationActionInfo copyWith({String? key, String? payload}) =>
       LinuxNotificationActionInfo(key: key ?? this.key);
 
   @override

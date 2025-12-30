@@ -14,6 +14,9 @@ void validateDateIsInTheFuture(
   }
   if (scheduledDate.isBefore(clock.now())) {
     throw ArgumentError.value(
-        scheduledDate, 'scheduledDate', 'Must be a date in the future');
+      scheduledDate,
+      'scheduledDate',
+      'Must be a date in the future',
+    );
   }
 }

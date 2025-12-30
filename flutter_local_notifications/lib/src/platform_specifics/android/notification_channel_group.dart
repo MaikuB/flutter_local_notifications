@@ -1,11 +1,7 @@
 /// A group of related Android notification channels.
 class AndroidNotificationChannelGroup {
   /// Constructs an instance of [AndroidNotificationChannelGroup].
-  const AndroidNotificationChannelGroup(
-    this.id,
-    this.name, {
-    this.description,
-  });
+  const AndroidNotificationChannelGroup(this.id, this.name, {this.description});
 
   /// The id of this group.
   final String id;

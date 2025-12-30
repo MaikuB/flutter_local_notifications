@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'enums.dart';
 import 'initialization_settings.dart';
 import 'message.dart';
@@ -13,55 +15,63 @@ import 'styles/inbox_style_information.dart';
 import 'styles/media_style_information.dart';
 import 'styles/messaging_style_information.dart';
 
-// ignore_for_file: avoid_as, public_member_api_docs
 extension AndroidInitializationSettingsMapper on AndroidInitializationSettings {
   Map<String, Object> toMap() => <String, Object>{'defaultIcon': defaultIcon};
 }
 
 extension MessageMapper on Message {
   Map<String, Object?> toMap() => <String, Object?>{
-        'text': text,
-        'timestamp': timestamp.millisecondsSinceEpoch,
-        'person': person?.toMap(),
-        'dataMimeType': dataMimeType,
-        'dataUri': dataUri
-      };
+    'text': text,
+    'timestamp': timestamp.millisecondsSinceEpoch,
+    'person': person?.toMap(),
+    'dataMimeType': dataMimeType,
+    'dataUri': dataUri,
+  };
 }
 
 extension AndroidNotificationChannelGroupMapper
     on AndroidNotificationChannelGroup {
   Map<String, Object?> toMap() => <String, Object?>{
-        'id': id,
-        'name': name,
-        'description': description,
-      };
+    'id': id,
+    'name': name,
+    'description': description,
+  };
 }
 
 extension AndroidNotificationChannelMapper on AndroidNotificationChannel {
   Map<String, Object?> toMap() => <String, Object?>{
-        'id': id,
-        'name': name,
-        'description': description,
-        'groupId': groupId,
-        'showBadge': showBadge,
-        'importance': importance.value,
-        'bypassDnd': bypassDnd,
-        'playSound': playSound,
-        'enableVibration': enableVibration,
-        'vibrationPattern': vibrationPattern,
-        'enableLights': enableLights,
-        'ledColorAlpha': ledColor?.alpha,
-        'ledColorRed': ledColor?.red,
-        'ledColorGreen': ledColor?.green,
-        'ledColorBlue': ledColor?.blue,
-        'audioAttributesUsage': audioAttributesUsage.value,
-        'channelAction':
-            AndroidNotificationChannelAction.createIfNotExists.index,
-      }..addAll(_convertNotificationSoundToMap(sound));
+    'id': id,
+    'name': name,
+    'description': description,
+    'groupId': groupId,
+    'showBadge': showBadge,
+    'importance': importance.value,
+    'bypassDnd': bypassDnd,
+    'playSound': playSound,
+    'enableVibration': enableVibration,
+    'vibrationPattern': vibrationPattern,
+    'enableLights': enableLights,
+    'ledColorAlpha': ledColor?.intAlpha,
+    'ledColorRed': ledColor?.intRed,
+    'ledColorGreen': ledColor?.intGreen,
+    'ledColorBlue': ledColor?.intBlue,
+    'audioAttributesUsage': audioAttributesUsage.value,
+    'channelAction': AndroidNotificationChannelAction.createIfNotExists.index,
+  }..addAll(_convertNotificationSoundToMap(sound));
+}
+
+extension IntColorComponents on Color {
+  int get intAlpha => _floatToInt8(a);
+  int get intRed => _floatToInt8(r);
+  int get intGreen => _floatToInt8(g);
+  int get intBlue => _floatToInt8(b);
+
+  int _floatToInt8(double x) => (x * 255.0).round() & 0xff;
 }
 
 Map<String, Object> _convertNotificationSoundToMap(
-    AndroidNotificationSound? sound) {
+  AndroidNotificationSound? sound,
+) {
   if (sound is RawResourceAndroidNotificationSound) {
     return <String, Object>{
       'sound': sound.sound,
@@ -79,12 +89,12 @@ Map<String, Object> _convertNotificationSoundToMap(
 
 extension PersonMapper on Person {
   Map<String, Object?> toMap() => <String, Object?>{
-        'bot': bot,
-        'important': important,
-        'key': key,
-        'name': name,
-        'uri': uri
-      }..addAll(_convertIconToMap());
+    'bot': bot,
+    'important': important,
+    'key': key,
+    'name': name,
+    'uri': uri,
+  }..addAll(_convertIconToMap());
 
   Map<String, Object> _convertIconToMap() {
     if (icon == null) {
@@ -102,11 +112,11 @@ extension DefaultStyleInformationMapper on DefaultStyleInformation {
 }
 
 Map<String, Object?> _convertDefaultStyleInformationToMap(
-        DefaultStyleInformation styleInformation) =>
-    <String, Object?>{
-      'htmlFormatContent': styleInformation.htmlFormatContent,
-      'htmlFormatTitle': styleInformation.htmlFormatTitle
-    };
+  DefaultStyleInformation styleInformation,
+) => <String, Object?>{
+  'htmlFormatContent': styleInformation.htmlFormatContent,
+  'htmlFormatTitle': styleInformation.htmlFormatTitle,
+};
 
 extension BigPictureStyleInformationMapper on BigPictureStyleInformation {
   Map<String, Object?> toMap() => _convertDefaultStyleInformationToMap(this)
@@ -117,13 +127,13 @@ extension BigPictureStyleInformationMapper on BigPictureStyleInformation {
       'summaryText': summaryText,
       'htmlFormatContentTitle': htmlFormatContentTitle,
       'htmlFormatSummaryText': htmlFormatSummaryText,
-      'hideExpandedLargeIcon': hideExpandedLargeIcon
+      'hideExpandedLargeIcon': hideExpandedLargeIcon,
     });
 
   Map<String, Object> _convertBigPictureToMap() => <String, Object>{
-        'bigPicture': bigPicture.data,
-        'bigPictureBitmapSource': bigPicture.source.index,
-      };
+    'bigPicture': bigPicture.data,
+    'bigPictureBitmapSource': bigPicture.source.index,
+  };
 
   Map<String, Object> _convertLargeIconToMap() {
     if (largeIcon == null) {
@@ -137,94 +147,93 @@ extension BigPictureStyleInformationMapper on BigPictureStyleInformation {
 }
 
 extension BigTexStyleInformationMapper on BigTextStyleInformation {
-  Map<String, Object?> toMap() => _convertDefaultStyleInformationToMap(this)
-    ..addAll(<String, Object?>{
-      'bigText': bigText,
-      'htmlFormatBigText': htmlFormatBigText,
-      'contentTitle': contentTitle,
-      'htmlFormatContentTitle': htmlFormatContentTitle,
-      'summaryText': summaryText,
-      'htmlFormatSummaryText': htmlFormatSummaryText
-    });
+  Map<String, Object?> toMap() =>
+      _convertDefaultStyleInformationToMap(this)..addAll(<String, Object?>{
+        'bigText': bigText,
+        'htmlFormatBigText': htmlFormatBigText,
+        'contentTitle': contentTitle,
+        'htmlFormatContentTitle': htmlFormatContentTitle,
+        'summaryText': summaryText,
+        'htmlFormatSummaryText': htmlFormatSummaryText,
+      });
 }
 
 extension InboxStyleInformationMapper on InboxStyleInformation {
-  Map<String, Object?> toMap() => _convertDefaultStyleInformationToMap(this)
-    ..addAll(<String, Object?>{
-      'contentTitle': contentTitle,
-      'htmlFormatContentTitle': htmlFormatContentTitle,
-      'summaryText': summaryText,
-      'htmlFormatSummaryText': htmlFormatSummaryText,
-      'lines': lines,
-      'htmlFormatLines': htmlFormatLines
-    });
+  Map<String, Object?> toMap() =>
+      _convertDefaultStyleInformationToMap(this)..addAll(<String, Object?>{
+        'contentTitle': contentTitle,
+        'htmlFormatContentTitle': htmlFormatContentTitle,
+        'summaryText': summaryText,
+        'htmlFormatSummaryText': htmlFormatSummaryText,
+        'lines': lines,
+        'htmlFormatLines': htmlFormatLines,
+      });
 }
 
 extension MessagingStyleInformationMapper on MessagingStyleInformation {
-  Map<String, Object?> toMap() => _convertDefaultStyleInformationToMap(this)
-    ..addAll(<String, Object?>{
-      'person': person.toMap(),
-      'conversationTitle': conversationTitle,
-      'groupConversation': groupConversation,
-      'messages': messages
-          ?.map((m) => m.toMap()) // ignore: always_specify_types
-          .toList()
-    });
+  Map<String, Object?> toMap() =>
+      _convertDefaultStyleInformationToMap(this)..addAll(<String, Object?>{
+        'person': person.toMap(),
+        'conversationTitle': conversationTitle,
+        'groupConversation': groupConversation,
+        'messages': messages?.map((m) => m.toMap()).toList(),
+      });
 }
 
 extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
-  Map<String, Object?> toMap() => <String, Object?>{
-        'icon': icon,
-        'channelId': channelId,
-        'channelName': channelName,
-        'channelDescription': channelDescription,
-        'channelShowBadge': channelShowBadge,
-        'channelAction': channelAction.index,
-        'importance': importance.value,
-        'channelBypassDnd': channelBypassDnd,
-        'priority': priority.value,
-        'playSound': playSound,
-        'enableVibration': enableVibration,
-        'vibrationPattern': vibrationPattern,
-        'groupKey': groupKey,
-        'setAsGroupSummary': setAsGroupSummary,
-        'groupAlertBehavior': groupAlertBehavior.index,
-        'autoCancel': autoCancel,
-        'ongoing': ongoing,
-        'silent': silent,
-        'colorAlpha': color?.alpha,
-        'colorRed': color?.red,
-        'colorGreen': color?.green,
-        'colorBlue': color?.blue,
-        'onlyAlertOnce': onlyAlertOnce,
-        'showWhen': showWhen,
-        'when': when,
-        'usesChronometer': usesChronometer,
-        'chronometerCountDown': chronometerCountDown,
-        'showProgress': showProgress,
-        'maxProgress': maxProgress,
-        'progress': progress,
-        'indeterminate': indeterminate,
-        'enableLights': enableLights,
-        'ledColorAlpha': ledColor?.alpha,
-        'ledColorRed': ledColor?.red,
-        'ledColorGreen': ledColor?.green,
-        'ledColorBlue': ledColor?.blue,
-        'ledOnMs': ledOnMs,
-        'ledOffMs': ledOffMs,
-        'ticker': ticker,
-        'visibility': visibility?.index,
-        'timeoutAfter': timeoutAfter,
-        'category': category?.name,
-        'fullScreenIntent': fullScreenIntent,
-        'shortcutId': shortcutId,
-        'additionalFlags': additionalFlags,
-        'subText': subText,
-        'tag': tag,
-        'colorized': colorized,
-        'number': number,
-        'audioAttributesUsage': audioAttributesUsage.value,
-      }
+  Map<String, Object?> toMap() =>
+      <String, Object?>{
+          'icon': icon,
+          'channelId': channelId,
+          'channelName': channelName,
+          'channelDescription': channelDescription,
+          'channelShowBadge': channelShowBadge,
+          'channelAction': channelAction.index,
+          'importance': importance.value,
+          'channelBypassDnd': channelBypassDnd,
+          'priority': priority.value,
+          'playSound': playSound,
+          'enableVibration': enableVibration,
+          'vibrationPattern': vibrationPattern,
+          'groupKey': groupKey,
+          'setAsGroupSummary': setAsGroupSummary,
+          'groupAlertBehavior': groupAlertBehavior.index,
+          'autoCancel': autoCancel,
+          'ongoing': ongoing,
+          'silent': silent,
+          'colorAlpha': color?.intAlpha,
+          'colorRed': color?.intRed,
+          'colorGreen': color?.intGreen,
+          'colorBlue': color?.intBlue,
+          'onlyAlertOnce': onlyAlertOnce,
+          'showWhen': showWhen,
+          'when': when,
+          'usesChronometer': usesChronometer,
+          'chronometerCountDown': chronometerCountDown,
+          'showProgress': showProgress,
+          'maxProgress': maxProgress,
+          'progress': progress,
+          'indeterminate': indeterminate,
+          'enableLights': enableLights,
+          'ledColorAlpha': ledColor?.intAlpha,
+          'ledColorRed': ledColor?.intRed,
+          'ledColorGreen': ledColor?.intGreen,
+          'ledColorBlue': ledColor?.intBlue,
+          'ledOnMs': ledOnMs,
+          'ledOffMs': ledOffMs,
+          'ticker': ticker,
+          'visibility': visibility?.index,
+          'timeoutAfter': timeoutAfter,
+          'category': category?.name,
+          'fullScreenIntent': fullScreenIntent,
+          'shortcutId': shortcutId,
+          'additionalFlags': additionalFlags,
+          'subText': subText,
+          'tag': tag,
+          'colorized': colorized,
+          'number': number,
+          'audioAttributesUsage': audioAttributesUsage.value,
+        }
         ..addAll(_convertActionsToMap(actions))
         ..addAll(_convertStyleInformationToMap())
         ..addAll(_convertNotificationSoundToMap(sound))
@@ -234,38 +243,38 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
     if (styleInformation is BigPictureStyleInformation) {
       return <String, Object?>{
         'style': AndroidNotificationStyle.bigPicture.index,
-        'styleInformation':
-            (styleInformation as BigPictureStyleInformation?)?.toMap(),
+        'styleInformation': (styleInformation as BigPictureStyleInformation?)
+            ?.toMap(),
       };
     } else if (styleInformation is BigTextStyleInformation) {
       return <String, Object?>{
         'style': AndroidNotificationStyle.bigText.index,
-        'styleInformation':
-            (styleInformation as BigTextStyleInformation?)?.toMap(),
+        'styleInformation': (styleInformation as BigTextStyleInformation?)
+            ?.toMap(),
       };
     } else if (styleInformation is InboxStyleInformation) {
       return <String, Object?>{
         'style': AndroidNotificationStyle.inbox.index,
-        'styleInformation':
-            (styleInformation as InboxStyleInformation?)?.toMap(),
+        'styleInformation': (styleInformation as InboxStyleInformation?)
+            ?.toMap(),
       };
     } else if (styleInformation is MessagingStyleInformation) {
       return <String, Object?>{
         'style': AndroidNotificationStyle.messaging.index,
-        'styleInformation':
-            (styleInformation as MessagingStyleInformation?)?.toMap(),
+        'styleInformation': (styleInformation as MessagingStyleInformation?)
+            ?.toMap(),
       };
     } else if (styleInformation is MediaStyleInformation) {
       return <String, Object?>{
         'style': AndroidNotificationStyle.media.index,
-        'styleInformation':
-            (styleInformation as MediaStyleInformation?)?.toMap(),
+        'styleInformation': (styleInformation as MediaStyleInformation?)
+            ?.toMap(),
       };
     } else if (styleInformation is DefaultStyleInformation) {
       return <String, Object?>{
         'style': AndroidNotificationStyle.defaultStyle.index,
-        'styleInformation':
-            (styleInformation as DefaultStyleInformation?)?.toMap(),
+        'styleInformation': (styleInformation as DefaultStyleInformation?)
+            ?.toMap(),
       };
     } else {
       return <String, Object>{
@@ -286,7 +295,8 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
   }
 
   Map<String, Object> _convertActionsToMap(
-      List<AndroidNotificationAction>? actions) {
+    List<AndroidNotificationAction>? actions,
+  ) {
     if (actions == null) {
       return <String, Object>{};
     }
@@ -296,10 +306,10 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
             (AndroidNotificationAction e) => <String, dynamic>{
               'id': e.id,
               'title': e.title,
-              'titleColorAlpha': e.titleColor?.alpha,
-              'titleColorRed': e.titleColor?.red,
-              'titleColorGreen': e.titleColor?.green,
-              'titleColorBlue': e.titleColor?.blue,
+              'titleColorAlpha': e.titleColor?.intAlpha,
+              'titleColorRed': e.titleColor?.intRed,
+              'titleColorGreen': e.titleColor?.intGreen,
+              'titleColorBlue': e.titleColor?.intBlue,
               if (e.icon != null) ...<String, Object>{
                 'icon': e.icon!.data,
                 'iconBitmapSource': e.icon!.source.index,
@@ -308,8 +318,10 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
               'showsUserInterface': e.showsUserInterface,
               'allowGeneratedReplies': e.allowGeneratedReplies,
               'inputs': e.inputs
-                  .map((AndroidNotificationActionInput input) =>
-                      _convertInputToMap(input))
+                  .map(
+                    (AndroidNotificationActionInput input) =>
+                        _convertInputToMap(input),
+                  )
                   .toList(),
               'cancelNotification': e.cancelNotification,
               'semanticAction': e.semanticAction.value,
@@ -321,11 +333,11 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
   }
 
   Map<String, dynamic> _convertInputToMap(
-          AndroidNotificationActionInput input) =>
-      <String, dynamic>{
-        'choices': input.choices,
-        'allowFreeFormInput': input.allowFreeFormInput,
-        'label': input.label,
-        'allowedMimeType': input.allowedMimeTypes.toList(),
-      };
+    AndroidNotificationActionInput input,
+  ) => <String, dynamic>{
+    'choices': input.choices,
+    'allowFreeFormInput': input.allowFreeFormInput,
+    'label': input.label,
+    'allowedMimeType': input.allowedMimeTypes.toList(),
+  };
 }
