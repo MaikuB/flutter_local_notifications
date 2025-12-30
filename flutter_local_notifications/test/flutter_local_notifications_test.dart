@@ -12,8 +12,10 @@ void main() {
   FlutterLocalNotificationsPlatform.instance = mock;
 
   test('Creates DarwinNotificationAttachment when file path is specified', () {
-    expect(const DarwinNotificationAttachment(''),
-        isA<DarwinNotificationAttachment>());
+    expect(
+      const DarwinNotificationAttachment(''),
+      isA<DarwinNotificationAttachment>(),
+    );
   });
 
   group('providesAppNotificationSettings tests', () {
@@ -26,22 +28,21 @@ void main() {
     test('initialization can be set to true', () {
       const DarwinInitializationSettings settings =
           DarwinInitializationSettings(
-        requestProvidesAppNotificationSettings: true,
-      );
+            requestProvidesAppNotificationSettings: true,
+          );
       expect(settings.requestProvidesAppNotificationSettings, true);
     });
 
     test('maps correctly to platform specific map', () {
       const DarwinInitializationSettings settings =
           DarwinInitializationSettings(
-        requestProvidesAppNotificationSettings: true,
-      );
+            requestProvidesAppNotificationSettings: true,
+          );
       final Map<String, Object> map = settings.toMap();
       expect(map['requestProvidesAppNotificationSettings'], true);
     });
 
-    test(
-        'NotificationsEnabledOptions stores '
+    test('NotificationsEnabledOptions stores '
         'providesAppNotificationSettings value', () async {
       const NotificationsEnabledOptions options = NotificationsEnabledOptions(
         isEnabled: true,
@@ -62,5 +63,4 @@ class MockMethodChannel extends Mock implements MethodChannel {}
 class MockFlutterLocalNotificationsPlugin extends Mock
     with
         MockPlatformInterfaceMixin // ignore: prefer_mixin
-    implements
-        FlutterLocalNotificationsPlatform {}
+    implements FlutterLocalNotificationsPlatform {}

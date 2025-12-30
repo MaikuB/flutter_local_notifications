@@ -20,8 +20,11 @@ extension on DateTime {
     final Duration offset = timeZoneOffset;
     final String sign = offset.isNegative ? '-' : '+';
     final String hours = offset.inHours.abs().toString().padLeft(2, '0');
-    final String minutes =
-        offset.inMinutes.abs().remainder(60).toString().padLeft(2, '0');
+    final String minutes = offset.inMinutes
+        .abs()
+        .remainder(60)
+        .toString()
+        .padLeft(2, '0');
     final String offsetString = '$sign$hours:$minutes';
     // Get first part of properly formatted ISO 8601 date
     final String formattedDate = toIso8601String().split('.').first;
@@ -83,9 +86,8 @@ extension DetailsToXml on WindowsNotificationDetails {
 
   /// XML attributes for the toast notification as a whole.
   Map<String, String> get attributes => <String, String>{
-        if (duration != null) 'duration': duration!.name,
-        if (timestamp != null)
-          'displayTimestamp': timestamp!.toIso8601StringTz(),
-        if (scenario != null) 'scenario': scenario!.name,
-      };
+    if (duration != null) 'duration': duration!.name,
+    if (timestamp != null) 'displayTimestamp': timestamp!.toIso8601StringTz(),
+    if (scenario != null) 'scenario': scenario!.name,
+  };
 }

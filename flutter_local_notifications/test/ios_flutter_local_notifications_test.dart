@@ -14,8 +14,9 @@ void main() {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   group('iOS', () {
-    const MethodChannel channel =
-        MethodChannel('dexterous.com/flutter/local_notifications');
+    const MethodChannel channel = MethodChannel(
+      'dexterous.com/flutter/local_notifications',
+    );
     final List<MethodCall> log = <MethodCall>[];
 
     setUp(() {
@@ -23,16 +24,16 @@ void main() {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        log.add(methodCall);
-        if (methodCall.method == 'pendingNotificationRequests') {
-          return <Map<String, Object>?>[];
-        } else if (methodCall.method == 'getActiveNotifications') {
-          return <Map<String, Object>?>[];
-        } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
-          return null;
-        }
-        return null;
-      });
+            log.add(methodCall);
+            if (methodCall.method == 'pendingNotificationRequests') {
+              return <Map<String, Object>?>[];
+            } else if (methodCall.method == 'getActiveNotifications') {
+              return <Map<String, Object>?>[];
+            } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
+              return null;
+            }
+            return null;
+          });
     });
 
     tearDown(() {
@@ -46,233 +47,254 @@ void main() {
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       expect(log, <Matcher>[
-        isMethodCall('initialize', arguments: <String, Object>{
-          'requestAlertPermission': true,
-          'requestSoundPermission': true,
-          'requestBadgePermission': true,
-          'requestProvisionalPermission': false,
-          'requestCriticalPermission': false,
-          'requestCarPlayPermission': false,
-          'requestProvidesAppNotificationSettings': false,
-          'defaultPresentAlert': true,
-          'defaultPresentSound': true,
-          'defaultPresentBadge': true,
-          'defaultPresentBanner': true,
-          'defaultPresentList': true,
-          'notificationCategories': <String>[],
-        })
+        isMethodCall(
+          'initialize',
+          arguments: <String, Object>{
+            'requestAlertPermission': true,
+            'requestSoundPermission': true,
+            'requestBadgePermission': true,
+            'requestProvisionalPermission': false,
+            'requestCriticalPermission': false,
+            'requestCarPlayPermission': false,
+            'requestProvidesAppNotificationSettings': false,
+            'defaultPresentAlert': true,
+            'defaultPresentSound': true,
+            'defaultPresentBadge': true,
+            'defaultPresentBanner': true,
+            'defaultPresentList': true,
+            'notificationCategories': <String>[],
+          },
+        ),
       ]);
     });
 
     test('initialize with notification categories', () async {
       final IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings(
-        notificationCategories: <DarwinNotificationCategory>[
-          DarwinNotificationCategory(
-            'category1',
-            actions: <DarwinNotificationAction>[
-              DarwinNotificationAction.plain(
-                'action1',
-                'Action 1',
-                options: <DarwinNotificationActionOption>{
-                  DarwinNotificationActionOption.destructive,
+            notificationCategories: <DarwinNotificationCategory>[
+              DarwinNotificationCategory(
+                'category1',
+                actions: <DarwinNotificationAction>[
+                  DarwinNotificationAction.plain(
+                    'action1',
+                    'Action 1',
+                    options: <DarwinNotificationActionOption>{
+                      DarwinNotificationActionOption.destructive,
+                    },
+                  ),
+                ],
+                options: <DarwinNotificationCategoryOption>{
+                  DarwinNotificationCategoryOption.allowAnnouncement,
                 },
               ),
-            ],
-            options: <DarwinNotificationCategoryOption>{
-              DarwinNotificationCategoryOption.allowAnnouncement,
-            },
-          ),
-          DarwinNotificationCategory(
-            'category2',
-            actions: <DarwinNotificationAction>[
-              DarwinNotificationAction.plain('action2', 'Action 2'),
-              DarwinNotificationAction.plain('action3', 'Action 3'),
-            ],
-          ),
-          DarwinNotificationCategory(
-            'category3',
-            actions: <DarwinNotificationAction>[
-              DarwinNotificationAction.text(
-                'action4',
-                'Action 4',
-                buttonTitle: 'Send',
-                placeholder: 'Placeholder',
+              DarwinNotificationCategory(
+                'category2',
+                actions: <DarwinNotificationAction>[
+                  DarwinNotificationAction.plain('action2', 'Action 2'),
+                  DarwinNotificationAction.plain('action3', 'Action 3'),
+                ],
+              ),
+              DarwinNotificationCategory(
+                'category3',
+                actions: <DarwinNotificationAction>[
+                  DarwinNotificationAction.text(
+                    'action4',
+                    'Action 4',
+                    buttonTitle: 'Send',
+                    placeholder: 'Placeholder',
+                  ),
+                ],
               ),
             ],
-          )
-        ],
-      );
+          );
       final InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       expect(log, <Matcher>[
-        isMethodCall('initialize', arguments: <String, Object>{
-          'requestAlertPermission': true,
-          'requestSoundPermission': true,
-          'requestBadgePermission': true,
-          'requestProvisionalPermission': false,
-          'requestCriticalPermission': false,
-          'requestCarPlayPermission': false,
-          'requestProvidesAppNotificationSettings': false,
-          'defaultPresentAlert': true,
-          'defaultPresentSound': true,
-          'defaultPresentBadge': true,
-          'defaultPresentBanner': true,
-          'defaultPresentList': true,
-          'notificationCategories': <Map<String, dynamic>>[
-            <String, dynamic>{
-              'identifier': 'category1',
-              'actions': <Map<String, dynamic>>[
-                <String, dynamic>{
-                  'type': 'plain',
-                  'identifier': 'action1',
-                  'title': 'Action 1',
-                  'options': <int>[2],
-                }
-              ],
-              'options': <int>[16],
-            },
-            <String, dynamic>{
-              'identifier': 'category2',
-              'actions': <Map<String, dynamic>>[
-                <String, dynamic>{
-                  'type': 'plain',
-                  'identifier': 'action2',
-                  'title': 'Action 2',
-                  'options': <int>[],
-                },
-                <String, dynamic>{
-                  'type': 'plain',
-                  'identifier': 'action3',
-                  'title': 'Action 3',
-                  'options': <int>[],
-                },
-              ],
-              'options': <int>[],
-            },
-            <String, dynamic>{
-              'identifier': 'category3',
-              'actions': <Map<String, dynamic>>[
-                <String, dynamic>{
-                  'type': 'text',
-                  'identifier': 'action4',
-                  'title': 'Action 4',
-                  'options': <int>[],
-                  'buttonTitle': 'Send',
-                  'placeholder': 'Placeholder',
-                },
-              ],
-              'options': <int>[],
-            }
-          ],
-        })
+        isMethodCall(
+          'initialize',
+          arguments: <String, Object>{
+            'requestAlertPermission': true,
+            'requestSoundPermission': true,
+            'requestBadgePermission': true,
+            'requestProvisionalPermission': false,
+            'requestCriticalPermission': false,
+            'requestCarPlayPermission': false,
+            'requestProvidesAppNotificationSettings': false,
+            'defaultPresentAlert': true,
+            'defaultPresentSound': true,
+            'defaultPresentBadge': true,
+            'defaultPresentBanner': true,
+            'defaultPresentList': true,
+            'notificationCategories': <Map<String, dynamic>>[
+              <String, dynamic>{
+                'identifier': 'category1',
+                'actions': <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    'type': 'plain',
+                    'identifier': 'action1',
+                    'title': 'Action 1',
+                    'options': <int>[2],
+                  },
+                ],
+                'options': <int>[16],
+              },
+              <String, dynamic>{
+                'identifier': 'category2',
+                'actions': <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    'type': 'plain',
+                    'identifier': 'action2',
+                    'title': 'Action 2',
+                    'options': <int>[],
+                  },
+                  <String, dynamic>{
+                    'type': 'plain',
+                    'identifier': 'action3',
+                    'title': 'Action 3',
+                    'options': <int>[],
+                  },
+                ],
+                'options': <int>[],
+              },
+              <String, dynamic>{
+                'identifier': 'category3',
+                'actions': <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    'type': 'text',
+                    'identifier': 'action4',
+                    'title': 'Action 4',
+                    'options': <int>[],
+                    'buttonTitle': 'Send',
+                    'placeholder': 'Placeholder',
+                  },
+                ],
+                'options': <int>[],
+              },
+            ],
+          },
+        ),
       ]);
     });
     test('initialize with all settings off', () async {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings(
-        requestAlertPermission: false,
-        requestBadgePermission: false,
-        requestSoundPermission: false,
-        defaultPresentAlert: false,
-        defaultPresentBadge: false,
-        defaultPresentSound: false,
-        defaultPresentBanner: false,
-        defaultPresentList: false,
-      );
+            requestAlertPermission: false,
+            requestBadgePermission: false,
+            requestSoundPermission: false,
+            defaultPresentAlert: false,
+            defaultPresentBadge: false,
+            defaultPresentSound: false,
+            defaultPresentBanner: false,
+            defaultPresentList: false,
+          );
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       expect(log, <Matcher>[
-        isMethodCall('initialize', arguments: <String, Object>{
-          'requestAlertPermission': false,
-          'requestSoundPermission': false,
-          'requestBadgePermission': false,
-          'requestProvisionalPermission': false,
-          'requestCriticalPermission': false,
-          'requestCarPlayPermission': false,
-          'requestProvidesAppNotificationSettings': false,
-          'defaultPresentAlert': false,
-          'defaultPresentSound': false,
-          'defaultPresentBadge': false,
-          'defaultPresentBanner': false,
-          'defaultPresentList': false,
-          'notificationCategories': <String>[],
-        })
+        isMethodCall(
+          'initialize',
+          arguments: <String, Object>{
+            'requestAlertPermission': false,
+            'requestSoundPermission': false,
+            'requestBadgePermission': false,
+            'requestProvisionalPermission': false,
+            'requestCriticalPermission': false,
+            'requestCarPlayPermission': false,
+            'requestProvidesAppNotificationSettings': false,
+            'defaultPresentAlert': false,
+            'defaultPresentSound': false,
+            'defaultPresentBadge': false,
+            'defaultPresentBanner': false,
+            'defaultPresentList': false,
+            'notificationCategories': <String>[],
+          },
+        ),
       ]);
     });
 
     test('initialize with CarPlay permission enabled', () async {
       const IOSInitializationSettings iosInitializationSettings =
-          IOSInitializationSettings(
-        requestCarPlayPermission: true,
-      );
+          IOSInitializationSettings(requestCarPlayPermission: true);
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       expect(log, <Matcher>[
-        isMethodCall('initialize', arguments: <String, Object>{
-          'requestAlertPermission': true,
-          'requestSoundPermission': true,
-          'requestBadgePermission': true,
-          'requestProvisionalPermission': false,
-          'requestCriticalPermission': false,
-          'requestCarPlayPermission': true,
-          'requestProvidesAppNotificationSettings': false,
-          'defaultPresentAlert': true,
-          'defaultPresentSound': true,
-          'defaultPresentBadge': true,
-          'defaultPresentBanner': true,
-          'defaultPresentList': true,
-          'notificationCategories': <String>[],
-        })
+        isMethodCall(
+          'initialize',
+          arguments: <String, Object>{
+            'requestAlertPermission': true,
+            'requestSoundPermission': true,
+            'requestBadgePermission': true,
+            'requestProvisionalPermission': false,
+            'requestCriticalPermission': false,
+            'requestCarPlayPermission': true,
+            'requestProvidesAppNotificationSettings': false,
+            'defaultPresentAlert': true,
+            'defaultPresentSound': true,
+            'defaultPresentBadge': true,
+            'defaultPresentBanner': true,
+            'defaultPresentList': true,
+            'notificationCategories': <String>[],
+          },
+        ),
       ]);
     });
 
-    test('initialize with DarwinInitializationSettings excludes CarPlay', () async {
-      const DarwinInitializationSettings darwinInitializationSettings =
-          DarwinInitializationSettings();
-      const InitializationSettings initializationSettings =
-          InitializationSettings(iOS: darwinInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-      expect(log, <Matcher>[
-        isMethodCall('initialize', arguments: <String, Object>{
-          'requestAlertPermission': true,
-          'requestSoundPermission': true,
-          'requestBadgePermission': true,
-          'requestProvisionalPermission': false,
-          'requestCriticalPermission': false,
-          'requestProvidesAppNotificationSettings': false,
-          'defaultPresentAlert': true,
-          'defaultPresentSound': true,
-          'defaultPresentBadge': true,
-          'defaultPresentBanner': true,
-          'defaultPresentList': true,
-          'notificationCategories': <String>[],
-          // Note: requestCarPlayPermission should NOT be present
-        })
-      ]);
-    });
+    test(
+      'initialize with DarwinInitializationSettings excludes CarPlay',
+      () async {
+        const DarwinInitializationSettings darwinInitializationSettings =
+            DarwinInitializationSettings();
+        const InitializationSettings initializationSettings =
+            InitializationSettings(iOS: darwinInitializationSettings);
+        await flutterLocalNotificationsPlugin.initialize(
+          initializationSettings,
+        );
+        expect(log, <Matcher>[
+          isMethodCall(
+            'initialize',
+            arguments: <String, Object>{
+              'requestAlertPermission': true,
+              'requestSoundPermission': true,
+              'requestBadgePermission': true,
+              'requestProvisionalPermission': false,
+              'requestCriticalPermission': false,
+              'requestProvidesAppNotificationSettings': false,
+              'defaultPresentAlert': true,
+              'defaultPresentSound': true,
+              'defaultPresentBadge': true,
+              'defaultPresentBanner': true,
+              'defaultPresentList': true,
+              'notificationCategories': <String>[],
+              // Note: requestCarPlayPermission should NOT be present
+            },
+          ),
+        ]);
+      },
+    );
 
-    test('IOSInitializationSettings inherits from DarwinInitializationSettings', () async {
-      const IOSInitializationSettings iosInitializationSettings =
-          IOSInitializationSettings(
-        requestAlertPermission: false,
-        requestSoundPermission: false,
-        requestBadgePermission: false,
-        requestCarPlayPermission: true,
-      );
-      
-      // Test that IOSInitializationSettings is a DarwinInitializationSettings
-      expect(iosInitializationSettings, isA<DarwinInitializationSettings>());
-      
-      // Test that CarPlay permission is specific to iOS
-      expect(iosInitializationSettings.requestCarPlayPermission, true);
-      expect(iosInitializationSettings.requestAlertPermission, false);
-      expect(iosInitializationSettings.requestSoundPermission, false);
-      expect(iosInitializationSettings.requestBadgePermission, false);
-    });
+    test(
+      'IOSInitializationSettings inherits from DarwinInitializationSettings',
+      () async {
+        const IOSInitializationSettings iosInitializationSettings =
+            IOSInitializationSettings(
+              requestAlertPermission: false,
+              requestSoundPermission: false,
+              requestBadgePermission: false,
+              requestCarPlayPermission: true,
+            );
+
+        // Test that IOSInitializationSettings is a DarwinInitializationSettings
+        expect(iosInitializationSettings, isA<DarwinInitializationSettings>());
+
+        // Test that CarPlay permission is specific to iOS
+        expect(iosInitializationSettings.requestCarPlayPermission, true);
+        expect(iosInitializationSettings.requestAlertPermission, false);
+        expect(iosInitializationSettings.requestSoundPermission, false);
+        expect(iosInitializationSettings.requestBadgePermission, false);
+      },
+    );
 
     test('show without iOS-specific details', () async {
       const IOSInitializationSettings iosInitializationSettings =
@@ -281,16 +303,23 @@ void main() {
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
       await flutterLocalNotificationsPlugin.show(
-          1, 'notification title', 'notification body', null);
+        id: 1,
+        title: 'notification title',
+        body: 'notification body',
+      );
       expect(
-          log.last,
-          isMethodCall('show', arguments: <String, Object?>{
+        log.last,
+        isMethodCall(
+          'show',
+          arguments: <String, Object?>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
             'payload': '',
             'platformSpecifics': null,
-          }));
+          },
+        ),
+      );
     });
 
     test('show with iOS-specific details', () async {
@@ -310,8 +339,10 @@ void main() {
           sound: 'sound.mp3',
           badgeNumber: 1,
           attachments: <DarwinNotificationAttachment>[
-            DarwinNotificationAttachment('video.mp4',
-                identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373'),
+            DarwinNotificationAttachment(
+              'video.mp4',
+              identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373',
+            ),
           ],
           categoryIdentifier: 'category1',
           criticalSoundVolume: 0.5,
@@ -319,11 +350,17 @@ void main() {
       );
 
       await flutterLocalNotificationsPlugin.show(
-          1, 'notification title', 'notification body', notificationDetails);
+        id: 1,
+        title: 'notification title',
+        body: 'notification body',
+        notificationDetails: notificationDetails,
+      );
 
       expect(
-          log.last,
-          isMethodCall('show', arguments: <String, Object>{
+        log.last,
+        isMethodCall(
+          'show',
+          arguments: <String, Object>{
             'id': 1,
             'title': 'notification title',
             'body': 'notification body',
@@ -344,13 +381,15 @@ void main() {
                   'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                   'hideThumbnail': null,
                   'thumbnailClippingRect': null,
-                }
+                },
               ],
               'categoryIdentifier': 'category1',
               'interruptionLevel': null,
               'criticalSoundVolume': 0.5,
             },
-          }));
+          },
+        ),
+      );
     });
 
     group('periodicallyShow', () {
@@ -362,8 +401,9 @@ void main() {
                 IOSInitializationSettings();
             const InitializationSettings initializationSettings =
                 InitializationSettings(iOS: iosInitializationSettings);
-            await flutterLocalNotificationsPlugin
-                .initialize(initializationSettings);
+            await flutterLocalNotificationsPlugin.initialize(
+              initializationSettings,
+            );
 
             const NotificationDetails notificationDetails = NotificationDetails(
               iOS: DarwinNotificationDetails(
@@ -378,18 +418,19 @@ void main() {
                   DarwinNotificationAttachment(
                     'video.mp4',
                     identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373',
-                  )
+                  ),
                 ],
               ),
             );
 
             await flutterLocalNotificationsPlugin.periodicallyShow(
-                1,
-                'notification title',
-                'notification body',
-                repeatInterval,
-                notificationDetails,
-                androidScheduleMode: AndroidScheduleMode.exact);
+              id: 1,
+              title: 'notification title',
+              body: 'notification body',
+              repeatInterval: repeatInterval,
+              notificationDetails: notificationDetails,
+              androidScheduleMode: AndroidScheduleMode.exact,
+            );
 
             expect(
               log.last,
@@ -418,7 +459,7 @@ void main() {
                         'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                         'hideThumbnail': null,
                         'thumbnailClippingRect': null,
-                      }
+                      },
                     ],
                     'categoryIdentifier': null,
                     'interruptionLevel': null,
@@ -438,12 +479,13 @@ void main() {
       const Duration thirtySeconds = Duration(seconds: 30);
       test('$thirtySeconds', () async {
         await withClock(Clock.fixed(now), () async {
-      const IOSInitializationSettings iosInitializationSettings =
-          IOSInitializationSettings();
+          const IOSInitializationSettings iosInitializationSettings =
+              IOSInitializationSettings();
           const InitializationSettings initializationSettings =
               InitializationSettings(iOS: iosInitializationSettings);
-          await flutterLocalNotificationsPlugin
-              .initialize(initializationSettings);
+          await flutterLocalNotificationsPlugin.initialize(
+            initializationSettings,
+          );
 
           const NotificationDetails notificationDetails = NotificationDetails(
             iOS: DarwinNotificationDetails(
@@ -458,21 +500,22 @@ void main() {
                 DarwinNotificationAttachment(
                   'video.mp4',
                   identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373',
-                )
+                ),
               ],
             ),
           );
 
           expect(
-              () async => await flutterLocalNotificationsPlugin
-                      .periodicallyShowWithDuration(
-                    1,
-                    'notification title',
-                    'notification body',
-                    thirtySeconds,
-                    notificationDetails,
-                  ),
-              throwsA(isA<ArgumentError>()));
+            () async => await flutterLocalNotificationsPlugin
+                .periodicallyShowWithDuration(
+                  id: 1,
+                  title: 'notification title',
+                  body: 'notification body',
+                  repeatDurationInterval: thirtySeconds,
+                  notificationDetails: notificationDetails,
+                ),
+            throwsA(isA<ArgumentError>()),
+          );
         });
       });
 
@@ -480,7 +523,7 @@ void main() {
         const Duration(minutes: 1),
         const Duration(minutes: 15),
         const Duration(hours: 5),
-        const Duration(days: 30)
+        const Duration(days: 30),
       ];
       for (final Duration repeatDurationInterval in repeatDurationIntervals) {
         test('$repeatDurationInterval', () async {
@@ -489,8 +532,9 @@ void main() {
                 IOSInitializationSettings();
             const InitializationSettings initializationSettings =
                 InitializationSettings(iOS: iosInitializationSettings);
-            await flutterLocalNotificationsPlugin
-                .initialize(initializationSettings);
+            await flutterLocalNotificationsPlugin.initialize(
+              initializationSettings,
+            );
 
             const NotificationDetails notificationDetails = NotificationDetails(
               iOS: DarwinNotificationDetails(
@@ -505,17 +549,17 @@ void main() {
                   DarwinNotificationAttachment(
                     'video.mp4',
                     identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373',
-                  )
+                  ),
                 ],
               ),
             );
 
             await flutterLocalNotificationsPlugin.periodicallyShowWithDuration(
-              1,
-              'notification title',
-              'notification body',
-              repeatDurationInterval,
-              notificationDetails,
+              id: 1,
+              title: 'notification title',
+              body: 'notification body',
+              repeatDurationInterval: repeatDurationInterval,
+              notificationDetails: notificationDetails,
             );
 
             expect(
@@ -546,7 +590,7 @@ void main() {
                         'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                         'hideThumbnail': null,
                         'thumbnailClippingRect': null,
-                      }
+                      },
                     ],
                     'categoryIdentifier': null,
                     'interruptionLevel': null,
@@ -566,37 +610,46 @@ void main() {
             IOSInitializationSettings();
         const InitializationSettings initializationSettings =
             InitializationSettings(iOS: iosInitializationSettings);
-        await flutterLocalNotificationsPlugin
-            .initialize(initializationSettings);
+        await flutterLocalNotificationsPlugin.initialize(
+          initializationSettings,
+        );
         tz.initializeTimeZones();
         tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
-        final tz.TZDateTime scheduledDate =
-            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
+        final tz.TZDateTime scheduledDate = tz.TZDateTime.now(
+          tz.local,
+        ).add(const Duration(seconds: 5));
         const NotificationDetails notificationDetails = NotificationDetails(
-            iOS: DarwinNotificationDetails(
-                presentAlert: true,
-                presentBadge: true,
-                presentSound: true,
-                presentBanner: true,
-                presentList: true,
-                sound: 'sound.mp3',
-                badgeNumber: 1,
-                attachments: <DarwinNotificationAttachment>[
-              DarwinNotificationAttachment('video.mp4',
-                  identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
-            ]));
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+            presentBanner: true,
+            presentList: true,
+            sound: 'sound.mp3',
+            badgeNumber: 1,
+            attachments: <DarwinNotificationAttachment>[
+              DarwinNotificationAttachment(
+                'video.mp4',
+                identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373',
+              ),
+            ],
+          ),
+        );
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
-            1,
-            'notification title',
-            'notification body',
-            scheduledDate,
-            notificationDetails,
-            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle);
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          scheduledDate: scheduledDate,
+          notificationDetails: notificationDetails,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        );
 
         expect(
-            log.last,
-            isMethodCall('zonedSchedule', arguments: <String, Object>{
+          log.last,
+          isMethodCall(
+            'zonedSchedule',
+            arguments: <String, Object>{
               'id': 1,
               'title': 'notification title',
               'body': 'notification body',
@@ -620,13 +673,15 @@ void main() {
                     'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                     'hideThumbnail': null,
                     'thumbnailClippingRect': null,
-                  }
+                  },
                 ],
                 'categoryIdentifier': null,
                 'interruptionLevel': null,
                 'criticalSoundVolume': null,
               },
-            }));
+            },
+          ),
+        );
       });
 
       test('match time components', () async {
@@ -634,38 +689,47 @@ void main() {
             IOSInitializationSettings();
         const InitializationSettings initializationSettings =
             InitializationSettings(iOS: iosInitializationSettings);
-        await flutterLocalNotificationsPlugin
-            .initialize(initializationSettings);
+        await flutterLocalNotificationsPlugin.initialize(
+          initializationSettings,
+        );
         tz.initializeTimeZones();
         tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
-        final tz.TZDateTime scheduledDate =
-            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
+        final tz.TZDateTime scheduledDate = tz.TZDateTime.now(
+          tz.local,
+        ).add(const Duration(seconds: 5));
         const NotificationDetails notificationDetails = NotificationDetails(
-            iOS: DarwinNotificationDetails(
-                presentAlert: true,
-                presentBadge: true,
-                presentSound: true,
-                presentBanner: true,
-                presentList: true,
-                sound: 'sound.mp3',
-                badgeNumber: 1,
-                attachments: <DarwinNotificationAttachment>[
-              DarwinNotificationAttachment('video.mp4',
-                  identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
-            ]));
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+            presentBanner: true,
+            presentList: true,
+            sound: 'sound.mp3',
+            badgeNumber: 1,
+            attachments: <DarwinNotificationAttachment>[
+              DarwinNotificationAttachment(
+                'video.mp4',
+                identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373',
+              ),
+            ],
+          ),
+        );
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
-            1,
-            'notification title',
-            'notification body',
-            scheduledDate,
-            notificationDetails,
-            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            matchDateTimeComponents: DateTimeComponents.time);
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          scheduledDate: scheduledDate,
+          notificationDetails: notificationDetails,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          matchDateTimeComponents: DateTimeComponents.time,
+        );
 
         expect(
-            log.last,
-            isMethodCall('zonedSchedule', arguments: <String, Object>{
+          log.last,
+          isMethodCall(
+            'zonedSchedule',
+            arguments: <String, Object>{
               'id': 1,
               'title': 'notification title',
               'body': 'notification body',
@@ -690,13 +754,15 @@ void main() {
                     'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                     'hideThumbnail': null,
                     'thumbnailClippingRect': null,
-                  }
+                  },
                 ],
                 'categoryIdentifier': null,
                 'interruptionLevel': null,
                 'criticalSoundVolume': null,
               },
-            }));
+            },
+          ),
+        );
       });
 
       test('match day of week and time components', () async {
@@ -704,38 +770,47 @@ void main() {
             IOSInitializationSettings();
         const InitializationSettings initializationSettings =
             InitializationSettings(iOS: iosInitializationSettings);
-        await flutterLocalNotificationsPlugin
-            .initialize(initializationSettings);
+        await flutterLocalNotificationsPlugin.initialize(
+          initializationSettings,
+        );
         tz.initializeTimeZones();
         tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
-        final tz.TZDateTime scheduledDate =
-            tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5));
+        final tz.TZDateTime scheduledDate = tz.TZDateTime.now(
+          tz.local,
+        ).add(const Duration(seconds: 5));
         const NotificationDetails notificationDetails = NotificationDetails(
-            iOS: DarwinNotificationDetails(
-                presentAlert: true,
-                presentBadge: true,
-                presentSound: true,
-                presentBanner: true,
-                presentList: true,
-                sound: 'sound.mp3',
-                badgeNumber: 1,
-                attachments: <DarwinNotificationAttachment>[
-              DarwinNotificationAttachment('video.mp4',
-                  identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373')
-            ]));
+          iOS: DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+            presentBanner: true,
+            presentList: true,
+            sound: 'sound.mp3',
+            badgeNumber: 1,
+            attachments: <DarwinNotificationAttachment>[
+              DarwinNotificationAttachment(
+                'video.mp4',
+                identifier: '2b3f705f-a680-4c9f-8075-a46a70e28373',
+              ),
+            ],
+          ),
+        );
 
         await flutterLocalNotificationsPlugin.zonedSchedule(
-            1,
-            'notification title',
-            'notification body',
-            scheduledDate,
-            notificationDetails,
-            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime);
+          id: 1,
+          title: 'notification title',
+          body: 'notification body',
+          scheduledDate: scheduledDate,
+          notificationDetails: notificationDetails,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+        );
 
         expect(
-            log.last,
-            isMethodCall('zonedSchedule', arguments: <String, Object>{
+          log.last,
+          isMethodCall(
+            'zonedSchedule',
+            arguments: <String, Object>{
               'id': 1,
               'title': 'notification title',
               'body': 'notification body',
@@ -761,60 +836,72 @@ void main() {
                     'identifier': '2b3f705f-a680-4c9f-8075-a46a70e28373',
                     'hideThumbnail': null,
                     'thumbnailClippingRect': null,
-                  }
+                  },
                 ],
                 'categoryIdentifier': null,
                 'interruptionLevel': null,
                 'criticalSoundVolume': null,
               },
-            }));
+            },
+          ),
+        );
       });
     });
     test('requestPermissions with default settings', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()!
+            IOSFlutterLocalNotificationsPlugin
+          >()!
           .requestPermissions();
       expect(log, <Matcher>[
-        isMethodCall('requestPermissions', arguments: <String, Object?>{
-          'sound': false,
-          'badge': false,
-          'alert': false,
-          'provisional': false,
-          'critical': false,
-          'carPlay': false,
-          'providesAppNotificationSettings': false
-        })
+        isMethodCall(
+          'requestPermissions',
+          arguments: <String, Object?>{
+            'sound': false,
+            'badge': false,
+            'alert': false,
+            'provisional': false,
+            'critical': false,
+            'carPlay': false,
+            'providesAppNotificationSettings': false,
+          },
+        ),
       ]);
     });
     test('iOS requestPermissions with all settings requested', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()!
+            IOSFlutterLocalNotificationsPlugin
+          >()!
           .requestPermissions(
-              sound: true,
-              badge: true,
-              alert: true,
-              provisional: true,
-              critical: true,
-              providesAppNotificationSettings: true);
+            sound: true,
+            badge: true,
+            alert: true,
+            provisional: true,
+            critical: true,
+            providesAppNotificationSettings: true,
+          );
       expect(log, <Matcher>[
-        isMethodCall('requestPermissions', arguments: <String, Object>{
-          'sound': true,
-          'badge': true,
-          'alert': true,
-          'provisional': true,
-          'critical': true,
-          'carPlay': false,
-          'providesAppNotificationSettings': true,
-        })
+        isMethodCall(
+          'requestPermissions',
+          arguments: <String, Object>{
+            'sound': true,
+            'badge': true,
+            'alert': true,
+            'provisional': true,
+            'critical': true,
+            'carPlay': false,
+            'providesAppNotificationSettings': true,
+          },
+        ),
       ]);
     });
 
     test('checkPermissions', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()!
+            IOSFlutterLocalNotificationsPlugin
+          >()!
           .checkPermissions();
       expect(log, <Matcher>[isMethodCall('checkPermissions', arguments: null)]);
     });
@@ -832,35 +919,36 @@ void main() {
     test('cancelAllPendingNotifications', () async {
       await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
       expect(log, <Matcher>[
-        isMethodCall('cancelAllPendingNotifications', arguments: null)
+        isMethodCall('cancelAllPendingNotifications', arguments: null),
       ]);
     });
 
     test('pendingNotificationRequests', () async {
       await flutterLocalNotificationsPlugin.pendingNotificationRequests();
       expect(log, <Matcher>[
-        isMethodCall('pendingNotificationRequests', arguments: null)
+        isMethodCall('pendingNotificationRequests', arguments: null),
       ]);
     });
 
     test('getActiveNotifications', () async {
       await flutterLocalNotificationsPlugin.getActiveNotifications();
-      expect(log,
-          <Matcher>[isMethodCall('getActiveNotifications', arguments: null)]);
+      expect(log, <Matcher>[
+        isMethodCall('getActiveNotifications', arguments: null),
+      ]);
     });
 
     test('getNotificationAppLaunchDetails', () async {
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
       expect(log, <Matcher>[
-        isMethodCall('getNotificationAppLaunchDetails', arguments: null)
+        isMethodCall('getNotificationAppLaunchDetails', arguments: null),
       ]);
     });
 
     test('initialize with providesAppNotificationSettings', () async {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings(
-        requestProvidesAppNotificationSettings: true,
-      );
+            requestProvidesAppNotificationSettings: true,
+          );
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
       await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -886,48 +974,60 @@ void main() {
       ]);
     });
 
-    test('iOS requestPermissions with providesAppNotificationSettings',
-        () async {
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()!
-          .requestPermissions(
+    test(
+      'iOS requestPermissions with providesAppNotificationSettings',
+      () async {
+        await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >()!
+            .requestPermissions(
               sound: true,
               alert: true,
               badge: true,
-              providesAppNotificationSettings: true);
-      expect(log, <Matcher>[
-        isMethodCall('requestPermissions', arguments: <String, Object>{
-          'sound': true,
-          'alert': true,
-          'badge': true,
-          'provisional': false,
-          'critical': false,
-          'carPlay': false,
-          'providesAppNotificationSettings': true
-        })
-      ]);
-    });
+              providesAppNotificationSettings: true,
+            );
+        expect(log, <Matcher>[
+          isMethodCall(
+            'requestPermissions',
+            arguments: <String, Object>{
+              'sound': true,
+              'alert': true,
+              'badge': true,
+              'provisional': false,
+              'critical': false,
+              'carPlay': false,
+              'providesAppNotificationSettings': true,
+            },
+          ),
+        ]);
+      },
+    );
 
     test('iOS requestPermissions with CarPlay enabled', () async {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()!
+            IOSFlutterLocalNotificationsPlugin
+          >()!
           .requestPermissions(
-              sound: true,
-              alert: true,
-              badge: true,
-              carPlay: true);
+            sound: true,
+            alert: true,
+            badge: true,
+            carPlay: true,
+          );
       expect(log, <Matcher>[
-        isMethodCall('requestPermissions', arguments: <String, Object>{
-          'sound': true,
-          'alert': true,
-          'badge': true,
-          'provisional': false,
-          'critical': false,
-          'carPlay': true,
-          'providesAppNotificationSettings': false
-        })
+        isMethodCall(
+          'requestPermissions',
+          arguments: <String, Object>{
+            'sound': true,
+            'alert': true,
+            'badge': true,
+            'provisional': false,
+            'critical': false,
+            'carPlay': true,
+            'providesAppNotificationSettings': false,
+          },
+        ),
       ]);
     });
   });

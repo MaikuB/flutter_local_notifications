@@ -10,11 +10,7 @@ enum WindowsInputType {
 /// A text or multiple choice input element in a Windows notification.
 sealed class WindowsInput {
   /// Creates an input field in a notification.
-  const WindowsInput({
-    required this.id,
-    required this.type,
-    this.title,
-  });
+  const WindowsInput({required this.id, required this.type, this.title});
 
   /// A unique ID for this input.
   ///
@@ -61,10 +57,7 @@ class WindowsSelectionInput extends WindowsInput {
 /// An option that can be selected by a [WindowsSelectionInput].
 class WindowsSelection {
   /// Creates a selectable choice.
-  const WindowsSelection({
-    required this.id,
-    required this.content,
-  });
+  const WindowsSelection({required this.id, required this.content});
 
   /// A unique ID for this item.
   final String id;

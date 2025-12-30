@@ -55,7 +55,7 @@ class DarwinInitializationSettings {
   /// Request permission to provide custom notification settings UI.
   ///
   /// When enabled on iOS, the system displays a
-  /// "Configure Notifications in <application name>" button in the
+  /// "Configure Notifications in \<application name\>" button in the
   /// notification's context menu (when swiping on a notification and
   /// selecting Options). This allows your app to present a custom UI
   /// for notification settings by handling the appropriate delegate

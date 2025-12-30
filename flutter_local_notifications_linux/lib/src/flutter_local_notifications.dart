@@ -11,14 +11,13 @@ class LinuxFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatformLinux {
   /// Constructs an instance of [LinuxNotificationDetails].
   LinuxFlutterLocalNotificationsPlugin()
-      : _manager = LinuxNotificationManager();
+    : _manager = LinuxNotificationManager();
 
   /// Constructs an instance of [LinuxNotificationDetails]
   /// with the give [manager].
   @visibleForTesting
-  LinuxFlutterLocalNotificationsPlugin.private(
-    LinuxNotificationManager manager,
-  ) : _manager = manager;
+  LinuxFlutterLocalNotificationsPlugin.private(LinuxNotificationManager manager)
+    : _manager = manager;
 
   /// Registers the Linux implementation.
   static void registerWith() {
@@ -42,19 +41,18 @@ class LinuxFlutterLocalNotificationsPlugin
   Future<bool?> initialize(
     LinuxInitializationSettings initializationSettings, {
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
-  }) =>
-      _manager.initialize(
-        initializationSettings,
-        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
-      );
+  }) => _manager.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+  );
 
   /// Show a notification with an optional payload that will be passed back to
   /// the app when a notification is tapped on.
   @override
-  Future<void> show(
-    int id,
+  Future<void> show({
+    required int id,
     String? title,
-    String? body, {
+    String? body,
     LinuxNotificationDetails? notificationDetails,
     String? payload,
   }) {
@@ -69,7 +67,7 @@ class LinuxFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> cancel(int id) {
+  Future<void> cancel({required int id}) {
     validateId(id);
     return _manager.cancel(id);
   }

@@ -26,7 +26,7 @@ class DarwinNotificationAttachment {
 
   /// The clipping rectangle for the thumbnail image.
   final DarwinNotificationAttachmentThumbnailClippingRect?
-      thumbnailClippingRect;
+  thumbnailClippingRect;
 }
 
 /// Represents the clipping rectangle used for the thumbnail image.

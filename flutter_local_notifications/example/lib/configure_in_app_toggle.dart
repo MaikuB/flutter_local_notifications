@@ -46,48 +46,52 @@ class _ConfigureInAppToggleState extends State<ConfigureInAppToggle> {
 
   @override
   Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            const Expanded(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(16, 16, 4, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "Show 'Configure in App' context menu option:",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      '''
+    decoration: BoxDecoration(
+      color: Colors.grey.shade100,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        const Expanded(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16, 16, 4, 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Show 'Configure in App' context menu option:",
+                  style: TextStyle(fontSize: 14),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  '''
 • To access: view a notification on the lock screen, swipe left, and tap 'Options'
 • Requests 'providesAppNotificationSettings' permission (iOS 12+)
 • Tap is handled by 'userNotificationCenter(_:openSettingsFor:)' delegate method (not provided by plugin)
 • Note: Once enabled, this declaration cannot be revoked''',
-                      style: TextStyle(fontSize: 12, color: Colors.black87),
-                    ),
-                  ],
+                  style: TextStyle(fontSize: 12, color: Colors.black87),
                 ),
-              ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: FutureBuilder<NotificationsEnabledOptions?>(
-                future: widget.flutterLocalNotificationsPlugin
-                    .resolvePlatformSpecificImplementation<
-                        IOSFlutterLocalNotificationsPlugin>()
-                    ?.checkPermissions(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<NotificationsEnabledOptions?> snapshot) {
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: FutureBuilder<NotificationsEnabledOptions?>(
+            future: widget.flutterLocalNotificationsPlugin
+                .resolvePlatformSpecificImplementation<
+                  IOSFlutterLocalNotificationsPlugin
+                >()
+                ?.checkPermissions(),
+            builder:
+                (
+                  BuildContext context,
+                  AsyncSnapshot<NotificationsEnabledOptions?> snapshot,
+                ) {
                   final bool enabled =
                       snapshot.data?.isProvidesAppNotificationSettingsEnabled ??
-                          false;
+                      false;
                   return Switch(
                     value: enabled,
                     onChanged: !Platform.isIOS || !_isIOS12OrHigher || enabled
@@ -96,7 +100,8 @@ class _ConfigureInAppToggleState extends State<ConfigureInAppToggle> {
                             final IOSFlutterLocalNotificationsPlugin? plugin =
                                 widget.flutterLocalNotificationsPlugin
                                     .resolvePlatformSpecificImplementation<
-                                        IOSFlutterLocalNotificationsPlugin>();
+                                      IOSFlutterLocalNotificationsPlugin
+                                    >();
                             if (plugin != null) {
                               await plugin.requestPermissions(
                                 alert: true,
@@ -109,9 +114,9 @@ class _ConfigureInAppToggleState extends State<ConfigureInAppToggle> {
                           },
                   );
                 },
-              ),
-            ),
-          ],
+          ),
         ),
-      );
+      ],
+    ),
+  );
 }

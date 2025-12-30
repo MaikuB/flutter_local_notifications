@@ -32,5 +32,5 @@ enum InterruptionLevel {
   /// https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/
   ///
   /// Corresponds to [`UNNotificationInterruptionLevel.critical`](https://developer.apple.com/documentation/usernotifications/unnotificationinterruptionlevel/critical).
-  critical
+  critical,
 }

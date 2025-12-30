@@ -16,10 +16,7 @@ class LinuxNotificationLocation {
 
   /// Creates a copy of this object,
   /// but with the given fields replaced with the new values.
-  LinuxNotificationLocation copyWith({
-    int? x,
-    int? y,
-  }) =>
+  LinuxNotificationLocation copyWith({int? x, int? y}) =>
       LinuxNotificationLocation(x ?? this.x, y ?? this.y);
 
   @override
