@@ -725,7 +725,7 @@ class IOSFlutterLocalNotificationsPlugin
     final Map<String, Object> arguments;
     if (initializationSettings is IOSInitializationSettings) {
       // Explicitly call iOS mapper extension
-      arguments = (initializationSettings as IOSInitializationSettings).toMap();
+      arguments = initializationSettings.toMap();
     } else {
       // Use Darwin mapper for DarwinInitializationSettings
       arguments = initializationSettings.toMap();
