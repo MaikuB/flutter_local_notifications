@@ -425,23 +425,24 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 
   // Configure the notification categories before requesting permissions
-  [self configureNotificationCategories:arguments
-                  withCompletionHandler:^{
-                    // Once notification categories are set up, the permissions
-                    // request will pick them up properly.
-                    [self requestPermissionsImpl:requestedSoundPermission
-                                        alertPermission:requestedAlertPermission
-                                        badgePermission:requestedBadgePermission
-                                  provisionalPermission:
-                                      requestedProvisionalPermission
-                                     criticalPermission:
-                                         requestedCriticalPermission
-                                      carPlayPermission:requestedCarPlayPermission
-                                 carPlayPermissionSpecified:carPlayPermissionSpecified
-                        providesAppNotificationSettings:
-                            requestedProvidesAppNotificationSettings
-                                                 result:result];
-                  }];
+  [self
+      configureNotificationCategories:arguments
+                withCompletionHandler:^{
+                  // Once notification categories are set up, the permissions
+                  // request will pick them up properly.
+                  [self requestPermissionsImpl:requestedSoundPermission
+                                      alertPermission:requestedAlertPermission
+                                      badgePermission:requestedBadgePermission
+                                provisionalPermission:
+                                    requestedProvisionalPermission
+                                   criticalPermission:
+                                       requestedCriticalPermission
+                                    carPlayPermission:requestedCarPlayPermission
+                           carPlayPermissionSpecified:carPlayPermissionSpecified
+                      providesAppNotificationSettings:
+                          requestedProvidesAppNotificationSettings
+                                               result:result];
+                }];
 
   _initialized = true;
 }
@@ -472,8 +473,7 @@ static FlutterError *getFlutterError(NSError *error) {
   }
   if ([self containsKey:CARPLAY_PERMISSION forDictionary:arguments]) {
     carPlayPermissionSpecified = true;
-    requestCarPlayPermission =
-        [arguments[CARPLAY_PERMISSION] boolValue];
+    requestCarPlayPermission = [arguments[CARPLAY_PERMISSION] boolValue];
   }
   if ([self containsKey:PROVIDES_APP_NOTIFICATION_SETTINGS
           forDictionary:arguments]) {
@@ -485,8 +485,8 @@ static FlutterError *getFlutterError(NSError *error) {
                       badgePermission:badgePermission
                 provisionalPermission:provisionalPermission
                    criticalPermission:criticalPermission
-                   carPlayPermission:requestCarPlayPermission
-              carPlayPermissionSpecified:carPlayPermissionSpecified
+                    carPlayPermission:requestCarPlayPermission
+           carPlayPermissionSpecified:carPlayPermissionSpecified
       providesAppNotificationSettings:providesAppNotificationSettings
                                result:result];
 }
@@ -496,8 +496,8 @@ static FlutterError *getFlutterError(NSError *error) {
                     badgePermission:(bool)badgePermission
               provisionalPermission:(bool)provisionalPermission
                  criticalPermission:(bool)criticalPermission
-                 carPlayPermission:(bool)carPlayPermission
-            carPlayPermissionSpecified:(bool)carPlayPermissionSpecified
+                  carPlayPermission:(bool)carPlayPermission
+         carPlayPermissionSpecified:(bool)carPlayPermissionSpecified
     providesAppNotificationSettings:(bool)providesAppNotificationSettings
                              result:(FlutterResult _Nonnull)result {
   if (!soundPermission && !alertPermission && !badgePermission &&
