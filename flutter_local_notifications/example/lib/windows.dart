@@ -382,7 +382,7 @@ Future<void> _showWindowsNotificationWithDynamic() async {
   Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
     if (timer.tick > 10) {
       timer.cancel();
-      await flutterLocalNotificationsPlugin.cancel(notificationId);
+      await flutterLocalNotificationsPlugin.cancel(id: notificationId);
       return;
     }
     await windows?.updateBindings(id: notificationId, bindings: getBindings());

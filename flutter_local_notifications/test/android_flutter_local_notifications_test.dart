@@ -52,7 +52,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       expect(log, <Matcher>[
         isMethodCall(
           'initialize',
@@ -66,7 +68,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       await flutterLocalNotificationsPlugin.show(
         id: 1,
         title: 'notification title',
@@ -244,7 +248,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
             'channelId',
@@ -340,7 +346,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
         final AndroidNotificationDetails androidNotificationDetails =
             AndroidNotificationDetails(
@@ -439,7 +445,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
         final int timestamp = clock.now().millisecondsSinceEpoch;
 
@@ -539,7 +545,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
         final int timestamp = clock.now().millisecondsSinceEpoch;
 
@@ -638,7 +644,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
             'channelId',
@@ -737,7 +745,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
         const AndroidNotificationDetails androidNotificationDetails =
             AndroidNotificationDetails(
@@ -838,7 +846,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
         const AndroidNotificationDetails androidNotificationDetails =
             AndroidNotificationDetails(
@@ -937,7 +945,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
         const AndroidNotificationDetails androidNotificationDetails =
             AndroidNotificationDetails(
@@ -1037,7 +1045,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
         const AndroidNotificationDetails androidNotificationDetails =
             AndroidNotificationDetails(
@@ -1143,7 +1151,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
             'channelId',
@@ -1257,7 +1267,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
             'channelId',
@@ -1364,7 +1376,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
         const AndroidNotificationDetails androidNotificationDetails =
             AndroidNotificationDetails(
@@ -1479,7 +1491,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
             'channelId',
@@ -1579,7 +1593,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
             'channelId',
@@ -1688,7 +1704,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
             'channelId',
@@ -1782,7 +1800,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
             'channelId',
@@ -1880,7 +1900,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       final AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
             'channelId',
@@ -1996,7 +2018,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       final AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
             'channelId',
@@ -2135,7 +2159,7 @@ void main() {
             const InitializationSettings initializationSettings =
                 InitializationSettings(android: androidInitializationSettings);
             await flutterLocalNotificationsPlugin.initialize(
-              initializationSettings,
+              settings: initializationSettings,
             );
 
             const AndroidNotificationDetails androidNotificationDetails =
@@ -2245,7 +2269,7 @@ void main() {
           const InitializationSettings initializationSettings =
               InitializationSettings(android: androidInitializationSettings);
           await flutterLocalNotificationsPlugin.initialize(
-            initializationSettings,
+            settings: initializationSettings,
           );
 
           const AndroidNotificationDetails androidNotificationDetails =
@@ -2286,7 +2310,7 @@ void main() {
             const InitializationSettings initializationSettings =
                 InitializationSettings(android: androidInitializationSettings);
             await flutterLocalNotificationsPlugin.initialize(
-              initializationSettings,
+              settings: initializationSettings,
             );
 
             const AndroidNotificationDetails androidNotificationDetails =
@@ -2392,7 +2416,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
         tz.initializeTimeZones();
         tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
@@ -2497,7 +2521,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
 
         tz.initializeTimeZones();
@@ -2605,7 +2629,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(android: androidInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
 
         tz.initializeTimeZones();
@@ -2846,14 +2870,14 @@ void main() {
           .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
           >()!
-          .deleteNotificationChannel('channelId');
+          .deleteNotificationChannel(channelId: 'channelId');
       expect(log, <Matcher>[
         isMethodCall('deleteNotificationChannel', arguments: 'channelId'),
       ]);
     });
 
     test('cancel', () async {
-      await flutterLocalNotificationsPlugin.cancel(1);
+      await flutterLocalNotificationsPlugin.cancel(id: 1);
       expect(log, <Matcher>[
         isMethodCall(
           'cancel',
@@ -2863,7 +2887,7 @@ void main() {
     });
 
     test('cancel with tag', () async {
-      await flutterLocalNotificationsPlugin.cancel(1, tag: 'tag');
+      await flutterLocalNotificationsPlugin.cancel(id: 1, tag: 'tag');
       expect(log, <Matcher>[
         isMethodCall(
           'cancel',
@@ -2910,7 +2934,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
@@ -2965,7 +2991,9 @@ void main() {
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
           InitializationSettings(android: androidInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       const AndroidNotificationDetails androidPlatformChannelSpecifics =
           AndroidNotificationDetails(
             'channelId',

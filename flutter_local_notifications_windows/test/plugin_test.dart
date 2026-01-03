@@ -23,7 +23,7 @@ void main() => group('Plugin', () {
   test('initializes safely', () async {
     final FlutterLocalNotificationsWindows plugin =
         FlutterLocalNotificationsWindows();
-    final bool result = await plugin.initialize(goodSettings);
+    final bool result = await plugin.initialize(settings: goodSettings);
     expect(result, isTrue);
     plugin.dispose();
   });
@@ -31,7 +31,7 @@ void main() => group('Plugin', () {
   test('catches bad GUIDs', () async {
     final FlutterLocalNotificationsWindows plugin =
         FlutterLocalNotificationsWindows();
-    expect(plugin.initialize(badSettings), throwsArgumentError);
+    expect(plugin.initialize(settings: badSettings), throwsArgumentError);
     plugin.dispose();
   });
 
@@ -81,7 +81,7 @@ void main() => group('Plugin', () {
       value: 0,
     );
     final TZDateTime now = TZDateTime.local(2024, 7, 18);
-    await plugin.initialize(goodSettings);
+    await plugin.initialize(settings: goodSettings);
     plugin.dispose();
     expect(plugin.cancel(id: 0), throwsStateError);
     expect(plugin.cancelAll(), throwsStateError);
@@ -114,7 +114,7 @@ void main() => group('Plugin', () {
   test('does not support repeating notifications', () async {
     final FlutterLocalNotificationsWindows plugin =
         FlutterLocalNotificationsWindows();
-    await plugin.initialize(goodSettings);
+    await plugin.initialize(settings: goodSettings);
     expect(
       plugin.periodicallyShow(
         id: 0,

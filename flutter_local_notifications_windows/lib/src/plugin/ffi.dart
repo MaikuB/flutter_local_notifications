@@ -60,9 +60,9 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   DidReceiveNotificationResponseCallback? userCallback;
 
   @override
-  Future<bool> initialize(
-    WindowsInitializationSettings settings, {
-    DidReceiveNotificationResponseCallback? onNotificationReceived,
+  Future<bool> initialize({
+    required WindowsInitializationSettings settings,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) async => using((Arena arena) {
     if (_isReady) {
       return true;
@@ -78,7 +78,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
       );
     }
     instance = this;
-    userCallback = onNotificationReceived;
+    userCallback = onDidReceiveNotificationResponse;
     final Pointer<Utf8> appName = settings.appName.toNativeUtf8(
       allocator: arena,
     );
@@ -338,11 +338,11 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   });
 
   @override
-  Future<void> zonedScheduleRawXml(
-    int id,
-    String xml,
-    TZDateTime scheduledDate,
-  ) async => using((Arena arena) {
+  Future<void> zonedScheduleRawXml({
+    required int id,
+    required String xml,
+    required TZDateTime scheduledDate,
+  }) async => using((Arena arena) {
     if (!_isReady) {
       throw StateError(
         'Flutter Local Notifications must be initialized before use',

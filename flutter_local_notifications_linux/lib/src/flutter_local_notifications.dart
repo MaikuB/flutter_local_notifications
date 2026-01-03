@@ -38,11 +38,11 @@ class LinuxFlutterLocalNotificationsPlugin
   /// [onSelectNotificationAction] specifies a callback handler which receives
   /// notification action IDs.
   @override
-  Future<bool?> initialize(
-    LinuxInitializationSettings initializationSettings, {
+  Future<bool?> initialize({
+    required LinuxInitializationSettings settings,
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) => _manager.initialize(
-    initializationSettings,
+    settings,
     onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
   );
 

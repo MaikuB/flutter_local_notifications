@@ -27,7 +27,7 @@ extension PluginUtils on FlutterLocalNotificationsWindows {
 void main() => group('Details:', () {
   final FlutterLocalNotificationsWindows plugin =
       FlutterLocalNotificationsWindows();
-  setUpAll(() => plugin.initialize(settings));
+  setUpAll(() => plugin.initialize(settings: settings));
   tearDownAll(() async {
     await plugin.cancelAll();
     plugin.dispose();
