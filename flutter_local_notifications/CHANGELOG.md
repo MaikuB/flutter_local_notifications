@@ -1,6 +1,6 @@
 ## [20.0.0-dev.3]
 
-* **Breaking changes** the positional parameters in the following methods have now been converted to named parameters across all platforms
+* **Breaking changes** the positional parameters in the following methods have now been converted to named parameters across all platforms. Thanks to the PR started by [Kwon Tae Hyung](https://github.com/TaeBbong)
   * `initialize()`
   * `show()`
   * `periodicallyShow()`
