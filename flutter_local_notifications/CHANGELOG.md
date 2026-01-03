@@ -1,3 +1,25 @@
+## [20.0.0-dev.3]
+
+* **Breaking changes** the positional parameters in the following methods have now been converted to named parameters across all platforms
+  * `initialize()`
+  * `show()`
+  * `periodicallyShow()`
+  * `periodicallyShowWithDuration()`
+  * `cancel()`
+  * `zonedSchedule()`
+* [Android] **Breaking changes** the positional parameters in the following methods have now been converted to named parameters
+  * `startForegroundService()`
+  * `deleteNotificationChannelGroup()`
+  * `deleteNotificationChannel()`
+  * `getActiveNotificationMessagingStyle()`
+* [Linux] **Breaking changes** the positional parameters in the `LinuxNotificationCustomHint()` method have now been converted to named parameters
+* [Windows] * **Breaking changes** the positional parameters in the following methods have now been converted to named parameters
+  * `showRawXml()`
+  * `zonedScheduleRawXml()`
+* [Windows] **Breaking changes** to align with the main the plugin, the following parameters have been renamed
+  * the `details` parameter in the `show()` and `zonedSchedule()` methods has been renamed to `notificationDetails`
+  * the `onNotificationReceived` in the `initialize()` method has been renamed to `onDidReceiveNotificationResponse`
+
 ## [20.0.0-dev.2]
 
 * [Android] updated Java compatibility version to 17

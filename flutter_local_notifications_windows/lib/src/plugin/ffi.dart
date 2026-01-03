@@ -10,7 +10,9 @@ import '../ffi/utils.dart';
 import 'base.dart';
 
 void _globalLaunchCallback(NativeLaunchDetails details) {
-  FlutterLocalNotificationsWindows.instance?._onNotificationReceived(details);
+  FlutterLocalNotificationsWindows.instance?._onDidReceiveNotificationResponse(
+    details,
+  );
 }
 
 extension on String {
@@ -114,7 +116,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     _isReady = false;
   }
 
-  void _onNotificationReceived(NativeLaunchDetails details) {
+  void _onDidReceiveNotificationResponse(NativeLaunchDetails details) {
     if (!_isReady) {
       return;
     } else if (_details != null) {
