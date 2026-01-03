@@ -1,3 +1,18 @@
+## [2.0.0-dev.3]
+
+* **Breaking changes** the positional parameters in the following methods have now been converted to named parameters
+  * `initialize()`
+  * `show()`
+  * `showRawXml()`
+  * `periodicallyShow()`
+  * `periodicallyShowWithDuration()`
+  * `cancel()`
+  * `zonedSchedule()`
+  * `zonedScheduleRawXml()`
+* **Breaking changes** to align with the main the plugin, the following parameters have been renamed
+  * the `details` parameter in the `show()` and `zonedSchedule()` methods has been renamed to `notificationDetails`
+  * the `onNotificationReceived` in the `initialize()` method has been renamed to `onDidReceiveNotificationResponse`
+
 ## [2.0.0-dev.2]
 
 * Bumped `ffigen` and regenerated bindings. Credits to [Levi Lesches](https://github.com/Levi-Lesches) who originally looked at this before the plugin had its minimum Flutter version bumped
