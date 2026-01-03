@@ -13,7 +13,7 @@ void main() => group('Schedules', () {
   final FlutterLocalNotificationsWindows plugin =
       FlutterLocalNotificationsWindows();
   setUpAll(initializeTimeZones);
-  setUpAll(() => plugin.initialize(settings));
+  setUpAll(() => plugin.initialize(settings: settings));
   tearDownAll(() async {
     await plugin.cancelAll();
     plugin.dispose();

@@ -30,7 +30,7 @@ void main() {
     });
     testWidgets('can initialise', (WidgetTester tester) async {
       final bool? initialised = await flutterLocalNotificationsPlugin
-          .initialize(initializationSettings);
+          .initialize(settings: initializationSettings);
       expect(initialised, isTrue);
     });
 
@@ -60,7 +60,7 @@ void main() {
         }
         expect(
           () async => await flutterLocalNotificationsPlugin.initialize(
-            initializationSettings,
+            settings: initializationSettings,
           ),
           throwsA(
             isArgumentError.having(
@@ -76,7 +76,9 @@ void main() {
   group('resolvePlatformSpecificImplementation()', () {
     setUpAll(() async {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
     });
 
     if (Platform.isIOS) {

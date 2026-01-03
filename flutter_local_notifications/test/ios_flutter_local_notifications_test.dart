@@ -45,7 +45,9 @@ void main() {
           IOSInitializationSettings();
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       expect(log, <Matcher>[
         isMethodCall(
           'initialize',
@@ -109,7 +111,9 @@ void main() {
           );
       final InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       expect(log, <Matcher>[
         isMethodCall(
           'initialize',
@@ -190,7 +194,9 @@ void main() {
           );
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       expect(log, <Matcher>[
         isMethodCall(
           'initialize',
@@ -218,7 +224,9 @@ void main() {
           IOSInitializationSettings(requestCarPlayPermission: true);
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       expect(log, <Matcher>[
         isMethodCall(
           'initialize',
@@ -249,7 +257,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(iOS: darwinInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
         expect(log, <Matcher>[
           isMethodCall(
@@ -301,7 +309,9 @@ void main() {
           IOSInitializationSettings();
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       await flutterLocalNotificationsPlugin.show(
         id: 1,
         title: 'notification title',
@@ -327,7 +337,9 @@ void main() {
           IOSInitializationSettings();
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       const NotificationDetails notificationDetails = NotificationDetails(
         iOS: DarwinNotificationDetails(
           presentAlert: true,
@@ -402,7 +414,7 @@ void main() {
             const InitializationSettings initializationSettings =
                 InitializationSettings(iOS: iosInitializationSettings);
             await flutterLocalNotificationsPlugin.initialize(
-              initializationSettings,
+              settings: initializationSettings,
             );
 
             const NotificationDetails notificationDetails = NotificationDetails(
@@ -484,7 +496,7 @@ void main() {
           const InitializationSettings initializationSettings =
               InitializationSettings(iOS: iosInitializationSettings);
           await flutterLocalNotificationsPlugin.initialize(
-            initializationSettings,
+            settings: initializationSettings,
           );
 
           const NotificationDetails notificationDetails = NotificationDetails(
@@ -533,7 +545,7 @@ void main() {
             const InitializationSettings initializationSettings =
                 InitializationSettings(iOS: iosInitializationSettings);
             await flutterLocalNotificationsPlugin.initialize(
-              initializationSettings,
+              settings: initializationSettings,
             );
 
             const NotificationDetails notificationDetails = NotificationDetails(
@@ -611,7 +623,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(iOS: iosInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
         tz.initializeTimeZones();
         tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
@@ -690,7 +702,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(iOS: iosInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
         tz.initializeTimeZones();
         tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
@@ -771,7 +783,7 @@ void main() {
         const InitializationSettings initializationSettings =
             InitializationSettings(iOS: iosInitializationSettings);
         await flutterLocalNotificationsPlugin.initialize(
-          initializationSettings,
+          settings: initializationSettings,
         );
         tz.initializeTimeZones();
         tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
@@ -907,7 +919,7 @@ void main() {
     });
 
     test('cancel', () async {
-      await flutterLocalNotificationsPlugin.cancel(1);
+      await flutterLocalNotificationsPlugin.cancel(id: 1);
       expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);
     });
 
@@ -951,7 +963,9 @@ void main() {
           );
       const InitializationSettings initializationSettings =
           InitializationSettings(iOS: iosInitializationSettings);
-      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
       expect(log, <Matcher>[
         isMethodCall(
           'initialize',
