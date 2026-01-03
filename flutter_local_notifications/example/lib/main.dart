@@ -163,7 +163,7 @@ Future<void> main() async {
   );
 
   await flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
+    settings: initializationSettings,
     onDidReceiveNotificationResponse: selectNotificationStream.add,
     onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
   );
@@ -1459,11 +1459,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _cancelNotification() async {
-    await flutterLocalNotificationsPlugin.cancel(--id);
+    await flutterLocalNotificationsPlugin.cancel(id: --id);
   }
 
   Future<void> _cancelNotificationWithTag() async {
-    await flutterLocalNotificationsPlugin.cancel(--id, tag: 'tag');
+    await flutterLocalNotificationsPlugin.cancel(id: --id, tag: 'tag');
   }
 
   Future<void> _showNotificationCustomSound() async {
@@ -2690,7 +2690,7 @@ class _HomePageState extends State<HomePage> {
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
         >()
-        ?.deleteNotificationChannelGroup(channelGroupId);
+        ?.deleteNotificationChannelGroup(groupId: channelGroupId);
 
     await showDialog<void>(
       context: context,
@@ -2931,7 +2931,7 @@ class _HomePageState extends State<HomePage> {
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
         >()
-        ?.deleteNotificationChannel(channelId);
+        ?.deleteNotificationChannel(channelId: channelId);
 
     await showDialog<void>(
       context: context,
@@ -3055,7 +3055,7 @@ class _HomePageState extends State<HomePage> {
               .resolvePlatformSpecificImplementation<
                 AndroidFlutterLocalNotificationsPlugin
               >()!
-              .getActiveNotificationMessagingStyle(id, tag: tag);
+              .getActiveNotificationMessagingStyle(id: id, tag: tag);
       if (messagingStyle == null) {
         dialogContent = const Text('No messaging style');
       } else {

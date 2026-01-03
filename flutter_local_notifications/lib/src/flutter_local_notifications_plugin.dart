@@ -112,8 +112,8 @@ class FlutterLocalNotificationsPlugin {
   /// [onDidReceiveBackgroundNotificationResponse]
   /// callback need to be annotated with the `@pragma('vm:entry-point')`
   /// annotation to ensure they are not stripped out by the Dart compiler.
-  Future<bool?> initialize(
-    InitializationSettings initializationSettings, {
+  Future<bool?> initialize({
+    required InitializationSettings settings,
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
     DidReceiveBackgroundNotificationResponseCallback?
     onDidReceiveBackgroundNotificationResponse,
@@ -123,7 +123,7 @@ class FlutterLocalNotificationsPlugin {
     }
 
     if (defaultTargetPlatform == TargetPlatform.android) {
-      if (initializationSettings.android == null) {
+      if (settings.android == null) {
         throw ArgumentError(
           'Android settings must be set when targeting Android platform.',
         );
@@ -133,13 +133,13 @@ class FlutterLocalNotificationsPlugin {
             AndroidFlutterLocalNotificationsPlugin
           >()
           ?.initialize(
-            initializationSettings.android!,
+            settings: settings.android!,
             onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
             onDidReceiveBackgroundNotificationResponse:
                 onDidReceiveBackgroundNotificationResponse,
           );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      if (initializationSettings.iOS == null) {
+      if (settings.iOS == null) {
         throw ArgumentError(
           'iOS settings must be set when targeting iOS platform.',
         );
@@ -149,13 +149,13 @@ class FlutterLocalNotificationsPlugin {
             IOSFlutterLocalNotificationsPlugin
           >()
           ?.initialize(
-            initializationSettings.iOS!,
+            settings: settings.iOS!,
             onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
             onDidReceiveBackgroundNotificationResponse:
                 onDidReceiveBackgroundNotificationResponse,
           );
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
-      if (initializationSettings.macOS == null) {
+      if (settings.macOS == null) {
         throw ArgumentError(
           'macOS settings must be set when targeting macOS platform.',
         );
@@ -165,11 +165,11 @@ class FlutterLocalNotificationsPlugin {
             MacOSFlutterLocalNotificationsPlugin
           >()
           ?.initialize(
-            initializationSettings.macOS!,
+            settings: settings.macOS!,
             onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
           );
     } else if (defaultTargetPlatform == TargetPlatform.linux) {
-      if (initializationSettings.linux == null) {
+      if (settings.linux == null) {
         throw ArgumentError(
           'Linux settings must be set when targeting Linux platform.',
         );
@@ -179,11 +179,11 @@ class FlutterLocalNotificationsPlugin {
             LinuxFlutterLocalNotificationsPlugin
           >()
           ?.initialize(
-            initializationSettings.linux!,
+            settings: settings.linux!,
             onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
           );
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
-      if (initializationSettings.windows == null) {
+      if (settings.windows == null) {
         throw ArgumentError(
           'Windows settings must be set when targeting Windows platform.',
         );
@@ -193,8 +193,8 @@ class FlutterLocalNotificationsPlugin {
             FlutterLocalNotificationsWindows
           >()
           ?.initialize(
-            initializationSettings.windows!,
-            onNotificationReceived: onDidReceiveNotificationResponse,
+            settings: settings.windows!,
+            onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
           );
     }
     return true;
@@ -329,7 +329,7 @@ class FlutterLocalNotificationsPlugin {
   /// The `tag` parameter specifies the Android tag. If it is provided,
   /// then the notification that matches both the id and the tag will
   /// be canceled. `tag` has no effect on other platforms.
-  Future<void> cancel(int id, {String? tag}) async {
+  Future<void> cancel({required int id, String? tag}) async {
     if (kIsWeb) {
       return;
     }
@@ -423,11 +423,11 @@ class FlutterLocalNotificationsPlugin {
             IOSFlutterLocalNotificationsPlugin
           >()
           ?.zonedSchedule(
-            id,
-            title,
-            body,
-            scheduledDate,
-            notificationDetails.iOS,
+            id: id,
+            title: title,
+            body: body,
+            scheduledDate: scheduledDate,
+            notificationDetails: notificationDetails.iOS,
             payload: payload,
             matchDateTimeComponents: matchDateTimeComponents,
           );

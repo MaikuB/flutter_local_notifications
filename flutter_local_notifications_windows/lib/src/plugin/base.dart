@@ -11,9 +11,9 @@ export 'package:timezone/timezone.dart';
 abstract class WindowsNotificationsBase
     extends FlutterLocalNotificationsPlatform {
   /// Initializes the plugin. No other method should be called before this.
-  Future<bool> initialize(
-    WindowsInitializationSettings settings, {
-    DidReceiveNotificationResponseCallback? onNotificationReceived,
+  Future<bool> initialize({
+    required WindowsInitializationSettings settings,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   });
 
   /// Releases any resources used by this plugin.
@@ -51,11 +51,11 @@ abstract class WindowsNotificationsBase
   ///
   /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
   /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
-  Future<void> zonedScheduleRawXml(
-    int id,
-    String xml,
-    TZDateTime scheduledDate,
-  );
+  Future<void> zonedScheduleRawXml({
+    required int id,
+    required String xml,
+    required TZDateTime scheduledDate,
+  });
 
   /// Updates the progress bar in the notification with the given ID.
   ///

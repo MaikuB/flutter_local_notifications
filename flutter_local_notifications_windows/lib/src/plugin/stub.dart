@@ -4,9 +4,9 @@ import 'base.dart';
 /// The Windows implementation of `package:flutter_local_notifications`.
 class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   @override
-  Future<bool> initialize(
-    WindowsInitializationSettings settings, {
-    DidReceiveNotificationResponseCallback? onNotificationReceived,
+  Future<bool> initialize({
+    required WindowsInitializationSettings settings,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) async {
     throw UnsupportedError(
       'This platform does not support Windows notifications',
@@ -77,12 +77,11 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   }) async {}
 
   @override
-  Future<void> zonedScheduleRawXml(
-    int id,
-    String xml,
-    TZDateTime scheduledDate,
-  ) async {}
-
+  Future<void> zonedScheduleRawXml({
+    required int id,
+    required String xml,
+    required TZDateTime scheduledDate,
+  }) async {}
   @override
   Future<NotificationUpdateResult> updateBindings({
     required int id,
