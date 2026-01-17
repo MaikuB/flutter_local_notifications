@@ -1,3 +1,7 @@
+## [20.0.0-dev.4]
+
+* [Android] fixed issue [#2745](https://github.com/MaikuB/flutter_local_notifications/issues/2745) to export the `AndroidIcon` abstract class 
+
 ## [20.0.0-dev.3]
 
 * **Breaking changes** the positional parameters in the following methods have now been converted to named parameters across all platforms. Thanks to the PR started by [Kwon Tae Hyung](https://github.com/TaeBbong)
