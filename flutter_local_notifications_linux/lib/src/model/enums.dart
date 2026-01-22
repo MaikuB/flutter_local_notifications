@@ -94,7 +94,7 @@ enum LinuxNotificationUrgency {
   normal,
 
   /// Critical urgency. Used for very important notifications.
-  critical
+  critical,
 }
 
 /// Specifies the Linux notification icon type.

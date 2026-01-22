@@ -1,6 +1,5 @@
 import 'package:timezone/timezone.dart';
 
-// ignore_for_file: public_member_api_docs
 extension TZDateTimeMapper on TZDateTime {
   Map<String, Object> toMap() {
     String twoDigits(int n) {
@@ -10,8 +9,9 @@ extension TZDateTimeMapper on TZDateTime {
       return '0$n';
     }
 
-    final String offsetMinutesComponent =
-        twoDigits(timeZoneOffset.inMinutes.remainder(60));
+    final String offsetMinutesComponent = twoDigits(
+      timeZoneOffset.inMinutes.remainder(60),
+    );
     final int offsetHoursComponent =
         (timeZoneOffset.inMicroseconds ~/ Duration.microsecondsPerHour).abs();
     final String iso8601OffsetComponent =

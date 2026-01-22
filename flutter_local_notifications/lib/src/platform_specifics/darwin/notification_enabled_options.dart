@@ -39,7 +39,7 @@ class NotificationsEnabledOptions {
   /// Whether the app has requested providesAppNotificationSettings permission.
   ///
   /// On iOS, when true, the system displays a
-  /// "Configure Notifications in <application name>" button in the
+  /// "Configure Notifications in \<application name\>" button in the
   /// notification's context menu.
   ///
   /// On macOS, the permission can be requested and this value reports

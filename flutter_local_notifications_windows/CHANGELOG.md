@@ -1,3 +1,27 @@
+## [2.0.0-dev.3]
+
+* **Breaking changes** the positional parameters in the following methods have now been converted to named parameters
+  * `initialize()`
+  * `show()`
+  * `showRawXml()`
+  * `periodicallyShow()`
+  * `periodicallyShowWithDuration()`
+  * `cancel()`
+  * `zonedSchedule()`
+  * `zonedScheduleRawXml()`
+* **Breaking changes** to align with the main the plugin, the following parameters have been renamed
+  * the `details` parameter in the `show()` and `zonedSchedule()` methods has been renamed to `notificationDetails`
+  * the `onNotificationReceived` in the `initialize()` method has been renamed to `onDidReceiveNotificationResponse`
+
+## [2.0.0-dev.2]
+
+* Bumped `ffigen` and regenerated bindings. Credits to [Levi Lesches](https://github.com/Levi-Lesches) who originally looked at this before the plugin had its minimum Flutter version bumped
+
+## [2.0.0-dev.1]
+
+* **Breaking change** removed the `details` parameter from the `zonedScheduleRawXml()` method as it was not actually used. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches)
+* Added `flutter_lints` to apply linter rules
+
 ## [1.0.3]
 
 * Fixed issue where non-ASCII characters for the notification [application name](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsInitializationSettings/appName.html) weren't being displayed properly. Thanks to the PR from [yoyoIU](https://github.com/yoyo930021)

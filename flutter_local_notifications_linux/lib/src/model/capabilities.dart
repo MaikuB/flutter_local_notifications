@@ -129,23 +129,23 @@ class LinuxServerCapabilities {
     bool? sound,
     bool? actions,
     bool? actionIcons,
-  }) =>
-      LinuxServerCapabilities(
-        otherCapabilities: otherCapabilities ?? this.otherCapabilities,
-        body: body ?? this.body,
-        bodyHyperlinks: bodyHyperlinks ?? this.bodyHyperlinks,
-        bodyImages: bodyImages ?? this.bodyImages,
-        bodyMarkup: bodyMarkup ?? this.bodyMarkup,
-        iconMulti: iconMulti ?? this.iconMulti,
-        iconStatic: iconStatic ?? this.iconStatic,
-        persistence: persistence ?? this.persistence,
-        sound: sound ?? this.sound,
-        actions: actions ?? this.actions,
-        actionIcons: actionIcons ?? this.actionIcons,
-      );
+  }) => LinuxServerCapabilities(
+    otherCapabilities: otherCapabilities ?? this.otherCapabilities,
+    body: body ?? this.body,
+    bodyHyperlinks: bodyHyperlinks ?? this.bodyHyperlinks,
+    bodyImages: bodyImages ?? this.bodyImages,
+    bodyMarkup: bodyMarkup ?? this.bodyMarkup,
+    iconMulti: iconMulti ?? this.iconMulti,
+    iconStatic: iconStatic ?? this.iconStatic,
+    persistence: persistence ?? this.persistence,
+    sound: sound ?? this.sound,
+    actions: actions ?? this.actions,
+    actionIcons: actionIcons ?? this.actionIcons,
+  );
 
   @override
-  String toString() => 'LinuxServerCapabilities(otherCapabilities: '
+  String toString() =>
+      'LinuxServerCapabilities(otherCapabilities: '
       '$otherCapabilities, body: $body, bodyHyperlinks: $bodyHyperlinks, '
       'bodyImages: $bodyImages, bodyMarkup: $bodyMarkup, '
       'iconMulti: $iconMulti, iconStatic: $iconStatic, '

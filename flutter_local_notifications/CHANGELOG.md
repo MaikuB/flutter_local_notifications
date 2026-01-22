@@ -1,3 +1,36 @@
+## [20.0.0-dev.3]
+
+* **Breaking changes** the positional parameters in the following methods have now been converted to named parameters across all platforms
+  * `initialize()`
+  * `show()`
+  * `periodicallyShow()`
+  * `periodicallyShowWithDuration()`
+  * `cancel()`
+  * `zonedSchedule()`
+* [Android] **Breaking changes** the positional parameters in the following methods have now been converted to named parameters
+  * `startForegroundService()`
+  * `deleteNotificationChannelGroup()`
+  * `deleteNotificationChannel()`
+  * `getActiveNotificationMessagingStyle()`
+* [Linux] **Breaking changes** the positional parameters in the `LinuxNotificationCustomHint()` method have now been converted to named parameters
+* [Windows] * **Breaking changes** the positional parameters in the following methods have now been converted to named parameters
+  * `showRawXml()`
+  * `zonedScheduleRawXml()`
+* [Windows] **Breaking changes** to align with the main the plugin, the following parameters have been renamed
+  * the `details` parameter in the `show()` and `zonedSchedule()` methods has been renamed to `notificationDetails`
+  * the `onNotificationReceived` in the `initialize()` method has been renamed to `onDidReceiveNotificationResponse`
+
+## [20.0.0-dev.2]
+
+* [Android] updated Java compatibility version to 17
+
+## [20.0.0-dev.1]
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.32.0 and Dart SDK requirement to 3.8.0
+* [Windows] **Breaking change** removed the `details` parameter from the `zonedScheduleRawXml()` method as it was not actually used. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches)
+* Updated readme with information for developers that plan to move to use the UIScene lifecycle
+* Added `flutter_lints` to apply linter rules
+
 ## [19.5.0]
 
 * [iOS][macOS] added `requestProvidesAppNotificationSettings` option to `DarwinInitializationSettings` class, and `isProvidesAppNotificationSettingsEnabled` to `NotificationsEnabledOptions` class. This allows applications to show a "Configure Notifications in <app name>" option when showing the context menu for an individual notification. This can be used for scenarios where an application can respond to the user selecting this option to show a custom page for controlling notification settings. Please note this whilst the API changes are applicable for iOS and macOS, the actual functionality only appears to be supported by Apple when it comes to iOS devices. See example app to see how this new functionality can be implemented. Thanks to the PR from [Luke Memet](https://github.com/lukemmtt)

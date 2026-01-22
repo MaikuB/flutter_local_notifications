@@ -10,10 +10,10 @@ class Message {
     this.dataMimeType,
     this.dataUri,
   }) : assert(
-          (dataMimeType == null && dataUri == null) ||
-              (dataMimeType != null && dataUri != null),
-          'Must provide both dataMimeType and dataUri together or not at all.',
-        );
+         (dataMimeType == null && dataUri == null) ||
+             (dataMimeType != null && dataUri != null),
+         'Must provide both dataMimeType and dataUri together or not at all.',
+       );
 
   /// The message text
   final String text;

@@ -211,13 +211,13 @@ android {
     compileOptions {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
-        // Sets Java compatibility to Java 11
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        // Sets Java compatibility to Java 17
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 }
 
@@ -239,13 +239,13 @@ android {
     compileOptions {
         // Flag to enable support for the new language APIs
         isCoreLibraryDesugaringEnabled = true
-        // Sets Java compatibility to Java 11
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        // Sets Java compatibility to Java 17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
   
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 }
 
@@ -469,6 +469,9 @@ if #available(iOS 10.0, *) {
 }
 ```
 
+> [!NOTE]
+> Apple have made an announcement [here](https://developer.apple.com/documentation/technotes/tn3187-migrating-to-the-uikit-scene-based-life-cycle) that after iOS 26, the next major release will enforce new requirements for applications. The migration instructions from the Flutter team can be found to meet these requirements can be found [here](https://docs.flutter.dev/release/breaking-changes/uiscenedelegate). If your application will follow these instructions to use the UIScene lifecycle, then ensure you follow their instructions that involves moving logic like the above to the appropriate method (i.e. `didInitializeImplicitFlutterEngine`)
+
 ### Handling notifications whilst the app is in the foreground
 
 By design, iOS applications *do not* display notifications while the app is in the foreground unless configured to do so.
@@ -541,6 +544,9 @@ override func application(
 }
 ```
 
+> [!NOTE]
+> Apple have made an announcement [here](https://developer.apple.com/documentation/technotes/tn3187-migrating-to-the-uikit-scene-based-life-cycle) that after iOS 26, the next major release will enforce new requirements for applications. The migration instructions from the Flutter team can be found to meet these requirements can be found [here](https://docs.flutter.dev/release/breaking-changes/uiscenedelegate). If your application will follow these instructions to use the UIScene lifecycle, then ensure you follow their instructions that involves moving logic like the above to the appropriate method (i.e. `didInitializeImplicitFlutterEngine`)
+
 On iOS/macOS, notification actions need to be configured before the app is started using the `initialize` method
 
 ``` dart
@@ -590,7 +596,7 @@ Specify this function as a parameter in the `initialize` method of this plugin:
 
 ``` dart
 await flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
+    settings: initializationSettings,
     onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
         // ...
     },
@@ -626,7 +632,7 @@ Future<void> _showNotificationWithActions() async {
   const NotificationDetails notificationDetails =
       NotificationDetails(android: androidNotificationDetails);
   await flutterLocalNotificationsPlugin.show(
-      0, '...', '...', notificationDetails);
+      id: 0, title: '...', body: '...', notificationDetails);
 }
 ```
 
@@ -667,7 +673,7 @@ final InitializationSettings initializationSettings = InitializationSettings(
     macOS: initializationSettingsDarwin,
     linux: initializationSettingsLinux,
     windows: initializationSettingsWindows);
-await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+await flutterLocalNotificationsPlugin.initialize(settings: initializationSettings,
     onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
 ```
 
@@ -780,7 +786,7 @@ The constructor for the `DarwinInitializationSettings` class  has three named pa
       iOS: initializationSettingsDarwin,
       macOS: initializationSettingsDarwin,
       linux: initializationSettingsLinux);
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+  await flutterLocalNotificationsPlugin.initialize(settings: initializationSettings,
       onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
 ```
 
@@ -866,9 +872,9 @@ Assuming the local location has been set, the `zonedSchedule` method can then be
 ```dart
 await flutterLocalNotificationsPlugin.zonedSchedule(
     0,
-    'scheduled title',
-    'scheduled body',
-    tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+    title: 'scheduled title',
+    body: 'scheduled body',
+    scheduledDate: tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
     const NotificationDetails(
         android: AndroidNotificationDetails(
             'your channel id', 'your channel name',
@@ -887,15 +893,23 @@ If you are trying to update your code so it doesn't use the deprecated methods f
 **Note** This is not supported on Windows
 
 ```dart
-const AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails(
-        'repeating channel id', 'repeating channel name',
-        channelDescription: 'repeating description');
-const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
-    'repeating body', RepeatInterval.everyMinute, notificationDetails,
-    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle);
+  const AndroidNotificationDetails androidNotificationDetails =
+      AndroidNotificationDetails(
+        'repeating channel id',
+        'repeating channel name',
+        channelDescription: 'repeating description',
+      );
+  const NotificationDetails notificationDetails = NotificationDetails(
+    android: androidNotificationDetails,
+  );
+  await flutterLocalNotificationsPlugin.periodicallyShow(
+    id: id++,
+    title: 'repeating title',
+    body: 'repeating body',
+    repeatInterval: RepeatInterval.everyMinute,
+    notificationDetails: notificationDetails,
+    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+  );
 ```
 
 ### Retrieving pending notification requests
@@ -935,58 +949,78 @@ const DarwinNotificationDetails iOSPlatformChannelSpecifics =
 This is a "translation" of the sample available at https://developer.android.com/training/notify-user/group.html
 
 ```dart
-const String groupKey = 'com.android.example.WORK_EMAIL';
-const String groupChannelId = 'grouped channel id';
-const String groupChannelName = 'grouped channel name';
-const String groupChannelDescription = 'grouped channel description';
-// example based on https://developer.android.com/training/notify-user/group.html
-const AndroidNotificationDetails firstNotificationAndroidSpecifics =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        importance: Importance.max,
-        priority: Priority.high,
-        groupKey: groupKey);
-const NotificationDetails firstNotificationPlatformSpecifics =
-    NotificationDetails(android: firstNotificationAndroidSpecifics);
-await flutterLocalNotificationsPlugin.show(1, 'Alex Faarborg',
-    'You will not believe...', firstNotificationPlatformSpecifics);
-const AndroidNotificationDetails secondNotificationAndroidSpecifics =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        importance: Importance.max,
-        priority: Priority.high,
-        groupKey: groupKey);
-const NotificationDetails secondNotificationPlatformSpecifics =
-    NotificationDetails(android: secondNotificationAndroidSpecifics);
-await flutterLocalNotificationsPlugin.show(
-    2,
-    'Jeff Chang',
-    'Please join us to celebrate the...',
-    secondNotificationPlatformSpecifics);
+ const String groupKey = 'com.android.example.WORK_EMAIL';
+    const String groupChannelId = 'grouped channel id';
+    const String groupChannelName = 'grouped channel name';
+    const String groupChannelDescription = 'grouped channel description';
+    // example based on https://developer.android.com/training/notify-user/group.html
+    const AndroidNotificationDetails firstNotificationAndroidSpecifics =
+        AndroidNotificationDetails(
+          groupChannelId,
+          groupChannelName,
+          channelDescription: groupChannelDescription,
+          importance: Importance.max,
+          priority: Priority.high,
+          groupKey: groupKey,
+        );
+    const NotificationDetails firstNotificationPlatformSpecifics =
+        NotificationDetails(android: firstNotificationAndroidSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      id: id++,
+      title: 'Alex Faarborg',
+      body: 'You will not believe...',
+      notificationDetails: firstNotificationPlatformSpecifics,
+    );
+    const AndroidNotificationDetails secondNotificationAndroidSpecifics =
+        AndroidNotificationDetails(
+          groupChannelId,
+          groupChannelName,
+          channelDescription: groupChannelDescription,
+          importance: Importance.max,
+          priority: Priority.high,
+          groupKey: groupKey,
+        );
+    const NotificationDetails secondNotificationPlatformSpecifics =
+        NotificationDetails(android: secondNotificationAndroidSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      id: id++,
+      title: 'Jeff Chang',
+      body: 'Please join us to celebrate the...',
+      notificationDetails: secondNotificationPlatformSpecifics,
+    );
 
-// Create the summary notification to support older devices that pre-date
-/// Android 7.0 (API level 24).
-///
-/// Recommended to create this regardless as the behaviour may vary as
-/// mentioned in https://developer.android.com/training/notify-user/group
-const List<String> lines = <String>[
-    'Alex Faarborg  Check this out',
-    'Jeff Chang    Launch Party'
-];
-const InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
-    lines,
-    contentTitle: '2 messages',
-    summaryText: 'janedoe@example.com');
-const AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        styleInformation: inboxStyleInformation,
-        groupKey: groupKey,
-        setAsGroupSummary: true);
-const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-await flutterLocalNotificationsPlugin.show(
-    3, 'Attention', 'Two messages', notificationDetails);
+    // Create the summary notification to support older devices that pre-date
+    /// Android 7.0 (API level 24).
+    ///
+    /// Recommended to create this regardless as the behaviour may vary as
+    /// mentioned in https://developer.android.com/training/notify-user/group
+    const List<String> lines = <String>[
+      'Alex Faarborg  Check this out',
+      'Jeff Chang    Launch Party',
+    ];
+    const InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
+      lines,
+      contentTitle: '2 messages',
+      summaryText: 'janedoe@example.com',
+    );
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+          groupChannelId,
+          groupChannelName,
+          channelDescription: groupChannelDescription,
+          styleInformation: inboxStyleInformation,
+          groupKey: groupKey,
+          setAsGroupSummary: true,
+        );
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+    );
+    await flutterLocalNotificationsPlugin.show(
+      id: id++,
+      title: 'Attention',
+      body: 'Two messages',
+      notificationDetails: notificationDetails,
+    );
 ```
 
 ### Cancelling/deleting a notification
@@ -995,7 +1029,7 @@ await flutterLocalNotificationsPlugin.show(
 
 ```dart
 // cancel the notification with id value of zero
-await flutterLocalNotificationsPlugin.cancel(0);
+await flutterLocalNotificationsPlugin.cancel(id: 0);
 ```
 
 ### Cancelling/deleting all notifications

@@ -38,12 +38,14 @@ class FlutterLocalNotificationsPlugin {
   /// argument is of type [AndroidFlutterLocalNotificationsPlugin], this will
   /// only return a result of that type when running on Android.
   T? resolvePlatformSpecificImplementation<
-      T extends FlutterLocalNotificationsPlatform>() {
+    T extends FlutterLocalNotificationsPlatform
+  >() {
     if (T == FlutterLocalNotificationsPlatform) {
       throw ArgumentError.value(
-          T,
-          'The type argument must be a concrete subclass of '
-          'FlutterLocalNotificationsPlatform');
+        T,
+        'The type argument must be a concrete subclass of '
+        'FlutterLocalNotificationsPlatform',
+      );
     }
     if (kIsWeb) {
       return null;
@@ -110,80 +112,90 @@ class FlutterLocalNotificationsPlugin {
   /// [onDidReceiveBackgroundNotificationResponse]
   /// callback need to be annotated with the `@pragma('vm:entry-point')`
   /// annotation to ensure they are not stripped out by the Dart compiler.
-  Future<bool?> initialize(
-    InitializationSettings initializationSettings, {
+  Future<bool?> initialize({
+    required InitializationSettings settings,
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
     DidReceiveBackgroundNotificationResponseCallback?
-        onDidReceiveBackgroundNotificationResponse,
+    onDidReceiveBackgroundNotificationResponse,
   }) async {
     if (kIsWeb) {
       return true;
     }
 
     if (defaultTargetPlatform == TargetPlatform.android) {
-      if (initializationSettings.android == null) {
+      if (settings.android == null) {
         throw ArgumentError(
-            'Android settings must be set when targeting Android platform.');
+          'Android settings must be set when targeting Android platform.',
+        );
       }
 
       return resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.initialize(
-        initializationSettings.android!,
-        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
-        onDidReceiveBackgroundNotificationResponse:
-            onDidReceiveBackgroundNotificationResponse,
-      );
+            settings: settings.android!,
+            onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+            onDidReceiveBackgroundNotificationResponse:
+                onDidReceiveBackgroundNotificationResponse,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      if (initializationSettings.iOS == null) {
+      if (settings.iOS == null) {
         throw ArgumentError(
-            'iOS settings must be set when targeting iOS platform.');
+          'iOS settings must be set when targeting iOS platform.',
+        );
       }
 
       return await resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
+            IOSFlutterLocalNotificationsPlugin
+          >()
           ?.initialize(
-        initializationSettings.iOS!,
-        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
-        onDidReceiveBackgroundNotificationResponse:
-            onDidReceiveBackgroundNotificationResponse,
-      );
+            settings: settings.iOS!,
+            onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+            onDidReceiveBackgroundNotificationResponse:
+                onDidReceiveBackgroundNotificationResponse,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
-      if (initializationSettings.macOS == null) {
+      if (settings.macOS == null) {
         throw ArgumentError(
-            'macOS settings must be set when targeting macOS platform.');
+          'macOS settings must be set when targeting macOS platform.',
+        );
       }
 
       return await resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
+            MacOSFlutterLocalNotificationsPlugin
+          >()
           ?.initialize(
-        initializationSettings.macOS!,
-        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
-      );
+            settings: settings.macOS!,
+            onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.linux) {
-      if (initializationSettings.linux == null) {
+      if (settings.linux == null) {
         throw ArgumentError(
-            'Linux settings must be set when targeting Linux platform.');
+          'Linux settings must be set when targeting Linux platform.',
+        );
       }
 
       return await resolvePlatformSpecificImplementation<
-              LinuxFlutterLocalNotificationsPlugin>()
+            LinuxFlutterLocalNotificationsPlugin
+          >()
           ?.initialize(
-        initializationSettings.linux!,
-        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
-      );
+            settings: settings.linux!,
+            onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
-      if (initializationSettings.windows == null) {
+      if (settings.windows == null) {
         throw ArgumentError(
-            'Windows settings must be set when targeting Windows platform.');
+          'Windows settings must be set when targeting Windows platform.',
+        );
       }
 
       return await resolvePlatformSpecificImplementation<
-              FlutterLocalNotificationsWindows>()
+            FlutterLocalNotificationsWindows
+          >()
           ?.initialize(
-        initializationSettings.windows!,
-        onNotificationReceived: onDidReceiveNotificationResponse,
-      );
+            settings: settings.windows!,
+            onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+          );
     }
     return true;
   }
@@ -201,25 +213,29 @@ class FlutterLocalNotificationsPlugin {
   /// versions older than 10.14. This is because there's currently no mechanism
   /// for plugins to receive information on lifecycle events.
   Future<NotificationAppLaunchDetails?>
-      getNotificationAppLaunchDetails() async {
+  getNotificationAppLaunchDetails() async {
     if (kIsWeb) {
       return null;
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       return await resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.getNotificationAppLaunchDetails();
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       return await resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
+            IOSFlutterLocalNotificationsPlugin
+          >()
           ?.getNotificationAppLaunchDetails();
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       return await resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
+            MacOSFlutterLocalNotificationsPlugin
+          >()
           ?.getNotificationAppLaunchDetails();
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       return await resolvePlatformSpecificImplementation<
-              FlutterLocalNotificationsWindows>()
+            FlutterLocalNotificationsWindows
+          >()
           ?.getNotificationAppLaunchDetails();
     } else {
       return await FlutterLocalNotificationsPlatform.instance
@@ -230,11 +246,11 @@ class FlutterLocalNotificationsPlugin {
 
   /// Show a notification with an optional payload that will be passed back to
   /// the app when a notification is tapped.
-  Future<void> show(
-    int id,
+  Future<void> show({
+    required int id,
     String? title,
     String? body,
-    NotificationDetails? notificationDetails, {
+    NotificationDetails? notificationDetails,
     String? payload,
   }) async {
     if (kIsWeb) {
@@ -242,34 +258,66 @@ class FlutterLocalNotificationsPlugin {
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.show(id, title, body,
-              notificationDetails: notificationDetails?.android,
-              payload: payload);
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.show(
+            id: id,
+            title: title,
+            body: body,
+            notificationDetails: notificationDetails?.android,
+            payload: payload,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.show(id, title, body,
-              notificationDetails: notificationDetails?.iOS, payload: payload);
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.show(
+            id: id,
+            title: title,
+            body: body,
+            notificationDetails: notificationDetails?.iOS,
+            payload: payload,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       await resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
-          ?.show(id, title, body,
-              notificationDetails: notificationDetails?.macOS,
-              payload: payload);
+            MacOSFlutterLocalNotificationsPlugin
+          >()
+          ?.show(
+            id: id,
+            title: title,
+            body: body,
+            notificationDetails: notificationDetails?.macOS,
+            payload: payload,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.linux) {
       await resolvePlatformSpecificImplementation<
-              LinuxFlutterLocalNotificationsPlugin>()
-          ?.show(id, title, body,
-              notificationDetails: notificationDetails?.linux,
-              payload: payload);
+            LinuxFlutterLocalNotificationsPlugin
+          >()
+          ?.show(
+            id: id,
+            title: title,
+            body: body,
+            notificationDetails: notificationDetails?.linux,
+            payload: payload,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       await resolvePlatformSpecificImplementation<
-              FlutterLocalNotificationsWindows>()
-          ?.show(id, title, body,
-              details: notificationDetails?.windows, payload: payload);
+            FlutterLocalNotificationsWindows
+          >()
+          ?.show(
+            id: id,
+            title: title,
+            body: body,
+            notificationDetails: notificationDetails?.windows,
+            payload: payload,
+          );
     } else {
-      await FlutterLocalNotificationsPlatform.instance.show(id, title, body);
+      await FlutterLocalNotificationsPlatform.instance.show(
+        id: id,
+        title: title,
+        body: body,
+        payload: payload,
+      );
     }
   }
 
@@ -281,16 +329,17 @@ class FlutterLocalNotificationsPlugin {
   /// The `tag` parameter specifies the Android tag. If it is provided,
   /// then the notification that matches both the id and the tag will
   /// be canceled. `tag` has no effect on other platforms.
-  Future<void> cancel(int id, {String? tag}) async {
+  Future<void> cancel({required int id, String? tag}) async {
     if (kIsWeb) {
       return;
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.cancel(id, tag: tag);
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.cancel(id: id, tag: tag);
     } else {
-      await FlutterLocalNotificationsPlatform.instance.cancel(id);
+      await FlutterLocalNotificationsPlatform.instance.cancel(id: id);
     }
   }
 
@@ -342,13 +391,13 @@ class FlutterLocalNotificationsPlugin {
   ///
   /// On Windows, this will only set a notification on the [scheduledDate], and
   /// not repeat, regardless of the value for [matchDateTimeComponents].
-  Future<void> zonedSchedule(
-    int id,
+  Future<void> zonedSchedule({
+    required int id,
+    required TZDateTime scheduledDate,
+    required NotificationDetails notificationDetails,
+    required AndroidScheduleMode androidScheduleMode,
     String? title,
     String? body,
-    TZDateTime scheduledDate,
-    NotificationDetails notificationDetails, {
-    required AndroidScheduleMode androidScheduleMode,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
   }) async {
@@ -357,37 +406,56 @@ class FlutterLocalNotificationsPlugin {
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()!
+            AndroidFlutterLocalNotificationsPlugin
+          >()!
           .zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails.android,
-              payload: payload,
-              scheduleMode: androidScheduleMode,
-              matchDateTimeComponents: matchDateTimeComponents);
+            id: id,
+            title: title,
+            body: body,
+            scheduledDate: scheduledDate,
+            notificationDetails: notificationDetails.android,
+            payload: payload,
+            scheduleMode: androidScheduleMode,
+            matchDateTimeComponents: matchDateTimeComponents,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
+            IOSFlutterLocalNotificationsPlugin
+          >()
           ?.zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails.iOS,
-              payload: payload,
-              matchDateTimeComponents: matchDateTimeComponents);
+            id: id,
+            title: title,
+            body: body,
+            scheduledDate: scheduledDate,
+            notificationDetails: notificationDetails.iOS,
+            payload: payload,
+            matchDateTimeComponents: matchDateTimeComponents,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       await resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
+            MacOSFlutterLocalNotificationsPlugin
+          >()
           ?.zonedSchedule(
-              id, title, body, scheduledDate, notificationDetails.macOS,
-              payload: payload,
-              matchDateTimeComponents: matchDateTimeComponents);
+            id: id,
+            title: title,
+            body: body,
+            scheduledDate: scheduledDate,
+            notificationDetails: notificationDetails.macOS,
+            payload: payload,
+            matchDateTimeComponents: matchDateTimeComponents,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       await resolvePlatformSpecificImplementation<
-              FlutterLocalNotificationsWindows>()
+            FlutterLocalNotificationsWindows
+          >()
           ?.zonedSchedule(
-        id,
-        title,
-        body,
-        scheduledDate,
-        notificationDetails.windows,
-        payload: payload,
-      );
+            id: id,
+            title: title,
+            body: body,
+            scheduledDate: scheduledDate,
+            notificationDetails: notificationDetails.windows,
+            payload: payload,
+          );
     } else {
       throw UnimplementedError('zonedSchedule() has not been implemented');
     }
@@ -402,13 +470,13 @@ class FlutterLocalNotificationsPlugin {
   /// On Android, this will also require additional setup for the app,
   /// especially in the app's `AndroidManifest.xml` file. Please see check the
   /// readme for further details.
-  Future<void> periodicallyShow(
-    int id,
+  Future<void> periodicallyShow({
+    required int id,
+    required RepeatInterval repeatInterval,
+    required NotificationDetails notificationDetails,
+    required AndroidScheduleMode androidScheduleMode,
     String? title,
     String? body,
-    RepeatInterval repeatInterval,
-    NotificationDetails notificationDetails, {
-    required AndroidScheduleMode androidScheduleMode,
     String? payload,
   }) async {
     if (kIsWeb) {
@@ -416,26 +484,50 @@ class FlutterLocalNotificationsPlugin {
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.periodicallyShow(id, title, body, repeatInterval,
-              notificationDetails: notificationDetails.android,
-              payload: payload,
-              scheduleMode: androidScheduleMode);
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.periodicallyShow(
+            id: id,
+            title: title,
+            body: body,
+            repeatInterval: repeatInterval,
+            notificationDetails: notificationDetails.android,
+            payload: payload,
+            scheduleMode: androidScheduleMode,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.periodicallyShow(id, title, body, repeatInterval,
-              notificationDetails: notificationDetails.iOS, payload: payload);
+            IOSFlutterLocalNotificationsPlugin
+          >()
+          ?.periodicallyShow(
+            id: id,
+            title: title,
+            body: body,
+            repeatInterval: repeatInterval,
+            notificationDetails: notificationDetails.iOS,
+            payload: payload,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       await resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
-          ?.periodicallyShow(id, title, body, repeatInterval,
-              notificationDetails: notificationDetails.macOS, payload: payload);
+            MacOSFlutterLocalNotificationsPlugin
+          >()
+          ?.periodicallyShow(
+            id: id,
+            title: title,
+            body: body,
+            repeatInterval: repeatInterval,
+            notificationDetails: notificationDetails.macOS,
+            payload: payload,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       throw UnsupportedError('Notifications do not repeat on Windows');
     } else {
-      await FlutterLocalNotificationsPlatform.instance
-          .periodicallyShow(id, title, body, repeatInterval);
+      await FlutterLocalNotificationsPlatform.instance.periodicallyShow(
+        id: id,
+        title: title,
+        body: body,
+        repeatInterval: repeatInterval,
+      );
     }
   }
 
@@ -449,12 +541,12 @@ class FlutterLocalNotificationsPlugin {
   /// On Android, this will also require additional setup for the app,
   /// especially in the app's `AndroidManifest.xml` file. Please see check the
   /// readme for further details.
-  Future<void> periodicallyShowWithDuration(
-    int id,
+  Future<void> periodicallyShowWithDuration({
+    required int id,
+    required Duration repeatDurationInterval,
+    required NotificationDetails notificationDetails,
     String? title,
     String? body,
-    Duration repeatDurationInterval,
-    NotificationDetails notificationDetails, {
     AndroidScheduleMode androidScheduleMode = AndroidScheduleMode.exact,
     String? payload,
   }) async {
@@ -463,28 +555,49 @@ class FlutterLocalNotificationsPlugin {
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.periodicallyShowWithDuration(
-              id, title, body, repeatDurationInterval,
-              notificationDetails: notificationDetails.android,
-              payload: payload,
-              scheduleMode: androidScheduleMode);
+            id: id,
+            title: title,
+            body: body,
+            repeatDurationInterval: repeatDurationInterval,
+            notificationDetails: notificationDetails.android,
+            payload: payload,
+            scheduleMode: androidScheduleMode,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
       await resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
+            IOSFlutterLocalNotificationsPlugin
+          >()
           ?.periodicallyShowWithDuration(
-              id, title, body, repeatDurationInterval,
-              notificationDetails: notificationDetails.iOS, payload: payload);
+            id: id,
+            title: title,
+            body: body,
+            repeatDurationInterval: repeatDurationInterval,
+            notificationDetails: notificationDetails.iOS,
+            payload: payload,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.macOS) {
       await resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
+            MacOSFlutterLocalNotificationsPlugin
+          >()
           ?.periodicallyShowWithDuration(
-              id, title, body, repeatDurationInterval,
-              notificationDetails: notificationDetails.macOS, payload: payload);
+            id: id,
+            title: title,
+            body: body,
+            repeatDurationInterval: repeatDurationInterval,
+            notificationDetails: notificationDetails.macOS,
+            payload: payload,
+          );
     } else {
       await FlutterLocalNotificationsPlatform.instance
           .periodicallyShowWithDuration(
-              id, title, body, repeatDurationInterval);
+            id: id,
+            title: title,
+            body: body,
+            repeatDurationInterval: repeatDurationInterval,
+          );
     }
   }
 

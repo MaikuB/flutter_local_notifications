@@ -27,9 +27,9 @@ extension LinuxHintValueExtension on LinuxHintValue {
           m.map(
             (LinuxHintValue key, LinuxHintValue value) =>
                 MapEntry<DBusValue, DBusValue>(
-              key.toDBusValue(),
-              value.toDBusValue(),
-            ),
+                  key.toDBusValue(),
+                  value.toDBusValue(),
+                ),
           ),
         );
       case LinuxHintValueType.double:

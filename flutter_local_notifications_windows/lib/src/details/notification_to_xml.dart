@@ -12,15 +12,15 @@ String notificationToXml({
   String? title,
   String? body,
   String? payload,
-  WindowsNotificationDetails? details,
+  WindowsNotificationDetails? notificationDetails,
 }) {
   final XmlBuilder builder = XmlBuilder();
   builder.element(
     'toast',
     attributes: <String, String>{
-      ...details?.attributes ?? <String, String>{},
+      ...notificationDetails?.attributes ?? <String, String>{},
       if (payload != null) 'launch': payload,
-      if (details?.scenario == null) 'useButtonStyle': 'true',
+      if (notificationDetails?.scenario == null) 'useButtonStyle': 'true',
     },
     nest: () {
       builder.element(
@@ -33,15 +33,16 @@ String notificationToXml({
               builder
                 ..element('text', nest: title)
                 ..element('text', nest: body);
-              details?.generateBinding(builder);
+              notificationDetails?.generateBinding(builder);
             },
           );
         },
       );
-      details?.buildXml(builder);
+      notificationDetails?.buildXml(builder);
     },
   );
-  return builder
-      .buildDocument()
-      .toXmlString(pretty: true, indentAttribute: (_) => true);
+  return builder.buildDocument().toXmlString(
+    pretty: true,
+    indentAttribute: (_) => true,
+  );
 }

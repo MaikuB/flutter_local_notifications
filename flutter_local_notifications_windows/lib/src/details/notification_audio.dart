@@ -87,16 +87,16 @@ enum WindowsNotificationSound {
 class WindowsNotificationAudio {
   /// No sound will play during this notification.
   WindowsNotificationAudio.silent()
-      : source = WindowsNotificationSound.defaultSound.name,
-        shouldLoop = false,
-        isSilent = true;
+    : source = WindowsNotificationSound.defaultSound.name,
+      shouldLoop = false,
+      isSilent = true;
 
   /// Audio from a Windows preset. See [WindowsNotificationSound] for options.
   WindowsNotificationAudio.preset({
     required WindowsNotificationSound sound,
     this.shouldLoop = false,
-  })  : isSilent = false,
-        source = sound.name;
+  }) : isSilent = false,
+       source = sound.name;
 
   /// Uses an audio file from a Flutter asset.
   ///
@@ -110,10 +110,10 @@ class WindowsNotificationAudio {
     String assetName, {
     this.shouldLoop = false,
     WindowsNotificationSound fallback = WindowsNotificationSound.defaultSound,
-  })  : isSilent = false,
-        source = MsixUtils.hasPackageIdentity()
-            ? MsixUtils.getAssetUri(assetName).toString()
-            : fallback.name;
+  }) : isSilent = false,
+       source = MsixUtils.hasPackageIdentity()
+           ? MsixUtils.getAssetUri(assetName).toString()
+           : fallback.name;
 
   /// Whether this audio should loop.
   final bool shouldLoop;
