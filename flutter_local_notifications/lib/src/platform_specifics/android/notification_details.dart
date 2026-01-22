@@ -156,6 +156,7 @@ class AndroidNotificationDetails {
     this.colorized = false,
     this.number,
     this.audioAttributesUsage = AudioAttributesUsage.notification,
+    this.showOnAndroidAuto = false,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -426,4 +427,13 @@ class AndroidNotificationDetails {
   /// such as alarm or ringtone set in [`AudioAttributes.Builder`](https://developer.android.com/reference/android/media/AudioAttributes.Builder#setUsage(int)).
   /// https://developer.android.com/reference/android/media/AudioAttributes
   final AudioAttributesUsage audioAttributesUsage;
+
+  /// Whether this notification should be shown on Android Auto when connected.
+  ///
+  /// When set to `true` and an Android Auto session is active, the notification
+  /// will be displayed on the car screen with a deep link to open the app.
+  /// This requires the app to implement a `CarAppService`.
+  ///
+  /// Defaults to `false`.
+  final bool showOnAndroidAuto;
 }
