@@ -1,5 +1,6 @@
-## [2.0.0-dev.3]
+## [2.0.0]
 
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.32.0 and Dart SDK requirement to 3.8.0
 * **Breaking changes** the positional parameters in the following methods have now been converted to named parameters
   * `initialize()`
   * `show()`
@@ -12,14 +13,8 @@
 * **Breaking changes** to align with the main the plugin, the following parameters have been renamed
   * the `details` parameter in the `show()` and `zonedSchedule()` methods has been renamed to `notificationDetails`
   * the `onNotificationReceived` in the `initialize()` method has been renamed to `onDidReceiveNotificationResponse`
-
-## [2.0.0-dev.2]
-
-* Bumped `ffigen` and regenerated bindings. Credits to [Levi Lesches](https://github.com/Levi-Lesches) who originally looked at this before the plugin had its minimum Flutter version bumped
-
-## [2.0.0-dev.1]
-
 * **Breaking change** removed the `details` parameter from the `zonedScheduleRawXml()` method as it was not actually used. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches)
+* Bumped `ffigen` and regenerated bindings. Credits to [Levi Lesches](https://github.com/Levi-Lesches) who originally looked at this before the plugin had its minimum Flutter version bumped
 * Added `flutter_lints` to apply linter rules
 
 ## [1.0.3]
