@@ -1,6 +1,7 @@
-## [20.0.0-dev.3]
+## [20.0.0]
 
-* **Breaking changes** the positional parameters in the following methods have now been converted to named parameters across all platforms
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.32.0 and Dart SDK requirement to 3.8.0
+* **Breaking changes** the positional parameters in the following methods have now been converted to named parameters across all platforms. Thanks to the PR started by [Kwon Tae Hyung](https://github.com/TaeBbong)
   * `initialize()`
   * `show()`
   * `periodicallyShow()`
@@ -19,15 +20,9 @@
 * [Windows] **Breaking changes** to align with the main the plugin, the following parameters have been renamed
   * the `details` parameter in the `show()` and `zonedSchedule()` methods has been renamed to `notificationDetails`
   * the `onNotificationReceived` in the `initialize()` method has been renamed to `onDidReceiveNotificationResponse`
-
-## [20.0.0-dev.2]
-
-* [Android] updated Java compatibility version to 17
-
-## [20.0.0-dev.1]
-
-* **Breaking change** bumped minimum Flutter SDK requirement to 3.32.0 and Dart SDK requirement to 3.8.0
 * [Windows] **Breaking change** removed the `details` parameter from the `zonedScheduleRawXml()` method as it was not actually used. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches)
+* [Android] updated Java compatibility version to 17
+* [Android] fixed issue [#2745](https://github.com/MaikuB/flutter_local_notifications/issues/2745) to export the `AndroidIcon` abstract class 
 * Updated readme with information for developers that plan to move to use the UIScene lifecycle
 * Added `flutter_lints` to apply linter rules
 
