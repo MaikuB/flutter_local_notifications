@@ -1,11 +1,11 @@
 ## [10.0.0]
 
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.32.0 and Dart SDK requirement to 3.8.0
 * **Breaking changes** the positional parameters in the following methods have now been converted to named parameters
   * `show()`
   * `periodicallyShow()`
   * `periodicallyShowWithDuration()`
   * `cancel()`
-* **Breaking change** bumped minimum Flutter SDK requirement to 3.32.0 and Dart SDK requirement to 3.8.0
 * Added `flutter_lints` to apply linter rules
 
 ## [9.1.0]
