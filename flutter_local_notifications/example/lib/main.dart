@@ -142,11 +142,11 @@ Future<void> main() async {
   /// done later
   final IOSInitializationSettings initializationSettingsIOS =
       IOSInitializationSettings(
-    requestAlertPermission: false,
-    requestBadgePermission: false,
-    requestSoundPermission: false,
-    notificationCategories: darwinNotificationCategories,
-  );
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+        notificationCategories: darwinNotificationCategories,
+      );
   final DarwinInitializationSettings initializationSettingsMacOS =
       DarwinInitializationSettings(
         requestAlertPermission: false,

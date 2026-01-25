@@ -62,9 +62,9 @@ void main() {
         requestProvisionalPermission: false,
         requestProvidesAppNotificationSettings: false,
       );
-      
+
       final map = iosSettings.toMap();
-      
+
       expect(map['requestAlertPermission'], true);
       expect(map['requestSoundPermission'], true);
       expect(map['requestBadgePermission'], true);
@@ -73,14 +73,14 @@ void main() {
       expect(map['requestProvisionalPermission'], false);
       expect(map['requestProvidesAppNotificationSettings'], false);
     });
-    
+
     test('should inherit Darwin settings and add CarPlay permission', () {
       const iosSettings = IOSInitializationSettings(
         requestCarPlayPermission: true,
       );
-      
+
       final map = iosSettings.toMap();
-      
+
       // Should have all Darwin defaults
       expect(map['requestAlertPermission'], true);
       expect(map['requestSoundPermission'], true);
@@ -90,7 +90,7 @@ void main() {
       expect(map['defaultPresentBadge'], true);
       expect(map['defaultPresentBanner'], true);
       expect(map['defaultPresentList'], true);
-      
+
       // Plus iOS-specific CarPlay
       expect(map['requestCarPlayPermission'], true);
     });
