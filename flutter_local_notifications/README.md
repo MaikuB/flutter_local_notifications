@@ -101,6 +101,7 @@ Note: the plugin requires Flutter SDK 3.22 at a minimum. The list of support pla
 * [Android] Start a foreground service
 * [Android] Ability to check if notifications are enabled
 * [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
+* [iOS 10+] Request CarPlay notification permissions for notifications to appear in CarPlay interface
 * [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
 * [iOS 12.0+] Support for custom notification settings UI via "Configure Notifications in <application name>" button in notification context menu (API available on macOS 10.14+ but UI button does not appear in practice)
 * [iOS and macOS 10.14 or newer] Ability to check if notifications are enabled with specific type check
@@ -679,6 +680,62 @@ await flutterLocalNotificationsPlugin.initialize(settings: initializationSetting
 Initialisation can be done in the `main` function of your application or can be done within the first page shown in your app. Developers can refer to the example app that has code for the initialising within the `main` function. The code above has been simplified for explaining the concepts. Here we have specified the default icon to use for notifications on Android (refer to the *Android setup* section) and designated the function (`onDidReceiveNotificationResponse`) that should fire when a notification has been tapped on via the `onDidReceiveNotificationResponse` callback. Specifying this callback is entirely optional but here it will trigger navigation to another page and display the payload associated with the notification. This callback **cannot** be used to handle when a notification launched an app. Use the `getNotificationAppLaunchDetails` method when the app starts if you need to handle when a notification triggering the launch for an app e.g. change the home route of the app for deep-linking.
 
 Note that all settings are nullable, because we don't want to force developers so specify settings for platforms they don't target. You will get a runtime ArgumentError Exception if you forgot to pass the settings for the platform you target.
+
+### [iOS-specific] Using IOSInitializationSettings
+
+Starting from version 17.3.0, iOS developers can use the more specific `IOSInitializationSettings` class instead of `DarwinInitializationSettings` to access iOS-only features like CarPlay notification permissions. The `IOSInitializationSettings` class extends `DarwinInitializationSettings`, so all existing Darwin features are still available.
+
+```dart
+const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('app_icon');
+final IOSInitializationSettings initializationSettingsIOS =
+    IOSInitializationSettings(
+        // Darwin settings
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+        // iOS-specific settings
+        requestCarPlayPermission: true,
+    );
+final DarwinInitializationSettings initializationSettingsDarwin =
+    DarwinInitializationSettings();
+final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsIOS,  // Use iOS-specific settings
+    macOS: initializationSettingsDarwin,  // Keep Darwin for macOS
+);
+```
+
+#### CarPlay Integration
+
+When `requestCarPlayPermission` is set to `true`, the plugin will request CarPlay notification permissions if the device supports it (iOS 10.0+). This allows your app's notifications to appear on the CarPlay interface when the device is connected to a compatible vehicle.
+
+**Important considerations:**
+- CarPlay permissions are only available on iOS 10.0 or newer
+- The permission request will be silently ignored on unsupported devices
+- CarPlay notifications follow the same content guidelines as regular iOS notifications
+- Test CarPlay integration using the iOS Simulator's CarPlay mode
+
+#### Migration from DarwinInitializationSettings
+
+Existing code using `DarwinInitializationSettings` for iOS will continue to work without changes. To migrate to iOS-specific features:
+
+1. Replace `DarwinInitializationSettings` with `IOSInitializationSettings` in your iOS initialization
+2. Add any iOS-specific options like `requestCarPlayPermission`
+3. Keep using `DarwinInitializationSettings` for macOS initialization
+
+```dart
+// Before (still works)
+final DarwinInitializationSettings initializationSettingsDarwin =
+    DarwinInitializationSettings(requestAlertPermission: true);
+
+// After (with iOS-specific features)
+final IOSInitializationSettings initializationSettingsIOS =
+    IOSInitializationSettings(
+        requestAlertPermission: true,
+        requestCarPlayPermission: true,
+    );
+```
 
 ```dart
 void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) async {
