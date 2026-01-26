@@ -12,7 +12,7 @@ export 'src/platform_flutter_local_notifications.dart'
 export 'src/platform_specifics/android/bitmap.dart';
 export 'src/platform_specifics/android/enums.dart'
     hide AndroidBitmapSource, AndroidIconSource, AndroidNotificationSoundSource;
-export 'src/platform_specifics/android/icon.dart' hide AndroidIcon;
+export 'src/platform_specifics/android/icon.dart';
 export 'src/platform_specifics/android/initialization_settings.dart';
 export 'src/platform_specifics/android/message.dart';
 export 'src/platform_specifics/android/notification_channel.dart';

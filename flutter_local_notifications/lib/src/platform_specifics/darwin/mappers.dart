@@ -45,7 +45,7 @@ extension DarwinInitializationSettingsMapper on DarwinInitializationSettings {
 
 extension IOSInitializationSettingsMapper on IOSInitializationSettings {
   Map<String, Object> toMap() {
-    final DarwinInitializationSettings darwinSettings = 
+    final DarwinInitializationSettings darwinSettings =
         this as DarwinInitializationSettings;
     final Map<String, Object> map = darwinSettings.toMap();
     map['requestCarPlayPermission'] = requestCarPlayPermission;
