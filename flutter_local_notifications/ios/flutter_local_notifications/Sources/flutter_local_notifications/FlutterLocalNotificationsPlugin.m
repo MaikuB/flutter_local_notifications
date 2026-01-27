@@ -340,6 +340,11 @@ static FlutterError *getFlutterError(NSError *error) {
         activeNotification[PAYLOAD] =
             notification.request.content.userInfo[PAYLOAD];
       }
+      if (notification.request.content.threadIdentifier != nil &&
+          notification.request.content.threadIdentifier.length > 0) {
+        activeNotification[@"groupKey"] =
+            notification.request.content.threadIdentifier;
+      }
       [activeNotifications addObject:activeNotification];
     }
     result(activeNotifications);

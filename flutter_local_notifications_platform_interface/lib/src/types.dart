@@ -63,7 +63,8 @@ class ActiveNotification {
 
   /// The notification's group.
   ///
-  /// Returned only on Android.
+  /// On Android, this is the notification's `groupKey`.
+  /// On iOS and macOS, this is the notification's `threadIdentifier`.
   final String? groupKey;
 
   /// The notification's title.
