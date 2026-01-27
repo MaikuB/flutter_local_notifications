@@ -876,6 +876,16 @@ final List<ActiveNotification> activeNotifications =
 - iOS 10.0 or newer
 - macOS 10.14 or newer
 
+The `ActiveNotification.groupKey` property contains the notification's grouping identifier:
+- On Android: the `groupKey` value set via `AndroidNotificationDetails`
+- On iOS/macOS: the `threadIdentifier` value set via `DarwinNotificationDetails`
+
+```dart
+for (final ActiveNotification notification in activeNotifications) {
+  print('Notification group/thread: ${notification.groupKey}');
+}
+```
+
 ### Grouping notifications
 
 #### iOS
