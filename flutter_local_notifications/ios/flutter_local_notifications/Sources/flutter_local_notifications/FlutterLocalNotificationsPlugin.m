@@ -357,7 +357,6 @@ static FlutterError *getFlutterError(NSError *error) {
   bool requestedProvisionalPermission = false;
   bool requestedCriticalPermission = false;
   bool requestedCarPlayPermission = false;
-  bool carPlayPermissionSpecified = false;
   bool requestedProvidesAppNotificationSettings = false;
   NSMutableDictionary *presentationOptions = [[NSMutableDictionary alloc] init];
   if ([self containsKey:DEFAULT_PRESENT_ALERT forDictionary:arguments]) {
@@ -407,7 +406,6 @@ static FlutterError *getFlutterError(NSError *error) {
         [arguments[REQUEST_CRITICAL_PERMISSION] boolValue];
   }
   if ([self containsKey:REQUEST_CARPLAY_PERMISSION forDictionary:arguments]) {
-    carPlayPermissionSpecified = true;
     requestedCarPlayPermission =
         [arguments[REQUEST_CARPLAY_PERMISSION] boolValue];
   }
@@ -438,7 +436,6 @@ static FlutterError *getFlutterError(NSError *error) {
                                    criticalPermission:
                                        requestedCriticalPermission
                                     carPlayPermission:requestedCarPlayPermission
-                           carPlayPermissionSpecified:carPlayPermissionSpecified
                       providesAppNotificationSettings:
                           requestedProvidesAppNotificationSettings
                                                result:result];
@@ -454,7 +451,6 @@ static FlutterError *getFlutterError(NSError *error) {
   bool provisionalPermission = false;
   bool criticalPermission = false;
   bool requestCarPlayPermission = false;
-  bool carPlayPermissionSpecified = false;
   bool providesAppNotificationSettings = false;
   if ([self containsKey:SOUND_PERMISSION forDictionary:arguments]) {
     soundPermission = [arguments[SOUND_PERMISSION] boolValue];
@@ -472,7 +468,6 @@ static FlutterError *getFlutterError(NSError *error) {
     criticalPermission = [arguments[CRITICAL_PERMISSION] boolValue];
   }
   if ([self containsKey:CARPLAY_PERMISSION forDictionary:arguments]) {
-    carPlayPermissionSpecified = true;
     requestCarPlayPermission = [arguments[CARPLAY_PERMISSION] boolValue];
   }
   if ([self containsKey:PROVIDES_APP_NOTIFICATION_SETTINGS
@@ -486,7 +481,6 @@ static FlutterError *getFlutterError(NSError *error) {
                 provisionalPermission:provisionalPermission
                    criticalPermission:criticalPermission
                     carPlayPermission:requestCarPlayPermission
-           carPlayPermissionSpecified:carPlayPermissionSpecified
       providesAppNotificationSettings:providesAppNotificationSettings
                                result:result];
 }
@@ -497,7 +491,6 @@ static FlutterError *getFlutterError(NSError *error) {
               provisionalPermission:(bool)provisionalPermission
                  criticalPermission:(bool)criticalPermission
                   carPlayPermission:(bool)carPlayPermission
-         carPlayPermissionSpecified:(bool)carPlayPermissionSpecified
     providesAppNotificationSettings:(bool)providesAppNotificationSettings
                              result:(FlutterResult _Nonnull)result {
   if (!soundPermission && !alertPermission && !badgePermission &&
@@ -519,7 +512,7 @@ static FlutterError *getFlutterError(NSError *error) {
     authorizationOptions += UNAuthorizationOptionBadge;
   }
   if (@available(iOS 10.0, *)) {
-    if (carPlayPermissionSpecified && carPlayPermission) {
+    if (carPlayPermission) {
       authorizationOptions += UNAuthorizationOptionCarPlay;
     }
   }
