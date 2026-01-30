@@ -21,6 +21,10 @@ class InitializationSettings {
   ///
   /// It is nullable, because we don't want to force users to specify settings
   /// for platforms that they don't target.
+  ///
+  /// You can pass either DarwinInitializationSettings or
+  /// IOSInitializationSettings. Use IOSInitializationSettings to access
+  /// iOS-specific features like CarPlay.
   final DarwinInitializationSettings? iOS;
 
   /// Settings for macOS.

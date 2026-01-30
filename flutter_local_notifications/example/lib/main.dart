@@ -140,7 +140,14 @@ Future<void> main() async {
 
   /// Note: permissions aren't requested here just to demonstrate that can be
   /// done later
-  final DarwinInitializationSettings initializationSettingsDarwin =
+  final IOSInitializationSettings initializationSettingsIOS =
+      IOSInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+        notificationCategories: darwinNotificationCategories,
+      );
+  final DarwinInitializationSettings initializationSettingsMacOS =
       DarwinInitializationSettings(
         requestAlertPermission: false,
         requestBadgePermission: false,
@@ -156,8 +163,8 @@ Future<void> main() async {
 
   final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
-    iOS: initializationSettingsDarwin,
-    macOS: initializationSettingsDarwin,
+    iOS: initializationSettingsIOS,
+    macOS: initializationSettingsMacOS,
     linux: initializationSettingsLinux,
     windows: windows.initSettings,
   );
