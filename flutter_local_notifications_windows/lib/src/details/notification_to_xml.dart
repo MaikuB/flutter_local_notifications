@@ -19,7 +19,7 @@ String notificationToXml({
     'toast',
     attributes: <String, String>{
       ...notificationDetails?.attributes ?? <String, String>{},
-      if (payload != null) 'launch': payload,
+      'launch': ?payload,
       if (notificationDetails?.scenario == null) 'useButtonStyle': 'true',
     },
     nest: () {
