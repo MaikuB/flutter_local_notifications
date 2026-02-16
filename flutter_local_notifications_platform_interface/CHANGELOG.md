@@ -2,7 +2,6 @@
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.38.1 and Dart SDK requirement to 3.10.0
 
-
 ## [10.0.0]
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.32.0 and Dart SDK requirement to 3.8.0
