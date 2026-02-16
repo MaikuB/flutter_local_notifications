@@ -12,8 +12,8 @@ extension TextInputToXml on WindowsTextInput {
     attributes: <String, String>{
       'id': id,
       'type': type.name,
-      if (title != null) 'title': title!,
-      if (placeHolderContent != null) 'placeHolderContent': placeHolderContent!,
+      'title': ?title,
+      'placeHolderContent': ?placeHolderContent,
     },
   );
 }
@@ -28,8 +28,8 @@ extension SelectionInputToXml on WindowsSelectionInput {
     attributes: <String, String>{
       'id': id,
       'type': type.name,
-      if (title != null) 'title': title!,
-      if (defaultItem != null) 'defaultInput': defaultItem!,
+      'title': ?title,
+      'defaultInput': ?defaultItem,
     },
     nest: () {
       for (final WindowsSelection item in items) {
