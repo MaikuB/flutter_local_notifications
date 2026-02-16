@@ -1,3 +1,10 @@
+## [21.0.0-dev.1]
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.38.1 and Dart SDK requirement to 3.10.0.Consequently the minimum OS requirements for each platform has been updated as well
+  * [Android] minimum Android version is now 7.0 (API level 24)
+  * [iOS] minimum iOS version is now 13
+  * [macOS] minimum macOS version is now 10.15
+
 ## [20.1.0]
 
 * [iOS] added CarPlay notification support. Thanks to the PR from [derrik f](https://github.com/derrik-fleming)
