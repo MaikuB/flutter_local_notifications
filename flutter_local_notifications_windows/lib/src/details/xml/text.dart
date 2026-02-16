@@ -10,7 +10,7 @@ extension TextToXml on WindowsNotificationText {
   void buildXml(XmlBuilder builder) => builder.element(
     'text',
     attributes: <String, String>{
-      if (languageCode != null) 'lang': languageCode!,
+      'lang': ?languageCode,
       if (placement != null) 'placement': placement!.name,
       'hint-callScenarioCenterAlign': centerIfCall.toString(),
       'hint-align': 'center',

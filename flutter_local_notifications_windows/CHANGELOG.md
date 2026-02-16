@@ -1,3 +1,7 @@
+## [3.0.0-dev.1]
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.38.1 and Dart SDK requirement to 3.10.0
+
 ## [2.0.1]
 
 * Non-functional change: addressed the [`use_null_aware_elements`](https://dart.dev/tools/diagnostics/use_null_aware_elements) linter issue

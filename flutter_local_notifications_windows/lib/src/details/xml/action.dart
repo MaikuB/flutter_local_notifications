@@ -16,9 +16,9 @@ extension ActionToXml on WindowsAction {
         'afterActivationBehavior': activationBehavior.name,
         if (placement != null) 'placement': placement!.name,
         if (imageUri != null) 'imageUri': imageUri!.toString(),
-        if (inputId != null) 'hint-inputId': inputId!,
+        'hint-inputId': ?inputId,
         if (buttonStyle != null) 'hint-buttonStyle': buttonStyle!.name,
-        if (tooltip != null) 'hint-toolTip': tooltip!,
+        'hint-toolTip': ?tooltip,
       },
     );
   }

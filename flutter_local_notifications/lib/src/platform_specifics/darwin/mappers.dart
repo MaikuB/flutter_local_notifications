@@ -10,8 +10,8 @@ extension DarwinNotificationActionMapper on DarwinNotificationAction {
     'title': title,
     'options': options.map((e) => e.value).toList(),
     'type': type.name,
-    if (buttonTitle != null) 'buttonTitle': buttonTitle!,
-    if (placeholder != null) 'placeholder': placeholder!,
+    'buttonTitle': ?buttonTitle,
+    'placeholder': ?placeholder,
   };
 }
 
