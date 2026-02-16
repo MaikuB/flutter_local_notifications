@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace 'com.dexterous.flutter_local_notifications_example'
-    compileSdk 35
+    compileSdk 36
     ndkVersion = flutter.ndkVersion
 
     sourceSets {
@@ -44,7 +44,7 @@ android {
         multiDexEnabled true
         applicationId "com.dexterous.flutter_local_notifications_example"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

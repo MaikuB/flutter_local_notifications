@@ -333,7 +333,7 @@ The plugin also requires that the `compileSdk` in your application's Gradle file
 
 ```gradle
 android {
-    compileSdk 35
+    compileSdk 36
     ...
 }
 ```
@@ -345,7 +345,7 @@ android {
 
 ```kotlin
 android {
-    compileSdk = 35
+    compileSdk = 36
     ...
 }
 ```
