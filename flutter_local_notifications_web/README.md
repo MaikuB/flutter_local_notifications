@@ -7,10 +7,15 @@ The web implementation of the `flutter_local_notifications` package.
 | Feature | Chrome/Edge | Firefox | Safari |
 |---------|-------------|---------|--------|
 | Basic notifications | ✅ | ✅ | ✅ |
-| Notification actions | ✅ | ❌ | ❌ |
+| Notification actions | ✅ (Chrome 48+, Edge 18+) | ❌ | ❌ |
 | Text input actions | ❌ | ❌ | ❌ |
 | Custom vibration | ✅ (desktop only) | ✅ (desktop only) | ❌ |
 | Service worker | ✅ | ✅ | ✅ |
+
+**Official Compatibility References:**
+- [MDN: Notification API Browser Compatibility](https://developer.mozilla.org/en-US/docs/Web/API/Notification#browser_compatibility)
+- [MDN: ServiceWorkerRegistration.showNotification()](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification)
+- [Can I Use: Notification Actions](https://caniuse.com/mdn-api_serviceworkerregistration_shownotification_options_actions_parameter)
 
 Note: Firefox and Safari may add action support in future versions. Text input fields use a standards proposal and may only work on Chrome for the foreseeable future.
 
@@ -20,6 +25,7 @@ Note: Firefox and Safari may add action support in future versions. Text input f
 - **No repeating notifications**: `periodicallyShow()` and `periodicallyShowWithDuration()` are not supported and will throw `UnsupportedError`.
 - **Permission must be user-initiated**: You can only request notification permissions in response to a user action (like a button click).
 - **Custom vibration on mobile**: Browsers on Android do not support custom vibration patterns.
+- **Notification ID behavior**: The web implementation uses the browser's `tag` field to store notification IDs. Showing a notification with the same ID will replace the previous one, matching the behavior on other platforms.
 
 ## Notes
 
@@ -46,6 +52,8 @@ if (WebFlutterLocalNotificationsPlugin.isSupported) {
   print('Notifications are not supported in this browser');
 }
 ```
+
+**Note on notification actions:** Actions are only supported in Chrome 48+ and Edge 18+. In Firefox and Safari, actions will be silently ignored and notifications will still be shown without action buttons. See the [Browser Compatibility](#browser-compatibility) section for details.
 
 ### Initialize the plugin
 

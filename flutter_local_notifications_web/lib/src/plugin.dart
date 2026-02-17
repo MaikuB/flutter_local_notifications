@@ -81,6 +81,14 @@ class WebFlutterLocalNotificationsPlugin
       );
     }
 
+    // Warn if actions are used (they may not be supported in all browsers)
+    if (details?.actions.isNotEmpty == true) {
+      // Note: Notification actions are only supported in Chrome 48+ and Edge 18+.
+      // In Firefox and Safari, actions will be silently ignored and the
+      // notification will still be shown without action buttons.
+      // See: https://caniuse.com/mdn-api_serviceworkerregistration_shownotification_options_actions_parameter
+    }
+
     await _registration!
         .showNotification(
           title ?? '',
@@ -260,15 +268,14 @@ class WebFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> cancel({required int id, String? tag}) async {
+  Future<void> cancel({required int id}) async {
     if (_registration == null) {
       return;
     }
     final List<Notification> notifications =
         await _registration!.getDartNotifications();
     final Notification? notification = notifications.firstWhereOrNull(
-      (Notification notification) =>
-          notification.id == id && (tag == null || notification.tag == tag),
+      (Notification notification) => notification.id == id,
     );
     notification?.close();
   }
@@ -315,6 +322,27 @@ class WebFlutterLocalNotificationsPlugin
     throw UnsupportedError(
       'periodicallyShowWithDuration() is not supported '
       'on the web',
+    );
+  }
+
+  /// Schedules a notification to be shown at a specific date and time.
+  ///
+  /// This method is not supported on web as browsers do not provide APIs
+  /// for scheduling notifications at specific times. Use server-side push
+  /// notifications or implement client-side scheduling with timers instead.
+  ///
+  /// Throws [UnsupportedError] when called.
+  Future<void> zonedSchedule({
+    required int id,
+    String? title,
+    String? body,
+    required DateTime scheduledDate,
+    String? payload,
+  }) {
+    throw UnsupportedError(
+      'zonedSchedule() is not supported on the web. '
+      'Browsers do not provide APIs for scheduling notifications. '
+      'Consider using server-side push notifications or client-side timers.',
     );
   }
 }

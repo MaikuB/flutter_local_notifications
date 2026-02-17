@@ -49,6 +49,11 @@ extension NullableWebNotificationDetailsUtils on WebNotificationDetails? {
   /// Converts these nullable details to a JS [NotificationOptions] object.
   NotificationOptions toJs(int id, String? body, String? payload) {
     final NotificationOptions options = NotificationOptions(
+      // Note: We use 'tag' to store the notification ID because:
+      // 1. The Web Notification API doesn't have a separate 'id' field
+      // 2. The 'tag' field is used to identify and replace notifications
+      // 3. Multiple notifications with the same tag will replace each other
+      // 4. This matches the behavior of notification IDs on other platforms
       data: <String, dynamic>{'payload': payload}.jsify(),
       tag: id.toString(),
       // -----------------------------
@@ -79,7 +84,16 @@ extension NullableWebNotificationDetailsUtils on WebNotificationDetails? {
 /// Utility methods on JavaScript [NotificationEvent] objects.
 extension WebNotificationEventUtils on NotificationEvent {
   /// Gets text input from the action, if any.
-  String? get reply => (this['reply'] as JSString).toDart;
+  ///
+  /// Note: This is a Chrome-only feature for text input actions and may not
+  /// be available in all browsers or for all notification action types.
+  String? get reply {
+    final JSAny? replyValue = this['reply'];
+    if (replyValue != null && replyValue.typeofEquals('string')) {
+      return (replyValue as JSString).toDart;
+    }
+    return null;
+  }
 }
 
 /// Helpful methods on strings.

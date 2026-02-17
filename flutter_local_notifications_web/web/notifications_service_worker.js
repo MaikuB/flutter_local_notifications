@@ -36,11 +36,18 @@ async function _handleNotif(event) {
   event.waitUntil(allClientsPromise);
   let allClients = await allClientsPromise;
 
+  // Extract reply text if available (Chrome-only feature for text input actions)
+  // Note: event.reply is only available in Chrome and only for text input actions
+  let reply = '';
+  if (event.reply !== undefined && event.reply !== null) {
+    reply = event.reply;
+  }
+
   let message = {
     id: event.notification.tag,
-    payload: event.notification.data.payload,
-    action: event.action,
-    reply: event.reply,
+    payload: event.notification.data?.payload || '',
+    action: event.action || '',
+    reply: reply,
   };
 
   if (allClients.length == 0) {
@@ -55,6 +62,9 @@ async function _handleNotif(event) {
     let client = allClients[0];
     await client.postMessage(message);
   }
+  
+  // Close the notification after handling
+  event.notification.close();
 }
 
 // Listen for notification events.
