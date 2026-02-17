@@ -1,7 +1,6 @@
 name: flutter_local_notifications_example
 description: Demonstrates how to use the flutter_local_notifications plugin.
 publish_to: none
-version: 1.0.0+0
 
 dependencies:
   cupertino_icons: ^1.0.8

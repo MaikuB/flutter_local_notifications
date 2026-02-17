@@ -18,11 +18,16 @@ class WebFlutterLocalNotificationsPlugin
   Future<bool> requestNotificationsPermission() async => false;
 
   @override
-  Future<void> cancel(int id, {String? tag}) async {}
+  Future<void> cancel({required int id, String? tag}) async {}
 
   @override
-  Future<void> show(int id, String? title, String? body,
-      {String? payload, WebNotificationDetails? details}) async {}
+  Future<void> show({
+    required int id,
+    String? title,
+    String? body,
+    String? payload,
+    WebNotificationDetails? details,
+  }) async {}
 
   /// Whether the user has granted permission to show notifications.
   bool get hasPermission => false;

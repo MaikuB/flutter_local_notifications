@@ -8,7 +8,7 @@ import 'plugin.dart';
 
 List<Widget> webExamples(bool? hasPermission) => <Widget>[
       const Text(
-        'Windows-specific examples',
+        'Web-specific examples',
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
       if (hasPermission ?? false)
@@ -50,10 +50,10 @@ final Uri badgeUrl =
 
 Future<void> showDetails(WebNotificationDetails details) =>
     flutterLocalNotificationsPlugin.show(
-      id++,
-      'This is a title',
-      'This is a body',
-      NotificationDetails(web: details),
+      id: id++,
+      title: 'This is a title',
+      body: 'This is a body',
+      notificationDetails: NotificationDetails(web: details),
     );
 
 void _showTimestamp() =>
@@ -62,17 +62,16 @@ void _showTimestamp() =>
 Future<void> _showRenotify() async {
   final int id2 = id++;
   await flutterLocalNotificationsPlugin.show(
-    id2,
-    'This is the original notification!',
-    'Wait for it...',
-    const NotificationDetails(web: WebNotificationDetails(renotify: true)),
+    id: id2,
+    title: 'This is the original notification!',
+    body: 'Wait for it...',
+    notificationDetails: const NotificationDetails(web: WebNotificationDetails(renotify: true)),
   );
   await Future<void>.delayed(const Duration(seconds: 1));
   await flutterLocalNotificationsPlugin.show(
-    id2,
-    'This is the replacement!',
-    'Notice there is no animation!',
-    null,
+    id: id2,
+    title: 'This is the replacement!',
+    body: 'Notice there is no animation!',
   );
 }
 
@@ -86,10 +85,10 @@ void _showImages() => showDetails(WebNotificationDetails(
     ));
 
 void _showRtl() => flutterLocalNotificationsPlugin.show(
-      id++,
-      'This is in a right-to-left language',
-      'שלום חביבי!',
-      const NotificationDetails(
+      id: id++,
+      title: 'This is in a right-to-left language',
+      body: 'שלום חביבי!',
+      notificationDetails: const NotificationDetails(
         web: WebNotificationDetails(
           direction: WebNotificationDirection.rightToLeft,
         ),

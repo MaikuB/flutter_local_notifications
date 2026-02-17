@@ -26,7 +26,7 @@ void _onNotificationClicked(MessageEvent event) {
 class WebFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
   /// Registers the web plugin with the platform interface.
-  static void registerWith(_) {
+  static void registerWith(Object _) {
     FlutterLocalNotificationsPlatform.instance =
         WebFlutterLocalNotificationsPlugin();
   }
@@ -38,8 +38,13 @@ class WebFlutterLocalNotificationsPlugin
   ServiceWorkerRegistration? _registration;
 
   @override
-  Future<void> show(int id, String? title, String? body,
-      {String? payload, WebNotificationDetails? details}) async {
+  Future<void> show({
+    required int id,
+    String? title,
+    String? body,
+    String? payload,
+    WebNotificationDetails? details,
+  }) async {
     if (_registration == null) {
       throw StateError(
         'FlutterLocalNotifications.show(): You must call initialize() before '
@@ -158,7 +163,7 @@ class WebFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> cancel(int id, {String? tag}) async {
+  Future<void> cancel({required int id, String? tag}) async {
     if (_registration == null) {
       return;
     }
@@ -188,14 +193,22 @@ class WebFlutterLocalNotificationsPlugin
       pendingNotificationRequests() async => <PendingNotificationRequest>[];
 
   @override
-  Future<void> periodicallyShow(
-      int id, String? title, String? body, RepeatInterval repeatInterval) {
+  Future<void> periodicallyShow({
+    required int id,
+    String? title,
+    String? body,
+    required RepeatInterval repeatInterval,
+  }) {
     throw UnsupportedError('periodicallyShow() is not supported on the web');
   }
 
   @override
-  Future<void> periodicallyShowWithDuration(
-      int id, String? title, String? body, Duration repeatDurationInterval) {
+  Future<void> periodicallyShowWithDuration({
+    required int id,
+    String? title,
+    String? body,
+    required Duration repeatDurationInterval,
+  }) {
     throw UnsupportedError(
       'periodicallyShowWithDuration() is not supported '
       'on the web',

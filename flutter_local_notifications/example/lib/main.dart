@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' hide Platform;
+import 'dart:io';
 // ignore: unnecessary_import
 import 'dart:typed_data';
 
@@ -15,17 +15,13 @@ import 'package:image/image.dart' as image;
 import 'package:path_provider/path_provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:universal_platform/universal_platform.dart';
 
 import 'configure_in_app_toggle.dart';
 import 'padded_button.dart';
 import 'plugin.dart';
 import 'repeating.dart' as repeating;
-import 'web_stub.dart' if (dart.library.js_interop) 'web.dart';
-
+import 'web_stub.dart' if (dart.library.js_interop) 'web.dart' as web;
 import 'windows.dart' as windows;
-
-typedef Platform = UniversalPlatform;
 
 /// Streams are created so that app can respond to notification-related events
 /// since the plugin is initialized in the `main` function
@@ -1086,6 +1082,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
               if (!kIsWeb && Platform.isWindows) ...windows.examples(),
+              if (kIsWeb) ...web.webExamples(_notificationsEnabled),
             ],
           ),
         ),
