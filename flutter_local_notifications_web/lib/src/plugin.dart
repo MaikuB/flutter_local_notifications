@@ -147,24 +147,24 @@ class WebFlutterLocalNotificationsPlugin
     if (_registration == null) {
       return <ActiveNotification>[];
     }
-    final List<ActiveNotification> result = <ActiveNotification>[];
+    final List<ActiveNotification> activeNotifications = <ActiveNotification>[];
     final Set<int> ids = <int>{};
-    final List<Notification> jsNotifs =
+    final List<Notification> notifications =
         await _registration!.getDartNotifications();
-    for (final Notification jsNotification in jsNotifs) {
-      final int? id = jsNotification.id;
+    for (final Notification notification in notifications) {
+      final int? id = notification.id;
       if (id == null) {
         continue;
       }
       
       // Extract additional notification details from the web Notification API
-      final String? title = jsNotification.title.nullIfEmpty;
-      final String? body = jsNotification.body.nullIfEmpty;
-      final String? tag = jsNotification.tag.nullIfEmpty;
+      final String? title = notification.title.nullIfEmpty;
+      final String? body = notification.body.nullIfEmpty;
+      final String? tag = notification.tag.nullIfEmpty;
       
       // Extract payload from the data object
       String? payload;
-      final JSAny? data = jsNotification.data;
+      final JSAny? data = notification.data;
       if (data != null && data.typeofEquals('object')) {
         final JSAny? payloadValue = (data as JSObject)['payload'];
         if (payloadValue != null && payloadValue.typeofEquals('string')) {
@@ -172,7 +172,7 @@ class WebFlutterLocalNotificationsPlugin
         }
       }
       
-      final ActiveNotification notif = ActiveNotification(
+      final ActiveNotification activeNotification = ActiveNotification(
         id: id,
         title: title,
         body: body,
@@ -180,9 +180,9 @@ class WebFlutterLocalNotificationsPlugin
         payload: payload,
       );
       ids.add(id);
-      result.add(notif);
+      activeNotifications.add(activeNotification);
     }
-    return result;
+    return activeNotifications;
   }
 
   @override
