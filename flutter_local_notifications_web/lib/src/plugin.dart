@@ -104,8 +104,8 @@ class WebFlutterLocalNotificationsPlugin
   /// Be sure to only request permissions in response to a user gesture, or it
   /// may be automatically rejected.
   Future<bool> requestNotificationsPermission() async {
-    final JSString result = await Notification.requestPermission().toDart;
-    return result.toDart == 'granted';
+    final JSString permissionStatus = await Notification.requestPermission().toDart;
+    return permissionStatus.toDart == 'granted';
   }
 
   /// Whether the user has granted permission to show notifications.
