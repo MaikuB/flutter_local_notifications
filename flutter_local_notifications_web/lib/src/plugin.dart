@@ -268,10 +268,12 @@ class WebFlutterLocalNotificationsPlugin
   }
 
   @override
-  Future<void> cancel({required int id}) async {
+  Future<void> cancel({required int id, String? tag}) async {
     if (_registration == null) {
       return;
     }
+    // Note: The tag parameter is Android-specific and ignored on web.
+    // On web, we only use the notification ID to identify notifications.
     final List<Notification> notifications =
         await _registration!.getDartNotifications();
     final Notification? notification = notifications.firstWhereOrNull(
