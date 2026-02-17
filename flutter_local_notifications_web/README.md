@@ -45,7 +45,7 @@ void handleNotification(NotificationResponse notification) {
 }
 
 final plugin = FlutterLocalNotificationsPlugin();
-await plugin.initialize(onNotificationReceived: handleNotification);
+await plugin.initialize(onDidReceiveNotificationResponse: handleNotification);
 
 // When your site is closed, clicking the notification will launch your site
 //  with special query parameters that include the notification details.

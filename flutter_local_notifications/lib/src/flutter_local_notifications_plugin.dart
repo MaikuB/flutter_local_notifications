@@ -119,7 +119,7 @@ class FlutterLocalNotificationsPlugin {
       return resolvePlatformSpecificImplementation<
               WebFlutterLocalNotificationsPlugin>()
           ?.initialize(
-        onNotificationReceived: onDidReceiveNotificationResponse,
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
       );
     }
 

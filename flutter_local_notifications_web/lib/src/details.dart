@@ -68,7 +68,7 @@ class WebNotificationDetails {
   /// sent instead of when it was received.
   final DateTime? timestamp;
 
-  /// An optional vibration pattern
+  /// An optional vibration pattern.
   ///
   /// This should be a list of milliseconds, starting with how long the device
   /// should vibrate for, followed by how long it should pause.

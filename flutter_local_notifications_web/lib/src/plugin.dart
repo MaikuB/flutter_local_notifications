@@ -79,10 +79,10 @@ class WebFlutterLocalNotificationsPlugin
 
   /// Initializes the plugin.
   Future<bool?> initialize({
-    DidReceiveNotificationResponseCallback? onNotificationReceived,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) async {
     instance = this;
-    _userCallback = onNotificationReceived;
+    _userCallback = onDidReceiveNotificationResponse;
 
     // Replace the default Flutter service worker with our own.
     // This isn't supported at build time yet and so must be done at runtime.

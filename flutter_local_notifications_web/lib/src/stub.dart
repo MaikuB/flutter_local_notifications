@@ -7,7 +7,7 @@ class WebFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
   /// Initializes the plugin.
   Future<bool?> initialize({
-    DidReceiveNotificationResponseCallback? onNotificationReceived,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) async =>
       null;
 
