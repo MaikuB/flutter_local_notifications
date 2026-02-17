@@ -9,6 +9,7 @@ environment:
   flutter: ">=3.22.0"
 
 dependencies:
+  collection: ^1.19.1
   flutter:
     sdk: flutter
   flutter_local_notifications_platform_interface: ^9.0.0
