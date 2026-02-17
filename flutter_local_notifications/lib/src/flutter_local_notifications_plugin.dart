@@ -117,10 +117,11 @@ class FlutterLocalNotificationsPlugin {
   }) async {
     if (kIsWeb) {
       return resolvePlatformSpecificImplementation<
-              WebFlutterLocalNotificationsPlugin>()
+            WebFlutterLocalNotificationsPlugin
+          >()
           ?.initialize(
-        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
-      );
+            onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+          );
     }
 
     if (defaultTargetPlatform == TargetPlatform.android) {
@@ -217,7 +218,8 @@ class FlutterLocalNotificationsPlugin {
   getNotificationAppLaunchDetails() async {
     if (kIsWeb) {
       return await resolvePlatformSpecificImplementation<
-              WebFlutterLocalNotificationsPlugin>()
+            WebFlutterLocalNotificationsPlugin
+          >()
           ?.getNotificationAppLaunchDetails();
     } else if (defaultTargetPlatform == TargetPlatform.android) {
       return await resolvePlatformSpecificImplementation<
@@ -257,14 +259,15 @@ class FlutterLocalNotificationsPlugin {
   }) async {
     if (kIsWeb) {
       await resolvePlatformSpecificImplementation<
-              WebFlutterLocalNotificationsPlugin>()
+            WebFlutterLocalNotificationsPlugin
+          >()
           ?.show(
-        id: id,
-        title: title,
-        body: body,
-        payload: payload,
-        details: notificationDetails?.web,
-      );
+            id: id,
+            title: title,
+            body: body,
+            payload: payload,
+            details: notificationDetails?.web,
+          );
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<
@@ -342,7 +345,8 @@ class FlutterLocalNotificationsPlugin {
   Future<void> cancel({required int id, String? tag}) async {
     if (kIsWeb) {
       await resolvePlatformSpecificImplementation<
-              WebFlutterLocalNotificationsPlugin>()
+            WebFlutterLocalNotificationsPlugin
+          >()
           ?.cancel(id: id, tag: tag);
     } else if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<
@@ -492,13 +496,14 @@ class FlutterLocalNotificationsPlugin {
   }) async {
     if (kIsWeb) {
       await resolvePlatformSpecificImplementation<
-              WebFlutterLocalNotificationsPlugin>()
+            WebFlutterLocalNotificationsPlugin
+          >()
           ?.periodicallyShow(
-        id: id,
-        title: title,
-        body: body,
-        repeatInterval: repeatInterval,
-      );
+            id: id,
+            title: title,
+            body: body,
+            repeatInterval: repeatInterval,
+          );
       return;
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
@@ -571,13 +576,14 @@ class FlutterLocalNotificationsPlugin {
   }) async {
     if (kIsWeb) {
       await resolvePlatformSpecificImplementation<
-              WebFlutterLocalNotificationsPlugin>()
+            WebFlutterLocalNotificationsPlugin
+          >()
           ?.periodicallyShowWithDuration(
-        id: id,
-        title: title,
-        body: body,
-        repeatDurationInterval: repeatDurationInterval,
-      );
+            id: id,
+            title: title,
+            body: body,
+            repeatDurationInterval: repeatDurationInterval,
+          );
       return;
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
