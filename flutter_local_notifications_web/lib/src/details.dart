@@ -41,6 +41,12 @@ class WebNotificationDetails {
   final Uri? imageUrl;
 
   /// The language code of the notification's content, eg `en-US`.
+  ///
+  /// This should be a BCP 47 language tag (such as `en-US`, `fr-FR`, or `ja-JP`).
+  /// When left null, the notification defaults to using an empty string for the
+  /// language, which typically causes the browser to use its default language
+  /// settings or infer the language from the notification content and the user's
+  /// locale environment.
   final String? lang;
 
   /// Whether the notification should remain visible until manually dismissed.
