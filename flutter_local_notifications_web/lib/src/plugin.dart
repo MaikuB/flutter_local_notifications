@@ -39,6 +39,18 @@ class WebFlutterLocalNotificationsPlugin
   DidReceiveNotificationResponseCallback? _userCallback;
   ServiceWorkerRegistration? _registration;
 
+  /// Whether the browser supports the Notification API.
+  ///
+  /// Returns `false` for very old browsers or certain embedded contexts
+  /// that don't support notifications.
+  static bool get isSupported {
+    try {
+      return window.hasProperty('Notification'.toJS).toDart;
+    } catch (e) {
+      return false;
+    }
+  }
+
   @override
   Future<void> show({
     required int id,
@@ -78,25 +90,59 @@ class WebFlutterLocalNotificationsPlugin
   }
 
   /// Initializes the plugin.
+  ///
+  /// Returns `true` if initialization succeeded, `false` if it failed.
+  /// Initialization can fail if:
+  /// - Service Workers are not supported (older browsers, private mode)
+  /// - Service Worker registration fails
+  /// - The Notification API is not available
   Future<bool?> initialize({
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) async {
     instance = this;
     _userCallback = onDidReceiveNotificationResponse;
 
-    // Replace the default Flutter service worker with our own.
-    // This isn't supported at build time yet and so must be done at runtime.
-    // See: https://github.com/flutter/flutter/issues/145828
-    final ServiceWorkerContainer serviceWorker = window.navigator.serviceWorker;
-    _registration = await serviceWorker.getRegistration().toDart;
-    const String jsPath =
-        './assets/packages/flutter_local_notifications_web/web/notifications_service_worker.js';
-    _registration = await serviceWorker.register(jsPath.toJS).toDart;
+    try {
+      // Check if the Notification API is supported
+      if (!isSupported) {
+        throw UnsupportedError(
+          'The Notification API is not supported in this browser',
+        );
+      }
 
-    // Subscribe to messages from the service worker
-    serviceWorker.onmessage = _onNotificationClicked.toJS;
+      // Check if service workers are supported
+      final JSAny? serviceWorkerProperty = window.navigator['serviceWorker'];
+      if (serviceWorkerProperty == null) {
+        throw UnsupportedError(
+          'Service Workers are not supported in this browser. '
+          'Notifications require Service Worker support.',
+        );
+      }
 
-    return true;
+      // Replace the default Flutter service worker with our own.
+      // This isn't supported at build time yet and so must be done at runtime.
+      // See: https://github.com/flutter/flutter/issues/145828
+      final ServiceWorkerContainer serviceWorker =
+          window.navigator.serviceWorker;
+      _registration = await serviceWorker.getRegistration().toDart;
+      const String jsPath =
+          './assets/packages/flutter_local_notifications_web/web/notifications_service_worker.js';
+      _registration = await serviceWorker.register(jsPath.toJS).toDart;
+
+      if (_registration == null) {
+        throw StateError('Failed to register service worker');
+      }
+
+      // Subscribe to messages from the service worker
+      serviceWorker.onmessage = _onNotificationClicked.toJS;
+
+      return true;
+    } catch (e) {
+      // Initialization failed - log error and return false
+      // ignore: avoid_print
+      print('flutter_local_notifications_web: Failed to initialize: $e');
+      return false;
+    }
   }
 
   /// Requests notification permission from the browser.
@@ -112,7 +158,7 @@ class WebFlutterLocalNotificationsPlugin
     if (isPermissionDenied) {
       return false;
     }
-    
+
     final JSString permissionStatus =
         await Notification.requestPermission().toDart;
     return permissionStatus.toDart == 'granted';
