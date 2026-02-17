@@ -14,7 +14,7 @@ dependencies:
   http: ^1.3.0
   image: ^4.5.2
   path_provider: ^2.1.5
-  timezone: ^0.10.0
+  timezone: ^0.11.0
 
 dev_dependencies:
   flutter_driver:
@@ -23,6 +23,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  flutter_lints: ^6.0.0
   msix: ^3.16.9
 
 flutter:
@@ -32,8 +33,8 @@ flutter:
     - sound/
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.10.0
+  flutter: ">=3.38.1"
 
 msix_config:
   display_name: Flutter Local Notifications Example

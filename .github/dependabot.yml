@@ -16,3 +16,7 @@ updates:
     directory: "/flutter_local_notifications"
     schedule:
       interval: "daily"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

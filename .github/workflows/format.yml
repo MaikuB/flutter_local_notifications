@@ -8,19 +8,19 @@ jobs:
   java_format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
-          java-version: '17'
-      - uses: axel-op/googlejavaformat-action@v3
+          java-version: '21'
+      - uses: axel-op/googlejavaformat-action@v4
         with:
           args: '--skip-sorting-imports --replace'
 
   objc_format:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Test
         run: |
           which clang-format || brew install clang-format
@@ -32,7 +32,7 @@ jobs:
   swift_format:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Test
         run: |
           which swiftlint || brew install swiftlint
@@ -44,7 +44,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install latest clang-format
         run: |
@@ -58,6 +58,6 @@ jobs:
           ~/.local/bin/clang-format *.cpp *.hpp *.h -i
           # git diff --exit-code || (git commit --all -m "Clang Format" && git push)
 
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: Clang format

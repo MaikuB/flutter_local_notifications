@@ -40,27 +40,18 @@ void main() {
       mockFs = MockFileSystem();
       mockStorageFile = MockFile();
 
-      when(
-        mockPlatformInfo.getAll(),
-      ).thenAnswer((_) async => platformInfo);
+      when(mockPlatformInfo.getAll()).thenAnswer((_) async => platformInfo);
       when(mockFs.open(fileStoragePath)).thenReturn(mockStorageFile);
     });
 
     setUp(() {
-      storage = NotificationStorage(
-        platformInfo: mockPlatformInfo,
-        fs: mockFs,
-      );
+      storage = NotificationStorage(platformInfo: mockPlatformInfo, fs: mockFs);
     });
 
     test('Insert', () async {
       const List<LinuxNotificationInfo> notifications = <LinuxNotificationInfo>[
         LinuxNotificationInfo(id: 1, systemId: 1),
-        LinuxNotificationInfo(
-          id: 2,
-          systemId: 2,
-          payload: 'test',
-        ),
+        LinuxNotificationInfo(id: 2, systemId: 2, payload: 'test'),
         LinuxNotificationInfo(
           id: 3,
           systemId: 3,
@@ -73,21 +64,15 @@ void main() {
       ];
 
       when(mockStorageFile.existsSync()).thenReturn(false);
-      when(
-        mockStorageFile.createSync(recursive: true),
-      ).thenAnswer((_) {});
-      when(
-        mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) {});
+      when(mockStorageFile.createSync(recursive: true)).thenAnswer((_) {});
+      when(mockStorageFile.writeAsStringSync(any)).thenAnswer((_) {});
       when(mockStorageFile.readAsStringSync()).thenReturn('');
 
       expect(await storage.insert(notifications[0]), isTrue);
       expect(await storage.insert(notifications[1]), isTrue);
       expect(await storage.insert(notifications[2]), isTrue);
 
-      verify(
-        mockStorageFile.createSync(recursive: true),
-      ).called(3);
+      verify(mockStorageFile.createSync(recursive: true)).called(3);
       verify(
         mockStorageFile.writeAsStringSync(
           jsonEncode(<LinuxNotificationInfo>[notifications[0]]),
@@ -101,17 +86,11 @@ void main() {
     test('Remove', () async {
       const List<LinuxNotificationInfo> notifications = <LinuxNotificationInfo>[
         LinuxNotificationInfo(id: 1, systemId: 1),
-        LinuxNotificationInfo(
-          id: 2,
-          systemId: 2,
-          payload: 'test',
-        ),
+        LinuxNotificationInfo(id: 2, systemId: 2, payload: 'test'),
       ];
 
       when(mockStorageFile.existsSync()).thenReturn(true);
-      when(
-        mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) {});
+      when(mockStorageFile.writeAsStringSync(any)).thenAnswer((_) {});
       when(mockStorageFile.readAsStringSync()).thenReturn('');
 
       await storage.insert(notifications[0]);
@@ -135,25 +114,20 @@ void main() {
     test('Get all', () async {
       const List<LinuxNotificationInfo> notifications = <LinuxNotificationInfo>[
         LinuxNotificationInfo(id: 1, systemId: 1),
+        LinuxNotificationInfo(id: 2, systemId: 2, payload: 'test'),
         LinuxNotificationInfo(
-          id: 2,
-          systemId: 2,
+          id: 3,
+          systemId: 3,
           payload: 'test',
+          actions: <LinuxNotificationActionInfo>[
+            LinuxNotificationActionInfo(key: '1'),
+            LinuxNotificationActionInfo(key: '2'),
+          ],
         ),
-        LinuxNotificationInfo(
-            id: 3,
-            systemId: 3,
-            payload: 'test',
-            actions: <LinuxNotificationActionInfo>[
-              LinuxNotificationActionInfo(key: '1'),
-              LinuxNotificationActionInfo(key: '2'),
-            ]),
       ];
 
       when(mockStorageFile.existsSync()).thenReturn(true);
-      when(
-        mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) {});
+      when(mockStorageFile.writeAsStringSync(any)).thenAnswer((_) {});
 
       when(mockStorageFile.readAsStringSync()).thenReturn('');
       expect(await storage.getAll(), <LinuxNotificationInfo>[]);
@@ -170,10 +144,7 @@ void main() {
       await storage.insert(notifications[1]);
       await storage.insert(notifications[2]);
 
-      expect(
-        await storage.getAll(),
-        notifications,
-      );
+      expect(await storage.getAll(), notifications);
     });
 
     test('Get by ID', () async {
@@ -183,9 +154,7 @@ void main() {
       );
 
       when(mockStorageFile.existsSync()).thenReturn(true);
-      when(
-        mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) {});
+      when(mockStorageFile.writeAsStringSync(any)).thenAnswer((_) {});
 
       when(mockStorageFile.readAsStringSync()).thenReturn('');
       expect(await storage.getAll(), <LinuxNotificationInfo>[]);
@@ -211,9 +180,7 @@ void main() {
       );
 
       when(mockStorageFile.existsSync()).thenReturn(true);
-      when(
-        mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) {});
+      when(mockStorageFile.writeAsStringSync(any)).thenAnswer((_) {});
 
       when(
         mockStorageFile.readAsStringSync(),
@@ -231,17 +198,11 @@ void main() {
     test('Remove by ID list', () async {
       const List<LinuxNotificationInfo> notifications = <LinuxNotificationInfo>[
         LinuxNotificationInfo(id: 1, systemId: 1),
-        LinuxNotificationInfo(
-          id: 2,
-          systemId: 2,
-          payload: 'test',
-        ),
+        LinuxNotificationInfo(id: 2, systemId: 2, payload: 'test'),
       ];
 
       when(mockStorageFile.existsSync()).thenReturn(true);
-      when(
-        mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) {});
+      when(mockStorageFile.writeAsStringSync(any)).thenAnswer((_) {});
       when(mockStorageFile.readAsStringSync()).thenReturn('');
 
       await storage.insert(notifications[0]);
@@ -269,9 +230,7 @@ void main() {
       );
 
       when(mockStorageFile.existsSync()).thenReturn(true);
-      when(
-        mockStorageFile.writeAsStringSync(any),
-      ).thenAnswer((_) {});
+      when(mockStorageFile.writeAsStringSync(any)).thenAnswer((_) {});
       when(mockStorageFile.readAsStringSync()).thenReturn('');
 
       await storage.insert(notification);

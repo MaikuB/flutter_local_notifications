@@ -8,12 +8,12 @@ extension HeaderToXml on WindowsHeader {
   ///
   /// See: https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-header
   void buildXml(XmlBuilder builder) => builder.element(
-        'header',
-        attributes: <String, String>{
-          'id': id,
-          'title': title,
-          'arguments': arguments,
-          if (activation != null) 'activationType': activation!.name,
-        },
-      );
+    'header',
+    attributes: <String, String>{
+      'id': id,
+      'title': title,
+      'arguments': arguments,
+      if (activation != null) 'activationType': activation!.name,
+    },
+  );
 }

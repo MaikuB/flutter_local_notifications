@@ -1,3 +1,48 @@
+## [21.0.0-dev.1]
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.38.1 and Dart SDK requirement to 3.10.0.Consequently the minimum OS requirements for each platform has been updated as well
+  * [Android] minimum Android version is now 7.0 (API level 24)
+  * [iOS] minimum iOS version is now 13
+  * [macOS] minimum macOS version is now 10.15
+
+## [20.1.0]
+
+* [iOS] added CarPlay notification support. Thanks to the PR from [derrik f](https://github.com/derrik-fleming)
+* [iOS][macOS] the `ActiveNotification` class now returns values for `groupKey` property if applicable. This depends on if the `threadIdentifier` was specified when creating the notification itself. Thanks to the PR from [Kwon Tae Hyung](https://github.com/TaeBbong)
+* [Windows] non-functional change: addressed the [`use_null_aware_elements`](https://dart.dev/tools/diagnostics/use_null_aware_elements) linter issue
+
+## [20.0.0]
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.32.0 and Dart SDK requirement to 3.8.0
+* **Breaking changes** the positional parameters in the following methods have now been converted to named parameters across all platforms. Thanks to the PR started by [Kwon Tae Hyung](https://github.com/TaeBbong)
+  * `initialize()`
+  * `show()`
+  * `periodicallyShow()`
+  * `periodicallyShowWithDuration()`
+  * `cancel()`
+  * `zonedSchedule()`
+* [Android] **Breaking changes** the positional parameters in the following methods have now been converted to named parameters
+  * `startForegroundService()`
+  * `deleteNotificationChannelGroup()`
+  * `deleteNotificationChannel()`
+  * `getActiveNotificationMessagingStyle()`
+* [Linux] **Breaking changes** the positional parameters in the `LinuxNotificationCustomHint()` method have now been converted to named parameters
+* [Windows] * **Breaking changes** the positional parameters in the following methods have now been converted to named parameters
+  * `showRawXml()`
+  * `zonedScheduleRawXml()`
+* [Windows] **Breaking changes** to align with the main the plugin, the following parameters have been renamed
+  * the `details` parameter in the `show()` and `zonedSchedule()` methods has been renamed to `notificationDetails`
+  * the `onNotificationReceived` in the `initialize()` method has been renamed to `onDidReceiveNotificationResponse`
+* [Windows] **Breaking change** removed the `details` parameter from the `zonedScheduleRawXml()` method as it was not actually used. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches)
+* [Android] updated Java compatibility version to 17
+* [Android] fixed issue [#2745](https://github.com/MaikuB/flutter_local_notifications/issues/2745) to export the `AndroidIcon` abstract class 
+* Updated readme with information for developers that plan to move to use the UIScene lifecycle
+* Added `flutter_lints` to apply linter rules
+
+## [19.5.0]
+
+* [iOS][macOS] added `requestProvidesAppNotificationSettings` option to `DarwinInitializationSettings` class, and `isProvidesAppNotificationSettingsEnabled` to `NotificationsEnabledOptions` class. This allows applications to show a "Configure Notifications in <app name>" option when showing the context menu for an individual notification. This can be used for scenarios where an application can respond to the user selecting this option to show a custom page for controlling notification settings. Please note this whilst the API changes are applicable for iOS and macOS, the actual functionality only appears to be supported by Apple when it comes to iOS devices. See example app to see how this new functionality can be implemented. Thanks to the PR from [Luke Memet](https://github.com/lukemmtt)
+
 ## [19.4.2]
 
 * [Windows] fixed issue where non-ASCII characters for the notification [application name](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/WindowsInitializationSettings/appName.html) weren't being displayed properly. Thanks to the PR from [yoyoIU](https://github.com/yoyo930021)

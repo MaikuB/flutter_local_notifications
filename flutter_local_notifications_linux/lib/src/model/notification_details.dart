@@ -101,10 +101,7 @@ class LinuxNotificationDetails {
 /// For more information, please see Desktop Notifications Specification https://specifications.freedesktop.org/notification-spec/latest/ar01s02.html
 class LinuxNotificationAction {
   /// Constructs a [LinuxNotificationAction] object.
-  const LinuxNotificationAction({
-    required this.key,
-    required this.label,
-  });
+  const LinuxNotificationAction({required this.key, required this.label});
 
   /// Unique ID for this action. This ID will be sent back in the action handler
   /// defined in [FlutterLocalNotificationsPlugin].

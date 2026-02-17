@@ -10,6 +10,7 @@ class DarwinInitializationSettings {
     this.requestBadgePermission = true,
     this.requestProvisionalPermission = false,
     this.requestCriticalPermission = false,
+    this.requestProvidesAppNotificationSettings = false,
     this.defaultPresentAlert = true,
     this.defaultPresentSound = true,
     this.defaultPresentBadge = true,
@@ -50,6 +51,28 @@ class DarwinInitializationSettings {
   ///
   /// Default value is 'false'.
   final bool requestCriticalPermission;
+
+  /// Request permission to provide custom notification settings UI.
+  ///
+  /// When enabled on iOS, the system displays a
+  /// "Configure Notifications in \<application name\>" button in the
+  /// notification's context menu (when swiping on a notification and
+  /// selecting Options). This allows your app to present a custom UI
+  /// for notification settings by handling the appropriate delegate
+  /// callback.
+  ///
+  /// **Note on macOS:** While the API is available on macOS 10.14+, the
+  /// UI button does not appear to be displayed in practice, despite proper
+  /// implementation of the delegate method. The API is supported for
+  /// consistency with iOS, but may not result in visible UI changes on macOS.
+  ///
+  /// Corresponds to https://developer.apple.com/documentation/usernotifications/unauthorizationoptions/3040321-providesappnotificationsettings
+  ///
+  /// Default value is false.
+  ///
+  /// On iOS, this property is only applicable to iOS 12 or newer.
+  /// On macOS, this property is only applicable to macOS 10.14 or newer.
+  final bool requestProvidesAppNotificationSettings;
 
   /// Configures the default setting on if an alert should be displayed when a
   /// notification is triggered while app is in the foreground.
@@ -136,4 +159,35 @@ class DarwinInitializationSettings {
   /// On iOS, this is only applicable to iOS 10 or newer.
   /// On macOS, this is only applicable to macOS 10.14 or newer.
   final List<DarwinNotificationCategory> notificationCategories;
+}
+
+/// Plugin initialization settings for iOS
+class IOSInitializationSettings extends DarwinInitializationSettings {
+  /// Constructs an instance of [IOSInitializationSettings].
+  const IOSInitializationSettings({
+    super.requestAlertPermission = true,
+    super.requestSoundPermission = true,
+    super.requestBadgePermission = true,
+    super.requestProvisionalPermission = false,
+    super.requestCriticalPermission = false,
+    super.requestProvidesAppNotificationSettings = false,
+    this.requestCarPlayPermission = false,
+    super.defaultPresentAlert = true,
+    super.defaultPresentSound = true,
+    super.defaultPresentBadge = true,
+    super.defaultPresentBanner = true,
+    super.defaultPresentList = true,
+    super.notificationCategories = const <DarwinNotificationCategory>[],
+  });
+
+  /// Request permission to show notifications on CarPlay.
+  ///
+  /// This permission allows the app to display notifications on the CarPlay
+  /// interface when connected to a compatible vehicle.
+  ///
+  /// Default value is false.
+  ///
+  /// This property is only applicable to iOS 10.0 or newer and is iOS-only.
+  /// CarPlay is not available on macOS.
+  final bool requestCarPlayPermission;
 }

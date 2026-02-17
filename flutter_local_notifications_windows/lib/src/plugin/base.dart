@@ -11,9 +11,9 @@ export 'package:timezone/timezone.dart';
 abstract class WindowsNotificationsBase
     extends FlutterLocalNotificationsPlatform {
   /// Initializes the plugin. No other method should be called before this.
-  Future<bool> initialize(
-    WindowsInitializationSettings settings, {
-    DidReceiveNotificationResponseCallback? onNotificationReceived,
+  Future<bool> initialize({
+    required WindowsInitializationSettings settings,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   });
 
   /// Releases any resources used by this plugin.
@@ -29,21 +29,21 @@ abstract class WindowsNotificationsBase
   });
 
   @override
-  Future<void> show(
-    int id,
+  Future<void> show({
+    required int id,
     String? title,
-    String? body, {
+    String? body,
     String? payload,
-    WindowsNotificationDetails? details,
+    WindowsNotificationDetails? notificationDetails,
   });
 
   /// Schedules a notification to appear at the given date and time.
-  Future<void> zonedSchedule(
-    int id,
+  Future<void> zonedSchedule({
+    required int id,
     String? title,
     String? body,
-    TZDateTime scheduledDate,
-    WindowsNotificationDetails? details, {
+    required TZDateTime scheduledDate,
+    WindowsNotificationDetails? notificationDetails,
     String? payload,
   });
 
@@ -51,12 +51,11 @@ abstract class WindowsNotificationsBase
   ///
   /// See https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/schema-root.
   /// For validation, see [the Windows Notifications Visualizer](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/notifications-visualizer).
-  Future<void> zonedScheduleRawXml(
-    int id,
-    String xml,
-    TZDateTime scheduledDate,
-    WindowsNotificationDetails? details,
-  );
+  Future<void> zonedScheduleRawXml({
+    required int id,
+    required String xml,
+    required TZDateTime scheduledDate,
+  });
 
   /// Updates the progress bar in the notification with the given ID.
   ///
@@ -65,11 +64,7 @@ abstract class WindowsNotificationsBase
   Future<NotificationUpdateResult> updateProgressBar({
     required int notificationId,
     required WindowsProgressBar progressBar,
-  }) =>
-      updateBindings(
-        id: notificationId,
-        bindings: progressBar.data,
-      );
+  }) => updateBindings(id: notificationId, bindings: progressBar.data);
 
   /// Updates any data binding in the given notification.
   ///

@@ -7,11 +7,11 @@ extension AudioToXml on WindowsNotificationAudio {
   ///
   /// See: https://learn.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-audio
   void buildXml(XmlBuilder builder) => builder.element(
-        'audio',
-        attributes: <String, String>{
-          'src': source,
-          'silent': isSilent.toString(),
-          'loop': shouldLoop.toString(),
-        },
-      );
+    'audio',
+    attributes: <String, String>{
+      'src': source,
+      'silent': isSilent.toString(),
+      'loop': shouldLoop.toString(),
+    },
+  );
 }

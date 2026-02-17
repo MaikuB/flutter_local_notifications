@@ -9,7 +9,7 @@ import 'enums.dart';
 @optionalTypeArgs
 class LinuxNotificationCustomHint<T> {
   /// Constructs an instance of [LinuxNotificationCustomHint].
-  const LinuxNotificationCustomHint(this.name, this.value);
+  const LinuxNotificationCustomHint({required this.name, required this.value});
 
   /// Name of this hint.
   /// The vendor hint name should be in the form of `x-vendor-name`.
@@ -74,12 +74,10 @@ class LinuxHintDictValue<K extends LinuxHintValue, V extends LinuxHintValue>
 
   /// Constructs an instance of [LinuxHintDictValue].
   LinuxHintDictValue.stringVariant(Map<String, V> value)
-      : value = value.map(
-          (String key, V value) => MapEntry<K, V>(
-            LinuxHintStringValue(key) as K,
-            value,
-          ),
-        );
+    : value = value.map(
+        (String key, V value) =>
+            MapEntry<K, V>(LinuxHintStringValue(key) as K, value),
+      );
 
   @override
   LinuxHintValueType get type => LinuxHintValueType.dict;

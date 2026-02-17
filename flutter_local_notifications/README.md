@@ -102,7 +102,9 @@ Note: the plugin requires Flutter SDK 3.22 at a minimum. The list of support pla
 * [Android] Start a foreground service
 * [Android] Ability to check if notifications are enabled
 * [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
+* [iOS 10+] Request CarPlay notification permissions for notifications to appear in CarPlay interface
 * [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
+* [iOS 12.0+] Support for custom notification settings UI via "Configure Notifications in <application name>" button in notification context menu (API available on macOS 10.14+ but UI button does not appear in practice)
 * [iOS and macOS 10.14 or newer] Ability to check if notifications are enabled with specific type check
 * [Linux] Ability to to use themed/Flutter Assets icons and sound
 * [Linux] Ability to to set the category
@@ -220,13 +222,13 @@ android {
     compileOptions {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
-        // Sets Java compatibility to Java 11
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        // Sets Java compatibility to Java 17
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 }
 
@@ -248,13 +250,13 @@ android {
     compileOptions {
         // Flag to enable support for the new language APIs
         isCoreLibraryDesugaringEnabled = true
-        // Sets Java compatibility to Java 11
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        // Sets Java compatibility to Java 17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
   
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 }
 
@@ -478,6 +480,9 @@ if #available(iOS 10.0, *) {
 }
 ```
 
+> [!NOTE]
+> Apple have made an announcement [here](https://developer.apple.com/documentation/technotes/tn3187-migrating-to-the-uikit-scene-based-life-cycle) that after iOS 26, the next major release will enforce new requirements for applications. The migration instructions from the Flutter team can be found to meet these requirements can be found [here](https://docs.flutter.dev/release/breaking-changes/uiscenedelegate). If your application will follow these instructions to use the UIScene lifecycle, then ensure you follow their instructions that involves moving logic like the above to the appropriate method (i.e. `didInitializeImplicitFlutterEngine`)
+
 ### Handling notifications whilst the app is in the foreground
 
 By design, iOS applications *do not* display notifications while the app is in the foreground unless configured to do so.
@@ -566,6 +571,9 @@ override func application(
 }
 ```
 
+> [!NOTE]
+> Apple have made an announcement [here](https://developer.apple.com/documentation/technotes/tn3187-migrating-to-the-uikit-scene-based-life-cycle) that after iOS 26, the next major release will enforce new requirements for applications. The migration instructions from the Flutter team can be found to meet these requirements can be found [here](https://docs.flutter.dev/release/breaking-changes/uiscenedelegate). If your application will follow these instructions to use the UIScene lifecycle, then ensure you follow their instructions that involves moving logic like the above to the appropriate method (i.e. `didInitializeImplicitFlutterEngine`)
+
 On iOS/macOS, notification actions need to be configured before the app is started using the `initialize` method
 
 ``` dart
@@ -615,7 +623,7 @@ Specify this function as a parameter in the `initialize` method of this plugin:
 
 ``` dart
 await flutterLocalNotificationsPlugin.initialize(
-    initializationSettings,
+    settings: initializationSettings,
     onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {
         // ...
     },
@@ -651,7 +659,7 @@ Future<void> _showNotificationWithActions() async {
   const NotificationDetails notificationDetails =
       NotificationDetails(android: androidNotificationDetails);
   await flutterLocalNotificationsPlugin.show(
-      0, '...', '...', notificationDetails);
+      id: 0, title: '...', body: '...', notificationDetails);
 }
 ```
 
@@ -692,13 +700,69 @@ final InitializationSettings initializationSettings = InitializationSettings(
     macOS: initializationSettingsDarwin,
     linux: initializationSettingsLinux,
     windows: initializationSettingsWindows);
-await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+await flutterLocalNotificationsPlugin.initialize(settings: initializationSettings,
     onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
 ```
 
 Initialisation can be done in the `main` function of your application or can be done within the first page shown in your app. Developers can refer to the example app that has code for the initialising within the `main` function. The code above has been simplified for explaining the concepts. Here we have specified the default icon to use for notifications on Android (refer to the *Android setup* section) and designated the function (`onDidReceiveNotificationResponse`) that should fire when a notification has been tapped on via the `onDidReceiveNotificationResponse` callback. Specifying this callback is entirely optional but here it will trigger navigation to another page and display the payload associated with the notification. This callback **cannot** be used to handle when a notification launched an app. Use the `getNotificationAppLaunchDetails` method when the app starts if you need to handle when a notification triggering the launch for an app e.g. change the home route of the app for deep-linking.
 
 Note that all settings are nullable, because we don't want to force developers so specify settings for platforms they don't target. You will get a runtime ArgumentError Exception if you forgot to pass the settings for the platform you target.
+
+### [iOS-specific] Using IOSInitializationSettings
+
+Starting from version 17.3.0, iOS developers can use the more specific `IOSInitializationSettings` class instead of `DarwinInitializationSettings` to access iOS-only features like CarPlay notification permissions. The `IOSInitializationSettings` class extends `DarwinInitializationSettings`, so all existing Darwin features are still available.
+
+```dart
+const AndroidInitializationSettings initializationSettingsAndroid =
+    AndroidInitializationSettings('app_icon');
+final IOSInitializationSettings initializationSettingsIOS =
+    IOSInitializationSettings(
+        // Darwin settings
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+        // iOS-specific settings
+        requestCarPlayPermission: true,
+    );
+final DarwinInitializationSettings initializationSettingsDarwin =
+    DarwinInitializationSettings();
+final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsIOS,  // Use iOS-specific settings
+    macOS: initializationSettingsDarwin,  // Keep Darwin for macOS
+);
+```
+
+#### CarPlay Integration
+
+When `requestCarPlayPermission` is set to `true`, the plugin will request CarPlay notification permissions if the device supports it (iOS 10.0+). This allows your app's notifications to appear on the CarPlay interface when the device is connected to a compatible vehicle.
+
+**Important considerations:**
+- CarPlay permissions are only available on iOS 10.0 or newer
+- The permission request will be silently ignored on unsupported devices
+- CarPlay notifications follow the same content guidelines as regular iOS notifications
+- Test CarPlay integration using the iOS Simulator's CarPlay mode
+
+#### Migration from DarwinInitializationSettings
+
+Existing code using `DarwinInitializationSettings` for iOS will continue to work without changes. To migrate to iOS-specific features:
+
+1. Replace `DarwinInitializationSettings` with `IOSInitializationSettings` in your iOS initialization
+2. Add any iOS-specific options like `requestCarPlayPermission`
+3. Keep using `DarwinInitializationSettings` for macOS initialization
+
+```dart
+// Before (still works)
+final DarwinInitializationSettings initializationSettingsDarwin =
+    DarwinInitializationSettings(requestAlertPermission: true);
+
+// After (with iOS-specific features)
+final IOSInitializationSettings initializationSettingsIOS =
+    IOSInitializationSettings(
+        requestAlertPermission: true,
+        requestCarPlayPermission: true,
+    );
+```
 
 ```dart
 void onDidReceiveNotificationResponse(NotificationResponse notificationResponse) async {
@@ -749,7 +813,7 @@ The constructor for the `DarwinInitializationSettings` class  has three named pa
       iOS: initializationSettingsDarwin,
       macOS: initializationSettingsDarwin,
       linux: initializationSettingsLinux);
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+  await flutterLocalNotificationsPlugin.initialize(settings: initializationSettings,
       onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
 ```
 
@@ -835,9 +899,9 @@ Assuming the local location has been set, the `zonedSchedule` method can then be
 ```dart
 await flutterLocalNotificationsPlugin.zonedSchedule(
     0,
-    'scheduled title',
-    'scheduled body',
-    tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+    title: 'scheduled title',
+    body: 'scheduled body',
+    scheduledDate: tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
     const NotificationDetails(
         android: AndroidNotificationDetails(
             'your channel id', 'your channel name',
@@ -856,15 +920,23 @@ If you are trying to update your code so it doesn't use the deprecated methods f
 **Note** This is not supported on Windows
 
 ```dart
-const AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails(
-        'repeating channel id', 'repeating channel name',
-        channelDescription: 'repeating description');
-const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-await flutterLocalNotificationsPlugin.periodicallyShow(0, 'repeating title',
-    'repeating body', RepeatInterval.everyMinute, notificationDetails,
-    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle);
+  const AndroidNotificationDetails androidNotificationDetails =
+      AndroidNotificationDetails(
+        'repeating channel id',
+        'repeating channel name',
+        channelDescription: 'repeating description',
+      );
+  const NotificationDetails notificationDetails = NotificationDetails(
+    android: androidNotificationDetails,
+  );
+  await flutterLocalNotificationsPlugin.periodicallyShow(
+    id: id++,
+    title: 'repeating title',
+    body: 'repeating body',
+    repeatInterval: RepeatInterval.everyMinute,
+    notificationDetails: notificationDetails,
+    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+  );
 ```
 
 ### Retrieving pending notification requests
@@ -888,6 +960,16 @@ final List<ActiveNotification> activeNotifications =
 - iOS 10.0 or newer
 - macOS 10.14 or newer
 
+The `ActiveNotification.groupKey` property contains the notification's grouping identifier:
+- On Android: the `groupKey` value set via `AndroidNotificationDetails`
+- On iOS/macOS: the `threadIdentifier` value set via `DarwinNotificationDetails`
+
+```dart
+for (final ActiveNotification notification in activeNotifications) {
+  print('Notification group/thread: ${notification.groupKey}');
+}
+```
+
 ### Grouping notifications
 
 #### iOS
@@ -904,58 +986,78 @@ const DarwinNotificationDetails iOSPlatformChannelSpecifics =
 This is a "translation" of the sample available at https://developer.android.com/training/notify-user/group.html
 
 ```dart
-const String groupKey = 'com.android.example.WORK_EMAIL';
-const String groupChannelId = 'grouped channel id';
-const String groupChannelName = 'grouped channel name';
-const String groupChannelDescription = 'grouped channel description';
-// example based on https://developer.android.com/training/notify-user/group.html
-const AndroidNotificationDetails firstNotificationAndroidSpecifics =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        importance: Importance.max,
-        priority: Priority.high,
-        groupKey: groupKey);
-const NotificationDetails firstNotificationPlatformSpecifics =
-    NotificationDetails(android: firstNotificationAndroidSpecifics);
-await flutterLocalNotificationsPlugin.show(1, 'Alex Faarborg',
-    'You will not believe...', firstNotificationPlatformSpecifics);
-const AndroidNotificationDetails secondNotificationAndroidSpecifics =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        importance: Importance.max,
-        priority: Priority.high,
-        groupKey: groupKey);
-const NotificationDetails secondNotificationPlatformSpecifics =
-    NotificationDetails(android: secondNotificationAndroidSpecifics);
-await flutterLocalNotificationsPlugin.show(
-    2,
-    'Jeff Chang',
-    'Please join us to celebrate the...',
-    secondNotificationPlatformSpecifics);
+ const String groupKey = 'com.android.example.WORK_EMAIL';
+    const String groupChannelId = 'grouped channel id';
+    const String groupChannelName = 'grouped channel name';
+    const String groupChannelDescription = 'grouped channel description';
+    // example based on https://developer.android.com/training/notify-user/group.html
+    const AndroidNotificationDetails firstNotificationAndroidSpecifics =
+        AndroidNotificationDetails(
+          groupChannelId,
+          groupChannelName,
+          channelDescription: groupChannelDescription,
+          importance: Importance.max,
+          priority: Priority.high,
+          groupKey: groupKey,
+        );
+    const NotificationDetails firstNotificationPlatformSpecifics =
+        NotificationDetails(android: firstNotificationAndroidSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      id: id++,
+      title: 'Alex Faarborg',
+      body: 'You will not believe...',
+      notificationDetails: firstNotificationPlatformSpecifics,
+    );
+    const AndroidNotificationDetails secondNotificationAndroidSpecifics =
+        AndroidNotificationDetails(
+          groupChannelId,
+          groupChannelName,
+          channelDescription: groupChannelDescription,
+          importance: Importance.max,
+          priority: Priority.high,
+          groupKey: groupKey,
+        );
+    const NotificationDetails secondNotificationPlatformSpecifics =
+        NotificationDetails(android: secondNotificationAndroidSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      id: id++,
+      title: 'Jeff Chang',
+      body: 'Please join us to celebrate the...',
+      notificationDetails: secondNotificationPlatformSpecifics,
+    );
 
-// Create the summary notification to support older devices that pre-date
-/// Android 7.0 (API level 24).
-///
-/// Recommended to create this regardless as the behaviour may vary as
-/// mentioned in https://developer.android.com/training/notify-user/group
-const List<String> lines = <String>[
-    'Alex Faarborg  Check this out',
-    'Jeff Chang    Launch Party'
-];
-const InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
-    lines,
-    contentTitle: '2 messages',
-    summaryText: 'janedoe@example.com');
-const AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails(groupChannelId, groupChannelName,
-        channelDescription: groupChannelDescription,
-        styleInformation: inboxStyleInformation,
-        groupKey: groupKey,
-        setAsGroupSummary: true);
-const NotificationDetails notificationDetails =
-    NotificationDetails(android: androidNotificationDetails);
-await flutterLocalNotificationsPlugin.show(
-    3, 'Attention', 'Two messages', notificationDetails);
+    // Create the summary notification to support older devices that pre-date
+    /// Android 7.0 (API level 24).
+    ///
+    /// Recommended to create this regardless as the behaviour may vary as
+    /// mentioned in https://developer.android.com/training/notify-user/group
+    const List<String> lines = <String>[
+      'Alex Faarborg  Check this out',
+      'Jeff Chang    Launch Party',
+    ];
+    const InboxStyleInformation inboxStyleInformation = InboxStyleInformation(
+      lines,
+      contentTitle: '2 messages',
+      summaryText: 'janedoe@example.com',
+    );
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+          groupChannelId,
+          groupChannelName,
+          channelDescription: groupChannelDescription,
+          styleInformation: inboxStyleInformation,
+          groupKey: groupKey,
+          setAsGroupSummary: true,
+        );
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+    );
+    await flutterLocalNotificationsPlugin.show(
+      id: id++,
+      title: 'Attention',
+      body: 'Two messages',
+      notificationDetails: notificationDetails,
+    );
 ```
 
 ### Cancelling/deleting a notification
@@ -964,7 +1066,7 @@ await flutterLocalNotificationsPlugin.show(
 
 ```dart
 // cancel the notification with id value of zero
-await flutterLocalNotificationsPlugin.cancel(0);
+await flutterLocalNotificationsPlugin.cancel(id: 0);
 ```
 
 ### Cancelling/deleting all notifications
