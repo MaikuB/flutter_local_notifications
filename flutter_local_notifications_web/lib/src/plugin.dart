@@ -1,6 +1,7 @@
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:web/web.dart';
 
@@ -190,13 +191,13 @@ class WebFlutterLocalNotificationsPlugin
     if (_registration == null) {
       return;
     }
-    final List<Notification> notifs =
+    final List<Notification> notifications =
         await _registration!.getDartNotifications();
-    for (final Notification notification in notifs) {
-      if (notification.id == id || (tag != null && tag == notification.tag)) {
-        notification.close();
-      }
-    }
+    final Notification? notification = notifications.firstWhereOrNull(
+      (Notification notification) =>
+          notification.id == id && (tag == null || notification.tag == tag),
+    );
+    notification?.close();
   }
 
   @override
@@ -204,9 +205,9 @@ class WebFlutterLocalNotificationsPlugin
     if (_registration == null) {
       return;
     }
-    final List<Notification> notifs =
+    final List<Notification> notifications =
         await _registration!.getDartNotifications();
-    for (final Notification notification in notifs) {
+    for (final Notification notification in notifications) {
       notification.close();
     }
   }
