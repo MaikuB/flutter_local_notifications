@@ -58,6 +58,14 @@ List<Widget> webExamples(
     buttonText: 'Notification with actions and payload',
     onPressed: _showWithActionsAndPayload,
   ),
+  const PaddedElevatedButton(
+    buttonText: 'Notification with icon actions',
+    onPressed: _showWithIconActions,
+  ),
+  const PaddedElevatedButton(
+    buttonText: 'Notification with reply action',
+    onPressed: _showWithReplyAction,
+  ),
 ];
 
 final Uri imageUrl = Uri.parse('https://picsum.photos/500');
@@ -164,4 +172,37 @@ void _showWithActionsAndPayload() => flutterLocalNotificationsPlugin.show(
   ),
   payload:
       '{"type": "message", "senderId": "user_789", "senderName": "John Doe", "messageId": "msg_456"}',
+);
+
+void _showWithIconActions() => flutterLocalNotificationsPlugin.show(
+  id: id++,
+  title: 'New Photo from Sarah',
+  body: 'Sarah shared a photo with you',
+  notificationDetails: const NotificationDetails(
+    web: WebNotificationDetails(
+      requireInteraction: true,
+      actions: <WebNotificationAction>[
+        WebNotificationAction(action: 'like', title: '👍 Like'),
+        WebNotificationAction(action: 'view', title: '👀 View'),
+      ],
+    ),
+  ),
+  payload: 'photo_123',
+);
+
+void _showWithReplyAction() => flutterLocalNotificationsPlugin.show(
+  id: id++,
+  title: 'Chat: Team Updates',
+  body: 'Alice: Can we move the standup to 3pm?',
+  notificationDetails: const NotificationDetails(
+    web: WebNotificationDetails(
+      requireInteraction: true,
+      actions: <WebNotificationAction>[
+        WebNotificationAction(action: 'reply', title: '💬 Reply'),
+        WebNotificationAction(action: 'mark_read', title: '✓ Mark Read'),
+      ],
+    ),
+  ),
+  payload:
+      '{"type": "chat", "channelId": "team_updates", "messageId": "msg_101"}',
 );

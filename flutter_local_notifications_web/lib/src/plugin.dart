@@ -84,10 +84,11 @@ class WebFlutterLocalNotificationsPlugin
 
     // Warn if actions are used (they may not be supported in all browsers)
     if (details?.actions.isNotEmpty == true) {
-      // Note: Notification actions are only supported in Chrome 48+ and Edge 18+.
-      // In Firefox and Safari, actions will be silently ignored and the
-      // notification will still be shown without action buttons.
-      // See: https://caniuse.com/mdn-api_serviceworkerregistration_shownotification_options_actions_parameter
+      developer.log(
+        'Notification actions are only supported in Chrome 48+ and Edge 18+. '
+        'In Firefox and Safari, actions will be silently ignored.',
+        name: 'flutter_local_notifications_web',
+      );
     }
 
     await _registration!

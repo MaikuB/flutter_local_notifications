@@ -33,11 +33,16 @@ extension on WebNotificationAction {
   /// Converts this object to the format expected by `showNotifications()`
   ///
   /// See: https://developer.mozilla.org/en-US/docs/Web/API/Notification/actions.
-  NotificationAction toJs() => <String, dynamic>{
-        'action': action,
-        'title': title,
-        'icon': icon?.toString(),
-      }.jsify() as NotificationAction;
+  NotificationAction toJs() {
+    final NotificationAction result = NotificationAction(
+      action: action,
+      title: title,
+    );
+    if (icon != null) {
+      result.icon = icon.toString();
+    }
+    return result;
+  }
 }
 
 /// A useful way to convert a nullable details object to a JS payload.

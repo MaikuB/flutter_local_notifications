@@ -368,8 +368,11 @@ class _HomePageState extends State<HomePage> {
     ) async {
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (BuildContext context) =>
-              SecondPage(response?.payload, data: response?.data),
+          builder: (BuildContext context) => SecondPage(
+            response?.payload,
+            data: response?.data,
+            response: response,
+          ),
         ),
       );
     });
@@ -3515,12 +3518,14 @@ Future<LinuxServerCapabilities> getLinuxCapabilities() =>
         .getCapabilities();
 
 class SecondPage extends StatefulWidget {
-  const SecondPage(this.payload, {this.data, Key? key}) : super(key: key);
+  const SecondPage(this.payload, {this.data, this.response, Key? key})
+    : super(key: key);
 
   static const String routeName = '/secondPage';
 
   final String? payload;
   final Map<String, dynamic>? data;
+  final NotificationResponse? response;
 
   @override
   State<StatefulWidget> createState() => SecondPageState();
@@ -3541,7 +3546,7 @@ class SecondPageState extends State<SecondPage> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Second Screen')),
     body: Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -3551,10 +3556,24 @@ class SecondPageState extends State<SecondPage> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
+            _InfoValueString(
+              title: 'Notification ID:',
+              value: widget.response?.id ?? 'null',
+            ),
+            _InfoValueString(
+              title: 'Action ID:',
+              value: widget.response?.actionId ?? 'null',
+            ),
+            _InfoValueString(
+              title: 'Input (reply text):',
+              value: widget.response?.input ?? 'null',
+            ),
+            _InfoValueString(
+              title: 'Response Type:',
+              value: widget.response?.notificationResponseType.name ?? 'null',
+            ),
             _InfoValueString(title: 'Payload:', value: _payload ?? 'null'),
             const SizedBox(height: 8),
-            // The data field contains the notification.data object from the web notification
-            // On web, this includes the payload and any other custom data
             if (_data != null && _data!.isNotEmpty) ...<Widget>[
               const Text(
                 'Data:',
