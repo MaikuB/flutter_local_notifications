@@ -1,4 +1,5 @@
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:web/web.dart';
@@ -155,7 +156,29 @@ class WebFlutterLocalNotificationsPlugin
       if (id == null) {
         continue;
       }
-      final ActiveNotification notif = ActiveNotification(id: id);
+      
+      // Extract additional notification details from the web Notification API
+      final String? title = jsNotification.title.nullIfEmpty;
+      final String? body = jsNotification.body.nullIfEmpty;
+      final String? tag = jsNotification.tag.nullIfEmpty;
+      
+      // Extract payload from the data object
+      String? payload;
+      final JSAny? data = jsNotification.data;
+      if (data != null && data.typeofEquals('object')) {
+        final JSAny? payloadValue = (data as JSObject)['payload'];
+        if (payloadValue != null && payloadValue.typeofEquals('string')) {
+          payload = (payloadValue as JSString).toDart.nullIfEmpty;
+        }
+      }
+      
+      final ActiveNotification notif = ActiveNotification(
+        id: id,
+        title: title,
+        body: body,
+        tag: tag,
+        payload: payload,
+      );
       ids.add(id);
       result.add(notif);
     }

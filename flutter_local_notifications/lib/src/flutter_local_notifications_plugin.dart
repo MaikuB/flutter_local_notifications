@@ -413,7 +413,7 @@ class FlutterLocalNotificationsPlugin {
     DateTimeComponents? matchDateTimeComponents,
   }) async {
     if (kIsWeb) {
-      return;
+      throw UnsupportedError('zonedSchedule() is not supported on the web');
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<
@@ -491,6 +491,14 @@ class FlutterLocalNotificationsPlugin {
     String? payload,
   }) async {
     if (kIsWeb) {
+      await resolvePlatformSpecificImplementation<
+              WebFlutterLocalNotificationsPlugin>()
+          ?.periodicallyShow(
+        id: id,
+        title: title,
+        body: body,
+        repeatInterval: repeatInterval,
+      );
       return;
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
@@ -562,6 +570,14 @@ class FlutterLocalNotificationsPlugin {
     String? payload,
   }) async {
     if (kIsWeb) {
+      await resolvePlatformSpecificImplementation<
+              WebFlutterLocalNotificationsPlugin>()
+          ?.periodicallyShowWithDuration(
+        id: id,
+        title: title,
+        body: body,
+        repeatDurationInterval: repeatDurationInterval,
+      );
       return;
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
