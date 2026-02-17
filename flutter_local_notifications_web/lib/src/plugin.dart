@@ -205,7 +205,13 @@ class WebFlutterLocalNotificationsPlugin
       getNotificationAppLaunchDetails() async {
     final Uri uri = Uri.parse(window.location.toString());
     final Map<String, String> query = uri.queryParameters;
-    final String? id = query['notification_id'];
+    final String? idString = query['notification_id'];
+    if (idString == null) {
+      return null;
+    }
+
+    // Safely parse the notification ID — return null for non-numeric values
+    final int? id = int.tryParse(idString);
     if (id == null) {
       return null;
     }
@@ -214,8 +220,21 @@ class WebFlutterLocalNotificationsPlugin
     final String? action = query['notification_action'];
     final String? reply = query['notification_reply'];
 
-    // Clean up query parameters so they don't persist on refresh
-    window.history.replaceState(null, '', '/');
+    // Clean up only notification-related query parameters while preserving
+    // the current path and any other query parameters
+    final Map<String, String> cleanedQuery = Map<String, String>.from(query)
+      ..remove('notification_id')
+      ..remove('notification_payload')
+      ..remove('notification_action')
+      ..remove('notification_reply');
+    final Uri cleanedUri = uri.replace(
+        queryParameters: cleanedQuery.isEmpty ? null : cleanedQuery);
+    // Use pathOnly (path + remaining query + fragment) to avoid pushing a
+    // full absolute URI which would fail for cross-origin scenarios
+    final String cleanedUrl = cleanedQuery.isEmpty
+        ? '${cleanedUri.path}${cleanedUri.hasFragment ? '#${cleanedUri.fragment}' : ''}'
+        : '${cleanedUri.path}?${cleanedUri.query}${cleanedUri.hasFragment ? '#${cleanedUri.fragment}' : ''}';
+    window.history.replaceState(null, '', cleanedUrl);
 
     return NotificationAppLaunchDetails(
       true,
@@ -223,7 +242,7 @@ class WebFlutterLocalNotificationsPlugin
         notificationResponseType: (action == null || action.isEmpty)
             ? NotificationResponseType.selectedNotification
             : NotificationResponseType.selectedNotificationAction,
-        id: int.parse(id),
+        id: id,
         input: reply?.nullIfEmpty,
         payload: payload?.nullIfEmpty,
         actionId: action?.nullIfEmpty,
