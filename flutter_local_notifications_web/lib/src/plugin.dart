@@ -103,11 +103,30 @@ class WebFlutterLocalNotificationsPlugin
   ///
   /// Be sure to only request permissions in response to a user gesture, or it
   /// may be automatically rejected.
+  ///
+  /// Returns `true` if permission was granted, `false` otherwise.
+  /// If permission was previously denied, this will return `false` without
+  /// showing a prompt (browsers typically don't allow re-prompting).
   Future<bool> requestNotificationsPermission() async {
+    // Don't request if already denied - browsers won't show prompt again
+    if (isPermissionDenied) {
+      return false;
+    }
+    
     final JSString permissionStatus =
         await Notification.requestPermission().toDart;
     return permissionStatus.toDart == 'granted';
   }
+
+  /// Returns the current permission status as a string.
+  ///
+  /// Possible values:
+  /// - `'granted'`: User explicitly allowed notifications
+  /// - `'denied'`: User explicitly blocked notifications (may be permanent)
+  /// - `'default'`: User hasn't decided yet
+  ///
+  /// See: https://developer.mozilla.org/en-US/docs/Web/API/Notification/permission
+  String get permissionStatus => Notification.permission;
 
   /// Whether the user has granted permission to show notifications.
   ///
@@ -115,6 +134,13 @@ class WebFlutterLocalNotificationsPlugin
   /// to only request permissions in response to a user gesture, or it may be
   /// automatically rejected.
   bool get hasPermission => Notification.permission == 'granted';
+
+  /// Whether the user has explicitly denied permission to show notifications.
+  ///
+  /// When this is `true`, calling [requestNotificationsPermission] will not
+  /// show a prompt and will return `false`. Users must manually reset
+  /// permissions in their browser settings.
+  bool get isPermissionDenied => Notification.permission == 'denied';
 
   @override
   Future<NotificationAppLaunchDetails?>
@@ -211,6 +237,12 @@ class WebFlutterLocalNotificationsPlugin
     for (final Notification notification in notifications) {
       notification.close();
     }
+  }
+
+  @override
+  Future<void> cancelAllPendingNotifications() async {
+    // Web doesn't support scheduled notifications, so there are no pending
+    // notifications to cancel. This is a no-op for web platform.
   }
 
   @override

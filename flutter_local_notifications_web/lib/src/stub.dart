@@ -17,11 +17,23 @@ class WebFlutterLocalNotificationsPlugin
   /// may be automatically rejected.
   Future<bool> requestNotificationsPermission() async => false;
 
+  /// Returns the current permission status as a string.
+  String get permissionStatus => 'denied';
+
+  /// Whether the user has granted permission to show notifications.
+  bool get hasPermission => false;
+
+  /// Whether the user has explicitly denied permission to show notifications.
+  bool get isPermissionDenied => false;
+
   @override
   Future<void> cancel({required int id, String? tag}) async {}
 
   @override
   Future<void> cancelAll() async {}
+
+  @override
+  Future<void> cancelAllPendingNotifications() async {}
 
   @override
   Future<void> show({
@@ -43,7 +55,4 @@ class WebFlutterLocalNotificationsPlugin
   @override
   Future<List<PendingNotificationRequest>>
       pendingNotificationRequests() async => <PendingNotificationRequest>[];
-
-  /// Whether the user has granted permission to show notifications.
-  bool get hasPermission => false;
 }
