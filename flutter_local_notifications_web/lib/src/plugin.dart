@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
@@ -135,6 +136,7 @@ class WebFlutterLocalNotificationsPlugin
       _registration = await serviceWorker.getRegistration().toDart;
       const String jsPath =
           './assets/packages/flutter_local_notifications_web/web/notifications_service_worker.js';
+
       _registration = await serviceWorker.register(jsPath.toJS).toDart;
 
       if (_registration == null) {
@@ -147,8 +149,10 @@ class WebFlutterLocalNotificationsPlugin
       return true;
     } catch (e) {
       // Initialization failed - log error and return false
-      // ignore: avoid_print
-      print('flutter_local_notifications_web: Failed to initialize: $e');
+      developer.log(
+        'Failed to initialize: $e',
+        name: 'flutter_local_notifications_web',
+      );
       return false;
     }
   }
@@ -202,26 +206,29 @@ class WebFlutterLocalNotificationsPlugin
     final Uri uri = Uri.parse(window.location.toString());
     final Map<String, String> query = uri.queryParameters;
     final String? id = query['notification_id'];
+    if (id == null) {
+      return null;
+    }
+
     final String? payload = query['notification_payload'];
     final String? action = query['notification_action'];
     final String? reply = query['notification_reply'];
+
+    // Clean up query parameters so they don't persist on refresh
     window.history.replaceState(null, '', '/');
-    if (id == null || payload == null || action == null || reply == null) {
-      return null;
-    } else {
-      return NotificationAppLaunchDetails(
-        true,
-        notificationResponse: NotificationResponse(
-          notificationResponseType: action.isEmpty
-              ? NotificationResponseType.selectedNotification
-              : NotificationResponseType.selectedNotificationAction,
-          id: int.parse(id),
-          input: reply.nullIfEmpty,
-          payload: payload.nullIfEmpty,
-          actionId: action.nullIfEmpty,
-        ),
-      );
-    }
+
+    return NotificationAppLaunchDetails(
+      true,
+      notificationResponse: NotificationResponse(
+        notificationResponseType: (action == null || action.isEmpty)
+            ? NotificationResponseType.selectedNotification
+            : NotificationResponseType.selectedNotificationAction,
+        id: int.parse(id),
+        input: reply?.nullIfEmpty,
+        payload: payload?.nullIfEmpty,
+        actionId: action?.nullIfEmpty,
+      ),
+    );
   }
 
   @override
@@ -314,7 +321,7 @@ class WebFlutterLocalNotificationsPlugin
     if (_registration == null) {
       return;
     }
-   
+
     final List<Notification> notifications =
         await _registration!.getDartNotifications();
     final Notification? notification = notifications.firstWhereOrNull(
@@ -367,5 +374,4 @@ class WebFlutterLocalNotificationsPlugin
       'on the web',
     );
   }
-
 }
