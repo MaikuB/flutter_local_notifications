@@ -244,15 +244,10 @@ class WebFlutterLocalNotificationsPlugin
       final String? body = notification.body.nullIfEmpty;
       final String? tag = notification.tag.nullIfEmpty;
 
-      // Extract payload from the data object
-      String? payload;
-      final JSAny? data = notification.data;
-      if (data != null && data.typeofEquals('object')) {
-        final JSAny? payloadValue = (data as JSObject)['payload'];
-        if (payloadValue != null && payloadValue.typeofEquals('string')) {
-          payload = (payloadValue as JSString).toDart.nullIfEmpty;
-        }
-      }
+      // Extract payload from the data object with comprehensive type checking
+      final String? payload = _extractPayloadFromNotificationData(
+        notification.data,
+      );
 
       final ActiveNotification activeNotification = ActiveNotification(
         id: id,
@@ -265,6 +260,53 @@ class WebFlutterLocalNotificationsPlugin
       activeNotifications.add(activeNotification);
     }
     return activeNotifications;
+  }
+
+  /// Safely extracts the payload string from notification data.
+  ///
+  /// Handles various edge cases:
+  /// - Null or undefined data
+  /// - Non-object data types
+  /// - Missing payload field
+  /// - Non-string payload values (converts numbers/booleans to strings)
+  ///
+  /// Returns null if the payload cannot be extracted or is empty.
+  String? _extractPayloadFromNotificationData(JSAny? data) {
+    // Check if data exists and is an object
+    if (data == null || !data.typeofEquals('object')) {
+      return null;
+    }
+
+    // Extract the payload field
+    final JSAny? payloadValue = (data as JSObject)['payload'];
+    if (payloadValue == null) {
+      return null;
+    }
+
+    // Handle string payloads (most common case)
+    if (payloadValue.typeofEquals('string')) {
+      return (payloadValue as JSString).toDart.nullIfEmpty;
+    }
+
+    // Handle number payloads (convert to string)
+    if (payloadValue.typeofEquals('number')) {
+      final num value = (payloadValue as JSNumber).toDartDouble;
+      // Check if it's an integer to avoid unnecessary decimal points
+      if (value == value.toInt()) {
+        return value.toInt().toString();
+      }
+      return value.toString();
+    }
+
+    // Handle boolean payloads (convert to string)
+    if (payloadValue.typeofEquals('boolean')) {
+      return (payloadValue as JSBoolean).toDart.toString();
+    }
+
+    // For other types (objects, arrays, functions), return null
+    // We don't attempt to serialize complex types as they weren't
+    // intended to be used as payloads
+    return null;
   }
 
   @override
@@ -327,24 +369,4 @@ class WebFlutterLocalNotificationsPlugin
     );
   }
 
-  /// Schedules a notification to be shown at a specific date and time.
-  ///
-  /// This method is not supported on web as browsers do not provide APIs
-  /// for scheduling notifications at specific times. Use server-side push
-  /// notifications or implement client-side scheduling with timers instead.
-  ///
-  /// Throws [UnsupportedError] when called.
-  Future<void> zonedSchedule({
-    required int id,
-    String? title,
-    String? body,
-    required DateTime scheduledDate,
-    String? payload,
-  }) {
-    throw UnsupportedError(
-      'zonedSchedule() is not supported on the web. '
-      'Browsers do not provide APIs for scheduling notifications. '
-      'Consider using server-side push notifications or client-side timers.',
-    );
-  }
 }
