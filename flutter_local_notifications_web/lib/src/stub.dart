@@ -27,7 +27,7 @@ class WebFlutterLocalNotificationsPlugin
   bool get isPermissionDenied => false;
 
   @override
-  Future<void> cancel({required int id, String? tag}) async {}
+  Future<void> cancel({required int id}) async {}
 
   @override
   Future<void> cancelAll() async {}
