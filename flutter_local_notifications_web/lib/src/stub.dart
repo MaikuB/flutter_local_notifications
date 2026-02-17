@@ -15,7 +15,7 @@ class WebFlutterLocalNotificationsPlugin
   ///
   /// Be sure to only request permissions in response to a user gesture, or it
   /// may be automatically rejected.
-  Future<bool> requestNotificationsPermission() async => false;
+  Future<bool?> requestNotificationsPermission() async => false;
 
   /// Returns the current permission status as a string.
   String get permissionStatus => 'denied';

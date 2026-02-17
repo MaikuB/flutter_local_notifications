@@ -165,7 +165,7 @@ class WebFlutterLocalNotificationsPlugin
   /// Returns `true` if permission was granted, `false` otherwise.
   /// If permission was previously denied, this will return `false` without
   /// showing a prompt (browsers typically don't allow re-prompting).
-  Future<bool> requestNotificationsPermission() async {
+  Future<bool?> requestNotificationsPermission() async {
     // Don't request if already denied - browsers won't show prompt again
     if (isPermissionDenied) {
       return false;
