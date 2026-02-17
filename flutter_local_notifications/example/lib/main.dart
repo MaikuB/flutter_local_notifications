@@ -234,7 +234,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _isAndroidPermissionGranted();
+    _isAndroidOrWebPermissionGranted();
     _requestPermissions();
     _configureSelectNotificationSubject();
 
@@ -263,7 +263,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _isAndroidPermissionGranted() async {
+  Future<void> _isAndroidOrWebPermissionGranted() async {
     if (kIsWeb) {
       final WebFlutterLocalNotificationsPlugin? webImplementation =
           flutterLocalNotificationsPlugin
