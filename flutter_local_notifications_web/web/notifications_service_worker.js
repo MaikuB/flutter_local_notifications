@@ -32,7 +32,7 @@ async function _handleNotif(event) {
   // processing this event. Without this, the event "expires" after the first
   // `await`, and trying to call `clients.openWindow()` later results in a
   // permission error, because the browser thinks they are unrelated events.
-  let allClientsPromise = clients.matchAll({includeUncontrolled: true});
+  let allClientsPromise = clients.matchAll({ type: 'window', includeUncontrolled: true });
   event.waitUntil(allClientsPromise);
   let allClients = await allClientsPromise;
 
@@ -62,7 +62,7 @@ async function _handleNotif(event) {
     let client = allClients[0];
     await client.postMessage(message);
   }
-  
+
   // Close the notification after handling
   event.notification.close();
 }
