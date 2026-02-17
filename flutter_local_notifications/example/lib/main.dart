@@ -297,7 +297,8 @@ class _HomePageState extends State<HomePage> {
               .resolvePlatformSpecificImplementation<
                 WebFlutterLocalNotificationsPlugin
               >();
-      final bool granted = await webImplementation?.requestNotificationsPermission() ?? false;
+      final bool granted =
+          await webImplementation?.requestNotificationsPermission() ?? false;
       setState(() {
         _notificationsEnabled = granted;
       });
@@ -513,14 +514,16 @@ class _HomePageState extends State<HomePage> {
                   await _cancelAllNotifications();
                 },
               ),
-              if (!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS))
+              if (!kIsWeb &&
+                  (Platform.isAndroid || Platform.isIOS || Platform.isMacOS))
                 PaddedElevatedButton(
                   buttonText: 'Cancel all pending notifications',
                   onPressed: () async {
                     await _cancelAllPendingNotifications();
                   },
                 ),
-              if (!kIsWeb && !Platform.isWindows) ...repeating.examples(context),
+              if (!kIsWeb && !Platform.isWindows)
+                ...repeating.examples(context),
               const Divider(),
               const Text(
                 'Notifications with actions',
@@ -1103,7 +1106,8 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
               if (!kIsWeb && Platform.isWindows) ...windows.examples(),
-              if (kIsWeb) ...web.webExamples(_notificationsEnabled, _requestPermissions),
+              if (kIsWeb)
+                ...web.webExamples(_notificationsEnabled, _requestPermissions),
             ],
           ),
         ),
@@ -3050,7 +3054,8 @@ class _HomePageState extends State<HomePage> {
                     'title: ${activeNotification.title}\n'
                     'body: ${activeNotification.body}',
                   ),
-                  if (!kIsWeb && Platform.isAndroid &&
+                  if (!kIsWeb &&
+                      Platform.isAndroid &&
                       activeNotification.id != null) ...<Widget>[
                     Text('bigText: ${activeNotification.bigText}'),
                     TextButton(
@@ -3536,18 +3541,43 @@ class SecondPageState extends State<SecondPage> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Second Screen')),
     body: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text('payload ${_payload ?? ''}'),
-          Text('data ${_data ?? ''}'),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Go back!'),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Text(
+              'Notification Response Details',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            _InfoValueString(title: 'Payload:', value: _payload ?? 'null'),
+            const SizedBox(height: 8),
+            // The data field contains the notification.data object from the web notification
+            // On web, this includes the payload and any other custom data
+            if (_data != null && _data!.isNotEmpty) ...<Widget>[
+              const Text(
+                'Data:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              ..._data!.entries.map(
+                (MapEntry<String, dynamic> entry) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text('  ${entry.key}: ${entry.value}'),
+                ),
+              ),
+            ] else
+              const Text('Data: null or empty'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Go back!'),
+            ),
+          ],
+        ),
       ),
     ),
   );

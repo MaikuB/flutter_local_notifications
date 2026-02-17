@@ -104,7 +104,8 @@ class WebFlutterLocalNotificationsPlugin
   /// Be sure to only request permissions in response to a user gesture, or it
   /// may be automatically rejected.
   Future<bool> requestNotificationsPermission() async {
-    final JSString permissionStatus = await Notification.requestPermission().toDart;
+    final JSString permissionStatus =
+        await Notification.requestPermission().toDart;
     return permissionStatus.toDart == 'granted';
   }
 
@@ -157,12 +158,12 @@ class WebFlutterLocalNotificationsPlugin
       if (id == null) {
         continue;
       }
-      
+
       // Extract additional notification details from the web Notification API
       final String? title = notification.title.nullIfEmpty;
       final String? body = notification.body.nullIfEmpty;
       final String? tag = notification.tag.nullIfEmpty;
-      
+
       // Extract payload from the data object
       String? payload;
       final JSAny? data = notification.data;
@@ -172,7 +173,7 @@ class WebFlutterLocalNotificationsPlugin
           payload = (payloadValue as JSString).toDart.nullIfEmpty;
         }
       }
-      
+
       final ActiveNotification activeNotification = ActiveNotification(
         id: id,
         title: title,
