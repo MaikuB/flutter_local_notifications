@@ -1,3 +1,7 @@
+## vNext
+
+* [Web] added web platform support. Thanks to the initial PR from [Levi Lesches](https://github.com/Levi-Lesches) and completion by [Gaurav](https://github.com/Gaurav-CareMonitor)
+
 ## [21.0.0-dev.1]
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.38.1 and Dart SDK requirement to 3.10.0.Consequently the minimum OS requirements for each platform has been updated as well
