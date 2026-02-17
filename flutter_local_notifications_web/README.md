@@ -30,16 +30,68 @@ Note: Firefox and Safari may add action support in future versions. Text input f
 
 ## Using the plugin
 
+### Check browser support
+
+```dart
+// Check if the browser supports notifications before initializing
+if (WebFlutterLocalNotificationsPlugin.isSupported) {
+  final plugin = FlutterLocalNotificationsPlugin();
+  final initialized = await plugin.initialize();
+  
+  if (initialized == false) {
+    // Initialization failed - browser may not support Service Workers
+    print('Failed to initialize notifications');
+  }
+} else {
+  print('Notifications are not supported in this browser');
+}
+```
+
 ### Initialize the plugin
 
 ```dart
 final plugin = FlutterLocalNotificationsPlugin();
-await plugin.initialize();
+final initialized = await plugin.initialize();
+
+if (initialized == false) {
+  // Handle initialization failure
+  print('Failed to initialize notifications');
+  return;
+}
 
 if (!plugin.hasPermission) {
   // IMPORTANT: Only call this after a button press!
   await plugin.requestNotificationsPermission();
 }
+```
+
+### Check permission status
+
+```dart
+final plugin = FlutterLocalNotificationsPlugin();
+
+// Check if permission is granted
+if (plugin.hasPermission) {
+  // Can show notifications
+}
+
+// Check if permission was explicitly denied
+if (plugin.isPermissionDenied) {
+  // User blocked notifications - guide them to browser settings
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Notifications Blocked'),
+      content: Text(
+        'You have blocked notifications. To enable them, '
+        'please update your browser settings.',
+      ),
+    ),
+  );
+}
+
+// Get the raw permission status
+final status = plugin.permissionStatus; // 'granted', 'denied', or 'default'
 ```
 
 ### Show a notification
@@ -86,10 +138,12 @@ If you're using `flutter run -d chrome`, notifications will appear but won't res
 
 ### Notifications don't appear
 
-1. Check that you've requested and been granted permission
-2. Verify the service worker is registered (check browser DevTools > Application > Service Workers)
-3. Make sure you called `initialize()` before `show()`
-4. Check browser console for errors
+1. Check that initialization succeeded: `await plugin.initialize()` should return `true`
+2. Check that you've requested and been granted permission
+3. Verify the service worker is registered (check browser DevTools > Application > Service Workers)
+4. Make sure you called `initialize()` before `show()`
+5. Check browser console for errors
+6. Verify browser supports notifications: `WebFlutterLocalNotificationsPlugin.isSupported`
 
 ### Service worker not updating
 
