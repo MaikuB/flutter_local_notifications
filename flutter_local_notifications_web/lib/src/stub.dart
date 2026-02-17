@@ -21,6 +21,9 @@ class WebFlutterLocalNotificationsPlugin
   Future<void> cancel({required int id, String? tag}) async {}
 
   @override
+  Future<void> cancelAll() async {}
+
+  @override
   Future<void> show({
     required int id,
     String? title,
@@ -28,6 +31,18 @@ class WebFlutterLocalNotificationsPlugin
     String? payload,
     WebNotificationDetails? details,
   }) async {}
+
+  @override
+  Future<NotificationAppLaunchDetails?>
+      getNotificationAppLaunchDetails() async => null;
+
+  @override
+  Future<List<ActiveNotification>> getActiveNotifications() async =>
+      <ActiveNotification>[];
+
+  @override
+  Future<List<PendingNotificationRequest>>
+      pendingNotificationRequests() async => <PendingNotificationRequest>[];
 
   /// Whether the user has granted permission to show notifications.
   bool get hasPermission => false;

@@ -2,6 +2,25 @@
 
 The web implementation of the `flutter_local_notifications` package.
 
+## Browser Compatibility
+
+| Feature | Chrome/Edge | Firefox | Safari |
+|---------|-------------|---------|--------|
+| Basic notifications | ✅ | ✅ | ✅ |
+| Notification actions | ✅ | ❌ | ❌ |
+| Text input actions | ❌ | ❌ | ❌ |
+| Custom vibration | ✅ (desktop only) | ✅ (desktop only) | ❌ |
+| Service worker | ✅ | ✅ | ✅ |
+
+Note: Firefox and Safari may add action support in future versions. Text input fields use a standards proposal and may only work on Chrome for the foreseeable future.
+
+## Important Limitations
+
+- **No scheduled notifications**: Browsers don't support scheduling notifications for future delivery. Methods like `zonedSchedule()` will throw `UnsupportedError`.
+- **No repeating notifications**: `periodicallyShow()` and `periodicallyShowWithDuration()` are not supported and will throw `UnsupportedError`.
+- **Permission must be user-initiated**: You can only request notification permissions in response to a user action (like a button click).
+- **Custom vibration on mobile**: Browsers on Android do not support custom vibration patterns.
+
 ## Notes
 
 - If you are debugging with `flutter run -d chrome`, you will see notifications but they will not respond to being clicked! This is due to the private debugging window that Flutter opens, and they will respond properly in release builds. To test notification handlers, make sure to use `flutter run -d web-server`. If you find that hot reload is broken with `-d web-server`, try to test as much as possible with `-d chrome`.
@@ -57,3 +76,29 @@ if (launchDetails != null) {
   print("User clicked on notification: ${notification.id}")
 }
 ```
+
+## Troubleshooting
+
+### Notifications don't respond to clicks in debug mode
+
+If you're using `flutter run -d chrome`, notifications will appear but won't respond to clicks. This is due to the private debugging window Flutter opens. Use `flutter run -d web-server` to test notification handlers properly.
+
+
+### Notifications don't appear
+
+1. Check that you've requested and been granted permission
+2. Verify the service worker is registered (check browser DevTools > Application > Service Workers)
+3. Make sure you called `initialize()` before `show()`
+4. Check browser console for errors
+
+### Service worker not updating
+
+If you modify the service worker and changes don't appear:
+1. Clear browser cache
+2. Unregister the old service worker in DevTools
+3. Hard refresh the page (Cmd+Shift+R or Ctrl+Shift+R)
+
+### Browser blocks all notifications from my site
+
+If you repeatedly request permissions without user interaction, browsers may permanently block your site. Users will need to manually reset permissions in their browser settings.
+
