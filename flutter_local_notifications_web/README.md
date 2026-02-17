@@ -8,7 +8,6 @@ The web implementation of the `flutter_local_notifications` package.
 |---------|-------------|---------|--------|
 | Basic notifications | ✅ | ✅ | ✅ |
 | Notification actions | ✅ (Chrome 48+, Edge 18+) | ❌ | ❌ |
-| Text input actions | ❌ | ❌ | ❌ |
 | Custom vibration | ✅ (desktop only) | ✅ (desktop only) | ❌ |
 | Service worker | ✅ | ✅ | ✅ |
 
