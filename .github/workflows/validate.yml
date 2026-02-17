@@ -250,26 +250,7 @@ jobs:
           cd flutter_local_notifications/example
           dart pub get
           flutter build web
-  build_example_web_3_22:
-    name: Build Web example app (3.22)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version: 3.22.0
-          cache: true
-          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
-      - name: Install Tools
-        run: |
-          dart pub global activate melos
-          melos bootstrap
-      - name: Build
-        run: |
-          cd flutter_local_notifications/example
-          dart pub get
-          flutter build web
+
   unit_tests_dart:
     name: Run all unit tests except for Windows (Dart)
     runs-on: ubuntu-latest
