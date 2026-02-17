@@ -203,7 +203,7 @@ Future<void> _configureLocalTimeZone() async {
     return;
   }
   tz.initializeTimeZones();
-  if (Platform.isWindows) {
+  if (!kIsWeb && Platform.isWindows) {
     return;
   }
   final String? timeZoneName = await FlutterTimezone.getLocalTimezone();
@@ -264,7 +264,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _isAndroidPermissionGranted() async {
-    if (Platform.isAndroid) {
+    if (kIsWeb) {
+      final WebFlutterLocalNotificationsPlugin? webImplementation =
+          flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                WebFlutterLocalNotificationsPlugin
+              >();
+      final bool granted = webImplementation?.hasPermission ?? false;
+
+      setState(() {
+        _notificationsEnabled = granted;
+      });
+    } else if (Platform.isAndroid) {
       final bool granted =
           await flutterLocalNotificationsPlugin
               .resolvePlatformSpecificImplementation<
@@ -280,7 +291,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _requestPermissions() async {
-    if (Platform.isIOS || Platform.isMacOS) {
+    if (kIsWeb) {
+      final WebFlutterLocalNotificationsPlugin? webImplementation =
+          flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                WebFlutterLocalNotificationsPlugin
+              >();
+      final bool granted = await webImplementation?.requestNotificationsPermission() ?? false;
+      setState(() {
+        _notificationsEnabled = granted;
+      });
+    } else if (Platform.isIOS || Platform.isMacOS) {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin
@@ -307,7 +328,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _requestPermissionsWithCriticalAlert() async {
-    if (Platform.isIOS || Platform.isMacOS) {
+    if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin
@@ -492,14 +513,14 @@ class _HomePageState extends State<HomePage> {
                   await _cancelAllNotifications();
                 },
               ),
-              if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)
+              if (!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS))
                 PaddedElevatedButton(
                   buttonText: 'Cancel all pending notifications',
                   onPressed: () async {
                     await _cancelAllPendingNotifications();
                   },
                 ),
-              if (!Platform.isWindows) ...repeating.examples(context),
+              if (!kIsWeb && !Platform.isWindows) ...repeating.examples(context),
               const Divider(),
               const Text(
                 'Notifications with actions',
@@ -511,7 +532,7 @@ class _HomePageState extends State<HomePage> {
                   await _showNotificationWithActions();
                 },
               ),
-              if (Platform.isLinux)
+              if (!kIsWeb && Platform.isLinux)
                 PaddedElevatedButton(
                   buttonText:
                       'Show notification with icon action (if supported)',
@@ -519,14 +540,14 @@ class _HomePageState extends State<HomePage> {
                     await _showNotificationWithIconAction();
                   },
                 ),
-              if (!Platform.isLinux)
+              if (!kIsWeb && !Platform.isLinux)
                 PaddedElevatedButton(
                   buttonText: 'Show notification with text action',
                   onPressed: () async {
                     await _showNotificationWithTextAction();
                   },
                 ),
-              if (!Platform.isLinux)
+              if (!kIsWeb && !Platform.isLinux)
                 PaddedElevatedButton(
                   buttonText: 'Show notification with text choice',
                   onPressed: () async {
@@ -534,7 +555,7 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
               const Divider(),
-              if (Platform.isAndroid) ...<Widget>[
+              if (!kIsWeb && Platform.isAndroid) ...<Widget>[
                 const Text(
                   'Android-specific examples',
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -894,7 +915,7 @@ class _HomePageState extends State<HomePage> {
                     await _showNotificationInNotificationCentreOnly();
                   },
                 ),
-                if (Platform.isIOS) ...<Widget>[
+                if (!kIsWeb && Platform.isIOS) ...<Widget>[
                   ConfigureInAppToggle(
                     flutterLocalNotificationsPlugin:
                         flutterLocalNotificationsPlugin,
@@ -1082,7 +1103,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
               if (!kIsWeb && Platform.isWindows) ...windows.examples(),
-              if (kIsWeb) ...web.webExamples(_notificationsEnabled),
+              if (kIsWeb) ...web.webExamples(_notificationsEnabled, _requestPermissions),
             ],
           ),
         ),
@@ -2978,7 +2999,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<Widget> _getActiveNotificationsDialogContent() async {
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       final AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
       if (androidInfo.version.sdkInt < 23) {
@@ -2986,7 +3007,7 @@ class _HomePageState extends State<HomePage> {
           '"getActiveNotifications" is available only for Android 6.0 or newer',
         );
       }
-    } else if (Platform.isIOS) {
+    } else if (!kIsWeb && Platform.isIOS) {
       final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       final IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
       final List<String> fullVersion = iosInfo.systemVersion.split('.');
@@ -3029,7 +3050,7 @@ class _HomePageState extends State<HomePage> {
                     'title: ${activeNotification.title}\n'
                     'body: ${activeNotification.body}',
                   ),
-                  if (Platform.isAndroid &&
+                  if (!kIsWeb && Platform.isAndroid &&
                       activeNotification.id != null) ...<Widget>[
                     Text('bigText: ${activeNotification.bigText}'),
                     TextButton(

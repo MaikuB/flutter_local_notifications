@@ -6,17 +6,27 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'padded_button.dart';
 import 'plugin.dart';
 
-List<Widget> webExamples(bool? hasPermission) => <Widget>[
+List<Widget> webExamples(
+  bool? hasPermission,
+  VoidCallback? onRequestPermission,
+) =>
+    <Widget>[
       const Text(
         'Web-specific examples',
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
       if (hasPermission ?? false)
         const Text('Notification permissions granted')
-      else
+      else ...<Widget>[
         const Text(
           'WARNING: The user did not grant permissions to show notifications',
         ),
+        if (onRequestPermission != null)
+          PaddedElevatedButton(
+            buttonText: 'Request permission',
+            onPressed: onRequestPermission,
+          ),
+      ],
       const PaddedElevatedButton(
         buttonText: 'Notification with images',
         onPressed: _showImages,
