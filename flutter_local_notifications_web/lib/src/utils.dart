@@ -33,18 +33,10 @@ extension on WebNotificationAction {
   /// Converts this object to the format expected by `showNotifications()`
   ///
   /// See: https://developer.mozilla.org/en-US/docs/Web/API/Notification/actions.
-  ///
-  /// Note: There is a WHATWG proposal to add button and text input actions.
-  /// This requires setting an additional `type` parameter, which is not yet
-  /// standardized, so is not a part of the Dart APIs. That's why we cannot rely
-  /// on `NotificationAction.toJs` for this function.
-  ///
-  /// The proposal can be found here: https://github.com/whatwg/notifications/pull/132
   NotificationAction toJs() => <String, dynamic>{
         'action': action,
         'title': title,
         'icon': icon?.toString(),
-        'type': type.jsValue,
       }.jsify() as NotificationAction;
 }
 
@@ -87,8 +79,6 @@ extension NullableWebNotificationDetailsUtils on WebNotificationDetails? {
 /// Utility methods on JavaScript [NotificationEvent] objects.
 extension WebNotificationEventUtils on NotificationEvent {
   /// Gets text input from the action, if any.
-  ///
-  /// See [WebNotificationActionType] for details.
   String? get reply => (this['reply'] as JSString).toDart;
 }
 
