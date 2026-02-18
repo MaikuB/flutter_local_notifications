@@ -623,6 +623,12 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<bool?> areNotificationsEnabled() async =>
       await _channel.invokeMethod<bool>('areNotificationsEnabled');
 
+  /// Opens the operating system notification settings screen for this app.
+  ///
+  /// Returns whether an activity could be launched.
+  Future<bool?> openAppNotificationSettings() async =>
+      await _channel.invokeMethod<bool>('openAppNotificationSettings');
+
   /// Returns whether the app can schedule exact notifications.
   Future<bool?> canScheduleExactNotifications() async =>
       await _channel.invokeMethod<bool>('canScheduleExactNotifications');

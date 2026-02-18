@@ -139,6 +139,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String INITIALIZE_METHOD = "initialize";
   private static final String GET_CALLBACK_HANDLE_METHOD = "getCallbackHandle";
   private static final String ARE_NOTIFICATIONS_ENABLED_METHOD = "areNotificationsEnabled";
+  private static final String OPEN_APP_NOTIFICATION_SETTINGS_METHOD = "openAppNotificationSettings";
   private static final String CAN_SCHEDULE_EXACT_NOTIFICATIONS_METHOD =
       "canScheduleExactNotifications";
   private static final String CREATE_NOTIFICATION_CHANNEL_GROUP_METHOD =
@@ -1544,6 +1545,9 @@ public class FlutterLocalNotificationsPlugin
       case ARE_NOTIFICATIONS_ENABLED_METHOD:
         areNotificationsEnabled(result);
         break;
+      case OPEN_APP_NOTIFICATION_SETTINGS_METHOD:
+        openAppNotificationSettings(result);
+        break;
       case CAN_SCHEDULE_EXACT_NOTIFICATIONS_METHOD:
         setCanScheduleExactNotifications(result);
         break;
@@ -2332,6 +2336,43 @@ public class FlutterLocalNotificationsPlugin
   private void areNotificationsEnabled(Result result) {
     NotificationManagerCompat notificationManager = getNotificationManager(applicationContext);
     result.success(notificationManager.areNotificationsEnabled());
+  }
+
+  private void openAppNotificationSettings(@NonNull Result result) {
+    final String packageName = applicationContext.getPackageName();
+    final PackageManager packageManager = applicationContext.getPackageManager();
+
+    Intent intent;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      intent = new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+      intent.putExtra(Settings.EXTRA_APP_PACKAGE, packageName);
+    } else {
+      intent = new Intent("android.settings.APP_NOTIFICATION_SETTINGS");
+      intent.putExtra("app_package", packageName);
+      intent.putExtra("app_uid", applicationContext.getApplicationInfo().uid);
+    }
+
+    if (intent.resolveActivity(packageManager) == null) {
+      intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+      intent.setData(Uri.parse("package:" + packageName));
+    }
+
+    if (intent.resolveActivity(packageManager) == null) {
+      result.success(false);
+      return;
+    }
+
+    try {
+      if (mainActivity != null) {
+        mainActivity.startActivity(intent);
+      } else {
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        applicationContext.startActivity(intent);
+      }
+      result.success(true);
+    } catch (Exception e) {
+      result.success(false);
+    }
   }
 
   private void setCanScheduleExactNotifications(Result result) {
