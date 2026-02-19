@@ -650,6 +650,24 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
                 PaddedElevatedButton(
+                  buttonText: 'Show custom content view notification',
+                  onPressed: () async {
+                    await _showCustomContentViewNotification();
+                  },
+                ),
+                PaddedElevatedButton(
+                  buttonText: 'Show custom big content view notification',
+                  onPressed: () async {
+                    await _showCustomBigContentViewNotification();
+                  },
+                ),
+                PaddedElevatedButton(
+                  buttonText: 'Show custom heads-up notification',
+                  onPressed: () async {
+                    await _showCustomHeadsUpNotification();
+                  },
+                ),
+                PaddedElevatedButton(
                   buttonText: 'Show grouped notifications',
                   onPressed: () async {
                     await _showGroupedNotifications();
@@ -2190,6 +2208,138 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _cancelAllPendingNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAllPendingNotifications();
+  }
+
+  Future<void> _showCustomContentViewNotification() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      'custom_view_channel',
+      'Custom View Notifications',
+      channelDescription: 'Notifications with custom layouts',
+      importance: Importance.high,
+      priority: Priority.high,
+      customContentView: CustomNotificationView(
+        layoutName: 'notification_custom_content',
+        viewMappings: <CustomViewMapping>[
+          CustomViewMapping(
+            viewId: 'custom_title',
+            text: 'Custom Title from Flutter',
+          ),
+          CustomViewMapping(
+            viewId: 'custom_text',
+            text: 'This text is set dynamically!',
+          ),
+        ],
+      ),
+    );
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+      id++,
+      null,
+      null,
+      notificationDetails,
+    );
+  }
+
+  Future<void> _showCustomBigContentViewNotification() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      'custom_view_channel',
+      'Custom View Notifications',
+      channelDescription: 'Notifications with custom layouts',
+      importance: Importance.high,
+      priority: Priority.high,
+      customContentView: CustomNotificationView(
+        layoutName: 'notification_custom_content',
+        viewMappings: <CustomViewMapping>[
+          CustomViewMapping(
+            viewId: 'custom_title',
+            text: 'Collapsed View',
+          ),
+          CustomViewMapping(
+            viewId: 'custom_text',
+            text: 'Pull down to expand',
+          ),
+        ],
+      ),
+      customBigContentView: CustomNotificationView(
+        layoutName: 'notification_custom_big_content',
+        viewMappings: <CustomViewMapping>[
+          CustomViewMapping(
+            viewId: 'custom_big_title',
+            text: 'Expanded View',
+          ),
+          CustomViewMapping(
+            viewId: 'custom_big_text',
+            text: 'This is the expanded content with more details!',
+          ),
+          CustomViewMapping(
+            viewId: 'custom_big_action',
+            text: 'TAP ME',
+            actionId: 'big_action',
+          ),
+        ],
+      ),
+    );
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+      id++,
+      null,
+      null,
+      notificationDetails,
+    );
+  }
+
+  Future<void> _showCustomHeadsUpNotification() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      'custom_view_channel',
+      'Custom View Notifications',
+      channelDescription: 'Notifications with custom layouts',
+      importance: Importance.high,
+      priority: Priority.high,
+      customContentView: CustomNotificationView(
+        layoutName: 'notification_custom_content',
+        viewMappings: <CustomViewMapping>[
+          CustomViewMapping(
+            viewId: 'custom_title',
+            text: 'Heads-Up Notification',
+          ),
+          CustomViewMapping(
+            viewId: 'custom_text',
+            text: 'This appears at the top',
+          ),
+        ],
+      ),
+      customHeadsUpContentView: CustomNotificationView(
+        layoutName: 'notification_custom_headsup',
+        viewMappings: <CustomViewMapping>[
+          CustomViewMapping(
+            viewId: 'custom_headsup_title',
+            text: 'Urgent!',
+          ),
+          CustomViewMapping(
+            viewId: 'custom_headsup_text',
+            text: 'Quick action needed',
+          ),
+          CustomViewMapping(
+            viewId: 'custom_headsup_action',
+            text: 'OK',
+            actionId: 'headsup_action',
+          ),
+        ],
+      ),
+    );
+    const NotificationDetails notificationDetails =
+        NotificationDetails(android: androidNotificationDetails);
+    await flutterLocalNotificationsPlugin.show(
+      id++,
+      null,
+      null,
+      notificationDetails,
+    );
   }
 
   Future<void> _showOngoingNotification() async {
