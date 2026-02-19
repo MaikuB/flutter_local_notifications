@@ -31,6 +31,13 @@ scripts:
     run: melos exec -c 1 -- "flutter build apk --debug && cd android && ./gradlew flutter_local_notifications:testDebug"
     packageFilters:
       scope: "*example*"
+  test:unit:web:
+    description: Runs web-specific unit tests in Chrome
+    run: melos exec -c 1 -- "flutter test --platform chrome"
+    packageFilters:
+      scope: '*_web'
+      dirExists:
+        - test
   test:unit:windows:
     description: Runs Windows-specific unit tests
     run: melos exec -c 1 -- "flutter test -j 1"
