@@ -210,6 +210,13 @@ void main() {
     });
   });
 
+  group('WebInitializationSettings', () {
+    test('can be created with const constructor', () {
+      const WebInitializationSettings settings = WebInitializationSettings();
+      expect(settings, isNotNull);
+    });
+  });
+
   group('WebFlutterLocalNotificationsPlugin', () {
     late WebFlutterLocalNotificationsPlugin plugin;
 
