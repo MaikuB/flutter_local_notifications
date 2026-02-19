@@ -367,6 +367,36 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> _openAppNotificationSettingsOnIOS() async {
+    final IOSFlutterLocalNotificationsPlugin? iosImplementation =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >();
+
+    final bool opened =
+        await iosImplementation?.openAppNotificationSettings() ?? false;
+
+    if (!opened && mounted) {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          content: const Text(
+            'Unable to open the app settings page on this device.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   void _configureSelectNotificationSubject() {
     selectNotificationStream.stream.listen((
       NotificationResponse? response,
@@ -853,6 +883,11 @@ class _HomePageState extends State<HomePage> {
                   buttonText: 'Request permission',
                   onPressed: _requestPermissions,
                 ),
+                if (Platform.isIOS)
+                  PaddedElevatedButton(
+                    buttonText: 'Open notification settings',
+                    onPressed: _openAppNotificationSettingsOnIOS,
+                  ),
                 PaddedElevatedButton(
                   buttonText:
                       'Request permission with critical alert permission',

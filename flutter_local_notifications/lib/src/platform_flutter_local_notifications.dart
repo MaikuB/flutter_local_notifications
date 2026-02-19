@@ -625,6 +625,9 @@ class AndroidFlutterLocalNotificationsPlugin
 
   /// Opens the operating system notification settings screen for this app.
   ///
+  /// On Android, this attempts to open the app's notification settings screen
+  /// and falls back to the app details screen if needed.
+  ///
   /// Returns whether an activity could be launched.
   Future<bool?> openAppNotificationSettings() async =>
       await _channel.invokeMethod<bool>('openAppNotificationSettings');
@@ -791,6 +794,20 @@ class IOSFlutterLocalNotificationsPlugin
           isCarPlayEnabled: dict['isCarPlayEnabled'] ?? false,
         );
       });
+
+  /// Opens the system settings UI where the user can manage notification
+  /// permissions for the app.
+  ///
+  /// On iOS 15.4 and newer, this attempts to open the app's Notifications
+  /// settings page. If that's not possible, it falls back to opening the app's
+  /// Settings page.
+  ///
+  /// Note that iOS may still redirect to the Settings app root depending on the
+  /// OS version and device configuration.
+  ///
+  /// Returns whether the settings page could be opened.
+  Future<bool?> openAppNotificationSettings() async =>
+      await _channel.invokeMethod<bool>('openAppNotificationSettings');
 
   /// Schedules a notification to be shown at the specified time in the
   /// future in a specific time zone.
