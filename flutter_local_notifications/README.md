@@ -266,14 +266,14 @@ dependencies {
 ```
 </details>
 
-Note that the plugin uses Android Gradle plugin (AGP) 8.6.0 to leverage this functionality so to err on the safe side, applications should aim to use the same version at a **minimum**. If your application uses a higher version then there's no need to use a lower AGP version. For a Flutter app using the legacy `apply` script syntax, this is specified in `android/build.gradle` and the main parts would look similar to the following
+Note that the plugin uses Android Gradle plugin (AGP) 8.11.1 to leverage this functionality so to err on the safe side, applications should aim to use the same version at a **minimum**. If your application uses a higher version then there's no need to use a lower AGP version. For a Flutter app using the legacy `apply` script syntax, this is specified in `android/build.gradle` and the main parts would look similar to the following
 
 ```gradle
 buildscript {
    ...
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.6.0'
+        classpath 'com.android.tools.build:gradle:8.11.1'
         ...
     }
 ```
@@ -287,7 +287,7 @@ If your app is using the new declarative [Plugin DSL syntax](https://docs.flutte
 ```gradle
 plugins {
     ...
-    id 'com.android.application' version '8.6.0' apply false
+    id 'com.android.application' version '8.11.1' apply false
     ...
 }
 ```
@@ -300,7 +300,7 @@ plugins {
 ```kotlin
 plugins {
     ...
-    id("com.android.application") version "8.6.0" apply false
+    id("com.android.application") version "8.11.1" apply false
     ...
 }
 ```
@@ -344,7 +344,7 @@ The plugin also requires that the `compileSdk` in your application's Gradle file
 
 ```gradle
 android {
-    compileSdk 35
+    compileSdk 36
     ...
 }
 ```
@@ -356,7 +356,7 @@ android {
 
 ```kotlin
 android {
-    compileSdk = 35
+    compileSdk = 36
     ...
 }
 ```

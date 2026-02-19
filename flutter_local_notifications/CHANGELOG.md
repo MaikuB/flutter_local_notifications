@@ -8,6 +8,9 @@
   * [Android] minimum Android version is now 7.0 (API level 24)
   * [iOS] minimum iOS version is now 13
   * [macOS] minimum macOS version is now 10.15
+* Bumped `timezone` dependency
+* [Android] **Breaking change** bumped `compileSdk` to 36 and updated readme to mention this
+* [Android] bumped Android Gradle Plugin (AGP) to 8.11.1 
 
 ## [20.1.0]
 
