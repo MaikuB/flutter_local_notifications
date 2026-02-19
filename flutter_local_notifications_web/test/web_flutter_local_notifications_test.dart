@@ -210,26 +210,26 @@ void main() {
     });
   });
 
-  group('WebFlutterLocalNotificationsPlugin - Stub', () {
-    test('stub implementation exists for non-web platforms', () {
-      // This ensures the stub is properly exported
-      expect(WebFlutterLocalNotificationsPlugin, isNotNull);
+  group('WebFlutterLocalNotificationsPlugin', () {
+    late WebFlutterLocalNotificationsPlugin plugin;
+
+    setUp(() async {
+      plugin = WebFlutterLocalNotificationsPlugin();
+      await plugin.initialize();
     });
 
-    test('stub pendingNotificationRequests returns empty list', () async {
-      final WebFlutterLocalNotificationsPlugin plugin =
-          WebFlutterLocalNotificationsPlugin();
+    test('extends platform interface', () {
+      expect(plugin, isA<FlutterLocalNotificationsPlatform>());
+    });
 
+    test('pendingNotificationRequests returns empty list', () async {
       final List<PendingNotificationRequest> requests =
           await plugin.pendingNotificationRequests();
 
       expect(requests, isEmpty);
     });
 
-    test('stub periodicallyShow throws UnsupportedError', () {
-      final WebFlutterLocalNotificationsPlugin plugin =
-          WebFlutterLocalNotificationsPlugin();
-
+    test('periodicallyShow throws UnsupportedError', () {
       expect(
         () => plugin.periodicallyShow(
           id: 1,
@@ -241,10 +241,7 @@ void main() {
       );
     });
 
-    test('stub periodicallyShowWithDuration throws UnsupportedError', () {
-      final WebFlutterLocalNotificationsPlugin plugin =
-          WebFlutterLocalNotificationsPlugin();
-
+    test('periodicallyShowWithDuration throws UnsupportedError', () {
       expect(
         () => plugin.periodicallyShowWithDuration(
           id: 1,
@@ -255,78 +252,29 @@ void main() {
         throwsA(isA<UnsupportedError>()),
       );
     });
-  });
 
-  group('Platform Interface Compliance', () {
-    test('WebFlutterLocalNotificationsPlugin extends platform interface', () {
-      final WebFlutterLocalNotificationsPlugin plugin =
-          WebFlutterLocalNotificationsPlugin();
-
-      expect(plugin, isA<FlutterLocalNotificationsPlatform>());
+    test('cancel completes with no active notifications', () async {
+      await plugin.cancel(id: 1);
     });
 
-    test('implements show method', () {
-      final WebFlutterLocalNotificationsPlugin plugin =
-          WebFlutterLocalNotificationsPlugin();
-
-      expect(
-        plugin.show(
-          id: 1,
-          title: 'Test',
-          body: 'Test',
-        ),
-        isA<Future<void>>(),
-      );
+    test('cancelAll completes with no active notifications', () async {
+      await plugin.cancelAll();
     });
 
-    test('implements cancel method', () {
-      final WebFlutterLocalNotificationsPlugin plugin =
-          WebFlutterLocalNotificationsPlugin();
+    test('getActiveNotifications returns empty with no notifications',
+        () async {
+      final List<ActiveNotification> notifications =
+          await plugin.getActiveNotifications();
 
-      expect(
-        plugin.cancel(id: 1),
-        isA<Future<void>>(),
-      );
+      expect(notifications, isEmpty);
     });
 
-    test('implements cancelAll method', () {
-      final WebFlutterLocalNotificationsPlugin plugin =
-          WebFlutterLocalNotificationsPlugin();
+    test('getNotificationAppLaunchDetails returns null without launch params',
+        () async {
+      final NotificationAppLaunchDetails? details =
+          await plugin.getNotificationAppLaunchDetails();
 
-      expect(
-        plugin.cancelAll(),
-        isA<Future<void>>(),
-      );
-    });
-
-    test('implements getNotificationAppLaunchDetails method', () {
-      final WebFlutterLocalNotificationsPlugin plugin =
-          WebFlutterLocalNotificationsPlugin();
-
-      expect(
-        plugin.getNotificationAppLaunchDetails(),
-        isA<Future<NotificationAppLaunchDetails?>>(),
-      );
-    });
-
-    test('implements getActiveNotifications method', () {
-      final WebFlutterLocalNotificationsPlugin plugin =
-          WebFlutterLocalNotificationsPlugin();
-
-      expect(
-        plugin.getActiveNotifications(),
-        isA<Future<List<ActiveNotification>>>(),
-      );
-    });
-
-    test('implements pendingNotificationRequests method', () {
-      final WebFlutterLocalNotificationsPlugin plugin =
-          WebFlutterLocalNotificationsPlugin();
-
-      expect(
-        plugin.pendingNotificationRequests(),
-        isA<Future<List<PendingNotificationRequest>>>(),
-      );
+      expect(details, isNull);
     });
   });
 }
