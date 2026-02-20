@@ -961,8 +961,8 @@ public class FlutterLocalNotificationsPlugin
           // Set click action if provided
           if (mapping.actionId != null) {
             try {
-              Intent intent = new Intent(context, ActionBroadcastReceiver.class);
-              intent.setAction(ActionBroadcastReceiver.ACTION_TAPPED);
+              Intent intent = getLaunchIntent(context);
+              intent.setAction(SELECT_NOTIFICATION);
               intent.putExtra(NOTIFICATION_ID, notificationDetails.id);
               intent.putExtra(ACTION_ID, mapping.actionId);
               intent.putExtra(PAYLOAD, notificationDetails.payload);
@@ -976,7 +976,7 @@ public class FlutterLocalNotificationsPlugin
                 flags |= PendingIntent.FLAG_IMMUTABLE;
               }
               
-              PendingIntent pendingIntent = PendingIntent.getBroadcast(
+              PendingIntent pendingIntent = PendingIntent.getActivity(
                   context,
                   notificationDetails.id.hashCode() + mapping.actionId.hashCode(),
                   intent,
