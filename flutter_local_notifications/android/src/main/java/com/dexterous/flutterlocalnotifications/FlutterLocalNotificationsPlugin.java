@@ -966,6 +966,7 @@ public class FlutterLocalNotificationsPlugin
               intent.putExtra(NOTIFICATION_ID, notificationDetails.id);
               intent.putExtra(ACTION_ID, mapping.actionId);
               intent.putExtra(PAYLOAD, notificationDetails.payload);
+              intent.putExtra(CANCEL_NOTIFICATION, true);
               
               if (notificationDetails.tag != null) {
                 intent.putExtra(NOTIFICATION_TAG, notificationDetails.tag);
@@ -1576,7 +1577,8 @@ public class FlutterLocalNotificationsPlugin
     mainActivity = binding.getActivity();
     Intent mainActivityIntent = mainActivity.getIntent();
     if (!launchedActivityFromHistory(mainActivityIntent)) {
-      if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.getAction())) {
+      if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.getAction())
+          || SELECT_NOTIFICATION.equals(mainActivityIntent.getAction())) {
         Map<String, Object> notificationResponse =
             extractNotificationResponseMap(mainActivityIntent);
         processForegroundNotificationAction(mainActivityIntent, notificationResponse);
@@ -2186,7 +2188,8 @@ public class FlutterLocalNotificationsPlugin
     if (SELECT_NOTIFICATION.equals(intent.getAction())
         || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
       Map<String, Object> notificationResponse = extractNotificationResponseMap(intent);
-      if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
+      if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())
+          || SELECT_NOTIFICATION.equals(intent.getAction())) {
         processForegroundNotificationAction(intent, notificationResponse);
       }
       channel.invokeMethod("didReceiveNotificationResponse", notificationResponse);
