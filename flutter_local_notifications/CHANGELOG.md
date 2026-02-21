@@ -1,3 +1,8 @@
+## [21.0.0-dev.2]
+
+* Migrated example app to `UIScene` lifecycle
+* Updated readme to specify changes needed for applications that have migrated to `UIScene` lifecycle
+
 ## [21.0.0-dev.1]
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.38.1 and Dart SDK requirement to 3.10.0. Consequently the minimum OS requirements for each platform has been updated as well
