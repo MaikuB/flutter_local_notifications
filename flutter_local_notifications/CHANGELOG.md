@@ -3,6 +3,7 @@
 * Migrated example app to `UIScene` lifecycle
 * Updated readme to specify changes needed for applications that have migrated to `UIScene` lifecycle
 * Updated iOS-specific setup around registering `UNUserNotificationCenterDelegate` to remove redundant `available` check and to be more specific that it should be done in the `application:didFinishLaunchingWithOptions:` method
+* Bumped `flutter_timezone` dependency in example app
 
 ## [21.0.0-dev.1]
 
