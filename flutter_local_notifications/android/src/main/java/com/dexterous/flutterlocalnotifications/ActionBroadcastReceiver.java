@@ -85,6 +85,10 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
 
     engine = new FlutterEngine(context);
 
+    if (FlutterLocalNotificationsPlugin.configureFlutterEngine != null) {
+      FlutterLocalNotificationsPlugin.configureFlutterEngine.accept(engine);
+    }
+
     /// This lookup needs to be done after creating an instance of `FlutterEngine` or lookup may
     // fail
     FlutterCallbackInformation dispatcherHandle = preferences.lookupDispatcherHandle();

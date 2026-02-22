@@ -92,8 +92,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import io.flutter.FlutterInjector;
+import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.loader.FlutterLoader;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -119,7 +121,6 @@ public class FlutterLocalNotificationsPlugin
         PluginRegistry.ActivityResultListener,
         FlutterPlugin,
         ActivityAware {
-
   static final String PAYLOAD = "payload";
   static final String NOTIFICATION_ID = "notificationId";
   static final String NOTIFICATION_TAG = "notificationTag";
@@ -219,6 +220,12 @@ public class FlutterLocalNotificationsPlugin
 
   static final int FULL_SCREEN_INTENT_PERMISSION_REQUEST_CODE = 3;
   static final int NOTIFICATION_POLICY_ACCESS_REQUEST_CODE = 4;
+
+  static Consumer<FlutterEngine> configureFlutterEngine = null;
+
+  public static void setConfigureFlutterEngineCallback(Consumer<FlutterEngine> callback) {
+    configureFlutterEngine = callback;
+  }
 
   private PermissionRequestListener callback;
 
