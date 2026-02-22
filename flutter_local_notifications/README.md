@@ -99,6 +99,7 @@ Note: the plugin requires Flutter SDK 3.38.1 at a minimum. The list of support p
 * [Android] Retrieve the list of active notifications
 * [Android] Full-screen intent notifications
 * [Android] Start a foreground service
+* [Android] Android Auto notification support (requires CarAppService integration—see Android setup section)
 * [Android] Ability to check if notifications are enabled
 * [iOS (all supported versions) & macOS 10.14+] Request notification permissions and customise the permissions being requested around displaying notifications
 * [iOS 10+] Request CarPlay notification permissions for notifications to appear in CarPlay interface
@@ -351,6 +352,52 @@ android {
 ```
 
 </details>
+
+#### 🚗 Supporting Android Auto Notifications
+
+The plugin supports delivering notifications to Android Auto displays via the `showOnAndroidAuto` option. If you intend to use this feature, there is additional setup required within your Android application.
+
+**CarAppService Implementation**
+  If your app supports Android Auto, your app must already define a class inheriting from [`androidx.car.app.CarAppService`](https://developer.android.com/reference/androidx/car/app/CarAppService).
+
+**What you need to do:**
+
+- **Let the `flutter_local_notifications` know about your service:**
+  `flutter_local_notifications` cannot provide this class itself, it must be supplied by you. To let the plugin access your `CarAppService`, make your `MainActivity` implement the `CarAppServiceClassConsumer` interface and return your service’s class from the required method.
+
+**Example (in `MainActivity.java`):**
+```java
+public class MainActivity extends FlutterActivity implements CarAppServiceClassConsumer {
+  @Override
+  public Class<? extends CarAppService> getCarAppServiceClass() {
+    return MyCarAppService.class; // Replace with your actual CarAppService class
+  }
+}
+```
+
+**Kotlin Example (in `MainActivity.kt`):**
+```kotlin
+class MainActivity : FlutterActivity(), CarAppServiceClassConsumer {
+    override fun getCarAppServiceClass(): Class<out CarAppService>? {
+        return MyCarAppService::class.java // Replace with your actual CarAppService class
+    }
+}
+```
+
+- **When is this required?**
+  Only when enabling Android Auto support for notifications via the `showOnAndroidAuto` option. For standard notifications, no action is required.
+
+- **How does this work?**
+  When creating a notification for Android Auto, the `flutter_local_notifications` will:
+  - Check if your activity implements `CarAppServiceClassConsumer`.
+  - If so, call `getCarAppServiceClass()` to get your service class.
+  - Build an intent that targets this class so notifications can be properly handled by Android Auto via `CarAppExtender` and `CarPendingIntent`.
+
+For more details, see the [CarAppServiceClassConsumer interface](android/src/main/java/com/dexterous/flutterlocalnotifications/interfaces/CarAppServiceClassConsumer.java).
+
+_Tip: If you do not require Android Auto support, you do not need to implement this interface._
+
+_Tip: Before adding Android Auto notifications to your app you should review the [Car App Quality](https://developer.android.com/docs/quality-guidelines/car-app-quality) guidelines for your [App Category](https://developer.android.com/training/cars#supported-app-categories)._
 
 ### AndroidManifest.xml setup
 
