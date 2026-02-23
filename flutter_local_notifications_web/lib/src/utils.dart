@@ -20,7 +20,7 @@ extension ServiceWorkerUtils on ServiceWorkerRegistration {
 
 /// Utility methods on [WebNotificationAction] objects.
 extension on WebNotificationAction {
-  /// Converts this object to the format expected by `showNotifications()`
+  /// Converts this object to the format expected by `showNotification()`
   ///
   /// See: https://developer.mozilla.org/en-US/docs/Web/API/Notification/actions.
   NotificationAction toJs() {

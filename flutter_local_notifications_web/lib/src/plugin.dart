@@ -20,7 +20,7 @@ import 'utils.dart';
 ///
 /// This function creates a [NotificationResponse] object and calls the user's
 /// callback they provided to [WebFlutterLocalNotificationsPlugin.initialize].
-void _onNotificationClicked(MessageEvent event) {
+void _handleNotificationClick(MessageEvent event) {
   final JSNotificationData data = event.data as JSNotificationData;
   final NotificationResponse response = data.response;
   WebFlutterLocalNotificationsPlugin.instance?._userCallback?.call(response);
@@ -141,7 +141,7 @@ class WebFlutterLocalNotificationsPlugin
       }
 
       // Subscribe to messages from the service worker
-      serviceWorker.onmessage = _onNotificationClicked.toJS;
+      serviceWorker.onmessage = _handleNotificationClick.toJS;
 
       return true;
     } catch (e) {
