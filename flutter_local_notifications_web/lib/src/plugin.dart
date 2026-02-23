@@ -4,6 +4,7 @@ import 'dart:js_interop_unsafe';
 
 import 'package:collection/collection.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
+import 'package:timezone/timezone.dart' as tz;
 import 'package:web/web.dart';
 
 import 'details.dart';
@@ -393,5 +394,18 @@ class WebFlutterLocalNotificationsPlugin
       'periodicallyShowWithDuration() is not supported '
       'on the web',
     );
+  }
+
+  @override
+  Future<void> zonedSchedule({
+    required int id,
+    String? title,
+    String? body,
+    required tz.TZDateTime scheduledDate,
+    String? payload,
+    DateTimeComponents? matchDateTimeComponents,
+    WebNotificationDetails? notificationDetails,
+  }) async {
+    throw UnsupportedError('zonedSchedule() is not supported on the web');
   }
 }

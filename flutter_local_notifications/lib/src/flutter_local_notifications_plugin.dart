@@ -417,7 +417,18 @@ class FlutterLocalNotificationsPlugin {
     DateTimeComponents? matchDateTimeComponents,
   }) async {
     if (kIsWeb) {
-      throw UnsupportedError('zonedSchedule() is not supported on the web');
+      await resolvePlatformSpecificImplementation<
+            WebFlutterLocalNotificationsPlugin
+          >()
+          ?.zonedSchedule(
+            id: id,
+            title: title,
+            body: body,
+            scheduledDate: scheduledDate,
+            matchDateTimeComponents: matchDateTimeComponents,
+            payload: payload,
+          );
+      return;
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<

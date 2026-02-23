@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 import 'details.dart';
 
@@ -55,4 +56,15 @@ class WebFlutterLocalNotificationsPlugin
   @override
   Future<List<PendingNotificationRequest>>
       pendingNotificationRequests() async => <PendingNotificationRequest>[];
+
+  @override
+  Future<void> zonedSchedule({
+    required int id,
+    String? title,
+    String? body,
+    required tz.TZDateTime scheduledDate,
+    String? payload,
+    DateTimeComponents? matchDateTimeComponents,
+    WebNotificationDetails? notificationDetails,
+  }) async {}
 }

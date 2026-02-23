@@ -10,7 +10,7 @@ environment:
 
 dependencies:
   plugin_platform_interface: ^2.1.8
-  timezone: ">=0.9.0 <1.0.0"
+  timezone: ^0.11.0
 
 dev_dependencies:
   flutter_test:
