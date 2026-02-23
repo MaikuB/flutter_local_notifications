@@ -496,7 +496,16 @@ class FlutterLocalNotificationsPlugin {
     String? payload,
   }) async {
     if (kIsWeb) {
-      throw UnsupportedError('periodicallyShow() is not supported on the web');
+      await resolvePlatformSpecificImplementation<
+            WebFlutterLocalNotificationsPlugin
+          >()
+          ?.periodicallyShow(
+            id: id,
+            title: title,
+            body: body,
+            repeatInterval: repeatInterval,
+          );
+      return;
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<
@@ -567,9 +576,16 @@ class FlutterLocalNotificationsPlugin {
     String? payload,
   }) async {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'periodicallyShowWithDuration() is not supported on the web',
-      );
+      await resolvePlatformSpecificImplementation<
+            WebFlutterLocalNotificationsPlugin
+          >()
+          ?.periodicallyShowWithDuration(
+            id: id,
+            title: title,
+            body: body,
+            repeatDurationInterval: repeatDurationInterval,
+          );
+      return;
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       await resolvePlatformSpecificImplementation<

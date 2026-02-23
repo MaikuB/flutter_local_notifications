@@ -204,8 +204,8 @@ Future<void> _configureLocalTimeZone() async {
   if (!kIsWeb && Platform.isWindows) {
     return;
   }
-  final String timeZoneInfo = await FlutterTimezone.getLocalTimezone();
-  tz.setLocalLocation(tz.getLocation(timeZoneInfo));
+  final TimezoneInfo timeZoneInfo = await FlutterTimezone.getLocalTimezone();
+  tz.setLocalLocation(tz.getLocation(timeZoneInfo.identifier));
 }
 
 class HomePage extends StatefulWidget {
