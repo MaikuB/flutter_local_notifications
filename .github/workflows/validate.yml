@@ -66,7 +66,7 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_android
-  build_example_android_3_19:
+  build_example_android_min_flutter:
       name: Build Android example app (3.38.1)
       runs-on: ubuntu-latest
       steps:
@@ -99,7 +99,7 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_ios
-  build_example_ios_3_19:
+  build_example_ios_min_flutter:
     name: Build iOS example app (3.38.1)
     runs-on: macos-latest
     steps:
@@ -128,7 +128,7 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_macos
-  build_example_macos_3_19:
+  build_example_macos_min_flutter:
     name: Build macOS example app (3.38.1)
     runs-on: macos-latest
     steps:
@@ -161,7 +161,7 @@ jobs:
       - run: flutter config --enable-linux-desktop
       - name: Build
         run: melos run build:example_linux
-  build_example_linux_3_19:
+  build_example_linux_min_flutter:
     name: Build Linux example app (3.38.1)
     runs-on: ubuntu-latest
     steps:
@@ -205,7 +205,7 @@ jobs:
           cd f\e
           dart pub get
           dart run msix:create
-  build_example_windows_3_19:
+  build_example_windows_min_flutter:
     name: Build Windows example app (3.38.1)
     runs-on: windows-latest
     steps:

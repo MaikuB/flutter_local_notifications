@@ -63,7 +63,7 @@ A cross platform plugin for displaying local notifications.
 * **Windows** Uses the [C++/WinRT](https://learn.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/) implementation of [Toast Notifications](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/toast-notifications-overview)
 * **Web** Uses the [Notifications API](https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API)
 
-Note: the plugin requires Flutter SDK 3.22 at a minimum. The list of support platforms for Flutter 3.22 itself can be found [here](https://github.com/flutter/website/blob/4fa26a1e909a2243fa18e4d101192bb5d400fcf2/src/_data/platforms.yml)
+Note: the plugin requires Flutter SDK 3.38.1 at a minimum. The list of support platforms for Flutter 3.38.1 itself can be found [here](https://github.com/flutter/website/blob/6150d58df2f39275ffd589ba32f25557a27e2384/src/content/reference/supported-platforms.md?plain=1#L82)
 
 ## ✨ Features
 
@@ -464,24 +464,17 @@ Before creating the release build of your app (which is the default setting when
 
 ### General setup
 
-Add the following lines to the `application` method in the AppDelegate.m/AppDelegate.swift file of your iOS project. See an example of this [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/ios/Runner/AppDelegate.swift).
+Add the following lines to the `application:didFinishLaunchingWithOptions:` method in the AppDelegate.m/AppDelegate.swift file of your iOS project. See an example of this [here](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/ios/Runner/AppDelegate.swift).
 
 Objective-C:
 ```objc
-if (@available(iOS 10.0, *)) {
-  [UNUserNotificationCenter currentNotificationCenter].delegate = (id<UNUserNotificationCenterDelegate>) self;
-}
+[UNUserNotificationCenter currentNotificationCenter].delegate = (id<UNUserNotificationCenterDelegate>) self;
 ```
 
 Swift:
 ```swift
-if #available(iOS 10.0, *) {
-  UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
-}
+UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
 ```
-
-> [!NOTE]
-> Apple have made an announcement [here](https://developer.apple.com/documentation/technotes/tn3187-migrating-to-the-uikit-scene-based-life-cycle) that after iOS 26, the next major release will enforce new requirements for applications. The migration instructions from the Flutter team can be found to meet these requirements can be found [here](https://docs.flutter.dev/release/breaking-changes/uiscenedelegate). If your application will follow these instructions to use the UIScene lifecycle, then ensure you follow their instructions that involves moving logic like the above to the appropriate method (i.e. `didInitializeImplicitFlutterEngine`)
 
 ### Handling notifications whilst the app is in the foreground
 
@@ -536,7 +529,7 @@ void registerPlugins(NSObject<FlutterPluginRegistry>* registry) {
 }
 ```
 
-then extend `didFinishLaunchingWithOptions` and register the callback:
+if your application has not been migrated to `UIScene` lifecycle as described [here](https://docs.flutter.dev/release/breaking-changes/uiscenedelegate#migration-guide-for-flutter-apps) then extend `didFinishLaunchingWithOptions` and register the callback as follows:
 
 ``` objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -547,8 +540,24 @@ then extend `didFinishLaunchingWithOptions` and register the callback:
 }
 ```
 
-For Swift, open the `AppDelegate.swift` and update the `didFinishLaunchingWithOptions` as follows
-where the commented code indicates the code to add in and why
+If it has been migrated to `UIScene` lifecycle then register the callback in through `didInitializeImplicitFlutterEngine`
+
+- (BOOL)application:(UIApplication *)application
+    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+   [GeneratedPluginRegistrant registerWithRegistry:self];
+    return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
+
+- (void)didInitializeImplicitFlutterEngine:(NSObject<FlutterImplicitEngineBridge>*)engineBridge {
+    [GeneratedPluginRegistrant registerWithRegistry:engineBridge.pluginRegistry];
+
+    // Add this method
+    [FlutterLocalNotificationsPlugin setPluginRegistrantCallback:registerPlugins];
+}
+
+
+For Swift, open the `AppDelegate.swift` and if your application has not been migrated to `UIScene` lifecycle, update the
+`didFinishLaunchingWithOptions` as follows where the commented code indicates the code to add in and why
 
 ```swift
 import UIKit
@@ -570,6 +579,25 @@ override func application(
   return super.application(application, didFinishLaunchingWithOptions: launchOptions)
 }
 ```
+
+If your application has been migrated to `UIScene` lifecycle then update `didInitializeImplicitFlutterEngine` as follows
+
+```swift
+import UIKit
+import Flutter
+// This is required for calling FlutterLocalNotificationsPlugin.setPluginRegistrantCallback method.
+import flutter_local_notifications
+
+...
+func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+    // This is required to make any communication available in the action isolate.
+    FlutterLocalNotificationsPlugin.setPluginRegistrantCallback { (registry) in
+        GeneratedPluginRegistrant.register(with: registry)
+    }
+    GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+}
+```
+
 
 > [!NOTE]
 > Apple have made an announcement [here](https://developer.apple.com/documentation/technotes/tn3187-migrating-to-the-uikit-scene-based-life-cycle) that after iOS 26, the next major release will enforce new requirements for applications. The migration instructions from the Flutter team can be found to meet these requirements can be found [here](https://docs.flutter.dev/release/breaking-changes/uiscenedelegate). If your application will follow these instructions to use the UIScene lifecycle, then ensure you follow their instructions that involves moving logic like the above to the appropriate method (i.e. `didInitializeImplicitFlutterEngine`)

@@ -9,7 +9,7 @@ dependencies:
     sdk: flutter
   flutter_local_notifications:
     path: ../
-  flutter_timezone: ^4.0.1
+  flutter_timezone: ^5.0.1
   http: ^1.3.0
   image: ^4.5.2
   path_provider: ^2.1.5
