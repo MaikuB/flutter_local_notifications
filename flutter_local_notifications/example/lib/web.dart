@@ -149,8 +149,7 @@ final List<int> vibrationPattern = <int>[
   40,
   500,
 ];
-void _showVibrate() =>
-    showDetails(WebNotificationDetails(vibrationPattern: vibrationPattern));
+void _showVibrate() => showDetails(const WebNotificationDetails());
 
 void _showWithPayload() => flutterLocalNotificationsPlugin.show(
   id: id++,
