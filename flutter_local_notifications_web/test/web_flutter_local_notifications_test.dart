@@ -220,8 +220,8 @@ void main() {
     });
 
     test('pendingNotificationRequests returns empty list', () async {
-      final List<PendingNotificationRequest> requests =
-          await plugin.pendingNotificationRequests();
+      final List<PendingNotificationRequest> requests = await plugin
+          .pendingNotificationRequests();
 
       expect(requests, isEmpty);
     });
@@ -258,20 +258,24 @@ void main() {
       await expectLater(plugin.cancelAll(), completes);
     });
 
-    test('getActiveNotifications returns empty with no notifications',
-        () async {
-      final List<ActiveNotification> notifications =
-          await plugin.getActiveNotifications();
+    test(
+      'getActiveNotifications returns empty with no notifications',
+      () async {
+        final List<ActiveNotification> notifications = await plugin
+            .getActiveNotifications();
 
-      expect(notifications, isEmpty);
-    });
+        expect(notifications, isEmpty);
+      },
+    );
 
-    test('getNotificationAppLaunchDetails returns null without launch params',
-        () async {
-      final NotificationAppLaunchDetails? details =
-          await plugin.getNotificationAppLaunchDetails();
+    test(
+      'getNotificationAppLaunchDetails returns null without launch params',
+      () async {
+        final NotificationAppLaunchDetails? details = await plugin
+            .getNotificationAppLaunchDetails();
 
-      expect(details, isNull);
-    });
+        expect(details, isNull);
+      },
+    );
   });
 }

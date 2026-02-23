@@ -29,8 +29,11 @@ void main() {
   group('NullableWebNotificationDetailsUtils.toJs', () {
     test('converts null details with defaults', () {
       const WebNotificationDetails? details = null;
-      final web.NotificationOptions options =
-          details.toJs(1, 'body', 'payload');
+      final web.NotificationOptions options = details.toJs(
+        1,
+        'body',
+        'payload',
+      );
 
       expect(options.tag, equals('1'));
       expect(options.body, equals('body'));
@@ -45,16 +48,22 @@ void main() {
 
     test('stores notification id as tag', () {
       const WebNotificationDetails? details = null;
-      final web.NotificationOptions options =
-          details.toJs(42, 'body', 'payload');
+      final web.NotificationOptions options = details.toJs(
+        42,
+        'body',
+        'payload',
+      );
 
       expect(options.tag, equals('42'));
     });
 
     test('stores payload in data object', () {
       const WebNotificationDetails? details = null;
-      final web.NotificationOptions options =
-          details.toJs(1, 'body', 'my-payload');
+      final web.NotificationOptions options = details.toJs(
+        1,
+        'body',
+        'my-payload',
+      );
 
       final JSObject data = options.data! as JSObject;
       final String payload = (data['payload']! as JSString).toDart;
@@ -164,8 +173,10 @@ void main() {
 
       expect(response.id, equals(42));
       expect(response.payload, equals('test-payload'));
-      expect(response.notificationResponseType,
-          equals(NotificationResponseType.selectedNotification));
+      expect(
+        response.notificationResponseType,
+        equals(NotificationResponseType.selectedNotification),
+      );
       expect(response.actionId, isNull);
       expect(response.input, isNull);
     });
@@ -184,8 +195,10 @@ void main() {
       expect(response.payload, equals('msg-payload'));
       expect(response.actionId, equals('reply'));
       expect(response.input, equals('user input'));
-      expect(response.notificationResponseType,
-          equals(NotificationResponseType.selectedNotificationAction));
+      expect(
+        response.notificationResponseType,
+        equals(NotificationResponseType.selectedNotificationAction),
+      );
     });
 
     test('handles null payload and action', () {
@@ -199,8 +212,10 @@ void main() {
       expect(response.payload, isNull);
       expect(response.actionId, isNull);
       expect(response.input, isNull);
-      expect(response.notificationResponseType,
-          equals(NotificationResponseType.selectedNotification));
+      expect(
+        response.notificationResponseType,
+        equals(NotificationResponseType.selectedNotification),
+      );
     });
 
     test('handles empty action as notification click', () {
@@ -211,8 +226,10 @@ void main() {
 
       final NotificationResponse response = data.response;
 
-      expect(response.notificationResponseType,
-          equals(NotificationResponseType.selectedNotification));
+      expect(
+        response.notificationResponseType,
+        equals(NotificationResponseType.selectedNotification),
+      );
       expect(response.actionId, isNull);
     });
 
@@ -257,9 +274,7 @@ void main() {
     });
 
     test('id returns null for empty tag', () {
-      final web.Notification notification = web.Notification(
-        'Test',
-      );
+      final web.Notification notification = web.Notification('Test');
       expect(notification.id, isNull);
     });
   });
