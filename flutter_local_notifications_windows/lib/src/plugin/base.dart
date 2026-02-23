@@ -37,14 +37,15 @@ abstract class WindowsNotificationsBase
     WindowsNotificationDetails? notificationDetails,
   });
 
-  /// Schedules a notification to appear at the given date and time.
+  @override
   Future<void> zonedSchedule({
     required int id,
     String? title,
     String? body,
     required TZDateTime scheduledDate,
-    WindowsNotificationDetails? notificationDetails,
     String? payload,
+    DateTimeComponents? matchDateTimeComponents,
+    WindowsNotificationDetails? notificationDetails,
   });
 
   /// Schedules a notification to appear using raw XML at this date and time.
