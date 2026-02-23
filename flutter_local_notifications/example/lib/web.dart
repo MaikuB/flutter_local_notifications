@@ -47,10 +47,6 @@ List<Widget> webExamples(
     onPressed: _showTimestamp,
   ),
   const PaddedElevatedButton(
-    buttonText: 'Notification with vibration',
-    onPressed: _showVibrate,
-  ),
-  const PaddedElevatedButton(
     buttonText: 'Notification with payload',
     onPressed: _showWithPayload,
   ),
@@ -127,29 +123,6 @@ void _showRtl() => flutterLocalNotificationsPlugin.show(
     ),
   ),
 );
-
-// Star wars theme!
-// See: https://tests.peter.sh/notification-generator/
-final List<int> vibrationPattern = <int>[
-  500,
-  110,
-  500,
-  110,
-  450,
-  110,
-  200,
-  110,
-  170,
-  40,
-  450,
-  110,
-  200,
-  110,
-  170,
-  40,
-  500,
-];
-void _showVibrate() => showDetails(const WebNotificationDetails());
 
 void _showWithPayload() => flutterLocalNotificationsPlugin.show(
   id: id++,
