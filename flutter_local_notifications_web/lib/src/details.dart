@@ -61,7 +61,7 @@ class WebNotificationDetails {
   /// this is true, the device will notify the user any time the notification is
   /// updated.
   ///
-  /// For exmaple, when updating a loading notification, you want each update to
+  /// For example, when updating a loading notification, you want each update to
   /// occur silently. But if you have a notification that represents a chat
   /// thread, you'd want it to update when a new message is sent.
   final bool renotify;
