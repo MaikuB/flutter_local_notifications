@@ -120,14 +120,24 @@ if (webPlugin != null) {
 
 ```dart
 var id = 0;  // increment this every time you show a notification
-await plugin.show(id, "Title", "Body text", null);
+await plugin.show(
+  id: id,
+  title: 'Title',
+  body: 'Body text',
+  notificationDetails: null,
+);
 ```
 
 ### Use web-specific details
 ```dart
 final webDetails = WebNotificationDetails(requireInteraction: true);
 final details = NotificationDetails(web: webDetails);
-await plugin.show(id, "Title", "Body text", details);
+await plugin.show(
+  id: id,
+  title: 'Title',
+  body: 'Body text',
+  notificationDetails: details,
+);
 ```
 
 ### Respond to notifications
