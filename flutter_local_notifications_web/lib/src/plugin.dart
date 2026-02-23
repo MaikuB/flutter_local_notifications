@@ -71,11 +71,6 @@ class WebFlutterLocalNotificationsPlugin
         'FlutterLocalNotifications.show(): You must request notifications '
         'permissions first',
       );
-    } else if (details?.isSilent == true && details?.vibrationPattern != null) {
-      throw ArgumentError(
-        'WebNotificationDetails: Cannot specify both silent and a vibration '
-        'pattern',
-      );
     } else if (_registration!.active == null) {
       throw StateError(
         'FlutterLocalNotifications.show(): There is no active service worker. '

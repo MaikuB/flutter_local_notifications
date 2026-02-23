@@ -19,7 +19,7 @@ void main() {
       expect(details.imageUrl, isNull);
       expect(details.lang, isNull);
       expect(details.timestamp, isNull);
-      expect(details.vibrationPattern, isNull);
+      expect(details.timestamp, isNull);
     });
 
     test('creates with custom values', () {
@@ -41,7 +41,6 @@ void main() {
         isSilent: true,
         renotify: true,
         timestamp: timestamp,
-        vibrationPattern: const <int>[200, 100, 200],
       );
 
       expect(details.actions.length, equals(1));
@@ -54,7 +53,7 @@ void main() {
       expect(details.isSilent, isTrue);
       expect(details.renotify, isTrue);
       expect(details.timestamp, equals(timestamp));
-      expect(details.vibrationPattern, equals(<int>[200, 100, 200]));
+      expect(details.timestamp, equals(timestamp));
     });
 
     test('creates with multiple actions', () {
@@ -72,22 +71,13 @@ void main() {
       expect(details.actions[2].action, equals('archive'));
     });
 
-    test('creates with vibration pattern', () {
-      const WebNotificationDetails details = WebNotificationDetails(
-        vibrationPattern: <int>[100, 50, 100, 50, 100],
-      );
-
-      expect(details.vibrationPattern, equals(<int>[100, 50, 100, 50, 100]));
-      expect(details.isSilent, isFalse);
-    });
-
     test('creates with silent notification', () {
       const WebNotificationDetails details = WebNotificationDetails(
         isSilent: true,
       );
 
       expect(details.isSilent, isTrue);
-      expect(details.vibrationPattern, isNull);
+      expect(details.isSilent, isTrue);
     });
 
     test('creates with require interaction', () {

@@ -22,7 +22,6 @@ class WebNotificationDetails {
     this.imageUrl,
     this.renotify = false,
     this.timestamp,
-    this.vibrationPattern,
   });
 
   /// A list of actions to send with the notification.
@@ -73,17 +72,4 @@ class WebNotificationDetails {
   /// ago, you can back-date this timestamp to when the message was originally
   /// sent instead of when it was received.
   final DateTime? timestamp;
-
-  /// An optional vibration pattern.
-  ///
-  /// This should be a list of milliseconds, starting with how long the device
-  /// should vibrate for, followed by how long it should pause.
-  ///
-  /// For examples, see:
-  /// - https://developer.mozilla.org/en-US/docs/Web/API/Vibration_API#vibration_patterns
-  /// - https://web.dev/articles/push-notifications-display-a-notification#vibrate
-  ///
-  /// Note: This is not supported on Android as vibration patterns are set by
-  /// the notification channel, not an individual notification.
-  final List<int>? vibrationPattern;
 }

@@ -18,16 +18,6 @@ extension ServiceWorkerUtils on ServiceWorkerRegistration {
       (await getNotifications().toDart).toDart;
 }
 
-/// Utility methods on [WebNotificationDetails] objects.
-extension WebNotificationDetailsUtils on WebNotificationDetails {
-  /// A JavaScript array with the number of milliseconds in between vibrations.
-  JSArray<JSNumber>? get vibrationPatternMs => vibrationPattern == null
-      ? null
-      : <JSNumber>[
-          for (final int duration in vibrationPattern!) duration.toJS,
-        ].toJS;
-}
-
 /// Utility methods on [WebNotificationAction] objects.
 extension on WebNotificationAction {
   /// Converts this object to the format expected by `showNotifications()`
@@ -76,11 +66,6 @@ extension NullableWebNotificationDetailsUtils on WebNotificationDetails? {
       silent: this?.isSilent,
       timestamp: (this?.timestamp ?? DateTime.now()).millisecondsSinceEpoch,
     );
-
-    final JSArray<JSNumber>? vibration = this?.vibrationPatternMs;
-    if (vibration != null) {
-      options.vibrate = vibration;
-    }
 
     return options;
   }

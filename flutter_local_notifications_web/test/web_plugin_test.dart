@@ -26,34 +26,6 @@ void main() {
     });
   });
 
-  group('WebNotificationDetailsUtils', () {
-    test('vibrationPatternMs returns null when pattern is null', () {
-      const WebNotificationDetails details = WebNotificationDetails();
-      expect(details.vibrationPatternMs, isNull);
-    });
-
-    test('vibrationPatternMs converts pattern to JSArray', () {
-      const WebNotificationDetails details = WebNotificationDetails(
-        vibrationPattern: <int>[200, 100, 200],
-      );
-      final JSArray<JSNumber>? result = details.vibrationPatternMs;
-      expect(result, isNotNull);
-      expect(result!.toDart.length, equals(3));
-      expect((result.toDart[0]).toDartInt, equals(200));
-      expect((result.toDart[1]).toDartInt, equals(100));
-      expect((result.toDart[2]).toDartInt, equals(200));
-    });
-
-    test('vibrationPatternMs handles empty pattern', () {
-      const WebNotificationDetails details = WebNotificationDetails(
-        vibrationPattern: <int>[],
-      );
-      final JSArray<JSNumber>? result = details.vibrationPatternMs;
-      expect(result, isNotNull);
-      expect(result!.toDart.length, equals(0));
-    });
-  });
-
   group('NullableWebNotificationDetailsUtils.toJs', () {
     test('converts null details with defaults', () {
       const WebNotificationDetails? details = null;
