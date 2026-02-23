@@ -41,7 +41,11 @@ Note: Firefox and Safari may add action support in future versions. Text input f
 // Check if the browser supports notifications before initializing
 if (WebFlutterLocalNotificationsPlugin.isSupported) {
   final plugin = FlutterLocalNotificationsPlugin();
-  final initialized = await plugin.initialize();
+  final initialized = await plugin.initialize(
+    const InitializationSettings(
+      // ... platform-specific settings
+    ),
+  );
   
   if (initialized == false) {
     // Initialization failed - browser may not support Service Workers
@@ -58,7 +62,11 @@ if (WebFlutterLocalNotificationsPlugin.isSupported) {
 
 ```dart
 final plugin = FlutterLocalNotificationsPlugin();
-final initialized = await plugin.initialize();
+final initialized = await plugin.initialize(
+  const InitializationSettings(
+    // ... platform-specific settings
+  ),
+);
 
 if (initialized == false) {
   // Handle initialization failure
@@ -66,9 +74,12 @@ if (initialized == false) {
   return;
 }
 
-if (!plugin.hasPermission) {
+final webPlugin = plugin.resolvePlatformSpecificImplementation<
+    WebFlutterLocalNotificationsPlugin>();
+
+if (webPlugin != null && !webPlugin.hasPermission) {
   // IMPORTANT: Only call this after a button press!
-  await plugin.requestNotificationsPermission();
+  await webPlugin.requestNotificationsPermission();
 }
 ```
 
@@ -76,29 +87,33 @@ if (!plugin.hasPermission) {
 
 ```dart
 final plugin = FlutterLocalNotificationsPlugin();
+final webPlugin = plugin.resolvePlatformSpecificImplementation<
+    WebFlutterLocalNotificationsPlugin>();
 
-// Check if permission is granted
-if (plugin.hasPermission) {
-  // Can show notifications
-}
+if (webPlugin != null) {
+  // Check if permission is granted
+  if (webPlugin.hasPermission) {
+    // Can show notifications
+  }
 
-// Check if permission was explicitly denied
-if (plugin.isPermissionDenied) {
-  // User blocked notifications - guide them to browser settings
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text('Notifications Blocked'),
-      content: Text(
-        'You have blocked notifications. To enable them, '
-        'please update your browser settings.',
+  // Check if permission was explicitly denied
+  if (webPlugin.isPermissionDenied) {
+    // User blocked notifications - guide them to browser settings
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Notifications Blocked'),
+        content: Text(
+          'You have blocked notifications. To enable them, '
+          'please update your browser settings.',
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-// Get the raw permission status
-final status = plugin.permissionStatus; // 'granted', 'denied', or 'default'
+  // Get the raw permission status
+  final status = webPlugin.permissionStatus; // 'granted', 'denied', or 'default'
+}
 ```
 
 ### Show a notification
@@ -123,7 +138,12 @@ void handleNotification(NotificationResponse notification) {
 }
 
 final plugin = FlutterLocalNotificationsPlugin();
-await plugin.initialize(onDidReceiveNotificationResponse: handleNotification);
+await plugin.initialize(
+  const InitializationSettings(
+    // ... platform-specific settings
+  ),
+  onDidReceiveNotificationResponse: handleNotification,
+);
 
 // When your site is closed, clicking the notification will launch your site
 //  with special query parameters that include the notification details.

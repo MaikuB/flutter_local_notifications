@@ -487,12 +487,21 @@ For iOS 10+, use the presentation options to control the behaviour for when a no
 No modifications to the HTML or JavaScript are necessary. But you must make sure to request permissions at runtime properly!
 
 ```dart
-final plugin = FlutterLocalNotificationsPlugin();
-await plugin.initialize();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
-if (!plugin.hasPermission) {
+await flutterLocalNotificationsPlugin.initialize(
+  const InitializationSettings(
+    // ... platform-specific settings
+  ),
+);
+
+final webPlugin = flutterLocalNotificationsPlugin
+    .resolvePlatformSpecificImplementation<WebFlutterLocalNotificationsPlugin>();
+
+if (webPlugin != null && !webPlugin.hasPermission) {
   // IMPORTANT: Only call this after a button press!
-  await plugin.requestNotificationsPermission();
+  await webPlugin.requestNotificationsPermission();
 }
 ```
 
