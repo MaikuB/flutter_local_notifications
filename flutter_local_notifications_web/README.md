@@ -112,7 +112,7 @@ if (webPlugin != null) {
   }
 
   // Get the raw permission status
-  final status = webPlugin.permissionStatus; // 'granted', 'denied', or 'default'
+  final status = webPlugin.permissionStatus; // WebNotificationPermission.granted, WebNotificationPermission.denied, or WebNotificationPermission.defaultPermissions
 }
 ```
 

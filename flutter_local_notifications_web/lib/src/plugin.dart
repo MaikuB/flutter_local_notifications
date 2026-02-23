@@ -9,6 +9,7 @@ import 'package:web/web.dart';
 
 import 'details.dart';
 import 'handler.dart';
+import 'permission.dart';
 import 'utils.dart';
 
 /// Called when a notification has been clicked.
@@ -88,10 +89,7 @@ class WebFlutterLocalNotificationsPlugin
     }
 
     await _registration!
-        .showNotification(
-          title ?? '',
-          details.toJs(id, body, payload),
-        )
+        .showNotification(title ?? '', details.toJs(id, body, payload))
         .toDart;
   }
 
@@ -173,15 +171,11 @@ class WebFlutterLocalNotificationsPlugin
     return permissionStatus.toDart == 'granted';
   }
 
-  /// Returns the current permission status as a string.
-  ///
-  /// Possible values:
-  /// - `'granted'`: User explicitly allowed notifications
-  /// - `'denied'`: User explicitly blocked notifications (may be permanent)
-  /// - `'default'`: User hasn't decided yet
+  /// Returns the current permission status as a [WebNotificationPermission].
   ///
   /// See: https://developer.mozilla.org/en-US/docs/Web/API/Notification/permission
-  String get permissionStatus => Notification.permission;
+  WebNotificationPermission get permissionStatus =>
+      WebNotificationPermission.fromString(Notification.permission);
 
   /// Whether the user has granted permission to show notifications.
   ///
@@ -199,7 +193,7 @@ class WebFlutterLocalNotificationsPlugin
 
   @override
   Future<NotificationAppLaunchDetails?>
-      getNotificationAppLaunchDetails() async {
+  getNotificationAppLaunchDetails() async {
     final Uri uri = Uri.parse(window.location.toString());
     final Map<String, String> query = uri.queryParameters;
     final String? idString = query['notification_id'];
@@ -225,7 +219,8 @@ class WebFlutterLocalNotificationsPlugin
       ..remove('notification_action')
       ..remove('notification_reply');
     final Uri cleanedUri = uri.replace(
-        queryParameters: cleanedQuery.isEmpty ? null : cleanedQuery);
+      queryParameters: cleanedQuery.isEmpty ? null : cleanedQuery,
+    );
     // Use pathOnly (path + remaining query + fragment) to avoid pushing a
     // full absolute URI which would fail for cross-origin scenarios
     final String cleanedUrl = cleanedQuery.isEmpty
@@ -254,8 +249,8 @@ class WebFlutterLocalNotificationsPlugin
     }
     final List<ActiveNotification> activeNotifications = <ActiveNotification>[];
     final Set<int> ids = <int>{};
-    final List<Notification> notifications =
-        await _registration!.getDartNotifications();
+    final List<Notification> notifications = await _registration!
+        .getDartNotifications();
     for (final Notification notification in notifications) {
       final int? id = notification.id;
       if (id == null) {
@@ -338,8 +333,8 @@ class WebFlutterLocalNotificationsPlugin
       return;
     }
 
-    final List<Notification> notifications =
-        await _registration!.getDartNotifications();
+    final List<Notification> notifications = await _registration!
+        .getDartNotifications();
     final Notification? notification = notifications.firstWhereOrNull(
       (Notification notification) => notification.id == id,
     );
@@ -351,8 +346,8 @@ class WebFlutterLocalNotificationsPlugin
     if (_registration == null) {
       return;
     }
-    final List<Notification> notifications =
-        await _registration!.getDartNotifications();
+    final List<Notification> notifications = await _registration!
+        .getDartNotifications();
     for (final Notification notification in notifications) {
       notification.close();
     }
@@ -366,7 +361,7 @@ class WebFlutterLocalNotificationsPlugin
 
   @override
   Future<List<PendingNotificationRequest>>
-      pendingNotificationRequests() async => <PendingNotificationRequest>[];
+  pendingNotificationRequests() async => <PendingNotificationRequest>[];
 
   @override
   Future<void> periodicallyShow({

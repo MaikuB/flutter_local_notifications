@@ -2,6 +2,7 @@ import 'package:flutter_local_notifications_platform_interface/flutter_local_not
 import 'package:timezone/timezone.dart' as tz;
 
 import 'details.dart';
+import 'permission.dart';
 
 /// A stub implementation of the web plugin, for non-web platforms.
 class WebFlutterLocalNotificationsPlugin
@@ -9,8 +10,7 @@ class WebFlutterLocalNotificationsPlugin
   /// Initializes the plugin.
   Future<bool?> initialize({
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
-  }) async =>
-      null;
+  }) async => null;
 
   /// Requests notification permission from the browser.
   ///
@@ -18,8 +18,9 @@ class WebFlutterLocalNotificationsPlugin
   /// may be automatically rejected.
   Future<bool?> requestNotificationsPermission() async => false;
 
-  /// Returns the current permission status as a string.
-  String get permissionStatus => 'denied';
+  /// Returns the current permission status.
+  WebNotificationPermission get permissionStatus =>
+      WebNotificationPermission.denied;
 
   /// Whether the user has granted permission to show notifications.
   bool get hasPermission => false;
@@ -47,7 +48,7 @@ class WebFlutterLocalNotificationsPlugin
 
   @override
   Future<NotificationAppLaunchDetails?>
-      getNotificationAppLaunchDetails() async => null;
+  getNotificationAppLaunchDetails() async => null;
 
   @override
   Future<List<ActiveNotification>> getActiveNotifications() async =>
@@ -55,7 +56,7 @@ class WebFlutterLocalNotificationsPlugin
 
   @override
   Future<List<PendingNotificationRequest>>
-      pendingNotificationRequests() async => <PendingNotificationRequest>[];
+  pendingNotificationRequests() async => <PendingNotificationRequest>[];
 
   @override
   Future<void> zonedSchedule({
