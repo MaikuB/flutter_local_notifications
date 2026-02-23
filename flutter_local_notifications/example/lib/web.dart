@@ -95,6 +95,9 @@ Future<void> _showRenotify() async {
       web: WebNotificationDetails(renotify: true),
     ),
   );
+
+  // Added delay to ensure the original notification appears and has time
+  // to be rendered before it is replaced.
   await Future<void>.delayed(const Duration(seconds: 1));
   await flutterLocalNotificationsPlugin.show(
     id: notificationId,
