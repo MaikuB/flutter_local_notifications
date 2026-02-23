@@ -264,7 +264,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _isAndroidPermissionGranted() async {
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       final bool granted =
           await flutterLocalNotificationsPlugin
               .resolvePlatformSpecificImplementation<
