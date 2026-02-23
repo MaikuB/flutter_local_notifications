@@ -86,9 +86,9 @@ void _showTimestamp() =>
     showDetails(WebNotificationDetails(timestamp: DateTime(2020, 1, 5)));
 
 Future<void> _showRenotify() async {
-  final int id2 = id++;
+  final int notificationId = id++;
   await flutterLocalNotificationsPlugin.show(
-    id: id2,
+    id: notificationId,
     title: 'This is the original notification!',
     body: 'Wait for it...',
     notificationDetails: const NotificationDetails(
@@ -97,7 +97,7 @@ Future<void> _showRenotify() async {
   );
   await Future<void>.delayed(const Duration(seconds: 1));
   await flutterLocalNotificationsPlugin.show(
-    id: id2,
+    id: notificationId,
     title: 'This is the replacement!',
     body: 'Notice there is no animation!',
   );
