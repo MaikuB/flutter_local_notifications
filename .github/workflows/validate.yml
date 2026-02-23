@@ -245,7 +245,7 @@ jobs:
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_web
-  build_example_web_3_19:
+  build_example_web_min_flutter:
     name: Build Web example app (3.38.1)
     runs-on: ubuntu-latest
     steps:
