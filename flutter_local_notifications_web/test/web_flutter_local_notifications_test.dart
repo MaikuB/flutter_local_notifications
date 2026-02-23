@@ -251,11 +251,11 @@ void main() {
     });
 
     test('cancel completes with no active notifications', () async {
-      await plugin.cancel(id: 1);
+      await expectLater(plugin.cancel(id: 1), completes);
     });
 
     test('cancelAll completes with no active notifications', () async {
-      await plugin.cancelAll();
+      await expectLater(plugin.cancelAll(), completes);
     });
 
     test('getActiveNotifications returns empty with no notifications',
