@@ -204,8 +204,8 @@ Future<void> _configureLocalTimeZone() async {
   if (!kIsWeb && Platform.isWindows) {
     return;
   }
-  final TimezoneInfo timeZoneInfo = await FlutterTimezone.getLocalTimezone();
-  tz.setLocalLocation(tz.getLocation(timeZoneInfo.identifier));
+  final String timeZoneInfo = await FlutterTimezone.getLocalTimezone();
+  tz.setLocalLocation(tz.getLocation(timeZoneInfo));
 }
 
 class HomePage extends StatefulWidget {
@@ -232,7 +232,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _isAndroidOrWebPermissionGranted();
+    _isAndroidPermissionGranted();
+    _isWebPermissionGranted();
+
     _requestPermissions();
     _configureSelectNotificationSubject();
 
@@ -261,19 +263,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _isAndroidOrWebPermissionGranted() async {
-    if (kIsWeb) {
-      final WebFlutterLocalNotificationsPlugin? webImplementation =
-          flutterLocalNotificationsPlugin
-              .resolvePlatformSpecificImplementation<
-                WebFlutterLocalNotificationsPlugin
-              >();
-      final bool granted = webImplementation?.hasPermission ?? false;
-
-      setState(() {
-        _notificationsEnabled = granted;
-      });
-    } else if (Platform.isAndroid) {
+  Future<void> _isAndroidPermissionGranted() async {
+    if (Platform.isAndroid) {
       final bool granted =
           await flutterLocalNotificationsPlugin
               .resolvePlatformSpecificImplementation<
@@ -281,6 +272,21 @@ class _HomePageState extends State<HomePage> {
               >()
               ?.areNotificationsEnabled() ??
           false;
+
+      setState(() {
+        _notificationsEnabled = granted;
+      });
+    }
+  }
+
+  Future<void> _isWebPermissionGranted() async {
+    if (kIsWeb) {
+      final WebFlutterLocalNotificationsPlugin? webImplementation =
+          flutterLocalNotificationsPlugin
+              .resolvePlatformSpecificImplementation<
+                WebFlutterLocalNotificationsPlugin
+              >();
+      final bool granted = webImplementation?.hasPermission ?? false;
 
       setState(() {
         _notificationsEnabled = granted;
