@@ -1,4 +1,5 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 import 'src/types.dart';
 
@@ -58,6 +59,19 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
     required RepeatInterval repeatInterval,
   }) {
     throw UnimplementedError('periodicallyShow() has not been implemented');
+  }
+
+  /// Schedules a notification to be shown at the specified date and time
+  /// relative to a specific time zone.
+  Future<void> zonedSchedule({
+    required int id,
+    String? title,
+    String? body,
+    required tz.TZDateTime scheduledDate,
+    String? payload,
+    DateTimeComponents? matchDateTimeComponents,
+  }) async {
+    throw UnimplementedError('zonedSchedule() has not been implemented');
   }
 
   /// Periodically show a notification using the specified custom duration

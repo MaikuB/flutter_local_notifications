@@ -1,3 +1,7 @@
+## vNext
+
+* [Web] added web platform support. Thanks to the initial PR from [Levi Lesches](https://github.com/Levi-Lesches) and completion by [Gaurav](https://github.com/Gaurav-CareMonitor)
+
 ## [21.0.0-dev.2]
 
 * Migrated example app to `UIScene` lifecycle

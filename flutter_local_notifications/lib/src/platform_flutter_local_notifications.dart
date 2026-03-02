@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:clock/clock.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
-import 'package:timezone/timezone.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 import 'callback_dispatcher.dart';
 import 'helpers.dart';
@@ -24,7 +24,7 @@ import 'platform_specifics/darwin/initialization_settings.dart';
 import 'platform_specifics/darwin/mappers.dart';
 import 'platform_specifics/darwin/notification_details.dart';
 import 'platform_specifics/darwin/notification_enabled_options.dart';
-import 'types.dart';
+
 import 'tz_datetime_mapper.dart';
 
 const MethodChannel _channel = MethodChannel(
@@ -243,15 +243,16 @@ class AndroidFlutterLocalNotificationsPlugin
   /// This will also require additional setup for the app, especially in the
   /// app's `AndroidManifest.xml` file. Please see check the readme for further
   /// details.
+  @override
   Future<void> zonedSchedule({
     required int id,
     String? title,
     String? body,
-    required TZDateTime scheduledDate,
-    AndroidNotificationDetails? notificationDetails,
-    required AndroidScheduleMode scheduleMode,
+    required tz.TZDateTime scheduledDate,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
+    AndroidNotificationDetails? notificationDetails,
+    AndroidScheduleMode scheduleMode = AndroidScheduleMode.exact,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
@@ -788,14 +789,15 @@ class IOSFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified time in the
   /// future in a specific time zone.
+  @override
   Future<void> zonedSchedule({
     required int id,
     String? title,
     String? body,
-    required TZDateTime scheduledDate,
-    DarwinNotificationDetails? notificationDetails,
+    required tz.TZDateTime scheduledDate,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
+    DarwinNotificationDetails? notificationDetails,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);
@@ -984,14 +986,15 @@ class MacOSFlutterLocalNotificationsPlugin
 
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
+  @override
   Future<void> zonedSchedule({
     required int id,
     String? title,
     String? body,
-    required TZDateTime scheduledDate,
-    DarwinNotificationDetails? notificationDetails,
+    required tz.TZDateTime scheduledDate,
     String? payload,
     DateTimeComponents? matchDateTimeComponents,
+    DarwinNotificationDetails? notificationDetails,
   }) async {
     validateId(id);
     validateDateIsInTheFuture(scheduledDate, matchDateTimeComponents);

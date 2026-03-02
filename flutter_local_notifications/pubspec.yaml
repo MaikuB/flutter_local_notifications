@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
   flutter_local_notifications_linux: ^8.0.0-dev.1
   flutter_local_notifications_windows: ^3.0.0-dev.1
+  flutter_local_notifications_web: ^1.0.0-dev.1
   flutter_local_notifications_platform_interface: ^11.0.0-dev.1
   timezone: ^0.11.0
 
@@ -41,6 +42,8 @@ flutter:
         default_package: flutter_local_notifications_linux
       windows:
         default_package: flutter_local_notifications_windows
+      web:
+        default_package: flutter_local_notifications_web
 
 environment:
   sdk: ^3.10.0

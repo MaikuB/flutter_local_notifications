@@ -61,6 +61,7 @@ A cross platform plugin for displaying local notifications.
 * **macOS** Uses the [UserNotification APIs](https://developer.apple.com/documentation/usernotifications) (aka the User Notifications Framework)
 * **Linux**. Uses the [Desktop Notifications Specification](https://specifications.freedesktop.org/notification-spec/)
 * **Windows** Uses the [C++/WinRT](https://learn.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/) implementation of [Toast Notifications](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/toast-notifications-overview)
+* **Web** Uses the [Notifications API](https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API)
 
 Note: the plugin requires Flutter SDK 3.38.1 at a minimum. The list of support platforms for Flutter 3.38.1 itself can be found [here](https://github.com/flutter/website/blob/6150d58df2f39275ffd589ba32f25557a27e2384/src/content/reference/supported-platforms.md?plain=1#L82)
 
@@ -167,19 +168,27 @@ The `onDidReceiveNotificationResponse` callback runs on the main isolate of the 
 - Windows does not support repeating notifications, so [`periodicallyShow`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/periodicallyShow.html) and [`periodicallyShowWithDuration`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/periodicallyShowWithDuration.html) will throw `UnsupportedError`s.
 - Windows only allows apps with package identity to retrieve previously shown notifications. This means that on an app that was not packaged as an [MSIX](https://learn.microsoft.com/en-us/windows/msix/overview) installer, [`cancel`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/cancel.html) does nothing and [`getActiveNotifications`](https://pub.dev/documentation/flutter_local_notifications/latest/flutter_local_notifications/FlutterLocalNotificationsPlugin/getActiveNotifications.html) will return an empty list. To package your app as an MSIX, see [`package:msix`](https://pub.dev/packages/msix) and the `msix` section in [the example's `pubspec.yaml`](https://github.com/MaikuB/flutter_local_notifications/blob/master/flutter_local_notifications/example/pubspec.yaml).
 
+### Web limitations
+
+- **You must request notification permissions before showing notifications -- but only in response to a user interaction.** If you try to request permissions automatically, like on loading a page, not only may your request be automatically denied, but the browser may deem your site as abusive and no longer show any more prompts to the user, and just block everything going forward.
+- Notification actions are supported by Chrome and Edge, but not Firefox or Safari. They may catch up soon, but text input fields use a standards _proposal_, not an accepted standard, and so may only work on Chrome for a while.
+
+- Browsers don't support scheduled or repeating notifications, and browsers on Android do not support custom vibration.
+
 ### Notification payload
 
 Due to some limitations on iOS with how it treats null values in dictionaries, a null notification payload is coalesced to an empty string behind the scenes on all platforms for consistency.
 
 ## 📷 Screenshots
 
-| Platform | Screenshot                                                                                                                                                                                                                      |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Android  | <img height="480" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/android_notification.png">                                                                                                       |
-| iOS      | <img height="414" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/ios_notification.png">                                                                                                           |
-| macOS    | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/macos_notification.png">                                                                                                                      |
+| Platform | Screenshot                                                   |
+| -------- | ------------------------------------------------------------ |
+| Android  | <img height="480" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/android_notification.png"> |
+| iOS      | <img height="414" src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/ios_notification.png"> |
+| macOS    | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/macos_notification.png"> |
 | Linux    | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/gnome_linux_notification.png"> <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/kde_linux_notification.png"> |
-| Windows  | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/windows_notification.png">                                                                                                                    |
+| Windows  | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/windows_notification.png"> |
+| Web      | <img src="https://github.com/MaikuB/flutter_local_notifications/raw/master/images/web_notifications.png"> |
 
 
 ## 👏 Acknowledgements
@@ -189,6 +198,7 @@ Due to some limitations on iOS with how it treats null values in dictionaries, a
 * [Ian Cavanaugh](https://github.com/icavanaugh95) for helping create a sample to reproduce the problem reported in [issue #88](https://github.com/MaikuB/flutter_local_notifications/issues/88)
 * [Zhang Jing](https://github.com/byrdkm17) for adding 'ticker' support for Android notifications
 * [Kenneth](https://github.com/kennethnym), [lightrabbit](https://github.com/lightrabbit), and [Levi Lesches](https://github.com/Levi-Lesches) for adding Windows support
+* [Gaurav](https://github.com/Gaurav-CareMonitor) and [Levi Lesches](https://github.com/Levi-Lesches) for adding Web support
 * ...and everyone else for their contributions. They are greatly appreciated
 
 ## 🔧 Android Setup
@@ -470,6 +480,31 @@ UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterD
 By design, iOS applications *do not* display notifications while the app is in the foreground unless configured to do so.
 
 For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. The default settings of the plugin will configure these such that a notification will be displayed when the app is in the foreground.
+
+## Web Setup
+
+No modifications to the HTML or JavaScript are necessary. But you must make sure to request permissions at runtime properly!
+
+```dart
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+await flutterLocalNotificationsPlugin.initialize(
+  const InitializationSettings(
+    // ... platform-specific settings
+  ),
+);
+
+final webPlugin = flutterLocalNotificationsPlugin
+    .resolvePlatformSpecificImplementation<WebFlutterLocalNotificationsPlugin>();
+
+if (webPlugin != null && !webPlugin.hasPermission) {
+  // IMPORTANT: Only call this after a button press!
+  await webPlugin.requestNotificationsPermission();
+}
+```
+
+Everything else works like the other platforms.
 
 ## ❓ Usage
 
