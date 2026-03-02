@@ -51,14 +51,6 @@ List<Widget> webExamples(
     onPressed: _showWithPayload,
   ),
   const PaddedElevatedButton(
-    buttonText: 'Notification with actions and payload',
-    onPressed: _showWithActionsAndPayload,
-  ),
-  const PaddedElevatedButton(
-    buttonText: 'Notification with icon actions',
-    onPressed: _showWithIconActions,
-  ),
-  const PaddedElevatedButton(
     buttonText: 'Notification with reply action',
     onPressed: _showWithReplyAction,
   ),
@@ -133,38 +125,6 @@ void _showWithPayload() => flutterLocalNotificationsPlugin.show(
       '{"userId": "12345", "action": "view_profile", "timestamp": "2024-02-17T10:30:00Z"}',
 );
 
-void _showWithActionsAndPayload() => flutterLocalNotificationsPlugin.show(
-  id: id++,
-  title: 'Message from John',
-  body: 'Hey, are you available for a call?',
-  notificationDetails: const NotificationDetails(
-    web: WebNotificationDetails(
-      actions: <WebNotificationAction>[
-        WebNotificationAction(action: 'reply', title: 'Reply'),
-        WebNotificationAction(action: 'dismiss', title: 'Dismiss'),
-      ],
-    ),
-  ),
-  payload:
-      '{"type": "message", "senderId": "user_789", "senderName": "John Doe", "messageId": "msg_456"}',
-);
-
-void _showWithIconActions() => flutterLocalNotificationsPlugin.show(
-  id: id++,
-  title: 'New Photo from Sarah',
-  body: 'Sarah shared a photo with you',
-  notificationDetails: const NotificationDetails(
-    web: WebNotificationDetails(
-      requireInteraction: true,
-      actions: <WebNotificationAction>[
-        WebNotificationAction(action: 'like', title: '👍 Like'),
-        WebNotificationAction(action: 'view', title: '👀 View'),
-      ],
-    ),
-  ),
-  payload: 'photo_123',
-);
-
 void _showWithReplyAction() => flutterLocalNotificationsPlugin.show(
   id: id++,
   title: 'Chat: Team Updates',
@@ -173,8 +133,8 @@ void _showWithReplyAction() => flutterLocalNotificationsPlugin.show(
     web: WebNotificationDetails(
       requireInteraction: true,
       actions: <WebNotificationAction>[
-        WebNotificationAction(action: 'reply', title: '💬 Reply'),
-        WebNotificationAction(action: 'mark_read', title: '✓ Mark Read'),
+        WebNotificationAction(action: 'reply', title: 'Reply'),
+        WebNotificationAction(action: 'mark_read', title: 'Mark Read'),
       ],
     ),
   ),
