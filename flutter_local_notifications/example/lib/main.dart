@@ -337,6 +337,66 @@ class _HomePageState extends State<HomePage> {
     await androidImplementation?.requestNotificationPolicyAccess();
   }
 
+  Future<void> _openAppNotificationSettings() async {
+    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+
+    final bool opened =
+        await androidImplementation?.openAppNotificationSettings() ?? false;
+
+    if (!opened && mounted) {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          content: const Text(
+            'Unable to open the app notification settings screen on this device.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  Future<void> _openAppNotificationSettingsOnIOS() async {
+    final IOSFlutterLocalNotificationsPlugin? iosImplementation =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin
+            >();
+
+    final bool opened =
+        await iosImplementation?.openAppNotificationSettings() ?? false;
+
+    if (!opened && mounted) {
+      await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          content: const Text(
+            'Unable to open the app settings page on this device.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   void _configureSelectNotificationSubject() {
     selectNotificationStream.stream.listen((
       NotificationResponse? response,
@@ -540,6 +600,10 @@ class _HomePageState extends State<HomePage> {
                 PaddedElevatedButton(
                   buttonText: 'Check if notifications are enabled for this app',
                   onPressed: _areNotifcationsEnabledOnAndroid,
+                ),
+                PaddedElevatedButton(
+                  buttonText: 'Open app notification settings',
+                  onPressed: _openAppNotificationSettings,
                 ),
                 PaddedElevatedButton(
                   buttonText: 'Request permission (API 33+)',
@@ -819,6 +883,11 @@ class _HomePageState extends State<HomePage> {
                   buttonText: 'Request permission',
                   onPressed: _requestPermissions,
                 ),
+                if (Platform.isIOS)
+                  PaddedElevatedButton(
+                    buttonText: 'Open notification settings',
+                    onPressed: _openAppNotificationSettingsOnIOS,
+                  ),
                 PaddedElevatedButton(
                   buttonText:
                       'Request permission with critical alert permission',

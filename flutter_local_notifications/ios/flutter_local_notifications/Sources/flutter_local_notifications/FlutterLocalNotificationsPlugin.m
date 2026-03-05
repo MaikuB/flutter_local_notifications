@@ -40,6 +40,8 @@ NSString *const ON_NOTIFICATION_METHOD = @"onNotification";
 NSString *const DID_RECEIVE_LOCAL_NOTIFICATION = @"didReceiveLocalNotification";
 NSString *const REQUEST_PERMISSIONS_METHOD = @"requestPermissions";
 NSString *const CHECK_PERMISSIONS_METHOD = @"checkPermissions";
+NSString *const OPEN_APP_NOTIFICATION_SETTINGS_METHOD =
+    @"openAppNotificationSettings";
 
 NSString *const DAY = @"day";
 
@@ -192,6 +194,9 @@ static FlutterError *getFlutterError(NSError *error) {
     [self requestPermissions:call.arguments result:result];
   } else if ([CHECK_PERMISSIONS_METHOD isEqualToString:call.method]) {
     [self checkPermissions:call.arguments result:result];
+  } else if ([OPEN_APP_NOTIFICATION_SETTINGS_METHOD
+                 isEqualToString:call.method]) {
+    [self openAppNotificationSettings:result];
   } else if ([CANCEL_METHOD isEqualToString:call.method]) {
     [self cancel:((NSNumber *)call.arguments) result:result];
   } else if ([CANCEL_ALL_METHOD isEqualToString:call.method]) {
@@ -217,6 +222,39 @@ static FlutterError *getFlutterError(NSError *error) {
   } else {
     result(FlutterMethodNotImplemented);
   }
+}
+
+- (void)openAppNotificationSettings:(FlutterResult _Nonnull)result {
+  NSString *urlString = UIApplicationOpenSettingsURLString;
+  // Note: iOS provides UIApplicationOpenNotificationSettingsURLString (iOS 15.4+),
+  // but some iOS versions/devices may still redirect to the Settings app root.
+  // Opening the app's Settings page is the most reliable way to guide users to
+  // notification settings across iOS versions.
+
+  NSURL *url = [NSURL URLWithString:urlString];
+  if (url == nil) {
+    result(@(NO));
+    return;
+  }
+
+  dispatch_async(dispatch_get_main_queue(), ^{
+    UIApplication *application = [UIApplication sharedApplication];
+    if (![application canOpenURL:url]) {
+      result(@(NO));
+      return;
+    }
+
+    if (@available(iOS 10.0, *)) {
+      [application openURL:url
+                   options:@{}
+         completionHandler:^(BOOL success) {
+           result(@(success));
+         }];
+    } else {
+      BOOL success = [application openURL:url];
+      result(@(success));
+    }
+  });
 }
 
 - (void)pendingNotificationRequests:(FlutterResult _Nonnull)result
