@@ -234,10 +234,27 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
           'number': number,
           'audioAttributesUsage': audioAttributesUsage.value,
         }
+        ..addAll(_convertCustomViewToMap())
         ..addAll(_convertActionsToMap(actions))
         ..addAll(_convertStyleInformationToMap())
         ..addAll(_convertNotificationSoundToMap(sound))
         ..addAll(_convertLargeIconToMap());
+
+  Map<String, Object?> _convertCustomViewToMap() {
+    final result = <String, Object?>{};
+    
+    if (customContentView != null) {
+      result['customContentView'] = customContentView!.toMap();
+    }
+    if (customBigContentView != null) {
+      result['customBigContentView'] = customBigContentView!.toMap();
+    }
+    if (customHeadsUpContentView != null) {
+      result['customHeadsUpContentView'] = customHeadsUpContentView!.toMap();
+    }
+    
+    return result;
+  }
 
   Map<String, Object?> _convertStyleInformationToMap() {
     if (styleInformation is BigPictureStyleInformation) {

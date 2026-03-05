@@ -10,6 +10,7 @@ export 'src/notification_details.dart';
 export 'src/platform_flutter_local_notifications.dart'
     hide MethodChannelFlutterLocalNotificationsPlugin;
 export 'src/platform_specifics/android/bitmap.dart';
+export 'src/platform_specifics/android/custom_notification_view.dart';
 export 'src/platform_specifics/android/enums.dart'
     hide AndroidBitmapSource, AndroidIconSource, AndroidNotificationSoundSource;
 export 'src/platform_specifics/android/icon.dart';
