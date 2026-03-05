@@ -1,11 +1,4 @@
-## [21.0.0-dev.2]
-
-* Migrated example app to `UIScene` lifecycle
-* Updated readme to specify changes needed for applications that have migrated to `UIScene` lifecycle
-* Updated iOS-specific setup around registering `UNUserNotificationCenterDelegate` to remove redundant `available` check and to be more specific that it should be done in the `application:didFinishLaunchingWithOptions:` method
-* Bumped `flutter_timezone` dependency in example app
-
-## [21.0.0-dev.1]
+## [21.0.0]
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.38.1 and Dart SDK requirement to 3.10.0. Consequently the minimum OS requirements for each platform has been updated as well
   * [Android] minimum Android version is now 7.0 (API level 24)
@@ -14,6 +7,10 @@
 * Bumped `timezone` dependency
 * [Android] **Breaking change** bumped `compileSdk` to 36 and updated readme to mention this
 * [Android] bumped Android Gradle Plugin (AGP) to 8.11.1 
+* Migrated example app to `UIScene` lifecycle
+* Updated readme to specify changes needed for applications that have migrated to `UIScene` lifecycle
+* Updated iOS-specific setup around registering `UNUserNotificationCenterDelegate` to remove redundant `available` check and to be more specific that it should be done in the `application:didFinishLaunchingWithOptions:` method
+* Bumped `flutter_timezone` dependency in example app
 
 ## [20.1.0]
 
