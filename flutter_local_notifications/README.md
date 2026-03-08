@@ -415,6 +415,75 @@ When specifying the large icon bitmap or big picture bitmap (associated with the
 
 ⚠️ For Android 8.0+, sounds and vibrations are associated with notification channels and can only be configured when they are first created. Showing/scheduling a notification will create a channel with the specified id if it doesn't exist already. If another notification specifies the same channel id but tries to specify another sound or vibration pattern then nothing occurs.
 
+
+### Bind ForegroundService to your FlutterActivity
+
+In your activity (e.g., `MainActivity.kt`), set up a broadcast receiver and a `ServiceConnection` to manage binding and unbinding. This is not required to use a `ForegroundService` but it will decrease the likelyhood of your activity being [killed or frozen by the OS while the activity is in the background](https://source.android.com/docs/core/perf/cached-apps-freezer#handling-custom-features):
+
+```kotlin
+class MainActivity: FlutterActivity() {
+    private var isServiceBound = false
+    private val serviceStartedAction = "com.dexterous.flutterlocalnotifications.FOREGROUND_SERVICE_STARTED"
+    private val serviceStoppedAction = "com.dexterous.flutterlocalnotifications.FOREGROUND_SERVICE_STOPPED"
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
+            isServiceBound = true
+            Log.d("MainActivity", "Service bound")
+        }
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isServiceBound = false
+            Log.d("MainActivity", "Service disconnected")
+        }
+    }
+
+    private val serviceBroadcastReceiver = object : android.content.BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Log.d("MainActivity", "Received broadcast: ${intent?.action}")
+            when (intent?.action) {
+                serviceStartedAction -> {
+                    if (!isServiceBound) {
+                        val bindIntent = Intent(context, ForegroundService::class.java)
+                        bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+                    }
+                }
+                serviceStoppedAction -> {
+                    if (isServiceBound) {
+                        unbindService(serviceConnection)
+                        isServiceBound = false
+                        Log.d("MainActivity", "Service unbound from broadcast")
+                    }
+                }
+            }
+        }
+    }
+
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+        super.onCreate(savedInstanceState)
+        val filter = android.content.IntentFilter().apply {
+            addAction(serviceStartedAction)
+            addAction(serviceStoppedAction)
+        }
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            registerReceiver(serviceBroadcastReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(serviceBroadcastReceiver, filter)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(serviceBroadcastReceiver)
+        if (isServiceBound) {
+            unbindService(serviceConnection)
+            isServiceBound = false
+        }
+    }
+    // ...existing code...
+}
+```
+
 ### Full-screen intent notifications
 
 If your application needs the ability to schedule full-screen intent notifications, add the following attributes to the activity you're opening. For a Flutter application, there is typically only one activity extends from `FlutterActivity`. These attributes ensure the screen turns on and shows when the device is locked.
