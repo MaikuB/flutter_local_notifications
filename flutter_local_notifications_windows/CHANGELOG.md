@@ -1,6 +1,6 @@
 ## [3.1.0-dev.1]
 
-* Updated `periodicallyShow()` to accept `payload` and `details` as optional parameters
+* Updated `periodicallyShow()` to accept `payload` and `notificationDetails` as optional parameters
 
 ## [3.0.0]
 
