@@ -27,18 +27,3 @@ enum Day {
   /// The integer representation of [Day].
   final int value;
 }
-
-/// The components of a date and time representations.
-enum DateTimeComponents {
-  /// The time.
-  time,
-
-  /// The day of the week and time.
-  dayOfWeekAndTime,
-
-  /// The day of the month and time.
-  dayOfMonthAndTime,
-
-  /// The date and time.
-  dateAndTime,
-}

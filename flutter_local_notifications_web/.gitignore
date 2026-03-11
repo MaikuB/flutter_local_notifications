@@ -5,9 +5,12 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
+.swiftpm/
+migrate_working_dir/
 
 # IntelliJ related
 *.iml
@@ -21,14 +24,10 @@
 #.vscode/
 
 # Flutter/Dart/Pub related
+# Libraries should not include pubspec.lock, per https://dart.dev/guides/libraries/private-files#pubspeclock.
+/pubspec.lock
 **/doc/api/
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
-.packages
-.pub-cache/
-.pub/
-/build/
-
-# Exceptions to above rules.
-!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+build/
