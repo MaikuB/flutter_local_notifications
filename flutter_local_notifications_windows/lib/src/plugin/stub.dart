@@ -39,7 +39,9 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     required int id,
     String? title,
     String? body,
+    String? payload,
     required RepeatInterval repeatInterval,
+    WindowsNotificationDetails? notificationDetails,
   }) async {}
 
   @override
