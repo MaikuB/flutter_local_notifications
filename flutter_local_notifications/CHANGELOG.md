@@ -1,6 +1,7 @@
-## vNext
+## [22.0.0-dev.1]
 
 * [Web] added web platform support. Thanks to the initial PR from [Levi Lesches](https://github.com/Levi-Lesches) and completion by [Gaurav](https://github.com/Gaurav-CareMonitor)
+* [Windows] when calling `periodicallyShow()` the message when the `UnsupportedError` is thrown has been updated to say `Windows devices cannot periodically show notifications` instead. This has happened as a result of shifting the responsibility of reporting the `UnsupportedError` so it is done by `flutter_local_notifications_windows` instead of `flutter_local_notifications`
 
 ## [21.0.0]
 
