@@ -43,7 +43,7 @@ class InitializationSettings {
   /// Settings for Windows.
   final WindowsInitializationSettings? windows;
 
-  /// Settings for Web.
+  /// Settings for web.
   ///
   /// It is nullable, because we don't want to force users to specify settings
   /// for platforms that they don't target.
