@@ -483,7 +483,13 @@ class FlutterLocalNotificationsPlugin {
             payload: payload,
           );
     } else {
-      throw UnimplementedError('zonedSchedule() has not been implemented');
+      await FlutterLocalNotificationsPlatform.instance.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: scheduledDate,
+        matchDateTimeComponents: matchDateTimeComponents,
+      );
     }
   }
 
@@ -555,7 +561,17 @@ class FlutterLocalNotificationsPlugin {
             payload: payload,
           );
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
-      throw UnsupportedError('Notifications do not repeat on Windows');
+      await resolvePlatformSpecificImplementation<
+            FlutterLocalNotificationsWindows
+          >()
+          ?.periodicallyShow(
+            id: id,
+            title: title,
+            body: body,
+            repeatInterval: repeatInterval,
+            notificationDetails: notificationDetails.windows,
+            payload: payload,
+          );
     } else {
       await FlutterLocalNotificationsPlatform.instance.periodicallyShow(
         id: id,
