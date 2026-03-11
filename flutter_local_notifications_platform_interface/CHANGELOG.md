@@ -1,6 +1,6 @@
-## vNext
+## [vNext]
 
-* Added web platform support to the platform interface
+* Added `zonedScheduled()` to the platform interface and moved `DateTimeComponents` from main plugin to platform interface. Thanks to the PR from [Gaurav Yadav](https://github.com/Gaurav-CareMonitor)
 
 ## [11.0.0]
 
