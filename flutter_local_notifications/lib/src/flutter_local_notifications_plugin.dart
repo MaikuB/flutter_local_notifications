@@ -483,7 +483,13 @@ class FlutterLocalNotificationsPlugin {
             payload: payload,
           );
     } else {
-      throw UnimplementedError('zonedSchedule() has not been implemented');
+      await FlutterLocalNotificationsPlatform.instance.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: scheduledDate,
+        matchDateTimeComponents: matchDateTimeComponents,
+      );
     }
   }
 
