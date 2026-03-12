@@ -3,6 +3,7 @@ package com.dexterous.flutterlocalnotifications.models;
 import android.graphics.Color;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.util.Log;
 
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
@@ -17,6 +18,9 @@ import com.dexterous.flutterlocalnotifications.utils.LongUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +77,14 @@ public class NotificationDetails implements Serializable {
   private static final String COLOR_BLUE = "colorBlue";
   private static final String LARGE_ICON = "largeIcon";
   private static final String LARGE_ICON_BITMAP_SOURCE = "largeIconBitmapSource";
+
+  private static final String CUSTOM_CONTENT_VIEW = "customContentView";
+  private static final String CUSTOM_BIG_CONTENT_VIEW = "customBigContentView";
+  private static final String CUSTOM_HEADS_UP_CONTENT_VIEW = "customHeadsUpContentView";
+  private static final String LAYOUT_NAME = "layoutName";
+  private static final String VIEW_MAPPINGS = "viewMappings";
+  private static final String VIEW_ID = "viewId";
+  private static final String ACTION_ID = "actionId";
   private static final String BIG_PICTURE = "bigPicture";
   private static final String BIG_PICTURE_BITMAP_SOURCE = "bigPictureBitmapSource";
   private static final String HIDE_EXPANDED_LARGE_ICON = "hideExpandedLargeIcon";
@@ -163,6 +175,9 @@ public class NotificationDetails implements Serializable {
   public Integer color;
   public Object largeIcon;
   public BitmapSource largeIconBitmapSource;
+  public @Nullable CustomNotificationView customContentView;
+  public @Nullable CustomNotificationView customBigContentView;
+  public @Nullable CustomNotificationView customHeadsUpContentView;
   public Boolean onlyAlertOnce;
   public Boolean showProgress;
   public Integer maxProgress;
@@ -279,6 +294,7 @@ public class NotificationDetails implements Serializable {
       readChannelInformation(notificationDetails, platformChannelSpecifics);
       readLedInformation(notificationDetails, platformChannelSpecifics);
       readLargeIconInformation(notificationDetails, platformChannelSpecifics);
+      readCustomViewInformation(notificationDetails, platformChannelSpecifics);
       notificationDetails.ticker = (String) platformChannelSpecifics.get(TICKER);
       notificationDetails.visibility = (Integer) platformChannelSpecifics.get(VISIBILITY);
       if (platformChannelSpecifics.containsKey(SCHEDULE_MODE)) {
@@ -339,6 +355,71 @@ public class NotificationDetails implements Serializable {
         notificationDetails.largeIconBitmapSource = BitmapSource.values()[argumentValue];
       }
     }
+  }
+
+
+  /**
+   * Reads custom view layout and button action information from platform channel specifics.
+   * 
+   * @param notificationDetails The notification details to populate
+   * @param platformChannelSpecifics The platform-specific notification parameters
+   */
+  private static void readCustomViewInformation(
+      NotificationDetails notificationDetails, Map<String, Object> platformChannelSpecifics) {
+    
+    if (platformChannelSpecifics.containsKey(CUSTOM_CONTENT_VIEW)) {
+      notificationDetails.customContentView = parseCustomNotificationView(
+          (Map<String, Object>) platformChannelSpecifics.get(CUSTOM_CONTENT_VIEW));
+    }
+    
+    if (platformChannelSpecifics.containsKey(CUSTOM_BIG_CONTENT_VIEW)) {
+      notificationDetails.customBigContentView = parseCustomNotificationView(
+          (Map<String, Object>) platformChannelSpecifics.get(CUSTOM_BIG_CONTENT_VIEW));
+    }
+    
+    if (platformChannelSpecifics.containsKey(CUSTOM_HEADS_UP_CONTENT_VIEW)) {
+      notificationDetails.customHeadsUpContentView = parseCustomNotificationView(
+          (Map<String, Object>) platformChannelSpecifics.get(CUSTOM_HEADS_UP_CONTENT_VIEW));
+    }
+  }
+
+  /**
+   * Parses a CustomNotificationView from a map.
+   * 
+   * @param viewMap The map containing view configuration
+   * @return A CustomNotificationView object or null if parsing fails
+   */
+  @Nullable
+  private static CustomNotificationView parseCustomNotificationView(@Nullable Map<String, Object> viewMap) {
+    if (viewMap == null) {
+      return null;
+    }
+    
+    String layoutName = (String) viewMap.get(LAYOUT_NAME);
+    if (layoutName == null) {
+      return null;
+    }
+    
+    List<CustomViewMapping> mappings = new ArrayList<>();
+    
+    if (viewMap.containsKey(VIEW_MAPPINGS)) {
+      @SuppressWarnings("unchecked")
+      List<Map<String, Object>> mappingsList = (List<Map<String, Object>>) viewMap.get(VIEW_MAPPINGS);
+      
+      if (mappingsList != null) {
+        for (Map<String, Object> mappingMap : mappingsList) {
+          String viewId = (String) mappingMap.get(VIEW_ID);
+          String text = (String) mappingMap.get(TEXT);
+          String actionId = (String) mappingMap.get(ACTION_ID);
+          
+          if (viewId != null) {
+            mappings.add(new CustomViewMapping(viewId, text, actionId));
+          }
+        }
+      }
+    }
+    
+    return new CustomNotificationView(layoutName, mappings);
   }
 
   private static void readGroupingInformation(

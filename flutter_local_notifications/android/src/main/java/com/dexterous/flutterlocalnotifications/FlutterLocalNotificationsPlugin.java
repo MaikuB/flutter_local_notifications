@@ -35,6 +35,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -51,6 +52,8 @@ import androidx.core.graphics.drawable.IconCompat;
 
 import com.dexterous.flutterlocalnotifications.isolate.IsolatePreferences;
 import com.dexterous.flutterlocalnotifications.models.BitmapSource;
+import com.dexterous.flutterlocalnotifications.models.CustomNotificationView;
+import com.dexterous.flutterlocalnotifications.models.CustomViewMapping;
 import com.dexterous.flutterlocalnotifications.models.DateTimeComponents;
 import com.dexterous.flutterlocalnotifications.models.IconSource;
 import com.dexterous.flutterlocalnotifications.models.MessageDetails;
@@ -392,6 +395,31 @@ public class FlutterLocalNotificationsPlugin
     builder.setLargeIcon(
         getBitmapFromSource(
             context, notificationDetails.largeIcon, notificationDetails.largeIconBitmapSource));
+
+    // Set custom content view
+    if (notificationDetails.customContentView != null) {
+      RemoteViews remoteViews = createCustomRemoteViews(context, notificationDetails, notificationDetails.customContentView);
+      if (remoteViews != null) {
+        builder.setCustomContentView(remoteViews);
+      }
+    }
+    
+    // Set custom big content view
+    if (notificationDetails.customBigContentView != null) {
+      RemoteViews bigRemoteViews = createCustomRemoteViews(context, notificationDetails, notificationDetails.customBigContentView);
+      if (bigRemoteViews != null) {
+        builder.setCustomBigContentView(bigRemoteViews);
+      }
+    }
+    
+    // Set custom heads-up content view
+    if (notificationDetails.customHeadsUpContentView != null) {
+      RemoteViews headsUpRemoteViews = createCustomRemoteViews(context, notificationDetails, notificationDetails.customHeadsUpContentView);
+      if (headsUpRemoteViews != null) {
+        builder.setCustomHeadsUpContentView(headsUpRemoteViews);
+      }
+    }
+
     if (notificationDetails.color != null) {
       builder.setColor(notificationDetails.color.intValue());
     }
@@ -848,6 +876,127 @@ public class FlutterLocalNotificationsPlugin
     return byteArray;
   }
 
+  /**
+   * Retrieves the layout resource ID by name.
+   * 
+   * @param context The application context
+   * @param layoutName The name of the layout resource (without .xml extension)
+   * @return The resource ID, or 0 if not found
+   */
+  private static int getLayoutResourceId(Context context, String layoutName) {
+    if (layoutName == null || layoutName.isEmpty()) {
+      Log.e(TAG, "Custom layout name is null or empty");
+      return 0;
+    }
+    
+    int layoutId = context.getResources().getIdentifier(
+        layoutName, "layout", context.getPackageName());
+    
+    if (layoutId == 0) {
+      Log.e(TAG, "Layout resource not found: " + layoutName);
+      return 0;
+    }
+    
+    return layoutId;
+  }
+
+  /**
+   * Sets up click listeners for buttons in custom notification layouts.
+   * 
+   * @param context The application context
+   * @param remoteViews The RemoteViews instance for the custom layout
+   * @param notificationDetails The notification details containing button action mappings
+   * @param buttonActions Map of button resource ID names to action IDs
+   */
+  /**
+   * Creates a RemoteViews object from a CustomNotificationView configuration.
+   * This method handles both text replacement and button action setup.
+   * 
+   * @param context The application context
+   * @param notificationDetails The notification details
+   * @param customView The custom view configuration
+   * @return A configured RemoteViews object or null if layout not found
+   */
+  @Nullable
+  private static RemoteViews createCustomRemoteViews(
+      Context context,
+      NotificationDetails notificationDetails,
+      CustomNotificationView customView) {
+    
+    if (customView == null || customView.layoutName == null) {
+      return null;
+    }
+    
+    int layoutId = getLayoutResourceId(context, customView.layoutName);
+    if (layoutId == 0) {
+      return null;
+    }
+    
+    try {
+      RemoteViews remoteViews = new RemoteViews(context.getPackageName(), layoutId);
+      
+      // Process view mappings
+      if (customView.viewMappings != null) {
+        for (CustomViewMapping mapping : customView.viewMappings) {
+          if (mapping.viewId == null) {
+            continue;
+          }
+          
+          int viewResId = context.getResources().getIdentifier(
+              mapping.viewId, "id", context.getPackageName());
+          
+          if (viewResId == 0) {
+            continue;
+          }
+          
+          // Set text if provided
+          if (mapping.text != null) {
+            try {
+              remoteViews.setTextViewText(viewResId, mapping.text);
+            } catch (Exception e) {
+              // Silently continue if text setting fails
+            }
+          }
+          
+          // Set click action if provided
+          if (mapping.actionId != null) {
+            try {
+              Intent intent = getLaunchIntent(context);
+              intent.setAction(SELECT_NOTIFICATION);
+              intent.putExtra(NOTIFICATION_ID, notificationDetails.id);
+              intent.putExtra(ACTION_ID, mapping.actionId);
+              intent.putExtra(PAYLOAD, notificationDetails.payload);
+              intent.putExtra(CANCEL_NOTIFICATION, true);
+              
+              if (notificationDetails.tag != null) {
+                intent.putExtra(NOTIFICATION_TAG, notificationDetails.tag);
+              }
+              
+              int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+              if (VERSION.SDK_INT >= VERSION_CODES.S) {
+                flags |= PendingIntent.FLAG_IMMUTABLE;
+              }
+              
+              PendingIntent pendingIntent = PendingIntent.getActivity(
+                  context,
+                  notificationDetails.id.hashCode() + mapping.actionId.hashCode(),
+                  intent,
+                  flags);
+              
+              remoteViews.setOnClickPendingIntent(viewResId, pendingIntent);
+            } catch (Exception e) {
+              // Silently continue if click action setting fails
+            }
+          }
+        }
+      }
+      
+      return remoteViews;
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
   private static Bitmap getBitmapFromSource(
       Context context, Object data, BitmapSource bitmapSource) {
     Bitmap bitmap = null;
@@ -1010,6 +1159,14 @@ public class FlutterLocalNotificationsPlugin
       Context context,
       NotificationDetails notificationDetails,
       NotificationCompat.Builder builder) {
+    // Skip setting style if custom views are present
+    // Custom views and notification styles can conflict
+    if (notificationDetails.customContentView != null || 
+        notificationDetails.customBigContentView != null ||
+        notificationDetails.customHeadsUpContentView != null) {
+      return;
+    }
+    
     switch (notificationDetails.style) {
       case BigPicture:
         setBigPictureStyle(context, notificationDetails, builder);
@@ -1420,7 +1577,8 @@ public class FlutterLocalNotificationsPlugin
     mainActivity = binding.getActivity();
     Intent mainActivityIntent = mainActivity.getIntent();
     if (!launchedActivityFromHistory(mainActivityIntent)) {
-      if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.getAction())) {
+      if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.getAction())
+          || SELECT_NOTIFICATION.equals(mainActivityIntent.getAction())) {
         Map<String, Object> notificationResponse =
             extractNotificationResponseMap(mainActivityIntent);
         processForegroundNotificationAction(mainActivityIntent, notificationResponse);
@@ -2030,7 +2188,8 @@ public class FlutterLocalNotificationsPlugin
     if (SELECT_NOTIFICATION.equals(intent.getAction())
         || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
       Map<String, Object> notificationResponse = extractNotificationResponseMap(intent);
-      if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
+      if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())
+          || SELECT_NOTIFICATION.equals(intent.getAction())) {
         processForegroundNotificationAction(intent, notificationResponse);
       }
       channel.invokeMethod("didReceiveNotificationResponse", notificationResponse);
