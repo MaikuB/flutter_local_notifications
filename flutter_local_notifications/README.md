@@ -21,6 +21,7 @@ A cross platform plugin for displaying local notifications.
    - [Custom notification sounds](#custom-notification-sounds)
    - [macOS differences](#macos-differences)
    - [Linux limitations](#linux-limitations)
+   - [Web limitations](#web-limitations)
    - [Notification payload](#notification-payload)
 - **[📷 Screenshots](#-screenshots)**
 - **[👏 Acknowledgements](#-acknowledgements)**
@@ -36,6 +37,7 @@ A cross platform plugin for displaying local notifications.
 - **[🔧 iOS setup](#-ios-setup)**
    - [General setup](#general-setup)
    - [Handling notifications whilst the app is in the foreground](#handling-notifications-whilst-the-app-is-in-the-foreground)
+- **[🌐 Web Setup](#web-setup)**
 - **[❓ Usage](#-usage)**
    - [Notification Actions](#notification-actions)
    - [Example app](#example-app)
@@ -174,6 +176,8 @@ The `onDidReceiveNotificationResponse` callback runs on the main isolate of the 
 - Notification actions are supported by Chrome and Edge, but not Firefox or Safari. They may catch up soon, but text input fields use a standards _proposal_, not an accepted standard, and so may only work on Chrome for a while.
 
 - Browsers don't support scheduled or repeating notifications, and browsers on Android do not support custom vibration.
+
+For more details on browser compatibility, limitations, and troubleshooting, see the [`flutter_local_notifications_web` README](https://pub.dev/packages/flutter_local_notifications_web).
 
 ### Notification payload
 
@@ -498,13 +502,13 @@ await flutterLocalNotificationsPlugin.initialize(
 final webPlugin = flutterLocalNotificationsPlugin
     .resolvePlatformSpecificImplementation<WebFlutterLocalNotificationsPlugin>();
 
-if (webPlugin != null && !webPlugin.hasPermission) {
+if (webPlugin != null && webPlugin.permissionStatus != WebNotificationPermission.granted) {
   // IMPORTANT: Only call this after a button press!
   await webPlugin.requestNotificationsPermission();
 }
 ```
 
-Everything else works like the other platforms.
+Everything else works like the other platforms. For web-specific details such as browser compatibility, notes, and troubleshooting, see the [`flutter_local_notifications_web` README](https://pub.dev/packages/flutter_local_notifications_web).
 
 ## ❓ Usage
 

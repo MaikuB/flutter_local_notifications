@@ -31,7 +31,11 @@ Note: Firefox and Safari may add action support in future versions. Text input f
 - Notification actions are supported by Chrome and Edge, but not Firefox or Safari. They may catch up soon, but text input fields use a standards _proposal_, not an accepted standard, and so may only work on Chrome for a while.
 - Browsers don't support scheduled or repeating notifications
 
-## Using the plugin
+## Usage
+
+This package is already included as part of the [`flutter_local_notifications`](https://pub.dev/packages/flutter_local_notifications) package dependency, and will be included when using `flutter_local_notifications` as normal.
+
+The code snippets below are only relevant when using the `flutter_local_notifications_web` package directly.
 
 ### Check browser support
 
@@ -64,7 +68,7 @@ if (initialized == false) {
   return;
 }
 
-if (!plugin.hasPermission) {
+if (plugin.permissionStatus != WebNotificationPermission.granted) {
   // IMPORTANT: Only call this after a button press!
   await plugin.requestNotificationsPermission();
 }
@@ -76,12 +80,12 @@ if (!plugin.hasPermission) {
 final plugin = WebFlutterLocalNotificationsPlugin();
 
 // Check if permission is granted
-if (plugin.hasPermission) {
+if (plugin.permissionStatus == WebNotificationPermission.granted) {
   // Can show notifications
 }
 
 // Check if permission was explicitly denied
-if (plugin.isPermissionDenied) {
+if (plugin.permissionStatus == WebNotificationPermission.denied) {
   // User blocked notifications - guide them to browser settings
   showDialog(
     context: context,
@@ -95,8 +99,10 @@ if (plugin.isPermissionDenied) {
   );
 }
 
-// Get the raw permission status
-final status = plugin.permissionStatus; // WebNotificationPermission.granted, WebNotificationPermission.denied, or WebNotificationPermission.defaultPermissions
+// Check if the user hasn't decided yet
+if (plugin.permissionStatus == WebNotificationPermission.defaultPermissions) {
+  // User hasn't been asked yet or dismissed the prompt
+}
 ```
 
 ### Show a notification
@@ -113,13 +119,13 @@ await plugin.show(
 
 ### Use web-specific details
 ```dart
-final details = WebNotificationDetails(requireInteraction: true);
+final notificationDetails = WebNotificationDetails(requireInteraction: true);
 final plugin = WebFlutterLocalNotificationsPlugin();
 await plugin.show(
   id: id,
   title: 'Title',
   body: 'Body text',
-  details: details,
+  notificationDetails: notificationDetails,
 );
 ```
 
@@ -127,7 +133,7 @@ await plugin.show(
 ```dart
 // Handle incoming notifications when your site is open
 void handleNotification(NotificationResponse notification) {
-  print("User clicked on notification: ${notification.id}");
+  print('User clicked on notification: ${notification.id}');
 }
 
 final plugin = WebFlutterLocalNotificationsPlugin();
@@ -142,7 +148,7 @@ final launchDetails = await plugin.getNotificationAppLaunchDetails();
 if (launchDetails != null) {
   // The site was launched because a notification was clicked
   final notification = launchDetails.notificationResponse;
-  print("User clicked on notification: ${notification.id}");
+  print('User clicked on notification: ${notification.id}');
 }
 ```
 
