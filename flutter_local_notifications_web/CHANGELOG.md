@@ -4,7 +4,7 @@
 * **Breaking changes** removed the `hasPermission` and `isPermissionDenied` boolean properties associated with the `WebFlutterLocalNotificationsPlugin` class. This was done to simplify the plugin as the `permissionStatus` property already exists and can be used
 * Fixed an issue where `isSupported` property in the `WebFlutterLocalNotificationsPlugin` was not exposed
 * Updated the readme to reference the web-specific APIs from this plugin instead of the APIs in the cross-platform plugin
-* 
+
 ## 1.0.0-dev.1
 
 * Initial web platform implementation with support for:
