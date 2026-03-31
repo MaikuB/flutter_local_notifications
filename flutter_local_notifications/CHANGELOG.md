@@ -1,3 +1,9 @@
+## [22.0.0-dev.2]
+
+* [Web] **Breaking change** renamed the `details` parameter associated with the `show()` method to `notificationDetails`. This was done to be consistent with other APIs across all of the platforms
+* [Web] **Breaking changes** removed the `hasPermission` and `isPermissionDenied` boolean properties associated with the `WebFlutterLocalNotificationsPlugin` class. This was done to simplify the plugin as the `permissionStatus` property already exists and can be used
+* [Web] Fixed an issue where `isSupported` property in the `WebFlutterLocalNotificationsPlugin` was not exposed
+
 ## [22.0.0-dev.1]
 
 * [Web] added web platform support. Thanks to the initial PR from [Levi Lesches](https://github.com/Levi-Lesches) and completion by [Gaurav](https://github.com/Gaurav-CareMonitor)
