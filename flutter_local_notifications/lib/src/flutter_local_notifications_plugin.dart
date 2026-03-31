@@ -265,7 +265,7 @@ class FlutterLocalNotificationsPlugin {
             title: title,
             body: body,
             payload: payload,
-            details: notificationDetails?.web,
+            notificationDetails: notificationDetails?.web,
           );
       return;
     }

@@ -60,14 +60,14 @@ class WebFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     String? payload,
-    WebNotificationDetails? details,
+    WebNotificationDetails? notificationDetails,
   }) async {
     if (_registration == null) {
       throw StateError(
         'FlutterLocalNotifications.show(): You must call initialize() before '
         'calling this method',
       );
-    } else if (!hasPermission) {
+    } else if (permissionStatus != WebNotificationPermission.granted) {
       throw StateError(
         'FlutterLocalNotifications.show(): You must request notifications '
         'permissions first',
@@ -80,7 +80,7 @@ class WebFlutterLocalNotificationsPlugin
     }
 
     // Warn if actions are used (they may not be supported in all browsers)
-    if (details?.actions.isNotEmpty == true) {
+    if (notificationDetails?.actions.isNotEmpty == true) {
       developer.log(
         'Notification actions are only supported in Chrome 48+ and Edge 18+. '
         'In Firefox and Safari, actions will be silently ignored.',
@@ -89,7 +89,10 @@ class WebFlutterLocalNotificationsPlugin
     }
 
     await _registration!
-        .showNotification(title ?? '', details.toJs(id, body, payload))
+        .showNotification(
+          title ?? '',
+          notificationDetails.toJs(id, body, payload),
+        )
         .toDart;
   }
 
@@ -162,13 +165,12 @@ class WebFlutterLocalNotificationsPlugin
   /// showing a prompt (browsers typically don't allow re-prompting).
   Future<bool?> requestNotificationsPermission() async {
     // Don't request if already denied - browsers won't show prompt again
-    if (isPermissionDenied) {
+    if (permissionStatus == WebNotificationPermission.denied) {
       return false;
     }
 
-    final JSString permissionStatus =
-        await Notification.requestPermission().toDart;
-    return permissionStatus.toDart == 'granted';
+    final JSString result = await Notification.requestPermission().toDart;
+    return result.toDart == 'granted';
   }
 
   /// Returns the current permission status as a [WebNotificationPermission].
@@ -176,20 +178,6 @@ class WebFlutterLocalNotificationsPlugin
   /// See: https://developer.mozilla.org/en-US/docs/Web/API/Notification/permission
   WebNotificationPermission get permissionStatus =>
       WebNotificationPermission.fromString(Notification.permission);
-
-  /// Whether the user has granted permission to show notifications.
-  ///
-  /// If this is false, you must call [requestNotificationsPermission]. Be sure
-  /// to only request permissions in response to a user gesture, or it may be
-  /// automatically rejected.
-  bool get hasPermission => Notification.permission == 'granted';
-
-  /// Whether the user has explicitly denied permission to show notifications.
-  ///
-  /// When this is `true`, calling [requestNotificationsPermission] will not
-  /// show a prompt and will return `false`. Users must manually reset
-  /// permissions in their browser settings.
-  bool get isPermissionDenied => Notification.permission == 'denied';
 
   @override
   Future<NotificationAppLaunchDetails?>

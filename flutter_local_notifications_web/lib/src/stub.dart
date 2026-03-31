@@ -7,6 +7,11 @@ import 'permission.dart';
 /// A stub implementation of the web plugin, for non-web platforms.
 class WebFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
+  /// Whether the browser supports the Notification API.
+  ///
+  /// Always returns `false` on non-web platforms.
+  static bool get isSupported => false;
+
   /// Initializes the plugin.
   Future<bool?> initialize({
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
@@ -21,12 +26,6 @@ class WebFlutterLocalNotificationsPlugin
   /// Returns the current permission status.
   WebNotificationPermission get permissionStatus =>
       WebNotificationPermission.denied;
-
-  /// Whether the user has granted permission to show notifications.
-  bool get hasPermission => false;
-
-  /// Whether the user has explicitly denied permission to show notifications.
-  bool get isPermissionDenied => false;
 
   @override
   Future<void> cancel({required int id}) async {}
@@ -43,7 +42,7 @@ class WebFlutterLocalNotificationsPlugin
     String? title,
     String? body,
     String? payload,
-    WebNotificationDetails? details,
+    WebNotificationDetails? notificationDetails,
   }) async {}
 
   @override

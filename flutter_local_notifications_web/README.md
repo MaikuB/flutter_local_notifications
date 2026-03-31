@@ -8,7 +8,6 @@ The web implementation of the `flutter_local_notifications` package.
 |---------|-------------|---------|--------|
 | Basic notifications | ✅ | ✅ | ✅ |
 | Notification actions | ✅ (Chrome 48+, Edge 18+) | ❌ | ❌ |
-| Custom vibration | ✅ (desktop only) | ✅ (desktop only) | ❌ |
 | Service worker | ✅ | ✅ | ✅ |
 
 **Official Compatibility References:**
@@ -28,24 +27,23 @@ Note: Firefox and Safari may add action support in future versions. Text input f
 
 ## Notes
 
-- If you are debugging with `flutter run -d chrome`, you will see notifications but they will not respond to being clicked! This is due to the private debugging window that Flutter opens, and they will respond properly in release builds. To test notification handlers, make sure to use `flutter run -d web-server`. If you find that hot reload is broken with `-d web-server`, try to test as much as possible with `-d chrome`.
 - **You must request notification permissions before showing notifications -- but only in response to a user interaction.** If you try to request permissions automatically, like on loading a page, not only may your request be automatically denied, but the browser may deem your site as abusive and no longer show any more prompts to the user, and just block everything going forward.
 - Notification actions are supported by Chrome and Edge, but not Firefox or Safari. They may catch up soon, but text input fields use a standards _proposal_, not an accepted standard, and so may only work on Chrome for a while.
-- Browsers don't support scheduled or repeating notifications, and browsers on Android do not support custom vibration.
+- Browsers don't support scheduled or repeating notifications
 
-## Using the plugin
+## Usage
+
+This package is already included as part of the [`flutter_local_notifications`](https://pub.dev/packages/flutter_local_notifications) package dependency, and will be included when using `flutter_local_notifications` as normal.
+
+The code snippets below are only relevant when using the `flutter_local_notifications_web` package directly.
 
 ### Check browser support
 
 ```dart
 // Check if the browser supports notifications before initializing
 if (WebFlutterLocalNotificationsPlugin.isSupported) {
-  final plugin = FlutterLocalNotificationsPlugin();
-  final initialized = await plugin.initialize(
-    const InitializationSettings(
-      // ... platform-specific settings
-    ),
-  );
+  final plugin = WebFlutterLocalNotificationsPlugin();
+  final initialized = await plugin.initialize();
   
   if (initialized == false) {
     // Initialization failed - browser may not support Service Workers
@@ -61,12 +59,8 @@ if (WebFlutterLocalNotificationsPlugin.isSupported) {
 ### Initialize the plugin
 
 ```dart
-final plugin = FlutterLocalNotificationsPlugin();
-final initialized = await plugin.initialize(
-  const InitializationSettings(
-    // ... platform-specific settings
-  ),
-);
+final plugin = WebFlutterLocalNotificationsPlugin();
+final initialized = await plugin.initialize();
 
 if (initialized == false) {
   // Handle initialization failure
@@ -74,45 +68,40 @@ if (initialized == false) {
   return;
 }
 
-final webPlugin = plugin.resolvePlatformSpecificImplementation<
-    WebFlutterLocalNotificationsPlugin>();
-
-if (webPlugin != null && !webPlugin.hasPermission) {
+if (plugin.permissionStatus != WebNotificationPermission.granted) {
   // IMPORTANT: Only call this after a button press!
-  await webPlugin.requestNotificationsPermission();
+  await plugin.requestNotificationsPermission();
 }
 ```
 
 ### Check permission status
 
 ```dart
-final plugin = FlutterLocalNotificationsPlugin();
-final webPlugin = plugin.resolvePlatformSpecificImplementation<
-    WebFlutterLocalNotificationsPlugin>();
+final plugin = WebFlutterLocalNotificationsPlugin();
 
-if (webPlugin != null) {
-  // Check if permission is granted
-  if (webPlugin.hasPermission) {
-    // Can show notifications
-  }
+// Check if permission is granted
+if (plugin.permissionStatus == WebNotificationPermission.granted) {
+  // Can show notifications
+}
 
-  // Check if permission was explicitly denied
-  if (webPlugin.isPermissionDenied) {
-    // User blocked notifications - guide them to browser settings
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Notifications Blocked'),
-        content: Text(
-          'You have blocked notifications. To enable them, '
-          'please update your browser settings.',
-        ),
+// Check if permission was explicitly denied
+if (plugin.permissionStatus == WebNotificationPermission.denied) {
+  // User blocked notifications - guide them to browser settings
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Notifications Blocked'),
+      content: Text(
+        'You have blocked notifications. To enable them, '
+        'please update your browser settings.',
       ),
-    );
-  }
+    ),
+  );
+}
 
-  // Get the raw permission status
-  final status = webPlugin.permissionStatus; // WebNotificationPermission.granted, WebNotificationPermission.denied, or WebNotificationPermission.defaultPermissions
+// Check if the user hasn't decided yet
+if (plugin.permissionStatus == WebNotificationPermission.defaultPermissions) {
+  // User hasn't been asked yet or dismissed the prompt
 }
 ```
 
@@ -120,23 +109,23 @@ if (webPlugin != null) {
 
 ```dart
 var id = 0;  // increment this every time you show a notification
+final plugin = WebFlutterLocalNotificationsPlugin();
 await plugin.show(
   id: id,
   title: 'Title',
   body: 'Body text',
-  notificationDetails: null,
 );
 ```
 
 ### Use web-specific details
 ```dart
-final webDetails = WebNotificationDetails(requireInteraction: true);
-final details = NotificationDetails(web: webDetails);
+final notificationDetails = WebNotificationDetails(requireInteraction: true);
+final plugin = WebFlutterLocalNotificationsPlugin();
 await plugin.show(
   id: id,
   title: 'Title',
   body: 'Body text',
-  notificationDetails: details,
+  notificationDetails: notificationDetails,
 );
 ```
 
@@ -144,14 +133,11 @@ await plugin.show(
 ```dart
 // Handle incoming notifications when your site is open
 void handleNotification(NotificationResponse notification) {
-  print("User clicked on notification: ${notification.id}");
+  print('User clicked on notification: ${notification.id}');
 }
 
-final plugin = FlutterLocalNotificationsPlugin();
+final plugin = WebFlutterLocalNotificationsPlugin();
 await plugin.initialize(
-  const InitializationSettings(
-    // ... platform-specific settings
-  ),
   onDidReceiveNotificationResponse: handleNotification,
 );
 
@@ -162,7 +148,7 @@ final launchDetails = await plugin.getNotificationAppLaunchDetails();
 if (launchDetails != null) {
   // The site was launched because a notification was clicked
   final notification = launchDetails.notificationResponse;
-  print("User clicked on notification: ${notification.id}")
+  print('User clicked on notification: ${notification.id}');
 }
 ```
 

@@ -286,7 +286,9 @@ class _HomePageState extends State<HomePage> {
               .resolvePlatformSpecificImplementation<
                 WebFlutterLocalNotificationsPlugin
               >();
-      final bool granted = webImplementation?.hasPermission ?? false;
+      final bool granted =
+          webImplementation?.permissionStatus ==
+          WebNotificationPermission.granted;
 
       setState(() {
         _notificationsEnabled = granted;
