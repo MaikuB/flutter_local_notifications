@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'bitmap.dart';
+import 'custom_notification_view.dart';
 import 'enums.dart';
 import 'notification_sound.dart';
 import 'styles/style_information.dart';
@@ -156,6 +157,9 @@ class AndroidNotificationDetails {
     this.colorized = false,
     this.number,
     this.audioAttributesUsage = AudioAttributesUsage.notification,
+    this.customContentView,
+    this.customBigContentView,
+    this.customHeadsUpContentView,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -267,6 +271,8 @@ class AndroidNotificationDetails {
 
   /// Specifics the large icon to use.
   final AndroidBitmap<Object>? largeIcon;
+  
+
 
   /// Specifies if you would only like the sound, vibrate and ticker to be
   /// played if the notification is not already showing.
@@ -426,4 +432,23 @@ class AndroidNotificationDetails {
   /// such as alarm or ringtone set in [`AudioAttributes.Builder`](https://developer.android.com/reference/android/media/AudioAttributes.Builder#setUsage(int)).
   /// https://developer.android.com/reference/android/media/AudioAttributes
   final AudioAttributesUsage audioAttributesUsage;
+
+  /// Custom notification content view configuration.
+  ///
+  /// Allows you to specify a custom Android XML layout and configure its views
+  /// with text content and click actions.
+  final CustomNotificationView? customContentView;
+
+  /// Custom notification big content view configuration.
+  ///
+  /// Allows you to specify a custom Android XML layout for the expanded
+  /// notification and configure its views with text content and click actions.
+  final CustomNotificationView? customBigContentView;
+
+  /// Custom notification heads-up content view configuration.
+  ///
+  /// Allows you to specify a custom Android XML layout for the heads-up
+  /// notification and configure its views with text content and click actions.
+  /// Heads-up notifications appear as floating windows at the top of the screen.
+  final CustomNotificationView? customHeadsUpContentView;
 }
