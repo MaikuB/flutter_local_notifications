@@ -15,7 +15,7 @@ dependencies:
   flutter_local_notifications_platform_interface: ^12.0.0-dev.1
   meta: ^1.11.0
   timezone: ^0.11.0
-  xml: ^6.5.0
+  xml: ">=6.5.0 <8.0.0"
 
 dev_dependencies:
   ffigen: ^20.1.1
