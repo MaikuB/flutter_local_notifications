@@ -1985,12 +1985,12 @@ public class FlutterLocalNotificationsPlugin
     } else {
       permissionRequestProgress = PermissionRequestProgress.RequestingNotificationPolicyAccess;
       // Highlights the app's row on the settings list.
-      String pkg = applicationContext.getPackageName();
+      String packageName = applicationContext.getPackageName();
       Bundle highlightArgs = new Bundle();
-      highlightArgs.putString(":settings:fragment_args_key", pkg);
+      highlightArgs.putString(":settings:fragment_args_key", packageName);
       Intent intent =
           new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-              .putExtra(":settings:fragment_args_key", pkg)
+              .putExtra(":settings:fragment_args_key", packageName)
               .putExtra(":settings:show_fragment_args", highlightArgs);
       mainActivity.startActivityForResult(intent, NOTIFICATION_POLICY_ACCESS_REQUEST_CODE);
     }
