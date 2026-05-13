@@ -38,6 +38,8 @@ void main() {
               return <Map<String, Object?>>[];
             } else if (methodCall.method == 'getNotificationAppLaunchDetails') {
               return null;
+            } else if (methodCall.method == 'openAppNotificationSettings') {
+              return true;
             }
             return null;
           });
@@ -2983,6 +2985,19 @@ void main() {
       expect(
         log.last,
         isMethodCall('areNotificationsEnabled', arguments: null),
+      );
+    });
+
+    test('openAppNotificationSettings', () async {
+      final bool? opened = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()!
+          .openAppNotificationSettings();
+      expect(opened, isTrue);
+      expect(
+        log.last,
+        isMethodCall('openAppNotificationSettings', arguments: null),
       );
     });
 
