@@ -1,3 +1,8 @@
+## [22.0.0-dev.3]
+
+* [Android] calling the `requestNotificationPolicyAccess()` method belonging to the `AndroidFlutterLocalNotificationsPlugin` class will now highlight associated application. Thanks to the PR from [Claudius Kienle](https://github.com/claudius-kienle)
+* [Windows] bumped `xml` dependency so that supported range is `>=6.5.0 <8.0.0`
+
 ## [22.0.0-dev.2]
 
 * [Web] **Breaking change** renamed the `details` parameter associated with the `show()` method to `notificationDetails`. This was done to be consistent with other APIs across all of the platforms

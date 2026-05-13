@@ -1,3 +1,7 @@
+## [3.1.0-dev.2]
+
+* Bumped `xml` dependency so that supported range is `>=6.5.0 <8.0.0`
+
 ## [3.1.0-dev.1]
 
 * Updated `periodicallyShow()` to accept `payload` and `notificationDetails` as optional parameters
