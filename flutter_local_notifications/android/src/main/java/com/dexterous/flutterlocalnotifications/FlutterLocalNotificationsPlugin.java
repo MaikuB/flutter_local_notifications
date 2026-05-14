@@ -12,6 +12,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,6 +40,10 @@ import android.util.Log;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.car.app.CarAppService;
+import androidx.car.app.notification.CarAppExtender;
+import androidx.car.app.notification.CarNotificationManager;
+import androidx.car.app.notification.CarPendingIntent;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
@@ -49,6 +54,7 @@ import androidx.core.app.RemoteInput;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.IconCompat;
 
+import com.dexterous.flutterlocalnotifications.interfaces.CarAppServiceClassConsumer;
 import com.dexterous.flutterlocalnotifications.isolate.IsolatePreferences;
 import com.dexterous.flutterlocalnotifications.models.BitmapSource;
 import com.dexterous.flutterlocalnotifications.models.DateTimeComponents;
@@ -210,6 +216,9 @@ public class FlutterLocalNotificationsPlugin
   private static final String NOTIFICATION_RESPONSE_TYPE = "notificationResponseType";
   static String NOTIFICATION_DETAILS = "notificationDetails";
   static Gson gson;
+
+  private static Class<? extends CarAppService> carAppServiceClass = null;
+
   private MethodChannel channel;
   private Context applicationContext;
   private Activity mainActivity;
@@ -263,6 +272,28 @@ public class FlutterLocalNotificationsPlugin
 
   protected static Notification createNotification(
       Context context, NotificationDetails notificationDetails) {
+    return createNotification(context, notificationDetails, null);
+  }
+
+  protected static Notification createNotification(
+      Context context, NotificationDetails notificationDetails, @Nullable Activity activity) {
+    NotificationCompat.Builder builder = createNotificationBuilder(context, notificationDetails, activity);
+    Notification notification = builder.build();
+    if (notificationDetails.additionalFlags != null
+        && notificationDetails.additionalFlags.length > 0) {
+      for (int additionalFlag : notificationDetails.additionalFlags) {
+        notification.flags |= additionalFlag;
+      }
+    }
+    return notification;
+  }
+
+  /**
+   * Creates a NotificationCompat.Builder with all settings applied.
+   * This is used by CarNotificationManager which requires a builder instead of a built notification.
+   */
+  protected static NotificationCompat.Builder createNotificationBuilder(
+      Context context, NotificationDetails notificationDetails, @Nullable Activity activity) {
     NotificationChannelDetails notificationChannelDetails =
         NotificationChannelDetails.fromNotificationDetails(notificationDetails);
     if (canCreateNotificationChannel(context, notificationChannelDetails)) {
@@ -443,14 +474,40 @@ public class FlutterLocalNotificationsPlugin
     setProgress(notificationDetails, builder);
     setCategory(notificationDetails, builder);
     setTimeoutAfter(notificationDetails, builder);
-    Notification notification = builder.build();
-    if (notificationDetails.additionalFlags != null
-        && notificationDetails.additionalFlags.length > 0) {
-      for (int additionalFlag : notificationDetails.additionalFlags) {
-        notification.flags |= additionalFlag;
+    
+    // Add Android Auto notifications support
+    // Inspired by Home Assistant's Android Auto implementation:
+    // https://github.com/home-assistant/android/pull/3642
+    // Only add CarAppExtender if explicitly requested via showOnAndroidAuto parameter
+    if (VERSION.SDK_INT >= VERSION_CODES.O && 
+        BooleanUtils.getValue(notificationDetails.showOnAndroidAuto)) {
+      try {
+        if (carAppServiceClass == null && activity instanceof CarAppServiceClassConsumer) {
+          carAppServiceClass = ((CarAppServiceClassConsumer) activity).getCarAppServiceClass();
+        }
+
+        if (carAppServiceClass != null) {
+          Intent carIntent = new Intent(Intent.ACTION_VIEW);
+          carIntent.setComponent(new ComponentName(context, carAppServiceClass));
+          carIntent.putExtra(NOTIFICATION_ID, notificationDetails.id);
+          carIntent.putExtra(PAYLOAD, notificationDetails.payload);
+
+          builder.extend(
+              new CarAppExtender.Builder()
+                  .setContentIntent(
+                      CarPendingIntent.getCarApp(
+                          context,
+                          carIntent.hashCode(),
+                          carIntent,
+                          PendingIntent.FLAG_IMMUTABLE))
+                  .build());
+        }
+      } catch (Exception e) {
+        Log.e(TAG, "Error setting up Android Auto support: " + e.getMessage(), e);
       }
     }
-    return notification;
+
+    return builder;
   }
 
   private static Boolean canCreateNotificationChannel(
@@ -1294,7 +1351,33 @@ public class FlutterLocalNotificationsPlugin
   }
 
   static void showNotification(Context context, NotificationDetails notificationDetails) {
-    Notification notification = createNotification(context, notificationDetails);
+    showNotification(context, notificationDetails, null);
+  }
+
+  static void showNotification(Context context, NotificationDetails notificationDetails, @Nullable Activity activity) {
+    boolean useCarNotification = carAppServiceClass != null && 
+                                  VERSION.SDK_INT >= VERSION_CODES.O &&
+                                  BooleanUtils.getValue(notificationDetails.showOnAndroidAuto);
+
+    if (useCarNotification) {
+      try {
+        CarNotificationManager carNotificationManager = CarNotificationManager.from(context);
+        NotificationCompat.Builder builder = createNotificationBuilder(context, notificationDetails, activity);
+
+        if (notificationDetails.tag != null) {
+          carNotificationManager.notify(notificationDetails.tag, notificationDetails.id, builder);
+        } else {
+          carNotificationManager.notify(notificationDetails.id, builder);
+        }
+
+        Log.d(TAG, "Notification posted via CarNotificationManager");
+        return;
+      } catch (Exception e) {
+        Log.d(TAG, "Could not use CarNotificationManager: " + e.getMessage() + ", falling back");
+      }
+    }
+
+    Notification notification = createNotification(context, notificationDetails, activity);
     NotificationManagerCompat notificationManagerCompat = getNotificationManager(context);
 
     if (notificationDetails.tag != null) {
@@ -1674,7 +1757,7 @@ public class FlutterLocalNotificationsPlugin
     Map<String, Object> arguments = call.arguments();
     NotificationDetails notificationDetails = extractNotificationDetails(result, arguments);
     if (notificationDetails != null) {
-      showNotification(applicationContext, notificationDetails);
+      showNotification(applicationContext, notificationDetails, mainActivity);
       result.success(null);
     }
   }
