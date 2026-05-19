@@ -629,6 +629,7 @@ class AndroidFlutterLocalNotificationsPlugin
   /// and falls back to the app details screen if needed.
   ///
   /// Returns whether an activity could be launched.
+  @override
   Future<bool?> openAppNotificationSettings() async =>
       await _channel.invokeMethod<bool>('openAppNotificationSettings');
 
@@ -806,6 +807,7 @@ class IOSFlutterLocalNotificationsPlugin
   /// OS version and device configuration.
   ///
   /// Returns whether the settings page could be opened.
+  @override
   Future<bool?> openAppNotificationSettings() async =>
       await _channel.invokeMethod<bool>('openAppNotificationSettings');
 

@@ -3001,6 +3001,16 @@ void main() {
       );
     });
 
+    test('openAppNotificationSettings (cross-platform)', () async {
+      final bool? opened =
+          await flutterLocalNotificationsPlugin.openAppNotificationSettings();
+      expect(opened, isTrue);
+      expect(
+        log.last,
+        isMethodCall('openAppNotificationSettings', arguments: null),
+      );
+    });
+
     test('startForegroundServiceWithBlueBackgroundNotification', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');

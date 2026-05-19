@@ -933,6 +933,16 @@ void main() {
       );
     });
 
+    test('openAppNotificationSettings (cross-platform)', () async {
+      final bool? opened =
+          await flutterLocalNotificationsPlugin.openAppNotificationSettings();
+      expect(opened, isTrue);
+      expect(
+        log.last,
+        isMethodCall('openAppNotificationSettings', arguments: null),
+      );
+    });
+
     test('cancel', () async {
       await flutterLocalNotificationsPlugin.cancel(id: 1);
       expect(log, <Matcher>[isMethodCall('cancel', arguments: 1)]);

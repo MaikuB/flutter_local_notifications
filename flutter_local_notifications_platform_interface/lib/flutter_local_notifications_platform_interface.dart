@@ -101,6 +101,16 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
     );
   }
 
+  /// Opens the system settings UI where the user can manage notification
+  /// permissions for the app.
+  ///
+  /// Returns whether the settings page could be opened.
+  Future<bool?> openAppNotificationSettings() async {
+    throw UnimplementedError(
+      'openAppNotificationSettings() has not been implemented',
+    );
+  }
+
   /// Returns a list of notifications pending to be delivered/shown
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() {
     throw UnimplementedError(

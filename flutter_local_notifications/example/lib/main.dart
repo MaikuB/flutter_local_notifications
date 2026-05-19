@@ -338,14 +338,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _openAppNotificationSettings() async {
-    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-        flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin
-            >();
-
     final bool opened =
-        await androidImplementation?.openAppNotificationSettings() ?? false;
+        await flutterLocalNotificationsPlugin.openAppNotificationSettings() ??
+        false;
 
     if (!opened && mounted) {
       await showDialog<void>(
@@ -353,36 +348,6 @@ class _HomePageState extends State<HomePage> {
         builder: (BuildContext context) => AlertDialog(
           content: const Text(
             'Unable to open the app notification settings screen on this device.',
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-    }
-  }
-
-  Future<void> _openAppNotificationSettingsOnIOS() async {
-    final IOSFlutterLocalNotificationsPlugin? iosImplementation =
-        flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin
-            >();
-
-    final bool opened =
-        await iosImplementation?.openAppNotificationSettings() ?? false;
-
-    if (!opened && mounted) {
-      await showDialog<void>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          content: const Text(
-            'Unable to open the app settings page on this device.',
           ),
           actions: <Widget>[
             TextButton(
@@ -886,7 +851,7 @@ class _HomePageState extends State<HomePage> {
                 if (Platform.isIOS)
                   PaddedElevatedButton(
                     buttonText: 'Open notification settings',
-                    onPressed: _openAppNotificationSettingsOnIOS,
+                    onPressed: _openAppNotificationSettings,
                   ),
                 PaddedElevatedButton(
                   buttonText:
