@@ -225,35 +225,49 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)openAppNotificationSettings:(FlutterResult _Nonnull)result {
-  NSString *urlString = UIApplicationOpenSettingsURLString;
-  // Note: iOS provides UIApplicationOpenNotificationSettingsURLString (iOS 15.4+),
-  // but some iOS versions/devices may still redirect to the Settings app root.
-  // Opening the app's Settings page is the most reliable way to guide users to
-  // notification settings across iOS versions.
-
-  NSURL *url = [NSURL URLWithString:urlString];
-  if (url == nil) {
-    result(@(NO));
-    return;
-  }
-
+  // Best-effort: open this app's notification settings in the Settings app.
+  // On iOS 15.4+, UIApplicationOpenNotificationSettingsURLString deep links to
+  // the app's Notifications page. If that fails or is unavailable, fall back
+  // to UIApplicationOpenSettingsURLString (this app's page in Settings).
+  // Fallback is based on openURL reporting failure, not canOpenURL.
+  // Note: even on supported versions, the destination screen may vary by
+  // OS/device configuration.
   dispatch_async(dispatch_get_main_queue(), ^{
     UIApplication *application = [UIApplication sharedApplication];
-    if (![application canOpenURL:url]) {
-      result(@(NO));
-      return;
+
+    void (^openAppSettings)(void) = ^{
+      NSURL *settingsUrl =
+          [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+      if (settingsUrl == nil) {
+        result(@(NO));
+        return;
+      }
+
+      [application openURL:settingsUrl
+                     options:@{}
+           completionHandler:^(BOOL success) {
+             result(@(success));
+           }];
+    };
+
+    if (@available(iOS 15.4, *)) {
+      NSURL *notificationSettingsUrl = [NSURL
+          URLWithString:UIApplicationOpenNotificationSettingsURLString];
+      if (notificationSettingsUrl != nil) {
+        [application openURL:notificationSettingsUrl
+                       options:@{}
+             completionHandler:^(BOOL success) {
+               if (success) {
+                 result(@(YES));
+               } else {
+                 openAppSettings();
+               }
+             }];
+        return;
+      }
     }
 
-    if (@available(iOS 10.0, *)) {
-      [application openURL:url
-                   options:@{}
-         completionHandler:^(BOOL success) {
-           result(@(success));
-         }];
-    } else {
-      BOOL success = [application openURL:url];
-      result(@(success));
-    }
+    openAppSettings();
   });
 }
 
