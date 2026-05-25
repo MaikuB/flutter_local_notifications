@@ -531,7 +531,7 @@ When the user selects a action, the plugin will start a **separate Flutter Engin
 Adjust `AppDelegate.m` and set the plugin registrant callback:
 
 If you're using Objective-C, add this function anywhere in AppDelegate.m:
-``` objc
+```objc
 // This is required for calling FlutterLocalNotificationsPlugin.setPluginRegistrantCallback method.
 #import <FlutterLocalNotificationsPlugin.h>
 ...
@@ -554,6 +554,7 @@ if your application has not been migrated to `UIScene` lifecycle as described [h
 
 If it has been migrated to `UIScene` lifecycle then register the callback in through `didInitializeImplicitFlutterEngine`
 
+```objc
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
    [GeneratedPluginRegistrant registerWithRegistry:self];
@@ -566,7 +567,7 @@ If it has been migrated to `UIScene` lifecycle then register the callback in thr
     // Add this method
     [FlutterLocalNotificationsPlugin setPluginRegistrantCallback:registerPlugins];
 }
-
+```
 
 For Swift, open the `AppDelegate.swift` and if your application has not been migrated to `UIScene` lifecycle, update the
 `didFinishLaunchingWithOptions` as follows where the commented code indicates the code to add in and why
