@@ -1,4 +1,4 @@
-## [12.0.0-dev.1]
+## [12.0.0]
 
 * Added `zonedScheduled()` to the platform interface and moved `DateTimeComponents` from main plugin to platform interface. Thanks to the PR from [Gaurav Yadav](https://github.com/Gaurav-CareMonitor)
 
