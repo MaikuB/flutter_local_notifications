@@ -2,7 +2,7 @@
 
 * Updated `periodicallyShow()` to accept `payload` and `notificationDetails` as optional parameters
 * Bumped `xml` dependency so that supported range is `>=6.5.0 <8.0.0`
-
+* Bumped dependency on `flutter_local_notifications_platform_interface`
 
 ## [3.0.0]
 
