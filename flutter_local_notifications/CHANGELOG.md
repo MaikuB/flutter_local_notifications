@@ -4,6 +4,7 @@
 * [Web] added web platform support. Thanks to the initial PR from [Levi Lesches](https://github.com/Levi-Lesches) and completion by [Gaurav](https://github.com/Gaurav-CareMonitor)
 * [Windows] when calling `periodicallyShow()` the message when the `UnsupportedError` is thrown has been updated to say `Windows devices cannot periodically show notifications` instead. This has happened as a result of shifting the responsibility of reporting the `UnsupportedError` so it is done by `flutter_local_notifications_windows` instead of `flutter_local_notifications`
 * [Windows] bumped `xml` dependency so that supported range is `>=6.5.0 <8.0.0`
+* Fixed missing code formatting in the Notification Actions configuration section. Thanks to the PR from [Matias de Andrea](https://github.com/deandreamatias)
 
 ## [21.0.0]
 
