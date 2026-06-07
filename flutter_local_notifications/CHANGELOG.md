@@ -1,18 +1,9 @@
-## [22.0.0-dev.3]
+## [22.0.0]
 
 * [Android] calling the `requestNotificationPolicyAccess()` method belonging to the `AndroidFlutterLocalNotificationsPlugin` class will now highlight associated application. Thanks to the PR from [Claudius Kienle](https://github.com/claudius-kienle)
-* [Windows] bumped `xml` dependency so that supported range is `>=6.5.0 <8.0.0`
-
-## [22.0.0-dev.2]
-
-* [Web] **Breaking change** renamed the `details` parameter associated with the `show()` method to `notificationDetails`. This was done to be consistent with other APIs across all of the platforms
-* [Web] **Breaking changes** removed the `hasPermission` and `isPermissionDenied` boolean properties associated with the `WebFlutterLocalNotificationsPlugin` class. This was done to simplify the plugin as the `permissionStatus` property already exists and can be used
-* [Web] Fixed an issue where `isSupported` property in the `WebFlutterLocalNotificationsPlugin` was not exposed
-
-## [22.0.0-dev.1]
-
 * [Web] added web platform support. Thanks to the initial PR from [Levi Lesches](https://github.com/Levi-Lesches) and completion by [Gaurav](https://github.com/Gaurav-CareMonitor)
 * [Windows] when calling `periodicallyShow()` the message when the `UnsupportedError` is thrown has been updated to say `Windows devices cannot periodically show notifications` instead. This has happened as a result of shifting the responsibility of reporting the `UnsupportedError` so it is done by `flutter_local_notifications_windows` instead of `flutter_local_notifications`
+* [Windows] bumped `xml` dependency so that supported range is `>=6.5.0 <8.0.0`
 
 ## [21.0.0]
 

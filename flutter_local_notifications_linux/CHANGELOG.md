@@ -1,4 +1,4 @@
-## [8.0.1-dev.1]
+## [8.0.1]
 
 * Bumped dependency on `flutter_local_notifications_platform_interface`
 
