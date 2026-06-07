@@ -40,6 +40,8 @@ NSString *const ON_NOTIFICATION_METHOD = @"onNotification";
 NSString *const DID_RECEIVE_LOCAL_NOTIFICATION = @"didReceiveLocalNotification";
 NSString *const REQUEST_PERMISSIONS_METHOD = @"requestPermissions";
 NSString *const CHECK_PERMISSIONS_METHOD = @"checkPermissions";
+NSString *const OPEN_APP_NOTIFICATION_SETTINGS_METHOD =
+    @"openAppNotificationSettings";
 
 NSString *const DAY = @"day";
 
@@ -192,6 +194,9 @@ static FlutterError *getFlutterError(NSError *error) {
     [self requestPermissions:call.arguments result:result];
   } else if ([CHECK_PERMISSIONS_METHOD isEqualToString:call.method]) {
     [self checkPermissions:call.arguments result:result];
+  } else if ([OPEN_APP_NOTIFICATION_SETTINGS_METHOD
+                 isEqualToString:call.method]) {
+    [self openAppNotificationSettings:result];
   } else if ([CANCEL_METHOD isEqualToString:call.method]) {
     [self cancel:((NSNumber *)call.arguments) result:result];
   } else if ([CANCEL_ALL_METHOD isEqualToString:call.method]) {
@@ -217,6 +222,53 @@ static FlutterError *getFlutterError(NSError *error) {
   } else {
     result(FlutterMethodNotImplemented);
   }
+}
+
+- (void)openAppNotificationSettings:(FlutterResult _Nonnull)result {
+  // Best-effort: open this app's notification settings in the Settings app.
+  // On iOS 15.4+, UIApplicationOpenNotificationSettingsURLString deep links to
+  // the app's Notifications page. If that fails or is unavailable, fall back
+  // to UIApplicationOpenSettingsURLString (this app's page in Settings).
+  // Fallback is based on openURL reporting failure, not canOpenURL.
+  // Note: even on supported versions, the destination screen may vary by
+  // OS/device configuration.
+  dispatch_async(dispatch_get_main_queue(), ^{
+    UIApplication *application = [UIApplication sharedApplication];
+
+    void (^openAppSettings)(void) = ^{
+      NSURL *settingsUrl =
+          [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+      if (settingsUrl == nil) {
+        result(@(NO));
+        return;
+      }
+
+      [application openURL:settingsUrl
+                     options:@{}
+           completionHandler:^(BOOL success) {
+             result(@(success));
+           }];
+    };
+
+    if (@available(iOS 15.4, *)) {
+      NSURL *notificationSettingsUrl = [NSURL
+          URLWithString:UIApplicationOpenNotificationSettingsURLString];
+      if (notificationSettingsUrl != nil) {
+        [application openURL:notificationSettingsUrl
+                       options:@{}
+             completionHandler:^(BOOL success) {
+               if (success) {
+                 result(@(YES));
+               } else {
+                 openAppSettings();
+               }
+             }];
+        return;
+      }
+    }
+
+    openAppSettings();
+  });
 }
 
 - (void)pendingNotificationRequests:(FlutterResult _Nonnull)result

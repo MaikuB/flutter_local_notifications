@@ -665,6 +665,23 @@ class FlutterLocalNotificationsPlugin {
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() =>
       FlutterLocalNotificationsPlatform.instance.pendingNotificationRequests();
 
+  /// Opens the system settings UI where the user can manage notification
+  /// permissions for the app.
+  ///
+  /// On iOS, this will attempt to open the app's notification settings page and
+  /// fall back to opening the app's Settings page when needed.
+  ///
+  /// On platforms that don't support this API, an [UnimplementedError] will be
+  /// thrown.
+  Future<bool?> openAppNotificationSettings() {
+    if (kIsWeb) {
+      throw UnimplementedError(
+        'openAppNotificationSettings() is not supported on web',
+      );
+    }
+    return FlutterLocalNotificationsPlatform.instance.openAppNotificationSettings();
+  }
+
   /// Returns the list of active notifications shown by the application that
   /// haven't been dismissed/removed.
   ///
