@@ -1,3 +1,7 @@
+## [22.0.1]
+
+* [Windows] Suppress warning around usage of experimental coroutines. This is to fix issue [#2777](https://github.com/MaikuB/flutter_local_notifications/issues/2777)
+
 ## [22.0.0]
 
 * [Android] calling the `requestNotificationPolicyAccess()` method belonging to the `AndroidFlutterLocalNotificationsPlugin` class will now highlight associated application. Thanks to the PR from [Claudius Kienle](https://github.com/claudius-kienle)
