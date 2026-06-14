@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(flutter_local_notifications_windows_library VERSION 1.0.0 LANGUAGES CXX)
 
+add_compile_definitions(_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)
+
 add_library(flutter_local_notifications_windows SHARED
   "ffi_api.cpp"
   "plugin.cpp"

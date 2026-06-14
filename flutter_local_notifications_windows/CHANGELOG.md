@@ -1,3 +1,7 @@
+## [3.1.1]
+
+* Suppress warning around usage of experimental coroutines. This is to fix issue [#2777](https://github.com/MaikuB/flutter_local_notifications/issues/2777)
+
 ## [3.1.0]
 
 * Updated `periodicallyShow()` to accept `payload` and `notificationDetails` as optional parameters
