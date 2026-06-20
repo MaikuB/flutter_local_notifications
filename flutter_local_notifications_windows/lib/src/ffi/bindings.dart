@@ -301,17 +301,33 @@ class NotificationsPluginBindings {
   late final _freeDetailsArray = _freeDetailsArrayPtr
       .asFunction<void Function(ffi.Pointer<NativeNotificationDetails>)>();
 
-  /// Releases the memory associated with a [NativeLaunchDetails].
-  void freeLaunchDetails(ffi.Pointer<NativeLaunchDetails> details) {
-    return _freeLaunchDetails(details);
+  /// Releases memory allocated for launch details (payload and data entries).
+  void freeLaunchDetails(
+    ffi.Pointer<pkg_ffi.Utf8> payload,
+    ffi.Pointer<StringMapEntry> entries,
+    int size,
+  ) {
+    return _freeLaunchDetails(payload, entries, size);
   }
 
   late final _freeLaunchDetailsPtr =
       _lookup<
-        ffi.NativeFunction<ffi.Void Function(ffi.Pointer<NativeLaunchDetails>)>
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<pkg_ffi.Utf8>,
+            ffi.Pointer<StringMapEntry>,
+            ffi.Int,
+          )
+        >
       >('freeLaunchDetails');
   late final _freeLaunchDetails = _freeLaunchDetailsPtr
-      .asFunction<void Function(ffi.Pointer<NativeLaunchDetails>)>();
+      .asFunction<
+        void Function(
+          ffi.Pointer<pkg_ffi.Utf8>,
+          ffi.Pointer<StringMapEntry>,
+          int,
+        )
+      >();
 }
 
 final class NativePlugin extends ffi.Opaque {}
@@ -352,36 +368,24 @@ enum NativeLaunchType {
   };
 }
 
-/// Details about how the app was launched.
-base class NativeLaunchDetails extends ffi.Struct {
-  /// Whether the app was launched by a notification
-  @ffi.Bool()
-  external bool didLaunch;
-
-  /// What part of the notification launched the app.
-  @ffi.UnsignedInt()
-  external int launchTypeAsInt;
-
-  /// The payload sent to the app by the notification. Usually the action that was pressed.
-  external ffi.Pointer<pkg_ffi.Utf8> payload;
-
-  /// The IDs and values of any text inputs in the notification.
-  ///
-  /// Flattened from NativeStringMap to avoid AOT snapshotter crashes with
-  /// nested FFI structs. These two fields correspond to NativeStringMap's
-  /// `entries` and `size` at the same offsets.
-  external ffi.Pointer<StringMapEntry> data_entries;
-
-  @ffi.Int()
-  external int data_size;
-}
-
 typedef NativeNotificationCallbackFunction =
-    ffi.Void Function(ffi.Pointer<NativeLaunchDetails> details);
+    ffi.Void Function(
+      ffi.Int didLaunch,
+      ffi.Int launchType,
+      ffi.Pointer<pkg_ffi.Utf8> payload,
+      ffi.Pointer<StringMapEntry> dataEntries,
+      ffi.Int dataSize,
+    );
 typedef DartNativeNotificationCallbackFunction =
-    void Function(ffi.Pointer<NativeLaunchDetails> details);
+    void Function(
+      int didLaunch,
+      int launchType,
+      ffi.Pointer<pkg_ffi.Utf8> payload,
+      ffi.Pointer<StringMapEntry> dataEntries,
+      int dataSize,
+    );
 
-/// A callback that is run with [NativeLaunchDetails] when a notification is pressed.
+/// A callback that is run with raw launch details when a notification is pressed.
 ///
 /// This may be called at app launch or even while the app is running.
 typedef NativeNotificationCallback =

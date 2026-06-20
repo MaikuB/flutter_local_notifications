@@ -9,10 +9,49 @@ import '../ffi/utils.dart';
 
 import 'base.dart';
 
-void _globalLaunchCallback(Pointer<NativeLaunchDetails> details) {
+/// Holds launch details read from a native callback.
+/// Memory is freed immediately in the callback, so we store Dart values.
+class _LaunchDetails {
+  final bool didLaunch;
+  final NativeLaunchType launchType;
+  final String payload;
+  final Map<String, String> data;
+
+  _LaunchDetails({
+    required this.didLaunch,
+    required this.launchType,
+    required this.payload,
+    required this.data,
+  });
+}
+
+void _globalLaunchCallback(
+  int didLaunch,
+  int launchType,
+  Pointer<Utf8> payload,
+  Pointer<StringMapEntry> dataEntries,
+  int dataSize,
+) {
   FlutterLocalNotificationsWindows.instance?._onDidReceiveNotificationResponse(
-    details,
+    _LaunchDetails(
+      didLaunch: didLaunch != 0,
+      launchType: NativeLaunchType.fromValue(launchType),
+      payload: payload.toDartString(),
+      data: () {
+        final map = <String, String>{};
+        for (int i = 0; i < dataSize; i++) {
+          map[dataEntries[i].key.toDartString()] = dataEntries[i].value
+              .toDartString();
+        }
+        return map;
+      }(),
+    ),
   );
+  // Free native memory immediately; values are already copied into Dart.
+  final bindings = FlutterLocalNotificationsWindows.instance?._bindings;
+  if (bindings != null) {
+    bindings.freeLaunchDetails(payload, dataEntries, dataSize);
+  }
 }
 
 extension on String {
@@ -56,7 +95,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   /// If the app is opened with a notification, this can be read with
   /// [getNotificationAppLaunchDetails]. If a notification is pressed while the
   /// app is running, this will be passed to [userCallback].
-  Pointer<NativeLaunchDetails>? _details;
+  _LaunchDetails? _details;
 
   /// A callback from [initialize] to run when a notification is pressed.
   DidReceiveNotificationResponseCallback? userCallback;
@@ -116,21 +155,16 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     _isReady = false;
   }
 
-  void _onDidReceiveNotificationResponse(Pointer<NativeLaunchDetails> details) {
+  void _onDidReceiveNotificationResponse(_LaunchDetails details) {
     if (!_isReady) {
       return;
-    } else if (_details != null) {
-      _bindings.freeLaunchDetails(_details!);
     }
     _details = details;
-    final NativeLaunchDetails nativeDetails = details.ref;
-    final Map<String, String> data = nativeDetails.dataToMap();
     final NotificationResponse response = NotificationResponse(
-      notificationResponseType: getResponseType(
-          NativeLaunchType.fromValue(nativeDetails.launchTypeAsInt)),
-      payload: nativeDetails.payload.toDartString(),
-      actionId: nativeDetails.payload.toDartString(),
-      data: data,
+      notificationResponseType: getResponseType(details.launchType),
+      payload: details.payload,
+      actionId: details.payload,
+      data: details.data,
     );
     userCallback?.call(response);
   }
@@ -199,20 +233,17 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         'Flutter Local Notifications must be initialized before use',
       );
     }
-    final Pointer<NativeLaunchDetails>? details = _details;
+    final _LaunchDetails? details = _details;
     if (details == null) {
       return null;
     }
-    final NativeLaunchDetails nativeDetails = details.ref;
-    final Map<String, String> data = nativeDetails.dataToMap();
     return NotificationAppLaunchDetails(
-      nativeDetails.didLaunch,
+      details.didLaunch,
       notificationResponse: NotificationResponse(
-        notificationResponseType: getResponseType(
-            NativeLaunchType.fromValue(nativeDetails.launchTypeAsInt)),
-        payload: nativeDetails.payload.toDartString(),
-        actionId: nativeDetails.payload.toDartString(),
-        data: data,
+        notificationResponseType: getResponseType(details.launchType),
+        payload: details.payload,
+        actionId: details.payload,
+        data: details.data,
       ),
     );
   }

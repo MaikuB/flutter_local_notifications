@@ -42,13 +42,9 @@ struct NotificationActivationCallback :
       const auto payload = string(CW2A(args, CP_UTF8));
       const auto launchType =
         openedWithAction ? NativeLaunchType::action : NativeLaunchType::notification;
-      NativeLaunchDetails launchDetails;
-      launchDetails.didLaunch = true;
-      launchDetails.launchType = launchType;
-      launchDetails.payload = toNativeString(payload);
-      launchDetails.data = toNativeMap(entries);
-      auto* pDetails = new NativeLaunchDetails(launchDetails);
-      callback(pDetails);
+      auto* nativePayload = toNativeString(payload);
+      auto nativeData = toNativeMap(entries);
+      callback(true, launchType, nativePayload, nativeData.entries, nativeData.size);
       return S_OK;
     } catch (...) {
       return winrt::to_hresult();

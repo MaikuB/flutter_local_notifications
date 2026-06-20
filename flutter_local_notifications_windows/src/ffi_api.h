@@ -47,22 +47,18 @@ typedef enum NativeLaunchType {
   action,
 } NativeLaunchType;
 
-/// Details about how the app was launched.
-typedef struct NativeLaunchDetails {
-  /// Whether the app was launched by a notification
-  bool didLaunch;
-  /// What part of the notification launched the app.
-  NativeLaunchType launchType;
-  /// The payload sent to the app by the notification. Usually the action that was pressed.
-  const char* payload;
-  /// The IDs and values of any text inputs in the notification.
-  NativeStringMap data;
-} NativeLaunchDetails;
-
-/// A callback that is run with [NativeLaunchDetails] when a notification is pressed.
+/// A callback that is run with raw launch details when a notification is pressed.
 ///
 /// This may be called at app launch or even while the app is running.
-typedef void (*NativeNotificationCallback)(NativeLaunchDetails* details);
+/// Parameters are passed individually instead of as a struct to avoid AOT
+/// snapshotter crashes with FFI structs containing bool fields.
+typedef void (*NativeNotificationCallback)(
+  int didLaunch,
+  int launchType,
+  const char* payload,
+  const StringMapEntry* data_entries,
+  int data_size
+);
 
 // See: https://learn.microsoft.com/en-us/uwp/api/windows.ui.notifications.notificationupdateresult
 typedef enum NativeUpdateResult {
@@ -133,8 +129,11 @@ FFI_PLUGIN_EXPORT NativeNotificationDetails* getPendingNotifications(
 /// Releases the memory associated with a [NativeNotificationDetails] array.
 FFI_PLUGIN_EXPORT void freeDetailsArray(NativeNotificationDetails* ptr);
 
-/// Releases the memory associated with a [NativeLaunchDetails].
-FFI_PLUGIN_EXPORT void freeLaunchDetails(NativeLaunchDetails* details);
+/// Releases the memory allocated for launch details.
+///
+/// Frees the payload string and the data entries array individually,
+/// since [NativeNotificationCallback] passes them as raw pointers.
+FFI_PLUGIN_EXPORT void freeLaunchDetails(const char* payload, const StringMapEntry* entries, int size);
 
 #ifdef __cplusplus
 }
