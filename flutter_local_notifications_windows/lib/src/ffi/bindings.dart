@@ -302,16 +302,16 @@ class NotificationsPluginBindings {
       .asFunction<void Function(ffi.Pointer<NativeNotificationDetails>)>();
 
   /// Releases the memory associated with a [NativeLaunchDetails].
-  void freeLaunchDetails(NativeLaunchDetails details) {
+  void freeLaunchDetails(ffi.Pointer<NativeLaunchDetails> details) {
     return _freeLaunchDetails(details);
   }
 
   late final _freeLaunchDetailsPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(NativeLaunchDetails)>>(
-        'freeLaunchDetails',
-      );
+      _lookup<
+        ffi.NativeFunction<ffi.Void Function(ffi.Pointer<NativeLaunchDetails>)>
+      >('freeLaunchDetails');
   late final _freeLaunchDetails = _freeLaunchDetailsPtr
-      .asFunction<void Function(NativeLaunchDetails)>();
+      .asFunction<void Function(ffi.Pointer<NativeLaunchDetails>)>();
 }
 
 final class NativePlugin extends ffi.Opaque {}
@@ -353,7 +353,7 @@ enum NativeLaunchType {
 }
 
 /// Details about how the app was launched.
-final class NativeLaunchDetails extends ffi.Struct {
+base class NativeLaunchDetails extends ffi.Struct {
   /// Whether the app was launched by a notification
   @ffi.Bool()
   external bool didLaunch;
@@ -362,20 +362,24 @@ final class NativeLaunchDetails extends ffi.Struct {
   @ffi.UnsignedInt()
   external int launchTypeAsInt;
 
-  NativeLaunchType get launchType =>
-      NativeLaunchType.fromValue(launchTypeAsInt);
-
   /// The payload sent to the app by the notification. Usually the action that was pressed.
   external ffi.Pointer<pkg_ffi.Utf8> payload;
 
   /// The IDs and values of any text inputs in the notification.
-  external NativeStringMap data;
+  ///
+  /// Flattened from NativeStringMap to avoid AOT snapshotter crashes with
+  /// nested FFI structs. These two fields correspond to NativeStringMap's
+  /// `entries` and `size` at the same offsets.
+  external ffi.Pointer<StringMapEntry> data_entries;
+
+  @ffi.Int()
+  external int data_size;
 }
 
 typedef NativeNotificationCallbackFunction =
-    ffi.Void Function(NativeLaunchDetails details);
+    ffi.Void Function(ffi.Pointer<NativeLaunchDetails> details);
 typedef DartNativeNotificationCallbackFunction =
-    void Function(NativeLaunchDetails details);
+    void Function(ffi.Pointer<NativeLaunchDetails> details);
 
 /// A callback that is run with [NativeLaunchDetails] when a notification is pressed.
 ///

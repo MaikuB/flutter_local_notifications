@@ -62,7 +62,7 @@ typedef struct NativeLaunchDetails {
 /// A callback that is run with [NativeLaunchDetails] when a notification is pressed.
 ///
 /// This may be called at app launch or even while the app is running.
-typedef void (*NativeNotificationCallback)(NativeLaunchDetails details);
+typedef void (*NativeNotificationCallback)(NativeLaunchDetails* details);
 
 // See: https://learn.microsoft.com/en-us/uwp/api/windows.ui.notifications.notificationupdateresult
 typedef enum NativeUpdateResult {
@@ -134,7 +134,7 @@ FFI_PLUGIN_EXPORT NativeNotificationDetails* getPendingNotifications(
 FFI_PLUGIN_EXPORT void freeDetailsArray(NativeNotificationDetails* ptr);
 
 /// Releases the memory associated with a [NativeLaunchDetails].
-FFI_PLUGIN_EXPORT void freeLaunchDetails(NativeLaunchDetails details);
+FFI_PLUGIN_EXPORT void freeLaunchDetails(NativeLaunchDetails* details);
 
 #ifdef __cplusplus
 }

@@ -16,6 +16,16 @@ extension NativeStringMapUtils on NativeStringMap {
   };
 }
 
+/// Helpful methods on launch details with flattened data fields.
+extension NativeLaunchDetailsUtils on NativeLaunchDetails {
+  /// Converts the flattened data fields back into a Dart map.
+  Map<String, String> dataToMap() => <String, String>{
+    for (int index = 0; index < data_size; index++)
+      data_entries[index].key.toDartString(): data_entries[index].value
+          .toDartString(),
+  };
+}
+
 /// Gets the [NotificationResponseType] from a [NativeLaunchType].
 NotificationResponseType getResponseType(NativeLaunchType launchType) {
   switch (launchType) {

@@ -47,7 +47,8 @@ struct NotificationActivationCallback :
       launchDetails.launchType = launchType;
       launchDetails.payload = toNativeString(payload);
       launchDetails.data = toNativeMap(entries);
-      callback(launchDetails);
+      auto* pDetails = new NativeLaunchDetails(launchDetails);
+      callback(pDetails);
       return S_OK;
     } catch (...) {
       return winrt::to_hresult();

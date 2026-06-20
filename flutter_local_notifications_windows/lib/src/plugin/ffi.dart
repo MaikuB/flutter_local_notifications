@@ -9,7 +9,7 @@ import '../ffi/utils.dart';
 
 import 'base.dart';
 
-void _globalLaunchCallback(NativeLaunchDetails details) {
+void _globalLaunchCallback(Pointer<NativeLaunchDetails> details) {
   FlutterLocalNotificationsWindows.instance?._onDidReceiveNotificationResponse(
     details,
   );
@@ -56,7 +56,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   /// If the app is opened with a notification, this can be read with
   /// [getNotificationAppLaunchDetails]. If a notification is pressed while the
   /// app is running, this will be passed to [userCallback].
-  NativeLaunchDetails? _details;
+  Pointer<NativeLaunchDetails>? _details;
 
   /// A callback from [initialize] to run when a notification is pressed.
   DidReceiveNotificationResponseCallback? userCallback;
@@ -116,18 +116,20 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     _isReady = false;
   }
 
-  void _onDidReceiveNotificationResponse(NativeLaunchDetails details) {
+  void _onDidReceiveNotificationResponse(Pointer<NativeLaunchDetails> details) {
     if (!_isReady) {
       return;
     } else if (_details != null) {
       _bindings.freeLaunchDetails(_details!);
     }
     _details = details;
-    final Map<String, String> data = details.data.toMap();
+    final NativeLaunchDetails nativeDetails = details.ref;
+    final Map<String, String> data = nativeDetails.dataToMap();
     final NotificationResponse response = NotificationResponse(
-      notificationResponseType: getResponseType(details.launchType),
-      payload: details.payload.toDartString(),
-      actionId: details.payload.toDartString(),
+      notificationResponseType: getResponseType(
+          NativeLaunchType.fromValue(nativeDetails.launchTypeAsInt)),
+      payload: nativeDetails.payload.toDartString(),
+      actionId: nativeDetails.payload.toDartString(),
       data: data,
     );
     userCallback?.call(response);
@@ -197,17 +199,19 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         'Flutter Local Notifications must be initialized before use',
       );
     }
-    final NativeLaunchDetails? details = _details;
+    final Pointer<NativeLaunchDetails>? details = _details;
     if (details == null) {
       return null;
     }
-    final Map<String, String> data = details.data.toMap();
+    final NativeLaunchDetails nativeDetails = details.ref;
+    final Map<String, String> data = nativeDetails.dataToMap();
     return NotificationAppLaunchDetails(
-      details.didLaunch,
+      nativeDetails.didLaunch,
       notificationResponse: NotificationResponse(
-        notificationResponseType: getResponseType(details.launchType),
-        payload: details.payload.toDartString(),
-        actionId: details.payload.toDartString(),
+        notificationResponseType: getResponseType(
+            NativeLaunchType.fromValue(nativeDetails.launchTypeAsInt)),
+        payload: nativeDetails.payload.toDartString(),
+        actionId: nativeDetails.payload.toDartString(),
         data: data,
       ),
     );
