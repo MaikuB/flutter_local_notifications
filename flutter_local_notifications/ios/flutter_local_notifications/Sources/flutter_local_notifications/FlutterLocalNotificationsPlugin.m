@@ -1029,9 +1029,11 @@ static FlutterError *getFlutterError(NSError *error) {
           isEqualToString:UNNotificationDefaultActionIdentifier]) {
     notitificationResponseDict[NOTIFICATION_RESPONSE_TYPE] =
         [NSNumber numberWithInteger:0];
-  } else if (response.actionIdentifier != nil &&
-             ![response.actionIdentifier
+  } else if ([response.actionIdentifier
                  isEqualToString:UNNotificationDismissActionIdentifier]) {
+    notitificationResponseDict[NOTIFICATION_RESPONSE_TYPE] =
+        [NSNumber numberWithInteger:2];
+  } else if (response.actionIdentifier != nil) {
     notitificationResponseDict[ACTION_ID] = response.actionIdentifier;
     notitificationResponseDict[NOTIFICATION_RESPONSE_TYPE] =
         [NSNumber numberWithInteger:1];
