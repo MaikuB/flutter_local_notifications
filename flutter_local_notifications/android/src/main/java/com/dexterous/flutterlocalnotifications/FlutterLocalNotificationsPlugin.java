@@ -2312,6 +2312,8 @@ public class FlutterLocalNotificationsPlugin
             Intent intent = new Intent(applicationContext, ForegroundService.class);
             intent.putExtra(ForegroundServiceStartParameter.EXTRA, parameter);
             ContextCompat.startForegroundService(applicationContext, intent);
+            applicationContext.sendBroadcast(new Intent("com.dexterous.flutterlocalnotifications.FOREGROUND_SERVICE_STARTED")
+              .setPackage(applicationContext.getPackageName()));
             result.success(null);
           } else {
             result.error(
@@ -2332,6 +2334,7 @@ public class FlutterLocalNotificationsPlugin
 
   private void stopForegroundService(Result result) {
     applicationContext.stopService(new Intent(applicationContext, ForegroundService.class));
+    applicationContext.sendBroadcast(new Intent("com.dexterous.flutterlocalnotifications.FOREGROUND_SERVICE_STOPPED").setPackage(applicationContext.getPackageName()));
     result.success(null);
   }
 
