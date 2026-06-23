@@ -233,6 +233,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
           'colorized': colorized,
           'number': number,
           'audioAttributesUsage': audioAttributesUsage.value,
+          'emitDismissEvent': emitDismissEvent,
         }
         ..addAll(_convertActionsToMap(actions))
         ..addAll(_convertStyleInformationToMap())

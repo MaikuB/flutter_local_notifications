@@ -150,8 +150,6 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             }
 
             completionHandler()
-        } else if response.actionIdentifier == UNNotificationDismissActionIdentifier {
-            completionHandler()
         } else {
             if initialized {
                 // No isolate can be used for macOS until https://github.com/flutter/flutter/issues/65222 is resolved.
@@ -612,7 +610,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         notificationResponseDict["notificationId"] = Int(response.notification.request.identifier)!
         if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
             notificationResponseDict[MethodCallArguments.notificationResponseType] = 0
-        } else if response.actionIdentifier != UNNotificationDismissActionIdentifier {
+        } else if response.actionIdentifier == UNNotificationDismissActionIdentifier {
+            notificationResponseDict[MethodCallArguments.notificationResponseType] = 2
+        } else {
             notificationResponseDict[MethodCallArguments.actionId] = response.actionIdentifier
             notificationResponseDict[MethodCallArguments.notificationResponseType] = 1
         }

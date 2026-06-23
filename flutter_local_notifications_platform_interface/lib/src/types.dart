@@ -166,4 +166,7 @@ enum NotificationResponseType {
 
   /// Indicates that a user has selected a notification action.
   selectedNotificationAction,
+
+  /// Indicates that a user has dismissed a notification.
+  notificationDismissed,
 }

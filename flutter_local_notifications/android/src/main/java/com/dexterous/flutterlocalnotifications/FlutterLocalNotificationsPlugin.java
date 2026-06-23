@@ -298,6 +298,22 @@ public class FlutterLocalNotificationsPlugin
             .setSilent(BooleanUtils.getValue(notificationDetails.silent))
             .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
 
+    if (BooleanUtils.getValue(notificationDetails.emitDismissEvent)) {
+      Intent deleteIntent = new Intent(context, ActionBroadcastReceiver.class);
+      deleteIntent.setAction(ActionBroadcastReceiver.ACTION_DISMISSED);
+      deleteIntent
+          .putExtra(NOTIFICATION_ID, notificationDetails.id)
+          .putExtra(NOTIFICATION_TAG, notificationDetails.tag)
+          .putExtra(PAYLOAD, notificationDetails.payload);
+      int deleteFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+      if (VERSION.SDK_INT >= VERSION_CODES.M) {
+        deleteFlags |= PendingIntent.FLAG_IMMUTABLE;
+      }
+      PendingIntent deletePendingIntent =
+          PendingIntent.getBroadcast(context, notificationDetails.id, deleteIntent, deleteFlags);
+      builder.setDeleteIntent(deletePendingIntent);
+    }
+
     if (notificationDetails.actions != null) {
       // Space out request codes by 16 so even with 16 actions they won't clash
       int requestCode = notificationDetails.id * 16;
@@ -658,6 +674,10 @@ public class FlutterLocalNotificationsPlugin
 
     if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
       notificationResponseMap.put(NOTIFICATION_RESPONSE_TYPE, 1);
+    }
+
+    if (ActionBroadcastReceiver.ACTION_DISMISSED.equals(intent.getAction())) {
+      notificationResponseMap.put(NOTIFICATION_RESPONSE_TYPE, 2);
     }
 
     return notificationResponseMap;

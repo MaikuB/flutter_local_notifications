@@ -156,6 +156,7 @@ class AndroidNotificationDetails {
     this.colorized = false,
     this.number,
     this.audioAttributesUsage = AudioAttributesUsage.notification,
+    this.emitDismissEvent = false,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -426,4 +427,13 @@ class AndroidNotificationDetails {
   /// such as alarm or ringtone set in [`AudioAttributes.Builder`](https://developer.android.com/reference/android/media/AudioAttributes.Builder#setUsage(int)).
   /// https://developer.android.com/reference/android/media/AudioAttributes
   final AudioAttributesUsage audioAttributesUsage;
+
+  /// Whether to report when the notification is dismissed by the user.
+  ///
+  /// When set to `true`, swiping the notification away or clearing it triggers
+  /// the `onDidReceiveBackgroundNotificationResponse` callback with a
+  /// [NotificationResponse] of type
+  /// [NotificationResponseType.notificationDismissed]. Dismissals caused by
+  /// tapping the notification or by calling `cancel` are not reported.
+  final bool emitDismissEvent;
 }
