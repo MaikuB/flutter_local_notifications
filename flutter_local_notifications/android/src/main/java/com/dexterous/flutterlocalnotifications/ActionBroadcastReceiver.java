@@ -28,6 +28,8 @@ import io.flutter.view.FlutterCallbackInformation;
 public class ActionBroadcastReceiver extends BroadcastReceiver {
   public static final String ACTION_TAPPED =
       "com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver.ACTION_TAPPED";
+  public static final String ACTION_DISMISSED =
+      "com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver.ACTION_DISMISSED";
   private static final String TAG = "ActionBroadcastReceiver";
   @Nullable private static ActionEventSink actionEventSink;
   @Nullable private static FlutterEngine engine;
@@ -43,7 +45,8 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
-    if (!ACTION_TAPPED.equalsIgnoreCase(intent.getAction())) {
+    if (!ACTION_TAPPED.equalsIgnoreCase(intent.getAction())
+        && !ACTION_DISMISSED.equalsIgnoreCase(intent.getAction())) {
       return;
     }
 
