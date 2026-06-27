@@ -13,7 +13,7 @@ void main() => group('Schedules', () {
   final FlutterLocalNotificationsWindows plugin =
       FlutterLocalNotificationsWindows();
   setUpAll(initializeTimeZones);
-  setUpAll(() => plugin.initialize(settings));
+  setUpAll(() => plugin.initialize(settings: settings));
   tearDownAll(() async {
     await plugin.cancelAll();
     plugin.dispose();
@@ -29,11 +29,23 @@ void main() => group('Schedules', () {
     await plugin.cancelAll();
     expect(await countPending(), 0);
     expect(
-      plugin.zonedSchedule(302, null, null, now, null),
+      plugin.zonedSchedule(
+        id: 302,
+        title: null,
+        body: null,
+        scheduledDate: now,
+        payload: null,
+      ),
       throwsArgumentError,
     );
     expect(
-      plugin.zonedSchedule(302, null, null, earlier, null),
+      plugin.zonedSchedule(
+        id: 302,
+        title: null,
+        body: null,
+        scheduledDate: earlier,
+        payload: null,
+      ),
       throwsArgumentError,
     );
   });

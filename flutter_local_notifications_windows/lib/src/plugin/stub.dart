@@ -4,9 +4,9 @@ import 'base.dart';
 /// The Windows implementation of `package:flutter_local_notifications`.
 class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   @override
-  Future<bool> initialize(
-    WindowsInitializationSettings settings, {
-    DidReceiveNotificationResponseCallback? onNotificationReceived,
+  Future<bool> initialize({
+    required WindowsInitializationSettings settings,
+    DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) async {
     throw UnsupportedError(
       'This platform does not support Windows notifications',
@@ -17,7 +17,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   void dispose() {}
 
   @override
-  Future<void> cancel(int id) async {}
+  Future<void> cancel({required int id}) async {}
 
   @override
   Future<void> cancelAll() async {}
@@ -35,28 +35,30 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   pendingNotificationRequests() async => <PendingNotificationRequest>[];
 
   @override
-  Future<void> periodicallyShow(
-    int id,
+  Future<void> periodicallyShow({
+    required int id,
     String? title,
     String? body,
-    RepeatInterval repeatInterval,
-  ) async {}
-
-  @override
-  Future<void> periodicallyShowWithDuration(
-    int id,
-    String? title,
-    String? body,
-    Duration repeatDurationInterval,
-  ) async {}
-
-  @override
-  Future<void> show(
-    int id,
-    String? title,
-    String? body, {
     String? payload,
-    WindowsNotificationDetails? details,
+    required RepeatInterval repeatInterval,
+    WindowsNotificationDetails? notificationDetails,
+  }) async {}
+
+  @override
+  Future<void> periodicallyShowWithDuration({
+    required int id,
+    String? title,
+    String? body,
+    required Duration repeatDurationInterval,
+  }) async {}
+
+  @override
+  Future<void> show({
+    required int id,
+    String? title,
+    String? body,
+    String? payload,
+    WindowsNotificationDetails? notificationDetails,
   }) async {}
 
   @override
@@ -67,22 +69,22 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   }) async {}
 
   @override
-  Future<void> zonedSchedule(
-    int id,
+  Future<void> zonedSchedule({
+    required int id,
     String? title,
     String? body,
-    TZDateTime scheduledDate,
-    WindowsNotificationDetails? details, {
+    required TZDateTime scheduledDate,
     String? payload,
+    DateTimeComponents? matchDateTimeComponents,
+    WindowsNotificationDetails? notificationDetails,
   }) async {}
 
   @override
-  Future<void> zonedScheduleRawXml(
-    int id,
-    String xml,
-    TZDateTime scheduledDate,
-  ) async {}
-
+  Future<void> zonedScheduleRawXml({
+    required int id,
+    required String xml,
+    required TZDateTime scheduledDate,
+  }) async {}
   @override
   Future<NotificationUpdateResult> updateBindings({
     required int id,

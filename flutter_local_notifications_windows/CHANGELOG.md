@@ -1,10 +1,39 @@
-## [2.0.0-dev.2]
+## [3.1.1]
 
-* Bumped `ffigen` and regenerated bindings. Credits to [Levi Lesches](https://github.com/Levi-Lesches) who originally looked at this before the plugin had its minimum Flutter version bumped
+* Suppress warning around usage of experimental coroutines. This is to fix issue [#2777](https://github.com/MaikuB/flutter_local_notifications/issues/2777)
 
-## [2.0.0-dev.1]
+## [3.1.0]
 
+* Updated `periodicallyShow()` to accept `payload` and `notificationDetails` as optional parameters
+* Bumped `xml` dependency so that supported range is `>=6.5.0 <8.0.0`
+* Bumped dependency on `flutter_local_notifications_platform_interface`
+
+## [3.0.0]
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.38.1 and Dart SDK requirement to 3.10.0
+* Bumped `timezone` dependency
+
+## [2.0.1]
+
+* Non-functional change: addressed the [`use_null_aware_elements`](https://dart.dev/tools/diagnostics/use_null_aware_elements) linter issue
+  
+## [2.0.0]
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.32.0 and Dart SDK requirement to 3.8.0
+* **Breaking changes** the positional parameters in the following methods have now been converted to named parameters
+  * `initialize()`
+  * `show()`
+  * `showRawXml()`
+  * `periodicallyShow()`
+  * `periodicallyShowWithDuration()`
+  * `cancel()`
+  * `zonedSchedule()`
+  * `zonedScheduleRawXml()`
+* **Breaking changes** to align with the main the plugin, the following parameters have been renamed
+  * the `details` parameter in the `show()` and `zonedSchedule()` methods has been renamed to `notificationDetails`
+  * the `onNotificationReceived` in the `initialize()` method has been renamed to `onDidReceiveNotificationResponse`
 * **Breaking change** removed the `details` parameter from the `zonedScheduleRawXml()` method as it was not actually used. Thanks to the PR from [Levi Lesches](https://github.com/Levi-Lesches)
+* Bumped `ffigen` and regenerated bindings. Credits to [Levi Lesches](https://github.com/Levi-Lesches) who originally looked at this before the plugin had its minimum Flutter version bumped
 * Added `flutter_lints` to apply linter rules
 
 ## [1.0.3]

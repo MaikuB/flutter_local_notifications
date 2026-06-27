@@ -1,4 +1,5 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 import 'src/types.dart';
 
@@ -37,10 +38,10 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
 
   /// Show a notification with an optional payload that will be passed back to
   /// the app when a notification is tapped on.
-  Future<void> show(
-    int id,
+  Future<void> show({
+    required int id,
     String? title,
-    String? body, {
+    String? body,
     String? payload,
   }) async {
     throw UnimplementedError('show() has not been implemented');
@@ -51,13 +52,26 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   /// For example, specifying a hourly interval means the first time the
   /// notification will be an hour after the method has been called and then
   /// every hour after that.
-  Future<void> periodicallyShow(
-    int id,
+  Future<void> periodicallyShow({
+    required int id,
     String? title,
     String? body,
-    RepeatInterval repeatInterval,
-  ) {
+    required RepeatInterval repeatInterval,
+  }) {
     throw UnimplementedError('periodicallyShow() has not been implemented');
+  }
+
+  /// Schedules a notification to be shown at the specified date and time
+  /// relative to a specific time zone.
+  Future<void> zonedSchedule({
+    required int id,
+    String? title,
+    String? body,
+    required tz.TZDateTime scheduledDate,
+    String? payload,
+    DateTimeComponents? matchDateTimeComponents,
+  }) async {
+    throw UnimplementedError('zonedSchedule() has not been implemented');
   }
 
   /// Periodically show a notification using the specified custom duration
@@ -68,12 +82,12 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   /// has been called and then every 5 minutes after that.
   ///
   /// [repeatDurationInterval] must be at least one minute.
-  Future<void> periodicallyShowWithDuration(
-    int id,
+  Future<void> periodicallyShowWithDuration({
+    required int id,
     String? title,
     String? body,
-    Duration repeatDurationInterval,
-  ) {
+    required Duration repeatDurationInterval,
+  }) {
     throw UnimplementedError(
       'periodicallyShowWithDuration() has not been implemented',
     );
@@ -83,7 +97,7 @@ abstract class FlutterLocalNotificationsPlatform extends PlatformInterface {
   ///
   /// This applies to notifications that have been scheduled and those that
   /// have already been presented.
-  Future<void> cancel(int id) async {
+  Future<void> cancel({required int id}) async {
     throw UnimplementedError('cancel() has not been implemented');
   }
 

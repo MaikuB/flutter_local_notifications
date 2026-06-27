@@ -21,8 +21,8 @@ class LinuxFlutterLocalNotificationsPlugin
   /// Errors on attempted calling of the stub. It exists only to satisfy
   /// compile-time dependencies, and should never actually be called.
   @override
-  Future<bool?> initialize(
-    LinuxInitializationSettings initializationSettings, {
+  Future<bool?> initialize({
+    required LinuxInitializationSettings settings,
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
   }) async {
     assert(false);
@@ -32,10 +32,10 @@ class LinuxFlutterLocalNotificationsPlugin
   /// Errors on attempted calling of the stub. It exists only to satisfy
   /// compile-time dependencies, and should never actually be called.
   @override
-  Future<void> show(
-    int id,
+  Future<void> show({
+    required int id,
     String? title,
-    String? body, {
+    String? body,
     LinuxNotificationDetails? notificationDetails,
     String? payload,
   }) async {

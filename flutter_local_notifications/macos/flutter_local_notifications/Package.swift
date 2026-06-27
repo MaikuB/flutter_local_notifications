@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "flutter_local_notifications",
     platforms: [
-        .macOS("10.14")
+        .macOS("10.15")
     ],
     products: [
         .library(name: "flutter-local-notifications", targets: ["flutter_local_notifications"])

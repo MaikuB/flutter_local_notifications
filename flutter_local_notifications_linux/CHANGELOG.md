@@ -1,6 +1,21 @@
-## [7.0.0-dev.1]
+## [8.0.1]
+
+* Bumped dependency on `flutter_local_notifications_platform_interface`
+
+## [8.0.0]
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.38.1 and Dart SDK requirement to 3.10.0
+
+## [7.0.0]
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.32.0 and Dart SDK requirement to 3.8.0
+* **Breaking changes** the positional parameters in the following methods have now been converted to named parameters
+  * `initialize()`
+  * `show()`
+  * `periodicallyShow()`
+  * `periodicallyShowWithDuration()`
+  * `cancel()`
+  * `LinuxNotificationCustomHint()`
 * Added `flutter_lints` to apply linter rules
 
 ## [6.0.0]

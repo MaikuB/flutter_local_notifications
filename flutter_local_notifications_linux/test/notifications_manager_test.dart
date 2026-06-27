@@ -732,47 +732,74 @@ void main() {
         final LinuxNotificationDetails details = LinuxNotificationDetails(
           customHints: <LinuxNotificationCustomHint>[
             LinuxNotificationCustomHint(
-              'array-hint',
-              LinuxHintArrayValue<LinuxHintStringValue>(<LinuxHintStringValue>[
-                LinuxHintStringValue('1'),
-                LinuxHintStringValue('2'),
-              ]),
-            ),
-            LinuxNotificationCustomHint('bool-hint', LinuxHintBoolValue(true)),
-            LinuxNotificationCustomHint('byte-hint', LinuxHintByteValue(1)),
-            LinuxNotificationCustomHint(
-              'dict-hint',
-              LinuxHintDictValue<LinuxHintByteValue, LinuxHintStringValue>(
-                <LinuxHintByteValue, LinuxHintStringValue>{
-                  LinuxHintByteValue(1): LinuxHintStringValue('1'),
-                  LinuxHintByteValue(2): LinuxHintStringValue('2'),
-                },
+              name: 'array-hint',
+              value: LinuxHintArrayValue<LinuxHintStringValue>(
+                <LinuxHintStringValue>[
+                  LinuxHintStringValue('1'),
+                  LinuxHintStringValue('2'),
+                ],
               ),
             ),
             LinuxNotificationCustomHint(
-              'double-hint',
-              LinuxHintDoubleValue(1.1),
-            ),
-            LinuxNotificationCustomHint('int16-hint', LinuxHintInt16Value(1)),
-            LinuxNotificationCustomHint('int32-hint', LinuxHintInt32Value(1)),
-            LinuxNotificationCustomHint('int64-hint', LinuxHintInt64Value(1)),
-            LinuxNotificationCustomHint(
-              'string-hint',
-              LinuxHintStringValue('test'),
+              name: 'bool-hint',
+              value: LinuxHintBoolValue(true),
             ),
             LinuxNotificationCustomHint(
-              'struct-hint',
-              LinuxHintStructValue(<LinuxHintValue>[
+              name: 'byte-hint',
+              value: LinuxHintByteValue(1),
+            ),
+            LinuxNotificationCustomHint(
+              name: 'dict-hint',
+              value:
+                  LinuxHintDictValue<LinuxHintByteValue, LinuxHintStringValue>(
+                    <LinuxHintByteValue, LinuxHintStringValue>{
+                      LinuxHintByteValue(1): LinuxHintStringValue('1'),
+                      LinuxHintByteValue(2): LinuxHintStringValue('2'),
+                    },
+                  ),
+            ),
+            LinuxNotificationCustomHint(
+              name: 'double-hint',
+              value: LinuxHintDoubleValue(1.1),
+            ),
+            LinuxNotificationCustomHint(
+              name: 'int16-hint',
+              value: LinuxHintInt16Value(1),
+            ),
+            LinuxNotificationCustomHint(
+              name: 'int32-hint',
+              value: LinuxHintInt32Value(1),
+            ),
+            LinuxNotificationCustomHint(
+              name: 'int64-hint',
+              value: LinuxHintInt64Value(1),
+            ),
+            LinuxNotificationCustomHint(
+              name: 'string-hint',
+              value: LinuxHintStringValue('test'),
+            ),
+            LinuxNotificationCustomHint(
+              name: 'struct-hint',
+              value: LinuxHintStructValue(<LinuxHintValue>[
                 LinuxHintStringValue('test'),
                 LinuxHintBoolValue(true),
               ]),
             ),
-            LinuxNotificationCustomHint('uint16-hint', LinuxHintUint16Value(1)),
-            LinuxNotificationCustomHint('uint32-hint', LinuxHintUint32Value(1)),
-            LinuxNotificationCustomHint('uint64-hint', LinuxHintUint64Value(1)),
             LinuxNotificationCustomHint(
-              'variant-hint',
-              LinuxHintVariantValue(LinuxHintByteValue(1)),
+              name: 'uint16-hint',
+              value: LinuxHintUint16Value(1),
+            ),
+            LinuxNotificationCustomHint(
+              name: 'uint32-hint',
+              value: LinuxHintUint32Value(1),
+            ),
+            LinuxNotificationCustomHint(
+              name: 'uint64-hint',
+              value: LinuxHintUint64Value(1),
+            ),
+            LinuxNotificationCustomHint(
+              name: 'variant-hint',
+              value: LinuxHintVariantValue(LinuxHintByteValue(1)),
             ),
           ],
         );

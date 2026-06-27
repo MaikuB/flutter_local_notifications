@@ -10,8 +10,8 @@ extension DarwinNotificationActionMapper on DarwinNotificationAction {
     'title': title,
     'options': options.map((e) => e.value).toList(),
     'type': type.name,
-    if (buttonTitle != null) 'buttonTitle': buttonTitle!,
-    if (placeholder != null) 'placeholder': placeholder!,
+    'buttonTitle': ?buttonTitle,
+    'placeholder': ?placeholder,
   };
 }
 
@@ -41,6 +41,16 @@ extension DarwinInitializationSettingsMapper on DarwinInitializationSettings {
         .map((e) => e.toMap())
         .toList(),
   };
+}
+
+extension IOSInitializationSettingsMapper on IOSInitializationSettings {
+  Map<String, Object> toMap() {
+    final DarwinInitializationSettings darwinSettings =
+        this as DarwinInitializationSettings;
+    final Map<String, Object> map = darwinSettings.toMap();
+    map['requestCarPlayPermission'] = requestCarPlayPermission;
+    return map;
+  }
 }
 
 extension on DarwinNotificationAttachmentThumbnailClippingRect {

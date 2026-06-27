@@ -12,7 +12,7 @@ extension ProgressBarToXml on WindowsProgressBar {
     attributes: <String, String>{
       'status': status,
       'value': '{$id-progressValue}',
-      if (title != null) 'title': title!,
+      'title': ?title,
       if (label != null) 'valueStringOverride': '{$id-progressString}',
     },
   );
@@ -25,6 +25,6 @@ extension ProgressBarToXml on WindowsProgressBar {
   /// [FlutterLocalNotificationsWindows.updateProgressBar].
   Map<String, String> get data => <String, String>{
     '$id-progressValue': value?.toString() ?? 'indeterminate',
-    if (label != null) '$id-progressString': label!,
+    '$id-progressString': ?label,
   };
 }

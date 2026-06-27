@@ -76,11 +76,11 @@ List<Widget> examples(BuildContext context) => <Widget>[
 /// To test we don't validate past dates when using `matchDateTimeComponents`
 Future<void> _scheduleDailyTenAMLastYearNotification() async {
   await flutterLocalNotificationsPlugin.zonedSchedule(
-    0,
-    'daily scheduled notification title',
-    'daily scheduled notification body',
-    _nextInstanceOfTenAMLastYear(),
-    const NotificationDetails(
+    id: 0,
+    title: 'daily scheduled notification title',
+    body: 'daily scheduled notification body',
+    scheduledDate: _nextInstanceOfTenAMLastYear(),
+    notificationDetails: const NotificationDetails(
       android: AndroidNotificationDetails(
         'daily notification channel id',
         'daily notification channel name',
@@ -94,11 +94,11 @@ Future<void> _scheduleDailyTenAMLastYearNotification() async {
 
 Future<void> _scheduleWeeklyTenAMNotification() async {
   await flutterLocalNotificationsPlugin.zonedSchedule(
-    0,
-    'weekly scheduled notification title',
-    'weekly scheduled notification body',
-    _nextInstanceOfTenAM(),
-    const NotificationDetails(
+    id: 0,
+    title: 'weekly scheduled notification title',
+    body: 'weekly scheduled notification body',
+    scheduledDate: _nextInstanceOfTenAM(),
+    notificationDetails: const NotificationDetails(
       android: AndroidNotificationDetails(
         'weekly notification channel id',
         'weekly notification channel name',
@@ -112,11 +112,11 @@ Future<void> _scheduleWeeklyTenAMNotification() async {
 
 Future<void> _scheduleWeeklyMondayTenAMNotification() async {
   await flutterLocalNotificationsPlugin.zonedSchedule(
-    0,
-    'weekly scheduled notification title',
-    'weekly scheduled notification body',
-    _nextInstanceOfMondayTenAM(),
-    const NotificationDetails(
+    id: 0,
+    title: 'weekly scheduled notification title',
+    body: 'weekly scheduled notification body',
+    scheduledDate: _nextInstanceOfMondayTenAM(),
+    notificationDetails: const NotificationDetails(
       android: AndroidNotificationDetails(
         'weekly notification channel id',
         'weekly notification channel name',
@@ -130,11 +130,11 @@ Future<void> _scheduleWeeklyMondayTenAMNotification() async {
 
 Future<void> _scheduleMonthlyMondayTenAMNotification() async {
   await flutterLocalNotificationsPlugin.zonedSchedule(
-    0,
-    'monthly scheduled notification title',
-    'monthly scheduled notification body',
-    _nextInstanceOfMondayTenAM(),
-    const NotificationDetails(
+    id: 0,
+    title: 'monthly scheduled notification title',
+    body: 'monthly scheduled notification body',
+    scheduledDate: _nextInstanceOfMondayTenAM(),
+    notificationDetails: const NotificationDetails(
       android: AndroidNotificationDetails(
         'monthly notification channel id',
         'monthly notification channel name',
@@ -148,11 +148,11 @@ Future<void> _scheduleMonthlyMondayTenAMNotification() async {
 
 Future<void> _scheduleYearlyMondayTenAMNotification() async {
   await flutterLocalNotificationsPlugin.zonedSchedule(
-    0,
-    'yearly scheduled notification title',
-    'yearly scheduled notification body',
-    _nextInstanceOfMondayTenAM(),
-    const NotificationDetails(
+    id: 0,
+    title: 'yearly scheduled notification title',
+    body: 'yearly scheduled notification body',
+    scheduledDate: _nextInstanceOfMondayTenAM(),
+    notificationDetails: const NotificationDetails(
       android: AndroidNotificationDetails(
         'yearly notification channel id',
         'yearly notification channel name',
@@ -175,11 +175,11 @@ Future<void> _repeatNotification() async {
     android: androidNotificationDetails,
   );
   await flutterLocalNotificationsPlugin.periodicallyShow(
-    id++,
-    'repeating title',
-    'repeating body',
-    RepeatInterval.everyMinute,
-    notificationDetails,
+    id: id++,
+    title: 'repeating title',
+    body: 'repeating body',
+    repeatInterval: RepeatInterval.everyMinute,
+    notificationDetails: notificationDetails,
     androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
   );
 }
@@ -195,22 +195,22 @@ Future<void> _repeatPeriodicallyWithDurationNotification() async {
     android: androidNotificationDetails,
   );
   await flutterLocalNotificationsPlugin.periodicallyShowWithDuration(
-    id++,
-    'repeating period title',
-    'repeating period body',
-    const Duration(minutes: 5),
-    notificationDetails,
+    id: id++,
+    title: 'repeating period title',
+    body: 'repeating period body',
+    repeatDurationInterval: const Duration(minutes: 5),
+    notificationDetails: notificationDetails,
     androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
   );
 }
 
 Future<void> _scheduleDailyTenAMNotification() async {
   await flutterLocalNotificationsPlugin.zonedSchedule(
-    0,
-    'daily scheduled notification title',
-    'daily scheduled notification body',
-    _nextInstanceOfTenAM(),
-    const NotificationDetails(
+    id: 0,
+    title: 'daily scheduled notification title',
+    body: 'daily scheduled notification body',
+    scheduledDate: _nextInstanceOfTenAM(),
+    notificationDetails: const NotificationDetails(
       android: AndroidNotificationDetails(
         'daily notification channel id',
         'daily notification channel name',

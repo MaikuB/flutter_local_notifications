@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/src/platform_specifics/darwin/notifi
 import 'package:flutter_local_notifications/src/platform_specifics/darwin/notification_action_option.dart';
 import 'package:flutter_local_notifications/src/platform_specifics/darwin/notification_category.dart';
 import 'package:flutter_local_notifications/src/platform_specifics/darwin/notification_category_option.dart';
+import 'package:flutter_local_notifications/src/platform_specifics/darwin/initialization_settings.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -47,6 +48,51 @@ void main() {
           'options': [1, 2, 4, 8, 16],
         },
       );
+    });
+  });
+
+  group('IOSInitializationSettingsMapper', () {
+    test('should map CarPlay permission correctly', () {
+      const iosSettings = IOSInitializationSettings(
+        requestAlertPermission: true,
+        requestSoundPermission: true,
+        requestBadgePermission: true,
+        requestCarPlayPermission: true,
+        requestCriticalPermission: false,
+        requestProvisionalPermission: false,
+        requestProvidesAppNotificationSettings: false,
+      );
+
+      final map = iosSettings.toMap();
+
+      expect(map['requestAlertPermission'], true);
+      expect(map['requestSoundPermission'], true);
+      expect(map['requestBadgePermission'], true);
+      expect(map['requestCarPlayPermission'], true);
+      expect(map['requestCriticalPermission'], false);
+      expect(map['requestProvisionalPermission'], false);
+      expect(map['requestProvidesAppNotificationSettings'], false);
+    });
+
+    test('should inherit Darwin settings and add CarPlay permission', () {
+      const iosSettings = IOSInitializationSettings(
+        requestCarPlayPermission: true,
+      );
+
+      final map = iosSettings.toMap();
+
+      // Should have all Darwin defaults
+      expect(map['requestAlertPermission'], true);
+      expect(map['requestSoundPermission'], true);
+      expect(map['requestBadgePermission'], true);
+      expect(map['defaultPresentAlert'], true);
+      expect(map['defaultPresentSound'], true);
+      expect(map['defaultPresentBadge'], true);
+      expect(map['defaultPresentBanner'], true);
+      expect(map['defaultPresentList'], true);
+
+      // Plus iOS-specific CarPlay
+      expect(map['requestCarPlayPermission'], true);
     });
   });
 }

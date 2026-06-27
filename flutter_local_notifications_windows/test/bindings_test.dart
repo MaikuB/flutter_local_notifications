@@ -15,14 +15,14 @@ const Map<String, String> bindings = <String, String>{
 void main() => group('Bindings', () {
   final FlutterLocalNotificationsWindows plugin =
       FlutterLocalNotificationsWindows();
-  setUpAll(() => plugin.initialize(settings));
+  setUpAll(() => plugin.initialize(settings: settings));
   tearDownAll(() async {
     await plugin.cancelAll();
     plugin.dispose();
   });
 
   test('work in simple cases', () async {
-    await plugin.show(500, '{title}', '{body}');
+    await plugin.show(id: 500, title: '{title}', body: '{body}');
     final NotificationUpdateResult result = await plugin.updateBindings(
       id: 500,
       bindings: bindings,
@@ -31,7 +31,7 @@ void main() => group('Bindings', () {
   });
 
   test('fail when ID is not found in simple cases', () async {
-    await plugin.show(501, '{title}', '{body}');
+    await plugin.show(id: 501, title: '{title}', body: '{body}');
     final NotificationUpdateResult result = await plugin.updateBindings(
       id: 599,
       bindings: bindings,
@@ -41,16 +41,16 @@ void main() => group('Bindings', () {
 
   test('are included in show()', () async {
     await plugin.show(
-      502,
-      '{title}',
-      '{body}',
-      details: const WindowsNotificationDetails(bindings: bindings),
+      id: 502,
+      title: '{title}',
+      body: '{body}',
+      notificationDetails: const WindowsNotificationDetails(bindings: bindings),
     );
   });
 
   test('fail when notification has been cancelled', () async {
     await Future<void>.delayed(const Duration(milliseconds: 200));
-    await plugin.show(503, '{title}', '{body}');
+    await plugin.show(id: 503, title: '{title}', body: '{body}');
     final NotificationUpdateResult result = await plugin.updateBindings(
       id: 503,
       bindings: bindings,

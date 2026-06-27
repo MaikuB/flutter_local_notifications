@@ -9,7 +9,7 @@ import 'enums.dart';
 @optionalTypeArgs
 class LinuxNotificationCustomHint<T> {
   /// Constructs an instance of [LinuxNotificationCustomHint].
-  const LinuxNotificationCustomHint(this.name, this.value);
+  const LinuxNotificationCustomHint({required this.name, required this.value});
 
   /// Name of this hint.
   /// The vendor hint name should be in the form of `x-vendor-name`.

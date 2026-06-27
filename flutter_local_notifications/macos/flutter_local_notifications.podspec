@@ -16,7 +16,7 @@ Flutter plugin for displaying local notifications.
   s.source_files = 'flutter_local_notifications/Sources/flutter_local_notifications/**/*.swift'
   s.dependency 'FlutterMacOS'
 
-  s.platform = :osx, '10.14'
+  s.platform = :osx, '10.15'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.resource_bundles = {'flutter_local_notifications_privacy' => ['flutter_local_notifications/Sources/flutter_local_notifications/PrivacyInfo.xcprivacy']}
   s.swift_version = '5.0'

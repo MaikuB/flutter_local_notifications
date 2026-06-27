@@ -36,6 +36,21 @@ class PendingNotificationRequest {
   final String? payload;
 }
 
+/// The components of a date and time representations.
+enum DateTimeComponents {
+  /// The time.
+  time,
+
+  /// The day of the week and time.
+  dayOfWeekAndTime,
+
+  /// The day of the month and time.
+  dayOfMonthAndTime,
+
+  /// The date and time.
+  dateAndTime,
+}
+
 /// Details of an active notification.
 class ActiveNotification {
   /// Constructs an instance of [ActiveNotification].
@@ -63,7 +78,8 @@ class ActiveNotification {
 
   /// The notification's group.
   ///
-  /// Returned only on Android.
+  /// On Android, this is the notification's `groupKey`.
+  /// On iOS and macOS, this is the notification's `threadIdentifier`.
   final String? groupKey;
 
   /// The notification's title.
