@@ -99,6 +99,8 @@ NSString *const PAYLOAD = @"payload";
 NSString *const NOTIFICATION_LAUNCHED_APP = @"notificationLaunchedApp";
 NSString *const ACTION_ID = @"actionId";
 NSString *const NOTIFICATION_RESPONSE_TYPE = @"notificationResponseType";
+NSString *const NOTIFICATION_DELIVERED_AT = @"notificationDeliveredAt";
+NSString *const RESPONSE_RECEIVED_AT = @"responseReceivedAt";
 
 NSString *const UNSUPPORTED_OS_VERSION_ERROR_CODE = @"unsupported_os_version";
 NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
@@ -131,6 +133,14 @@ typedef NS_ENUM(NSInteger, DateTimeComponents) {
   DayOfMonthAndTime,
   DateAndTime
 };
+
+static NSNumber *millisecondsSinceEpoch(NSDate *date) {
+  if (date == nil) {
+    return nil;
+  }
+  return [NSNumber numberWithLongLong:(long long)([date timeIntervalSince1970] *
+                                                  1000.0)];
+}
 
 static FlutterError *getFlutterError(NSError *error) {
   return [FlutterError
@@ -1015,7 +1025,9 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (NSMutableDictionary *)extractNotificationResponseDict:
-    (UNNotificationResponse *_Nonnull)response API_AVAILABLE(ios(10.0)) {
+    (UNNotificationResponse *_Nonnull)response
+                         responseReceivedAt:(NSDate *_Nonnull)responseReceivedAt
+    API_AVAILABLE(ios(10.0)) {
   NSMutableDictionary *notitificationResponseDict =
       [[NSMutableDictionary alloc] init];
   NSInteger notificationId =
@@ -1025,6 +1037,14 @@ static FlutterError *getFlutterError(NSError *error) {
   NSNumber *notificationIdNumber = [NSNumber numberWithInteger:notificationId];
   notitificationResponseDict[@"notificationId"] = notificationIdNumber;
   notitificationResponseDict[PAYLOAD] = payload;
+  NSNumber *notificationDeliveredAt =
+      millisecondsSinceEpoch(response.notification.date);
+  if (notificationDeliveredAt != nil) {
+    notitificationResponseDict[NOTIFICATION_DELIVERED_AT] =
+        notificationDeliveredAt;
+  }
+  notitificationResponseDict[RESPONSE_RECEIVED_AT] =
+      millisecondsSinceEpoch(responseReceivedAt);
   if ([response.actionIdentifier
           isEqualToString:UNNotificationDefaultActionIdentifier]) {
     notitificationResponseDict[NOTIFICATION_RESPONSE_TYPE] =
@@ -1048,29 +1068,29 @@ static FlutterError *getFlutterError(NSError *error) {
     didReceiveNotificationResponse:(UNNotificationResponse *)response
              withCompletionHandler:(void (^)(void))completionHandler
     API_AVAILABLE(ios(10.0)) {
+  NSDate *responseReceivedAt = [NSDate date];
   if (![self isAFlutterLocalNotification:response.notification.request.content
                                              .userInfo]) {
     return;
   }
 
-  NSInteger notificationId =
-      [response.notification.request.identifier integerValue];
-  NSString *payload =
-      (NSString *)response.notification.request.content.userInfo[PAYLOAD];
-
   if ([response.actionIdentifier
           isEqualToString:UNNotificationDefaultActionIdentifier]) {
+    NSMutableDictionary *notificationResponseDict =
+        [self extractNotificationResponseDict:response
+                           responseReceivedAt:responseReceivedAt];
     if (_initialized) {
-      [self handleSelectNotification:notificationId payload:payload];
+      [_channel invokeMethod:@"didReceiveNotificationResponse"
+                   arguments:notificationResponseDict];
     } else {
-      _launchNotificationResponseDict =
-          [self extractNotificationResponseDict:response];
+      _launchNotificationResponseDict = notificationResponseDict;
       _launchingAppFromNotification = true;
     }
     completionHandler();
   } else if (response.actionIdentifier != nil) {
     NSMutableDictionary *notificationResponseDict =
-        [self extractNotificationResponseDict:response];
+        [self extractNotificationResponseDict:response
+                           responseReceivedAt:responseReceivedAt];
     NSArray<NSString *> *foregroundActionIdentifiers =
         [[NSUserDefaults standardUserDefaults]
             stringArrayForKey:FOREGROUND_ACTION_IDENTIFIERS];

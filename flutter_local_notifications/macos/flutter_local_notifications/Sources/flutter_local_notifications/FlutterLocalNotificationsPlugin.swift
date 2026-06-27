@@ -50,6 +50,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let interruptionLevel = "interruptionLevel"
         static let actionId = "actionId"
         static let notificationResponseType = "notificationResponseType"
+        static let notificationDeliveredAt = "notificationDeliveredAt"
+        static let responseReceivedAt = "responseReceivedAt"
         static let isNotificationsEnabled = "isEnabled"
         static let isSoundEnabled = "isSoundEnabled"
         static let isAlertEnabled = "isAlertEnabled"
@@ -137,15 +139,16 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     }
 
     public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let responseReceivedAt = Date()
         if !isAFlutterLocalNotification(userInfo: response.notification.request.content.userInfo) {
             return
         }
         if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
-            let payload = response.notification.request.content.userInfo[MethodCallArguments.payload] as? String
+            let notificationResponseDict = extractNotificationResponseDict(response: response, responseReceivedAt: responseReceivedAt)
             if initialized {
-                handleSelectNotification(notificationId: Int(response.notification.request.identifier)!, payload: payload)
+                handleSelectNotificationAction(arguments: notificationResponseDict)
             } else {
-                launchNotificationResponseDict = extractNotificationResponseDict(response: response)
+                launchNotificationResponseDict = notificationResponseDict
                 launchingAppFromNotification = true
             }
 
@@ -153,13 +156,14 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         } else if response.actionIdentifier == UNNotificationDismissActionIdentifier {
             completionHandler()
         } else {
+            let notificationResponseDict = extractNotificationResponseDict(response: response, responseReceivedAt: responseReceivedAt)
             if initialized {
                 // No isolate can be used for macOS until https://github.com/flutter/flutter/issues/65222 is resolved.
                 //
                 // Therefore, we call the regular method channel and let the macos plugin handle it appropriately.
-                handleSelectNotificationAction(arguments: extractNotificationResponseDict(response: response))
+                handleSelectNotificationAction(arguments: notificationResponseDict)
             } else {
-                launchNotificationResponseDict = extractNotificationResponseDict(response: response)
+                launchNotificationResponseDict = notificationResponseDict
                 launchingAppFromNotification = true
             }
 
@@ -607,9 +611,11 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         channel.invokeMethod("didReceiveNotificationResponse", arguments: arguments)
     }
 
-    func extractNotificationResponseDict(response: UNNotificationResponse) -> [String: Any?] {
+    func extractNotificationResponseDict(response: UNNotificationResponse, responseReceivedAt: Date) -> [String: Any?] {
         var notificationResponseDict: [String: Any?] = [:]
         notificationResponseDict["notificationId"] = Int(response.notification.request.identifier)!
+        notificationResponseDict[MethodCallArguments.notificationDeliveredAt] = millisecondsSinceEpoch(response.notification.date)
+        notificationResponseDict[MethodCallArguments.responseReceivedAt] = millisecondsSinceEpoch(responseReceivedAt)
         if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
             notificationResponseDict[MethodCallArguments.notificationResponseType] = 0
         } else if response.actionIdentifier != UNNotificationDismissActionIdentifier {
@@ -619,6 +625,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         notificationResponseDict["input"] = (response as? UNTextInputNotificationResponse)?.userText
         notificationResponseDict[MethodCallArguments.payload] = response.notification.request.content.userInfo[MethodCallArguments.payload]
         return notificationResponseDict
+    }
+
+    func millisecondsSinceEpoch(_ date: Date) -> Int64 {
+        Int64(date.timeIntervalSince1970 * 1000)
     }
 
     func isAFlutterLocalNotification(userInfo: [AnyHashable: Any]) -> Bool {
