@@ -4,6 +4,28 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 
+DateTime? _dateTimeFromMillisecondsSinceEpoch(Object? value) {
+  if (value == null) {
+    return null;
+  }
+  if (value is int) {
+    return DateTime.fromMillisecondsSinceEpoch(value, isUtc: true);
+  }
+  if (value is num) {
+    return DateTime.fromMillisecondsSinceEpoch(value.toInt(), isUtc: true);
+  }
+  if (value is String) {
+    final millisecondsSinceEpoch = int.tryParse(value);
+    if (millisecondsSinceEpoch != null) {
+      return DateTime.fromMillisecondsSinceEpoch(
+        millisecondsSinceEpoch,
+        isUtc: true,
+      );
+    }
+  }
+  return null;
+}
+
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +69,12 @@ void callbackDispatcher() {
               actionId: event['actionId'],
               input: event['input'],
               payload: event['payload'],
+              notificationDeliveredAt: _dateTimeFromMillisecondsSinceEpoch(
+                event['notificationDeliveredAt'],
+              ),
+              responseReceivedAt: _dateTimeFromMillisecondsSinceEpoch(
+                event['responseReceivedAt'],
+              ),
               notificationResponseType:
                   NotificationResponseType.selectedNotificationAction,
             ),
