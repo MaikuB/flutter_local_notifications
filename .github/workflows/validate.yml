@@ -375,6 +375,7 @@ jobs:
       - name: Install applesimutils
         run: |
           brew tap wix/brew
+          brew trust wix/brew
           brew install applesimutils
       - name: Grant notification permissions
         run: applesimutils --byId ${{ steps.simulator-action.outputs.udid}} --bundle com.dexterous.flutterLocalNotificationsExample --setPermissions notifications=YES
