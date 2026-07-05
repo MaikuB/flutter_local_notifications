@@ -3,13 +3,13 @@ name: validate
 on:
   pull_request:
     paths-ignore:
-      - "**.md"
+      - '**.md'
   push:
     branches:
       - master
       - hotfix/*
     paths-ignore:
-      - "**.md"
+      - '**.md'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -26,7 +26,7 @@ jobs:
           channel: stable
           flutter-version: 3.38.1
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Analyze
@@ -43,7 +43,7 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Format
@@ -55,36 +55,36 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
         with:
-          distribution: "zulu"
-          java-version: "21"
+          distribution: 'zulu'
+          java-version: '21'
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
         run: melos run build:example_android
   build_example_android_min_flutter:
-    name: Build Android example app (3.38.1)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-java@v5
-        with:
-          distribution: "zulu"
-          java-version: "21"
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version: 3.38.1
-          cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
-      - name: Install Tools
-        run: ./.github/workflows/scripts/install-tools.sh
-      - name: Build
-        run: melos run build:example_android
+      name: Build Android example app (3.38.1)
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v7
+        - uses: actions/setup-java@v5
+          with:
+            distribution: 'zulu'
+            java-version: '21'
+        - uses: subosito/flutter-action@v2
+          with:
+            channel: stable
+            flutter-version: 3.38.1
+            cache: true
+            cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
+        - name: Install Tools
+          run: ./.github/workflows/scripts/install-tools.sh
+        - name: Build
+          run: melos run build:example_android
   build_example_ios_stable:
     name: Build iOS example app (stable channel)
     runs-on: macos-latest
@@ -94,7 +94,7 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
@@ -109,7 +109,7 @@ jobs:
           channel: stable
           flutter-version: 3.38.1
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
@@ -123,7 +123,7 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
@@ -138,7 +138,7 @@ jobs:
           channel: stable
           flutter-version: 3.38.1
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
@@ -152,7 +152,7 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - run: |
@@ -171,7 +171,7 @@ jobs:
           channel: stable
           flutter-version: 3.38.1
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - run: |
@@ -189,7 +189,7 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: |
           dart pub global activate melos
@@ -215,7 +215,7 @@ jobs:
           channel: stable
           flutter-version: 3.38.1
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: |
           dart pub global activate melos
@@ -240,7 +240,7 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
@@ -255,7 +255,7 @@ jobs:
           channel: stable
           flutter-version: 3.38.1
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Build
@@ -270,7 +270,7 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Run Tests
@@ -282,13 +282,13 @@ jobs:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
         with:
-          distribution: "zulu"
-          java-version: "21"
+          distribution: 'zulu'
+          java-version: '21'
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Run Tests
@@ -302,7 +302,7 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install tools
         run: |
           dart pub global activate melos
@@ -322,7 +322,7 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - name: Run Tests
@@ -365,17 +365,16 @@ jobs:
         with:
           channel: stable
           cache: true
-          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
       - name: Install Tools
         run: ./.github/workflows/scripts/install-tools.sh
       - uses: futureware-tech/simulator-action@v5
         id: simulator-action
         with:
-          model: "iPhone 16"
+          model: 'iPhone 16'
       - name: Install applesimutils
         run: |
           brew tap wix/brew
-          brew trust wix/brew
           brew install applesimutils
       - name: Grant notification permissions
         run: applesimutils --byId ${{ steps.simulator-action.outputs.udid}} --bundle com.dexterous.flutterLocalNotificationsExample --setPermissions notifications=YES
