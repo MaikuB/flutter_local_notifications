@@ -33,6 +33,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let title = "title"
         static let subtitle = "subtitle"
         static let categoryIdentifier = "categoryIdentifier"
+        static let dismissIsolate = "dismissIsolate"
         static let body = "body"
         static let scheduledDateTime = "scheduledDateTimeISO8601"
         static let timeZoneName = "timeZoneName"
@@ -151,6 +152,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
             completionHandler()
         } else {
+            // Only report a dismissal when opted in via dismissIsolate.
+            if response.actionIdentifier == UNNotificationDismissActionIdentifier,
+                response.notification.request.content.userInfo[MethodCallArguments.dismissIsolate] == nil {
+                completionHandler()
+                return
+            }
             if initialized {
                 // No isolate can be used for macOS until https://github.com/flutter/flutter/issues/65222 is resolved.
                 //
@@ -481,6 +488,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         content.userInfo = [MethodCallArguments.payload: arguments[MethodCallArguments.payload] as Any, MethodCallArguments.presentSound: presentSound, MethodCallArguments.presentBadge: presentBadge, MethodCallArguments.presentAlert: presentAlert,
                             MethodCallArguments.presentBanner: presentBanner,
                             MethodCallArguments.presentList: presentList]
+        if let platformSpecifics = arguments[MethodCallArguments.platformSpecifics] as? [String: AnyObject],
+            let dismissIsolate = platformSpecifics[MethodCallArguments.dismissIsolate], !(dismissIsolate is NSNull) {
+            content.userInfo[MethodCallArguments.dismissIsolate] = dismissIsolate
+        }
         if presentSound && content.sound == nil {
             content.sound = UNNotificationSound.default
         }

@@ -198,7 +198,7 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
-              'emitDismissEvent': false,
+              'dismissIsolate': null,
               'actions': <Map<String, Object>>[
                 <String, Object>{
                   'id': 'action1',
@@ -333,7 +333,7 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
-              'emitDismissEvent': false,
+              'dismissIsolate': null,
             },
           },
         ),
@@ -432,7 +432,7 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
-                'emitDismissEvent': false,
+                'dismissIsolate': null,
               },
             },
           ),
@@ -533,7 +533,7 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
-                'emitDismissEvent': false,
+                'dismissIsolate': null,
               },
             },
           ),
@@ -635,7 +635,7 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
-                'emitDismissEvent': false,
+                'dismissIsolate': null,
               },
             },
           ),
@@ -736,7 +736,7 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
-              'emitDismissEvent': false,
+              'dismissIsolate': null,
             },
           },
         ),
@@ -837,7 +837,7 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
-                'emitDismissEvent': false,
+                'dismissIsolate': null,
               },
             },
           ),
@@ -937,7 +937,7 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
-                'emitDismissEvent': false,
+                'dismissIsolate': null,
               },
             },
           ),
@@ -1037,7 +1037,7 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
-                'emitDismissEvent': false,
+                'dismissIsolate': null,
               },
             },
           ),
@@ -1147,7 +1147,7 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
-                'emitDismissEvent': false,
+                'dismissIsolate': null,
               },
             },
           ),
@@ -1265,7 +1265,7 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
-              'emitDismissEvent': false,
+              'dismissIsolate': null,
             },
           },
         ),
@@ -1372,7 +1372,7 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
-              'emitDismissEvent': false,
+              'dismissIsolate': null,
             },
           },
         ),
@@ -1491,7 +1491,7 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
-                'emitDismissEvent': false,
+                'dismissIsolate': null,
               },
             },
           ),
@@ -1595,7 +1595,7 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
-              'emitDismissEvent': false,
+              'dismissIsolate': null,
             },
           },
         ),
@@ -1707,7 +1707,7 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
-              'emitDismissEvent': false,
+              'dismissIsolate': null,
             },
           },
         ),
@@ -1804,7 +1804,7 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
-              'emitDismissEvent': false,
+              'dismissIsolate': null,
             },
           },
         ),
@@ -1904,7 +1904,7 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
-              'emitDismissEvent': false,
+              'dismissIsolate': null,
             },
           },
         ),
@@ -2023,7 +2023,7 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
-              'emitDismissEvent': false,
+              'dismissIsolate': null,
             },
           },
         ),
@@ -2161,7 +2161,7 @@ void main() {
               'colorized': false,
               'number': null,
               'audioAttributesUsage': 5,
-              'emitDismissEvent': false,
+              'dismissIsolate': null,
             },
           },
         ),
@@ -2268,7 +2268,7 @@ void main() {
                     'colorized': false,
                     'number': null,
                     'audioAttributesUsage': 5,
-                    'emitDismissEvent': false,
+                    'dismissIsolate': null,
                   },
                 },
               ),
@@ -2420,7 +2420,7 @@ void main() {
                     'colorized': false,
                     'number': null,
                     'audioAttributesUsage': 5,
-                    'emitDismissEvent': false,
+                    'dismissIsolate': null,
                   },
                 },
               ),
@@ -2530,7 +2530,7 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
-                'emitDismissEvent': false,
+                'dismissIsolate': null,
               },
             },
           ),
@@ -2639,7 +2639,7 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
-                'emitDismissEvent': false,
+                'dismissIsolate': null,
               },
             },
           ),
@@ -2749,7 +2749,7 @@ void main() {
                 'colorized': false,
                 'number': null,
                 'audioAttributesUsage': 5,
-                'emitDismissEvent': false,
+                'dismissIsolate': null,
               },
             },
           ),
@@ -3104,7 +3104,7 @@ void main() {
                 'colorized': true,
                 'number': null,
                 'audioAttributesUsage': 5,
-                'emitDismissEvent': false,
+                'dismissIsolate': null,
               },
             },
             'startType': AndroidServiceStartType.startSticky.index,
@@ -3138,7 +3138,7 @@ void main() {
       );
     });
 
-    test('show with emitDismissEvent', () async {
+    test('show with dismissIsolate', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
@@ -3154,17 +3154,20 @@ void main() {
           android: AndroidNotificationDetails(
             'channelId',
             'channelName',
-            emitDismissEvent: true,
+            dismissIsolate: NotificationDismissedIsolate.background,
           ),
         ),
       );
       final Map<dynamic, dynamic> platformSpecifics =
           (log.last.arguments as Map<dynamic, dynamic>)['platformSpecifics']
               as Map<dynamic, dynamic>;
-      expect(platformSpecifics['emitDismissEvent'], true);
+      expect(
+        platformSpecifics['dismissIsolate'],
+        NotificationDismissedIsolate.background.index,
+      );
     });
 
-    test('show without emitDismissEvent', () async {
+    test('show without dismissIsolate', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');
       const InitializationSettings initializationSettings =
@@ -3183,7 +3186,7 @@ void main() {
       final Map<dynamic, dynamic> platformSpecifics =
           (log.last.arguments as Map<dynamic, dynamic>)['platformSpecifics']
               as Map<dynamic, dynamic>;
-      expect(platformSpecifics['emitDismissEvent'], false);
+      expect(platformSpecifics['dismissIsolate'], null);
     });
 
     test('notification dismissed response', () async {

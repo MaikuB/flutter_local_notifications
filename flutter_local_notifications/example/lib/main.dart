@@ -71,8 +71,8 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
       NotificationResponseType.notificationDismissed) {
     // ignore: avoid_print
     print(
-      'notification(${notificationResponse.id}) dismissed with'
-      ' payload: ${notificationResponse.payload}',
+      'notification(${notificationResponse.id}) dismissed on background isolate'
+      ' with payload: ${notificationResponse.payload}',
     );
     return;
   }
@@ -396,8 +396,8 @@ class _HomePageState extends State<HomePage> {
           NotificationResponseType.notificationDismissed) {
         // ignore: avoid_print
         print(
-          'notification(${response?.id}) dismissed with'
-          ' payload: ${response?.payload}',
+          'notification(${response?.id}) dismissed on main isolate'
+          ' with payload: ${response?.payload}',
         );
         return;
       }
@@ -478,9 +478,22 @@ class _HomePageState extends State<HomePage> {
               ),
               PaddedElevatedButton(
                 buttonText:
-                    'Show notification that reports when it is dismissed',
+                    'Show notification that reports its dismissal on '
+                    'the main isolate',
                 onPressed: () async {
-                  await _showDismissibleNotification();
+                  await _showDismissibleNotification(
+                    NotificationDismissedIsolate.main,
+                  );
+                },
+              ),
+              PaddedElevatedButton(
+                buttonText:
+                    'Show notification that reports its dismissal on '
+                    'a background isolate',
+                onPressed: () async {
+                  await _showDismissibleNotification(
+                    NotificationDismissedIsolate.background,
+                  );
                 },
               ),
               PaddedElevatedButton(
@@ -1182,8 +1195,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> _showDismissibleNotification() async {
-    const AndroidNotificationDetails androidNotificationDetails =
+  Future<void> _showDismissibleNotification(
+    NotificationDismissedIsolate isolate,
+  ) async {
+    final AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
           'your channel id',
           'your channel name',
@@ -1191,13 +1206,14 @@ class _HomePageState extends State<HomePage> {
           importance: Importance.max,
           priority: Priority.high,
           ticker: 'ticker',
-          emitDismissEvent: true,
+          dismissIsolate: isolate,
         );
-    const DarwinNotificationDetails darwinNotificationDetails =
+    final DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(
           categoryIdentifier: dismissableNotificationCategory,
+          dismissIsolate: isolate,
         );
-    const NotificationDetails notificationDetails = NotificationDetails(
+    final NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
       iOS: darwinNotificationDetails,
       macOS: darwinNotificationDetails,
