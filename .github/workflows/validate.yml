@@ -371,10 +371,11 @@ jobs:
       - uses: futureware-tech/simulator-action@v5
         id: simulator-action
         with:
-          model: 'iPhone 16'
+          model: 'iPhone 17'
       - name: Install applesimutils
         run: |
           brew tap wix/brew
+          brew trust wix/brew
           brew install applesimutils
       - name: Grant notification permissions
         run: applesimutils --byId ${{ steps.simulator-action.outputs.udid}} --bundle com.dexterous.flutterLocalNotificationsExample --setPermissions notifications=YES
