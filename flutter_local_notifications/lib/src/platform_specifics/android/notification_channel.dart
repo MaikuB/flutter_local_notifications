@@ -22,6 +22,8 @@ class AndroidNotificationChannel {
     this.enableLights = false,
     this.ledColor,
     this.audioAttributesUsage = AudioAttributesUsage.notification,
+    this.conversationId,
+    this.parentChannelId,
   });
 
   /// The channel's id.
@@ -95,4 +97,20 @@ class AndroidNotificationChannel {
   /// such as alarm or ringtone set in [`AudioAttributes.Builder`](https://developer.android.com/reference/android/media/AudioAttributes.Builder#setUsage(int)).
   /// https://developer.android.com/reference/android/media/AudioAttributes
   final AudioAttributesUsage audioAttributesUsage;
+
+  /// The shortcut ID of the conversation this channel belongs to.
+  ///
+  /// When set together with [parentChannelId], the channel is registered as a
+  /// conversation channel via `NotificationChannelCompat.Builder.setConversationId`.
+  /// This causes Android 11+ to display per-conversation notification controls
+  /// and to classify linked `MessagingStyle` notifications as Conversations.
+  ///
+  /// Both [conversationId] and [parentChannelId] must be non-null for the
+  /// conversation channel to be created. No-op on Android < 11.
+  final String? conversationId;
+
+  /// The ID of the parent notification channel for a conversation channel.
+  ///
+  /// See [conversationId].
+  final String? parentChannelId;
 }
