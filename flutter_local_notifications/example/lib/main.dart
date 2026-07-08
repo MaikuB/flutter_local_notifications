@@ -660,6 +660,14 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
                 PaddedElevatedButton(
+                  buttonText:
+                      'Show big picture notification, show big picture when '
+                      'collapsed (API 31+)',
+                  onPressed: () async {
+                    await _showBigPictureNotificationShowWhenCollapsed();
+                  },
+                ),
+                PaddedElevatedButton(
                   buttonText: 'Show media notification',
                   onPressed: () async {
                     await _showNotificationMediaStyle();
@@ -1886,6 +1894,44 @@ class _HomePageState extends State<HomePage> {
         BigPictureStyleInformation(
           FilePathAndroidBitmap(bigPicturePath),
           hideExpandedLargeIcon: true,
+          contentTitle: 'overridden <b>big</b> content title',
+          htmlFormatContentTitle: true,
+          summaryText: 'summary <i>text</i>',
+          htmlFormatSummaryText: true,
+        );
+    final AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+          'big text channel id',
+          'big text channel name',
+          channelDescription: 'big text channel description',
+          largeIcon: FilePathAndroidBitmap(largeIconPath),
+          styleInformation: bigPictureStyleInformation,
+        );
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+    );
+    await flutterLocalNotificationsPlugin.show(
+      id: id++,
+      title: 'big text title',
+      body: 'silent body',
+      notificationDetails: notificationDetails,
+    );
+  }
+
+  Future<void> _showBigPictureNotificationShowWhenCollapsed() async {
+    final String largeIconPath = await _downloadAndSaveFile(
+      'https://dummyimage.com/48x48',
+      'largeIcon',
+    );
+    final String bigPicturePath = await _downloadAndSaveFile(
+      'https://dummyimage.com/400x800',
+      'bigPicture',
+    );
+    final BigPictureStyleInformation bigPictureStyleInformation =
+        BigPictureStyleInformation(
+          FilePathAndroidBitmap(bigPicturePath),
+          hideExpandedLargeIcon: true,
+          showBigPictureWhenCollapsed: true,
           contentTitle: 'overridden <b>big</b> content title',
           htmlFormatContentTitle: true,
           summaryText: 'summary <i>text</i>',
