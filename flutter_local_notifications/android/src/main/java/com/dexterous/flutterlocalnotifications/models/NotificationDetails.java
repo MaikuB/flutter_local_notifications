@@ -76,6 +76,7 @@ public class NotificationDetails implements Serializable {
   private static final String BIG_PICTURE = "bigPicture";
   private static final String BIG_PICTURE_BITMAP_SOURCE = "bigPictureBitmapSource";
   private static final String HIDE_EXPANDED_LARGE_ICON = "hideExpandedLargeIcon";
+  private static final String SHOW_BIG_PICTURE_WHEN_COLLAPSED = "showBigPictureWhenCollapsed";
   private static final String SHOW_PROGRESS = "showProgress";
   private static final String MAX_PROGRESS = "maxProgress";
   private static final String PROGRESS = "progress";
@@ -542,6 +543,8 @@ public class NotificationDetails implements Serializable {
         (Integer) styleInformation.get(BIG_PICTURE_BITMAP_SOURCE);
     BitmapSource bigPictureBitmapSource = BitmapSource.values()[bigPictureBitmapSourceArgument];
     Boolean showThumbnail = (Boolean) styleInformation.get(HIDE_EXPANDED_LARGE_ICON);
+    Boolean showBigPictureWhenCollapsed =
+        (Boolean) styleInformation.get(SHOW_BIG_PICTURE_WHEN_COLLAPSED);
     notificationDetails.styleInformation =
         new BigPictureStyleInformation(
             defaultStyleInformation.htmlFormatTitle,
@@ -554,7 +557,8 @@ public class NotificationDetails implements Serializable {
             largeIconBitmapSource,
             bigPicture,
             bigPictureBitmapSource,
-            showThumbnail);
+            showThumbnail,
+            showBigPictureWhenCollapsed);
   }
 
   private static DefaultStyleInformation getDefaultStyleInformation(

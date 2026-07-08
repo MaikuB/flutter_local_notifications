@@ -15,6 +15,7 @@ public class BigPictureStyleInformation extends DefaultStyleInformation {
   public Object bigPicture;
   public BitmapSource bigPictureBitmapSource;
   public Boolean hideExpandedLargeIcon;
+  public Boolean showBigPictureWhenCollapsed;
 
   public BigPictureStyleInformation(
       Boolean htmlFormatTitle,
@@ -27,7 +28,8 @@ public class BigPictureStyleInformation extends DefaultStyleInformation {
       BitmapSource largeIconBitmapSource,
       Object bigPicture,
       BitmapSource bigPictureBitmapSource,
-      Boolean hideExpandedLargeIcon) {
+      Boolean hideExpandedLargeIcon,
+      Boolean showBigPictureWhenCollapsed) {
     super(htmlFormatTitle, htmlFormatBody);
     this.contentTitle = contentTitle;
     this.htmlFormatContentTitle = htmlFormatContentTitle;
@@ -38,5 +40,6 @@ public class BigPictureStyleInformation extends DefaultStyleInformation {
     this.bigPicture = bigPicture;
     this.bigPictureBitmapSource = bigPictureBitmapSource;
     this.hideExpandedLargeIcon = hideExpandedLargeIcon;
+    this.showBigPictureWhenCollapsed = showBigPictureWhenCollapsed;
   }
 }

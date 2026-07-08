@@ -15,6 +15,7 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
     bool htmlFormatContent = false,
     bool htmlFormatTitle = false,
     this.hideExpandedLargeIcon = false,
+    this.showBigPictureWhenCollapsed = false,
   }) : super(htmlFormatContent, htmlFormatTitle);
 
   /// Overrides ContentTitle in the big form of the template.
@@ -41,4 +42,7 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
 
   /// Hides the large icon when showing the expanded notification.
   final bool hideExpandedLargeIcon;
+
+  /// Shows the big picture as a thumbnail in the collapsed notification (API 31+).
+  final bool showBigPictureWhenCollapsed;
 }

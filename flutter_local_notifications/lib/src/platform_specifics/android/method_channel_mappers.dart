@@ -128,6 +128,7 @@ extension BigPictureStyleInformationMapper on BigPictureStyleInformation {
       'htmlFormatContentTitle': htmlFormatContentTitle,
       'htmlFormatSummaryText': htmlFormatSummaryText,
       'hideExpandedLargeIcon': hideExpandedLargeIcon,
+      'showBigPictureWhenCollapsed': showBigPictureWhenCollapsed,
     });
 
   Map<String, Object> _convertBigPictureToMap() => <String, Object>{
