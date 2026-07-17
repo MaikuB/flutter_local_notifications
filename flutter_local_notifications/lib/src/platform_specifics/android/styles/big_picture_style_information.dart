@@ -43,6 +43,8 @@ class BigPictureStyleInformation extends DefaultStyleInformation {
   /// Hides the large icon when showing the expanded notification.
   final bool hideExpandedLargeIcon;
 
-  /// Shows the big picture as a thumbnail in the collapsed notification (API 31+).
+  /// Shows the big picture as a thumbnail in the collapsed notification.
+  ///
+  /// This property is only applicable to Android versions 12.0 or newer.
   final bool showBigPictureWhenCollapsed;
 }
