@@ -1079,6 +1079,10 @@ public class FlutterLocalNotificationsPlugin
             context,
             bigPictureStyleInformation.bigPicture,
             bigPictureStyleInformation.bigPictureBitmapSource));
+    if (VERSION.SDK_INT >= VERSION_CODES.S
+        && Boolean.TRUE.equals(bigPictureStyleInformation.showBigPictureWhenCollapsed)) {
+      bigPictureStyle.showBigPictureWhenCollapsed(true);
+    }
     builder.setStyle(bigPictureStyle);
   }
 
