@@ -1,6 +1,7 @@
-## [Unreleased]
+## [22.1.0]
 
 * [Android] added support for `showBigPictureWhenCollapsed` in `BigPictureStyleInformation`. Thanks to the PR from [hiimax (Codematic)](https://github.com/hiimax)
+* [iOS][macOS] improved SPM compatibility
 
 ## [22.0.1]
 

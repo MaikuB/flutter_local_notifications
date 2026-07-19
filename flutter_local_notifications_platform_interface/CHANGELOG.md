@@ -1,3 +1,7 @@
+## [12.0.1]
+
+* Fixed API docs of `NotificationResponseType.selectedNotificationAction`. Thanks to the PR from [fush1m1](https://github.com/Fush1m1)
+
 ## [12.0.0]
 
 * Added `zonedScheduled()` to the platform interface and moved `DateTimeComponents` from main plugin to platform interface. Thanks to the PR from [Gaurav Yadav](https://github.com/Gaurav-CareMonitor)
