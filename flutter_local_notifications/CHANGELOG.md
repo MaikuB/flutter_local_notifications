@@ -2,6 +2,8 @@
 
 * [Android] added support for `showBigPictureWhenCollapsed` in `BigPictureStyleInformation`. Thanks to the PR from [hiimax (Codematic)](https://github.com/hiimax)
 * [iOS][macOS] improved SPM compatibility
+* Migrated example app to use SPM and removed Cocoapods integration
+* Fixed API docs of `NotificationResponseType.selectedNotificationAction`. Thanks to the PR from [fush1m1](https://github.com/Fush1m1)
 
 ## [22.0.1]
 
