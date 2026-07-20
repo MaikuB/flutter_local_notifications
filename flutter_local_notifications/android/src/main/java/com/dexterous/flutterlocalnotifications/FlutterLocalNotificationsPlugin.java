@@ -487,8 +487,16 @@ public class FlutterLocalNotificationsPlugin
       if (StringUtils.isNullOrEmpty(defaultIcon)) {
         // for backwards compatibility: this is for handling the old way references to the icon used
         // to be kept but should be removed in future
-        builder.setSmallIcon(notificationDetails.iconResourceId);
-
+        if (notificationDetails.iconResourceId != null) {
+          builder.setSmallIcon(notificationDetails.iconResourceId);
+        } else {
+          // No icon on the notification, no persisted default icon, and no legacy
+          // resource id (e.g. a notification serialized by an older version of the
+          // plugin that fires after an app update). Fall back to the application's
+          // own icon so delivery never crashes with an NPE unboxing a null
+          // iconResourceId. See https://github.com/MaikuB/flutter_local_notifications/issues/298
+          builder.setSmallIcon(context.getApplicationInfo().icon);
+        }
       } else {
         builder.setSmallIcon(getDrawableResourceId(context, defaultIcon));
       }
