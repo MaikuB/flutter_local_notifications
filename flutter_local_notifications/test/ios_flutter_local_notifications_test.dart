@@ -956,6 +956,109 @@ void main() {
       ]);
     });
 
+    test('getNotificationAppLaunchDetails maps response timestamps', () async {
+      final DateTime notificationDeliveredAt = DateTime.utc(
+        2026,
+        DateTime.january,
+        2,
+        3,
+        4,
+        5,
+      );
+      final DateTime responseReceivedAt = DateTime.utc(
+        2026,
+        DateTime.january,
+        2,
+        3,
+        6,
+        7,
+      );
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+            log.add(methodCall);
+            if (methodCall.method == 'getNotificationAppLaunchDetails') {
+              return <String, Object?>{
+                'notificationLaunchedApp': true,
+                'notificationResponse': <String, Object?>{
+                  'notificationId': 1,
+                  'actionId': 'action',
+                  'input': null,
+                  'notificationResponseType': 1,
+                  'payload': 'payload',
+                  'notificationDeliveredAt':
+                      notificationDeliveredAt.millisecondsSinceEpoch,
+                  'responseReceivedAt':
+                      responseReceivedAt.millisecondsSinceEpoch,
+                },
+              };
+            }
+            return null;
+          });
+
+      final NotificationAppLaunchDetails? details =
+          await flutterLocalNotificationsPlugin
+              .getNotificationAppLaunchDetails();
+
+      expect(details?.didNotificationLaunchApp, isTrue);
+      expect(
+        details?.notificationResponse?.notificationDeliveredAt,
+        notificationDeliveredAt,
+      );
+      expect(
+        details?.notificationResponse?.responseReceivedAt,
+        responseReceivedAt,
+      );
+    });
+
+    test('onDidReceiveNotificationResponse maps response timestamps', () async {
+      final DateTime notificationDeliveredAt = DateTime.utc(
+        2026,
+        DateTime.january,
+        2,
+        3,
+        4,
+        5,
+      );
+      final DateTime responseReceivedAt = DateTime.utc(
+        2026,
+        DateTime.january,
+        2,
+        3,
+        6,
+        7,
+      );
+      NotificationResponse? response;
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: const InitializationSettings(
+          iOS: IOSInitializationSettings(),
+        ),
+        onDidReceiveNotificationResponse: (NotificationResponse value) {
+          response = value;
+        },
+      );
+
+      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .handlePlatformMessage(
+            'dexterous.com/flutter/local_notifications',
+            channel.codec.encodeMethodCall(
+              MethodCall('didReceiveNotificationResponse', <String, Object?>{
+                'notificationId': 1,
+                'actionId': 'action',
+                'input': null,
+                'notificationResponseType': 1,
+                'payload': 'payload',
+                'notificationDeliveredAt':
+                    notificationDeliveredAt.millisecondsSinceEpoch,
+                'responseReceivedAt': responseReceivedAt.millisecondsSinceEpoch,
+              }),
+            ),
+            (_) {},
+          );
+
+      expect(response?.notificationDeliveredAt, notificationDeliveredAt);
+      expect(response?.responseReceivedAt, responseReceivedAt);
+    });
+
     test('initialize with providesAppNotificationSettings', () async {
       const IOSInitializationSettings iosInitializationSettings =
           IOSInitializationSettings(

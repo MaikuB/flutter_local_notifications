@@ -31,6 +31,16 @@ const MethodChannel _channel = MethodChannel(
   'dexterous.com/flutter/local_notifications',
 );
 
+DateTime? _dateTimeFromMillisecondsSinceEpoch(Object? value) {
+  if (value == null) {
+    return null;
+  }
+  if (value is int) {
+    return DateTime.fromMillisecondsSinceEpoch(value, isUtc: true);
+  }
+  return null;
+}
+
 /// An implementation of a local notifications platform using method channels.
 class MethodChannelFlutterLocalNotificationsPlugin
     extends FlutterLocalNotificationsPlatform {
@@ -74,6 +84,12 @@ class MethodChannelFlutterLocalNotificationsPlugin
                 payload: notificationResponse.containsKey('payload')
                     ? notificationResponse['payload']
                     : null,
+                notificationDeliveredAt: _dateTimeFromMillisecondsSinceEpoch(
+                  notificationResponse['notificationDeliveredAt'],
+                ),
+                responseReceivedAt: _dateTimeFromMillisecondsSinceEpoch(
+                  notificationResponse['responseReceivedAt'],
+                ),
                 data: Map<String, dynamic>.from(
                   notificationResponse['data'] ?? <String, dynamic>{},
                 ),
@@ -653,6 +669,12 @@ class AndroidFlutterLocalNotificationsPlugin
             actionId: call.arguments['actionId'],
             input: call.arguments['input'],
             payload: call.arguments['payload'],
+            notificationDeliveredAt: _dateTimeFromMillisecondsSinceEpoch(
+              call.arguments['notificationDeliveredAt'],
+            ),
+            responseReceivedAt: _dateTimeFromMillisecondsSinceEpoch(
+              call.arguments['responseReceivedAt'],
+            ),
             notificationResponseType: NotificationResponseType
                 .values[call.arguments['notificationResponseType']],
           ),
@@ -894,6 +916,12 @@ class IOSFlutterLocalNotificationsPlugin
             actionId: call.arguments['actionId'],
             input: call.arguments['input'],
             payload: call.arguments['payload'],
+            notificationDeliveredAt: _dateTimeFromMillisecondsSinceEpoch(
+              call.arguments['notificationDeliveredAt'],
+            ),
+            responseReceivedAt: _dateTimeFromMillisecondsSinceEpoch(
+              call.arguments['responseReceivedAt'],
+            ),
             notificationResponseType: NotificationResponseType
                 .values[call.arguments['notificationResponseType']],
           ),
@@ -1091,6 +1119,12 @@ class MacOSFlutterLocalNotificationsPlugin
             actionId: call.arguments['actionId'],
             input: call.arguments['input'],
             payload: call.arguments['payload'],
+            notificationDeliveredAt: _dateTimeFromMillisecondsSinceEpoch(
+              call.arguments['notificationDeliveredAt'],
+            ),
+            responseReceivedAt: _dateTimeFromMillisecondsSinceEpoch(
+              call.arguments['responseReceivedAt'],
+            ),
             notificationResponseType: NotificationResponseType
                 .values[call.arguments['notificationResponseType']],
           ),
