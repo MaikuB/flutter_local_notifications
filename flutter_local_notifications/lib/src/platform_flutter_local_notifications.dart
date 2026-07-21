@@ -38,18 +38,6 @@ DateTime? _dateTimeFromMillisecondsSinceEpoch(Object? value) {
   if (value is int) {
     return DateTime.fromMillisecondsSinceEpoch(value, isUtc: true);
   }
-  if (value is num) {
-    return DateTime.fromMillisecondsSinceEpoch(value.toInt(), isUtc: true);
-  }
-  if (value is String) {
-    final millisecondsSinceEpoch = int.tryParse(value);
-    if (millisecondsSinceEpoch != null) {
-      return DateTime.fromMillisecondsSinceEpoch(
-        millisecondsSinceEpoch,
-        isUtc: true,
-      );
-    }
-  }
   return null;
 }
 
