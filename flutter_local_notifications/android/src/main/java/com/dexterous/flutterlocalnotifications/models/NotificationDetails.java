@@ -293,8 +293,7 @@ public class NotificationDetails implements Serializable {
       notificationDetails.category = (String) platformChannelSpecifics.get(CATEGORY);
       notificationDetails.fullScreenIntent =
           (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
-      notificationDetails.dismissIsolate =
-          (Integer) platformChannelSpecifics.get(DISMISS_ISOLATE);
+      notificationDetails.dismissIsolate = (Integer) platformChannelSpecifics.get(DISMISS_ISOLATE);
       notificationDetails.shortcutId = (String) platformChannelSpecifics.get(SHORTCUT_ID);
       notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
       notificationDetails.subText = (String) platformChannelSpecifics.get(SUB_TEXT);
