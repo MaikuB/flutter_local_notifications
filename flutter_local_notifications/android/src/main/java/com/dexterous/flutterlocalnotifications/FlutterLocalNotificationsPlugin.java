@@ -6,6 +6,7 @@ import static android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -276,8 +277,16 @@ public class FlutterLocalNotificationsPlugin
     if (VERSION.SDK_INT >= VERSION_CODES.M) {
       flags |= PendingIntent.FLAG_IMMUTABLE;
     }
-    PendingIntent pendingIntent =
-        PendingIntent.getActivity(context, notificationDetails.id, intent, flags);
+    PendingIntent pendingIntent;
+    if (VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE) {
+      ActivityOptions activityOptions = ActivityOptions.makeBasic();
+      activityOptions.setPendingIntentCreatorBackgroundActivityStartMode(
+          ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_DENIED);
+      pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, flags,
+          activityOptions.toBundle());
+    } else {
+      pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, flags);
+    }
     DefaultStyleInformation defaultStyleInformation =
         (DefaultStyleInformation) notificationDetails.styleInformation;
     NotificationCompat.Builder builder =
@@ -334,10 +343,22 @@ public class FlutterLocalNotificationsPlugin
         }
 
         @SuppressLint("UnspecifiedImmutableFlag")
-        final PendingIntent actionPendingIntent =
-            action.showsUserInterface != null && action.showsUserInterface
-                ? PendingIntent.getActivity(context, requestCode++, actionIntent, actionFlags)
-                : PendingIntent.getBroadcast(context, requestCode++, actionIntent, actionFlags);
+        final PendingIntent actionPendingIntent;
+        if (action.showsUserInterface != null && action.showsUserInterface) {
+          if (VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ActivityOptions activityOptions = ActivityOptions.makeBasic();
+            activityOptions.setPendingIntentCreatorBackgroundActivityStartMode(
+                ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_DENIED);
+            actionPendingIntent = PendingIntent.getActivity(context, requestCode++, actionIntent,
+                actionFlags, activityOptions.toBundle());
+          } else {
+            actionPendingIntent = PendingIntent.getActivity(context, requestCode++, actionIntent,
+                actionFlags);
+          }
+        } else {
+          actionPendingIntent = PendingIntent.getBroadcast(context, requestCode++, actionIntent,
+              actionFlags);
+        }
 
         final Spannable actionTitleSpannable = new SpannableString(action.title);
         if (action.titleColor != null) {
