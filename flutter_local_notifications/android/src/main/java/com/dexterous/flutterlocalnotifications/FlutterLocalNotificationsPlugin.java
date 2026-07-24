@@ -41,6 +41,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.AlarmManagerCompat;
+import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.Action.Builder;
 import androidx.core.app.NotificationManagerCompat;
@@ -1214,6 +1215,81 @@ public class FlutterLocalNotificationsPlugin
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
       NotificationManager notificationManager =
           (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+      // Conversation channels require API 30+. Below that, getConversationId()
+      // always returns null (the compat lib skips the platform call), causing
+      // the delete-and-recreate guard to fire on every call and discard user
+      // customisations. Fall through to the regular path on older devices.
+      if (!StringUtils.isNullOrEmpty(notificationChannelDetails.conversationId)
+          && !StringUtils.isNullOrEmpty(notificationChannelDetails.parentChannelId)
+          && VERSION.SDK_INT >= VERSION_CODES.R) {
+        NotificationManagerCompat compatManager = NotificationManagerCompat.from(context);
+        Integer importance =
+            notificationChannelDetails.importance != null
+                ? notificationChannelDetails.importance
+                : NotificationManagerCompat.IMPORTANCE_DEFAULT;
+
+        // Android channel properties are immutable once created: conversationId
+        // cannot be added to an existing channel. Delete the channel first if
+        // it exists without a conversationId so it can be recreated with
+        // setConversationId(). This happens at most once per room (on upgrade
+        // from a build that created the channel without conversation support).
+        NotificationChannelCompat existing =
+            compatManager.getNotificationChannelCompat(notificationChannelDetails.id);
+        if (existing != null && existing.getConversationId() == null) {
+          compatManager.deleteNotificationChannel(notificationChannelDetails.id);
+        }
+
+        NotificationChannelCompat.Builder builder =
+            new NotificationChannelCompat.Builder(notificationChannelDetails.id, importance)
+                .setName(notificationChannelDetails.name)
+                .setDescription(notificationChannelDetails.description)
+                .setGroup(notificationChannelDetails.groupId)
+                .setShowBadge(BooleanUtils.getValue(notificationChannelDetails.showBadge))
+                .setVibrationEnabled(
+                    BooleanUtils.getValue(notificationChannelDetails.enableVibration))
+                .setVibrationPattern(notificationChannelDetails.vibrationPattern)
+                .setLightsEnabled(BooleanUtils.getValue(notificationChannelDetails.enableLights))
+                .setConversationId(
+                    notificationChannelDetails.parentChannelId,
+                    notificationChannelDetails.conversationId);
+
+        if (notificationChannelDetails.playSound) {
+          Integer audioAttributesUsage =
+              notificationChannelDetails.audioAttributesUsage != null
+                  ? notificationChannelDetails.audioAttributesUsage
+                  : AudioAttributes.USAGE_NOTIFICATION;
+          AudioAttributes audioAttributes =
+              new AudioAttributes.Builder().setUsage(audioAttributesUsage).build();
+          Uri uri =
+              retrieveSoundResourceUri(
+                  context,
+                  notificationChannelDetails.sound,
+                  notificationChannelDetails.soundSource);
+          builder.setSound(uri, audioAttributes);
+        } else {
+          builder.setSound(null, null);
+        }
+
+        if (BooleanUtils.getValue(notificationChannelDetails.enableLights)
+            && notificationChannelDetails.ledColor != null) {
+          builder.setLightColor(notificationChannelDetails.ledColor);
+        }
+
+        // NotificationChannelCompat.Builder does not expose setBypassDnd.
+        if (BooleanUtils.getValue(notificationChannelDetails.bypassDnd)) {
+          Log.w(
+              TAG,
+              "Channel '"
+                  + notificationChannelDetails.name
+                  + "' was set to bypass Do Not Disturb but this is not supported"
+                  + " for conversation channels.");
+        }
+
+        compatManager.createNotificationChannel(builder.build());
+        return;
+      }
+
       NotificationChannel notificationChannel =
           new NotificationChannel(
               notificationChannelDetails.id,
