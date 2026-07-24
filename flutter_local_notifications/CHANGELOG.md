@@ -1,3 +1,7 @@
+## [22.1.1]
+
+* [Android] Fixed a `NullPointerException` crash in `setSmallIcon` (`Attempt to invoke virtual method 'int java.lang.Integer.intValue()' on a null object reference`) when a scheduled notification is delivered with no `icon`, no persisted default icon, and a null legacy `iconResourceId`. This can happen when a notification serialized by an older version of the plugin fires after an app update. The application's own icon is now used as a fallback so notification delivery no longer crashes. Fixes [#298](https://github.com/MaikuB/flutter_local_notifications/issues/298) and [#2049](https://github.com/MaikuB/flutter_local_notifications/issues/2049)
+
 ## [22.1.0]
 
 * [Android] added support for `showBigPictureWhenCollapsed` in `BigPictureStyleInformation`. Thanks to the PR from [hiimax (Codematic)](https://github.com/hiimax)
