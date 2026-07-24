@@ -62,8 +62,20 @@ const String darwinNotificationCategoryText = 'textCategory';
 /// Defines a iOS/MacOS notification category for plain actions.
 const String darwinNotificationCategoryPlain = 'plainCategory';
 
+/// Defines a iOS/MacOS notification category that reports dismissals.
+const String dismissableNotificationCategory = 'dismissableCategory';
+
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
+  if (notificationResponse.notificationResponseType ==
+      NotificationResponseType.notificationDismissed) {
+    // ignore: avoid_print
+    print(
+      'notification(${notificationResponse.id}) dismissed on background isolate'
+      ' with payload: ${notificationResponse.payload}',
+    );
+    return;
+  }
   // ignore: avoid_print
   print(
     'notification(${notificationResponse.id}) action tapped: '
@@ -133,6 +145,14 @@ Future<void> main() async {
           ],
           options: <DarwinNotificationCategoryOption>{
             DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
+          },
+        ),
+        const DarwinNotificationCategory(
+          dismissableNotificationCategory,
+          // The customDismissAction option is required for iOS/macOS to report
+          // when the user dismisses a notification belonging to this category.
+          options: <DarwinNotificationCategoryOption>{
+            DarwinNotificationCategoryOption.customDismissAction,
           },
         ),
       ];
@@ -372,6 +392,15 @@ class _HomePageState extends State<HomePage> {
     selectNotificationStream.stream.listen((
       NotificationResponse? response,
     ) async {
+      if (response?.notificationResponseType ==
+          NotificationResponseType.notificationDismissed) {
+        // ignore: avoid_print
+        print(
+          'notification(${response?.id}) dismissed on main isolate'
+          ' with payload: ${response?.payload}',
+        );
+        return;
+      }
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (BuildContext context) => SecondPage(
@@ -445,6 +474,26 @@ class _HomePageState extends State<HomePage> {
                 buttonText: 'Show plain notification with payload',
                 onPressed: () async {
                   await _showNotification();
+                },
+              ),
+              PaddedElevatedButton(
+                buttonText:
+                    'Show notification that reports its dismissal on '
+                    'the main isolate',
+                onPressed: () async {
+                  await _showDismissibleNotification(
+                    NotificationDismissedIsolate.main,
+                  );
+                },
+              ),
+              PaddedElevatedButton(
+                buttonText:
+                    'Show notification that reports its dismissal on '
+                    'a background isolate',
+                onPressed: () async {
+                  await _showDismissibleNotification(
+                    NotificationDismissedIsolate.background,
+                  );
                 },
               ),
               PaddedElevatedButton(
@@ -1151,6 +1200,38 @@ class _HomePageState extends State<HomePage> {
       body: 'plain body',
       notificationDetails: notificationDetails,
       payload: 'item x',
+    );
+  }
+
+  Future<void> _showDismissibleNotification(
+    NotificationDismissedIsolate isolate,
+  ) async {
+    final AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+          'your channel id',
+          'your channel name',
+          channelDescription: 'your channel description',
+          importance: Importance.max,
+          priority: Priority.high,
+          ticker: 'ticker',
+          dismissIsolate: isolate,
+        );
+    final DarwinNotificationDetails darwinNotificationDetails =
+        DarwinNotificationDetails(
+          categoryIdentifier: dismissableNotificationCategory,
+          dismissIsolate: isolate,
+        );
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+      iOS: darwinNotificationDetails,
+      macOS: darwinNotificationDetails,
+    );
+    await flutterLocalNotificationsPlugin.show(
+      id: id++,
+      title: 'dismiss me',
+      body: 'swipe me away to trigger a dismiss event',
+      notificationDetails: notificationDetails,
+      payload: 'dismissible item',
     );
   }
 

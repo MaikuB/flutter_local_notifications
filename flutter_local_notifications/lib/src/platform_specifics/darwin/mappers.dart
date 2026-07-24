@@ -86,5 +86,6 @@ extension DarwinNotificationDetailsMapper on DarwinNotificationDetails {
     'attachments': attachments?.map((a) => a.toMap()).toList(),
     'categoryIdentifier': categoryIdentifier,
     'criticalSoundVolume': criticalSoundVolume,
+    'dismissIsolate': dismissIsolate?.index,
   };
 }

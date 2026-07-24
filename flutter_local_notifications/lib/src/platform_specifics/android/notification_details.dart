@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
+import '../../types.dart';
 import 'bitmap.dart';
 import 'enums.dart';
 import 'notification_sound.dart';
@@ -156,6 +157,7 @@ class AndroidNotificationDetails {
     this.colorized = false,
     this.number,
     this.audioAttributesUsage = AudioAttributesUsage.notification,
+    this.dismissIsolate,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -426,4 +428,13 @@ class AndroidNotificationDetails {
   /// such as alarm or ringtone set in [`AudioAttributes.Builder`](https://developer.android.com/reference/android/media/AudioAttributes.Builder#setUsage(int)).
   /// https://developer.android.com/reference/android/media/AudioAttributes
   final AudioAttributesUsage audioAttributesUsage;
+
+  /// The isolate a dismissal is reported on, or `null` to not report it.
+  ///
+  /// When set, swiping the notification away triggers a [NotificationResponse]
+  /// of type [NotificationResponseType.notificationDismissed] on that isolate.
+  /// [NotificationDismissedIsolate.background] fires even when the app has been
+  /// terminated; [NotificationDismissedIsolate.main] fires only while it runs.
+  /// Dismissing via a tap or `cancel` is never reported.
+  final NotificationDismissedIsolate? dismissIsolate;
 }

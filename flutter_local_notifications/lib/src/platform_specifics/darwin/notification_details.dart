@@ -1,3 +1,4 @@
+import '../../types.dart';
 import 'interruption_level.dart';
 import 'notification_attachment.dart';
 
@@ -19,6 +20,7 @@ class DarwinNotificationDetails {
     this.categoryIdentifier,
     this.interruptionLevel,
     this.criticalSoundVolume,
+    this.dismissIsolate,
   });
 
   /// Indicates if an alert should be display when the notification is triggered
@@ -153,4 +155,13 @@ class DarwinNotificationDetails {
   /// On iOS, this property is only applicable to iOS 12.0 or newer.
   /// On macOS, this property is only applicable to macOS 10.14 or newer.
   final double? criticalSoundVolume;
+
+  /// The isolate a dismissal is reported on, or `null` to not report it.
+  ///
+  /// Requires the notification's category to be configured with the
+  /// `customDismissAction` option. When set, swiping the notification away
+  /// triggers a [NotificationResponse] of type
+  /// [NotificationResponseType.notificationDismissed] on that isolate. macOS
+  /// has no background isolate so it always reports on the main isolate.
+  final NotificationDismissedIsolate? dismissIsolate;
 }

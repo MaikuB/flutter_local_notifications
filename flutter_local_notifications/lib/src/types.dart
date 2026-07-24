@@ -27,3 +27,12 @@ enum Day {
   /// The integer representation of [Day].
   final int value;
 }
+
+/// The isolate a notification dismissal is reported on.
+enum NotificationDismissedIsolate {
+  /// The application's main isolate.
+  main,
+
+  /// A background isolate.
+  background,
+}

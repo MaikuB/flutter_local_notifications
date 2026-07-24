@@ -99,6 +99,7 @@ NSString *const PAYLOAD = @"payload";
 NSString *const NOTIFICATION_LAUNCHED_APP = @"notificationLaunchedApp";
 NSString *const ACTION_ID = @"actionId";
 NSString *const NOTIFICATION_RESPONSE_TYPE = @"notificationResponseType";
+NSString *const DISMISS_ISOLATE = @"dismissIsolate";
 
 NSString *const UNSUPPORTED_OS_VERSION_ERROR_CODE = @"unsupported_os_version";
 NSString *const GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
@@ -798,14 +799,21 @@ static FlutterError *getFlutterError(NSError *error) {
   if (presentSound && content.sound == nil) {
     content.sound = UNNotificationSound.defaultSound;
   }
-  content.userInfo = [self buildUserDict:arguments[ID]
-                                   title:content.title
-                            presentAlert:presentAlert
-                            presentSound:presentSound
-                            presentBadge:presentBadge
-                           presentBanner:presentBanner
-                             presentList:presentList
-                                 payload:arguments[PAYLOAD]];
+  NSMutableDictionary *userDict = [self buildUserDict:arguments[ID]
+                                                title:content.title
+                                         presentAlert:presentAlert
+                                         presentSound:presentSound
+                                         presentBadge:presentBadge
+                                        presentBanner:presentBanner
+                                          presentList:presentList
+                                              payload:arguments[PAYLOAD]];
+  if (arguments[PLATFORM_SPECIFICS] != [NSNull null]) {
+    id dismissIsolate = arguments[PLATFORM_SPECIFICS][DISMISS_ISOLATE];
+    if (dismissIsolate != nil && dismissIsolate != [NSNull null]) {
+      userDict[DISMISS_ISOLATE] = dismissIsolate;
+    }
+  }
+  content.userInfo = userDict;
   return content;
 }
 
@@ -1029,9 +1037,11 @@ static FlutterError *getFlutterError(NSError *error) {
           isEqualToString:UNNotificationDefaultActionIdentifier]) {
     notitificationResponseDict[NOTIFICATION_RESPONSE_TYPE] =
         [NSNumber numberWithInteger:0];
-  } else if (response.actionIdentifier != nil &&
-             ![response.actionIdentifier
+  } else if ([response.actionIdentifier
                  isEqualToString:UNNotificationDismissActionIdentifier]) {
+    notitificationResponseDict[NOTIFICATION_RESPONSE_TYPE] =
+        [NSNumber numberWithInteger:2];
+  } else if (response.actionIdentifier != nil) {
     notitificationResponseDict[ACTION_ID] = response.actionIdentifier;
     notitificationResponseDict[NOTIFICATION_RESPONSE_TYPE] =
         [NSNumber numberWithInteger:1];
@@ -1066,6 +1076,28 @@ static FlutterError *getFlutterError(NSError *error) {
       _launchNotificationResponseDict =
           [self extractNotificationResponseDict:response];
       _launchingAppFromNotification = true;
+    }
+    completionHandler();
+  } else if ([response.actionIdentifier
+                 isEqualToString:UNNotificationDismissActionIdentifier]) {
+    id dismissIsolate =
+        response.notification.request.content.userInfo[DISMISS_ISOLATE];
+    if (dismissIsolate != nil && dismissIsolate != [NSNull null]) {
+      NSMutableDictionary *notificationResponseDict =
+          [self extractNotificationResponseDict:response];
+      if ([dismissIsolate integerValue] == 0) {
+        if (_initialized) {
+          [_channel invokeMethod:@"didReceiveNotificationResponse"
+                       arguments:notificationResponseDict];
+        }
+      } else {
+        if (!actionEventSink) {
+          actionEventSink = [[ActionEventSink alloc] init];
+        }
+        [actionEventSink addItem:notificationResponseDict];
+        [_flutterEngineManager startEngineIfNeeded:actionEventSink
+                                   registerPlugins:registerPlugins];
+      }
     }
     completionHandler();
   } else if (response.actionIdentifier != nil) {

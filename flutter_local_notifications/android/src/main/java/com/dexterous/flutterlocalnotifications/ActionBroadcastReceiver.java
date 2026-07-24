@@ -23,11 +23,17 @@ import io.flutter.embedding.engine.loader.FlutterLoader;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.EventChannel.StreamHandler;
+import io.flutter.plugin.common.MethodChannel;
 import io.flutter.view.FlutterCallbackInformation;
 
 public class ActionBroadcastReceiver extends BroadcastReceiver {
   public static final String ACTION_TAPPED =
       "com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver.ACTION_TAPPED";
+  public static final String ACTION_DISMISSED =
+      "com.dexterous.flutterlocalnotifications.ActionBroadcastReceiver.ACTION_DISMISSED";
+  public static final String DISMISS_ISOLATE = "dismissIsolate";
+  private static final int DISMISS_ISOLATE_MAIN = 0;
+  private static final int DISMISS_ISOLATE_BACKGROUND = 1;
   private static final String TAG = "ActionBroadcastReceiver";
   @Nullable private static ActionEventSink actionEventSink;
   @Nullable private static FlutterEngine engine;
@@ -43,14 +49,26 @@ public class ActionBroadcastReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
-    if (!ACTION_TAPPED.equalsIgnoreCase(intent.getAction())) {
+    if (!ACTION_TAPPED.equalsIgnoreCase(intent.getAction())
+        && !ACTION_DISMISSED.equalsIgnoreCase(intent.getAction())) {
+      return;
+    }
+
+    final Map<String, Object> action =
+        FlutterLocalNotificationsPlugin.extractNotificationResponseMap(intent);
+
+    // A main-isolate dismissal is only delivered while the app is running.
+    if (ACTION_DISMISSED.equalsIgnoreCase(intent.getAction())
+        && intent.getIntExtra(DISMISS_ISOLATE, DISMISS_ISOLATE_BACKGROUND)
+            == DISMISS_ISOLATE_MAIN) {
+      MethodChannel liveChannel = FlutterLocalNotificationsPlugin.liveChannel;
+      if (liveChannel != null) {
+        liveChannel.invokeMethod("didReceiveNotificationResponse", action);
+      }
       return;
     }
 
     preferences = preferences == null ? new IsolatePreferences(context) : preferences;
-
-    final Map<String, Object> action =
-        FlutterLocalNotificationsPlugin.extractNotificationResponseMap(intent);
 
     if (intent.getBooleanExtra(FlutterLocalNotificationsPlugin.CANCEL_NOTIFICATION, false)) {
       int notificationId = (int) action.get(FlutterLocalNotificationsPlugin.NOTIFICATION_ID);

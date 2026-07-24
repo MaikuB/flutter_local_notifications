@@ -33,6 +33,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         static let title = "title"
         static let subtitle = "subtitle"
         static let categoryIdentifier = "categoryIdentifier"
+        static let dismissIsolate = "dismissIsolate"
         static let body = "body"
         static let scheduledDateTime = "scheduledDateTimeISO8601"
         static let timeZoneName = "timeZoneName"
@@ -150,9 +151,13 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             }
 
             completionHandler()
-        } else if response.actionIdentifier == UNNotificationDismissActionIdentifier {
-            completionHandler()
         } else {
+            // Only report a dismissal when opted in via dismissIsolate.
+            if response.actionIdentifier == UNNotificationDismissActionIdentifier,
+                response.notification.request.content.userInfo[MethodCallArguments.dismissIsolate] == nil {
+                completionHandler()
+                return
+            }
             if initialized {
                 // No isolate can be used for macOS until https://github.com/flutter/flutter/issues/65222 is resolved.
                 //
@@ -483,6 +488,10 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         content.userInfo = [MethodCallArguments.payload: arguments[MethodCallArguments.payload] as Any, MethodCallArguments.presentSound: presentSound, MethodCallArguments.presentBadge: presentBadge, MethodCallArguments.presentAlert: presentAlert,
                             MethodCallArguments.presentBanner: presentBanner,
                             MethodCallArguments.presentList: presentList]
+        if let platformSpecifics = arguments[MethodCallArguments.platformSpecifics] as? [String: AnyObject],
+            let dismissIsolate = platformSpecifics[MethodCallArguments.dismissIsolate], !(dismissIsolate is NSNull) {
+            content.userInfo[MethodCallArguments.dismissIsolate] = dismissIsolate
+        }
         if presentSound && content.sound == nil {
             content.sound = UNNotificationSound.default
         }
@@ -612,7 +621,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         notificationResponseDict["notificationId"] = Int(response.notification.request.identifier)!
         if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
             notificationResponseDict[MethodCallArguments.notificationResponseType] = 0
-        } else if response.actionIdentifier != UNNotificationDismissActionIdentifier {
+        } else if response.actionIdentifier == UNNotificationDismissActionIdentifier {
+            notificationResponseDict[MethodCallArguments.notificationResponseType] = 2
+        } else {
             notificationResponseDict[MethodCallArguments.actionId] = response.actionIdentifier
             notificationResponseDict[MethodCallArguments.notificationResponseType] = 1
         }
