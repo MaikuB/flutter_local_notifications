@@ -1,3 +1,7 @@
+## [12.1.0]
+
+* Added `NotificationResponseType.notificationDismissed` enum value to support handling when a notification has been dismissed. Thanks to the PR from [Vasily Laushkin](https://github.com/vlaushkin)
+
 ## [12.0.1]
 
 * Fixed API docs of `NotificationResponseType.selectedNotificationAction`. Thanks to the PR from [fush1m1](https://github.com/Fush1m1)
