@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'enums.dart';
+import 'icon.dart';
 import 'initialization_settings.dart';
 import 'message.dart';
 import 'notification_channel.dart';
@@ -14,6 +15,7 @@ import 'styles/default_style_information.dart';
 import 'styles/inbox_style_information.dart';
 import 'styles/media_style_information.dart';
 import 'styles/messaging_style_information.dart';
+import 'styles/progress_style_information.dart';
 
 extension AndroidInitializationSettingsMapper on AndroidInitializationSettings {
   Map<String, Object> toMap() => <String, Object>{'defaultIcon': defaultIcon};
@@ -181,6 +183,54 @@ extension MessagingStyleInformationMapper on MessagingStyleInformation {
       });
 }
 
+Map<String, Object> _convertAndroidIconToMap(
+  AndroidIcon<Object>? icon,
+  String key,
+) {
+  if (icon == null) {
+    return <String, Object>{};
+  }
+  return <String, Object>{key: icon.data, '${key}Source': icon.source.index};
+}
+
+extension ProgressStyleInformationMapper on ProgressStyleInformation {
+  Map<String, Object?> toMap() => _convertDefaultStyleInformationToMap(this)
+    ..addAll(<String, Object?>{
+      'progress': progress,
+      'progressIndeterminate': progressIndeterminate,
+      'styledByProgress': styledByProgress,
+      'segments': segments.map((s) => s.toMap()).toList(),
+      'points': points.map((p) => p.toMap()).toList(),
+    })
+    ..addAll(
+      _convertAndroidIconToMap(progressTrackerIcon, 'progressTrackerIcon'),
+    )
+    ..addAll(_convertAndroidIconToMap(progressStartIcon, 'progressStartIcon'))
+    ..addAll(_convertAndroidIconToMap(progressEndIcon, 'progressEndIcon'));
+}
+
+extension ProgressStyleSegmentMapper on ProgressStyleSegment {
+  Map<String, Object?> toMap() => <String, Object?>{
+    'length': length,
+    'id': id,
+    'colorAlpha': color?.intAlpha,
+    'colorRed': color?.intRed,
+    'colorGreen': color?.intGreen,
+    'colorBlue': color?.intBlue,
+  };
+}
+
+extension ProgressStylePointMapper on ProgressStylePoint {
+  Map<String, Object?> toMap() => <String, Object?>{
+    'position': position,
+    'id': id,
+    'colorAlpha': color?.intAlpha,
+    'colorRed': color?.intRed,
+    'colorGreen': color?.intGreen,
+    'colorBlue': color?.intBlue,
+  };
+}
+
 extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
   Map<String, Object?> toMap() =>
       <String, Object?>{
@@ -201,6 +251,8 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
           'groupAlertBehavior': groupAlertBehavior.index,
           'autoCancel': autoCancel,
           'ongoing': ongoing,
+          'requestPromotedOngoing': requestPromotedOngoing,
+          'shortCriticalText': shortCriticalText,
           'silent': silent,
           'colorAlpha': color?.intAlpha,
           'colorRed': color?.intRed,
@@ -270,6 +322,12 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
       return <String, Object?>{
         'style': AndroidNotificationStyle.media.index,
         'styleInformation': (styleInformation as MediaStyleInformation?)
+            ?.toMap(),
+      };
+    } else if (styleInformation is ProgressStyleInformation) {
+      return <String, Object?>{
+        'style': AndroidNotificationStyle.progress.index,
+        'styleInformation': (styleInformation as ProgressStyleInformation?)
             ?.toMap(),
       };
     } else if (styleInformation is DefaultStyleInformation) {

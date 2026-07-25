@@ -28,6 +28,7 @@ export 'src/platform_specifics/android/styles/default_style_information.dart';
 export 'src/platform_specifics/android/styles/inbox_style_information.dart';
 export 'src/platform_specifics/android/styles/media_style_information.dart';
 export 'src/platform_specifics/android/styles/messaging_style_information.dart';
+export 'src/platform_specifics/android/styles/progress_style_information.dart';
 export 'src/platform_specifics/android/styles/style_information.dart';
 export 'src/platform_specifics/darwin/initialization_settings.dart';
 export 'src/platform_specifics/darwin/interruption_level.dart';

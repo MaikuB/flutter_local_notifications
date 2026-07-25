@@ -47,6 +47,9 @@ enum AndroidNotificationStyle {
 
   /// The media style.
   media,
+
+  /// The progress style ("Live Update").
+  progress,
 }
 
 /// Specifies the source for a sound used by Android notifications.

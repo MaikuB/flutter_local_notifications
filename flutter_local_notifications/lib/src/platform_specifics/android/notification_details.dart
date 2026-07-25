@@ -126,6 +126,8 @@ class AndroidNotificationDetails {
     this.groupAlertBehavior = GroupAlertBehavior.all,
     this.autoCancel = true,
     this.ongoing = false,
+    this.requestPromotedOngoing = false,
+    this.shortCriticalText,
     this.silent = false,
     this.color,
     this.largeIcon,
@@ -260,6 +262,25 @@ class AndroidNotificationDetails {
 
   /// Specifies if the notification will be "ongoing".
   final bool ongoing;
+
+  /// Requests that an [ongoing] notification be promoted to a "Live Update".
+  ///
+  /// On Android 16 (API level 36) and newer, a promoted ongoing notification is
+  /// given elevated placement in the status bar and notification shade. It has
+  /// no effect unless [ongoing] is also `true`, and is ignored on older
+  /// versions of Android.
+  ///
+  /// See https://developer.android.com/develop/ui/views/notifications/promoted-ongoing
+  /// for the requirements a notification must meet to be promoted.
+  final bool requestPromotedOngoing;
+
+  /// Short text shown in the status bar chip of a promoted "Live Update".
+  ///
+  /// On Android 16 (API level 36) and newer, this conveys the most important
+  /// piece of state at a glance, e.g. `"3 min"` or `"2.1 mi"`. It only has an
+  /// effect when the notification is promoted (see [requestPromotedOngoing])
+  /// and is ignored on older versions of Android.
+  final String? shortCriticalText;
 
   /// Specifies if the notification will be "silent".
   final bool silent;
