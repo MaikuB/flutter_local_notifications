@@ -245,25 +245,25 @@ static FlutterError *getFlutterError(NSError *error) {
       }
 
       [application openURL:settingsUrl
-                     options:@{}
-           completionHandler:^(BOOL success) {
-             result(@(success));
-           }];
+          options:@{}
+          completionHandler:^(BOOL success) {
+            result(@(success));
+          }];
     };
 
     if (@available(iOS 15.4, *)) {
-      NSURL *notificationSettingsUrl = [NSURL
-          URLWithString:UIApplicationOpenNotificationSettingsURLString];
+      NSURL *notificationSettingsUrl =
+          [NSURL URLWithString:UIApplicationOpenNotificationSettingsURLString];
       if (notificationSettingsUrl != nil) {
         [application openURL:notificationSettingsUrl
-                       options:@{}
-             completionHandler:^(BOOL success) {
-               if (success) {
-                 result(@(YES));
-               } else {
-                 openAppSettings();
-               }
-             }];
+            options:@{}
+            completionHandler:^(BOOL success) {
+              if (success) {
+                result(@(YES));
+              } else {
+                openAppSettings();
+              }
+            }];
         return;
       }
     }
