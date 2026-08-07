@@ -1012,7 +1012,7 @@ class MacOSFlutterLocalNotificationsPlugin
   /// Opens the system settings UI where the user can manage notification
   /// permissions for the app.
   ///
-  /// Falls back to opening the general notification settings page if the app's
+  /// Falls back to opening the system settings notifications pane if the app's
   /// notifications settings page cannot be opened.
   ///
   /// Returns whether the settings page could be opened.

@@ -109,7 +109,8 @@ Note: the plugin requires Flutter SDK 3.38.1 at a minimum. The list of support p
 * [iOS 10 or newer and macOS 10.14 or newer] Display notifications with attachments
 * [iOS 12.0+] Support for custom notification settings UI via "Configure Notifications in <application name>" button in notification context menu (API available on macOS 10.14+ but UI button does not appear in practice)
 * [iOS and macOS 10.14 or newer] Ability to check if notifications are enabled with specific type check
-* [iOS 15.4+ and macOS] Attempt to open the app's notification settings page (falls back to app settings on older iOS versions)
+* [iOS 15.4+] Attempt to open the app's notification settings page (falls back to app settings on older iOS versions)
+* [macOS] Attempt to open the app's notification settings page (falls back to system settings notifications pane)
 * [Linux] Ability to to use themed/Flutter Assets icons and sound
 * [Linux] Ability to to set the category
 * [Linux] Configuring the urgency

@@ -1,6 +1,6 @@
 ## [22.3.0]
 
-* [Android][iOS][macOS] added `openAppNotificationSettings()` method. Tthis opens the system settings UI where the user can manage notification permissions for the app. When not possible, on iOS, it opens the application's settings on iOS and on macOS, it opens the general notification settings. Thanks to the PR from [hamadcc](https://github.com/hamadcc)
+* [Android][iOS][macOS] added `openAppNotificationSettings()` method. This opens the system settings UI where the user can manage notification permissions for the app. When not possible, on iOS, it opens the application's settings on iOS and on macOS, it opens the system settings notification pane. Thanks to the PR from [hamadcc](https://github.com/hamadcc)
 
 ## [22.2.0]
 
