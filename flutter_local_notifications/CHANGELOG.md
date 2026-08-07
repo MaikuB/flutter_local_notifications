@@ -1,3 +1,7 @@
+## [22.3.0]
+
+* [Android][iOS][macOS] added `openAppNotificationSettings()` method. Tthis opens the system settings UI where the user can manage notification permissions for the app. When not possible, on iOS, it opens the application's settings on iOS and on macOS, it opens the general notification settings. Thanks to the PR from [hamadcc](https://github.com/hamadcc)
+
 ## [22.2.0]
 
 * [Android][iOS][macOS] added support for callbacks to fire when a notification has been dismissed. This requires opting in by where the key requirements is to make use of the `dismissIsolate` property added to the `AndroidNotificationDetails` and `DarwinNotificationDetails` class. This indicates which isolate should be used to handle when a notification has been dismissed. Note on macOS, there is no support for background isolates so callback will always fire on the main isolate despite what is specified. Please see example app for more details on how to set up handling dismissals. Thanks to the PR from from [Vasily Laushkin](https://github.com/vlaushkin)

@@ -1009,6 +1009,17 @@ class MacOSFlutterLocalNotificationsPlugin
         );
       });
 
+  /// Opens the system settings UI where the user can manage notification
+  /// permissions for the app.
+  ///
+  /// Falls back to opening the general notification settings page if the app's
+  /// notifications settings page cannot be opened.
+  ///
+  /// Returns whether the settings page could be opened.
+  @override
+  Future<bool?> openAppNotificationSettings() async =>
+      await _channel.invokeMethod<bool>('openAppNotificationSettings');
+
   /// Schedules a notification to be shown at the specified date and time
   /// relative to a specific time zone.
   @override

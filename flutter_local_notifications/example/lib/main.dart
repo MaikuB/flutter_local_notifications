@@ -941,11 +941,10 @@ class _HomePageState extends State<HomePage> {
                   buttonText: 'Request permission',
                   onPressed: _requestPermissions,
                 ),
-                if (Platform.isIOS)
-                  PaddedElevatedButton(
-                    buttonText: 'Open notification settings',
-                    onPressed: _openAppNotificationSettings,
-                  ),
+                PaddedElevatedButton(
+                  buttonText: 'Open notification settings',
+                  onPressed: _openAppNotificationSettings,
+                ),
                 PaddedElevatedButton(
                   buttonText:
                       'Request permission with critical alert permission',
