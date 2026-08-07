@@ -604,16 +604,16 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
     func openAppNotificationSettings(_ result: @escaping FlutterResult) {
         let notificationsPath = "x-apple.systempreferences:com.apple.Notifications-Settings.extension"
-        
+
         guard let bundleId = Bundle.main.bundleIdentifier else { return }
         var openedAppNotificationSettings = false
         if let url = URL(string: "\(notificationsPath)?id=\(bundleId)") {
             openedAppNotificationSettings = NSWorkspace.shared.open(url)
         }
 
-        if(openedAppNotificationSettings) {
+        if openedAppNotificationSettings {
             result(openedAppNotificationSettings)
-            return;
+            return
         }
 
         openNotificationSettings(result)
