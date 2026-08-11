@@ -411,9 +411,6 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         if let title = arguments[MethodCallArguments.title] as? String {
             content.title = title
         }
-        if let subtitle = arguments[MethodCallArguments.subtitle] as? String {
-            content.subtitle = subtitle
-        }
         if let body = arguments[MethodCallArguments.body] as? String {
             content.body = body
         }
@@ -453,6 +450,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             }
             if !(platformSpecifics[MethodCallArguments.presentList] is NSNull) && platformSpecifics[MethodCallArguments.presentList] != nil {
                 presentList = platformSpecifics[MethodCallArguments.presentList] as! Bool
+            }
+            if let subtitle = platformSpecifics[MethodCallArguments.subtitle] as? String {
+                content.subtitle = subtitle
             }
             if let threadIdentifier = platformSpecifics[MethodCallArguments.threadIdentifier] as? String {
                 content.threadIdentifier = threadIdentifier
