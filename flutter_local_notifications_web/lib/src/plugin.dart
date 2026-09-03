@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
@@ -11,6 +12,37 @@ import 'details.dart';
 import 'handler.dart';
 import 'permission.dart';
 import 'utils.dart';
+
+/// Upper bound so initialize() does not hang if activation never finishes.
+const Duration _serviceWorkerActivationTimeout = Duration(seconds: 10);
+
+Future<void> _waitUntilActivated(ServiceWorker? worker) {
+  if (worker == null || worker.state == 'redundant') {
+    throw StateError('Service worker did not become active');
+  }
+  if (worker.state == 'activated') {
+    return Future<void>.value();
+  }
+  final Completer<void> completer = Completer<void>();
+  void completeIfSettled() {
+    if (completer.isCompleted) {
+      return;
+    }
+    if (worker.state == 'activated') {
+      completer.complete();
+    } else if (worker.state == 'redundant') {
+      completer.completeError(
+        StateError('Service worker did not become active'),
+      );
+    }
+  }
+
+  worker.onstatechange = ((Event _) {
+    completeIfSettled();
+  }).toJS;
+  completeIfSettled();
+  return completer.future.timeout(_serviceWorkerActivationTimeout);
+}
 
 /// Called when a notification has been clicked.
 ///
@@ -141,8 +173,13 @@ class WebFlutterLocalNotificationsPlugin
         throw StateError('Failed to register service worker');
       }
 
-      // Subscribe to messages from the service worker
       serviceWorker.onmessage = _handleNotificationClick.toJS;
+
+      await _waitUntilActivated(
+        _registration!.installing ??
+            _registration!.waiting ??
+            _registration!.active,
+      );
 
       return true;
     } catch (e) {
