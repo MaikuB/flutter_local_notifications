@@ -154,8 +154,10 @@ class WebFlutterLocalNotificationsPlugin
       final ServiceWorkerContainer serviceWorker =
           window.navigator.serviceWorker;
       _registration = await serviceWorker.getRegistration().toDart;
+      // Add version query parameter to the service worker file to burst cache
+      // NOTE: update version from pubspec.yaml whenever you update the service worker file
       const String jsPath =
-          './assets/packages/flutter_local_notifications_web/web/notifications_service_worker.js';
+          './assets/packages/flutter_local_notifications_web/web/notifications_service_worker.js?v=1.0.0';
 
       _registration = await serviceWorker.register(jsPath.toJS).toDart;
 
