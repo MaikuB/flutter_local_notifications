@@ -66,5 +66,4 @@
             </intent-filter>
         </receiver>
     </application>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 </manifest>
