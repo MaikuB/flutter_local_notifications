@@ -1,3 +1,7 @@
+## [13.0.0-dev.1]
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.44.0 and Dart SDK requirement to 3.12.0
+
 ## [12.2.0]
 
 * Added `openAppNotificationSettings()` method. When implemented, this opens the system settings UI where the user can manage notification permissions for the app. Thanks to the PR from [hamadcc](https://github.com/hamadcc)

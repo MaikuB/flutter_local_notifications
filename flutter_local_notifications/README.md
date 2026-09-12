@@ -65,7 +65,7 @@ A cross platform plugin for displaying local notifications.
 * **Windows** Uses the [C++/WinRT](https://learn.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/) implementation of [Toast Notifications](https://learn.microsoft.com/en-us/windows/apps/design/shell/tiles-and-notifications/toast-notifications-overview)
 * **Web** Uses the [Notifications API](https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API)
 
-Note: the plugin requires Flutter SDK 3.38.1 at a minimum. The list of support platforms for Flutter 3.38.1 itself can be found [here](https://github.com/flutter/website/blob/6150d58df2f39275ffd589ba32f25557a27e2384/src/content/reference/supported-platforms.md?plain=1#L82)
+Note: the plugin requires Flutter SDK 3.44.0 at a minimum. The list of supported platforms for Flutter can be found [here](https://docs.flutter.dev/reference/supported-platforms)
 
 ## ✨ Features
 
@@ -232,9 +232,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+}
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+// Only needed if your app has Kotlin sources
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 
@@ -260,9 +263,12 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-  
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+}
+
+// Only needed if your app has Kotlin sources
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 
@@ -272,14 +278,14 @@ dependencies {
 ```
 </details>
 
-Note that the plugin uses Android Gradle plugin (AGP) 8.11.1 to leverage this functionality so to err on the safe side, applications should aim to use the same version at a **minimum**. If your application uses a higher version then there's no need to use a lower AGP version. For a Flutter app using the legacy `apply` script syntax, this is specified in `android/build.gradle` and the main parts would look similar to the following
+Note that the plugin uses Android Gradle plugin (AGP) 9.0.1 to leverage this functionality so to err on the safe side, applications should aim to use the same version at a **minimum**. If your application uses a higher version then there's no need to use a lower AGP version. For a Flutter app using the legacy `apply` script syntax, this is specified in `android/build.gradle` and the main parts would look similar to the following
 
 ```gradle
 buildscript {
    ...
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.11.1'
+        classpath 'com.android.tools.build:gradle:9.0.1'
         ...
     }
 ```
@@ -293,7 +299,7 @@ If your app is using the new declarative [Plugin DSL syntax](https://docs.flutte
 ```gradle
 plugins {
     ...
-    id 'com.android.application' version '8.11.1' apply false
+    id 'com.android.application' version '9.0.1' apply false
     ...
 }
 ```
@@ -306,12 +312,14 @@ plugins {
 ```kotlin
 plugins {
     ...
-    id("com.android.application") version "8.11.1" apply false
+    id("com.android.application") version "9.0.1" apply false
     ...
 }
 ```
 
 </details>
+
+AGP 9 and later use [built-in Kotlin](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin) instead of applying the Kotlin Gradle Plugin (KGP) directly. If your app still applies the `kotlin-android`/`org.jetbrains.kotlin.android` plugin, follow Flutter's [migration guide for app developers](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers) to remove it and use the `kotlin { compilerOptions { ... } }` block shown above instead.
 
 There have been reports that enabling desugaring may result in a Flutter apps crashing on Android 12L and above. This would be an issue with Flutter itself, not the plugin. One possible fix is adding the [WindowManager library](https://developer.android.com/jetpack/androidx/releases/window) as a dependency:
 
