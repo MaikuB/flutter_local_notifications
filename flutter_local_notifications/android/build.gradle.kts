@@ -1,0 +1,57 @@
+group = "com.dexterous.flutterlocalnotifications"
+version = "1.0-SNAPSHOT"
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.11.1")
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+plugins {
+    id("com.android.library")
+}
+
+android {
+    namespace = "com.dexterous.flutterlocalnotifications"
+    compileSdk = 36
+
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        multiDexEnabled = true
+        minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    lint {
+        disable.add("InvalidPackage")
+    }
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    implementation("androidx.core:core:1.3.0")
+    implementation("androidx.media:media:1.1.0")
+    implementation("com.google.code.gson:gson:2.12.0")
+
+    testImplementation("junit:junit:4.12")
+    testImplementation("org.mockito:mockito-core:3.10.0")
+    testImplementation("androidx.test:core:1.2.0")
+    testImplementation("org.robolectric:robolectric:4.14.1")
+}
