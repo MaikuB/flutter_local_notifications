@@ -1,3 +1,7 @@
+## [4.0.0-dev.1]
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.44.0 and Dart SDK requirement to 3.12.0
+
 ## [3.1.1]
 
 * Suppress warning around usage of experimental coroutines. This is to fix issue [#2777](https://github.com/MaikuB/flutter_local_notifications/issues/2777)

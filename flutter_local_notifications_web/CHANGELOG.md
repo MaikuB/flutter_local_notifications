@@ -1,3 +1,7 @@
+## 2.0.0-dev.1
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.44.0 and Dart SDK requirement to 3.12.0
+
 ## 1.0.0
 
 * Initial web platform implementation with support for:
