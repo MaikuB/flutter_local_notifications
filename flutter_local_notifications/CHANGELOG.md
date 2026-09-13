@@ -1,7 +1,8 @@
 ## [23.0.0-dev.1]
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.44.0 and Dart SDK requirement to 3.12.0
-* [Android] migrated example app off the Kotlin Gradle Plugin (KGP) in favour of [built-in Kotlin](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin) and bumped Android Gradle Plugin (AGP) to 9.0.1
+* **Breaking change** bumped to AGP 9.0.1
+* Migrated example app off the Kotlin Gradle Plugin (KGP) in favour of [built-in Kotlin](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin) and bumped Android Gradle Plugin (AGP) to 9.0.1
 
 ## [22.3.1]
 
