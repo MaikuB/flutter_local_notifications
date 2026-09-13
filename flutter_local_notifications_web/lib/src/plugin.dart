@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
@@ -11,6 +12,27 @@ import 'details.dart';
 import 'handler.dart';
 import 'permission.dart';
 import 'utils.dart';
+
+Future<void> _waitUntilActivated(ServiceWorker? worker) {
+  if (worker == null) {
+    throw StateError('Service worker did not become active');
+  }
+  if (worker.state == 'activated') {
+    return Future<void>.value();
+  }
+  final Completer<void> completer = Completer<void>();
+  void completeIfActivated() {
+    if (worker.state == 'activated' && !completer.isCompleted) {
+      completer.complete();
+    }
+  }
+
+  worker.onstatechange = ((Event _) {
+    completeIfActivated();
+  }).toJS;
+  completeIfActivated();
+  return completer.future.timeout(const Duration(seconds: 10));
+}
 
 /// Called when a notification has been clicked.
 ///
@@ -132,14 +154,22 @@ class WebFlutterLocalNotificationsPlugin
       final ServiceWorkerContainer serviceWorker =
           window.navigator.serviceWorker;
       _registration = await serviceWorker.getRegistration().toDart;
+      // Add version query parameter to the service worker file to burst cache
+      // NOTE: update version from pubspec.yaml whenever you update the service worker file
       const String jsPath =
-          './assets/packages/flutter_local_notifications_web/web/notifications_service_worker.js';
+          './assets/packages/flutter_local_notifications_web/web/notifications_service_worker.js?v=1.0.0';
 
       _registration = await serviceWorker.register(jsPath.toJS).toDart;
 
       if (_registration == null) {
         throw StateError('Failed to register service worker');
       }
+
+      await _waitUntilActivated(
+        _registration!.installing ??
+            _registration!.waiting ??
+            _registration!.active,
+      );
 
       // Subscribe to messages from the service worker
       serviceWorker.onmessage = _handleNotificationClick.toJS;
