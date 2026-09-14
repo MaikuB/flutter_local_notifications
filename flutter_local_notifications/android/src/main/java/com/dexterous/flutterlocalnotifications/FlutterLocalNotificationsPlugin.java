@@ -514,6 +514,14 @@ public class FlutterLocalNotificationsPlugin
           // plugin that fires after an app update). Fall back to the application's
           // own icon so delivery never crashes with an NPE unboxing a null
           // iconResourceId. See https://github.com/MaikuB/flutter_local_notifications/issues/298
+          Log.w(
+              TAG,
+              "Notification "
+                  + notificationDetails.id
+                  + " has no icon, no default icon has been persisted via initialize(), and no"
+                  + " legacy icon resource id. This can happen when a notification scheduled by an"
+                  + " older version of the plugin is delivered before initialize() has run on the"
+                  + " current install. Falling back to the application's icon.");
           builder.setSmallIcon(context.getApplicationInfo().icon);
         }
       } else {
