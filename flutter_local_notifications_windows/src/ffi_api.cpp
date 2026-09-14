@@ -29,10 +29,14 @@ bool init(
   if (!didRegister) return false;
   plugin->hasIdentity = hasPackageIdentity();
   plugin->aumid = winrt::to_hstring(aumId);
-  plugin->notifier = plugin->hasIdentity
-    ? ToastNotificationManager::CreateToastNotifier()
-    : ToastNotificationManager::CreateToastNotifier(plugin->aumid);
-  plugin->history = ToastNotificationManager::History();
+  try {
+    plugin->notifier = plugin->hasIdentity
+      ? ToastNotificationManager::CreateToastNotifier()
+      : ToastNotificationManager::CreateToastNotifier(plugin->aumid);
+    plugin->history = ToastNotificationManager::History();
+  } catch (...) {
+    return false;
+  }
   plugin->isReady = true;
   return true;
 }
