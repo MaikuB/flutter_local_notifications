@@ -182,6 +182,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             requestPermissions(call, result)
         case "checkPermissions":
             checkPermissions(call, result)
+        case "openAppNotificationSettings":
+            openAppNotificationSettings(result)
         case "getNotificationAppLaunchDetails":
             getNotificationAppLaunchDetails(result)
         case "cancel":
@@ -409,9 +411,6 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         if let title = arguments[MethodCallArguments.title] as? String {
             content.title = title
         }
-        if let subtitle = arguments[MethodCallArguments.subtitle] as? String {
-            content.subtitle = subtitle
-        }
         if let body = arguments[MethodCallArguments.body] as? String {
             content.body = body
         }
@@ -451,6 +450,9 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             }
             if !(platformSpecifics[MethodCallArguments.presentList] is NSNull) && platformSpecifics[MethodCallArguments.presentList] != nil {
                 presentList = platformSpecifics[MethodCallArguments.presentList] as! Bool
+            }
+            if let subtitle = platformSpecifics[MethodCallArguments.subtitle] as? String {
+                content.subtitle = subtitle
             }
             if let threadIdentifier = platformSpecifics[MethodCallArguments.threadIdentifier] as? String {
                 content.threadIdentifier = threadIdentifier
@@ -598,6 +600,32 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
 
             result(dict)
         }
+    }
+
+    func openAppNotificationSettings(_ result: @escaping FlutterResult) {
+        let notificationsPath = "x-apple.systempreferences:com.apple.Notifications-Settings.extension"
+
+        guard let bundleId = Bundle.main.bundleIdentifier else { return }
+        var openedAppNotificationSettings = false
+        if let url = URL(string: "\(notificationsPath)?id=\(bundleId)") {
+            openedAppNotificationSettings = NSWorkspace.shared.open(url)
+        }
+
+        if openedAppNotificationSettings {
+            result(openedAppNotificationSettings)
+            return
+        }
+
+        openNotificationSettings(result)
+    }
+
+    func openNotificationSettings(_ result: @escaping FlutterResult) {
+        guard let url = URL(string: "x-apple.systempreferences:com.apple.preference.notifications") else {
+            result(false)
+            return
+        }
+
+        result(NSWorkspace.shared.open(url))
     }
 
     func getIdentifier(fromArguments arguments: [String: AnyObject]) -> String {
