@@ -65,6 +65,15 @@ const String darwinNotificationCategoryPlain = 'plainCategory';
 /// Defines a iOS/MacOS notification category that reports dismissals.
 const String dismissableNotificationCategory = 'dismissableCategory';
 
+String _formatNotificationResponseTimestamp(DateTime? timestamp) =>
+    timestamp?.toLocal().toIso8601String() ?? 'null';
+
+String _notificationResponseTimestamps(NotificationResponse? response) =>
+    ' delivered at: '
+    '${_formatNotificationResponseTimestamp(response?.notificationDeliveredAt)},'
+    ' response received at: '
+    '${_formatNotificationResponseTimestamp(response?.responseReceivedAt)}';
+
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
   if (notificationResponse.notificationResponseType ==
@@ -72,7 +81,8 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
     // ignore: avoid_print
     print(
       'notification(${notificationResponse.id}) dismissed on background isolate'
-      ' with payload: ${notificationResponse.payload}',
+      ' with payload: ${notificationResponse.payload},'
+      '${_notificationResponseTimestamps(notificationResponse)}',
     );
     return;
   }
@@ -80,7 +90,8 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
   print(
     'notification(${notificationResponse.id}) action tapped: '
     '${notificationResponse.actionId} with'
-    ' payload: ${notificationResponse.payload}',
+    ' payload: ${notificationResponse.payload},'
+    '${_notificationResponseTimestamps(notificationResponse)}',
   );
   if (notificationResponse.input?.isNotEmpty ?? false) {
     // ignore: avoid_print
@@ -422,7 +433,8 @@ class _HomePageState extends State<HomePage> {
         // ignore: avoid_print
         print(
           'notification(${response?.id}) dismissed on main isolate'
-          ' with payload: ${response?.payload}',
+          ' with payload: ${response?.payload},'
+          '${_notificationResponseTimestamps(response)}',
         );
         return;
       }
@@ -3701,6 +3713,19 @@ class SecondPageState extends State<SecondPage> {
   String? _payload;
   Map<String, dynamic>? _data;
 
+  String get _responseDelay {
+    final DateTime? notificationDeliveredAt =
+        widget.response?.notificationDeliveredAt;
+    final DateTime? responseReceivedAt = widget.response?.responseReceivedAt;
+    if (notificationDeliveredAt == null || responseReceivedAt == null) {
+      return 'null';
+    }
+    final double seconds =
+        responseReceivedAt.difference(notificationDeliveredAt).inMicroseconds /
+        Duration.microsecondsPerSecond;
+    return '${seconds.toStringAsFixed(3)} seconds';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -3738,6 +3763,19 @@ class SecondPageState extends State<SecondPage> {
               title: 'Response Type:',
               value: widget.response?.notificationResponseType.name ?? 'null',
             ),
+            _InfoValueString(
+              title: 'Notification delivered at:',
+              value: _formatNotificationResponseTimestamp(
+                widget.response?.notificationDeliveredAt,
+              ),
+            ),
+            _InfoValueString(
+              title: 'Response received at:',
+              value: _formatNotificationResponseTimestamp(
+                widget.response?.responseReceivedAt,
+              ),
+            ),
+            _InfoValueString(title: 'Response delay:', value: _responseDelay),
             _InfoValueString(title: 'Payload:', value: _payload ?? 'null'),
             const SizedBox(height: 8),
             if (_data != null && _data!.isNotEmpty) ...<Widget>[
