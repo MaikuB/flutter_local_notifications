@@ -11,6 +11,7 @@ add_library(flutter_local_notifications_windows SHARED
   "ffi_api.cpp"
   "plugin.cpp"
   "utils.cpp"
+  "worker.cpp"
 )
 
 target_compile_features(flutter_local_notifications_windows PRIVATE cxx_std_17)
