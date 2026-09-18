@@ -1,18 +1,18 @@
 name: flutter_local_notifications_web
 description: Web implementation of the flutter_local_notifications plugin
-version: 1.0.0
+version: 2.0.0-dev.1
 homepage: https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications_web
 issue_tracker: https://github.com/MaikuB/flutter_local_notifications/issues
 
 environment:
-  sdk: ^3.10.0
-  flutter: ">=3.38.1"
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
 
 dependencies:
   collection: ^1.19.1
   flutter:
     sdk: flutter
-  flutter_local_notifications_platform_interface: ^12.0.0
+  flutter_local_notifications_platform_interface: ^13.0.0-dev.1
   timezone: ^0.11.0
   web: ^1.1.1
 
