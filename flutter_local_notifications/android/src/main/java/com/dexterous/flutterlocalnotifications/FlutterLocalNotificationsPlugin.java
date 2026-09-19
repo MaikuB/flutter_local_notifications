@@ -504,6 +504,16 @@ public class FlutterLocalNotificationsPlugin
           context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
       String defaultIcon = sharedPreferences.getString(DEFAULT_ICON, null);
       if (StringUtils.isNullOrEmpty(defaultIcon)) {
+        // No default icon has been persisted on this install, e.g. initialize() hasn't run since
+        // the app was updated. Fall back to the one captured when the notification was scheduled,
+        // provided it still resolves to a drawable in the current build.
+        String scheduleTimeIcon = notificationDetails.defaultIconAtScheduleTime;
+        if (!StringUtils.isNullOrEmpty(scheduleTimeIcon)
+            && getDrawableResourceId(context, scheduleTimeIcon) != 0) {
+          defaultIcon = scheduleTimeIcon;
+        }
+      }
+      if (StringUtils.isNullOrEmpty(defaultIcon)) {
         // for backwards compatibility: this is for handling the old way references to the icon used
         // to be kept but should be removed in future
         builder.setSmallIcon(notificationDetails.iconResourceId);
@@ -586,6 +596,7 @@ public class FlutterLocalNotificationsPlugin
       Context context,
       final NotificationDetails notificationDetails,
       Boolean updateScheduledNotificationsCache) {
+    captureDefaultIcon(context, notificationDetails);
     Gson gson = buildGson();
     String notificationDetailsJson = gson.toJson(notificationDetails);
     Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
@@ -609,6 +620,7 @@ public class FlutterLocalNotificationsPlugin
       Context context,
       final NotificationDetails notificationDetails,
       Boolean updateScheduledNotificationsCache) {
+    captureDefaultIcon(context, notificationDetails);
     Gson gson = buildGson();
     String notificationDetailsJson = gson.toJson(notificationDetails);
     Intent notificationIntent = new Intent(context, ScheduledNotificationReceiver.class);
@@ -632,6 +644,7 @@ public class FlutterLocalNotificationsPlugin
 
   private static void scheduleNextRepeatingNotification(
       Context context, NotificationDetails notificationDetails) {
+    captureDefaultIcon(context, notificationDetails);
     long repeatInterval = calculateRepeatIntervalMilliseconds(notificationDetails);
     long notificationTriggerTime =
         calculateNextNotificationTrigger(notificationDetails.calledAt, repeatInterval);
@@ -698,6 +711,7 @@ public class FlutterLocalNotificationsPlugin
       Context context,
       NotificationDetails notificationDetails,
       Boolean updateScheduledNotificationsCache) {
+    captureDefaultIcon(context, notificationDetails);
     long repeatInterval = calculateRepeatIntervalMilliseconds(notificationDetails);
 
     long notificationTriggerTime = notificationDetails.calledAt;
@@ -835,6 +849,29 @@ public class FlutterLocalNotificationsPlugin
         break;
     }
     return repeatInterval;
+  }
+
+  /**
+   * Captures the default icon configured via {@code initialize()} into the given notification so
+   * that delivering it doesn't depend on that icon still being readable from shared preferences.
+   *
+   * <p>A scheduled notification is delivered by {@link ScheduledNotificationReceiver} in a
+   * background process where no Dart code runs, so the default icon can only come from shared
+   * preferences that a previous call to {@code initialize()} wrote. A notification scheduled by an
+   * older version of the plugin, which didn't persist the default icon, can therefore be delivered
+   * with nothing to show. Storing the icon in the notification itself closes that window for
+   * notifications scheduled from now on.
+   */
+  private static void captureDefaultIcon(Context context, NotificationDetails notificationDetails) {
+    if (!StringUtils.isNullOrEmpty(notificationDetails.icon)) {
+      return;
+    }
+    SharedPreferences sharedPreferences =
+        context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+    String defaultIcon = sharedPreferences.getString(DEFAULT_ICON, null);
+    if (!StringUtils.isNullOrEmpty(defaultIcon)) {
+      notificationDetails.defaultIconAtScheduleTime = defaultIcon;
+    }
   }
 
   private static void saveScheduledNotification(

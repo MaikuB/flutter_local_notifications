@@ -206,6 +206,12 @@ public class NotificationDetails implements Serializable {
   // re-hydrating scheduled notifications when a device has been restarted.
   public Integer iconResourceId;
 
+  // Note: this is set on the Android side when a notification is scheduled and holds the default
+  // icon that was configured via initialize() at that point in time. It is used as a fallback at
+  // delivery time when the notification has no icon of its own and no default icon has been
+  // persisted to shared preferences on the current install.
+  public String defaultIconAtScheduleTime;
+
   public static NotificationDetails from(Map<String, Object> arguments) {
     NotificationDetails notificationDetails = new NotificationDetails();
     notificationDetails.payload = (String) arguments.get(PAYLOAD);
