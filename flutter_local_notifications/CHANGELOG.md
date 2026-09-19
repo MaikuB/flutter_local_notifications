@@ -4,6 +4,7 @@
 * [Android] **Breaking change** bumped `compileSdk` to 37 and updated readme to mention this
 * [Android] **Breaking change** bumped to AGP 9.1.1
 * [Android] migrated to Kotlin DSL
+* [Android] scheduled notifications now capture the default icon configured via `initialize()` at the time they are scheduled, and fall back to it at delivery time when no default icon can be read from shared preferences. Delivery no longer depends on `initialize()` having run on the current install, which isn't guaranteed for an alarm that fires after the app has been updated in the background
 * Migrated example app off the Kotlin Gradle Plugin (KGP) in favour of [built-in Kotlin](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin) and bumped Android Gradle Plugin (AGP) to 9.1.1
 
 ## [22.3.1]
