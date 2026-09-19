@@ -514,6 +514,13 @@ public class FlutterLocalNotificationsPlugin
           // plugin that fires after an app update). Fall back to the application's
           // own icon so delivery never crashes with an NPE unboxing a null
           // iconResourceId. See https://github.com/MaikuB/flutter_local_notifications/issues/298
+          // Declaring android:icon is optional, so fall back again to a platform drawable
+          // when the application doesn't have an icon of its own: a notification with no
+          // valid small icon is rejected when it is posted.
+          int fallbackIcon = context.getApplicationInfo().icon;
+          if (fallbackIcon == 0) {
+            fallbackIcon = android.R.drawable.sym_def_app_icon;
+          }
           Log.w(
               TAG,
               "Notification "
@@ -522,7 +529,7 @@ public class FlutterLocalNotificationsPlugin
                   + " legacy icon resource id. This can happen when a notification scheduled by an"
                   + " older version of the plugin is delivered before initialize() has run on the"
                   + " current install. Falling back to the application's icon.");
-          builder.setSmallIcon(context.getApplicationInfo().icon);
+          builder.setSmallIcon(fallbackIcon);
         }
       } else {
         builder.setSmallIcon(getDrawableResourceId(context, defaultIcon));
