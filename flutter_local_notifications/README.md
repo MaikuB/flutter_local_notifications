@@ -278,14 +278,14 @@ dependencies {
 ```
 </details>
 
-Note that the plugin uses Android Gradle plugin (AGP) 9.0.1 to leverage this functionality so to err on the safe side, applications should aim to use the same version at a **minimum**. If your application uses a higher version then there's no need to use a lower AGP version. For a Flutter app using the legacy `apply` script syntax, this is specified in `android/build.gradle` and the main parts would look similar to the following
+Note that the plugin uses Android Gradle plugin (AGP) 9.1.1 to leverage this functionality so to err on the safe side, applications should aim to use the same version at a **minimum**. If your application uses a higher version then there's no need to use a lower AGP version. For a Flutter app using the legacy `apply` script syntax, this is specified in `android/build.gradle` and the main parts would look similar to the following
 
 ```gradle
 buildscript {
    ...
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:9.0.1'
+        classpath 'com.android.tools.build:gradle:9.1.1'
         ...
     }
 ```
@@ -299,7 +299,7 @@ If your app is using the new declarative [Plugin DSL syntax](https://docs.flutte
 ```gradle
 plugins {
     ...
-    id 'com.android.application' version '9.0.1' apply false
+    id 'com.android.application' version '9.1.1' apply false
     ...
 }
 ```
@@ -312,7 +312,7 @@ plugins {
 ```kotlin
 plugins {
     ...
-    id("com.android.application") version "9.0.1" apply false
+    id("com.android.application") version "9.1.1" apply false
     ...
 }
 ```
@@ -351,14 +351,14 @@ dependencies {
 
 More information and other proposed solutions can be found in [Flutter issue #110658](https://github.com/flutter/flutter/issues/110658).
 
-The plugin also requires that the `compileSdk` in your application's Gradle file is set to 35 at a minimum:
+The plugin also requires that the `compileSdk` in your application's Gradle file is set to 37 at a minimum:
 
 <details>
 <summary>Groovy - build.gradle</summary>
 
 ```gradle
 android {
-    compileSdk 36
+    compileSdk 37
     ...
 }
 ```
@@ -370,7 +370,7 @@ android {
 
 ```kotlin
 android {
-    compileSdk = 36
+    compileSdk = 37
     ...
 }
 ```

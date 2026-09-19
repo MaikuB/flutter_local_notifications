@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:9.0.1")
+        classpath("com.android.tools.build:gradle:9.1.1")
     }
 }
 
@@ -25,7 +25,7 @@ plugins {
 
 android {
     namespace = "com.dexterous.flutterlocalnotifications"
-    compileSdk = 36
+    compileSdk = 37
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
