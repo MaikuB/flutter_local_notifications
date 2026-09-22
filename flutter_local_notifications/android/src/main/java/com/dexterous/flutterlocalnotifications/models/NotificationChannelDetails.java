@@ -26,6 +26,8 @@ public class NotificationChannelDetails implements Serializable {
   private static final String LED_COLOR_GREEN = "ledColorGreen";
   private static final String LED_COLOR_BLUE = "ledColorBlue";
   private static final String AUDIO_ATTRIBUTES_USAGE = "audioAttributesUsage";
+  private static final String CONVERSATION_ID = "conversationId";
+  private static final String PARENT_CHANNEL_ID = "parentChannelId";
 
   public String id;
   public String name;
@@ -43,6 +45,8 @@ public class NotificationChannelDetails implements Serializable {
   public Boolean enableLights;
   public Integer ledColor;
   public Integer audioAttributesUsage;
+  public String conversationId;
+  public String parentChannelId;
 
   public static NotificationChannelDetails from(Map<String, Object> arguments) {
     NotificationChannelDetails notificationChannel = new NotificationChannelDetails();
@@ -75,6 +79,8 @@ public class NotificationChannelDetails implements Serializable {
     }
 
     notificationChannel.enableLights = (Boolean) arguments.get(ENABLE_LIGHTS);
+    notificationChannel.conversationId = (String) arguments.get(CONVERSATION_ID);
+    notificationChannel.parentChannelId = (String) arguments.get(PARENT_CHANNEL_ID);
     return notificationChannel;
   }
 
