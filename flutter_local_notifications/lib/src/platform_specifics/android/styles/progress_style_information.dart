@@ -30,7 +30,7 @@ class ProgressStyleSegment {
   /// The meaning conveyed by the segment, which the system renders with a
   /// matching colour.
   ///
-  /// Applies to API level 37 and newer, where it is only used if [color] is
+  /// Applies to Android 17 and newer, where it is only used if [color] is
   /// not set. It is ignored on older versions.
   final SemanticStyle semanticStyle;
 }
@@ -59,13 +59,13 @@ class ProgressStylePoint {
   /// The meaning conveyed by the point, which the system renders with a
   /// matching colour.
   ///
-  /// Applies to API level 37 and newer, where it is only used if [color] is
+  /// Applies to Android 17 and newer, where it is only used if [color] is
   /// not set. It is ignored on older versions.
   final SemanticStyle semanticStyle;
 }
 
 /// Used to create a progress-centric ("Live Update") notification on
-/// Android 16 (API level 36) and newer.
+/// Android 16 and newer.
 ///
 /// The track is split into [segments] and may be annotated with [points]. The
 /// current [progress] moves an optional [progressTrackerIcon] along the track,

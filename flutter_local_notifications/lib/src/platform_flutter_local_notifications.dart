@@ -641,9 +641,8 @@ class AndroidFlutterLocalNotificationsPlugin
   /// Returns whether the app can post promoted ongoing ("Live Update")
   /// notifications.
   ///
-  /// On Android 16 (API level 36) and newer this reflects whether the user has
-  /// allowed the app's notifications to be promoted. On older versions it
-  /// returns `false`.
+  /// On Android 16 and newer this reflects whether the user has allowed the
+  /// app's notifications to be promoted. On older versions it returns `false`.
   Future<bool?> canPostPromotedNotifications() async =>
       await _channel.invokeMethod<bool>('canPostPromotedNotifications');
 
