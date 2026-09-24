@@ -26,6 +26,8 @@ import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.service.notification.StatusBarNotification;
 import android.text.Html;
@@ -88,21 +90,26 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.flutter.FlutterInjector;
 import io.flutter.embedding.engine.loader.FlutterLoader;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry;
+import io.flutter.plugin.common.StandardMethodCodec;
 
 interface PermissionRequestListener {
   void complete(boolean granted);
@@ -203,6 +210,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String PERMISSION_REQUEST_IN_PROGRESS_ERROR_MESSAGE =
       "Another permission request is already in progress";
   private static final String EXACT_ALARMS_PERMISSION_ERROR_CODE = "exact_alarms_not_permitted";
+  private static final String PLUGIN_DETACHED_ERROR_CODE = "plugin_detached";
   private static final String CANCEL_ID = "id";
   private static final String CANCEL_TAG = "tag";
   private static final String ACTION_ID = "actionId";
@@ -213,8 +221,69 @@ public class FlutterLocalNotificationsPlugin
   static Gson gson;
   private MethodChannel channel;
   static MethodChannel liveChannel;
-  private Context applicationContext;
+
+  /**
+   * Written by {@link #onAttachedToEngine} on the main thread and read by the background task
+   * queue, so it is {@code volatile}. {@link #onMethodCall} checks it before dispatching rather
+   * than letting a call that arrives after detach throw.
+   */
+  private volatile Context applicationContext;
+
   private Activity mainActivity;
+
+  /**
+   * Serialises every read-modify-write of the scheduled-notification cache.
+   *
+   * <p>{@link #saveScheduledNotification} and {@link #removeNotificationFromCache} each load the
+   * whole pending list out of {@link SharedPreferences}, rebuild it, and write it back, with
+   * nothing guarding the pair. That was safe while the method call handler, {@link
+   * ScheduledNotificationReceiver} and {@link ScheduledNotificationBootReceiver} all ran on the
+   * main {@link Looper}, because the thread did the serialising. Moving the handler onto a task
+   * queue gives that up.
+   *
+   * <p>A {@code SerialTaskQueue} also only serialises one queue, and each {@code FlutterEngine} in
+   * the process gets its own — so an app running a background engine (a {@code WorkManager} worker,
+   * for instance) that also schedules notifications can genuinely interleave two passes. Without
+   * this lock, one pass overwrites the other's additions and notifications are silently lost.
+   *
+   * <p>Held across a single load-modify-save and never across a batch, so a broadcast receiver
+   * arriving on the main thread waits behind one write.
+   */
+  private static final Object scheduledNotificationsCacheLock = new Object();
+
+  /**
+   * The methods that must run on the main thread even though the channel is bound to a background
+   * task queue.
+   *
+   * <ul>
+   *   <li>The four permission requests reach {@link ActivityCompat#requestPermissions} and {@link
+   *       Activity#startActivityForResult}, which touch the activity's transition state and are not
+   *       safe off the main thread.
+   *   <li>{@code getNotificationAppLaunchDetails} reads {@code mainActivity.getIntent()}, which
+   *       {@link #onNewIntent} writes on the main thread.
+   * </ul>
+   *
+   * <p>These are also the only methods that touch {@link #callback}, {@link
+   * #permissionRequestProgress} and {@link #mainActivity}, which are otherwise read by {@link
+   * #onRequestPermissionsResult} and {@link #onActivityResult} — both delivered by the framework on
+   * the main thread. Posting them back keeps that state single-threaded rather than shared.
+   *
+   * <p>Everything else the channel handles uses the application context, binder calls and {@link
+   * SharedPreferences}, all of which are safe on any thread.
+   */
+  private static final Set<String> MAIN_THREAD_METHODS =
+      Collections.unmodifiableSet(
+          new HashSet<>(
+              Arrays.asList(
+                  GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD,
+                  REQUEST_NOTIFICATIONS_PERMISSION_METHOD,
+                  REQUEST_EXACT_ALARMS_PERMISSION_METHOD,
+                  REQUEST_FULL_SCREEN_INTENT_PERMISSION_METHOD,
+                  REQUEST_NOTIFICATION_POLICY_ACCESS_METHOD)));
+
+  /** Posts {@link #MAIN_THREAD_METHODS} back to the main thread. */
+  private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+
   static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
 
   static final int EXACT_ALARM_PERMISSION_REQUEST_CODE = 2;
@@ -556,39 +625,53 @@ public class FlutterLocalNotificationsPlugin
     return gson;
   }
 
+  // Guarded because callers now reach this off the main thread. The lock also
+  // covers buildGson()'s lazy initialisation of the static gson field.
   private static ArrayList<NotificationDetails> loadScheduledNotifications(Context context) {
-    ArrayList<NotificationDetails> scheduledNotifications = new ArrayList<>();
-    SharedPreferences sharedPreferences =
-        context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
-    String json = sharedPreferences.getString(SCHEDULED_NOTIFICATIONS, null);
-    if (json != null) {
-      Gson gson = buildGson();
-      Type type = new TypeToken<ArrayList<NotificationDetails>>() {}.getType();
-      scheduledNotifications = gson.fromJson(json, type);
+    synchronized (scheduledNotificationsCacheLock) {
+      ArrayList<NotificationDetails> scheduledNotifications = new ArrayList<>();
+      SharedPreferences sharedPreferences =
+          context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
+      String json = sharedPreferences.getString(SCHEDULED_NOTIFICATIONS, null);
+      if (json != null) {
+        Gson gson = buildGson();
+        Type type = new TypeToken<ArrayList<NotificationDetails>>() {}.getType();
+        scheduledNotifications = gson.fromJson(json, type);
+      }
+      return scheduledNotifications;
     }
-    return scheduledNotifications;
   }
 
+  // apply() stays asynchronous to disk, which is safe here: it updates the
+  // instance's in-memory map before returning, and every reader in the process
+  // goes through the same cached SharedPreferences instance.
   private static void saveScheduledNotifications(
       Context context, ArrayList<NotificationDetails> scheduledNotifications) {
-    Gson gson = buildGson();
-    String json = gson.toJson(scheduledNotifications);
-    SharedPreferences sharedPreferences =
-        context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
-    SharedPreferences.Editor editor = sharedPreferences.edit();
-    editor.putString(SCHEDULED_NOTIFICATIONS, json).apply();
+    synchronized (scheduledNotificationsCacheLock) {
+      Gson gson = buildGson();
+      String json = gson.toJson(scheduledNotifications);
+      SharedPreferences sharedPreferences =
+          context.getSharedPreferences(SCHEDULED_NOTIFICATIONS, Context.MODE_PRIVATE);
+      SharedPreferences.Editor editor = sharedPreferences.edit();
+      editor.putString(SCHEDULED_NOTIFICATIONS, json).apply();
+    }
   }
 
+  // The load and the save are one read-modify-write and have to be one critical
+  // section rather than two. The monitor is reentrant, so the primitives above
+  // re-acquiring it inside this block costs nothing.
   static void removeNotificationFromCache(Context context, Integer notificationId) {
-    ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
-    for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
-      NotificationDetails notificationDetails = it.next();
-      if (notificationDetails.id.equals(notificationId)) {
-        it.remove();
-        break;
+    synchronized (scheduledNotificationsCacheLock) {
+      ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
+      for (Iterator<NotificationDetails> it = scheduledNotifications.iterator(); it.hasNext(); ) {
+        NotificationDetails notificationDetails = it.next();
+        if (notificationDetails.id.equals(notificationId)) {
+          it.remove();
+          break;
+        }
       }
+      saveScheduledNotifications(context, scheduledNotifications);
     }
-    saveScheduledNotifications(context, scheduledNotifications);
   }
 
   @SuppressWarnings("deprecation")
@@ -860,18 +943,23 @@ public class FlutterLocalNotificationsPlugin
     return repeatInterval;
   }
 
+  // Every scheduled notification passes through here, so this is the
+  // read-modify-write that matters. Two engines scheduling concurrently would
+  // otherwise drop whichever additions the loser of the race had already made.
   private static void saveScheduledNotification(
       Context context, NotificationDetails notificationDetails) {
-    ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
-    ArrayList<NotificationDetails> scheduledNotificationsToSave = new ArrayList<>();
-    for (NotificationDetails scheduledNotification : scheduledNotifications) {
-      if (scheduledNotification.id.equals(notificationDetails.id)) {
-        continue;
+    synchronized (scheduledNotificationsCacheLock) {
+      ArrayList<NotificationDetails> scheduledNotifications = loadScheduledNotifications(context);
+      ArrayList<NotificationDetails> scheduledNotificationsToSave = new ArrayList<>();
+      for (NotificationDetails scheduledNotification : scheduledNotifications) {
+        if (scheduledNotification.id.equals(notificationDetails.id)) {
+          continue;
+        }
+        scheduledNotificationsToSave.add(scheduledNotification);
       }
-      scheduledNotificationsToSave.add(scheduledNotification);
+      scheduledNotificationsToSave.add(notificationDetails);
+      saveScheduledNotifications(context, scheduledNotificationsToSave);
     }
-    scheduledNotificationsToSave.add(notificationDetails);
-    saveScheduledNotifications(context, scheduledNotificationsToSave);
   }
 
   private static int getDrawableResourceId(Context context, String name) {
@@ -1450,7 +1538,25 @@ public class FlutterLocalNotificationsPlugin
   @Override
   public void onAttachedToEngine(FlutterPluginBinding binding) {
     this.applicationContext = binding.getApplicationContext();
-    this.channel = new MethodChannel(binding.getBinaryMessenger(), METHOD_CHANNEL);
+
+    // Bind the channel to a background task queue so the plugin's work does not
+    // run on the platform task runner, which on Android is the application's
+    // main Looper — the same thread that drives the UI. Scheduling or cancelling
+    // a large number of notifications otherwise blocks it for as long as the
+    // batch takes: see #2202 and #2730.
+    //
+    // makeBackgroundTaskQueue() returns a SERIAL queue (TaskQueueOptions
+    // defaults isSerial=true), so calls on this channel still execute one at a
+    // time and in order, just not on the main thread. The serialisation is per
+    // queue and therefore per engine, which is what
+    // scheduledNotificationsCacheLock exists to cover.
+    BinaryMessenger messenger = binding.getBinaryMessenger();
+    this.channel =
+        new MethodChannel(
+            messenger,
+            METHOD_CHANNEL,
+            StandardMethodCodec.INSTANCE,
+            messenger.makeBackgroundTaskQueue());
     this.channel.setMethodCallHandler(this);
     liveChannel = this.channel;
   }
@@ -1502,6 +1608,24 @@ public class FlutterLocalNotificationsPlugin
 
   @Override
   public void onMethodCall(MethodCall call, @NonNull Result result) {
+    // This handler runs on a background task queue, so the methods that touch
+    // the Activity are posted back to the main thread and re-enter here. See
+    // MAIN_THREAD_METHODS for which, and why.
+    if (MAIN_THREAD_METHODS.contains(call.method) && Looper.myLooper() != Looper.getMainLooper()) {
+      mainThreadHandler.post(() -> onMethodCall(call, result));
+      return;
+    }
+
+    // A queued call can arrive after the engine has detached. Report that rather
+    // than dereferencing a null context part-way through the work.
+    if (applicationContext == null) {
+      result.error(
+          PLUGIN_DETACHED_ERROR_CODE,
+          "The plugin has been detached from the engine and can no longer handle " + call.method,
+          null);
+      return;
+    }
+
     switch (call.method) {
       case INITIALIZE_METHOD:
         initialize(call, result);
@@ -1889,6 +2013,20 @@ public class FlutterLocalNotificationsPlugin
     removeNotificationFromCache(applicationContext, id);
   }
 
+  // This method and cancelAllPendingNotifications below are deliberately NOT
+  // wrapped in scheduledNotificationsCacheLock, so that it does not read as an
+  // oversight.
+  //
+  // Both load the list and then write an EMPTY one. The write is not derived
+  // from the read, so no notification can be lost to an interleaving the way it
+  // can in saveScheduledNotification, and the locked primitives are enough.
+  // Holding the lock across the loop would mean holding it across one
+  // alarmManager.cancel() binder call per pending notification, with anything
+  // arriving on the main thread queued behind all of them.
+  //
+  // What an interleaving can do here is leave an alarm armed that the cache no
+  // longer lists, if a schedule lands mid-loop. That is inherent to "cancel
+  // everything" racing "schedule something" and a lock does not improve it.
   private void cancelAllNotifications(Result result) {
     NotificationManagerCompat notificationManager = getNotificationManager(applicationContext);
     notificationManager.cancelAll();
