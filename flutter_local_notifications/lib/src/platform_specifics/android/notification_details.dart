@@ -158,6 +158,7 @@ class AndroidNotificationDetails {
     this.number,
     this.audioAttributesUsage = AudioAttributesUsage.notification,
     this.dismissIsolate,
+    this.postedIsolate,
   });
 
   /// The icon that should be used when displaying the notification.
@@ -437,4 +438,18 @@ class AndroidNotificationDetails {
   /// terminated; [NotificationDismissedIsolate.main] fires only while it runs.
   /// Dismissing via a tap or `cancel` is never reported.
   final NotificationDismissedIsolate? dismissIsolate;
+
+  /// The isolate the posting of a scheduled notification is reported on, or
+  /// `null` to not report it.
+  ///
+  /// When set, each time a scheduled notification is handed to the system
+  /// a [NotificationResponse] of type
+  /// [NotificationResponseType.notificationPosted] is triggered on that
+  /// isolate. This applies to every occurrence of a repeating notification.
+  /// [NotificationPostedIsolate.background] fires even when the app has been
+  /// terminated; [NotificationPostedIsolate.main] fires only while it runs.
+  /// Being posted doesn't mean the notification was seen, as the user may have
+  /// blocked notifications or turned on Do Not Disturb. Notifications shown
+  /// immediately are never reported.
+  final NotificationPostedIsolate? postedIsolate;
 }

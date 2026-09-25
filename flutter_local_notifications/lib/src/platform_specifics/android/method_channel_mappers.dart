@@ -235,6 +235,7 @@ extension AndroidNotificationDetailsMapper on AndroidNotificationDetails {
           'number': number,
           'audioAttributesUsage': audioAttributesUsage.value,
           'dismissIsolate': dismissIsolate?.index,
+          'postedIsolate': postedIsolate?.index,
         }
         ..addAll(_convertActionsToMap(actions))
         ..addAll(_convertStyleInformationToMap())
