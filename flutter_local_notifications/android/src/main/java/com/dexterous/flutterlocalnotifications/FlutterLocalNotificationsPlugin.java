@@ -706,6 +706,10 @@ public class FlutterLocalNotificationsPlugin
       notificationResponseMap.put(NOTIFICATION_RESPONSE_TYPE, 2);
     }
 
+    if (ActionBroadcastReceiver.ACTION_POSTED.equals(intent.getAction())) {
+      notificationResponseMap.put(NOTIFICATION_RESPONSE_TYPE, 3);
+    }
+
     return notificationResponseMap;
   }
 

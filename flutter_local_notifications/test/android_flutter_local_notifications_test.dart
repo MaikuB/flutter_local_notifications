@@ -201,6 +201,7 @@ void main() {
               'number': null,
               'audioAttributesUsage': 5,
               'dismissIsolate': null,
+              'postedIsolate': null,
               'actions': <Map<String, Object>>[
                 <String, Object>{
                   'id': 'action1',
@@ -336,6 +337,7 @@ void main() {
               'number': null,
               'audioAttributesUsage': 5,
               'dismissIsolate': null,
+              'postedIsolate': null,
             },
           },
         ),
@@ -435,6 +437,7 @@ void main() {
                 'number': null,
                 'audioAttributesUsage': 5,
                 'dismissIsolate': null,
+                'postedIsolate': null,
               },
             },
           ),
@@ -536,6 +539,7 @@ void main() {
                 'number': null,
                 'audioAttributesUsage': 5,
                 'dismissIsolate': null,
+                'postedIsolate': null,
               },
             },
           ),
@@ -638,6 +642,7 @@ void main() {
                 'number': null,
                 'audioAttributesUsage': 5,
                 'dismissIsolate': null,
+                'postedIsolate': null,
               },
             },
           ),
@@ -739,6 +744,7 @@ void main() {
               'number': null,
               'audioAttributesUsage': 5,
               'dismissIsolate': null,
+              'postedIsolate': null,
             },
           },
         ),
@@ -840,6 +846,7 @@ void main() {
                 'number': null,
                 'audioAttributesUsage': 5,
                 'dismissIsolate': null,
+                'postedIsolate': null,
               },
             },
           ),
@@ -940,6 +947,7 @@ void main() {
                 'number': null,
                 'audioAttributesUsage': 5,
                 'dismissIsolate': null,
+                'postedIsolate': null,
               },
             },
           ),
@@ -1040,6 +1048,7 @@ void main() {
                 'number': null,
                 'audioAttributesUsage': 5,
                 'dismissIsolate': null,
+                'postedIsolate': null,
               },
             },
           ),
@@ -1151,6 +1160,7 @@ void main() {
                 'number': null,
                 'audioAttributesUsage': 5,
                 'dismissIsolate': null,
+                'postedIsolate': null,
               },
             },
           ),
@@ -1271,6 +1281,7 @@ void main() {
               'number': null,
               'audioAttributesUsage': 5,
               'dismissIsolate': null,
+              'postedIsolate': null,
             },
           },
         ),
@@ -1379,6 +1390,7 @@ void main() {
               'number': null,
               'audioAttributesUsage': 5,
               'dismissIsolate': null,
+              'postedIsolate': null,
             },
           },
         ),
@@ -1499,6 +1511,7 @@ void main() {
                 'number': null,
                 'audioAttributesUsage': 5,
                 'dismissIsolate': null,
+                'postedIsolate': null,
               },
             },
           ),
@@ -1603,6 +1616,7 @@ void main() {
               'number': null,
               'audioAttributesUsage': 5,
               'dismissIsolate': null,
+              'postedIsolate': null,
             },
           },
         ),
@@ -1715,6 +1729,7 @@ void main() {
               'number': null,
               'audioAttributesUsage': 5,
               'dismissIsolate': null,
+              'postedIsolate': null,
             },
           },
         ),
@@ -1812,6 +1827,7 @@ void main() {
               'number': null,
               'audioAttributesUsage': 5,
               'dismissIsolate': null,
+              'postedIsolate': null,
             },
           },
         ),
@@ -1912,6 +1928,7 @@ void main() {
               'number': null,
               'audioAttributesUsage': 5,
               'dismissIsolate': null,
+              'postedIsolate': null,
             },
           },
         ),
@@ -2031,6 +2048,7 @@ void main() {
               'number': null,
               'audioAttributesUsage': 5,
               'dismissIsolate': null,
+              'postedIsolate': null,
             },
           },
         ),
@@ -2169,6 +2187,7 @@ void main() {
               'number': null,
               'audioAttributesUsage': 5,
               'dismissIsolate': null,
+              'postedIsolate': null,
             },
           },
         ),
@@ -2276,6 +2295,7 @@ void main() {
                     'number': null,
                     'audioAttributesUsage': 5,
                     'dismissIsolate': null,
+                    'postedIsolate': null,
                   },
                 },
               ),
@@ -2428,6 +2448,7 @@ void main() {
                     'number': null,
                     'audioAttributesUsage': 5,
                     'dismissIsolate': null,
+                    'postedIsolate': null,
                   },
                 },
               ),
@@ -2538,6 +2559,7 @@ void main() {
                 'number': null,
                 'audioAttributesUsage': 5,
                 'dismissIsolate': null,
+                'postedIsolate': null,
               },
             },
           ),
@@ -2647,6 +2669,7 @@ void main() {
                 'number': null,
                 'audioAttributesUsage': 5,
                 'dismissIsolate': null,
+                'postedIsolate': null,
               },
             },
           ),
@@ -2757,6 +2780,7 @@ void main() {
                 'number': null,
                 'audioAttributesUsage': 5,
                 'dismissIsolate': null,
+                'postedIsolate': null,
               },
             },
           ),
@@ -3135,6 +3159,7 @@ void main() {
                 'number': null,
                 'audioAttributesUsage': 5,
                 'dismissIsolate': null,
+                'postedIsolate': null,
               },
             },
             'startType': AndroidServiceStartType.startSticky.index,
@@ -3254,6 +3279,81 @@ void main() {
       expect(
         receivedResponse!.notificationResponseType,
         NotificationResponseType.notificationDismissed,
+      );
+      expect(receivedResponse!.id, 1);
+      expect(receivedResponse!.payload, 'item x');
+    });
+
+    test('zonedSchedule with postedIsolate', () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(android: androidInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
+      tz.initializeTimeZones();
+      tz.setLocalLocation(tz.getLocation('Australia/Sydney'));
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        id: 1,
+        title: 'notification title',
+        body: 'notification body',
+        scheduledDate: tz.TZDateTime.now(
+          tz.local,
+        ).add(const Duration(seconds: 5)),
+        notificationDetails: const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'channelId',
+            'channelName',
+            postedIsolate: NotificationPostedIsolate.background,
+          ),
+        ),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      );
+      final Map<dynamic, dynamic> platformSpecifics =
+          (log.last.arguments as Map<dynamic, dynamic>)['platformSpecifics']
+              as Map<dynamic, dynamic>;
+      expect(
+        platformSpecifics['postedIsolate'],
+        NotificationPostedIsolate.background.index,
+      );
+    });
+
+    test('notification posted response', () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings('app_icon');
+      const InitializationSettings initializationSettings =
+          InitializationSettings(android: androidInitializationSettings);
+      NotificationResponse? receivedResponse;
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+        onDidReceiveNotificationResponse: (NotificationResponse response) {
+          receivedResponse = response;
+        },
+      );
+
+      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .handlePlatformMessage(
+            channel.name,
+            channel.codec.encodeMethodCall(
+              const MethodCall(
+                'didReceiveNotificationResponse',
+                <String, Object?>{
+                  'notificationId': 1,
+                  'actionId': null,
+                  'input': null,
+                  'payload': 'item x',
+                  'notificationResponseType': 3,
+                },
+              ),
+            ),
+            (ByteData? data) {},
+          );
+
+      expect(receivedResponse, isNotNull);
+      expect(
+        receivedResponse!.notificationResponseType,
+        NotificationResponseType.notificationPosted,
       );
       expect(receivedResponse!.id, 1);
       expect(receivedResponse!.payload, 'item x');

@@ -124,6 +124,7 @@ public class NotificationDetails implements Serializable {
 
   private static final String FULL_SCREEN_INTENT = "fullScreenIntent";
   private static final String DISMISS_ISOLATE = "dismissIsolate";
+  private static final String POSTED_ISOLATE = "postedIsolate";
   private static final String SHORTCUT_ID = "shortcutId";
   private static final String SUB_TEXT = "subText";
   private static final String ACTIONS = "actions";
@@ -194,6 +195,7 @@ public class NotificationDetails implements Serializable {
   public Long when;
   public Boolean fullScreenIntent;
   public Integer dismissIsolate;
+  public Integer postedIsolate;
   public String shortcutId;
   public String subText;
   public @Nullable List<NotificationAction> actions;
@@ -294,6 +296,7 @@ public class NotificationDetails implements Serializable {
       notificationDetails.fullScreenIntent =
           (Boolean) platformChannelSpecifics.get((FULL_SCREEN_INTENT));
       notificationDetails.dismissIsolate = (Integer) platformChannelSpecifics.get(DISMISS_ISOLATE);
+      notificationDetails.postedIsolate = (Integer) platformChannelSpecifics.get(POSTED_ISOLATE);
       notificationDetails.shortcutId = (String) platformChannelSpecifics.get(SHORTCUT_ID);
       notificationDetails.additionalFlags = (int[]) platformChannelSpecifics.get(ADDITIONAL_FLAGS);
       notificationDetails.subText = (String) platformChannelSpecifics.get(SUB_TEXT);

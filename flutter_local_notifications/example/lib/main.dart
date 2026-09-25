@@ -76,6 +76,15 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
     );
     return;
   }
+  if (notificationResponse.notificationResponseType ==
+      NotificationResponseType.notificationPosted) {
+    // ignore: avoid_print
+    print(
+      'notification(${notificationResponse.id}) posted on background isolate'
+      ' with payload: ${notificationResponse.payload}',
+    );
+    return;
+  }
   // ignore: avoid_print
   print(
     'notification(${notificationResponse.id}) action tapped: '
@@ -426,6 +435,15 @@ class _HomePageState extends State<HomePage> {
         );
         return;
       }
+      if (response?.notificationResponseType ==
+          NotificationResponseType.notificationPosted) {
+        // ignore: avoid_print
+        print(
+          'notification(${response?.id}) posted on main isolate'
+          ' with payload: ${response?.payload}',
+        );
+        return;
+      }
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (BuildContext context) => SecondPage(
@@ -662,6 +680,26 @@ class _HomePageState extends State<HomePage> {
                 PaddedElevatedButton(
                   buttonText: 'Request notification policy access',
                   onPressed: () => _requestNotificationPolicyAccess(),
+                ),
+                PaddedElevatedButton(
+                  buttonText:
+                      'Schedule notification to appear in 5 seconds that '
+                      'reports its posting on the main isolate',
+                  onPressed: () async {
+                    await _zonedSchedulePostedNotification(
+                      NotificationPostedIsolate.main,
+                    );
+                  },
+                ),
+                PaddedElevatedButton(
+                  buttonText:
+                      'Schedule notification to appear in 5 seconds that '
+                      'reports its posting on a background isolate',
+                  onPressed: () async {
+                    await _zonedSchedulePostedNotification(
+                      NotificationPostedIsolate.background,
+                    );
+                  },
                 ),
                 PaddedElevatedButton(
                   buttonText:
@@ -1717,6 +1755,29 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
+  }
+
+  Future<void> _zonedSchedulePostedNotification(
+    NotificationPostedIsolate isolate,
+  ) async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      id: id++,
+      title: 'scheduled title',
+      body: 'scheduled body',
+      scheduledDate: tz.TZDateTime.now(
+        tz.local,
+      ).add(const Duration(seconds: 5)),
+      notificationDetails: NotificationDetails(
+        android: AndroidNotificationDetails(
+          'your channel id',
+          'your channel name',
+          channelDescription: 'your channel description',
+          postedIsolate: isolate,
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      payload: 'item x',
     );
   }
 
