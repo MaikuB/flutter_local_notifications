@@ -206,6 +206,18 @@ public class NotificationDetails implements Serializable {
   // re-hydrating scheduled notifications when a device has been restarted.
   public Integer iconResourceId;
 
+  // A channel is required from Android 8.0, and details that are present but lack one can't be
+  // read at all.
+  public static boolean isMissingChannel(Map<String, Object> arguments) {
+    @SuppressWarnings("unchecked")
+    Map<String, Object> platformChannelSpecifics =
+        (Map<String, Object>) arguments.get(PLATFORM_SPECIFICS);
+    if (platformChannelSpecifics == null) {
+      return VERSION.SDK_INT >= VERSION_CODES.O;
+    }
+    return platformChannelSpecifics.get(CHANNEL_ID) == null;
+  }
+
   public static NotificationDetails from(Map<String, Object> arguments) {
     NotificationDetails notificationDetails = new NotificationDetails();
     notificationDetails.payload = (String) arguments.get(PAYLOAD);

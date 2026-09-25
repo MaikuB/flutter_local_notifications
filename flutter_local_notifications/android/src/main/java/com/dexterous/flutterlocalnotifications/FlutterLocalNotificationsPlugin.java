@@ -182,6 +182,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String INVALID_BIG_PICTURE_ERROR_CODE = "invalid_big_picture";
   private static final String INVALID_SOUND_ERROR_CODE = "invalid_sound";
   private static final String INVALID_LED_DETAILS_ERROR_CODE = "invalid_led_details";
+  private static final String MISSING_CHANNEL_ERROR_CODE = "missing_channel";
   private static final String UNSUPPORTED_OS_VERSION_ERROR_CODE = "unsupported_os_version";
   private static final String GET_ACTIVE_NOTIFICATIONS_ERROR_MESSAGE =
       "Android version must be 6.0 or newer to use getActiveNotifications";
@@ -191,6 +192,9 @@ public class FlutterLocalNotificationsPlugin
   private static final String INVALID_LED_DETAILS_ERROR_MESSAGE =
       "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of"
           + " Android before Oreo";
+  private static final String MISSING_CHANNEL_ERROR_MESSAGE =
+      "AndroidNotificationDetails must be provided as notifications require a channel on Android"
+          + " 8.0 or newer";
   private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
   private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE =
       "The resource %s could not be found. Please make sure it has been added as a drawable"
@@ -1786,6 +1790,10 @@ public class FlutterLocalNotificationsPlugin
   // some of the details (especially resources) passed are valid
   private NotificationDetails extractNotificationDetails(
       Result result, Map<String, Object> arguments) {
+    if (NotificationDetails.isMissingChannel(arguments)) {
+      result.error(MISSING_CHANNEL_ERROR_CODE, MISSING_CHANNEL_ERROR_MESSAGE, null);
+      return null;
+    }
     NotificationDetails notificationDetails = NotificationDetails.from(arguments);
     if (hasInvalidIcon(result, notificationDetails.icon)
         || hasInvalidLargeIcon(
