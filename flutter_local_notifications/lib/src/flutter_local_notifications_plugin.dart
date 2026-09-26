@@ -470,6 +470,18 @@ class FlutterLocalNotificationsPlugin {
             payload: payload,
             matchDateTimeComponents: matchDateTimeComponents,
           );
+    } else if (defaultTargetPlatform == TargetPlatform.linux) {
+      await resolvePlatformSpecificImplementation<
+            LinuxFlutterLocalNotificationsPlugin
+          >()
+          ?.zonedSchedule(
+            id: id,
+            title: title,
+            body: body,
+            scheduledDate: scheduledDate,
+            notificationDetails: notificationDetails.linux,
+            payload: payload,
+          );
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       await resolvePlatformSpecificImplementation<
             FlutterLocalNotificationsWindows

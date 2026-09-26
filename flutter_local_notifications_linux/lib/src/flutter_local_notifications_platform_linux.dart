@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 import 'model/capabilities.dart';
 import 'model/initialization_settings.dart';
@@ -19,6 +20,18 @@ abstract class FlutterLocalNotificationsPlatformLinux
   Future<bool?> initialize({
     required LinuxInitializationSettings settings,
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
+  });
+
+  /// Schedules a notification to appear at the given date and time.
+  /// Only fires while the app is running. Does not support recurring
+  /// (matchDateTimeComponents is ignored, matching Windows behavior).
+  Future<void> zonedSchedule({
+    required int id,
+    String? title,
+    String? body,
+    required tz.TZDateTime scheduledDate,
+    LinuxNotificationDetails? notificationDetails,
+    String? payload,
   });
 
   /// Show a notification with an optional payload that will be passed back to
