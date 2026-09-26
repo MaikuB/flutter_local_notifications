@@ -1,3 +1,5 @@
+import 'package:timezone/timezone.dart' as tz;
+
 import 'flutter_local_notifications_platform_linux.dart';
 import 'model/capabilities.dart';
 import 'model/initialization_settings.dart';
@@ -27,6 +29,20 @@ class LinuxFlutterLocalNotificationsPlugin
   }) async {
     assert(false);
     return null;
+  }
+
+  /// Errors on attempted calling of the stub. It exists only to satisfy
+  /// compile-time dependencies, and should never actually be called.
+  @override
+  Future<void> zonedSchedule({
+    required int id,
+    String? title,
+    String? body,
+    required tz.TZDateTime scheduledDate,
+    LinuxNotificationDetails? notificationDetails,
+    String? payload,
+  }) async {
+    assert(false);
   }
 
   /// Errors on attempted calling of the stub. It exists only to satisfy

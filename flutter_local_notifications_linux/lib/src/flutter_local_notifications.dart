@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 import 'flutter_local_notifications_platform_linux.dart';
 import 'model/capabilities.dart';
@@ -46,6 +47,26 @@ class LinuxFlutterLocalNotificationsPlugin
     onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
   );
 
+  @override
+  Future<void> zonedSchedule({
+    required int id,
+    String? title,
+    String? body,
+    required tz.TZDateTime scheduledDate,
+    LinuxNotificationDetails? notificationDetails,
+    String? payload,
+  }) {
+    validateId(id);
+    return _manager.zonedSchedule(
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: scheduledDate,
+      notificationDetails: notificationDetails,
+      payload: payload,
+    );
+  }
+
   /// Show a notification with an optional payload that will be passed back to
   /// the app when a notification is tapped on.
   @override
@@ -74,6 +95,14 @@ class LinuxFlutterLocalNotificationsPlugin
 
   @override
   Future<void> cancelAll() => _manager.cancelAll();
+
+  @override
+  Future<void> cancelAllPendingNotifications() =>
+      _manager.cancelAllPendingNotifications();
+
+  @override
+  Future<List<PendingNotificationRequest>> pendingNotificationRequests() =>
+      _manager.pendingNotificationRequests();
 
   /// Returns the system notification server capabilities.
   /// Some functionality may not be implemented by the notification server,

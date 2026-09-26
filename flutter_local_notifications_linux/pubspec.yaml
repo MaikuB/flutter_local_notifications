@@ -13,6 +13,7 @@ flutter:
 
 dependencies:
   dbus: ^0.7.8
+  timezone: ^0.11.0
   ffi: ^2.0.1
   flutter:
     sdk: flutter
