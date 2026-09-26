@@ -568,7 +568,6 @@ If it has been migrated to `UIScene` lifecycle then register the callback in thr
 ```objc
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-   [GeneratedPluginRegistrant registerWithRegistry:self];
     return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
