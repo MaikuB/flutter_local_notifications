@@ -41,6 +41,7 @@ class LinuxFlutterLocalNotificationsPlugin
     required tz.TZDateTime scheduledDate,
     LinuxNotificationDetails? notificationDetails,
     String? payload,
+    DateTimeComponents? matchDateTimeComponents,
   }) async {
     assert(false);
   }

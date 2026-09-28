@@ -55,6 +55,7 @@ class LinuxFlutterLocalNotificationsPlugin
     required tz.TZDateTime scheduledDate,
     LinuxNotificationDetails? notificationDetails,
     String? payload,
+    DateTimeComponents? matchDateTimeComponents,
   }) {
     validateId(id);
     return _manager.zonedSchedule(

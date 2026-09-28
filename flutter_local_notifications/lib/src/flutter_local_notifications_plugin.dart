@@ -481,6 +481,7 @@ class FlutterLocalNotificationsPlugin {
             scheduledDate: scheduledDate,
             notificationDetails: notificationDetails.linux,
             payload: payload,
+            matchDateTimeComponents: matchDateTimeComponents,
           );
     } else if (defaultTargetPlatform == TargetPlatform.windows) {
       await resolvePlatformSpecificImplementation<

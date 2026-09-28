@@ -25,6 +25,7 @@ abstract class FlutterLocalNotificationsPlatformLinux
   /// Schedules a notification to appear at the given date and time.
   /// Only fires while the app is running. Does not support recurring
   /// (matchDateTimeComponents is ignored, matching Windows behavior).
+  @override
   Future<void> zonedSchedule({
     required int id,
     String? title,
@@ -32,6 +33,7 @@ abstract class FlutterLocalNotificationsPlatformLinux
     required tz.TZDateTime scheduledDate,
     LinuxNotificationDetails? notificationDetails,
     String? payload,
+    DateTimeComponents? matchDateTimeComponents,
   });
 
   /// Show a notification with an optional payload that will be passed back to
