@@ -58,8 +58,9 @@ async function _handleNotif(event) {
       + `&notification_reply=${encodeURIComponent(message.reply)}`;
     await clients.openWindow(url);
   } else {
-    // At least one client is open, send the message to the first one
+    // At least one client is open, focus on the first one and send the message to it
     let client = allClients[0];
+    client.focus();
     await client.postMessage(message);
   }
 
