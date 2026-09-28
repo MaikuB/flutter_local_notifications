@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dbus/dbus.dart';
+import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications_platform_interface/flutter_local_notifications_platform_interface.dart';
 import 'package:path/path.dart' as path;
@@ -42,6 +43,9 @@ class LinuxNotificationManager {
   final DBusWrapper _dbus;
   final LinuxPlatformInfo _platformInfo;
   final NotificationStorage _storage;
+
+  final Map<int, Timer> _scheduledTimers = {};
+  final Map<int, _PendingScheduledNotification> _scheduledNotifications = {};
 
   late final LinuxInitializationSettings _initializationSettings;
   late final DidReceiveNotificationResponseCallback?
@@ -132,6 +136,52 @@ class LinuxNotificationManager {
           actions: actionsInfo ?? <LinuxNotificationActionInfo>[],
         );
     await _storage.insert(notify);
+  }
+
+  /// Schedules a notification to appear at the given date and time.
+  /// Only fires while the app is running. Does not support recurring.
+  Future<void> zonedSchedule({
+    required int id,
+    String? title,
+    String? body,
+    required tz.TZDateTime scheduledDate,
+    LinuxNotificationDetails? notificationDetails,
+    String? payload,
+  }) async {
+    final now = DateTime.now().toUtc();
+    final scheduledUtc = scheduledDate.toUtc();
+    if (scheduledUtc.isBefore(now)) {
+      throw ArgumentError(
+        'Flutter Local Notifications cannot schedule notifications in the past',
+      );
+    }
+
+    _cancelScheduled(id);
+
+    final delay = scheduledUtc.difference(now);
+    final pending = _PendingScheduledNotification(
+      id: id,
+      title: title,
+      body: body,
+      details: notificationDetails,
+      payload: payload,
+    );
+    _scheduledNotifications[id] = pending;
+
+    final timer = Timer(delay, () {
+      _scheduledTimers.remove(id);
+      final p = _scheduledNotifications.remove(id);
+      if (p != null) {
+        show(p.id, p.title, p.body, details: p.details, payload: p.payload);
+      }
+    });
+    _scheduledTimers[id] = timer;
+  }
+
+  void _cancelScheduled(int id) {
+    final timer = _scheduledTimers.remove(id);
+    timer?.cancel();
+    _scheduledNotifications.remove(id);
   }
 
   Map<String, DBusValue> _buildHints(
@@ -229,6 +279,7 @@ class LinuxNotificationManager {
 
   /// Cancel notification with the given [id].
   Future<void> cancel(int id) async {
+    _cancelScheduled(id);
     final LinuxNotificationInfo? notify = await _storage.getById(id);
     await _storage.removeById(id);
     if (notify != null) {
@@ -238,6 +289,12 @@ class LinuxNotificationManager {
 
   /// Cancel all notifications.
   Future<void> cancelAll() async {
+    for (final timer in _scheduledTimers.values) {
+      timer.cancel();
+    }
+    _scheduledTimers.clear();
+    _scheduledNotifications.clear();
+
     final List<LinuxNotificationInfo> notifyList = await _storage.getAll();
     final List<int> idList = <int>[];
     for (final LinuxNotificationInfo notify in notifyList) {
@@ -245,6 +302,29 @@ class LinuxNotificationManager {
       await _dbusCancel(notify.systemId);
     }
     await _storage.removeByIdList(idList);
+  }
+
+  /// Cancels all pending scheduled notifications.
+  Future<void> cancelAllPendingNotifications() async {
+    for (final timer in _scheduledTimers.values) {
+      timer.cancel();
+    }
+    _scheduledTimers.clear();
+    _scheduledNotifications.clear();
+  }
+
+  /// Returns the list of pending scheduled notifications.
+  Future<List<PendingNotificationRequest>> pendingNotificationRequests() async {
+    return _scheduledNotifications.values
+        .map(
+          (p) => PendingNotificationRequest(
+            p.id,
+            p.title,
+            p.body,
+            p.payload,
+          ),
+        )
+        .toList();
   }
 
   /// Returns the system notification server capabilities.
@@ -366,6 +446,22 @@ class LinuxNotificationManager {
       await _storage.removeBySystemId(systemId);
     });
   }
+}
+
+class _PendingScheduledNotification {
+  _PendingScheduledNotification({
+    required this.id,
+    this.title,
+    this.body,
+    this.details,
+    this.payload,
+  });
+
+  final int id;
+  final String? title;
+  final String? body;
+  final LinuxNotificationDetails? details;
+  final String? payload;
 }
 
 const String _kDefaultActionName = 'default';
