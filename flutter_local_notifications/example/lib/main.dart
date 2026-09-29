@@ -794,21 +794,24 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
                 PaddedElevatedButton(
-                  buttonText: 'Show live update: food delivery',
+                  buttonText:
+                      'Show live update with progress segments, points and '
+                      'icons',
                   onPressed: () async {
-                    await _showFoodDeliveryLiveUpdate();
+                    await _showLiveUpdateWithProgressStyle();
                   },
                 ),
                 PaddedElevatedButton(
-                  buttonText: 'Show live update: navigation',
+                  buttonText:
+                      'Show live update with semantic progress segments',
                   onPressed: () async {
-                    await _showNavigationLiveUpdate();
+                    await _showLiveUpdateWithSemanticStyles();
                   },
                 ),
                 PaddedElevatedButton(
-                  buttonText: 'Show live update: timer',
+                  buttonText: 'Show live update with a countdown chronometer',
                   onPressed: () async {
-                    await _showTimerLiveUpdate();
+                    await _showLiveUpdateWithChronometer();
                   },
                 ),
                 PaddedElevatedButton(
@@ -2449,7 +2452,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _showFoodDeliveryLiveUpdate() async {
+  Future<void> _showLiveUpdateWithProgressStyle() async {
     await _warnIfPromotedNotificationsDisabled();
     final int notificationId = id++;
     const List<ProgressStyleSegment> segments = <ProgressStyleSegment>[
@@ -2464,7 +2467,7 @@ class _HomePageState extends State<HomePage> {
       ProgressStylePoint(75, id: 7, color: Color(0xFFECB7FF)),
     ];
 
-    Future<void> post(
+    Future<void> updateNotification(
       String title,
       String body, {
       int progress = 0,
@@ -2507,64 +2510,48 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    await post(
+    await updateNotification(
       'Your order is being placed',
       'Confirming with the bakery',
       indeterminate: true,
       shortCriticalText: 'Placing',
     );
-    Timer(
-      const Duration(seconds: 3),
-      () => unawaited(
-        post(
-          'Your order is being prepared',
-          'Next step will be delivery',
-          progress: 25,
-          shortCriticalText: 'Baking',
-        ),
-      ),
-    );
-    Timer(
-      const Duration(seconds: 6),
-      () => unawaited(
-        post(
-          'Your order is on its way',
-          'En route to your address',
-          progress: 50,
-          trackerIcon: const DrawableResourceAndroidIcon('ic_live_update_bag'),
-        ),
-      ),
-    );
-    Timer(
-      const Duration(seconds: 9),
-      () => unawaited(
-        post(
-          'Your order is arriving',
-          'Almost at your door',
-          progress: 75,
-          trackerIcon: const DrawableResourceAndroidIcon(
-            'ic_live_update_truck',
-          ),
-        ),
-      ),
-    );
-    Timer(
-      const Duration(seconds: 12),
-      () => unawaited(
-        post(
-          'Your order is complete',
-          'Enjoy your snack!',
-          progress: 100,
-          trackerIcon: const DrawableResourceAndroidIcon(
-            'ic_live_update_check',
-          ),
-          shortCriticalText: 'Arrived',
-        ),
-      ),
-    );
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(
+        'Your order is being prepared',
+        'Next step will be delivery',
+        progress: 25,
+        shortCriticalText: 'Baking',
+      );
+    });
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(
+        'Your order is on its way',
+        'En route to your address',
+        progress: 50,
+        trackerIcon: const DrawableResourceAndroidIcon('ic_live_update_bag'),
+      );
+    });
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(
+        'Your order is arriving',
+        'Almost at your door',
+        progress: 75,
+        trackerIcon: const DrawableResourceAndroidIcon('ic_live_update_truck'),
+      );
+    });
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(
+        'Your order is complete',
+        'Enjoy your snack!',
+        progress: 100,
+        trackerIcon: const DrawableResourceAndroidIcon('ic_live_update_check'),
+        shortCriticalText: 'Arrived',
+      );
+    });
   }
 
-  Future<void> _showNavigationLiveUpdate() async {
+  Future<void> _showLiveUpdateWithSemanticStyles() async {
     await _warnIfPromotedNotificationsDisabled();
     final int notificationId = id++;
     const List<ProgressStyleSegment> segments = <ProgressStyleSegment>[
@@ -2573,7 +2560,7 @@ class _HomePageState extends State<HomePage> {
       ProgressStyleSegment(30, id: 3, semanticStyle: SemanticStyle.danger),
     ];
 
-    Future<void> post(int progress, String title, String eta) {
+    Future<void> updateNotification(int progress, String title, String eta) {
       final AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
             'live updates',
@@ -2602,22 +2589,19 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    await post(10, 'Starting route', '2.1 mi');
-    Timer(
-      const Duration(seconds: 3),
-      () => unawaited(post(45, 'In 900 m, turn left', '1.2 mi')),
-    );
-    Timer(
-      const Duration(seconds: 6),
-      () => unawaited(post(80, 'In 300 m, turn right', '450 m')),
-    );
-    Timer(
-      const Duration(seconds: 9),
-      () => unawaited(post(100, 'You have arrived', 'Arrived')),
-    );
+    await updateNotification(10, 'Starting route', '2.1 mi');
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(45, 'In 900 m, turn left', '1.2 mi');
+    });
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(80, 'In 300 m, turn right', '450 m');
+    });
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(100, 'You have arrived', 'Arrived');
+    });
   }
 
-  Future<void> _showTimerLiveUpdate() async {
+  Future<void> _showLiveUpdateWithChronometer() async {
     await _warnIfPromotedNotificationsDisabled();
     final int endTime = DateTime.now()
         .add(const Duration(minutes: 5))
