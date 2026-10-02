@@ -496,6 +496,16 @@ By design, iOS applications *do not* display notifications while the app is in t
 
 For iOS 10+, use the presentation options to control the behaviour for when a notification is triggered while the app is in the foreground. The default settings of the plugin will configure these such that a notification will be displayed when the app is in the foreground.
 
+### iOS 27 changes
+
+iOS 27 appears to have changed the behaviour of what happens when an attempt to show a notification happens when permissions have not been granted. A `PlatformException` ends up being thrown like follows
+
+```
+PlatformException(Error 2003, Repository could not save notification. Source is not authorized., UNErrorDomain, null)
+```
+
+This has been reported on this repository [here](https://github.com/MaikuB/flutter_local_notifications/issues/2838). If you have applications running into this, ensure you catch the `PlatformException` and deal with it appropriately as this was not a change within this plugin. A future release may swallow these at a native level to restore the old behaviour
+
 ## Web Setup
 
 No modifications to the HTML or JavaScript are necessary. But you must make sure to request permissions at runtime properly!
