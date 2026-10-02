@@ -504,7 +504,7 @@ iOS 27 appears to have changed the behaviour of what happens when an attempt to 
 PlatformException(Error 2003, Repository could not save notification. Source is not authorized., UNErrorDomain, null)
 ```
 
-This has been reported on this repository [here](https://github.com/MaikuB/flutter_local_notifications/issues/2838). If you have applications running into this, ensure you catch the `PlatformException` and deal with it appropriately as this was not a change within this plugin. A future release may swallow these at a native level to restore the old behaviour
+This has been reported on this repository [here](https://github.com/MaikuB/flutter_local_notifications/issues/2838). If you have applications running into this issue, the recommendation is permissions are checked before attempting to show notifications. This is a more intuitive approach that can then be used provide guidance to users on how to grant permissions. Worst case, the `PlatformException` can be caught and dealt with it appropriately but is not the recommended solution. A future release may swallow these at a native level to restore the old behaviour
 
 ## Web Setup
 
