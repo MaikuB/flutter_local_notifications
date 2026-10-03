@@ -70,6 +70,9 @@ import com.dexterous.flutterlocalnotifications.models.styles.BigTextStyleInforma
 import com.dexterous.flutterlocalnotifications.models.styles.DefaultStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.InboxStyleInformation;
 import com.dexterous.flutterlocalnotifications.models.styles.MessagingStyleInformation;
+import com.dexterous.flutterlocalnotifications.models.styles.ProgressStyleInformation;
+import com.dexterous.flutterlocalnotifications.models.styles.ProgressStylePoint;
+import com.dexterous.flutterlocalnotifications.models.styles.ProgressStyleSegment;
 import com.dexterous.flutterlocalnotifications.models.styles.StyleInformation;
 import com.dexterous.flutterlocalnotifications.utils.BooleanUtils;
 import com.dexterous.flutterlocalnotifications.utils.LongUtils;
@@ -140,6 +143,8 @@ public class FlutterLocalNotificationsPlugin
   private static final String GET_CALLBACK_HANDLE_METHOD = "getCallbackHandle";
   private static final String ARE_NOTIFICATIONS_ENABLED_METHOD = "areNotificationsEnabled";
   private static final String OPEN_APP_NOTIFICATION_SETTINGS_METHOD = "openAppNotificationSettings";
+  private static final String CAN_POST_PROMOTED_NOTIFICATIONS_METHOD =
+      "canPostPromotedNotifications";
   private static final String CAN_SCHEDULE_EXACT_NOTIFICATIONS_METHOD =
       "canScheduleExactNotifications";
   private static final String CREATE_NOTIFICATION_CHANNEL_GROUP_METHOD =
@@ -298,7 +303,10 @@ public class FlutterLocalNotificationsPlugin
             .setPriority(notificationDetails.priority)
             .setOngoing(BooleanUtils.getValue(notificationDetails.ongoing))
             .setSilent(BooleanUtils.getValue(notificationDetails.silent))
-            .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce));
+            .setOnlyAlertOnce(BooleanUtils.getValue(notificationDetails.onlyAlertOnce))
+            .setRequestPromotedOngoing(
+                BooleanUtils.getValue(notificationDetails.requestPromotedOngoing))
+            .setShortCriticalText(notificationDetails.shortCriticalText);
 
     if (notificationDetails.dismissIsolate != null) {
       Intent deleteIntent = new Intent(context, ActionBroadcastReceiver.class);
@@ -546,7 +554,8 @@ public class FlutterLocalNotificationsPlugin
               .registerSubtype(BigTextStyleInformation.class)
               .registerSubtype(BigPictureStyleInformation.class)
               .registerSubtype(InboxStyleInformation.class)
-              .registerSubtype(MessagingStyleInformation.class);
+              .registerSubtype(MessagingStyleInformation.class)
+              .registerSubtype(ProgressStyleInformation.class);
       GsonBuilder builder =
           new GsonBuilder()
               .registerTypeAdapter(ScheduleMode.class, new ScheduleMode.Deserializer())
@@ -1072,9 +1081,98 @@ public class FlutterLocalNotificationsPlugin
       case Media:
         setMediaStyle(builder);
         break;
+      case Progress:
+        setProgressStyle(context, notificationDetails, builder);
+        break;
       default:
         break;
     }
+  }
+
+  private static void setProgressStyle(
+      Context context,
+      NotificationDetails notificationDetails,
+      NotificationCompat.Builder builder) {
+    ProgressStyleInformation progressStyleInformation =
+        (ProgressStyleInformation) notificationDetails.styleInformation;
+    NotificationCompat.ProgressStyle progressStyle = new NotificationCompat.ProgressStyle();
+    if (progressStyleInformation.progress != null) {
+      progressStyle.setProgress(progressStyleInformation.progress);
+    }
+    if (progressStyleInformation.progressIndeterminate != null) {
+      progressStyle.setProgressIndeterminate(progressStyleInformation.progressIndeterminate);
+    }
+    if (progressStyleInformation.styledByProgress != null) {
+      progressStyle.setStyledByProgress(progressStyleInformation.styledByProgress);
+    }
+    if (progressStyleInformation.segments != null) {
+      List<NotificationCompat.ProgressStyle.Segment> segments = new ArrayList<>();
+      for (ProgressStyleSegment segment : progressStyleInformation.segments) {
+        NotificationCompat.ProgressStyle.Segment builtSegment =
+            new NotificationCompat.ProgressStyle.Segment(segment.length);
+        if (segment.id != null) {
+          builtSegment = builtSegment.setId(segment.id);
+        }
+        if (segment.color != null) {
+          builtSegment = builtSegment.setColor(segment.color);
+        }
+        if (segment.semanticStyle != null) {
+          builtSegment = builtSegment.setSemanticStyle(segment.semanticStyle);
+        }
+        segments.add(builtSegment);
+      }
+      progressStyle.setProgressSegments(segments);
+    }
+    if (progressStyleInformation.points != null) {
+      List<NotificationCompat.ProgressStyle.Point> points = new ArrayList<>();
+      for (ProgressStylePoint point : progressStyleInformation.points) {
+        NotificationCompat.ProgressStyle.Point builtPoint =
+            new NotificationCompat.ProgressStyle.Point(point.position);
+        if (point.id != null) {
+          builtPoint = builtPoint.setId(point.id);
+        }
+        if (point.color != null) {
+          builtPoint = builtPoint.setColor(point.color);
+        }
+        if (point.semanticStyle != null) {
+          builtPoint = builtPoint.setSemanticStyle(point.semanticStyle);
+        }
+        points.add(builtPoint);
+      }
+      progressStyle.setProgressPoints(points);
+    }
+    IconCompat trackerIcon =
+        buildProgressIcon(
+            context,
+            progressStyleInformation.progressTrackerIcon,
+            progressStyleInformation.progressTrackerIconSource);
+    if (trackerIcon != null) {
+      progressStyle.setProgressTrackerIcon(trackerIcon);
+    }
+    IconCompat startIcon =
+        buildProgressIcon(
+            context,
+            progressStyleInformation.progressStartIcon,
+            progressStyleInformation.progressStartIconSource);
+    if (startIcon != null) {
+      progressStyle.setProgressStartIcon(startIcon);
+    }
+    IconCompat endIcon =
+        buildProgressIcon(
+            context,
+            progressStyleInformation.progressEndIcon,
+            progressStyleInformation.progressEndIconSource);
+    if (endIcon != null) {
+      progressStyle.setProgressEndIcon(endIcon);
+    }
+    builder.setStyle(progressStyle);
+  }
+
+  private static IconCompat buildProgressIcon(Context context, Object data, IconSource iconSource) {
+    if (data == null || iconSource == null) {
+      return null;
+    }
+    return getIconFromSource(context, data, iconSource);
   }
 
   private static void setProgress(
@@ -1600,6 +1698,9 @@ public class FlutterLocalNotificationsPlugin
         break;
       case OPEN_APP_NOTIFICATION_SETTINGS_METHOD:
         openAppNotificationSettings(result);
+        break;
+      case CAN_POST_PROMOTED_NOTIFICATIONS_METHOD:
+        canPostPromotedNotifications(result);
         break;
       case CAN_SCHEDULE_EXACT_NOTIFICATIONS_METHOD:
         setCanScheduleExactNotifications(result);
@@ -2432,6 +2533,11 @@ public class FlutterLocalNotificationsPlugin
     } catch (Exception e) {
       result.success(false);
     }
+  }
+
+  private void canPostPromotedNotifications(Result result) {
+    NotificationManagerCompat notificationManager = getNotificationManager(applicationContext);
+    result.success(notificationManager.canPostPromotedNotifications());
   }
 
   private void setCanScheduleExactNotifications(Result result) {
