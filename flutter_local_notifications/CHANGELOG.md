@@ -1,3 +1,9 @@
+## [23.0.0-dev.2]
+
+* [Android] added support for [live update notifications](https://developer.android.com/develop/ui/compose/notifications/live-update). Example app has been updated to demonstrate usage. Thanks to the PR from [Vasily Laushkin](https://github.com/vlaushkin)
+* [Linux] bumped allowed `dbus` dependency version constraints to `>=0.7.8 <0.9.0`
+* Updated readme to guidance on handling `PlatformException` being thrown when trying to show notifications when permissions have not been granted due to iOS 27 behavioural changes outside the control of the plugin
+
 ## [23.0.0-dev.1]
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.44.0 and Dart SDK requirement to 3.12.0
