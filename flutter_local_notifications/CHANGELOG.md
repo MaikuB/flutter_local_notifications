@@ -1,3 +1,8 @@
+## [23.0.0-dev.2]
+
+* Updated readme to guidance on handling `PlatformException` being thrown when trying to show notifications when permissions have not been granted due to iOS 27 behavioural changes outside the control of the plugin
+* [Linux] bumped allowed `dbus` dependency version constraints to `>=0.7.8 <0.9.0`
+
 ## [23.0.0-dev.1]
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.44.0 and Dart SDK requirement to 3.12.0
