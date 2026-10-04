@@ -1,11 +1,9 @@
 # The Flutter tooling requires that developers have CMake 3.10 or later
 # installed. You should not increase this version, as doing so will cause
 # the plugin to fail to compile for some customers of the plugin.
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
 project(flutter_local_notifications_windows_library VERSION 1.0.0 LANGUAGES CXX)
-
-add_compile_definitions(_SILENCE_EXPERIMENTAL_COROUTINE_DEPRECATION_WARNINGS)
 
 add_library(flutter_local_notifications_windows SHARED
   "ffi_api.cpp"
@@ -13,7 +11,7 @@ add_library(flutter_local_notifications_windows SHARED
   "utils.cpp"
 )
 
-target_compile_features(flutter_local_notifications_windows PRIVATE cxx_std_17)
+target_compile_features(flutter_local_notifications_windows PRIVATE cxx_std_20)
 
 set_target_properties(flutter_local_notifications_windows PROPERTIES
   PUBLIC_HEADER ffi_api.h
