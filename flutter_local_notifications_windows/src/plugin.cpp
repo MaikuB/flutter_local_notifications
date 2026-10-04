@@ -32,8 +32,8 @@ struct NotificationActivationCallback :
       vector<StringMapEntry> entries;
       for (ULONG i = 0; i < count; i++) {
         auto item = data[i];
-        const std::string key = CW2A(item.Key, CP_UTF8);
-        const std::string value = CW2A(item.Value, CP_UTF8);
+        const std::string key(CW2A(item.Key, CP_UTF8));
+        const std::string value(CW2A(item.Value, CP_UTF8));
         const auto pair = StringMapEntry {toNativeString(key), toNativeString(value)};
         entries.push_back(pair);
       }
