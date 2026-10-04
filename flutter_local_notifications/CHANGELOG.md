@@ -1,7 +1,7 @@
 ## [23.0.0-dev.3]
 
 * [Windows] **Breaking change** bumped cmake minimum version to 3.14 and have plugin compile with at least C++ 20 (i.e. `CXX_STANDARD 20`)
-* [Windows] Properly fixed issue [#2777](https://github.com/MaikuB/flutter_local_notifications/issues/2777) to ensure future MSVC toolchain compatibility through code changes. The previous fix was done by suppressing a warning
+* [Windows] Properly fixed issue [#2777](https://github.com/MaikuB/flutter_local_notifications/issues/2777) to ensure future MSVC toolchain compatibility through code changes. The previous fix was done by suppressing a warning. Thanks to [Dragonloverlord](https://github.com/dragonloverlord) for sharing how it could be solved
 
 ## [23.0.0-dev.2]
 
