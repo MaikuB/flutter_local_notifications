@@ -36,3 +36,12 @@ enum NotificationDismissedIsolate {
   /// A background isolate.
   background,
 }
+
+/// The isolate the posting of a scheduled notification is reported on.
+enum NotificationPostedIsolate {
+  /// The application's main isolate.
+  main,
+
+  /// A background isolate.
+  background,
+}
