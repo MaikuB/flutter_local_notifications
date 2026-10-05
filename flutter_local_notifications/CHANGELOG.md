@@ -2,6 +2,7 @@
 
 * [Windows] **Breaking change** bumped cmake minimum version to 3.14 and have plugin compile with at least C++ 20 (i.e. `CXX_STANDARD 20`)
 * [Windows] Properly fixed issue [#2777](https://github.com/MaikuB/flutter_local_notifications/issues/2777) to ensure future MSVC toolchain compatibility through code changes. The previous fix was done by suppressing a warning. Thanks to [Dragonloverlord](https://github.com/dragonloverlord) for sharing how it could be solved
+* [Android] plugin now explicitly specifies [background activity launches](https://developer.android.com/guide/components/activities/secure-bal) are [denied](https://developer.android.com/reference/android/app/ActivityOptions#MODE_BACKGROUND_ACTIVITY_START_DENIED) on Android 14+. Notifications are still expected to still work as before and have not found any breaking changes from testing. If any developers happen to find issues related to this change then create a bug report [here](https://github.com/MaikuB/flutter_local_notifications/issues/). Thanks to the PR from [Luca-CZ](https://github.com/Luca-CZ)
 
 ## [23.0.0-dev.2]
 
