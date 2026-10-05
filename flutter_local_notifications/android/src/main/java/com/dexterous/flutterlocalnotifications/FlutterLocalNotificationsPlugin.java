@@ -289,8 +289,9 @@ public class FlutterLocalNotificationsPlugin
       ActivityOptions activityOptions = ActivityOptions.makeBasic();
       activityOptions.setPendingIntentCreatorBackgroundActivityStartMode(
           ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_DENIED);
-      pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, flags,
-          activityOptions.toBundle());
+      pendingIntent =
+          PendingIntent.getActivity(
+              context, notificationDetails.id, intent, flags, activityOptions.toBundle());
     } else {
       pendingIntent = PendingIntent.getActivity(context, notificationDetails.id, intent, flags);
     }
@@ -376,15 +377,16 @@ public class FlutterLocalNotificationsPlugin
             ActivityOptions activityOptions = ActivityOptions.makeBasic();
             activityOptions.setPendingIntentCreatorBackgroundActivityStartMode(
                 ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_DENIED);
-            actionPendingIntent = PendingIntent.getActivity(context, requestCode++, actionIntent,
-                actionFlags, activityOptions.toBundle());
+            actionPendingIntent =
+                PendingIntent.getActivity(
+                    context, requestCode++, actionIntent, actionFlags, activityOptions.toBundle());
           } else {
-            actionPendingIntent = PendingIntent.getActivity(context, requestCode++, actionIntent,
-                actionFlags);
+            actionPendingIntent =
+                PendingIntent.getActivity(context, requestCode++, actionIntent, actionFlags);
           }
         } else {
-          actionPendingIntent = PendingIntent.getBroadcast(context, requestCode++, actionIntent,
-              actionFlags);
+          actionPendingIntent =
+              PendingIntent.getBroadcast(context, requestCode++, actionIntent, actionFlags);
         }
 
         final Spannable actionTitleSpannable = new SpannableString(action.title);
