@@ -8,7 +8,16 @@ import android.os.IBinder;
 
 import java.util.ArrayList;
 
+import android.os.Binder;
+
 public class ForegroundService extends Service {
+  private final IBinder binder = new LocalBinder();
+
+  public class LocalBinder extends Binder {
+    ForegroundService getService() {
+      return ForegroundService.this;
+    }
+  }
 
   @Override
   @SuppressWarnings("deprecation")
@@ -36,6 +45,7 @@ public class ForegroundService extends Service {
     } else {
       startForeground(parameter.notificationData.id, notification);
     }
+
     return parameter.startMode;
   }
 
@@ -49,6 +59,6 @@ public class ForegroundService extends Service {
 
   @Override
   public IBinder onBind(Intent intent) {
-    return null;
+    return binder;
   }
 }
