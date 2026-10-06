@@ -142,6 +142,12 @@ static FlutterError *getFlutterError(NSError *error) {
             details:error.domain];
 }
 
+// iOS 27 fails with error 2002 when a notification only updates the badge,
+// although the badge is still applied
+static BOOL isBadgeOnlyNotificationError(NSError *error) {
+  return [error.domain isEqualToString:UNErrorDomain] && error.code == 2002;
+}
+
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:CHANNEL
@@ -999,7 +1005,7 @@ static FlutterError *getFlutterError(NSError *error) {
       [UNUserNotificationCenter currentNotificationCenter];
   [center addNotificationRequest:notificationRequest
            withCompletionHandler:^(NSError *_Nullable error) {
-             if (error == nil) {
+             if (error == nil || isBadgeOnlyNotificationError(error)) {
                result(nil);
                return;
              }
