@@ -3156,6 +3156,8 @@ void main() {
             'audioAttributesUsage': AudioAttributesUsage.notification.value,
             'channelAction':
                 AndroidNotificationChannelAction.createIfNotExists.index,
+            'conversationId': null,
+            'parentChannelId': null,
           },
         ),
       ]);
@@ -3180,6 +3182,8 @@ void main() {
               enableVibration: false,
               ledColor: Color.fromARGB(255, 255, 0, 0),
               audioAttributesUsage: AudioAttributesUsage.alarm,
+              conversationId: 'conversationId',
+              parentChannelId: 'parentChannelId',
             ),
           );
       expect(log, <Matcher>[
@@ -3204,6 +3208,8 @@ void main() {
             'audioAttributesUsage': AudioAttributesUsage.alarm.value,
             'channelAction':
                 AndroidNotificationChannelAction.createIfNotExists.index,
+            'conversationId': 'conversationId',
+            'parentChannelId': 'parentChannelId',
           },
         ),
       ]);
