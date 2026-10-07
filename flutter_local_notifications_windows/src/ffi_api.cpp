@@ -8,6 +8,8 @@
 
 using winrt::Windows::Data::Xml::Dom::XmlDocument;
 
+static const winrt::hstring kDefaultGroup = L"flnpGroupNull";
+
 bool hasPackageIdentity() {
   if (!IsWindows8OrGreater()) return false;
   uint32_t length = 0;
@@ -58,6 +60,7 @@ bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap b
   ToastNotification notification(doc);
   const auto data = dataFromMap(bindings);
   notification.Tag(winrt::to_hstring(id));
+  if (!plugin->hasIdentity) notification.Group(kDefaultGroup);
   notification.Data(data);
   plugin->notifier.value().Show(notification);
   return true;
@@ -73,15 +76,18 @@ bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time) {
   }
   ScheduledToastNotification notification(doc, winrt::clock::from_time_t(time));
   notification.Tag(winrt::to_hstring(id));
+  if (!plugin->hasIdentity) notification.Group(kDefaultGroup);
   plugin->notifier.value().AddToSchedule(notification);
   return true;
 }
 
 NativeUpdateResult updateNotification(NativePlugin* plugin, int id, NativeStringMap bindings) {
-  if (!plugin->isReady) return NativeUpdateResult::failed;
+  if (!plugin->isReady) return failed;
   const auto tag = winrt::to_hstring(id);
   const auto data = dataFromMap(bindings);
-  const auto result = plugin->notifier.value().Update(data, tag);
+  const auto result = plugin->hasIdentity
+    ? plugin->notifier.value().Update(data, tag)
+    : plugin->notifier.value().Update(data, tag, kDefaultGroup);
   return (NativeUpdateResult) result;
 }
 
@@ -100,7 +106,12 @@ void cancelAll(NativePlugin* plugin) {
 void cancelNotification(NativePlugin* plugin, int id) {
   if (!plugin->isReady) return;
   const auto tag = winrt::to_hstring(id);
-  if (plugin->hasIdentity) plugin->history.value().Remove(tag);
+  try {
+    if (plugin->hasIdentity) plugin->history.value().Remove(tag);
+    else plugin->history.value().Remove(tag, kDefaultGroup, plugin->aumid);
+  } catch (winrt::hresult_error&) {
+    // Toast not found
+  }
   for (const auto notification : plugin->notifier.value().GetScheduledToastNotifications()) {
     if (notification.Tag() == tag) {
       plugin->notifier.value().RemoveFromSchedule(notification);
@@ -111,11 +122,13 @@ void cancelNotification(NativePlugin* plugin, int id) {
 
 NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* size) {
   // TODO: Get more details here
-  if (!plugin->isReady || !plugin->hasIdentity) {
+  if (!plugin->isReady) {
     *size = 0;
     return nullptr;
   }
-  const auto active = plugin->history.value().GetHistory();
+  const auto active = plugin->hasIdentity
+    ? plugin->history.value().GetHistory()
+    : plugin->history.value().GetHistory(plugin->aumid);
   *size = active.Size();
   const auto result = new NativeNotificationDetails[*size];
   int index = 0;
