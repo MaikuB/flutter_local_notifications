@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
@@ -11,6 +12,38 @@ import 'details.dart';
 import 'handler.dart';
 import 'permission.dart';
 import 'utils.dart';
+
+/// Upper bound so initialize() does not hang if activation never finishes.
+const Duration _serviceWorkerActivationTimeout = Duration(seconds: 10);
+
+Future<void> _waitUntilActivated(ServiceWorkerRegistration registration) {
+  final Completer<void> completer = Completer<void>();
+  void check() {
+    if (completer.isCompleted) {
+      return;
+    }
+    final ServiceWorker? worker =
+        registration.installing ?? registration.waiting ?? registration.active;
+    if (worker == null) {
+      // Wait for updatefound to populate a worker slot.
+      return;
+    }
+    if (worker.state == 'activated') {
+      completer.complete();
+      return;
+    }
+    // Re-resolves from the registration after `redundant`.
+    worker.onstatechange = ((Event _) {
+      check();
+    }).toJS;
+  }
+
+  registration.onupdatefound = ((Event _) {
+    check();
+  }).toJS;
+  check();
+  return completer.future.timeout(_serviceWorkerActivationTimeout);
+}
 
 /// Called when a notification has been clicked.
 ///
@@ -131,9 +164,10 @@ class WebFlutterLocalNotificationsPlugin
       // See: https://github.com/flutter/flutter/issues/145828
       final ServiceWorkerContainer serviceWorker =
           window.navigator.serviceWorker;
-      _registration = await serviceWorker.getRegistration().toDart;
+      // Add version query parameter to the service worker file to burst cache
+      // NOTE: update version from pubspec.yaml whenever you update the service worker file
       const String jsPath =
-          './assets/packages/flutter_local_notifications_web/web/notifications_service_worker.js';
+          './assets/packages/flutter_local_notifications_web/web/notifications_service_worker.js?v=1.0.0';
 
       _registration = await serviceWorker.register(jsPath.toJS).toDart;
 
@@ -141,8 +175,9 @@ class WebFlutterLocalNotificationsPlugin
         throw StateError('Failed to register service worker');
       }
 
-      // Subscribe to messages from the service worker
       serviceWorker.onmessage = _handleNotificationClick.toJS;
+
+      await _waitUntilActivated(_registration!);
 
       return true;
     } catch (e) {
