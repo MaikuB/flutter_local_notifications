@@ -997,19 +997,17 @@ static FlutterError *getFlutterError(NSError *error) {
                                            trigger:trigger];
   UNUserNotificationCenter *center =
       [UNUserNotificationCenter currentNotificationCenter];
-  [center
-      addNotificationRequest:notificationRequest
-       withCompletionHandler:^(NSError *_Nullable error) {
-         // iOS 27 fails with 2002 when a notification only updates the badge
-         // (the badge is still applied) and with 2003 when notifications
-         // aren't authorized, neither of which happened before
-         if (error == nil || ([error.domain isEqualToString:UNErrorDomain] &&
-                              (error.code == 2002 || error.code == 2003))) {
-           result(nil);
-           return;
-         }
-         result(getFlutterError(error));
-       }];
+  [center addNotificationRequest:notificationRequest
+           withCompletionHandler:^(NSError *_Nullable error) {
+             // iOS 27 returns errors where earlier versions failed silently,
+             // such as when notifications aren't authorized, so errors in this
+             // domain are ignored
+             if (error == nil || [error.domain isEqualToString:UNErrorDomain]) {
+               result(nil);
+               return;
+             }
+             result(getFlutterError(error));
+           }];
 }
 
 - (BOOL)isAFlutterLocalNotification:(NSDictionary *)userInfo {
