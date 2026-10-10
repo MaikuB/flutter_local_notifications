@@ -22,7 +22,7 @@ NativePlugin* createPlugin() { return new NativePlugin(); }
 void disposePlugin(NativePlugin* plugin) { delete plugin; }
 
 /// (Re)creates the WinRT handles used to show and manage notifications.
-void createHandles(NativePlugin* plugin) {
+static void createHandles(NativePlugin* plugin) {
   plugin->notifier = plugin->hasIdentity
     ? ToastNotificationManager::CreateToastNotifier()
     : ToastNotificationManager::CreateToastNotifier(plugin->aumid);
@@ -34,10 +34,13 @@ void createHandles(NativePlugin* plugin) {
 /// The notifier and the history are COM proxies created once in [init]. If the notification
 /// platform behind them goes away while the app is running, every call on them fails with one of
 /// these errors until they are created again.
-bool isDisconnected(const winrt::hresult_error& error) {
+///
+/// Only codes that guarantee the call did not execute are listed, so the retry cannot run it twice.
+static bool isDisconnected(const winrt::hresult_error& error) {
   const HRESULT code = error.code();
   return code == CO_E_OBJNOTCONNECTED || code == RPC_E_DISCONNECTED
-    || code == HRESULT_FROM_WIN32(RPC_S_SERVER_UNAVAILABLE);
+    || code == RPC_E_SERVER_DIED_DNE || code == HRESULT_FROM_WIN32(RPC_S_SERVER_UNAVAILABLE)
+    || code == HRESULT_FROM_WIN32(RPC_S_CALL_FAILED_DNE);
 }
 
 /// Runs [action], which uses the plugin's WinRT handles, without letting an exception escape.
@@ -46,7 +49,7 @@ bool isDisconnected(const winrt::hresult_error& error) {
 /// process. If the handles are disconnected, they are created again and [action] is retried once.
 /// Returns false if [action] could not complete.
 template <typename Action>
-bool withHandles(NativePlugin* plugin, Action action) {
+static bool withHandles(NativePlugin* plugin, Action action) {
   try {
     action();
     return true;
@@ -70,11 +73,16 @@ bool init(
 ) {
   string icon;
   if (iconPath != nullptr) icon = string(iconPath);
-  const auto didRegister = plugin->registerApp(aumId, appName, guid, icon, callback);
-  if (!didRegister) return false;
-  plugin->hasIdentity = hasPackageIdentity();
-  plugin->aumid = winrt::to_hstring(aumId);
-  createHandles(plugin);
+  try {
+    const auto didRegister = plugin->registerApp(aumId, appName, guid, icon, callback);
+    if (!didRegister) return false;
+    plugin->hasIdentity = hasPackageIdentity();
+    plugin->aumid = winrt::to_hstring(aumId);
+    createHandles(plugin);
+  } catch (...) {
+    // The notification platform can be unavailable at launch. Report it instead of terminating.
+    return false;
+  }
   plugin->isReady = true;
   return true;
 }
@@ -160,8 +168,19 @@ void cancelNotification(NativePlugin* plugin, int id) {
   });
 }
 
+/// Adds the notification ID held in [tag], skipping a tag that is not a number.
+///
+/// The history holds every notification shown under the app's ID, including ones this plugin did
+/// not create, so one unexpected tag must not hide the others.
+static void addId(vector<int>& ids, const winrt::hstring& tag) {
+  try {
+    ids.push_back(std::stoi(winrt::to_string(tag)));
+  } catch (const std::exception&) {
+  }
+}
+
 /// Copies the notification IDs into an array that must be released with [freeDetailsArray].
-NativeNotificationDetails* toDetailsArray(const vector<int>& ids, int* size) {
+static NativeNotificationDetails* toDetailsArray(const vector<int>& ids, int* size) {
   *size = static_cast<int>(ids.size());
   const auto result = new NativeNotificationDetails[ids.size()];
   for (size_t index = 0; index < ids.size(); index++) result[index].id = ids[index];
@@ -178,7 +197,7 @@ NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* siz
   const auto didRead = withHandles(plugin, [&] {
     ids.clear();
     for (const auto notification : plugin->history.value().GetHistory()) {
-      ids.push_back(std::stoi(winrt::to_string(notification.Tag())));
+      addId(ids, notification.Tag());
     }
   });
   if (!didRead) ids.clear();
@@ -195,7 +214,7 @@ NativeNotificationDetails* getPendingNotifications(NativePlugin* plugin, int* si
   const auto didRead = withHandles(plugin, [&] {
     ids.clear();
     for (const auto notification : plugin->notifier.value().GetScheduledToastNotifications()) {
-      ids.push_back(std::stoi(winrt::to_string(notification.Tag())));
+      addId(ids, notification.Tag());
     }
   });
   if (!didRead) ids.clear();
