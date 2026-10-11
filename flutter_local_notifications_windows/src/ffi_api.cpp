@@ -1,3 +1,5 @@
+#include <charconv>
+#include <system_error>
 #include <vector>
 
 #include <windows.h>  // <-- This must be the first Windows header
@@ -168,15 +170,18 @@ void cancelNotification(NativePlugin* plugin, int id) {
   });
 }
 
-/// Adds the notification ID held in [tag], skipping a tag that is not a number.
+/// Adds the notification ID held in [tag], skipping a tag that is not exactly a number.
 ///
 /// The history holds every notification shown under the app's ID, including ones this plugin did
-/// not create, so one unexpected tag must not hide the others.
+/// not create, so one unexpected tag must not hide the others. The whole tag must parse:
+/// `std::from_chars` does not skip whitespace, and checking that it consumed every character
+/// rejects a numeric prefix, so a tag such as "12abc" is skipped rather than reported as ID 12.
 static void addId(vector<int>& ids, const winrt::hstring& tag) {
-  try {
-    ids.push_back(std::stoi(winrt::to_string(tag)));
-  } catch (const std::exception&) {
-  }
+  const auto text = winrt::to_string(tag);
+  const auto end = text.data() + text.size();
+  int id = 0;
+  const auto [last, error] = std::from_chars(text.data(), end, id);
+  if (error == std::errc() && last == end) ids.push_back(id);
 }
 
 /// Copies the notification IDs into an array that must be released with [freeDetailsArray].
