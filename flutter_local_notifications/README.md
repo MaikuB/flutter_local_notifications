@@ -498,7 +498,7 @@ For iOS 10+, use the presentation options to control the behaviour for when a no
 
 ### iOS 27 changes
 
-iOS 27 returns errors when a notification can't be saved, for example when permissions haven't been granted, where earlier versions did nothing. The plugin ignores errors in `UNErrorDomain` so showing a notification behaves the same as it did before. Checking permissions before showing notifications is still recommended so users can be guided on how to grant them. This was reported [here](https://github.com/MaikuB/flutter_local_notifications/issues/2838).
+iOS 27 returns errors in cases where earlier versions didn't, such as when permissions haven't been granted or when a notification only updates the badge. The plugin ignores errors in `UNErrorDomain` when showing or scheduling a notification, so these calls behave as they did before. Checking permissions before showing notifications is still recommended so users can be guided on how to grant them. This was reported [here](https://github.com/MaikuB/flutter_local_notifications/issues/2838).
 
 ## Web Setup
 
