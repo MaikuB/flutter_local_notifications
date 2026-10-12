@@ -1,3 +1,7 @@
+## [23.0.0-dev.4]
+
+* Applies changes done as part of 22.3.2 hotfix
+
 ## [23.0.0-dev.3]
 
 * [Windows] **Breaking change** bumped cmake minimum version to 3.14 and have plugin compile with at least C++ 20 (i.e. `CXX_STANDARD 20`)
