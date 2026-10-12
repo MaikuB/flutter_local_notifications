@@ -999,7 +999,10 @@ static FlutterError *getFlutterError(NSError *error) {
       [UNUserNotificationCenter currentNotificationCenter];
   [center addNotificationRequest:notificationRequest
            withCompletionHandler:^(NSError *_Nullable error) {
-             if (error == nil) {
+             // iOS 27 returns errors where earlier versions failed silently,
+             // such as when notifications aren't authorized, so errors in this
+             // domain are ignored
+             if (error == nil || [error.domain isEqualToString:UNErrorDomain]) {
                result(nil);
                return;
              }

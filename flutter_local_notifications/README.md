@@ -498,13 +498,7 @@ For iOS 10+, use the presentation options to control the behaviour for when a no
 
 ### iOS 27 changes
 
-iOS 27 appears to have changed the behaviour of what happens when an attempt to show a notification happens when permissions have not been granted. A `PlatformException` ends up being thrown like follows
-
-```
-PlatformException(Error 2003, Repository could not save notification. Source is not authorized., UNErrorDomain, null)
-```
-
-This has been reported on this repository [here](https://github.com/MaikuB/flutter_local_notifications/issues/2838). If you have applications running into this issue, the recommendation is permissions are checked before attempting to show notifications. This is a more intuitive approach that can then be used provide guidance to users on how to grant permissions. Worst case, the `PlatformException` can be caught and dealt with it appropriately but is not the recommended solution. A future release may swallow these at a native level to restore the old behaviour.
+iOS 27 returns errors in cases where earlier versions didn't, such as when permissions haven't been granted or when a notification only updates the badge. The plugin ignores errors in `UNErrorDomain` when showing or scheduling a notification, so these calls behave as they did before. Checking permissions before showing notifications is still recommended so users can be guided on how to grant them. This was reported [here](https://github.com/MaikuB/flutter_local_notifications/issues/2838).
 
 ## Web Setup
 
