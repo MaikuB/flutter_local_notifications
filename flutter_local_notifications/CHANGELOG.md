@@ -19,6 +19,11 @@
 * [Android] Fixed a `NullPointerException` crash in `setSmallIcon` (`Attempt to invoke virtual method 'int java.lang.Integer.intValue()' on a null object reference`) when a scheduled notification is delivered with no `icon`, no persisted default icon, and a null legacy `iconResourceId`. This can happen when a notification serialized by an older version of the plugin fires after an app update. The application's own icon is now used as a fallback so notification delivery no longer crashes. Fixes [#298](https://github.com/MaikuB/flutter_local_notifications/issues/298) and [#2049](https://github.com/MaikuB/flutter_local_notifications/issues/2049). Thanks to the PR from [Michael Allen](https://github.com/mtallenca)
 * Migrated example app off the Kotlin Gradle Plugin (KGP) in favour of [built-in Kotlin](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin) and bumped Android Gradle Plugin (AGP) to 9.1.1
 
+## [22.3.2]
+
+* [iOS] fixed issue [#2838](https://github.com/MaikuB/flutter_local_notifications/issues/2838) so that plugin longer throw `PlatformException`s that started on iOS 27 when permissions were not granted and for badge only notifications. This restores the behaviour of the plugin to as it was before. Thanks to the PR from [Vasily Laushkin](https://github.com/vlaushkin)
+* [Linux] bumped allowed `dbus` dependency version constraints to `>=0.7.8 <0.9.0`
+
 ## [22.3.1]
 
 * [macOS] fixed subtitle not showing up properly. Thanks to the PR from [Soi (Jiwon Lee)](https://github.com/JIWON1923)

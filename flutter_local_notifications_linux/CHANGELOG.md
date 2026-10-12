@@ -6,6 +6,10 @@
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.44.0 and Dart SDK requirement to 3.12.0
 
+## [8.0.2]
+
+* Bumped allowed `dbus` dependency version constraints to `>=0.7.8 <0.9.0`
+
 ## [8.0.1]
 
 * Bumped dependency on `flutter_local_notifications_platform_interface`
