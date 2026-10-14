@@ -35,6 +35,18 @@ void main() => group('Plugin', () {
     plugin.dispose();
   });
 
+  test('can initialize again after a failed initialization', () async {
+    final FlutterLocalNotificationsWindows plugin =
+        FlutterLocalNotificationsWindows();
+    await expectLater(
+      plugin.initialize(settings: badSettings),
+      throwsArgumentError,
+    );
+    final bool result = await plugin.initialize(settings: goodSettings);
+    expect(result, isTrue);
+    plugin.dispose();
+  });
+
   test('cannot be used before initializing', () async {
     final FlutterLocalNotificationsWindows plugin =
         FlutterLocalNotificationsWindows();
