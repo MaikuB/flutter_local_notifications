@@ -1,3 +1,14 @@
+## [vNext]
+
+* **Breaking change** the plugin no longer terminates the app when its connection to the Windows notification platform is lost while the app is running (e.g. `0x800401FD`). It now recreates its notifier and retries the call once, and reports a failure instead of letting a native exception cross the FFI boundary. This fixes issue [#2666](https://github.com/MaikuB/flutter_local_notifications/issues/2666). When a call still fails after the retry:
+  * `show()` throws an `Exception` and `showRawXml()` throws an `ArgumentError`. Note that `showRawXml()` reports this as invalid XML
+  * `zonedSchedule()` and `zonedScheduleRawXml()` complete without an error even though nothing was scheduled
+  * `cancel()` and `cancelAll()` complete without an error
+  * `updateBindings()` returns `NotificationUpdateResult.error`
+  * `getActiveNotifications()` and `pendingNotificationRequests()` return an empty list
+* **Breaking change** `initialize()` now returns `false` when the Windows notification platform is unavailable at launch, where it used to terminate the app. The native resources allocated for that attempt are released, so `initialize()` can be called again on the same instance. A call rejected for an invalid GUID can also be retried
+* `getActiveNotifications()` and `pendingNotificationRequests()` now skip a notification whose tag is not a number (e.g. one shown under the app's ID by other code) instead of terminating the app
+
 ## [4.0.0-dev.2]
 
 * **Breaking change** bumped cmake minimum version to 3.14 and have plugin compile with at least C++ 20 (i.e. `CXX_STANDARD 20`)
