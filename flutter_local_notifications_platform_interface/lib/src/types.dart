@@ -169,4 +169,9 @@ enum NotificationResponseType {
 
   /// Indicates that a user has dismissed a notification.
   notificationDismissed,
+
+  /// Indicates that a scheduled notification has been posted.
+  ///
+  /// Only reported on Android.
+  notificationPosted,
 }
