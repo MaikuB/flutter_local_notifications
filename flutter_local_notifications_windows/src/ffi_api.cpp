@@ -8,8 +8,6 @@
 
 using winrt::Windows::Data::Xml::Dom::XmlDocument;
 
-static const winrt::hstring kDefaultGroup = L"flnpGroupNull";
-
 bool hasPackageIdentity() {
   if (!IsWindows8OrGreater()) return false;
   uint32_t length = 0;
@@ -23,7 +21,7 @@ void disposePlugin(NativePlugin* plugin) { delete plugin; }
 
 bool init(
   NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath,
-  NativeNotificationCallback callback
+  char* groupName, NativeNotificationCallback callback
 ) {
   string icon;
   if (iconPath != nullptr) icon = string(iconPath);
@@ -31,6 +29,7 @@ bool init(
   if (!didRegister) return false;
   plugin->hasIdentity = hasPackageIdentity();
   plugin->aumid = winrt::to_hstring(aumId);
+  plugin->group = winrt::to_hstring(groupName);
   plugin->notifier = plugin->hasIdentity
     ? ToastNotificationManager::CreateToastNotifier()
     : ToastNotificationManager::CreateToastNotifier(plugin->aumid);
@@ -60,7 +59,7 @@ bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap b
   ToastNotification notification(doc);
   const auto data = dataFromMap(bindings);
   notification.Tag(winrt::to_hstring(id));
-  if (!plugin->hasIdentity) notification.Group(kDefaultGroup);
+  if (!plugin->hasIdentity) notification.Group(plugin->group);
   notification.Data(data);
   plugin->notifier.value().Show(notification);
   return true;
@@ -76,7 +75,7 @@ bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time) {
   }
   ScheduledToastNotification notification(doc, winrt::clock::from_time_t(time));
   notification.Tag(winrt::to_hstring(id));
-  if (!plugin->hasIdentity) notification.Group(kDefaultGroup);
+  if (!plugin->hasIdentity) notification.Group(plugin->group);
   plugin->notifier.value().AddToSchedule(notification);
   return true;
 }
@@ -87,7 +86,7 @@ NativeUpdateResult updateNotification(NativePlugin* plugin, int id, NativeString
   const auto data = dataFromMap(bindings);
   const auto result = plugin->hasIdentity
     ? plugin->notifier.value().Update(data, tag)
-    : plugin->notifier.value().Update(data, tag, kDefaultGroup);
+    : plugin->notifier.value().Update(data, tag, plugin->group);
   return (NativeUpdateResult) result;
 }
 
@@ -108,7 +107,7 @@ void cancelNotification(NativePlugin* plugin, int id) {
   const auto tag = winrt::to_hstring(id);
   try {
     if (plugin->hasIdentity) plugin->history.value().Remove(tag);
-    else plugin->history.value().Remove(tag, kDefaultGroup, plugin->aumid);
+    else plugin->history.value().Remove(tag, plugin->group, plugin->aumid);
   } catch (winrt::hresult_error&) {
     // Toast not found
   }

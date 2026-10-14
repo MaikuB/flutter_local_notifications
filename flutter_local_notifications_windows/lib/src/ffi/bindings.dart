@@ -83,9 +83,10 @@ class NotificationsPluginBindings {
     ffi.Pointer<pkg_ffi.Utf8> aumId,
     ffi.Pointer<pkg_ffi.Utf8> guid,
     ffi.Pointer<pkg_ffi.Utf8> iconPath,
+    ffi.Pointer<pkg_ffi.Utf8> groupName,
     NativeNotificationCallback callback,
   ) {
-    return _init(plugin, appName, aumId, guid, iconPath, callback);
+    return _init(plugin, appName, aumId, guid, iconPath, groupName, callback);
   }
 
   late final _initPtr =
@@ -93,6 +94,7 @@ class NotificationsPluginBindings {
         ffi.NativeFunction<
           ffi.Bool Function(
             ffi.Pointer<NativePlugin>,
+            ffi.Pointer<pkg_ffi.Utf8>,
             ffi.Pointer<pkg_ffi.Utf8>,
             ffi.Pointer<pkg_ffi.Utf8>,
             ffi.Pointer<pkg_ffi.Utf8>,
@@ -105,6 +107,7 @@ class NotificationsPluginBindings {
       .asFunction<
         bool Function(
           ffi.Pointer<NativePlugin>,
+          ffi.Pointer<pkg_ffi.Utf8>,
           ffi.Pointer<pkg_ffi.Utf8>,
           ffi.Pointer<pkg_ffi.Utf8>,
           ffi.Pointer<pkg_ffi.Utf8>,

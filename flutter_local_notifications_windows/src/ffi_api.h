@@ -89,7 +89,7 @@ FFI_PLUGIN_EXPORT void disposePlugin(NativePlugin* ptr);
 /// Initializes the plugin and registers the callback to be run when a notification is pressed.
 FFI_PLUGIN_EXPORT bool init(
   NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath,
-  NativeNotificationCallback callback
+  char* groupName, NativeNotificationCallback callback
 );
 
 /// Shows the XML as a notification with the given ID. See [updateNotification] for details on
