@@ -36,9 +36,6 @@ struct NativePlugin {
   /// The API responsible for showing notifications. Null if [isReady] is false.
   optional<ToastNotifier> notifier;
 
-  /// The API responsible for querying shown notifications. Null if [isReady] is false.
-  optional<ToastNotificationHistory> history;
-
   /// A callback to run when a notification is pressed, when the app is or is not running.
   NativeNotificationCallback callback;
 
