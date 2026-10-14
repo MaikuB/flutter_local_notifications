@@ -47,7 +47,10 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   );
 
   /// A pointer to the C++ handler class.
-  late final Pointer<NativePlugin> _plugin;
+  ///
+  /// Only valid while [_isReady] is true: it is released when initialization
+  /// fails or when the plugin is disposed, so [initialize] can be called again.
+  Pointer<NativePlugin> _plugin = nullptr;
 
   bool _isReady = false;
 
@@ -69,8 +72,8 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     if (_isReady) {
       return true;
     }
-    _plugin = _bindings.createPlugin();
-    // The C++ code will crash if there's an invalid GUID, so check it here
+    // The C++ code will crash if there's an invalid GUID, so check it here,
+    // before anything is allocated on the native side.
     if (!settings.guid.isValidGuid) {
       throw ArgumentError.value(
         settings.guid,
@@ -94,16 +97,23 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         NativeCallable<NativeNotificationCallbackFunction>.listener(
           _globalLaunchCallback,
         ).nativeFunction;
+    final Pointer<NativePlugin> plugin = _bindings.createPlugin();
     final bool result = _bindings.init(
-      _plugin,
+      plugin,
       appName,
       aumId,
       guid,
       iconPath,
       callback,
     );
-    _isReady = result;
-    return result;
+    if (!result) {
+      // Release the native plugin so a later call can try again.
+      _bindings.disposePlugin(plugin);
+      return false;
+    }
+    _plugin = plugin;
+    _isReady = true;
+    return true;
   });
 
   @override
@@ -112,6 +122,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
       return;
     }
     _bindings.disposePlugin(_plugin);
+    _plugin = nullptr;
     instance = null;
     _isReady = false;
   }
