@@ -20,8 +20,8 @@ NativePlugin* createPlugin() { return new NativePlugin(); }
 void disposePlugin(NativePlugin* plugin) { delete plugin; }
 
 bool init(
-  NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath,
-  char* groupName, NativeNotificationCallback callback
+  NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath, char* groupName,
+  NativeNotificationCallback callback
 ) {
   string icon;
   if (iconPath != nullptr) icon = string(iconPath);
@@ -106,8 +106,10 @@ void cancelNotification(NativePlugin* plugin, int id) {
   const auto tag = winrt::to_hstring(id);
   try {
     const auto history = ToastNotificationManager::History();
-    if (plugin->hasIdentity) history.Remove(tag);
-    else history.Remove(tag, plugin->group, plugin->aumid);
+    if (plugin->hasIdentity)
+      history.Remove(tag);
+    else
+      history.Remove(tag, plugin->group, plugin->aumid);
   } catch (winrt::hresult_error&) {
     // Toast not found
   }
@@ -125,9 +127,8 @@ NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* siz
   if (!plugin->isReady) return nullptr;
   try {
     const auto history = ToastNotificationManager::History();
-    const auto active = plugin->hasIdentity
-      ? history.GetHistory()
-      : history.GetHistory(plugin->aumid);
+    const auto active =
+      plugin->hasIdentity ? history.GetHistory() : history.GetHistory(plugin->aumid);
     const auto result = new NativeNotificationDetails[active.Size()];
     for (const auto notification : active) {
       try {
