@@ -7,6 +7,7 @@
 #include <winrt/Windows.UI.Notifications.h>
 
 #include "ffi_api.h"
+#include "worker.hpp"
 
 using std::optional;
 using std::string;
@@ -38,6 +39,9 @@ struct NativePlugin {
 
   /// A callback to run when a notification is pressed, when the app is or is not running.
   NativeNotificationCallback callback;
+
+  /// Owns the apartment every WinRT handle above was created in. See [NotificationWorker].
+  NotificationWorker worker;
 
   NativePlugin() {}
   ~NativePlugin() {}
