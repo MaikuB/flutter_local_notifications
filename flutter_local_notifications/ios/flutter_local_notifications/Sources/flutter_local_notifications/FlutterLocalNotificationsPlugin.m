@@ -680,31 +680,50 @@ static FlutterError *getFlutterError(NSError *error) {
                        trigger:trigger];
 }
 
+static dispatch_queue_t removalQueue(void) {
+  static dispatch_queue_t queue;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    queue = dispatch_queue_create(
+        "com.dexterous.flutter_local_notifications.removal",
+        dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL,
+                                                QOS_CLASS_USER_INITIATED, 0));
+  });
+  return queue;
+}
+
+static void removeOffMainThread(void (^removal)(UNUserNotificationCenter *),
+                                FlutterResult result) {
+  dispatch_async(removalQueue(), ^{
+    removal([UNUserNotificationCenter currentNotificationCenter]);
+    dispatch_async(dispatch_get_main_queue(), ^{
+      result(nil);
+    });
+  });
+}
+
 - (void)cancel:(NSNumber *)id
         result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
-  UNUserNotificationCenter *center =
-      [UNUserNotificationCenter currentNotificationCenter];
   NSArray *idsToRemove =
       [[NSArray alloc] initWithObjects:[id stringValue], nil];
-  [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
-  [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
-  result(nil);
+  removeOffMainThread(^(UNUserNotificationCenter *center) {
+    [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
+    [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
+  }, result);
 }
 
 - (void)cancelAll:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
-  UNUserNotificationCenter *center =
-      [UNUserNotificationCenter currentNotificationCenter];
-  [center removeAllPendingNotificationRequests];
-  [center removeAllDeliveredNotifications];
-  result(nil);
+  removeOffMainThread(^(UNUserNotificationCenter *center) {
+    [center removeAllPendingNotificationRequests];
+    [center removeAllDeliveredNotifications];
+  }, result);
 }
 
 - (void)cancelAllPendingNotifications:(FlutterResult _Nonnull)result
     API_AVAILABLE(ios(10.0)) {
-  UNUserNotificationCenter *center =
-      [UNUserNotificationCenter currentNotificationCenter];
-  [center removeAllPendingNotificationRequests];
-  result(nil);
+  removeOffMainThread(^(UNUserNotificationCenter *center) {
+    [center removeAllPendingNotificationRequests];
+  }, result);
 }
 
 - (UNMutableNotificationContent *)
