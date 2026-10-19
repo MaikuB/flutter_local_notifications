@@ -79,6 +79,16 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
             ' format.\nYou can get one by searching GUID generators online',
       );
     }
+    // Windows rejects empty groups and groups over 64 UTF-16 code units.
+    // The group is only used by apps without package identity.
+    if (!_bindings.hasPackageIdentity() &&
+        (settings.groupName.isEmpty || settings.groupName.length > 64)) {
+      throw ArgumentError.value(
+        settings.groupName,
+        'groupName',
+        'Must be between 1 and 64 characters long',
+      );
+    }
     instance = this;
     userCallback = onDidReceiveNotificationResponse;
     final Pointer<Utf8> appName = settings.appName.toNativeUtf8(
