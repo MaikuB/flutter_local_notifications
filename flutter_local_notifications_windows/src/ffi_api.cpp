@@ -121,6 +121,19 @@ void cancelNotification(NativePlugin* plugin, int id) {
   }
 }
 
+// Returns the ID stored in a tag, or nothing if a different plugin wrote it
+std::optional<int> idFromTag(const winrt::hstring& tag) {
+  const auto tagStr = winrt::to_string(tag);
+  try {
+    size_t parsed = 0;
+    const auto id = std::stoi(tagStr, &parsed);
+    if (parsed != tagStr.size()) return std::nullopt;
+    return id;
+  } catch (const std::exception&) {
+    return std::nullopt;
+  }
+}
+
 NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* size) {
   // TODO: Get more details here
   *size = 0;
@@ -131,16 +144,8 @@ NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* siz
       plugin->hasIdentity ? history.GetHistory() : history.GetHistory(plugin->aumid);
     const auto result = new NativeNotificationDetails[active.Size()];
     for (const auto notification : active) {
-      try {
-        const auto tag = winrt::to_string(notification.Tag());
-        size_t parsed = 0;
-        const auto id = std::stoi(tag, &parsed);
-        if (parsed != tag.size()) continue;
-        result[*size].id = id;
-        (*size)++;
-      } catch (const std::exception&) {
-        // A different plugin wrote this notification, ignore it
-      }
+      const auto id = idFromTag(notification.Tag());
+      if (id) result[(*size)++].id = *id;
     }
     return result;
   } catch (const winrt::hresult_error&) {
@@ -156,14 +161,11 @@ NativeNotificationDetails* getPendingNotifications(NativePlugin* plugin, int* si
     return nullptr;
   }
   const auto pending = plugin->notifier.value().GetScheduledToastNotifications();
-  *size = pending.Size();
-  const auto result = new NativeNotificationDetails[*size];
-  int index = 0;
+  *size = 0;
+  const auto result = new NativeNotificationDetails[pending.Size()];
   for (const auto notification : pending) {
-    const auto tag = notification.Tag();
-    const auto tagStr = winrt::to_string(tag);
-    const auto tagInt = std::stoi(tagStr);
-    result[index++].id = tagInt;
+    const auto id = idFromTag(notification.Tag());
+    if (id) result[(*size)++].id = *id;
   }
   return result;
 }
