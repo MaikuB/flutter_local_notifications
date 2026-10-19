@@ -132,7 +132,11 @@ NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* siz
     const auto result = new NativeNotificationDetails[active.Size()];
     for (const auto notification : active) {
       try {
-        result[*size].id = std::stoi(winrt::to_string(notification.Tag()));
+        const auto tag = winrt::to_string(notification.Tag());
+        size_t parsed = 0;
+        const auto id = std::stoi(tag, &parsed);
+        if (parsed != tag.size()) continue;
+        result[*size].id = id;
         (*size)++;
       } catch (const std::exception&) {
         // A different plugin wrote this notification, ignore it
