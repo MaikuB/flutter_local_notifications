@@ -2,6 +2,8 @@
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Data.Xml.Dom.h>
 
+#include <vector>
+
 #include "ffi_api.h"
 #include "plugin.hpp"
 #include "utils.hpp"
@@ -53,6 +55,16 @@ bool isValidXml(char* xml) {
   }
 }
 
+// Collects matches first: removing while iterating the scheduled view is unsafe.
+static void removeScheduled(NativePlugin* plugin, const winrt::hstring& tag) {
+  auto& notifier = plugin->notifier.value();
+  std::vector<ScheduledToastNotification> matches;
+  for (const auto notification : notifier.GetScheduledToastNotifications()) {
+    if (notification.Tag() == tag) matches.push_back(notification);
+  }
+  for (const auto& notification : matches) notifier.RemoveFromSchedule(notification);
+}
+
 bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap bindings) {
   const string xmlCopy(xml);
   const auto bindingsCopy = copyMap(bindings);
@@ -83,7 +95,9 @@ bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time) {
       return;
     }
     ScheduledToastNotification notification(doc, winrt::clock::from_time_t(time));
-    notification.Tag(winrt::to_hstring(id));
+    const auto tag = winrt::to_hstring(id);
+    notification.Tag(tag);
+    removeScheduled(plugin, tag);
     plugin->notifier.value().AddToSchedule(notification);
   });
   return true;
@@ -119,12 +133,7 @@ void cancelNotification(NativePlugin* plugin, int id) {
     if (!plugin->isReady) return;
     const auto tag = winrt::to_hstring(id);
     if (plugin->hasIdentity) plugin->history.value().Remove(tag);
-    for (const auto notification : plugin->notifier.value().GetScheduledToastNotifications()) {
-      if (notification.Tag() == tag) {
-        plugin->notifier.value().RemoveFromSchedule(notification);
-        return;
-      }
-    }
+    removeScheduled(plugin, tag);
   });
 }
 
