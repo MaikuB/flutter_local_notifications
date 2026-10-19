@@ -28,9 +28,10 @@ class NotificationWorker {
  private:
   void run();
 
-  std::thread thread;
   std::mutex mutex;
   std::condition_variable signal;
   std::deque<std::function<void()>> jobs;
   bool stopping = false;
+  // Declared last: the thread starts in the constructor and uses every member above.
+  std::thread thread;
 };
