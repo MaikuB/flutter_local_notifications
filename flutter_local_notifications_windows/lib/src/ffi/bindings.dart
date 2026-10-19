@@ -222,8 +222,6 @@ class NotificationsPluginBindings {
       .asFunction<void Function(ffi.Pointer<NativePlugin>)>();
 
   /// Cancels a notification with the given ID.
-  ///
-  /// Only applications with "package identity" (ie, installed with an MSIX installer), can use this.
   void cancelNotification(ffi.Pointer<NativePlugin> plugin, int id) {
     return _cancelNotification(plugin, id);
   }
@@ -238,9 +236,6 @@ class NotificationsPluginBindings {
       .asFunction<void Function(ffi.Pointer<NativePlugin>, int)>();
 
   /// Gets all notifications that have already been shown but are still in the Action center.
-  ///
-  /// Only applications with "package identity" (ie, installed with an MSIX installer), can use this.
-  /// When your app does not have identity, such as in debug mode, this will return an empty array.
   ffi.Pointer<NativeNotificationDetails> getActiveNotifications(
     ffi.Pointer<NativePlugin> plugin,
     ffi.Pointer<ffi.Int> size,
