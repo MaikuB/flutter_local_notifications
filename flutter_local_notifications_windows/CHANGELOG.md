@@ -6,7 +6,7 @@
   * `cancel()` and `cancelAll()` complete without an error
   * `updateBindings()` returns `NotificationUpdateResult.error`
   * `getActiveNotifications()` and `pendingNotificationRequests()` return an empty list
-* **Breaking change** `initialize()` now returns `false` when the Windows notification platform is unavailable at launch, where it used to terminate the app. The native resources allocated for that attempt are released, so `initialize()` can be called again on the same instance. A call rejected for an invalid GUID can also be retried
+* **Breaking change** `initialize()` now returns `false` when the Windows notification platform is unavailable at launch, where it used to terminate the app. The native resources allocated for that attempt are released, including the COM registration of the notification activation callback, so `initialize()` can be called again on the same instance. A call rejected for an invalid GUID can also be retried
 * `getActiveNotifications()` and `pendingNotificationRequests()` now skip a notification whose tag is not a number (e.g. one shown under the app's ID by other code) instead of terminating the app
 
 ## [4.0.0-dev.2]

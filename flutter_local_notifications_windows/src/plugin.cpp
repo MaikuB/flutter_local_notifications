@@ -161,8 +161,9 @@ void UpdateRegistry(
 
 /// Register the notification activation callback factory
 /// and the guid of the callback.
-bool RegisterCallback(const std::string& guid, NativeNotificationCallback callback) {
-  DWORD registration {};
+bool RegisterCallback(
+  const std::string& guid, NativeNotificationCallback callback, DWORD& registration
+) {
   winrt::guid rclsid = parseGuid(guid);
   const auto factory_ref = winrt::make_self<NotificationActivationCallbackFactory>();
   const auto factory = factory_ref.get();
@@ -178,5 +179,10 @@ bool NativePlugin::registerApp(
   NativeNotificationCallback callback
 ) {
   UpdateRegistry(aumid, appName, guid, iconPath);
-  return RegisterCallback(guid, callback);
+  if (registration != 0) {
+    // A previous registration of this plugin: revoke it before registering again.
+    CoRevokeClassObject(registration);
+    registration = 0;
+  }
+  return RegisterCallback(guid, callback, registration);
 }
