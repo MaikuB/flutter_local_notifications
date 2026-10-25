@@ -1,3 +1,7 @@
+## [23.0.0-dev.5]
+
+* Applies changes done as part of 22.3.3 hotfix
+
 ## [23.0.0-dev.4]
 
 * Applies changes done as part of 22.3.2 hotfix
