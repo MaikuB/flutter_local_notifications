@@ -40,6 +40,7 @@ import android.util.Log;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationCompat;
@@ -85,7 +86,10 @@ import com.google.gson.reflect.TypeToken;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.time.Clock;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -1513,43 +1517,51 @@ public class FlutterLocalNotificationsPlugin
 
   private static String getNextFireDateMatchingDateTimeComponents(
       NotificationDetails notificationDetails) {
+    return getNextFireDateMatchingDateTimeComponents(
+        notificationDetails, Clock.systemDefaultZone());
+  }
+
+  /**
+   * Returns the next local date-time, from now on, that matches the components of the scheduled
+   * date-time.
+   *
+   * <p>Candidate dates advance as calendar dates and keep the scheduled wall-clock time. A {@link
+   * ZonedDateTime} would resolve a time in a daylight saving gap to a later hour, for example 02:30
+   * to 03:30 on the day clocks go forward. That hour would be stored and every later repetition
+   * would keep it. The returned value keeps 02:30, and only the alarm for that one day resolves it
+   * to an instant.
+   */
+  @VisibleForTesting
+  static String getNextFireDateMatchingDateTimeComponents(
+      NotificationDetails notificationDetails, Clock clock) {
     ZoneId zoneId = ZoneId.of(notificationDetails.timeZoneName);
-    ZonedDateTime scheduledDateTime =
-        ZonedDateTime.of(LocalDateTime.parse(notificationDetails.scheduledDateTime), zoneId);
-    ZonedDateTime now = ZonedDateTime.now(zoneId);
-    ZonedDateTime nextFireDate =
-        ZonedDateTime.of(
-            now.getYear(),
-            now.getMonthValue(),
-            now.getDayOfMonth(),
-            scheduledDateTime.getHour(),
-            scheduledDateTime.getMinute(),
-            scheduledDateTime.getSecond(),
-            scheduledDateTime.getNano(),
-            zoneId);
-    while (nextFireDate.isBefore(now)) {
+    LocalDateTime scheduledDateTime = LocalDateTime.parse(notificationDetails.scheduledDateTime);
+    LocalTime time = scheduledDateTime.toLocalTime();
+    ZonedDateTime now = ZonedDateTime.now(clock.withZone(zoneId));
+    LocalDate nextFireDate = now.toLocalDate();
+    while (ZonedDateTime.of(nextFireDate, time, zoneId).isBefore(now)) {
       // adjust to be a date in the future that matches the time
       nextFireDate = nextFireDate.plusDays(1);
     }
     if (notificationDetails.matchDateTimeComponents == DateTimeComponents.Time) {
-      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate.atTime(time));
     } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DayOfWeekAndTime) {
       while (nextFireDate.getDayOfWeek() != scheduledDateTime.getDayOfWeek()) {
         nextFireDate = nextFireDate.plusDays(1);
       }
-      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate.atTime(time));
     } else if (notificationDetails.matchDateTimeComponents
         == DateTimeComponents.DayOfMonthAndTime) {
       while (nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
         nextFireDate = nextFireDate.plusDays(1);
       }
-      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate.atTime(time));
     } else if (notificationDetails.matchDateTimeComponents == DateTimeComponents.DateAndTime) {
       while (nextFireDate.getMonthValue() != scheduledDateTime.getMonthValue()
           || nextFireDate.getDayOfMonth() != scheduledDateTime.getDayOfMonth()) {
         nextFireDate = nextFireDate.plusDays(1);
       }
-      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate);
+      return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(nextFireDate.atTime(time));
     }
     return null;
   }
