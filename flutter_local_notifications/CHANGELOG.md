@@ -1,3 +1,7 @@
+## [23.0.0-dev.5]
+
+* Applies changes done as part of 22.3.3 hotfix
+
 ## [23.0.0-dev.4]
 
 * Applies changes done as part of 22.3.2 hotfix
@@ -22,6 +26,10 @@
 * [Android] migrated to Kotlin DSL
 * [Android] Fixed a `NullPointerException` crash in `setSmallIcon` (`Attempt to invoke virtual method 'int java.lang.Integer.intValue()' on a null object reference`) when a scheduled notification is delivered with no `icon`, no persisted default icon, and a null legacy `iconResourceId`. This can happen when a notification serialized by an older version of the plugin fires after an app update. The application's own icon is now used as a fallback so notification delivery no longer crashes. Fixes [#298](https://github.com/MaikuB/flutter_local_notifications/issues/298) and [#2049](https://github.com/MaikuB/flutter_local_notifications/issues/2049). Thanks to the PR from [Michael Allen](https://github.com/mtallenca)
 * Migrated example app off the Kotlin Gradle Plugin (KGP) in favour of [built-in Kotlin](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin) and bumped Android Gradle Plugin (AGP) to 9.1.1
+
+## [22.3.3]
+
+* [Android] fixed issues [#2858](https://github.com/MaikuB/flutter_local_notifications/issues/2858) where for repeating notifications, the specified wall-clock time was not kept when daylight savings related transitions took place. Thanks to the PR from [Metehan Arıman](https://github.com/imariman)
 
 ## [22.3.2]
 
