@@ -53,8 +53,7 @@ public class NextFireDateMatchingDateTimeComponentsTest {
   public void timeOutsideTransitions_isUnchanged() {
     NotificationDetails daily = details("2027-03-20T09:00", DateTimeComponents.Time);
     NotificationDetails weekly = details("2027-03-20T09:00", DateTimeComponents.DayOfWeekAndTime);
-    NotificationDetails monthly =
-        details("2027-01-31T09:00", DateTimeComponents.DayOfMonthAndTime);
+    NotificationDetails monthly = details("2027-01-31T09:00", DateTimeComponents.DayOfMonthAndTime);
     NotificationDetails yearly = details("2026-02-14T09:00", DateTimeComponents.DateAndTime);
 
     assertEquals("2027-03-27T09:00:00", nextFireDate(daily, "2027-03-27T08:00"));
