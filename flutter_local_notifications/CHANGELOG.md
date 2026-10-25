@@ -1,3 +1,7 @@
+## [22.3.3]
+
+* [Android] fixed issues [#2858](https://github.com/MaikuB/flutter_local_notifications/issues/2858) where for repeating notifications, the specified wall-clock time was not kept when daylight savings related transitions took place. Thanks to the PR from [Metehan Arıman](https://github.com/imariman)
+
 ## [22.3.2]
 
 * [iOS] fixed issue [#2838](https://github.com/MaikuB/flutter_local_notifications/issues/2838) so that plugin longer throws `PlatformException`s that started on iOS 27 when permissions were not granted and when badge only notifications were triggered. This restores the behaviour of the plugin to as it was before. Thanks to the PR from [Vasily Laushkin](https://github.com/vlaushkin)
