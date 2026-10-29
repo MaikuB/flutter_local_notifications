@@ -35,6 +35,25 @@ void main() => group('Plugin', () {
     plugin.dispose();
   });
 
+  test('catches bad group names', () async {
+    for (final String groupName in <String>['', 'a' * 65]) {
+      final FlutterLocalNotificationsWindows plugin =
+          FlutterLocalNotificationsWindows();
+      expect(
+        plugin.initialize(
+          settings: WindowsInitializationSettings(
+            appName: 'test',
+            appUserModelId: 'com.test.test',
+            guid: 'a8c22b55-049e-422f-b30f-863694de08c8',
+            groupName: groupName,
+          ),
+        ),
+        throwsArgumentError,
+      );
+      plugin.dispose();
+    }
+  });
+
   test('cannot be used before initializing', () async {
     final FlutterLocalNotificationsWindows plugin =
         FlutterLocalNotificationsWindows();

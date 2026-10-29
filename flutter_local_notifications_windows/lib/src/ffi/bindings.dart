@@ -83,9 +83,10 @@ class NotificationsPluginBindings {
     ffi.Pointer<pkg_ffi.Utf8> aumId,
     ffi.Pointer<pkg_ffi.Utf8> guid,
     ffi.Pointer<pkg_ffi.Utf8> iconPath,
+    ffi.Pointer<pkg_ffi.Utf8> groupName,
     NativeNotificationCallback callback,
   ) {
-    return _init(plugin, appName, aumId, guid, iconPath, callback);
+    return _init(plugin, appName, aumId, guid, iconPath, groupName, callback);
   }
 
   late final _initPtr =
@@ -93,6 +94,7 @@ class NotificationsPluginBindings {
         ffi.NativeFunction<
           ffi.Bool Function(
             ffi.Pointer<NativePlugin>,
+            ffi.Pointer<pkg_ffi.Utf8>,
             ffi.Pointer<pkg_ffi.Utf8>,
             ffi.Pointer<pkg_ffi.Utf8>,
             ffi.Pointer<pkg_ffi.Utf8>,
@@ -105,6 +107,7 @@ class NotificationsPluginBindings {
       .asFunction<
         bool Function(
           ffi.Pointer<NativePlugin>,
+          ffi.Pointer<pkg_ffi.Utf8>,
           ffi.Pointer<pkg_ffi.Utf8>,
           ffi.Pointer<pkg_ffi.Utf8>,
           ffi.Pointer<pkg_ffi.Utf8>,
@@ -219,8 +222,6 @@ class NotificationsPluginBindings {
       .asFunction<void Function(ffi.Pointer<NativePlugin>)>();
 
   /// Cancels a notification with the given ID.
-  ///
-  /// Only applications with "package identity" (ie, installed with an MSIX installer), can use this.
   void cancelNotification(ffi.Pointer<NativePlugin> plugin, int id) {
     return _cancelNotification(plugin, id);
   }
@@ -235,9 +236,6 @@ class NotificationsPluginBindings {
       .asFunction<void Function(ffi.Pointer<NativePlugin>, int)>();
 
   /// Gets all notifications that have already been shown but are still in the Action center.
-  ///
-  /// Only applications with "package identity" (ie, installed with an MSIX installer), can use this.
-  /// When your app does not have identity, such as in debug mode, this will return an empty array.
   ffi.Pointer<NativeNotificationDetails> getActiveNotifications(
     ffi.Pointer<NativePlugin> plugin,
     ffi.Pointer<ffi.Int> size,
