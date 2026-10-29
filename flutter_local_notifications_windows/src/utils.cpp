@@ -27,6 +27,23 @@ NotificationData dataFromMap(NativeStringMap map) {
   return data;
 }
 
+vector<std::pair<string, string>> copyMap(NativeStringMap map) {
+  vector<std::pair<string, string>> pairs;
+  pairs.reserve(map.size);
+  for (int index = 0; index < map.size; index++) {
+    pairs.emplace_back(string(map.entries[index].key), string(map.entries[index].value));
+  }
+  return pairs;
+}
+
+NotificationData dataFromPairs(const vector<std::pair<string, string>>& pairs) {
+  NotificationData data;
+  for (const auto& pair : pairs) {
+    data.Values().Insert(winrt::to_hstring(pair.first), winrt::to_hstring(pair.second));
+  }
+  return data;
+}
+
 std::wstring utf8_to_wstring(const std::string& utf8) {
   int len = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), -1, nullptr, 0);
   winrt::check_win32(len != 0 ? ERROR_SUCCESS : GetLastError());

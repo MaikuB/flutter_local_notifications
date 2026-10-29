@@ -7,6 +7,7 @@
 #include <winrt/Windows.UI.Notifications.h>
 
 #include "ffi_api.h"
+#include "worker.hpp"
 
 using std::optional;
 using std::string;
@@ -39,8 +40,23 @@ struct NativePlugin {
   /// A callback to run when a notification is pressed, when the app is or is not running.
   NativeNotificationCallback callback;
 
+  /// The cookie from `CoRegisterClassObject`. Zero until the callback is registered.
+  DWORD registration = 0;
+
+  /// Owns the apartment every WinRT handle above was created in. See [NotificationWorker].
+  NotificationWorker worker;
+
   NativePlugin() {}
-  ~NativePlugin() {}
+
+  // [worker] is destroyed first and tears its apartment down, so everything created
+  // in that apartment is released on the worker beforehand.
+  ~NativePlugin() {
+    worker.invoke([this] {
+      if (registration != 0) CoRevokeClassObject(registration);
+      notifier.reset();
+      history.reset();
+    });
+  }
 
   /// Registers the given [callback] to run when a notification is pressed.
   bool registerApp(
