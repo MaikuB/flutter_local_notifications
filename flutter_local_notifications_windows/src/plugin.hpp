@@ -39,8 +39,16 @@ struct NativePlugin {
   /// A callback to run when a notification is pressed, when the app is or is not running.
   NativeNotificationCallback callback;
 
+  /// The cookie of the activation callback factory registered with COM, or 0 if none is registered.
+  ///
+  /// Revoked when the plugin is disposed, including after a failed [registerApp] or a failed `init`,
+  /// so that retrying `initialize()` does not leave one registered factory per attempt.
+  DWORD registration = 0;
+
   NativePlugin() {}
-  ~NativePlugin() {}
+  ~NativePlugin() {
+    if (registration != 0) CoRevokeClassObject(registration);
+  }
 
   /// Registers the given [callback] to run when a notification is pressed.
   bool registerApp(
