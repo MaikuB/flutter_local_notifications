@@ -552,7 +552,8 @@ static FlutterError *getFlutterError(NSError *error) {
     providesAppNotificationSettings:(bool)providesAppNotificationSettings
                              result:(FlutterResult _Nonnull)result {
   if (!soundPermission && !alertPermission && !badgePermission &&
-      !criticalPermission && !providesAppNotificationSettings) {
+      !provisionalPermission && !criticalPermission &&
+      !providesAppNotificationSettings) {
     result(@NO);
     return;
   }
