@@ -13,8 +13,10 @@ import 'handler.dart';
 import 'permission.dart';
 import 'utils.dart';
 
-/// Upper bound so initialize() does not hang if activation never finishes.
-const Duration _serviceWorkerActivationTimeout = Duration(seconds: 10);
+/// Activation is normally sub-second (no install work, skipWaiting); this only
+/// guards against a stuck worker. Hitting it fails initialize(), so leave some
+/// margin for slow devices.
+const Duration _serviceWorkerActivationTimeout = Duration(seconds: 4);
 
 Future<void> _waitUntilActivated(ServiceWorkerRegistration registration) {
   final Completer<void> completer = Completer<void>();
