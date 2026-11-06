@@ -132,6 +132,7 @@ public class FlutterLocalNotificationsPlugin
   static final String NOTIFICATION_ID = "notificationId";
   static final String NOTIFICATION_TAG = "notificationTag";
   static final String CANCEL_NOTIFICATION = "cancelNotification";
+  static final String ACTION_ID = "actionId";
 
   private static final String TAG = "FLTLocalNotifPlugin";
 
@@ -140,6 +141,7 @@ public class FlutterLocalNotificationsPlugin
   private static final String CALLBACK_HANDLE = "callback_handle";
   private static final String DRAWABLE = "drawable";
   private static final String DEFAULT_ICON = "defaultIcon";
+  private static final String VERIFY_NOTIFICATION_INTENTS = "verifyNotificationIntents";
   private static final String SELECT_NOTIFICATION = "SELECT_NOTIFICATION";
   private static final String SELECT_FOREGROUND_NOTIFICATION_ACTION =
       "SELECT_FOREGROUND_NOTIFICATION";
@@ -215,7 +217,6 @@ public class FlutterLocalNotificationsPlugin
   private static final String EXACT_ALARMS_PERMISSION_ERROR_CODE = "exact_alarms_not_permitted";
   private static final String CANCEL_ID = "id";
   private static final String CANCEL_TAG = "tag";
-  private static final String ACTION_ID = "actionId";
   private static final String INPUT_RESULT = "FlutterLocalNotificationsPluginInputResult";
   private static final String INPUT = "input";
   private static final String NOTIFICATION_RESPONSE_TYPE = "notificationResponseType";
@@ -284,6 +285,7 @@ public class FlutterLocalNotificationsPlugin
     intent.setAction(SELECT_NOTIFICATION);
     intent.putExtra(NOTIFICATION_ID, notificationDetails.id);
     intent.putExtra(PAYLOAD, notificationDetails.payload);
+    NotificationIntentSigner.sign(context, intent);
     int flags = PendingIntent.FLAG_UPDATE_CURRENT;
     if (VERSION.SDK_INT >= VERSION_CODES.M) {
       flags |= PendingIntent.FLAG_IMMUTABLE;
@@ -377,6 +379,7 @@ public class FlutterLocalNotificationsPlugin
         @SuppressLint("UnspecifiedImmutableFlag")
         final PendingIntent actionPendingIntent;
         if (action.showsUserInterface != null && action.showsUserInterface) {
+          NotificationIntentSigner.sign(context, actionIntent);
           if (VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE) {
             ActivityOptions activityOptions = ActivityOptions.makeBasic();
             activityOptions.setPendingIntentCreatorBackgroundActivityStartMode(
@@ -1576,6 +1579,33 @@ public class FlutterLocalNotificationsPlugin
             == Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY;
   }
 
+  /**
+   * Returns whether the intent was sent by a notification shown by the plugin, when the user tapped
+   * the notification or one of its actions that shows the user interface. The launch activity is
+   * exported, so other apps can send it intents with the same action.
+   */
+  private boolean isNotificationIntent(Intent intent) {
+    String action = intent.getAction();
+    if (!SELECT_NOTIFICATION.equals(action)
+        && !SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(action)) {
+      return false;
+    }
+    boolean verify =
+        applicationContext
+            .getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE)
+            .getBoolean(VERIFY_NOTIFICATION_INTENTS, true);
+    if (!verify || NotificationIntentSigner.verify(applicationContext, intent)) {
+      return true;
+    }
+    Log.w(
+        TAG,
+        "Ignoring "
+            + action
+            + " intent without a valid signature. It wasn't sent by a notification shown by the"
+            + " plugin.");
+    return false;
+  }
+
   private void setActivity(Activity flutterActivity) {
     this.mainActivity = flutterActivity;
   }
@@ -1607,7 +1637,8 @@ public class FlutterLocalNotificationsPlugin
     mainActivity = binding.getActivity();
     Intent mainActivityIntent = mainActivity.getIntent();
     if (!launchedActivityFromHistory(mainActivityIntent)) {
-      if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.getAction())) {
+      if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(mainActivityIntent.getAction())
+          && isNotificationIntent(mainActivityIntent)) {
         Map<String, Object> notificationResponse =
             extractNotificationResponseMap(mainActivityIntent);
         processForegroundNotificationAction(mainActivityIntent, notificationResponse);
@@ -1879,9 +1910,8 @@ public class FlutterLocalNotificationsPlugin
       Intent launchIntent = mainActivity.getIntent();
       notificationLaunchedApp =
           launchIntent != null
-              && (SELECT_NOTIFICATION.equals(launchIntent.getAction())
-                  || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.getAction()))
-              && !launchedActivityFromHistory(launchIntent);
+              && !launchedActivityFromHistory(launchIntent)
+              && isNotificationIntent(launchIntent);
       if (notificationLaunchedApp) {
         notificationAppLaunchDetails.put(
             "notificationResponse", extractNotificationResponseMap(launchIntent));
@@ -1909,7 +1939,12 @@ public class FlutterLocalNotificationsPlugin
     SharedPreferences sharedPreferences =
         applicationContext.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
-    editor.putString(DEFAULT_ICON, defaultIcon).apply();
+    editor
+        .putString(DEFAULT_ICON, defaultIcon)
+        .putBoolean(
+            VERIFY_NOTIFICATION_INTENTS,
+            !Boolean.FALSE.equals(arguments.get(VERIFY_NOTIFICATION_INTENTS)))
+        .apply();
     result.success(true);
   }
 
@@ -2226,8 +2261,7 @@ public class FlutterLocalNotificationsPlugin
   }
 
   private Boolean sendNotificationPayloadMessage(Intent intent) {
-    if (SELECT_NOTIFICATION.equals(intent.getAction())
-        || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
+    if (isNotificationIntent(intent)) {
       Map<String, Object> notificationResponse = extractNotificationResponseMap(intent);
       if (SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(intent.getAction())) {
         processForegroundNotificationAction(intent, notificationResponse);
