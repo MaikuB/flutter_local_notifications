@@ -1,6 +1,7 @@
 #include <windows.h>  // <-- This must be the first Windows header
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Data.Xml.Dom.h>
+#include <memory>
 
 #include "ffi_api.h"
 #include "plugin.hpp"
@@ -146,12 +147,12 @@ NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* siz
     const auto history = ToastNotificationManager::History();
     const auto active =
       plugin->hasIdentity ? history.GetHistory() : history.GetHistory(plugin->aumid);
-    const auto result = new NativeNotificationDetails[active.Size()];
+    auto result = std::make_unique<NativeNotificationDetails[]>(active.Size());
     for (const auto notification : active) {
       const auto id = idFromTag(notification.Tag());
       if (id) result[(*size)++].id = *id;
     }
-    return result;
+    return result.release();
   } catch (const winrt::hresult_error&) {
     *size = 0;
     return nullptr;
