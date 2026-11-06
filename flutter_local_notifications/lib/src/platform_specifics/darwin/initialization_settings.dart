@@ -36,7 +36,8 @@ class DarwinInitializationSettings {
 
   /// Request permission to send provisional notification for iOS 12+
   ///
-  /// Subject to specific approval from Apple: https://developer.apple.com/documentation/usernotifications/asking_permission_to_use_notifications#3544375
+  /// The system grants provisional authorization without prompting the user:
+  /// https://developer.apple.com/documentation/usernotifications/asking-permission-to-use-notifications#Use-provisional-authorization-to-send-trial-notifications
   ///
   /// Default value is false.
   ///
