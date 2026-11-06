@@ -31,15 +31,25 @@ void main() => group('Plugin', () {
   test('catches bad GUIDs', () async {
     final FlutterLocalNotificationsWindows plugin =
         FlutterLocalNotificationsWindows();
-    expect(plugin.initialize(settings: badSettings), throwsArgumentError);
+    await expectLater(
+      plugin.initialize(settings: badSettings),
+      throwsArgumentError,
+    );
+    expect(await plugin.initialize(settings: goodSettings), isTrue);
     plugin.dispose();
   });
 
   test('catches bad group names', () async {
-    for (final String groupName in <String>['', 'a' * 65]) {
+    for (final String groupName in <String>[
+      '',
+      'a' * 65,
+      '\u0000',
+      'group\u0000suffix',
+      '\u{1F600}' * 33,
+    ]) {
       final FlutterLocalNotificationsWindows plugin =
           FlutterLocalNotificationsWindows();
-      expect(
+      await expectLater(
         plugin.initialize(
           settings: WindowsInitializationSettings(
             appName: 'test',
@@ -50,6 +60,7 @@ void main() => group('Plugin', () {
         ),
         throwsArgumentError,
       );
+      expect(await plugin.initialize(settings: goodSettings), isTrue);
       plugin.dispose();
     }
   });

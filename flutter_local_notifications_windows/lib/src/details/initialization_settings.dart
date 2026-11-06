@@ -33,6 +33,7 @@ class WindowsInitializationSettings {
   /// package identity.
   ///
   /// For apps without package identity, this must be between 1 and 64
-  /// characters long, otherwise [initialize] throws an [ArgumentError].
+  /// UTF-16 code units long and contain no NUL characters, otherwise
+  /// [initialize] throws an [ArgumentError].
   final String groupName;
 }

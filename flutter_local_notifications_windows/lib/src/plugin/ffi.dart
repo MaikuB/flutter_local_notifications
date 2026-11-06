@@ -69,7 +69,6 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     if (_isReady) {
       return true;
     }
-    _plugin = _bindings.createPlugin();
     // The C++ code will crash if there's an invalid GUID, so check it here
     if (!settings.guid.isValidGuid) {
       throw ArgumentError.value(
@@ -82,13 +81,16 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     // Windows rejects empty groups and groups over 64 UTF-16 code units.
     // The group is only used by apps without package identity.
     if (!_bindings.hasPackageIdentity() &&
-        (settings.groupName.isEmpty || settings.groupName.length > 64)) {
+        (settings.groupName.isEmpty ||
+            settings.groupName.length > 64 ||
+            settings.groupName.contains('\u0000'))) {
       throw ArgumentError.value(
         settings.groupName,
         'groupName',
-        'Must be between 1 and 64 characters long',
+        'Must be between 1 and 64 UTF-16 code units long and contain no NUL characters',
       );
     }
+    _plugin = _bindings.createPlugin();
     instance = this;
     userCallback = onDidReceiveNotificationResponse;
     final Pointer<Utf8> appName = settings.appName.toNativeUtf8(
