@@ -131,7 +131,7 @@ std::optional<int> idFromTag(const winrt::hstring& tag) {
   try {
     size_t parsed = 0;
     const auto id = std::stoi(tagStr, &parsed);
-    if (parsed != tagStr.size()) return std::nullopt;
+    if (parsed != tagStr.size() || std::to_string(id) != tagStr) return std::nullopt;
     return id;
   } catch (const std::exception&) {
     return std::nullopt;
