@@ -1,4 +1,4 @@
-## 2.0.0-dev.1
+## [2.0.0]
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.44.0 and Dart SDK requirement to 3.12.0
 
