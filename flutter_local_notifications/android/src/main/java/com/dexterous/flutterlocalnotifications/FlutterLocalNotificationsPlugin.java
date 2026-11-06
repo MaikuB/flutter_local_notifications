@@ -2242,8 +2242,14 @@ public class FlutterLocalNotificationsPlugin
   private void processForegroundNotificationAction(
       Intent intent, Map<String, Object> notificationResponse) {
     if (intent.getBooleanExtra(FlutterLocalNotificationsPlugin.CANCEL_NOTIFICATION, false)) {
-      NotificationManagerCompat.from(applicationContext)
-          .cancel((int) notificationResponse.get(FlutterLocalNotificationsPlugin.NOTIFICATION_ID));
+      int id =
+          (int) notificationResponse.get(FlutterLocalNotificationsPlugin.NOTIFICATION_ID);
+      Object tag = notificationResponse.get(FlutterLocalNotificationsPlugin.NOTIFICATION_TAG);
+      if (tag instanceof String) {
+        NotificationManagerCompat.from(applicationContext).cancel((String) tag, id);
+      } else {
+        NotificationManagerCompat.from(applicationContext).cancel(id);
+      }
     }
   }
 
