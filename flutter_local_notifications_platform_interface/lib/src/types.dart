@@ -113,6 +113,8 @@ class NotificationResponse {
     this.actionId,
     this.input,
     this.payload,
+    this.notificationDeliveredAt,
+    this.responseReceivedAt,
     this.data = const <String, dynamic>{},
   });
 
@@ -134,6 +136,16 @@ class NotificationResponse {
 
   /// The notification's payload.
   final String? payload;
+
+  /// The time the notification was delivered by the operating system.
+  ///
+  /// This is only populated when the platform exposes this information.
+  final DateTime? notificationDeliveredAt;
+
+  /// The time the notification response was received by the native plugin.
+  ///
+  /// This is only populated when the platform exposes this information.
+  final DateTime? responseReceivedAt;
 
   /// Any other data returned by the platform.
   ///
