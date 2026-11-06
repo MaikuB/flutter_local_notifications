@@ -84,9 +84,8 @@ NativeUpdateResult updateNotification(NativePlugin* plugin, int id, NativeString
   if (!plugin->isReady) return failed;
   const auto tag = winrt::to_hstring(id);
   const auto data = dataFromMap(bindings);
-  auto result = plugin->hasIdentity
-    ? plugin->notifier.value().Update(data, tag)
-    : plugin->notifier.value().Update(data, tag, plugin->group);
+  auto result = plugin->hasIdentity ? plugin->notifier.value().Update(data, tag)
+                                    : plugin->notifier.value().Update(data, tag, plugin->group);
   // Notifications created before groups were introduced have an empty group.
   if (!plugin->hasIdentity && result == NotificationUpdateResult::NotificationNotFound) {
     result = plugin->notifier.value().Update(data, tag);
