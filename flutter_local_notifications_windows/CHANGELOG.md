@@ -1,6 +1,6 @@
 ## [4.0.1]
 
-* Improved performance by deferring the native DLL loading until first use
+* Improved performance by deferring the native DLL loading until first use. Thanks to the PR from [palmoni5](https://github.com/palmoni5)
 * Added missing changelog entry to 4.0.0 around how issue [#2777](https://github.com/MaikuB/flutter_local_notifications/issues/2777) has been fixed
 
 ## [4.0.0]
