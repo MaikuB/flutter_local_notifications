@@ -39,7 +39,7 @@ struct NotificationActivationCallback :
       }
 
       const auto openedWithAction = args != nullptr;
-      const auto payload = string(CW2A(args, CP_UTF8));
+      const auto payload = openedWithAction ? string(CW2A(args, CP_UTF8)) : string();
       const auto launchType =
         openedWithAction ? NativeLaunchType::action : NativeLaunchType::notification;
       NativeLaunchDetails launchDetails;
