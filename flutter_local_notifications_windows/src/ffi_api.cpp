@@ -2,6 +2,8 @@
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Data.Xml.Dom.h>
 
+#include <charconv>
+#include <thread>
 #include <vector>
 
 #include "ffi_api.h"
@@ -19,7 +21,11 @@ bool hasPackageIdentity() {
 
 NativePlugin* createPlugin() { return new NativePlugin(); }
 
-void disposePlugin(NativePlugin* plugin) { delete plugin; }
+// Teardown waits for the worker, which may be stuck in a COM call, so it never runs
+// on the caller's thread. The reaper thread owns [plugin] from here on.
+void disposePlugin(NativePlugin* plugin) {
+  std::thread([plugin] { delete plugin; }).detach();
+}
 
 bool init(
   NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath,
@@ -66,6 +72,8 @@ static void removeScheduled(NativePlugin* plugin, const winrt::hstring& tag) {
 }
 
 bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap bindings) {
+  // Parsing is local, so a malformed document is still reported to the caller.
+  if (!isValidXml(xml)) return false;
   const string xmlCopy(xml);
   const auto bindingsCopy = copyMap(bindings);
   plugin->worker.post([plugin, id, xmlCopy, bindingsCopy] {
@@ -85,6 +93,7 @@ bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap b
 }
 
 bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time) {
+  if (!isValidXml(xml)) return false;
   const string xmlCopy(xml);
   plugin->worker.post([plugin, id, xmlCopy, time] {
     if (!plugin->isReady) return;
@@ -137,26 +146,33 @@ void cancelNotification(NativePlugin* plugin, int id) {
   });
 }
 
+// Toast history can hold tags this plugin did not set; those are skipped. The array
+// is published only once complete, so the caller never sees a count without data.
+template <typename Notifications>
+static NativeNotificationDetails* copyIds(const Notifications& notifications, int& count) {
+  std::vector<int> ids;
+  for (const auto notification : notifications) {
+    const auto tag = winrt::to_string(notification.Tag());
+    int id = 0;
+    const auto parsed = std::from_chars(tag.data(), tag.data() + tag.size(), id);
+    if (!tag.empty() && parsed.ec == std::errc() && parsed.ptr == tag.data() + tag.size()) {
+      ids.push_back(id);
+    }
+  }
+  if (ids.empty()) return nullptr;
+  const auto result = new NativeNotificationDetails[ids.size()];
+  for (size_t index = 0; index < ids.size(); index++) result[index].id = ids[index];
+  count = static_cast<int>(ids.size());
+  return result;
+}
+
 NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* size) {
   NativeNotificationDetails* out = nullptr;
   int count = 0;
   plugin->worker.invoke([plugin, &out, &count] {
-  // TODO: Get more details here
-  if (!plugin->isReady || !plugin->hasIdentity) {
-    return;
-  }
-  int* size = &count;
-  const auto active = plugin->history.value().GetHistory();
-  *size = active.Size();
-  const auto result = new NativeNotificationDetails[*size];
-  int index = 0;
-  for (const auto notification : active) {
-    const auto tag = notification.Tag();
-    const auto tagStr = winrt::to_string(tag);
-    const auto tagInt = std::stoi(tagStr);
-    result[index++].id = tagInt;
-  }
-  out = result;
+    // TODO: Get more details here
+    if (!plugin->isReady || !plugin->hasIdentity) return;
+    out = copyIds(plugin->history.value().GetHistory(), count);
   });
   *size = count;
   return out;
@@ -166,22 +182,9 @@ NativeNotificationDetails* getPendingNotifications(NativePlugin* plugin, int* si
   NativeNotificationDetails* out = nullptr;
   int count = 0;
   plugin->worker.invoke([plugin, &out, &count] {
-  // TODO: Get more details here
-  if (!plugin->isReady) {
-    return;
-  }
-  int* size = &count;
-  const auto pending = plugin->notifier.value().GetScheduledToastNotifications();
-  *size = pending.Size();
-  const auto result = new NativeNotificationDetails[*size];
-  int index = 0;
-  for (const auto notification : pending) {
-    const auto tag = notification.Tag();
-    const auto tagStr = winrt::to_string(tag);
-    const auto tagInt = std::stoi(tagStr);
-    result[index++].id = tagInt;
-  }
-  out = result;
+    // TODO: Get more details here
+    if (!plugin->isReady) return;
+    out = copyIds(plugin->notifier.value().GetScheduledToastNotifications(), count);
   });
   *size = count;
   return out;

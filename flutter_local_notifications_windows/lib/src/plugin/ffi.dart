@@ -69,8 +69,8 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     if (_isReady) {
       return true;
     }
-    _plugin = _bindings.createPlugin();
-    // The C++ code will crash if there's an invalid GUID, so check it here
+    // The C++ code will crash if there's an invalid GUID, so check it before
+    // createPlugin starts the native worker thread.
     if (!settings.guid.isValidGuid) {
       throw ArgumentError.value(
         settings.guid,
@@ -79,6 +79,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
             ' format.\nYou can get one by searching GUID generators online',
       );
     }
+    _plugin = _bindings.createPlugin();
     instance = this;
     userCallback = onDidReceiveNotificationResponse;
     final Pointer<Utf8> appName = settings.appName.toNativeUtf8(

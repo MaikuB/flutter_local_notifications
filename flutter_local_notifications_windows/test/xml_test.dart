@@ -77,5 +77,16 @@ void main() {
       expect(plugin.isValidXml(validXml), isTrue);
       expect(plugin.isValidXml(complexXml), isTrue);
     });
+
+    test('showRawXml rejects malformed XML', () async {
+      await expectLater(
+        plugin.showRawXml(id: 0, xml: invalidXml),
+        throwsArgumentError,
+      );
+      await expectLater(
+        plugin.showRawXml(id: 0, xml: unmatchedXml),
+        throwsArgumentError,
+      );
+    });
   });
 }
