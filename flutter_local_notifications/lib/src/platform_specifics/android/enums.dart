@@ -47,6 +47,9 @@ enum AndroidNotificationStyle {
 
   /// The media style.
   media,
+
+  /// The progress style ("Live Update").
+  progress,
 }
 
 /// Specifies the source for a sound used by Android notifications.
@@ -308,6 +311,31 @@ enum SemanticAction {
   const SemanticAction(this.value);
 
   /// The integer representation of [SemanticAction].
+  final int value;
+}
+
+/// The available semantic styles for the segments and points of a progress
+/// style notification.
+enum SemanticStyle {
+  /// Corresponds to [`NotificationCompat.SEMANTIC_STYLE_UNSPECIFIED`](https://developer.android.com/reference/androidx/core/app/NotificationCompat#SEMANTIC_STYLE_UNSPECIFIED%28%29).
+  unspecified(0),
+
+  /// Corresponds to [`NotificationCompat.SEMANTIC_STYLE_INFO`](https://developer.android.com/reference/androidx/core/app/NotificationCompat#SEMANTIC_STYLE_INFO%28%29).
+  info(1),
+
+  /// Corresponds to [`NotificationCompat.SEMANTIC_STYLE_SAFE`](https://developer.android.com/reference/androidx/core/app/NotificationCompat#SEMANTIC_STYLE_SAFE%28%29).
+  safe(2),
+
+  /// Corresponds to [`NotificationCompat.SEMANTIC_STYLE_CAUTION`](https://developer.android.com/reference/androidx/core/app/NotificationCompat#SEMANTIC_STYLE_CAUTION%28%29).
+  caution(3),
+
+  /// Corresponds to [`NotificationCompat.SEMANTIC_STYLE_DANGER`](https://developer.android.com/reference/androidx/core/app/NotificationCompat#SEMANTIC_STYLE_DANGER%28%29).
+  danger(4);
+
+  /// Constructs an instance of [SemanticStyle].
+  const SemanticStyle(this.value);
+
+  /// The integer representation of [SemanticStyle].
   final int value;
 }
 

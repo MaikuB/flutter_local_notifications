@@ -795,6 +795,27 @@ class _HomePageState extends State<HomePage> {
                 ),
                 PaddedElevatedButton(
                   buttonText:
+                      'Show live update with progress segments, points and '
+                      'icons',
+                  onPressed: () async {
+                    await _showLiveUpdateWithProgressStyle();
+                  },
+                ),
+                PaddedElevatedButton(
+                  buttonText:
+                      'Show live update with semantic progress segments',
+                  onPressed: () async {
+                    await _showLiveUpdateWithSemanticStyles();
+                  },
+                ),
+                PaddedElevatedButton(
+                  buttonText: 'Show live update with a countdown chronometer',
+                  onPressed: () async {
+                    await _showLiveUpdateWithChronometer();
+                  },
+                ),
+                PaddedElevatedButton(
+                  buttonText:
                       'Show notification with no badge, alert only once',
                   onPressed: () async {
                     await _showNotificationWithNoBadge();
@@ -2407,6 +2428,204 @@ class _HomePageState extends State<HomePage> {
       title: 'ongoing notification title',
       body: 'ongoing notification body',
       notificationDetails: notificationDetails,
+    );
+  }
+
+  Future<void> _warnIfPromotedNotificationsDisabled() async {
+    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+    final bool canPost =
+        await androidImplementation?.canPostPromotedNotifications() ?? false;
+    if (!canPost) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Promoted (Live Update) notifications require Android 16 and '
+            'must be allowed for this app',
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _showLiveUpdateWithProgressStyle() async {
+    await _warnIfPromotedNotificationsDisabled();
+    final int notificationId = id++;
+    const List<ProgressStyleSegment> segments = <ProgressStyleSegment>[
+      ProgressStyleSegment(25, id: 1, color: Color(0xFF86F7FA)),
+      ProgressStyleSegment(25, id: 2, color: Color(0xFF86F7FA)),
+      ProgressStyleSegment(25, id: 3, color: Color(0xFF86F7FA)),
+      ProgressStyleSegment(25, id: 4, color: Color(0xFF86F7FA)),
+    ];
+    const List<ProgressStylePoint> points = <ProgressStylePoint>[
+      ProgressStylePoint(25, id: 5, color: Color(0xFFECB7FF)),
+      ProgressStylePoint(50, id: 6, color: Color(0xFFECB7FF)),
+      ProgressStylePoint(75, id: 7, color: Color(0xFFECB7FF)),
+    ];
+
+    Future<void> updateNotification(
+      String title,
+      String body, {
+      int progress = 0,
+      bool indeterminate = false,
+      AndroidIcon<Object>? trackerIcon,
+      String? shortCriticalText,
+    }) {
+      final AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+            'live updates',
+            'Live updates',
+            channelDescription: 'Android 16 promoted ongoing notifications',
+            ongoing: true,
+            autoCancel: false,
+            onlyAlertOnce: true,
+            requestPromotedOngoing: true,
+            shortCriticalText: shortCriticalText,
+            largeIcon: const DrawableResourceAndroidBitmap('food'),
+            styleInformation: ProgressStyleInformation(
+              segments,
+              points: points,
+              progress: progress,
+              progressIndeterminate: indeterminate,
+              progressTrackerIcon: trackerIcon,
+              progressStartIcon: const DrawableResourceAndroidIcon(
+                'ic_live_update_store',
+              ),
+              progressEndIcon: const DrawableResourceAndroidIcon(
+                'ic_live_update_home',
+              ),
+            ),
+          );
+      return flutterLocalNotificationsPlugin.show(
+        id: notificationId,
+        title: title,
+        body: body,
+        notificationDetails: NotificationDetails(
+          android: androidNotificationDetails,
+        ),
+      );
+    }
+
+    await updateNotification(
+      'Your order is being placed',
+      'Confirming with the bakery',
+      indeterminate: true,
+      shortCriticalText: 'Placing',
+    );
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(
+        'Your order is being prepared',
+        'Next step will be delivery',
+        progress: 25,
+        shortCriticalText: 'Baking',
+      );
+    });
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(
+        'Your order is on its way',
+        'En route to your address',
+        progress: 50,
+        trackerIcon: const DrawableResourceAndroidIcon('ic_live_update_bag'),
+      );
+    });
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(
+        'Your order is arriving',
+        'Almost at your door',
+        progress: 75,
+        trackerIcon: const DrawableResourceAndroidIcon('ic_live_update_truck'),
+      );
+    });
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(
+        'Your order is complete',
+        'Enjoy your snack!',
+        progress: 100,
+        trackerIcon: const DrawableResourceAndroidIcon('ic_live_update_check'),
+        shortCriticalText: 'Arrived',
+      );
+    });
+  }
+
+  Future<void> _showLiveUpdateWithSemanticStyles() async {
+    await _warnIfPromotedNotificationsDisabled();
+    final int notificationId = id++;
+    const List<ProgressStyleSegment> segments = <ProgressStyleSegment>[
+      ProgressStyleSegment(40, id: 1, semanticStyle: SemanticStyle.safe),
+      ProgressStyleSegment(30, id: 2, semanticStyle: SemanticStyle.caution),
+      ProgressStyleSegment(30, id: 3, semanticStyle: SemanticStyle.danger),
+    ];
+
+    Future<void> updateNotification(int progress, String title, String eta) {
+      final AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+            'live updates',
+            'Live updates',
+            channelDescription: 'Android 16 promoted ongoing notifications',
+            ongoing: true,
+            autoCancel: false,
+            onlyAlertOnce: true,
+            requestPromotedOngoing: true,
+            shortCriticalText: eta,
+            styleInformation: ProgressStyleInformation(
+              segments,
+              progress: progress,
+              progressTrackerIcon: const DrawableResourceAndroidIcon(
+                'ic_live_update_navigation',
+              ),
+            ),
+          );
+      return flutterLocalNotificationsPlugin.show(
+        id: notificationId,
+        title: title,
+        body: 'Continue on Main St',
+        notificationDetails: NotificationDetails(
+          android: androidNotificationDetails,
+        ),
+      );
+    }
+
+    await updateNotification(10, 'Starting route', '2.1 mi');
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(45, 'In 900 m, turn left', '1.2 mi');
+    });
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(80, 'In 300 m, turn right', '450 m');
+    });
+    await Future<void>.delayed(const Duration(seconds: 3), () async {
+      await updateNotification(100, 'You have arrived', 'Arrived');
+    });
+  }
+
+  Future<void> _showLiveUpdateWithChronometer() async {
+    await _warnIfPromotedNotificationsDisabled();
+    final int endTime = DateTime.now()
+        .add(const Duration(minutes: 5))
+        .millisecondsSinceEpoch;
+    final AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+          'live updates',
+          'Live updates',
+          channelDescription: 'Android 16 promoted ongoing notifications',
+          ongoing: true,
+          autoCancel: false,
+          onlyAlertOnce: true,
+          requestPromotedOngoing: true,
+          when: endTime,
+          usesChronometer: true,
+          chronometerCountDown: true,
+        );
+    await flutterLocalNotificationsPlugin.show(
+      id: id++,
+      title: 'Focus timer',
+      body: 'Time remaining',
+      notificationDetails: NotificationDetails(
+        android: androidNotificationDetails,
+      ),
     );
   }
 

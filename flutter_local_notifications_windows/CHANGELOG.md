@@ -1,3 +1,8 @@
+## [4.0.0]
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.44.0 and Dart SDK requirement to 3.12.0
+* **Breaking change** bumped CMake minimum version to 3.14 and requires the plugin to compile with at least C++ 20 (i.e. `CXX_STANDARD 20`)
+
 ## [3.1.1]
 
 * Suppress warning around usage of experimental coroutines. This is to fix issue [#2777](https://github.com/MaikuB/flutter_local_notifications/issues/2777)

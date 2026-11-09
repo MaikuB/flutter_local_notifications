@@ -1,3 +1,27 @@
+## [23.0.0]
+
+* **Breaking change** bumped minimum Flutter SDK requirement to 3.44.0 and Dart SDK requirement to 3.12.0
+* [Android] **Breaking change** bumped `compileSdk` to 37 and updated readme to mention this
+* [Android] **Breaking change** bumped to AGP 9.1.1
+* [Windows] **Breaking change** bumped CMake minimum version to 3.14 and requires the plugin to compile with at least C++ 20 (i.e. `CXX_STANDARD 20`)
+* [Android] migrated to Kotlin DSL
+* Migrated example app off the Kotlin Gradle Plugin (KGP) in favour of [built-in Kotlin](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin) and bumped Android Gradle Plugin (AGP) to 9.1.1
+* [Android] added support for [live update notifications](https://developer.android.com/develop/ui/compose/notifications/live-update). Example app has been updated to demonstrate usage. Thanks to the PR from [Vasily Laushkin](https://github.com/vlaushkin)
+* [Android] plugin now explicitly specifies [background activity launches](https://developer.android.com/guide/components/activities/secure-bal) are [denied](https://developer.android.com/reference/android/app/ActivityOptions#MODE_BACKGROUND_ACTIVITY_START_DENIED) on Android 14+. Notifications are still expected to still work as before and have not found any breaking changes from testing. If any developers happen to find issues related to this change then create a bug report [here](https://github.com/MaikuB/flutter_local_notifications/issues/). Thanks to the PR from [Luca-CZ](https://github.com/Luca-CZ)
+* [Android] Fixed a `NullPointerException` crash in `setSmallIcon` (`Attempt to invoke virtual method 'int java.lang.Integer.intValue()' on a null object reference`) when a scheduled notification is delivered with no `icon`, no persisted default icon, and a null legacy `iconResourceId`. This can happen when a notification serialized by an older version of the plugin fires after an app update. The application's own icon is now used as a fallback so notification delivery no longer crashes. Fixes [#298](https://github.com/MaikuB/flutter_local_notifications/issues/298) and [#2049](https://github.com/MaikuB/flutter_local_notifications/issues/2049). Thanks to the PR from [Michael Allen](https://github.com/mtallenca)
+* [Linux] bumped allowed `dbus` dependency version constraints to `>=0.7.8 <0.9.0`
+* Updated readme to guidance on handling `PlatformException` being thrown when trying to show notifications when permissions have not been granted due to iOS 27 behavioural changes outside the control of the plugin
+* [Windows] fixed issue [#2777](https://github.com/MaikuB/flutter_local_notifications/issues/2777) to ensure future MSVC toolchain compatibility through code changes rather than suppressing a warning. Thanks to [Dragonloverlord](https://github.com/dragonloverlord)
+
+## [22.3.3]
+
+* [Android] fixed issues [#2858](https://github.com/MaikuB/flutter_local_notifications/issues/2858) where for repeating notifications, the specified wall-clock time was not kept when daylight savings related transitions took place. Thanks to the PR from [Metehan Arıman](https://github.com/imariman)
+
+## [22.3.2]
+
+* [iOS] fixed issue [#2838](https://github.com/MaikuB/flutter_local_notifications/issues/2838) so that plugin longer throws `PlatformException`s that started on iOS 27 when permissions were not granted and when badge only notifications were triggered. This restores the behaviour of the plugin to as it was before. Thanks to the PR from [Vasily Laushkin](https://github.com/vlaushkin)
+* [Linux] bumped allowed `dbus` dependency version constraints to `>=0.7.8 <0.9.0`
+
 ## [22.3.1]
 
 * [macOS] fixed subtitle not showing up properly. Thanks to the PR from [Soi (Jiwon Lee)](https://github.com/JIWON1923)

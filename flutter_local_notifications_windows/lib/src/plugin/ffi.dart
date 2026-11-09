@@ -42,7 +42,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   late final NotificationsPluginBindings _bindings =
       NotificationsPluginBindings(_library);
 
-  final DynamicLibrary _library = DynamicLibrary.open(
+  late final DynamicLibrary _library = DynamicLibrary.open(
     'flutter_local_notifications_windows.dll',
   );
 

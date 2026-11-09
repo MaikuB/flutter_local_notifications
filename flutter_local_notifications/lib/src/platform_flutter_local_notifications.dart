@@ -638,6 +638,14 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<bool?> canScheduleExactNotifications() async =>
       await _channel.invokeMethod<bool>('canScheduleExactNotifications');
 
+  /// Returns whether the app can post promoted ongoing ("Live Update")
+  /// notifications.
+  ///
+  /// On Android 16 and newer this reflects whether the user has allowed the
+  /// app's notifications to be promoted. On older versions it returns `false`.
+  Future<bool?> canPostPromotedNotifications() async =>
+      await _channel.invokeMethod<bool>('canPostPromotedNotifications');
+
   AndroidNotificationSound? _getNotificationChannelSound(
     Map<dynamic, dynamic> channelMap,
   ) {
