@@ -2,6 +2,8 @@
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Data.Xml.Dom.h>
 
+#include <vector>
+
 #include "ffi_api.h"
 #include "plugin.hpp"
 #include "utils.hpp"
@@ -63,6 +65,16 @@ bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap b
   return true;
 }
 
+// Collects matches before removing any, so removal does not rely on the view being a snapshot.
+static void removeScheduled(NativePlugin* plugin, const winrt::hstring* tag) {
+  auto& notifier = plugin->notifier.value();
+  std::vector<ScheduledToastNotification> matches;
+  for (const auto notification : notifier.GetScheduledToastNotifications()) {
+    if (tag == nullptr || notification.Tag() == *tag) matches.push_back(notification);
+  }
+  for (const auto& notification : matches) notifier.RemoveFromSchedule(notification);
+}
+
 bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time) {
   if (!plugin->isReady) return false;
   XmlDocument doc;
@@ -72,7 +84,9 @@ bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time) {
     return false;
   }
   ScheduledToastNotification notification(doc, winrt::clock::from_time_t(time));
-  notification.Tag(winrt::to_hstring(id));
+  const auto tag = winrt::to_hstring(id);
+  notification.Tag(tag);
+  removeScheduled(plugin, &tag);
   plugin->notifier.value().AddToSchedule(notification);
   return true;
 }
@@ -92,21 +106,14 @@ void cancelAll(NativePlugin* plugin) {
   } else {
     plugin->history.value().Clear(plugin->aumid);
   }
-  for (const auto notification : plugin->notifier.value().GetScheduledToastNotifications()) {
-    plugin->notifier.value().RemoveFromSchedule(notification);
-  }
+  removeScheduled(plugin, nullptr);
 }
 
 void cancelNotification(NativePlugin* plugin, int id) {
   if (!plugin->isReady) return;
   const auto tag = winrt::to_hstring(id);
   if (plugin->hasIdentity) plugin->history.value().Remove(tag);
-  for (const auto notification : plugin->notifier.value().GetScheduledToastNotifications()) {
-    if (notification.Tag() == tag) {
-      plugin->notifier.value().RemoveFromSchedule(notification);
-      return;
-    }
-  }
+  removeScheduled(plugin, &tag);
 }
 
 NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* size) {
