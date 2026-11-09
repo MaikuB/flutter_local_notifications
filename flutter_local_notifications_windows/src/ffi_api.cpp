@@ -3,7 +3,6 @@
 #include <winrt/Windows.Data.Xml.Dom.h>
 
 #include <charconv>
-#include <thread>
 #include <vector>
 
 #include "ffi_api.h"
@@ -21,11 +20,9 @@ bool hasPackageIdentity() {
 
 NativePlugin* createPlugin() { return new NativePlugin(); }
 
-// Teardown waits for the worker, which may be stuck in a COM call, so it never runs
-// on the caller's thread. The reaper thread owns [plugin] from here on.
-void disposePlugin(NativePlugin* plugin) {
-  std::thread([plugin] { delete plugin; }).detach();
-}
+// Blocks until the worker has revoked the activator and closed the callback gate, so
+// the caller may release the callback afterwards. Dart calls this on a helper isolate.
+void disposePlugin(NativePlugin* plugin) { delete plugin; }
 
 bool init(
   NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath,

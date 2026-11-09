@@ -1,11 +1,13 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <optional>
 
 #include <windows.h>  // <-- This must be the first Windows header
 #include <winrt/Windows.UI.Notifications.h>
 
+#include "callback_gate.hpp"
 #include "ffi_api.h"
 #include "worker.hpp"
 
@@ -38,7 +40,7 @@ struct NativePlugin {
   optional<ToastNotificationHistory> history;
 
   /// A callback to run when a notification is pressed, when the app is or is not running.
-  NativeNotificationCallback callback;
+  std::shared_ptr<NotificationCallbackGate> callbackGate;
 
   /// The cookie from `CoRegisterClassObject`. Zero until the callback is registered.
   DWORD registration = 0;
@@ -52,6 +54,7 @@ struct NativePlugin {
   // in that apartment is released on the worker beforehand.
   ~NativePlugin() {
     worker.invoke([this] {
+      if (callbackGate) callbackGate->close();
       if (registration != 0) CoRevokeClassObject(registration);
       notifier.reset();
       history.reset();

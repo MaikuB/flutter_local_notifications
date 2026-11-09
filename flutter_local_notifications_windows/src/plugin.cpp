@@ -22,7 +22,7 @@ using RegistryKey = winrt::handle_type<RegistryHandle>;
 /// This callback will be called when a notification sent by this plugin is clicked on.
 struct NotificationActivationCallback :
     winrt::implements<NotificationActivationCallback, INotificationActivationCallback> {
-  NativeNotificationCallback callback;
+  std::shared_ptr<NotificationCallbackGate> callbackGate;
 
   HRESULT __stdcall Activate(
     LPCWSTR app, LPCWSTR args, NOTIFICATION_USER_INPUT_DATA const* data, ULONG count
@@ -47,7 +47,7 @@ struct NotificationActivationCallback :
       launchDetails.launchType = launchType;
       launchDetails.payload = toNativeString(payload);
       launchDetails.data = toNativeMap(entries);
-      callback(launchDetails);
+      callbackGate->deliver(launchDetails);
       return S_OK;
     } catch (...) {
       return winrt::to_hresult();
@@ -58,13 +58,13 @@ struct NotificationActivationCallback :
 /// A class factory that creates an instance of NotificationActivationCallback.
 struct NotificationActivationCallbackFactory :
     winrt::implements<NotificationActivationCallbackFactory, IClassFactory> {
-  NativeNotificationCallback callback;
+  std::shared_ptr<NotificationCallbackGate> callbackGate;
 
   HRESULT __stdcall CreateInstance(IUnknown* outer, GUID const& iid, void** result) noexcept final {
     *result = nullptr;
     if (outer) return CLASS_E_NOAGGREGATION;
     const auto cb = winrt::make_self<NotificationActivationCallback>();
-    cb.get()->callback = callback;
+    cb.get()->callbackGate = callbackGate;
     return cb->QueryInterface(iid, result);
   }
 
@@ -162,12 +162,13 @@ void UpdateRegistry(
 /// Register the notification activation callback factory
 /// and the guid of the callback.
 bool RegisterCallback(
-  const std::string& guid, NativeNotificationCallback callback, DWORD& registration
+  const std::string& guid, const std::shared_ptr<NotificationCallbackGate>& callbackGate,
+  DWORD& registration
 ) {
   winrt::guid rclsid = parseGuid(guid);
   const auto factory_ref = winrt::make_self<NotificationActivationCallbackFactory>();
   const auto factory = factory_ref.get();
-  factory->callback = callback;
+  factory->callbackGate = callbackGate;
   winrt::check_hresult(
     CoRegisterClassObject(rclsid, factory, CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE, &registration)
   );
@@ -179,5 +180,6 @@ bool NativePlugin::registerApp(
   NativeNotificationCallback callback
 ) {
   UpdateRegistry(aumid, appName, guid, iconPath);
-  return RegisterCallback(guid, callback, registration);
+  callbackGate = std::make_shared<NotificationCallbackGate>(callback);
+  return RegisterCallback(guid, callbackGate, registration);
 }
