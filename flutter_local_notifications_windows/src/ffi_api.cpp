@@ -125,15 +125,15 @@ NativeUpdateResult updateNotification(NativePlugin* plugin, int id, NativeString
 
 void cancelAll(NativePlugin* plugin) {
   plugin->worker.post([plugin] {
-  if (!plugin->isReady) return;
-  if (plugin->hasIdentity) {
-    plugin->history.value().Clear();
-  } else {
-    plugin->history.value().Clear(plugin->aumid);
-  }
-  for (const auto notification : plugin->notifier.value().GetScheduledToastNotifications()) {
-    plugin->notifier.value().RemoveFromSchedule(notification);
-  }
+    if (!plugin->isReady) return;
+    if (plugin->hasIdentity) {
+      plugin->history.value().Clear();
+    } else {
+      plugin->history.value().Clear(plugin->aumid);
+    }
+    for (const auto notification : plugin->notifier.value().GetScheduledToastNotifications()) {
+      plugin->notifier.value().RemoveFromSchedule(notification);
+    }
   });
 }
 

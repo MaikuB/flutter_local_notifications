@@ -35,17 +35,17 @@ bool NotificationWorker::invoke(std::function<void()> job) {
   };
   const auto state = std::make_shared<InvocationState>();
   if (!post([job = std::move(job), state] {
-    try {
-      job();
-    } catch (...) {
-      // The caller receives its default result, but must never wait forever.
-    }
-    {
-      std::lock_guard<std::mutex> lock(state->mutex);
-      state->done = true;
-    }
-    state->signal.notify_one();
-  })) {
+        try {
+          job();
+        } catch (...) {
+          // The caller receives its default result, but must never wait forever.
+        }
+        {
+          std::lock_guard<std::mutex> lock(state->mutex);
+          state->done = true;
+        }
+        state->signal.notify_one();
+      })) {
     return false;
   }
   std::unique_lock<std::mutex> lock(state->mutex);

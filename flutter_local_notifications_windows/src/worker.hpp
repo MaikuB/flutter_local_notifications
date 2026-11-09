@@ -13,7 +13,7 @@
 /// the thread that runs the Flutter engine freezes the whole UI, so the plugin owns
 /// a worker instead: `post` returns immediately, `invoke` waits for a result.
 class NotificationWorker {
- public:
+public:
   NotificationWorker();
   ~NotificationWorker();
 
@@ -25,7 +25,7 @@ class NotificationWorker {
   /// Returns false when shutdown has already started.
   bool invoke(std::function<void()> job);
 
- private:
+private:
   void run();
 
   std::mutex mutex;
