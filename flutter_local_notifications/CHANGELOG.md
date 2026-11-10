@@ -1,3 +1,8 @@
+## [23.0.1]
+
+* [Android] fixed issue where cancelling a notification did not work for tag-based notifications when an action with `showsUserInterface` set to `true` was invoked. Thanks to the PR from [Yokota Yuki](https://github.com/y2q-actionman)
+* [Windows] improved performance by deferring the native DLL loading until first use. Thanks to the PR from [palmoni5](https://github.com/palmoni5)
+
 ## [23.0.0]
 
 * **Breaking change** bumped minimum Flutter SDK requirement to 3.44.0 and Dart SDK requirement to 3.12.0
