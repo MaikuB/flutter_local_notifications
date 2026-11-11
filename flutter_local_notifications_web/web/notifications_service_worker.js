@@ -28,13 +28,7 @@
 // If the site is open, sends the information to the site using postMessage().
 // Otherwise, open the site with notification details as query parameters.
 async function _handleNotif(event) {
-  // We have to use `event.waitUntil()` to tell the browser that we're still
-  // processing this event. Without this, the event "expires" after the first
-  // `await`, and trying to call `clients.openWindow()` later results in a
-  // permission error, because the browser thinks they are unrelated events.
-  let allClientsPromise = clients.matchAll({ type: 'window', includeUncontrolled: true });
-  event.waitUntil(allClientsPromise);
-  let allClients = await allClientsPromise;
+  let allClients = await clients.matchAll({ type: 'window', includeUncontrolled: true });
 
   // Extract reply text if available (Chrome-only feature for text input actions)
   // Note: event.reply is only available in Chrome and only for text input actions
@@ -58,8 +52,13 @@ async function _handleNotif(event) {
       + `&notification_reply=${encodeURIComponent(message.reply)}`;
     await clients.openWindow(url);
   } else {
-    // At least one client is open, send the message to the first one
+    // At least one client is open, focus on the first one and send the message to it
     let client = allClients[0];
+    try {
+      await client.focus();
+    } catch (_) {
+      // Still deliver the click if the browser rejects focus.
+    }
     await client.postMessage(message);
   }
 
@@ -67,8 +66,8 @@ async function _handleNotif(event) {
   event.notification.close();
 }
 
-// Listen for notification events.
-self.addEventListener("notificationclick", _handleNotif);
+// waitUntil keeps the worker alive until focus, postMessage, and openWindow finish.
+self.addEventListener("notificationclick", event => event.waitUntil(_handleNotif(event)));
 
 // Normally, a service worker only takes effect the _next_ time it is installed.
 // These next lines make sure it takes effect the first time.
