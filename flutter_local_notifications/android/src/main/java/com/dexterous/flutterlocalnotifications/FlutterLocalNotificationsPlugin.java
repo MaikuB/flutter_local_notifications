@@ -824,7 +824,7 @@ public class FlutterLocalNotificationsPlugin
     } else {
       if (notificationDetails.scheduleMode.useExactAlarm()) {
         checkCanScheduleExactAlarms(alarmManager);
-        AlarmManagerCompat.setExact(
+        alarmManager.setExact(
             alarmManager, AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent);
       } else if (notificationDetails.scheduleMode.useAlarmClock()) {
         checkCanScheduleExactAlarms(alarmManager);
