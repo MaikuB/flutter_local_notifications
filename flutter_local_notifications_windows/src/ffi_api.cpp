@@ -26,7 +26,7 @@ void disposePlugin(NativePlugin* plugin) { delete plugin; }
 
 bool init(
   NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath,
-  NativeNotificationCallback callback
+  NativeNotificationCallback callback, NativeInitCallback onReady
 ) {
   // The caller's strings live in a Dart arena that is freed when this returns, so
   // everything the worker needs is copied before queueing.
@@ -35,17 +35,22 @@ bool init(
   const string clsid(guid);
   string icon;
   if (iconPath != nullptr) icon = string(iconPath);
-  plugin->worker.post([plugin, name, aumid, clsid, icon, callback] {
-    if (!plugin->registerApp(aumid, name, clsid, icon, callback)) return;
-    plugin->hasIdentity = hasPackageIdentity();
-    plugin->aumid = winrt::to_hstring(aumid);
-    plugin->notifier = plugin->hasIdentity
-      ? ToastNotificationManager::CreateToastNotifier()
-      : ToastNotificationManager::CreateToastNotifier(plugin->aumid);
-    plugin->history = ToastNotificationManager::History();
-    plugin->isReady = true;
+  return plugin->worker.post([plugin, name, aumid, clsid, icon, callback, onReady] {
+    try {
+      if (plugin->registerApp(aumid, name, clsid, icon, callback)) {
+        plugin->hasIdentity = hasPackageIdentity();
+        plugin->aumid = winrt::to_hstring(aumid);
+        plugin->notifier = plugin->hasIdentity
+          ? ToastNotificationManager::CreateToastNotifier()
+          : ToastNotificationManager::CreateToastNotifier(plugin->aumid);
+        plugin->history = ToastNotificationManager::History();
+        plugin->isReady = true;
+      }
+    } catch (...) {
+      // Reported as a failure below, so the caller never waits forever.
+    }
+    onReady(plugin->isReady);
   });
-  return true;
 }
 
 bool isValidXml(char* xml) {
@@ -100,10 +105,18 @@ bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time) {
     } catch (winrt::hresult_error error) {
       return;
     }
-    ScheduledToastNotification notification(doc, winrt::clock::from_time_t(time));
     const auto tag = winrt::to_hstring(id);
-    notification.Tag(tag);
     removeScheduled(plugin, tag);
+    const auto deliveryTime = winrt::clock::from_time_t(time);
+    // The job may run late behind a stalled call, and AddToSchedule throws for a past time.
+    if (deliveryTime <= winrt::clock::now()) {
+      ToastNotification notification(doc);
+      notification.Tag(tag);
+      plugin->notifier.value().Show(notification);
+      return;
+    }
+    ScheduledToastNotification notification(doc, deliveryTime);
+    notification.Tag(tag);
     plugin->notifier.value().AddToSchedule(notification);
   });
   return true;

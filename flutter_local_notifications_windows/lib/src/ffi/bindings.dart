@@ -77,6 +77,9 @@ class NotificationsPluginBindings {
       .asFunction<void Function(ffi.Pointer<NativePlugin>)>();
 
   /// Initializes the plugin and registers the callback to be run when a notification is pressed.
+  ///
+  /// Returns immediately; [onReady] reports the result once initialization finishes. Returns false,
+  /// and never calls [onReady], if the work could not be queued.
   bool init(
     ffi.Pointer<NativePlugin> plugin,
     ffi.Pointer<pkg_ffi.Utf8> appName,
@@ -84,8 +87,9 @@ class NotificationsPluginBindings {
     ffi.Pointer<pkg_ffi.Utf8> guid,
     ffi.Pointer<pkg_ffi.Utf8> iconPath,
     NativeNotificationCallback callback,
+    NativeInitCallback onReady,
   ) {
-    return _init(plugin, appName, aumId, guid, iconPath, callback);
+    return _init(plugin, appName, aumId, guid, iconPath, callback, onReady);
   }
 
   late final _initPtr =
@@ -98,6 +102,7 @@ class NotificationsPluginBindings {
             ffi.Pointer<pkg_ffi.Utf8>,
             ffi.Pointer<pkg_ffi.Utf8>,
             NativeNotificationCallback,
+            NativeInitCallback,
           )
         >
       >('init');
@@ -110,6 +115,7 @@ class NotificationsPluginBindings {
           ffi.Pointer<pkg_ffi.Utf8>,
           ffi.Pointer<pkg_ffi.Utf8>,
           NativeNotificationCallback,
+          NativeInitCallback,
         )
       >();
 
@@ -382,6 +388,12 @@ typedef DartNativeNotificationCallbackFunction =
 /// This may be called at app launch or even while the app is running.
 typedef NativeNotificationCallback =
     ffi.Pointer<ffi.NativeFunction<NativeNotificationCallbackFunction>>;
+typedef NativeInitCallbackFunction = ffi.Void Function(ffi.Bool success);
+typedef DartNativeInitCallbackFunction = void Function(bool success);
+
+/// A callback that is run once, with whether [init] succeeded.
+typedef NativeInitCallback =
+    ffi.Pointer<ffi.NativeFunction<NativeInitCallbackFunction>>;
 
 /// See: https://learn.microsoft.com/en-us/uwp/api/windows.ui.notifications.notificationupdateresult
 enum NativeUpdateResult {

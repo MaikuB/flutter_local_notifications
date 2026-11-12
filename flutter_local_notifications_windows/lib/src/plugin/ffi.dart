@@ -92,6 +92,9 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   late final Pointer<NativePlugin> _plugin;
 
   bool _isReady = false;
+
+  /// Completes once a pending [initialize] finishes; null when none is pending.
+  Future<bool>? _initialization;
   int _blockingCalls = 0;
   bool _disposeRequested = false;
   bool _nativeDisposalStarted = false;
@@ -107,13 +110,18 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   /// A callback from [initialize] to run when a notification is pressed.
   DidReceiveNotificationResponseCallback? userCallback;
 
+  /// Calls made while initializing share the first call's settings and result.
   @override
   Future<bool> initialize({
     required WindowsInitializationSettings settings,
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
-  }) async => using((Arena arena) {
+  }) async {
     if (_isReady) {
       return true;
+    }
+    final Future<bool>? pending = _initialization;
+    if (pending != null) {
+      return pending;
     }
     if (_disposeRequested || _nativeDisposalStarted) {
       throw StateError(
@@ -133,38 +141,85 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     _plugin = _bindings.createPlugin();
     instance = this;
     userCallback = onDidReceiveNotificationResponse;
-    final Pointer<Utf8> appName = settings.appName.toNativeUtf8(
-      allocator: arena,
-    );
-    final Pointer<Utf8> aumId = settings.appUserModelId.toNativeUtf8(
-      allocator: arena,
-    );
-    final Pointer<Utf8> guid = settings.guid.toNativeUtf8(allocator: arena);
-    final Pointer<Utf8> iconPath =
-        settings.iconPath?.toNativeUtf8(allocator: arena) ?? nullptr;
+    final Completer<bool> completer = Completer<bool>();
+
+    void finish(bool success) {
+      _initialization = null;
+      if (_disposeRequested) {
+        completer.complete(false);
+      } else if (success) {
+        _isReady = true;
+        completer.complete(true);
+      } else {
+        // Releases the native worker; a failed instance cannot be reused.
+        _disposeRequested = true;
+        userCallback = null;
+        final NativeLaunchDetails? details = _details;
+        _details = null;
+        if (details != null) {
+          _bindings.freeLaunchDetails(details);
+        }
+        completer.complete(false);
+      }
+      _endBlockingCall();
+    }
+
+    late final NativeCallable<NativeInitCallbackFunction> onReady;
+    onReady = NativeCallable<NativeInitCallbackFunction>.listener((
+      bool success,
+    ) {
+      onReady.close();
+      finish(success);
+    });
     final NativeCallable<NativeNotificationCallbackFunction> callback =
         NativeCallable<NativeNotificationCallbackFunction>.listener(
           (NativeLaunchDetails details) =>
               _onDidReceiveNotificationResponse(details),
         );
     _launchCallback = callback;
-    _isReady = _bindings.init(
-      _plugin,
-      appName,
-      aumId,
-      guid,
-      iconPath,
-      callback.nativeFunction,
-    );
-    return _isReady;
-  });
+    _initialization = completer.future;
+    // dispose() waits for the queued init, like any other in-flight native call.
+    _beginBlockingCall();
+    final bool queued;
+    try {
+      queued = using((Arena arena) {
+        final Pointer<Utf8> appName = settings.appName.toNativeUtf8(
+          allocator: arena,
+        );
+        final Pointer<Utf8> aumId = settings.appUserModelId.toNativeUtf8(
+          allocator: arena,
+        );
+        final Pointer<Utf8> guid = settings.guid.toNativeUtf8(allocator: arena);
+        final Pointer<Utf8> iconPath =
+            settings.iconPath?.toNativeUtf8(allocator: arena) ?? nullptr;
+        return _bindings.init(
+          _plugin,
+          appName,
+          aumId,
+          guid,
+          iconPath,
+          callback.nativeFunction,
+          onReady.nativeFunction,
+        );
+      });
+    } catch (_) {
+      onReady.close();
+      finish(false);
+      rethrow;
+    }
+    if (!queued) {
+      onReady.close();
+      finish(false);
+    }
+    return completer.future;
+  }
 
   @override
   void dispose() {
-    if (!_isReady && !_disposeRequested) {
+    if (!_isReady && !_disposeRequested && _initialization == null) {
       return;
     }
-    if (_isReady) {
+    if (_isReady || _initialization != null) {
       _isReady = false;
       _disposeRequested = true;
       userCallback = null;
@@ -214,7 +269,10 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   }
 
   void _onDidReceiveNotificationResponse(NativeLaunchDetails details) {
-    if (!_isReady) {
+    // A launch activation can arrive while init is still pending.
+    final bool accepting =
+        _isReady || (_initialization != null && !_disposeRequested);
+    if (!accepting) {
       // dispose can be waiting for a helper-isolate query. The native callback
       // remains registered until that query completes, so release late details
       // instead of leaking their native strings.
