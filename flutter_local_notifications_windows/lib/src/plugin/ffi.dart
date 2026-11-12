@@ -93,7 +93,6 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     instance = this;
     userCallback = onDidReceiveNotificationResponse;
     final Completer<bool> completer = Completer<bool>();
-    _initialization = completer.future;
     final NativeCallable<NativeNotificationCallbackFunction> launchCallback =
         NativeCallable<NativeNotificationCallbackFunction>.listener(
           _globalLaunchCallback,
@@ -131,26 +130,34 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
       onReady.close();
       finish(success);
     });
-    final bool queued = using((Arena arena) {
-      final Pointer<Utf8> appName = settings.appName.toNativeUtf8(
-        allocator: arena,
-      );
-      final Pointer<Utf8> aumId = settings.appUserModelId.toNativeUtf8(
-        allocator: arena,
-      );
-      final Pointer<Utf8> guid = settings.guid.toNativeUtf8(allocator: arena);
-      final Pointer<Utf8> iconPath =
-          settings.iconPath?.toNativeUtf8(allocator: arena) ?? nullptr;
-      return _bindings.init(
-        plugin,
-        appName,
-        aumId,
-        guid,
-        iconPath,
-        launchCallback.nativeFunction,
-        onReady.nativeFunction,
-      );
-    });
+    _initialization = completer.future;
+    final bool queued;
+    try {
+      queued = using((Arena arena) {
+        final Pointer<Utf8> appName = settings.appName.toNativeUtf8(
+          allocator: arena,
+        );
+        final Pointer<Utf8> aumId = settings.appUserModelId.toNativeUtf8(
+          allocator: arena,
+        );
+        final Pointer<Utf8> guid = settings.guid.toNativeUtf8(allocator: arena);
+        final Pointer<Utf8> iconPath =
+            settings.iconPath?.toNativeUtf8(allocator: arena) ?? nullptr;
+        return _bindings.init(
+          plugin,
+          appName,
+          aumId,
+          guid,
+          iconPath,
+          launchCallback.nativeFunction,
+          onReady.nativeFunction,
+        );
+      });
+    } catch (_) {
+      onReady.close();
+      finish(false);
+      rethrow;
+    }
     if (!queued) {
       onReady.close();
       launchCallback.close();
