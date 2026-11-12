@@ -359,6 +359,7 @@ jobs:
   integration_tests_ios:
     name: Run integration tests (iOS)
     runs-on: macos-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
@@ -379,4 +380,17 @@ jobs:
           brew install applesimutils
       - name: Grant notification permissions
         run: applesimutils --byId ${{ steps.simulator-action.outputs.udid}} --bundle com.dexterous.flutterLocalNotificationsExample --setPermissions notifications=YES
-      - run: melos run test:integration
+      # The app sometimes never connects after "Xcode build done" and the
+      # job would hang until the 6-hour limit. Bound each attempt and retry
+      # once, only when an attempt timed out.
+      - name: Run integration tests
+        run: |
+          for attempt in 1 2; do
+            status=0
+            perl -e 'alarm shift; exec @ARGV' 1200 melos run test:integration || status=$?
+            if [ "$status" -ne 142 ]; then exit "$status"; fi
+            echo "::warning::iOS integration tests timed out (attempt $attempt)"
+            pkill -f flutter_tools.snapshot || true
+            xcrun simctl terminate ${{ steps.simulator-action.outputs.udid }} com.dexterous.flutterLocalNotificationsExample || true
+          done
+          exit 1
