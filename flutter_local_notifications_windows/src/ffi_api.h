@@ -88,7 +88,7 @@ FFI_PLUGIN_EXPORT void disposePlugin(NativePlugin* ptr);
 
 /// Initializes the plugin and registers the callback to be run when a notification is pressed.
 FFI_PLUGIN_EXPORT bool init(
-  NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath,
+  NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath, char* groupName,
   NativeNotificationCallback callback
 );
 
@@ -113,14 +113,9 @@ updateNotification(NativePlugin* plugin, int id, NativeStringMap bindings);
 FFI_PLUGIN_EXPORT void cancelAll(NativePlugin* plugin);
 
 /// Cancels a notification with the given ID.
-///
-/// Only applications with "package identity" (ie, installed with an MSIX installer), can use this.
 FFI_PLUGIN_EXPORT void cancelNotification(NativePlugin* plugin, int id);
 
 /// Gets all notifications that have already been shown but are still in the Action center.
-///
-/// Only applications with "package identity" (ie, installed with an MSIX installer), can use this.
-/// When your app does not have identity, such as in debug mode, this will return an empty array.
 FFI_PLUGIN_EXPORT NativeNotificationDetails* getActiveNotifications(
   NativePlugin* plugin, int* size
 );
