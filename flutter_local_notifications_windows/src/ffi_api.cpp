@@ -97,7 +97,7 @@ bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap b
   return true;
 }
 
-bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time) {
+bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int64_t time) {
   if (!isValidXml(xml)) return false;
   const string xmlCopy(xml);
   plugin->worker.post([plugin, id, xmlCopy, time] {

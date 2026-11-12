@@ -151,7 +151,7 @@ class NotificationsPluginBindings {
         )
       >();
 
-  /// Schedules the notification to be shown at the given time (as a [time_t]).
+  /// Schedules the notification at the given signed 64-bit Unix timestamp in seconds.
   bool scheduleNotification(
     ffi.Pointer<NativePlugin> plugin,
     int id,
@@ -168,7 +168,7 @@ class NotificationsPluginBindings {
             ffi.Pointer<NativePlugin>,
             ffi.Int,
             ffi.Pointer<pkg_ffi.Utf8>,
-            ffi.Int,
+            ffi.Int64,
           )
         >
       >('scheduleNotification');

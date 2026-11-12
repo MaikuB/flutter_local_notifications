@@ -20,6 +20,7 @@ extern "C" {
 #endif
 
 #include <stdbool.h>
+#include <stdint.h>
 
 /// A fake type to represent the C++ class that will own the Windows API handles.
 typedef struct NativePlugin NativePlugin;
@@ -104,8 +105,8 @@ FFI_PLUGIN_EXPORT bool showNotification(
   NativePlugin* plugin, int id, char* xml, NativeStringMap bindings
 );
 
-/// Schedules the notification to be shown at the given time (as a [time_t]).
-FFI_PLUGIN_EXPORT bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time);
+/// Schedules the notification at the given signed 64-bit Unix timestamp in seconds.
+FFI_PLUGIN_EXPORT bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int64_t time);
 
 /// Updates a notification with the provided bindings after it's been shown.
 ///
