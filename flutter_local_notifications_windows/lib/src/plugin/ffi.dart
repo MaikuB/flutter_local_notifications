@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
@@ -47,9 +48,12 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   );
 
   /// A pointer to the C++ handler class.
-  late final Pointer<NativePlugin> _plugin;
+  late Pointer<NativePlugin> _plugin;
 
   bool _isReady = false;
+
+  /// Completes once a pending [initialize] finishes; null when none is pending.
+  Future<bool>? _initialization;
 
   /// The last recorded launch details, if any.
   ///
@@ -61,13 +65,18 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   /// A callback from [initialize] to run when a notification is pressed.
   DidReceiveNotificationResponseCallback? userCallback;
 
+  /// Calls made while initializing share the first call's settings and result.
   @override
   Future<bool> initialize({
     required WindowsInitializationSettings settings,
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
-  }) async => using((Arena arena) {
+  }) async {
     if (_isReady) {
       return true;
+    }
+    final Future<bool>? pending = _initialization;
+    if (pending != null) {
+      return pending;
     }
     // The C++ code will crash if there's an invalid GUID, so check it before
     // createPlugin starts the native worker thread.
@@ -79,46 +88,101 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
             ' format.\nYou can get one by searching GUID generators online',
       );
     }
-    _plugin = _bindings.createPlugin();
+    final Pointer<NativePlugin> plugin = _bindings.createPlugin();
+    _plugin = plugin;
     instance = this;
     userCallback = onDidReceiveNotificationResponse;
-    final Pointer<Utf8> appName = settings.appName.toNativeUtf8(
-      allocator: arena,
-    );
-    final Pointer<Utf8> aumId = settings.appUserModelId.toNativeUtf8(
-      allocator: arena,
-    );
-    final Pointer<Utf8> guid = settings.guid.toNativeUtf8(allocator: arena);
-    final Pointer<Utf8> iconPath =
-        settings.iconPath?.toNativeUtf8(allocator: arena) ?? nullptr;
-    final NativeNotificationCallback callback =
+    final Completer<bool> completer = Completer<bool>();
+    _initialization = completer.future;
+    final NativeCallable<NativeNotificationCallbackFunction> launchCallback =
         NativeCallable<NativeNotificationCallbackFunction>.listener(
           _globalLaunchCallback,
-        ).nativeFunction;
-    final bool result = _bindings.init(
-      _plugin,
-      appName,
-      aumId,
-      guid,
-      iconPath,
-      callback,
-    );
-    _isReady = result;
-    return result;
-  });
+        );
+
+    void finish(bool success) {
+      // A dispose() while pending already released the plugin.
+      if (!identical(_initialization, completer.future)) {
+        completer.complete(false);
+        return;
+      }
+      _initialization = null;
+      if (success) {
+        _isReady = true;
+      } else {
+        _bindings.disposePlugin(plugin);
+        // Native code may still hold it until disposal finishes, so it stays open.
+        launchCallback.keepIsolateAlive = false;
+        final NativeLaunchDetails? details = _details;
+        _details = null;
+        if (details != null) {
+          _bindings.freeLaunchDetails(details);
+        }
+        if (identical(instance, this)) {
+          instance = null;
+        }
+      }
+      completer.complete(success);
+    }
+
+    late final NativeCallable<NativeInitCallbackFunction> onReady;
+    onReady = NativeCallable<NativeInitCallbackFunction>.listener((
+      bool success,
+    ) {
+      onReady.close();
+      finish(success);
+    });
+    final bool queued = using((Arena arena) {
+      final Pointer<Utf8> appName = settings.appName.toNativeUtf8(
+        allocator: arena,
+      );
+      final Pointer<Utf8> aumId = settings.appUserModelId.toNativeUtf8(
+        allocator: arena,
+      );
+      final Pointer<Utf8> guid = settings.guid.toNativeUtf8(allocator: arena);
+      final Pointer<Utf8> iconPath =
+          settings.iconPath?.toNativeUtf8(allocator: arena) ?? nullptr;
+      return _bindings.init(
+        plugin,
+        appName,
+        aumId,
+        guid,
+        iconPath,
+        launchCallback.nativeFunction,
+        onReady.nativeFunction,
+      );
+    });
+    if (!queued) {
+      onReady.close();
+      launchCallback.close();
+      finish(false);
+    }
+    return completer.future;
+  }
 
   @override
   void dispose() {
+    if (_initialization != null) {
+      // The worker finishes the queued init before releasing the plugin.
+      _initialization = null;
+      _bindings.disposePlugin(_plugin);
+      if (identical(instance, this)) {
+        instance = null;
+      }
+      return;
+    }
     if (!_isReady) {
       return;
     }
     _bindings.disposePlugin(_plugin);
-    instance = null;
+    if (identical(instance, this)) {
+      instance = null;
+    }
     _isReady = false;
   }
 
   void _onDidReceiveNotificationResponse(NativeLaunchDetails details) {
-    if (!_isReady) {
+    // A launch activation can arrive before init reports back.
+    if (!_isReady && _initialization == null) {
       return;
     } else if (_details != null) {
       _bindings.freeLaunchDetails(_details!);
