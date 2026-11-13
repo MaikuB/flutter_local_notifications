@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:ffi';
+import 'dart:isolate';
 
 import 'package:ffi/ffi.dart';
 
@@ -9,9 +11,51 @@ import '../ffi/utils.dart';
 
 import 'base.dart';
 
-void _globalLaunchCallback(NativeLaunchDetails details) {
-  FlutterLocalNotificationsWindows.instance?._onDidReceiveNotificationResponse(
-    details,
+const String _nativeLibraryName = 'flutter_local_notifications_windows.dll';
+
+NotificationsPluginBindings _backgroundBindings() =>
+    NotificationsPluginBindings(DynamicLibrary.open(_nativeLibraryName));
+
+List<int> _queryNotificationIds((int pluginAddress, bool pending) request) {
+  final NotificationsPluginBindings bindings = _backgroundBindings();
+  final Pointer<NativePlugin> plugin = Pointer<NativePlugin>.fromAddress(
+    request.$1,
+  );
+  return using((Arena arena) {
+    final Pointer<Int> length = arena<Int>();
+    final Pointer<NativeNotificationDetails> array = request.$2
+        ? bindings.getPendingNotifications(plugin, length)
+        : bindings.getActiveNotifications(plugin, length);
+    try {
+      if (length.value < 0 || (length.value > 0 && array == nullptr)) {
+        throw StateError('Invalid native notification query array');
+      }
+      return <int>[
+        for (int index = 0; index < length.value; index++) array[index].id,
+      ];
+    } finally {
+      bindings.freeDetailsArray(array);
+    }
+  });
+}
+
+int _updateNotificationBindings(
+  (int pluginAddress, int id, Map<String, String> values) request,
+) {
+  final NotificationsPluginBindings bindings = _backgroundBindings();
+  final Pointer<NativePlugin> plugin = Pointer<NativePlugin>.fromAddress(
+    request.$1,
+  );
+  return using((Arena arena) {
+    return bindings
+        .updateNotification(plugin, request.$2, request.$3.toNativeMap(arena))
+        .value;
+  });
+}
+
+void _disposeNativePlugin(int pluginAddress) {
+  _backgroundBindings().disposePlugin(
+    Pointer<NativePlugin>.fromAddress(pluginAddress),
   );
 }
 
@@ -35,21 +79,26 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
         FlutterLocalNotificationsWindows();
   }
 
-  /// The global instance of this plugin. Used in [_globalLaunchCallback].
+  /// The most recently initialized instance, cleared after native disposal.
   static FlutterLocalNotificationsWindows? instance;
 
   /// The FFI generated bindings to the native code.
   late final NotificationsPluginBindings _bindings =
       NotificationsPluginBindings(_library);
 
-  late final DynamicLibrary _library = DynamicLibrary.open(
-    'flutter_local_notifications_windows.dll',
-  );
+  late final DynamicLibrary _library = DynamicLibrary.open(_nativeLibraryName);
 
   /// A pointer to the C++ handler class.
   late final Pointer<NativePlugin> _plugin;
 
   bool _isReady = false;
+
+  /// Completes once a pending [initialize] finishes; null when none is pending.
+  Future<bool>? _initialization;
+  int _blockingCalls = 0;
+  bool _disposeRequested = false;
+  bool _nativeDisposalStarted = false;
+  NativeCallable<NativeNotificationCallbackFunction>? _launchCallback;
 
   /// The last recorded launch details, if any.
   ///
@@ -61,16 +110,26 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   /// A callback from [initialize] to run when a notification is pressed.
   DidReceiveNotificationResponseCallback? userCallback;
 
+  /// Calls made while initializing share the first call's settings and result.
   @override
   Future<bool> initialize({
     required WindowsInitializationSettings settings,
     DidReceiveNotificationResponseCallback? onDidReceiveNotificationResponse,
-  }) async => using((Arena arena) {
+  }) async {
     if (_isReady) {
       return true;
     }
-    _plugin = _bindings.createPlugin();
-    // The C++ code will crash if there's an invalid GUID, so check it here
+    final Future<bool>? pending = _initialization;
+    if (pending != null) {
+      return pending;
+    }
+    if (_disposeRequested || _nativeDisposalStarted) {
+      throw StateError(
+        'Flutter Local Notifications cannot be reinitialized after dispose',
+      );
+    }
+    // The C++ code will crash if there's an invalid GUID, so check it before
+    // createPlugin starts the native worker thread.
     if (!settings.guid.isValidGuid) {
       throw ArgumentError.value(
         settings.guid,
@@ -79,45 +138,145 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
             ' format.\nYou can get one by searching GUID generators online',
       );
     }
+    _plugin = _bindings.createPlugin();
     instance = this;
     userCallback = onDidReceiveNotificationResponse;
-    final Pointer<Utf8> appName = settings.appName.toNativeUtf8(
-      allocator: arena,
-    );
-    final Pointer<Utf8> aumId = settings.appUserModelId.toNativeUtf8(
-      allocator: arena,
-    );
-    final Pointer<Utf8> guid = settings.guid.toNativeUtf8(allocator: arena);
-    final Pointer<Utf8> iconPath =
-        settings.iconPath?.toNativeUtf8(allocator: arena) ?? nullptr;
-    final NativeNotificationCallback callback =
+    final Completer<bool> completer = Completer<bool>();
+
+    void finish(bool success) {
+      _initialization = null;
+      if (_disposeRequested) {
+        completer.complete(false);
+      } else if (success) {
+        _isReady = true;
+        completer.complete(true);
+      } else {
+        // Releases the native worker; a failed instance cannot be reused.
+        _disposeRequested = true;
+        userCallback = null;
+        final NativeLaunchDetails? details = _details;
+        _details = null;
+        if (details != null) {
+          _bindings.freeLaunchDetails(details);
+        }
+        completer.complete(false);
+      }
+      _endBlockingCall();
+    }
+
+    late final NativeCallable<NativeInitCallbackFunction> onReady;
+    onReady = NativeCallable<NativeInitCallbackFunction>.listener((
+      bool success,
+    ) {
+      onReady.close();
+      finish(success);
+    });
+    final NativeCallable<NativeNotificationCallbackFunction> callback =
         NativeCallable<NativeNotificationCallbackFunction>.listener(
-          _globalLaunchCallback,
-        ).nativeFunction;
-    final bool result = _bindings.init(
-      _plugin,
-      appName,
-      aumId,
-      guid,
-      iconPath,
-      callback,
-    );
-    _isReady = result;
-    return result;
-  });
+          (NativeLaunchDetails details) =>
+              _onDidReceiveNotificationResponse(details),
+        );
+    _launchCallback = callback;
+    _initialization = completer.future;
+    // dispose() waits for the queued init, like any other in-flight native call.
+    _beginBlockingCall();
+    final bool queued;
+    try {
+      queued = using((Arena arena) {
+        final Pointer<Utf8> appName = settings.appName.toNativeUtf8(
+          allocator: arena,
+        );
+        final Pointer<Utf8> aumId = settings.appUserModelId.toNativeUtf8(
+          allocator: arena,
+        );
+        final Pointer<Utf8> guid = settings.guid.toNativeUtf8(allocator: arena);
+        final Pointer<Utf8> iconPath =
+            settings.iconPath?.toNativeUtf8(allocator: arena) ?? nullptr;
+        return _bindings.init(
+          _plugin,
+          appName,
+          aumId,
+          guid,
+          iconPath,
+          callback.nativeFunction,
+          onReady.nativeFunction,
+        );
+      });
+    } catch (_) {
+      onReady.close();
+      finish(false);
+      rethrow;
+    }
+    if (!queued) {
+      onReady.close();
+      finish(false);
+    }
+    return completer.future;
+  }
 
   @override
   void dispose() {
-    if (!_isReady) {
+    if (!_isReady && !_disposeRequested && _initialization == null) {
       return;
     }
-    _bindings.disposePlugin(_plugin);
-    instance = null;
-    _isReady = false;
+    if (_isReady || _initialization != null) {
+      _isReady = false;
+      _disposeRequested = true;
+      userCallback = null;
+      final NativeLaunchDetails? details = _details;
+      _details = null;
+      if (details != null) {
+        _bindings.freeLaunchDetails(details);
+      }
+    }
+    _finishDisposeIfIdle();
+  }
+
+  void _finishDisposeIfIdle() {
+    if (!_disposeRequested || _nativeDisposalStarted || _blockingCalls != 0) {
+      return;
+    }
+    _nativeDisposalStarted = true;
+    // NativePlugin teardown can join a slow worker; never block the UI isolate.
+    unawaited(_disposeNativePluginAsync(_plugin.address));
+  }
+
+  Future<void> _disposeNativePluginAsync(int pluginAddress) async {
+    try {
+      await Isolate.run(() => _disposeNativePlugin(pluginAddress));
+    } catch (_) {
+      // Keep the callback open until the native owner is released; calling
+      // dispose again retries. Rethrowing here would surface as unhandled.
+      _nativeDisposalStarted = false;
+      return;
+    }
+    _disposeRequested = false;
+    _launchCallback?.close();
+    _launchCallback = null;
+    if (identical(instance, this)) {
+      instance = null;
+    }
+  }
+
+  void _beginBlockingCall() {
+    _blockingCalls++;
+  }
+
+  void _endBlockingCall() {
+    _blockingCalls--;
+    assert(_blockingCalls >= 0);
+    _finishDisposeIfIdle();
   }
 
   void _onDidReceiveNotificationResponse(NativeLaunchDetails details) {
-    if (!_isReady) {
+    // A launch activation can arrive while init is still pending.
+    final bool accepting =
+        _isReady || (_initialization != null && !_disposeRequested);
+    if (!accepting) {
+      // dispose can be waiting for a helper-isolate query. The native callback
+      // remains registered until that query completes, so release late details
+      // instead of leaking their native strings.
+      _bindings.freeLaunchDetails(details);
       return;
     } else if (_details != null) {
       _bindings.freeLaunchDetails(_details!);
@@ -154,40 +313,47 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   }
 
   @override
-  Future<List<ActiveNotification>> getActiveNotifications() async =>
-      using((Arena arena) {
-        if (!_isReady) {
-          throw StateError(
-            'Flutter Local Notifications must be initialized before use',
-          );
-        }
-        final Pointer<Int> length = arena<Int>();
-        final Pointer<NativeNotificationDetails> array = _bindings
-            .getActiveNotifications(_plugin, length);
-        final List<ActiveNotification> result = array.asActiveNotifications(
-          length.value,
-        );
-        _bindings.freeDetailsArray(array);
-        return result;
-      });
-
-  @override
-  Future<List<PendingNotificationRequest>>
-  pendingNotificationRequests() async => using((Arena arena) {
+  Future<List<ActiveNotification>> getActiveNotifications() async {
     if (!_isReady) {
       throw StateError(
         'Flutter Local Notifications must be initialized before use',
       );
     }
-    final Pointer<Int> length = arena<Int>();
-    final Pointer<NativeNotificationDetails> array = _bindings
-        .getPendingNotifications(_plugin, length);
-    final List<PendingNotificationRequest> result = array.asPendingRequests(
-      length.value,
-    );
-    _bindings.freeDetailsArray(array);
-    return result;
-  });
+    final int pluginAddress = _plugin.address;
+    _beginBlockingCall();
+    try {
+      final List<int> ids = await Isolate.run(
+        () => _queryNotificationIds((pluginAddress, false)),
+      );
+      return <ActiveNotification>[
+        for (final int id in ids) ActiveNotification(id: id),
+      ];
+    } finally {
+      _endBlockingCall();
+    }
+  }
+
+  @override
+  Future<List<PendingNotificationRequest>> pendingNotificationRequests() async {
+    if (!_isReady) {
+      throw StateError(
+        'Flutter Local Notifications must be initialized before use',
+      );
+    }
+    final int pluginAddress = _plugin.address;
+    _beginBlockingCall();
+    try {
+      final List<int> ids = await Isolate.run(
+        () => _queryNotificationIds((pluginAddress, true)),
+      );
+      return <PendingNotificationRequest>[
+        for (final int id in ids)
+          PendingNotificationRequest(id, null, null, null),
+      ];
+    } finally {
+      _endBlockingCall();
+    }
+  }
 
   @override
   Future<NotificationAppLaunchDetails?>
@@ -372,17 +538,22 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   Future<NotificationUpdateResult> updateBindings({
     required int id,
     required Map<String, String> bindings,
-  }) async => using((Arena arena) {
+  }) async {
     if (!_isReady) {
       throw StateError(
         'Flutter Local Notifications must be initialized before use',
       );
     }
-    final NativeUpdateResult result = _bindings.updateNotification(
-      _plugin,
-      id,
-      bindings.toNativeMap(arena),
-    );
-    return getUpdateResult(result);
-  });
+    final int pluginAddress = _plugin.address;
+    final Map<String, String> values = Map<String, String>.of(bindings);
+    _beginBlockingCall();
+    try {
+      final int result = await Isolate.run(
+        () => _updateNotificationBindings((pluginAddress, id, values)),
+      );
+      return getUpdateResult(NativeUpdateResult.fromValue(result));
+    } finally {
+      _endBlockingCall();
+    }
+  }
 }

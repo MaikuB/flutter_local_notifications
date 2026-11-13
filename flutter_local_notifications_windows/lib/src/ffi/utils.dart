@@ -56,20 +56,3 @@ extension MapToNativeMap on Map<String, String> {
     return pointer.ref;
   }
 }
-
-/// Helpful methods on native notification details.
-extension NativeNotificationDetailsUtils on Pointer<NativeNotificationDetails> {
-  /// Parses this array as a list of [ActiveNotification]s.
-  List<ActiveNotification> asActiveNotifications(int length) =>
-      <ActiveNotification>[
-        for (int index = 0; index < length; index++)
-          ActiveNotification(id: this[index].id),
-      ];
-
-  /// Parses this array os a list of [PendingNotificationRequest]s.
-  List<PendingNotificationRequest> asPendingRequests(int length) =>
-      <PendingNotificationRequest>[
-        for (int index = 0; index < length; index++)
-          PendingNotificationRequest(this[index].id, null, null, null),
-      ];
-}
