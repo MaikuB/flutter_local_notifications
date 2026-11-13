@@ -2,6 +2,10 @@
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Data.Xml.Dom.h>
 
+#include <charconv>
+#include <thread>
+#include <vector>
+
 #include "ffi_api.h"
 #include "plugin.hpp"
 #include "utils.hpp"
@@ -17,24 +21,39 @@ bool hasPackageIdentity() {
 
 NativePlugin* createPlugin() { return new NativePlugin(); }
 
-void disposePlugin(NativePlugin* plugin) { delete plugin; }
+// Teardown waits for the worker, which may be stuck in a COM call, so it never runs
+// on the caller's thread. The reaper thread owns [plugin] from here on.
+void disposePlugin(NativePlugin* plugin) {
+  std::thread([plugin] { delete plugin; }).detach();
+}
 
 bool init(
   NativePlugin* plugin, char* appName, char* aumId, char* guid, char* iconPath,
-  NativeNotificationCallback callback
+  NativeNotificationCallback callback, NativeInitCallback onReady
 ) {
+  // The caller's strings live in a Dart arena that is freed when this returns, so
+  // everything the worker needs is copied before queueing.
+  const string name(appName);
+  const string aumid(aumId);
+  const string clsid(guid);
   string icon;
   if (iconPath != nullptr) icon = string(iconPath);
-  const auto didRegister = plugin->registerApp(aumId, appName, guid, icon, callback);
-  if (!didRegister) return false;
-  plugin->hasIdentity = hasPackageIdentity();
-  plugin->aumid = winrt::to_hstring(aumId);
-  plugin->notifier = plugin->hasIdentity
-    ? ToastNotificationManager::CreateToastNotifier()
-    : ToastNotificationManager::CreateToastNotifier(plugin->aumid);
-  plugin->history = ToastNotificationManager::History();
-  plugin->isReady = true;
-  return true;
+  return plugin->worker.post([plugin, name, aumid, clsid, icon, callback, onReady] {
+    try {
+      if (plugin->registerApp(aumid, name, clsid, icon, callback)) {
+        plugin->hasIdentity = hasPackageIdentity();
+        plugin->aumid = winrt::to_hstring(aumid);
+        plugin->notifier = plugin->hasIdentity
+          ? ToastNotificationManager::CreateToastNotifier()
+          : ToastNotificationManager::CreateToastNotifier(plugin->aumid);
+        plugin->history = ToastNotificationManager::History();
+        plugin->isReady = true;
+      }
+    } catch (...) {
+      // Reported as a failure below, so the caller never waits forever.
+    }
+    onReady(plugin->isReady);
+  });
 }
 
 bool isValidXml(char* xml) {
@@ -47,104 +66,141 @@ bool isValidXml(char* xml) {
   }
 }
 
-bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap bindings) {
-  if (!plugin->isReady) return false;
-  XmlDocument doc;
-  try {
-    doc.LoadXml(winrt::to_hstring(xml));
-  } catch (winrt::hresult_error error) {
-    return false;
+// Collects matches first: removing while iterating the scheduled view is unsafe.
+static void removeScheduled(NativePlugin* plugin, const winrt::hstring& tag) {
+  auto& notifier = plugin->notifier.value();
+  std::vector<ScheduledToastNotification> matches;
+  for (const auto notification : notifier.GetScheduledToastNotifications()) {
+    if (notification.Tag() == tag) matches.push_back(notification);
   }
-  ToastNotification notification(doc);
-  const auto data = dataFromMap(bindings);
-  notification.Tag(winrt::to_hstring(id));
-  notification.Data(data);
-  plugin->notifier.value().Show(notification);
+  for (const auto& notification : matches) notifier.RemoveFromSchedule(notification);
+}
+
+bool showNotification(NativePlugin* plugin, int id, char* xml, NativeStringMap bindings) {
+  // Parsing is local, so a malformed document is still reported to the caller.
+  if (!isValidXml(xml)) return false;
+  const string xmlCopy(xml);
+  const auto bindingsCopy = copyMap(bindings);
+  plugin->worker.post([plugin, id, xmlCopy, bindingsCopy] {
+    if (!plugin->isReady) return;
+    XmlDocument doc;
+    try {
+      doc.LoadXml(winrt::to_hstring(xmlCopy));
+    } catch (winrt::hresult_error error) {
+      return;
+    }
+    ToastNotification notification(doc);
+    notification.Tag(winrt::to_hstring(id));
+    notification.Data(dataFromPairs(bindingsCopy));
+    plugin->notifier.value().Show(notification);
+  });
   return true;
 }
 
-bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int time) {
-  if (!plugin->isReady) return false;
-  XmlDocument doc;
-  try {
-    doc.LoadXml(winrt::to_hstring(xml));
-  } catch (winrt::hresult_error error) {
-    return false;
-  }
-  ScheduledToastNotification notification(doc, winrt::clock::from_time_t(time));
-  notification.Tag(winrt::to_hstring(id));
-  plugin->notifier.value().AddToSchedule(notification);
+bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int64_t time) {
+  if (!isValidXml(xml)) return false;
+  const string xmlCopy(xml);
+  plugin->worker.post([plugin, id, xmlCopy, time] {
+    if (!plugin->isReady) return;
+    XmlDocument doc;
+    try {
+      doc.LoadXml(winrt::to_hstring(xmlCopy));
+    } catch (winrt::hresult_error error) {
+      return;
+    }
+    const auto tag = winrt::to_hstring(id);
+    removeScheduled(plugin, tag);
+    const auto deliveryTime = winrt::clock::from_time_t(time);
+    // The job may run late behind a stalled call, and AddToSchedule throws for a past time.
+    if (deliveryTime <= winrt::clock::now()) {
+      ToastNotification notification(doc);
+      notification.Tag(tag);
+      plugin->notifier.value().Show(notification);
+      return;
+    }
+    ScheduledToastNotification notification(doc, deliveryTime);
+    notification.Tag(tag);
+    plugin->notifier.value().AddToSchedule(notification);
+  });
   return true;
 }
 
 NativeUpdateResult updateNotification(NativePlugin* plugin, int id, NativeStringMap bindings) {
-  if (!plugin->isReady) return NativeUpdateResult::failed;
-  const auto tag = winrt::to_hstring(id);
-  const auto data = dataFromMap(bindings);
-  const auto result = plugin->notifier.value().Update(data, tag);
-  return (NativeUpdateResult) result;
+  NativeUpdateResult result = NativeUpdateResult::failed;
+  plugin->worker.invoke([plugin, id, bindings, &result] {
+    if (!plugin->isReady) return;
+    const auto tag = winrt::to_hstring(id);
+    const auto data = dataFromMap(bindings);
+    result = (NativeUpdateResult) plugin->notifier.value().Update(data, tag);
+  });
+  return result;
 }
 
 void cancelAll(NativePlugin* plugin) {
-  if (!plugin->isReady) return;
-  if (plugin->hasIdentity) {
-    plugin->history.value().Clear();
-  } else {
-    plugin->history.value().Clear(plugin->aumid);
-  }
-  for (const auto notification : plugin->notifier.value().GetScheduledToastNotifications()) {
-    plugin->notifier.value().RemoveFromSchedule(notification);
-  }
+  plugin->worker.post([plugin] {
+    if (!plugin->isReady) return;
+    if (plugin->hasIdentity) {
+      plugin->history.value().Clear();
+    } else {
+      plugin->history.value().Clear(plugin->aumid);
+    }
+    for (const auto notification : plugin->notifier.value().GetScheduledToastNotifications()) {
+      plugin->notifier.value().RemoveFromSchedule(notification);
+    }
+  });
 }
 
 void cancelNotification(NativePlugin* plugin, int id) {
-  if (!plugin->isReady) return;
-  const auto tag = winrt::to_hstring(id);
-  if (plugin->hasIdentity) plugin->history.value().Remove(tag);
-  for (const auto notification : plugin->notifier.value().GetScheduledToastNotifications()) {
-    if (notification.Tag() == tag) {
-      plugin->notifier.value().RemoveFromSchedule(notification);
-      return;
+  plugin->worker.post([plugin, id] {
+    if (!plugin->isReady) return;
+    const auto tag = winrt::to_hstring(id);
+    if (plugin->hasIdentity) plugin->history.value().Remove(tag);
+    removeScheduled(plugin, tag);
+  });
+}
+
+// Toast history can hold tags this plugin did not set; those are skipped. The array
+// is published only once complete, so the caller never sees a count without data.
+template <typename Notifications>
+static NativeNotificationDetails* copyIds(const Notifications& notifications, int& count) {
+  std::vector<int> ids;
+  for (const auto notification : notifications) {
+    const auto tag = winrt::to_string(notification.Tag());
+    int id = 0;
+    const auto parsed = std::from_chars(tag.data(), tag.data() + tag.size(), id);
+    if (!tag.empty() && parsed.ec == std::errc() && parsed.ptr == tag.data() + tag.size()) {
+      ids.push_back(id);
     }
   }
+  if (ids.empty()) return nullptr;
+  const auto result = new NativeNotificationDetails[ids.size()];
+  for (size_t index = 0; index < ids.size(); index++) result[index].id = ids[index];
+  count = static_cast<int>(ids.size());
+  return result;
 }
 
 NativeNotificationDetails* getActiveNotifications(NativePlugin* plugin, int* size) {
-  // TODO: Get more details here
-  if (!plugin->isReady || !plugin->hasIdentity) {
-    *size = 0;
-    return nullptr;
-  }
-  const auto active = plugin->history.value().GetHistory();
-  *size = active.Size();
-  const auto result = new NativeNotificationDetails[*size];
-  int index = 0;
-  for (const auto notification : active) {
-    const auto tag = notification.Tag();
-    const auto tagStr = winrt::to_string(tag);
-    const auto tagInt = std::stoi(tagStr);
-    result[index++].id = tagInt;
-  }
-  return result;
+  NativeNotificationDetails* out = nullptr;
+  int count = 0;
+  plugin->worker.invoke([plugin, &out, &count] {
+    // TODO: Get more details here
+    if (!plugin->isReady || !plugin->hasIdentity) return;
+    out = copyIds(plugin->history.value().GetHistory(), count);
+  });
+  *size = count;
+  return out;
 }
 
 NativeNotificationDetails* getPendingNotifications(NativePlugin* plugin, int* size) {
-  // TODO: Get more details here
-  if (!plugin->isReady) {
-    *size = 0;
-    return nullptr;
-  }
-  const auto pending = plugin->notifier.value().GetScheduledToastNotifications();
-  *size = pending.Size();
-  const auto result = new NativeNotificationDetails[*size];
-  int index = 0;
-  for (const auto notification : pending) {
-    const auto tag = notification.Tag();
-    const auto tagStr = winrt::to_string(tag);
-    const auto tagInt = std::stoi(tagStr);
-    result[index++].id = tagInt;
-  }
-  return result;
+  NativeNotificationDetails* out = nullptr;
+  int count = 0;
+  plugin->worker.invoke([plugin, &out, &count] {
+    // TODO: Get more details here
+    if (!plugin->isReady) return;
+    out = copyIds(plugin->notifier.value().GetScheduledToastNotifications(), count);
+  });
+  *size = count;
+  return out;
 }
 
 void freeDetailsArray(NativeNotificationDetails* ptr) { delete[] ptr; }
