@@ -257,25 +257,24 @@ void main() {
 
   group('JSNotificationUtils', () {
     test('id parses tag as integer', () {
-      // Notification constructor requires a title; tag is set via options
-      final web.Notification notification = web.Notification(
-        'Test',
-        web.NotificationOptions(tag: '42'),
-      );
-      expect(notification.id, equals(42));
+      final JSObject notification = JSObject();
+      notification['tag'] = '42'.toJS;
+
+      expect((notification as web.Notification).id, equals(42));
     });
 
     test('id returns null for non-numeric tag', () {
-      final web.Notification notification = web.Notification(
-        'Test',
-        web.NotificationOptions(tag: 'not-a-number'),
-      );
-      expect(notification.id, isNull);
+      final JSObject notification = JSObject();
+      notification['tag'] = 'not-a-number'.toJS;
+
+      expect((notification as web.Notification).id, isNull);
     });
 
     test('id returns null for empty tag', () {
-      final web.Notification notification = web.Notification('Test');
-      expect(notification.id, isNull);
+      final JSObject notification = JSObject();
+      notification['tag'] = ''.toJS;
+
+      expect((notification as web.Notification).id, isNull);
     });
   });
 }
