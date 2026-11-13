@@ -35,6 +35,22 @@ void main() => group('Plugin', () {
     plugin.dispose();
   });
 
+  test('rejects GUIDs with non-hex digits', () async {
+    final FlutterLocalNotificationsWindows plugin =
+        FlutterLocalNotificationsWindows();
+    expect(
+      plugin.initialize(
+        settings: const WindowsInitializationSettings(
+          appName: 'test',
+          appUserModelId: 'com.test.test',
+          guid: 'zzzzzzzz-049e-422f-b30f-863694de08c8',
+        ),
+      ),
+      throwsArgumentError,
+    );
+    plugin.dispose();
+  });
+
   test('cannot be used before initializing', () async {
     final FlutterLocalNotificationsWindows plugin =
         FlutterLocalNotificationsWindows();
