@@ -1,3 +1,7 @@
+## [23.0.3]
+
+* [iOS][macOS] fixed notification trigger scheduling to use the Gregorian calendar regardless of the device's current calendar. Thanks to the PR from [Sagar Ghag](https://github.com/GhagSagar23)
+
 ## [23.0.2]
 
 * [iOS] fixed issue where provisional notification permission request was not shown when no other permission was requested. Thanks to the PR from [Bilal Aksoy](https://github.com/BiAksoy)
