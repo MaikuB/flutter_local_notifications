@@ -512,7 +512,7 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
         dateFormatter.formatOptions = [.withFractionalSeconds, .withInternetDateTime]
         dateFormatter.timeZone = timeZone
         let date = dateFormatter.date(from: scheduledDateTime)!
-        var calendar = Calendar.current
+        var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = timeZone!
         if let rawDateTimeComponents = arguments[MethodCallArguments.matchDateTimeComponents] as? Int {
             let dateTimeComponents = DateTimeComponents.init(rawValue: rawDateTimeComponents)!
