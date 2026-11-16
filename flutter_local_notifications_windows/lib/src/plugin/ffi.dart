@@ -111,6 +111,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
   DidReceiveNotificationResponseCallback? userCallback;
 
   /// Calls made while initializing share the first call's settings and result.
+  /// After a false result, call [initialize] again to retry or [dispose].
   @override
   Future<bool> initialize({
     required WindowsInitializationSettings settings,

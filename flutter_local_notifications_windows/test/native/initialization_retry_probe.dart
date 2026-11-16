@@ -1,3 +1,5 @@
+// Manual probe, not run by `flutter test` (not a *_test.dart file). Build
+// query_latency_stub.cpp as flutter_local_notifications_windows.dll first.
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
@@ -101,7 +103,7 @@ void main() {
     setInitFailures(1);
     expect(await plugin.initialize(settings: retrySettings), isFalse);
     final int firstCallback = callbackAddress();
-    expect(plugin.pendingNotificationRequests(), throwsStateError);
+    await expectLater(plugin.pendingNotificationRequests(), throwsStateError);
     final Future<bool> first = plugin.initialize(settings: retrySettings);
     final Future<bool> shared = plugin.initialize(settings: retrySettings);
     expect(await Future.wait(<Future<bool>>[first, shared]), <bool>[
@@ -130,6 +132,7 @@ void main() {
     expect(plugin.initialize(settings: retrySettings), throwsStateError);
     plugin.dispose();
   });
+
   test('dispose during failed initialization releases one plugin', () async {
     final FlutterLocalNotificationsWindows plugin =
         FlutterLocalNotificationsWindows();

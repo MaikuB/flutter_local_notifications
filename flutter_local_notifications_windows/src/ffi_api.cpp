@@ -49,7 +49,11 @@ bool init(
     } catch (...) {
       // Reported as a failure below, so the caller never waits forever.
     }
-    if (!plugin->isReady) plugin->resetRegistration();
+    try {
+      if (!plugin->isReady) plugin->resetRegistration();
+    } catch (...) {
+      // onReady must still run, or the caller waits forever.
+    }
     onReady(plugin->isReady);
   });
 }
