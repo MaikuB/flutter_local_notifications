@@ -1,3 +1,5 @@
+// Manual ABI probe, not run by `flutter test` (not a *_test.dart file). Build
+// schedule_timestamp_stub.cpp as flutter_local_notifications_timestamp_fixture.dll first.
 import 'dart:ffi';
 
 import 'package:flutter_local_notifications_windows/src/ffi/bindings.dart';
