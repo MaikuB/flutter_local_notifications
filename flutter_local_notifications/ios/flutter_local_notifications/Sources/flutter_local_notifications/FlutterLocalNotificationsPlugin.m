@@ -876,7 +876,8 @@ static FlutterError *getFlutterError(NSError *error) {
   NSString *timeZoneName = arguments[TIME_ZONE_NAME];
 
   NSNumber *matchDateComponents = arguments[MATCH_DATE_TIME_COMPONENTS];
-  NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+  NSCalendar *calendar = [[NSCalendar alloc]
+      initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
   NSTimeZone *timezone = [NSTimeZone timeZoneWithName:timeZoneName];
   NSISO8601DateFormatter *dateFormatter = [[NSISO8601DateFormatter alloc] init];
   [dateFormatter setTimeZone:timezone];
