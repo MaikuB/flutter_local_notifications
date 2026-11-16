@@ -65,11 +65,14 @@ bool isValidXml(char* xml) {
 }
 
 // Collects matches first: removing while iterating the scheduled view is unsafe.
-static void removeScheduled(NativePlugin* plugin, const winrt::hstring& tag) {
+// A null [tag] removes every scheduled toast.
+static void removeScheduled(NativePlugin* plugin, const winrt::hstring* tag) {
   auto& notifier = plugin->notifier.value();
   std::vector<ScheduledToastNotification> matches;
   for (const auto notification : notifier.GetScheduledToastNotifications()) {
-    if (notification.Tag() == tag) matches.push_back(notification);
+    if (tag == nullptr || notification.Tag() == *tag) {
+      matches.push_back(notification);
+    }
   }
   for (const auto& notification : matches) notifier.RemoveFromSchedule(notification);
 }
@@ -107,7 +110,7 @@ bool scheduleNotification(NativePlugin* plugin, int id, char* xml, int64_t time)
       return;
     }
     const auto tag = winrt::to_hstring(id);
-    removeScheduled(plugin, tag);
+    removeScheduled(plugin, &tag);
     const auto deliveryTime = winrt::clock::from_time_t(time);
     // The job may run late behind a stalled call, and AddToSchedule throws for a past time.
     if (deliveryTime <= winrt::clock::now()) {
@@ -142,9 +145,7 @@ void cancelAll(NativePlugin* plugin) {
     } else {
       plugin->history.value().Clear(plugin->aumid);
     }
-    for (const auto notification : plugin->notifier.value().GetScheduledToastNotifications()) {
-      plugin->notifier.value().RemoveFromSchedule(notification);
-    }
+    removeScheduled(plugin, nullptr);
   });
 }
 
@@ -153,7 +154,7 @@ void cancelNotification(NativePlugin* plugin, int id) {
     if (!plugin->isReady) return;
     const auto tag = winrt::to_hstring(id);
     if (plugin->hasIdentity) plugin->history.value().Remove(tag);
-    removeScheduled(plugin, tag);
+    removeScheduled(plugin, &tag);
   });
 }
 
