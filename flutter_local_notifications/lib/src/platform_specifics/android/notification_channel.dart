@@ -22,6 +22,8 @@ class AndroidNotificationChannel {
     this.enableLights = false,
     this.ledColor,
     this.audioAttributesUsage = AudioAttributesUsage.notification,
+    this.conversationId,
+    this.parentChannelId,
   });
 
   /// The channel's id.
@@ -95,4 +97,16 @@ class AndroidNotificationChannel {
   /// such as alarm or ringtone set in [`AudioAttributes.Builder`](https://developer.android.com/reference/android/media/AudioAttributes.Builder#setUsage(int)).
   /// https://developer.android.com/reference/android/media/AudioAttributes
   final AudioAttributesUsage audioAttributesUsage;
+
+  /// The shortcut ID of the conversation this channel belongs to.
+  ///
+  /// Used with [parentChannelId] to identify a conversation channel when it is
+  /// first created on Android 11 or newer. Both values must be non-null and
+  /// non-empty.
+  final String? conversationId;
+
+  /// The ID of the parent notification channel for a conversation channel.
+  ///
+  /// See [conversationId].
+  final String? parentChannelId;
 }
