@@ -15,13 +15,13 @@ void _globalLaunchCallback(NativeLaunchDetails details) {
   );
 }
 
+final RegExp _guidPattern = RegExp(
+  r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-'
+  r'[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+);
+
 extension on String {
-  bool get isValidGuid =>
-      length == 36 &&
-      this[8] == '-' &&
-      this[13] == '-' &&
-      this[18] == '-' &&
-      this[23] == '-';
+  bool get isValidGuid => _guidPattern.hasMatch(this);
 }
 
 /// The Windows implementation of `package:flutter_local_notifications`.
@@ -69,8 +69,8 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
     if (_isReady) {
       return true;
     }
-    _plugin = _bindings.createPlugin();
-    // The C++ code will crash if there's an invalid GUID, so check it here
+    // The C++ code will crash if there's an invalid GUID, so check it here,
+    // before allocating the native plugin.
     if (!settings.guid.isValidGuid) {
       throw ArgumentError.value(
         settings.guid,
@@ -79,6 +79,7 @@ class FlutterLocalNotificationsWindows extends WindowsNotificationsBase {
             ' format.\nYou can get one by searching GUID generators online',
       );
     }
+    _plugin = _bindings.createPlugin();
     instance = this;
     userCallback = onDidReceiveNotificationResponse;
     final Pointer<Utf8> appName = settings.appName.toNativeUtf8(
