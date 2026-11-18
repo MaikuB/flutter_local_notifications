@@ -28,6 +28,29 @@ void main() => group('Plugin', () {
     plugin.dispose();
   });
 
+  test('concurrent initialize calls share one result', () async {
+    final FlutterLocalNotificationsWindows plugin =
+        FlutterLocalNotificationsWindows();
+    final Future<bool> first = plugin.initialize(settings: goodSettings);
+    final Future<bool> second = plugin.initialize(settings: goodSettings);
+    expect(await Future.wait(<Future<bool>>[first, second]), <bool>[
+      true,
+      true,
+    ]);
+    plugin.dispose();
+  });
+
+  test('dispose while initializing reports failure', () async {
+    final FlutterLocalNotificationsWindows plugin =
+        FlutterLocalNotificationsWindows();
+    final Future<bool> result = plugin.initialize(settings: goodSettings);
+    plugin.dispose();
+    expect(await result, isFalse);
+    expect(plugin.cancelAll(), throwsStateError);
+    expect(await plugin.initialize(settings: goodSettings), isTrue);
+    plugin.dispose();
+  });
+
   test('catches bad GUIDs', () async {
     final FlutterLocalNotificationsWindows plugin =
         FlutterLocalNotificationsWindows();
