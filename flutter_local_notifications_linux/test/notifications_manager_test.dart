@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dbus/dbus.dart';
@@ -83,10 +84,10 @@ void main() {
       );
 
       when(
-        mockActionInvokedSignal.listen(any),
+        mockActionInvokedSignal.listen(any, onError: anyNamed('onError')),
       ).thenReturn(FakeStreamSubscription<DBusSignal>());
       when(
-        mockNotifyClosedSignal.listen(any),
+        mockNotifyClosedSignal.listen(any, onError: anyNamed('onError')),
       ).thenReturn(FakeStreamSubscription<DBusSignal>());
     });
 
@@ -122,8 +123,36 @@ void main() {
           path: '/org/freedesktop/Notifications',
         ),
       ).called(1);
-      verify(mockActionInvokedSignal.listen(any)).called(1);
-      verify(mockNotifyClosedSignal.listen(any)).called(1);
+      verify(
+        mockActionInvokedSignal.listen(any, onError: anyNamed('onError')),
+      ).called(1);
+      verify(
+        mockNotifyClosedSignal.listen(any, onError: anyNamed('onError')),
+      ).called(1);
+    });
+
+    test('Initialize without a session bus', () async {
+      const LinuxInitializationSettings initSettings =
+          LinuxInitializationSettings(defaultActionName: 'test');
+
+      for (final MockDBusRemoteObjectSignalStream signal
+          in <MockDBusRemoteObjectSignalStream>[
+            mockActionInvokedSignal,
+            mockNotifyClosedSignal,
+          ]) {
+        when(signal.listen(any, onError: anyNamed('onError'))).thenAnswer(
+          (Invocation invocation) =>
+              Stream<DBusSignal>.error(
+                const SocketException('Connection failed'),
+              ).listen(
+                invocation.positionalArguments.single,
+                onError: invocation.namedArguments[#onError],
+              ),
+        );
+      }
+
+      expect(await manager.initialize(initSettings), isTrue);
+      await pumpEventQueue();
     });
 
     const String kDefaultActionName = 'Open notification';
@@ -1016,9 +1045,9 @@ void main() {
         ).thenAnswer((_) async => true);
       }
 
-      when(mockNotifyClosedSignal.listen(any)).thenAnswer((
-        Invocation invocation,
-      ) {
+      when(
+        mockNotifyClosedSignal.listen(any, onError: anyNamed('onError')),
+      ).thenAnswer((Invocation invocation) {
         final Future<void> Function(DBusSignal) callback =
             invocation.positionalArguments.single;
         for (final LinuxNotificationInfo notify in notifications) {
@@ -1071,9 +1100,9 @@ void main() {
         ).thenAnswer((_) async => notify);
         completers.add(Completer<void>());
       }
-      when(mockActionInvokedSignal.listen(any)).thenAnswer((
-        Invocation invocation,
-      ) {
+      when(
+        mockActionInvokedSignal.listen(any, onError: anyNamed('onError')),
+      ).thenAnswer((Invocation invocation) {
         final Future<void> Function(DBusSignal) callback =
             invocation.positionalArguments.single;
         for (final LinuxNotificationInfo notify in notifications) {
@@ -1213,9 +1242,9 @@ void main() {
         ).thenAnswer((_) async => notify);
         completers.add(Completer<void>());
       }
-      when(mockActionInvokedSignal.listen(any)).thenAnswer((
-        Invocation invocation,
-      ) {
+      when(
+        mockActionInvokedSignal.listen(any, onError: anyNamed('onError')),
+      ).thenAnswer((Invocation invocation) {
         final Future<void> Function(DBusSignal) callback =
             invocation.positionalArguments.single;
         for (final LinuxNotificationInfo notify in notifications) {
