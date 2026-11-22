@@ -186,6 +186,8 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             openAppNotificationSettings(result)
         case "getNotificationAppLaunchDetails":
             getNotificationAppLaunchDetails(result)
+        case "clearNotificationAppLaunchDetails":
+            clearNotificationAppLaunchDetails(result)
         case "cancel":
             cancel(call, result)
         case "cancelAll":
@@ -313,6 +315,12 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
     func getNotificationAppLaunchDetails(_ result: @escaping FlutterResult) {
         let appLaunchDetails: [String: Any?] = [MethodCallArguments.notificationLaunchedApp: launchingAppFromNotification, "notificationResponse": launchNotificationResponseDict]
         result(appLaunchDetails)
+    }
+
+    func clearNotificationAppLaunchDetails(_ result: @escaping FlutterResult) {
+        launchingAppFromNotification = false
+        launchNotificationResponseDict = nil
+        result(nil)
     }
 
     func cancel(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {

@@ -73,6 +73,27 @@ void main() {
       },
     );
   });
+  if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+    group('clearNotificationAppLaunchDetails()', () {
+      setUpAll(() async {
+        flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+        await flutterLocalNotificationsPlugin.initialize(
+          settings: initializationSettings,
+        );
+      });
+
+      testWidgets('app is reported as not launched by a notification', (
+        WidgetTester tester,
+      ) async {
+        await flutterLocalNotificationsPlugin
+            .clearNotificationAppLaunchDetails();
+        final NotificationAppLaunchDetails? notificationAppLaunchDetails =
+            await flutterLocalNotificationsPlugin
+                .getNotificationAppLaunchDetails();
+        expect(notificationAppLaunchDetails?.didNotificationLaunchApp, isFalse);
+      });
+    });
+  }
   group('resolvePlatformSpecificImplementation()', () {
     setUpAll(() async {
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();

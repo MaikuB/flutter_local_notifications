@@ -176,6 +176,8 @@ public class FlutterLocalNotificationsPlugin
       "periodicallyShowWithDuration";
   private static final String GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
       "getNotificationAppLaunchDetails";
+  private static final String CLEAR_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
+      "clearNotificationAppLaunchDetails";
   private static final String REQUEST_NOTIFICATIONS_PERMISSION_METHOD =
       "requestNotificationsPermission";
   private static final String REQUEST_EXACT_ALARMS_PERMISSION_METHOD =
@@ -202,6 +204,8 @@ public class FlutterLocalNotificationsPlugin
       "Must specify both ledOnMs and ledOffMs to configure the blink cycle on older versions of"
           + " Android before Oreo";
   private static final String NOTIFICATION_LAUNCHED_APP = "notificationLaunchedApp";
+  private static final String NOTIFICATION_APP_LAUNCH_DETAILS_CLEARED =
+      "notificationAppLaunchDetailsCleared";
   private static final String INVALID_DRAWABLE_RESOURCE_ERROR_MESSAGE =
       "The resource %s could not be found. Please make sure it has been added as a drawable"
           + " resource to your Android head project.";
@@ -1644,6 +1648,9 @@ public class FlutterLocalNotificationsPlugin
       case GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD:
         getNotificationAppLaunchDetails(result);
         break;
+      case CLEAR_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD:
+        clearNotificationAppLaunchDetails(result);
+        break;
       case SHOW_METHOD:
         show(call, result);
         break;
@@ -1880,7 +1887,8 @@ public class FlutterLocalNotificationsPlugin
           launchIntent != null
               && (SELECT_NOTIFICATION.equals(launchIntent.getAction())
                   || SELECT_FOREGROUND_NOTIFICATION_ACTION.equals(launchIntent.getAction()))
-              && !launchedActivityFromHistory(launchIntent);
+              && !launchedActivityFromHistory(launchIntent)
+              && !launchIntent.getBooleanExtra(NOTIFICATION_APP_LAUNCH_DETAILS_CLEARED, false);
       if (notificationLaunchedApp) {
         notificationAppLaunchDetails.put(
             "notificationResponse", extractNotificationResponseMap(launchIntent));
@@ -1889,6 +1897,13 @@ public class FlutterLocalNotificationsPlugin
 
     notificationAppLaunchDetails.put(NOTIFICATION_LAUNCHED_APP, notificationLaunchedApp);
     result.success(notificationAppLaunchDetails);
+  }
+
+  private void clearNotificationAppLaunchDetails(Result result) {
+    if (mainActivity != null && mainActivity.getIntent() != null) {
+      mainActivity.getIntent().putExtra(NOTIFICATION_APP_LAUNCH_DETAILS_CLEARED, true);
+    }
+    result.success(null);
   }
 
   private void initialize(MethodCall call, Result result) {

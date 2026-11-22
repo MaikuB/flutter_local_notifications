@@ -3273,6 +3273,24 @@ void main() {
       ]);
     });
 
+    test('clearNotificationAppLaunchDetails', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()!
+          .clearNotificationAppLaunchDetails();
+      expect(log, <Matcher>[
+        isMethodCall('clearNotificationAppLaunchDetails', arguments: null),
+      ]);
+    });
+
+    test('clearNotificationAppLaunchDetails (cross-platform)', () async {
+      await flutterLocalNotificationsPlugin.clearNotificationAppLaunchDetails();
+      expect(log, <Matcher>[
+        isMethodCall('clearNotificationAppLaunchDetails', arguments: null),
+      ]);
+    });
+
     test('startForegroundService', () async {
       const AndroidInitializationSettings androidInitializationSettings =
           AndroidInitializationSettings('app_icon');

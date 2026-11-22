@@ -790,6 +790,24 @@ void main() {
       ]);
     });
 
+    test('clearNotificationAppLaunchDetails', () async {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin
+          >()!
+          .clearNotificationAppLaunchDetails();
+      expect(log, <Matcher>[
+        isMethodCall('clearNotificationAppLaunchDetails', arguments: null),
+      ]);
+    });
+
+    test('clearNotificationAppLaunchDetails (cross-platform)', () async {
+      await flutterLocalNotificationsPlugin.clearNotificationAppLaunchDetails();
+      expect(log, <Matcher>[
+        isMethodCall('clearNotificationAppLaunchDetails', arguments: null),
+      ]);
+    });
+
     test('initialize with providesAppNotificationSettings', () async {
       const DarwinInitializationSettings macOSInitializationSettings =
           DarwinInitializationSettings(
