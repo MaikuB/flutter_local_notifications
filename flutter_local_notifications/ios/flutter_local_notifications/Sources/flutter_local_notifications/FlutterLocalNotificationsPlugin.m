@@ -889,8 +889,9 @@ static FlutterError *getFlutterError(NSError *error) {
   if (matchDateComponents != nil) {
     if ([matchDateComponents integerValue] == Time) {
       NSDateComponents *dateComponents =
-          [calendar components:(NSCalendarUnitHour | NSCalendarUnitMinute |
-                                NSCalendarUnitSecond | NSCalendarUnitTimeZone)
+          [calendar components:(NSCalendarUnitCalendar | NSCalendarUnitHour |
+                                NSCalendarUnitMinute | NSCalendarUnitSecond |
+                                NSCalendarUnitTimeZone)
                       fromDate:date];
       return [UNCalendarNotificationTrigger
           triggerWithDateMatchingComponents:dateComponents
@@ -898,27 +899,28 @@ static FlutterError *getFlutterError(NSError *error) {
 
     } else if ([matchDateComponents integerValue] == DayOfWeekAndTime) {
       NSDateComponents *dateComponents =
-          [calendar components:(NSCalendarUnitWeekday | NSCalendarUnitHour |
-                                NSCalendarUnitMinute | NSCalendarUnitSecond |
-                                NSCalendarUnitTimeZone)
+          [calendar components:(NSCalendarUnitCalendar | NSCalendarUnitWeekday |
+                                NSCalendarUnitHour | NSCalendarUnitMinute |
+                                NSCalendarUnitSecond | NSCalendarUnitTimeZone)
                       fromDate:date];
       return [UNCalendarNotificationTrigger
           triggerWithDateMatchingComponents:dateComponents
                                     repeats:YES];
     } else if ([matchDateComponents integerValue] == DayOfMonthAndTime) {
       NSDateComponents *dateComponents =
-          [calendar components:(NSCalendarUnitDay | NSCalendarUnitHour |
-                                NSCalendarUnitMinute | NSCalendarUnitSecond |
-                                NSCalendarUnitTimeZone)
+          [calendar components:(NSCalendarUnitCalendar | NSCalendarUnitDay |
+                                NSCalendarUnitHour | NSCalendarUnitMinute |
+                                NSCalendarUnitSecond | NSCalendarUnitTimeZone)
                       fromDate:date];
       return [UNCalendarNotificationTrigger
           triggerWithDateMatchingComponents:dateComponents
                                     repeats:YES];
     } else if ([matchDateComponents integerValue] == DateAndTime) {
       NSDateComponents *dateComponents =
-          [calendar components:(NSCalendarUnitMonth | NSCalendarUnitDay |
-                                NSCalendarUnitHour | NSCalendarUnitMinute |
-                                NSCalendarUnitSecond | NSCalendarUnitTimeZone)
+          [calendar components:(NSCalendarUnitCalendar | NSCalendarUnitMonth |
+                                NSCalendarUnitDay | NSCalendarUnitHour |
+                                NSCalendarUnitMinute | NSCalendarUnitSecond |
+                                NSCalendarUnitTimeZone)
                       fromDate:date];
       return [UNCalendarNotificationTrigger
           triggerWithDateMatchingComponents:dateComponents
@@ -926,11 +928,12 @@ static FlutterError *getFlutterError(NSError *error) {
     }
     return nil;
   }
-  NSDateComponents *dateComponents = [calendar
-      components:(NSCalendarUnitYear | NSCalendarUnitMonth | NSCalendarUnitDay |
-                  NSCalendarUnitHour | NSCalendarUnitMinute |
-                  NSCalendarUnitSecond | NSCalendarUnitTimeZone)
-        fromDate:date];
+  NSDateComponents *dateComponents =
+      [calendar components:(NSCalendarUnitCalendar | NSCalendarUnitYear |
+                            NSCalendarUnitMonth | NSCalendarUnitDay |
+                            NSCalendarUnitHour | NSCalendarUnitMinute |
+                            NSCalendarUnitSecond | NSCalendarUnitTimeZone)
+                  fromDate:date];
   return [UNCalendarNotificationTrigger
       triggerWithDateMatchingComponents:dateComponents
                                 repeats:NO];
