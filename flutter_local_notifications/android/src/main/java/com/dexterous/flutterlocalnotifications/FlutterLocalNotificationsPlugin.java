@@ -1389,6 +1389,14 @@ public class FlutterLocalNotificationsPlugin
               notificationChannelDetails.id,
               notificationChannelDetails.name,
               notificationChannelDetails.importance);
+      if (VERSION.SDK_INT >= VERSION_CODES.R) {
+        if (!StringUtils.isNullOrEmpty(notificationChannelDetails.conversationId)
+            && !StringUtils.isNullOrEmpty(notificationChannelDetails.parentChannelId)) {
+          notificationChannel.setConversationId(
+              notificationChannelDetails.parentChannelId,
+              notificationChannelDetails.conversationId);
+        }
+      }
       notificationChannel.setDescription(notificationChannelDetails.description);
       notificationChannel.setGroup(notificationChannelDetails.groupId);
       if (notificationChannelDetails.playSound) {
