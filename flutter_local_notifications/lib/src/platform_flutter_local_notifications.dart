@@ -82,6 +82,14 @@ class MethodChannelFlutterLocalNotificationsPlugin
     }
   }
 
+  /// Clears the details on if a notification launched the application.
+  ///
+  /// Subsequent calls to [getNotificationAppLaunchDetails] will indicate that
+  /// the application wasn't launched by a notification. This is useful as a
+  /// hot restart doesn't restart the native side of the application.
+  Future<void> clearNotificationAppLaunchDetails() =>
+      _channel.invokeMethod('clearNotificationAppLaunchDetails');
+
   @override
   Future<List<PendingNotificationRequest>> pendingNotificationRequests() async {
     final List<Map<dynamic, dynamic>>? pendingNotifications = await _channel

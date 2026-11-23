@@ -247,6 +247,22 @@ class FlutterLocalNotificationsPlugin {
     }
   }
 
+  /// Clears the details returned by [getNotificationAppLaunchDetails].
+  ///
+  /// Subsequent calls to [getNotificationAppLaunchDetails] will indicate that
+  /// the application wasn't launched by a notification. This is useful as a
+  /// hot restart doesn't restart the native side of the application.
+  ///
+  /// This is only supported on Android, iOS and macOS. On other platforms,
+  /// this does nothing.
+  Future<void> clearNotificationAppLaunchDetails() async {
+    final FlutterLocalNotificationsPlatform platform =
+        FlutterLocalNotificationsPlatform.instance;
+    if (platform is MethodChannelFlutterLocalNotificationsPlugin) {
+      await platform.clearNotificationAppLaunchDetails();
+    }
+  }
+
   /// Show a notification with an optional payload that will be passed back to
   /// the app when a notification is tapped.
   Future<void> show({

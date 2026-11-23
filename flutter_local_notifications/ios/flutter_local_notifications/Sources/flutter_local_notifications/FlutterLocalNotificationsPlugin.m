@@ -33,6 +33,8 @@ NSString *const PENDING_NOTIFICATION_REQUESTS_METHOD =
 NSString *const GET_ACTIVE_NOTIFICATIONS_METHOD = @"getActiveNotifications";
 NSString *const GET_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
     @"getNotificationAppLaunchDetails";
+NSString *const CLEAR_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD =
+    @"clearNotificationAppLaunchDetails";
 NSString *const CHANNEL = @"dexterous.com/flutter/local_notifications";
 NSString *const CALLBACK_CHANNEL =
     @"dexterous.com/flutter/local_notifications_background";
@@ -215,6 +217,11 @@ static FlutterError *getFlutterError(NSError *error) {
     notificationAppLaunchDetails[@"notificationResponse"] =
         _launchNotificationResponseDict;
     result(notificationAppLaunchDetails);
+  } else if ([CLEAR_NOTIFICATION_APP_LAUNCH_DETAILS_METHOD
+                 isEqualToString:call.method]) {
+    _launchingAppFromNotification = false;
+    _launchNotificationResponseDict = nil;
+    result(nil);
   } else if ([PENDING_NOTIFICATION_REQUESTS_METHOD
                  isEqualToString:call.method]) {
     [self pendingNotificationRequests:result];
