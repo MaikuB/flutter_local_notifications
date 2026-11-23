@@ -1,3 +1,7 @@
+## [23.0.4]
+
+* [iOS][macOS] fixed regression issue [#2886](https://github.com/MaikuB/flutter_local_notifications/issues/2886) introduced by 23.0.3 to do with non-Gregorian calendars. Thanks to the PR [weimi89](https://github.com/weimi89)
+
 ## [23.0.3]
 
 * [iOS][macOS] fixed notification trigger scheduling to use the Gregorian calendar regardless of the device's current calendar. Thanks to the PR from [Sagar Ghag](https://github.com/GhagSagar23)
