@@ -518,20 +518,20 @@ public class FlutterLocalNotificationsPlugin: NSObject, FlutterPlugin, UNUserNot
             let dateTimeComponents = DateTimeComponents.init(rawValue: rawDateTimeComponents)!
             switch dateTimeComponents {
             case .time:
-                let dateComponents = calendar.dateComponents([.day, .hour, .minute, .second, .timeZone], from: date)
+                let dateComponents = calendar.dateComponents([.calendar, .day, .hour, .minute, .second, .timeZone], from: date)
                 return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
             case .dayOfWeekAndTime:
-                let dateComponents = calendar.dateComponents([ .weekday, .hour, .minute, .second, .timeZone], from: date)
+                let dateComponents = calendar.dateComponents([.calendar, .weekday, .hour, .minute, .second, .timeZone], from: date)
                 return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
             case .dayOfMonthAndTime:
-                let dateComponents = calendar.dateComponents([ .day, .hour, .minute, .second, .timeZone], from: date)
+                let dateComponents = calendar.dateComponents([.calendar, .day, .hour, .minute, .second, .timeZone], from: date)
                 return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
             case .dateAndTime:
-                let dateComponents = calendar.dateComponents([ .day, .month, .hour, .minute, .second, .timeZone], from: date)
+                let dateComponents = calendar.dateComponents([.calendar, .day, .month, .hour, .minute, .second, .timeZone], from: date)
                 return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: true)
             }
         }
-        let dateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second, .timeZone], from: date)
+        let dateComponents = calendar.dateComponents([.calendar, .year, .month, .day, .hour, .minute, .second, .timeZone], from: date)
         return UNCalendarNotificationTrigger.init(dateMatching: dateComponents, repeats: false)
     }
 
