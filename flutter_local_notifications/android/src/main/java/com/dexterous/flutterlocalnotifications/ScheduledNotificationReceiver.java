@@ -60,6 +60,17 @@ public class ScheduledNotificationReceiver extends BroadcastReceiver {
 
       FlutterLocalNotificationsPlugin.showNotification(context, notificationDetails);
       FlutterLocalNotificationsPlugin.scheduleNextNotification(context, notificationDetails);
+
+      if (notificationDetails.postedIsolate != null) {
+        Intent postedIntent = new Intent(context, ActionBroadcastReceiver.class);
+        postedIntent.setAction(ActionBroadcastReceiver.ACTION_POSTED);
+        postedIntent
+            .putExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_ID, notificationDetails.id)
+            .putExtra(FlutterLocalNotificationsPlugin.NOTIFICATION_TAG, notificationDetails.tag)
+            .putExtra(FlutterLocalNotificationsPlugin.PAYLOAD, notificationDetails.payload)
+            .putExtra(ActionBroadcastReceiver.POSTED_ISOLATE, notificationDetails.postedIsolate);
+        context.sendBroadcast(postedIntent);
+      }
     }
   }
 }
