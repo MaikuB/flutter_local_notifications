@@ -60,7 +60,32 @@ void main() {
       expect(log, <Matcher>[
         isMethodCall(
           'initialize',
-          arguments: <String, Object>{'defaultIcon': 'app_icon'},
+          arguments: <String, Object>{
+            'defaultIcon': 'app_icon',
+            'verifyNotificationIntents': true,
+          },
+        ),
+      ]);
+    });
+
+    test('initialize without verifying notification intents', () async {
+      const AndroidInitializationSettings androidInitializationSettings =
+          AndroidInitializationSettings(
+            'app_icon',
+            verifyNotificationIntents: false,
+          );
+      const InitializationSettings initializationSettings =
+          InitializationSettings(android: androidInitializationSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        settings: initializationSettings,
+      );
+      expect(log, <Matcher>[
+        isMethodCall(
+          'initialize',
+          arguments: <String, Object>{
+            'defaultIcon': 'app_icon',
+            'verifyNotificationIntents': false,
+          },
         ),
       ]);
     });
