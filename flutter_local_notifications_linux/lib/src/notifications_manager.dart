@@ -353,7 +353,7 @@ class LinuxNotificationManager {
           ),
         );
       }
-    });
+    }, onError: _onSignalError);
 
     _dbus.subscribeSignal(_DBusMethodsSpec.notificationClosed).listen((
       DBusSignal s,
@@ -364,8 +364,13 @@ class LinuxNotificationManager {
 
       final int systemId = (s.values[0] as DBusUint32).value;
       await _storage.removeBySystemId(systemId);
-    });
+    }, onError: _onSignalError);
   }
+
+  /// Ignores errors on the signal streams, for example a `SocketException`
+  /// when the session bus is not available. Without a session bus, the
+  /// notification signals cannot arrive, and the app must continue to run.
+  void _onSignalError(Object error) {}
 }
 
 const String _kDefaultActionName = 'default';
