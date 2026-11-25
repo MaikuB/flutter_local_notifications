@@ -85,8 +85,8 @@ NativeUpdateResult updateNotification(NativePlugin* plugin, int id, NativeString
   const auto tag = winrt::to_hstring(id);
   const auto data = dataFromMap(bindings);
   const auto result = plugin->hasIdentity
-                          ? plugin->notifier.value().Update(data, tag)
-                          : plugin->notifier.value().Update(data, tag, plugin->group);
+    ? plugin->notifier.value().Update(data, tag)
+    : plugin->notifier.value().Update(data, tag, plugin->group);
   return static_cast<NativeUpdateResult>(result);
 }
 
