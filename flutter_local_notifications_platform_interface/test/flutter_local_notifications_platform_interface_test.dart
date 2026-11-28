@@ -34,4 +34,25 @@ void main() {
           ExtendsFlutterLocalNotificationsPlatform();
     });
   });
+
+  group('$NotificationResponse', () {
+    test('supports notification response timestamps', () {
+      final DateTime notificationDeliveredAt = DateTime.utc(2026);
+      final DateTime responseReceivedAt = DateTime.utc(
+        2026,
+        DateTime.january,
+        2,
+      );
+
+      final NotificationResponse response = NotificationResponse(
+        notificationResponseType:
+            NotificationResponseType.selectedNotificationAction,
+        notificationDeliveredAt: notificationDeliveredAt,
+        responseReceivedAt: responseReceivedAt,
+      );
+
+      expect(response.notificationDeliveredAt, notificationDeliveredAt);
+      expect(response.responseReceivedAt, responseReceivedAt);
+    });
+  });
 }
