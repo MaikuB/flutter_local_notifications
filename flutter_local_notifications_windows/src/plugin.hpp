@@ -30,11 +30,11 @@ struct NativePlugin {
   /// For more details, see https://learn.microsoft.com/en-us/windows/win32/shell/appids
   winrt::hstring aumid;
 
+  /// The group assigned to notifications when [hasIdentity] is false, needed to remove them by tag.
+  winrt::hstring group;
+
   /// The API responsible for showing notifications. Null if [isReady] is false.
   optional<ToastNotifier> notifier;
-
-  /// The API responsible for querying shown notifications. Null if [isReady] is false.
-  optional<ToastNotificationHistory> history;
 
   /// A callback to run when a notification is pressed, when the app is or is not running.
   NativeNotificationCallback callback;
